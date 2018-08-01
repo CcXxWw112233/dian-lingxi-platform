@@ -3,11 +3,13 @@ import { connect } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import { Card } from 'antd'
 import FormList from './FormList'
-
+import globalClassNmae from '../../globalset/css/globalClassName.less'
+import styleConstant from '../../globalset/css/constant.less'
+// style={{ background: '#f5f5f5',height: '100%', }}
 const Login = (options) => {
   const { dispatch, products } = options
   return (
-  <div style={{ background: '#f2f2f2',height: '100%', }}>
+  <div className={globalClassNmae['page_style_1']}>
     <Card  bordered={false} style={{ width: 400,padding: '0 50px 0 50px', margin: '0 auto',border: '1px solid #ececec' }}>
       <QueueAnim duration={500} type='top'>
         <FormList style={{margin: '0 auto',margin:'0 50px 0 50px'}}/>
