@@ -65,7 +65,7 @@ class FormList extends React.Component {
     };
 
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
         {/* 输入账户 */}
         <FormItem>
           {getFieldDecorator('account', {
@@ -81,21 +81,21 @@ class FormList extends React.Component {
         {/* 验证码 */}
         <div style={{position: 'relative'}}>
           <FormItem >
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: '请输入账号', whitespace: true }],
-          })(
-            <Input
-              style={{height: '40px'}}
-              prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.6)' }} />}
-              maxLength={40} placeholder="手机号/邮箱" />
-          )}
-         </FormItem>
+            {getFieldDecorator('password', {
+              rules: [{ required: true, message: '请输入账号', whitespace: true }],
+            })(
+              <Input
+                style={{height: '40px'}}
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.6)' }} />}
+                maxLength={40} placeholder="手机号/邮箱" />
+            )}
+          </FormItem>
           <div style={{position: 'absolute',top:0 ,right: 0, color: '#999999',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer'}}>获取验证码</div>
         </div>
 
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit">确认</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认</Button>
 
         </FormItem>
 

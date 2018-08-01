@@ -1,21 +1,21 @@
 import React from 'react';
 import { connect } from 'dva';
-import QueueAnim from 'rc-queue-anim'
+import QueueAnim from  'rc-queue-anim'
+import { Row,  Col} from 'antd'
 import { Card } from 'antd'
 import FormList from './FormList'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
-import styleConstant from '../../globalset/css/constant.less'
-// style={{ background: '#f5f5f5',height: '100%', }}
+
 const Login = (options) => {
   const { dispatch, products } = options
   return (
-  <div className={globalClassNmae['page_style_1']}>
-    <Card  bordered={false} style={{ width: 400,padding: '0 50px 0 50px', margin: '0 auto',border: '1px solid #ececec' }}>
-      <QueueAnim duration={500} type='top'>
-        <FormList style={{margin: '0 auto',margin:'0 50px 0 50px'}}/>
-      </QueueAnim>
-    </Card>
-  </div>
+    <div className={globalClassNmae['page_style_1']}>
+      <Card  bordered={false} style={{ border: '1px solid #ececec',maxWidth: 472,margin: '0 auto',width: '100%'}}>
+        <QueueAnim duration={500} type='top'>
+          <FormList />
+        </QueueAnim>
+      </Card>
+    </div>
   );
 };
 
