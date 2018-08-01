@@ -7,7 +7,7 @@ import FormList from './FormList'
 const Login = (options) => {
   const { dispatch, products } = options
   return (
-  <div style={{ background: '#f2f2f2', padding: '30px' }}>
+  <div style={{ background: '#f2f2f2',height: '100%', }}>
     <Card  bordered={false} style={{ width: 400,padding: '0 50px 0 50px', margin: '0 auto',border: '1px solid #ececec' }}>
       <QueueAnim duration={500} type='top'>
         <FormList style={{margin: '0 auto',margin:'0 50px 0 50px'}}/>
