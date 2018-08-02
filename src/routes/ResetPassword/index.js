@@ -9,16 +9,17 @@ import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 
-const Login = (options) => {
+const ResetPassword = (options) => {
   const { dispatch, products } = options
   return (
     <div className={globalClassNmae['page_style_1']}>
       <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
         border: '1px solid rgba(217,217,217,1)',
         borderRadius: '4px'}}>
-        <TopContent text={'欢迎来到'} productName={'productname'}/>
+        <TopContent text={'重置密码'} hidenDescription={true}/>
         <FormList />
-        <BottomContent type={'login'}/>
+        <div style={{height: 40}}></div>
+        {/*<BottomContent type={'register'}/>*/}
       </div>
       <Copyright />
     </div>
@@ -28,5 +29,5 @@ const Login = (options) => {
 // export default Products;
 export default connect(({ login }) => ({
   login,
-}))(Login);
+}))(ResetPassword);
 

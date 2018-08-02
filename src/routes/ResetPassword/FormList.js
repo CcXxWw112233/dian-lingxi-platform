@@ -66,40 +66,46 @@ class FormList extends React.Component {
     };
 
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
-        {/* 输入账户 */}
+      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  280}}>
+        {/* 密码 */}
         <FormItem>
-          {getFieldDecorator('account', {
-            rules: [{ required: true, message: '请输入账号', whitespace: true }],
+          {getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入新密码', whitespace: true }],
           })(
             <Input
               style={{height: '40px',fontSize: 16}}
-              prefix={<Icon type="user" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-              maxLength={40} placeholder="手机号/邮箱" />
+              maxLength={40} placeholder="输入新密码" />
           )}
         </FormItem>
-
-        {/* 验证码 */}
-        <div style={{position: 'relative', marginTop: -6}}>
-          <FormItem >
-            {getFieldDecorator('password', {
-              rules: [{ required: true, message: '请输入验证码', whitespace: true }],
-            })(
-              <Input
-                style={{height: '40px',fontSize: 16, color: '#8C8C8C'}}
-                prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-                maxLength={6} placeholder="密码" />
-            )}
-          </FormItem>
-          <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
-            <div style={{height: 20, marginTop: 10,marginRight: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
-            <div>获取验证码</div>
-          </div>
-        </div>
-
+        {/* 确认密码 */}
+        <FormItem  style={{marginTop: -6}}>
+          {getFieldDecorator('phone', {
+            rules: [{ required: true, message: '请确认密码', whitespace: true }],
+          })(
+            <Input
+              style={{height: '40px',fontSize: 16}}
+              maxLength={40} placeholder="确认密码" />
+          )}
+        </FormItem>
+        {/*验证码*/}
+        <FormItem style={{marginTop: -6}}>
+          <Row gutter={8}>
+            <Col span={14}>
+              {getFieldDecorator('captcha', {
+                rules: [{ required: true, message: '请输入验证码' }],
+              })(
+                <Input placeholder="手机验证码" style={{height: '40px',fontSize: 16,}}/>
+              )}
+            </Col>
+            <Col span={10}>
+              <Button style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}}>获取验证码</Button>
+            </Col>
+          </Row>
+        </FormItem>
+        <div style={{fontSize: 14, color: '#595959', marginTop: -6, marginBottom: 20}}>验证码已发送至你的手机，请注意查收短信。</div>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>登陆</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认修改</Button>
         </FormItem>
 
 

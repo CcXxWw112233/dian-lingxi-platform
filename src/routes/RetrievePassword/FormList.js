@@ -66,40 +66,21 @@ class FormList extends React.Component {
     };
 
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
-        {/* 输入账户 */}
-        <FormItem>
-          {getFieldDecorator('account', {
-            rules: [{ required: true, message: '请输入账号', whitespace: true }],
+      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  280}}>
+        {/* 绑定的手机号或邮箱 */}
+        <FormItem  style={{marginTop: -6}}>
+          {getFieldDecorator('phone', {
+            rules: [{ required: true, message: '请输入绑定的手机号或邮箱', whitespace: true }],
           })(
             <Input
               style={{height: '40px',fontSize: 16}}
-              prefix={<Icon type="user" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-              maxLength={40} placeholder="手机号/邮箱" />
+              maxLength={40} placeholder="绑定的手机号或邮箱" />
           )}
         </FormItem>
 
-        {/* 验证码 */}
-        <div style={{position: 'relative', marginTop: -6}}>
-          <FormItem >
-            {getFieldDecorator('password', {
-              rules: [{ required: true, message: '请输入验证码', whitespace: true }],
-            })(
-              <Input
-                style={{height: '40px',fontSize: 16, color: '#8C8C8C'}}
-                prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-                maxLength={6} placeholder="密码" />
-            )}
-          </FormItem>
-          <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
-            <div style={{height: 20, marginTop: 10,marginRight: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
-            <div>获取验证码</div>
-          </div>
-        </div>
-
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>登陆</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认修改</Button>
         </FormItem>
 
 
