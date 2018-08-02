@@ -8,6 +8,7 @@ import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
+import DragMove from '../../components/DragMove'
 
 const RetrievePassword = (options) => {
   const { dispatch, products } = options
@@ -19,6 +20,7 @@ const RetrievePassword = (options) => {
         <TopContent text={'找回密码'} hidenDescription={true}/>
         <FormList />
         <div style={{fontSize: 14, color: '#595959',width: 252,margin: '0 auto', marginBottom: 60}}>如无法通过手机或邮箱找回请发送邮件至support@ProductName.com 寻求帮助</div>
+        <DragMove style={{width:'100px',height:'100px',backgroundColor:'green',position:'absolute'}}/>
       </div>
       <Copyright />
     </div>
