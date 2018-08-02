@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" afterPath="$PROJECT_DIR$/public/index.html" />
-      <change beforePath="$PROJECT_DIR$/src/globalset/css/constant.less" afterPath="$PROJECT_DIR$/src/globalset/css/constant.less" />
-      <change beforePath="$PROJECT_DIR$/src/globalset/css/globalClassName.less" afterPath="$PROJECT_DIR$/src/globalset/css/globalClassName.less" />
-      <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Login/FormList.js" afterPath="$PROJECT_DIR$/src/routes/Login/FormList.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Login/index.js" afterPath="$PROJECT_DIR$/src/routes/Login/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Login/index.less" afterPath="$PROJECT_DIR$/src/routes/Login/index.less" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -216,7 +209,7 @@
       <workItem from="1533109307850" duration="118000" />
       <workItem from="1533109465563" duration="4506000" />
       <workItem from="1533113991133" duration="7169000" />
-      <workItem from="1533172209250" duration="26404000" />
+      <workItem from="1533172209250" duration="26473000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -260,11 +253,18 @@
       <option name="project" value="LOCAL" />
       <updated>1533123493184</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="登录界面,注册界面，注册成功，找回密码，重置密码界面ui">
+      <created>1533209115367</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1533209115367</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44340000" />
+    <option name="totallyTimeSpent" value="44409000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -300,7 +300,8 @@
     <MESSAGE value="去掉idea" />
     <MESSAGE value="稍微修改" />
     <MESSAGE value="登录界面" />
-    <option name="LAST_COMMIT_MESSAGE" value="登录界面" />
+    <MESSAGE value="登录界面,注册界面，注册成功，找回密码，重置密码界面ui" />
+    <option name="LAST_COMMIT_MESSAGE" value="登录界面,注册界面，注册成功，找回密码，重置密码界面ui" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
