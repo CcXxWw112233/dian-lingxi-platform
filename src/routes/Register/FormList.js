@@ -2,6 +2,7 @@
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import React from 'react'
 import indexStyle from './index.less'
+import VerificationCode from  '../../components/VerificationCode'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -99,7 +100,8 @@ class FormList extends React.Component {
               )}
             </Col>
             <Col span={10}>
-              <Button style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}}>获取验证码</Button>
+              <VerificationCode  style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}} text={'获取验证码'}/>
+              {/*<Button style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}}>获取验证码</Button>*/}
             </Col>
           </Row>
         </FormItem>
