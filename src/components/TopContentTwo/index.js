@@ -1,7 +1,7 @@
-//页面顶部样式，参见注册成功后
 import React from 'react';
 import indexStyles from './index.less'
 
+//页面顶部样式，参见注册成功后
 const TopContentTwo = (props) => {
   const { text, productName } = props
   return (

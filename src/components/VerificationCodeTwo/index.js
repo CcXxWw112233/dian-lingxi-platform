@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from 'antd'
 let interval = null
-let initTime = 60
+const initTimeValue = 10
+let initTime = initTimeValue
 
-export default class VerificationCode extends React.Component{
+//参见登陆界面验证码
+export default class VerificationCodeTwo extends React.Component{
 
   constructor(props) {
     super(props)
@@ -17,6 +19,9 @@ export default class VerificationCode extends React.Component{
     this.buttonClickAction()
   }
   buttonClickAction = () => {
+    if(this.state.buttonDisabled) {
+      return false
+    }
     const that = this
     this.setState({
       initTimeText: --initTime,
@@ -29,7 +34,7 @@ export default class VerificationCode extends React.Component{
         buttonDisabled: true
       })
       if(initTime === 0) {
-        initTime = 60
+        initTime = initTimeValue
         clearInterval(interval)
         that.setState({
           initTimeText: '重新获取',
@@ -42,11 +47,11 @@ export default class VerificationCode extends React.Component{
     const { text, style } = this.props
     const buttonDisabled = this.state.buttonDisabled
     return (
-      <Button style={{...style, color: !buttonDisabled ? 'rgba(0,0,0,.65)' : 'rgba(0,0,0,.25)',}} disabled={this.state.buttonDisabled} onClick={this.buttonClick}>{this.state.initTimeText}</Button>
+      <div style={{...style, color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)',}} onClick={this.buttonClick}>{this.state.initTimeText}</div>
     );
   }
 
 };
 
-VerificationCode.propTypes = {
+VerificationCodeTwo.propTypes = {
 };

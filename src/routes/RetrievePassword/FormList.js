@@ -2,6 +2,7 @@
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import React from 'react'
 import indexStyle from './index.less'
+import DragValidation from '../../components/DragValidation'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -78,8 +79,10 @@ class FormList extends React.Component {
           )}
         </FormItem>
 
+        <DragValidation />
+
         {/* 确认 */}
-        <FormItem>
+        <FormItem style={{marginTop: 20}}>
           <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认修改</Button>
         </FormItem>
 

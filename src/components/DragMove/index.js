@@ -14,6 +14,7 @@ export default class Drag extends React.Component{
   }
   /*定义鼠标下落事件*/
   fnDown(e){
+    console.log(e)
     /*事件兼容*/
     let event = e || window.event;
     /*事件源对象兼容*/
@@ -23,8 +24,11 @@ export default class Drag extends React.Component{
     this.disY = event.clientY - target.offsetTop;
     /*定义鼠标移动事件*/
     document.onmousemove = this.fnMove.bind(this);
+    document.ontouchmove = this.fnMove.bind(this);
     /*定义鼠标抬起事件*/
     document.onmouseup = this.fnUp.bind(this);
+    document.ontouchend = this.fnUp.bind(this);
+
   }
   /*定义鼠标移动事件*/
   fnMove(e){
@@ -40,6 +44,8 @@ export default class Drag extends React.Component{
   fnUp(){
     document.onmousemove = null;
     document.onmuseup = null;
+    document.ontouchmove = null;
+    document.ontouchend = null;
   }
   render(){
     /*返回元素*/
@@ -50,7 +56,12 @@ export default class Drag extends React.Component{
         position:this.props.style.position,
         left:this.state.needX,
         top:this.state.needY}}
-           onMouseDown={this.fnDown.bind(this)}></div>
+           onMouseDown={this.fnDown.bind(this)}
+           onTouchStart={this.fnDown.bind(this)}
+      ></div>
     )
   }
 }
+
+//使用方法
+{/*<DragMove style={{width:'100px',height:'100px',backgroundColor:'green',position:'absolute'}}/>*/}

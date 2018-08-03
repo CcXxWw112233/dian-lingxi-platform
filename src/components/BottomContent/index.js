@@ -2,6 +2,7 @@ import React from 'react';
 import indexStyles from './index.less'
 import { Icon } from 'antd'
 
+//第三方登陆授权
 const BottomContent = (props) => {
   const { type } = props
   return (
