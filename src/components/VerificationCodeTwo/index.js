@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd'
 let interval = null
-const initTimeValue = 10
+const initTimeValue = 60
 let initTime = initTimeValue
 
 //参见登陆界面验证码
@@ -44,10 +44,10 @@ export default class VerificationCodeTwo extends React.Component{
     }, 1000)
   }
   render() {
-    const { text, style } = this.props
+    const { text, style, getVerifyCode } = this.props
     const buttonDisabled = this.state.buttonDisabled
     return (
-      <div style={{...style, color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)',}} onClick={this.buttonClick}>{this.state.initTimeText}</div>
+      <div style={{...style, color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)',}} onClick={getVerifyCode.bind(null, this.buttonClick)}>{this.state.initTimeText}</div>
     );
   }
 

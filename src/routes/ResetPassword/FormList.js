@@ -78,7 +78,7 @@ class FormList extends React.Component {
           )}
         </FormItem>
         {/* 确认密码 */}
-        <FormItem  style={{marginTop: -6}}>
+        <FormItem  style={{marginTop: 0}}>
           {getFieldDecorator('phone', {
             rules: [{ required: true, message: '请确认密码', whitespace: true }],
           })(
@@ -88,7 +88,7 @@ class FormList extends React.Component {
           )}
         </FormItem>
         {/*验证码*/}
-        <FormItem style={{marginTop: -6}}>
+        <FormItem style={{marginTop: 0}}>
           <Row gutter={8}>
             <Col span={14}>
               {getFieldDecorator('captcha', {
@@ -102,7 +102,7 @@ class FormList extends React.Component {
             </Col>
           </Row>
         </FormItem>
-        <div style={{fontSize: 14, color: '#595959', marginTop: -6, marginBottom: 20}}>验证码已发送至你的手机，请注意查收短信。</div>
+        <div style={{fontSize: 14, color: '#595959', marginTop: 0, marginBottom: 20}}>验证码已发送至你的手机，请注意查收短信。</div>
         {/* 确认 */}
         <FormItem>
           <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认修改</Button>

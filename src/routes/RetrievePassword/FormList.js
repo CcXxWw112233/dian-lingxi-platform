@@ -69,7 +69,7 @@ class FormList extends React.Component {
     return (
       <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  280}}>
         {/* 绑定的手机号或邮箱 */}
-        <FormItem  style={{marginTop: -6}}>
+        <FormItem  style={{marginTop: 0}}>
           {getFieldDecorator('phone', {
             rules: [{ required: true, message: '请输入绑定的手机号或邮箱', whitespace: true }],
           })(

@@ -79,7 +79,7 @@ class FormList extends React.Component {
           )}
         </FormItem>
         {/* 电话 */}
-        <FormItem  style={{marginTop: -6}}>
+        <FormItem  style={{marginTop: 0}}>
           {getFieldDecorator('phone', {
             rules: [{ required: true, message: '请输入手机号', whitespace: true }],
           })(
@@ -106,7 +106,7 @@ class FormList extends React.Component {
           </Row>
         </FormItem>
         {/* 密码 */}
-        <FormItem  style={{marginTop: -6}}>
+        <FormItem  style={{marginTop: 0}}>
           {getFieldDecorator('password', {
             rules: [{ required: true, message: '请输入密码', whitespace: true }],
           })(
@@ -116,7 +116,7 @@ class FormList extends React.Component {
           )}
         </FormItem>
         {/* 邮箱 */}
-        <FormItem  style={{marginTop: -6}}>
+        <FormItem  style={{marginTop: 0}}>
           {getFieldDecorator('Mailbox', {
             rules: [{ required: true, message: '请输入邮箱', whitespace: true }],
           })(
@@ -125,13 +125,20 @@ class FormList extends React.Component {
               maxLength={40} placeholder="邮箱" />
           )}
         </FormItem>
-
+        {/* agrement */}
+        <FormItem  style={{marginTop: 0}}>
+          {getFieldDecorator('check', {
+            rules: [{ required: true, message: '请确认勾选服务协议', whitespace: true }],
+          })(
+            <Checkbox>
+              Check all
+            </Checkbox>
+          )}
+        </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>登陆</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40, fontSize: 16}}>注册</Button>
         </FormItem>
-
-
       </Form>
     );
   }

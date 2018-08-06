@@ -1,5 +1,6 @@
 //用来定义一些公共样式类名
 @import "constant.less";
+@import "./theme.less";
 //页面整体样式
 .page_style_1 {
   padding: 0;
@@ -9,16 +10,30 @@
   padding-bottom: 80px;
   padding-top: 168px;
 }
-
+.page_style_2 {
+  padding: 0;
+  background-color: @page_background_1;
+  height: 100%;
+  overflow: auto;
+  padding-bottom: 80px;
+  padding-top: 80px;
+}
 .vertical_center{
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+//第三方授权登录图标
+.authTheme{
+  font-family: iconfont ;
+}
 
 @media only screen and (max-width: 600px) {
   .page_style_1 {
+    padding-top: 0;
+  }
+  .page_style_2 {
     padding-top: 0;
   }
 }
