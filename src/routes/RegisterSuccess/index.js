@@ -8,13 +8,25 @@ import Copyright from '../../components/Copyright'
 import TopContentTwo from  '../../components/TopContentTwo'
 import CheckMain from './CheckMain'
 
+const getEffectOrReducerByName = name => `registerSuccess/${name}`
 const RegisterSuccess = (options) => {
-  const { dispatch, products } = options
+  const { dispatch, registerSuccess: { datas = {}} } = options
+  const CheckMainProps = {
+    datas,
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    }
+  }
   return (
     <div className={globalClassNmae.page_style_1} style={{paddingTop: 108}}>
-      <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',}}>
+      <div style={{ maxWidth: 472,margin: '0 auto',width: '100%',}}>
         <TopContentTwo />
-        <CheckMain />
+        <CheckMain  {...CheckMainProps}/>
       </div>
       <Copyright />
     </div>
@@ -22,7 +34,7 @@ const RegisterSuccess = (options) => {
 };
 
 // export default Products;
-export default connect(({ login }) => ({
-  login,
+export default connect(({ registerSuccess }) => ({
+  registerSuccess,
 }))(RegisterSuccess);
 

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="登录调试">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="zhuce">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/components/BottomContent/index.js" afterPath="$PROJECT_DIR$/src/components/BottomContent/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/components/BottomContent/index.less" afterPath="$PROJECT_DIR$/src/components/BottomContent/index.less" />
-      <change beforePath="$PROJECT_DIR$/src/components/VerificationCode/index.js" afterPath="$PROJECT_DIR$/src/components/VerificationCode/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/components/DragValidation/index.js" afterPath="$PROJECT_DIR$/src/components/DragValidation/index.js" />
       <change beforePath="$PROJECT_DIR$/src/models/login/index.js" afterPath="$PROJECT_DIR$/src/models/login/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/models/register/index.js" afterPath="$PROJECT_DIR$/src/models/register/index.js" />
       <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Login/FormList.js" afterPath="$PROJECT_DIR$/src/routes/Login/FormList.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Login/index.js" afterPath="$PROJECT_DIR$/src/routes/Login/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Products/index.js" afterPath="" />
       <change beforePath="$PROJECT_DIR$/src/routes/Register/FormList.js" afterPath="$PROJECT_DIR$/src/routes/Register/FormList.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Register/index.js" afterPath="$PROJECT_DIR$/src/routes/Register/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/handleResponseData.js" afterPath="$PROJECT_DIR$/src/utils/handleResponseData.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/requestAxios.js" afterPath="$PROJECT_DIR$/src/utils/requestAxios.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/verify.js" afterPath="$PROJECT_DIR$/src/utils/verify.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" afterPath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" afterPath="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" afterPath="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/ResetPassword/index.js" afterPath="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js" afterPath="$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" afterPath="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -28,113 +28,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="router.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/router.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="53" column="50" lean-forward="true" selection-start-line="53" selection-start-column="50" selection-end-line="53" selection-end-column="50" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-                <element signature="e#1129#1154#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
+        <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
-              <caret line="11" column="56" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+            <state relative-caret-position="289">
+              <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
-                <element signature="e#576#912#0" expanded="false" />
-                <element signature="e#951#1119#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FormList.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Login/FormList.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="150" column="27" lean-forward="false" selection-start-line="150" selection-start-column="27" selection-end-line="150" selection-end-column="27" />
-              <folding>
-                <element signature="e#46#220#0" expanded="true" />
-                <element signature="e#896#983#0" expanded="false" />
-                <element signature="e#1020#1786#0" expanded="false" />
-                <element signature="e#1829#2296#0" expanded="false" />
-                <element signature="e#2349#2658#0" expanded="false" />
-                <element signature="e#2701#3209#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="29" column="63" lean-forward="true" selection-start-line="29" selection-start-column="63" selection-end-line="29" selection-end-column="63" />
-              <folding>
-                <element signature="e#0#68#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/services/login/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="4" column="40" lean-forward="true" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
-              <folding>
-                <element signature="e#0#46#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="16" column="14" lean-forward="false" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="14" />
-              <folding>
-                <element signature="e#957#1125#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="FormList.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/routes/Register/FormList.js">
+        <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/FormList.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="40" column="41" lean-forward="false" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
+            <state relative-caret-position="200">
+              <caret line="50" column="9" lean-forward="false" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
               <folding>
+                <element signature="n#!!doc" expanded="true" />
                 <element signature="e#46#211#0" expanded="true" />
-                <element signature="e#969#1056#0" expanded="false" />
-                <element signature="e#2431#3512#0" expanded="false" />
-                <element signature="e#3551#3634#0" expanded="false" />
-                <element signature="e#3676#4117#0" expanded="false" />
-                <element signature="e#4305#4599#0" expanded="false" />
-                <element signature="e#4627#5023#0" expanded="false" />
-                <element signature="e#5772#6204#0" expanded="false" />
-                <element signature="e#6232#6626#0" expanded="false" />
-                <element signature="e#6660#6973#0" expanded="false" />
-                <element signature="e#7001#7167#0" expanded="false" />
+                <element signature="e#1109#1384#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+        <entry file="file://$PROJECT_DIR$/src/models/resetPassword/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-75">
-              <caret line="0" column="70" lean-forward="false" selection-start-line="0" selection-start-column="70" selection-end-line="0" selection-end-column="70" />
+            <state relative-caret-position="525">
+              <caret line="48" column="10" lean-forward="false" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#76#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/services/resetPassword/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="50">
+              <caret line="3" column="6" lean-forward="false" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -173,11 +109,19 @@
       <find>tailFormItemLayout</find>
       <find>validatePassword</find>
       <find>getVerifyCode</find>
+      <find>phone</find>
+      <find>completeValidation</find>
+      <find>needX</find>
+      <find>handleNeedX</find>
+      <find>setState</find>
+      <find>getVerificationcode</find>
+      <find>mobile</find>
     </findStrings>
     <replaceStrings>
       <replace>0</replace>
       <replace>MESSAGE_DURATION_TIME</replace>
       <replace>REQUEST_DOMAIN</replace>
+      <replace>mobile</replace>
     </replaceStrings>
     <dirStrings>
       <dir>W:\work\newdicolla-platform\src\routes</dir>
@@ -196,12 +140,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/globalset/css/mixin.less" />
-        <option value="$PROJECT_DIR$/src/globalset/css/variableFunc.less" />
-        <option value="D:/搜狗高速下载/src/src/routes/Login/FormList.js" />
-        <option value="$PROJECT_DIR$/src/routes/Login/TopContent.js" />
-        <option value="$PROJECT_DIR$/public/index.html" />
-        <option value="$PROJECT_DIR$/src/components/Copyright/index.less.js" />
         <option value="$PROJECT_DIR$/src/components/Copyright/index.less" />
         <option value="$PROJECT_DIR$/src/globalset/css/constant.less" />
         <option value="$PROJECT_DIR$/src/routes/Login/BottomContent.js" />
@@ -209,19 +147,12 @@
         <option value="$PROJECT_DIR$/src/routes/Login/index.less" />
         <option value="$PROJECT_DIR$/.eslintrc" />
         <option value="$PROJECT_DIR$/src/components/TopContentTwo/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
         <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
-        <option value="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
         <option value="$PROJECT_DIR$/src/assets/emainTemplate.html" />
         <option value="$PROJECT_DIR$/src/assets/emailTemplate.html" />
         <option value="$PROJECT_DIR$/src/components/TopContent/index.js" />
         <option value="$PROJECT_DIR$/src/components/TopContentTwo/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js" />
-        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
         <option value="$PROJECT_DIR$/src/components/DragMove/index.js" />
-        <option value="$PROJECT_DIR$/src/components/DragValidation/index.js" />
         <option value="$PROJECT_DIR$/src/components/DragValidation/index.less" />
         <option value="$PROJECT_DIR$/src/components/Copyright/index.js" />
         <option value="$PROJECT_DIR$/src/utils/verity.js" />
@@ -235,18 +166,31 @@
         <option value="$PROJECT_DIR$/src/components/BottomContent/index.less" />
         <option value="$PROJECT_DIR$/src/utils/handleResponseData.js" />
         <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
-        <option value="$PROJECT_DIR$/src/models/login/index.js" />
         <option value="$PROJECT_DIR$/src/components/BottomContent/index.js" />
-        <option value="$PROJECT_DIR$/src/router.js" />
         <option value="$PROJECT_DIR$/src/services/login/index.js" />
         <option value="$PROJECT_DIR$/src/services/register/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Login/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Register/index.js" />
         <option value="$PROJECT_DIR$/src/utils/verify.js" />
-        <option value="$PROJECT_DIR$/src/models/register/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Login/FormList.js" />
         <option value="$PROJECT_DIR$/src/components/VerificationCode/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Register/FormList.js" />
+        <option value="$PROJECT_DIR$/src/models/register/index.js" />
+        <option value="$PROJECT_DIR$/src/models/registerSuccess/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
+        <option value="$PROJECT_DIR$/src/utils/util.js" />
+        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
+        <option value="$PROJECT_DIR$/src/models/login/index.js" />
+        <option value="$PROJECT_DIR$/src/services/retrievePassword/index.js" />
+        <option value="$PROJECT_DIR$/src/components/DragValidation/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js" />
+        <option value="$PROJECT_DIR$/src/models/retrievePassword/index.js" />
+        <option value="$PROJECT_DIR$/src/router.js" />
+        <option value="$PROJECT_DIR$/src/services/resetPassword/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
+        <option value="$PROJECT_DIR$/src/models/resetPassword/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
       </list>
     </option>
   </component>
@@ -290,7 +234,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -313,7 +256,20 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="globalset" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="register" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -325,25 +281,34 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Register" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="resetPassword" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../it-nutrition-mini-programe" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="W:\work\newdicolla-platform\node_modules\eslint" />
@@ -360,15 +325,15 @@
     <property name="node.js.selected.package.standard" value="W:\work\newdicolla-platform\node_modules\eslint" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="W:\work\dian-platform" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="W:\work\newdicolla-platform\src\services" />
       <recent name="W:\work\newdicolla-platform\src\models" />
       <recent name="W:\work\newdicolla-platform\src\utils" />
       <recent name="W:\work\newdicolla-platform\src\components\DragValidation" />
       <recent name="W:\work\newdicolla-platform\src\components" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="W:\work\dian-platform" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -406,7 +371,8 @@
       <workItem from="1533172209250" duration="36308000" />
       <workItem from="1533274928046" duration="15411000" />
       <workItem from="1533518293512" duration="32170000" />
-      <workItem from="1533603667413" duration="11689000" />
+      <workItem from="1533603667413" duration="11730000" />
+      <workItem from="1533620169757" duration="18118000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -485,16 +451,23 @@
       <option name="project" value="LOCAL" />
       <updated>1533558353008</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="zhuce">
+      <created>1533617202544</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1533617202544</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="114160000" />
+    <option name="totallyTimeSpent" value="132319000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15700738" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20706007" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -502,7 +475,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25785482" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19609967" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -529,7 +502,8 @@
     <MESSAGE value="拖拽组件" />
     <MESSAGE value="验证码" />
     <MESSAGE value="登录调试" />
-    <option name="LAST_COMMIT_MESSAGE" value="登录调试" />
+    <MESSAGE value="zhuce" />
+    <option name="LAST_COMMIT_MESSAGE" value="zhuce" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -547,13 +521,11 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/routes/Login/index.js</url>
           <line>15</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/routes/Register/FormList.js</url>
           <line>35</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
@@ -562,77 +534,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/components/DragMove/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test.html" />
-    <entry file="file://$PROJECT_DIR$/src/components/TopContentTwo/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="24" column="1" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/TopContent/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="30" column="22" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/webstorm.jar!/resources/html5-schema/html5/web-forms.rnc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="503" column="12" lean-forward="false" selection-start-line="503" selection-start-column="12" selection-end-line="503" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/globalset/css/constant.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="4" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Login/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="39" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Copyright/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/emailTemplate.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="129" column="6" lean-forward="false" selection-start-line="129" selection-start-column="6" selection-end-line="129" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/VerificationCode/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/antd/lib/button/button.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/TopContentTwo/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="50">
@@ -661,21 +562,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="21" column="152" lean-forward="false" selection-start-line="21" selection-start-column="152" selection-end-line="21" selection-end-column="152" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1619">
-          <caret line="81" column="18" lean-forward="false" selection-start-line="81" selection-start-column="18" selection-end-line="81" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/DragValidation/index.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-175">
@@ -689,16 +575,6 @@
         <state relative-caret-position="318">
           <caret line="18" column="14" lean-forward="false" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/DragValidation/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="140" column="48" lean-forward="false" selection-start-line="140" selection-start-column="45" selection-end-line="140" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -720,14 +596,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/products/index.js" />
-    <entry file="file://$PROJECT_DIR$/src/routes/Products/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="16" column="3" lean-forward="false" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/ProductList/index.js" />
     <entry file="file://$PROJECT_DIR$/src/routes/IndexPage/index.js" />
     <entry file="file://$PROJECT_DIR$/mock/.gitkeep">
@@ -755,7 +623,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
           <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -814,16 +681,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/BottomContent/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="40" lean-forward="true" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/handleResponseData.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
@@ -842,23 +699,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/router.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="53" column="50" lean-forward="true" selection-start-line="53" selection-start-column="50" selection-end-line="53" selection-end-column="50" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#1129#1154#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="11" column="56" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        <state relative-caret-position="275">
+          <caret line="11" column="56" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
             <element signature="e#576#912#0" expanded="false" />
             <element signature="e#951#1119#0" expanded="false" />
           </folding>
@@ -873,13 +719,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+    <entry file="file://$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="29" column="63" lean-forward="true" selection-start-line="29" selection-start-column="63" selection-end-line="29" selection-end-column="63" />
-          <folding>
-            <element signature="e#0#68#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="275">
+          <caret line="49" column="138" lean-forward="true" selection-start-line="49" selection-start-column="87" selection-end-line="49" selection-end-column="138" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/VerificationCode/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="39" column="3" lean-forward="true" selection-start-line="39" selection-start-column="3" selection-end-line="39" selection-end-column="3" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -893,38 +745,91 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
+    <entry file="file://$PROJECT_DIR$/src/components/BottomContent/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="16" column="14" lean-forward="false" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="14" />
+        <state relative-caret-position="400">
+          <caret line="28" column="133" lean-forward="true" selection-start-line="28" selection-start-column="133" selection-end-line="28" selection-end-column="168" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/query-string/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="e#957#1125#0" expanded="false" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+    <entry file="file://$PROJECT_DIR$/src/utils/util.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-75">
-          <caret line="0" column="70" lean-forward="false" selection-start-line="0" selection-start-column="70" selection-end-line="0" selection-end-column="70" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="49" column="138" lean-forward="true" selection-start-line="49" selection-start-column="87" selection-end-line="49" selection-end-column="138" />
+        <state relative-caret-position="1075">
+          <caret line="43" column="36" lean-forward="false" selection-start-line="43" selection-start-column="36" selection-end-line="43" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="22" column="29" lean-forward="false" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Products/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="16" column="3" lean-forward="false" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/services/retrievePassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="4" column="32" lean-forward="false" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/DragValidation/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="688">
+          <caret line="130" column="72" lean-forward="false" selection-start-line="130" selection-start-column="72" selection-end-line="130" selection-end-column="72" />
+          <folding>
+            <element signature="e#2434#2868#0" expanded="false" />
+            <element signature="e#2894#3055#0" expanded="false" />
+            <element signature="e#3079#3185#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Login/FormList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="150" column="27" lean-forward="false" selection-start-line="150" selection-start-column="27" selection-end-line="150" selection-end-column="27" />
+        <state relative-caret-position="383">
+          <caret line="127" column="74" lean-forward="true" selection-start-line="127" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
           <folding>
-            <element signature="e#46#220#0" expanded="true" />
             <element signature="e#896#983#0" expanded="false" />
             <element signature="e#1020#1786#0" expanded="false" />
             <element signature="e#1829#2296#0" expanded="false" />
@@ -934,30 +839,124 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/VerificationCode/index.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="39" column="3" lean-forward="true" selection-start-line="39" selection-start-column="3" selection-end-line="39" selection-end-column="3" />
+        <state relative-caret-position="725">
+          <caret line="39" column="18" lean-forward="false" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="60" column="51" lean-forward="false" selection-start-line="60" selection-start-column="38" selection-end-line="60" selection-end-column="51" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#1129#1154#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/retrievePassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#60#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1400">
+          <caret line="6" column="27" lean-forward="false" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="10" column="59" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="45" column="6" lean-forward="true" selection-start-line="36" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#71#0" expanded="true" />
+            <element signature="e#1101#1443#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/registerSuccess/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="53" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/resetPassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="48" column="10" lean-forward="false" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#76#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Register/FormList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="40" column="41" lean-forward="false" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
+        <state relative-caret-position="495">
+          <caret line="62" column="6" lean-forward="false" selection-start-line="62" selection-start-column="6" selection-end-line="63" selection-end-column="22" />
           <folding>
             <element signature="e#46#211#0" expanded="true" />
             <element signature="e#969#1056#0" expanded="false" />
-            <element signature="e#2431#3512#0" expanded="false" />
-            <element signature="e#3551#3634#0" expanded="false" />
-            <element signature="e#3676#4117#0" expanded="false" />
-            <element signature="e#4305#4599#0" expanded="false" />
-            <element signature="e#4627#5023#0" expanded="false" />
-            <element signature="e#5772#6204#0" expanded="false" />
-            <element signature="e#6232#6626#0" expanded="false" />
-            <element signature="e#6660#6973#0" expanded="false" />
-            <element signature="e#7001#7167#0" expanded="false" />
+            <element signature="e#2434#3516#0" expanded="false" />
+            <element signature="e#3555#3638#0" expanded="false" />
+            <element signature="e#5079#5732#0" expanded="false" />
+            <element signature="e#5780#6212#0" expanded="false" />
+            <element signature="e#6240#6634#0" expanded="false" />
+            <element signature="e#6668#6981#0" expanded="false" />
+            <element signature="e#7009#7175#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/services/resetPassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="3" column="6" lean-forward="false" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="50" column="9" lean-forward="false" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#46#211#0" expanded="true" />
+            <element signature="e#1109#1384#0" expanded="false" />
           </folding>
         </state>
       </provider>

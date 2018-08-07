@@ -54,15 +54,15 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/Register/'),
     }, {
       path: '/registerSuccess',
-      // models: () => [import('./models/registerSuccess')],
+      models: () => [import('./models/registerSuccess')],
       component: () => import('./routes/RegisterSuccess/'),
     }, {
       path: '/resetPassword',
-      // models: () => [import('./models/resetPassword')],
+      models: () => [import('./models/resetPassword')],
       component: () => import('./routes/ResetPassword/'),
     }, {
       path: '/retrievePassword',
-      // models: () => [import('./models/retrievePassword')],
+      models: () => [import('./models/retrievePassword')],
       component: () => import('./routes/RetrievePassword/'),
     }
 

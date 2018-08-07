@@ -3,8 +3,8 @@ import indexStyles from './index.less'
 import { Icon } from  'antd'
 
 export default class DragValidation extends React.Component{
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       /*定义两个值用来存放当前元素的left和top值*/
       needX:0,
@@ -73,6 +73,7 @@ export default class DragValidation extends React.Component{
       this.setState({
         completeValidation: !!(this.state.needX === this.state.blockMaxLeft)
       })
+      this.props.listenCompleteValidation(this.state.completeValidation)
     }else{
 
     }
@@ -127,6 +128,7 @@ export default class DragValidation extends React.Component{
       this.setState({
         completeValidation: !!(this.state.needX === this.state.blockMaxLeft)
       })
+      this.props.listenCompleteValidation(this.state.completeValidation)
     }else{
 
     }

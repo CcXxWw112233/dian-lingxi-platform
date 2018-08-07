@@ -3,6 +3,8 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
+import queryString from 'query-string';
+
 
 
 export default {
@@ -12,15 +14,22 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname === '/register') {
+
         }
       })
     },
   },
   effects: {
     * formSubmit({ payload }, { select, call, put }) { //提交表单
+      const { mobile, email } = payload
       let res = yield call(formSubmit, payload)
+
       if(isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
+        yield put(routerRedux.push({
+          pathname: '/registerSuccess',
+          search: queryString.stringify({ mobile, email })
+        }))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

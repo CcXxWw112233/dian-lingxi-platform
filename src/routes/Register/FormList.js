@@ -45,12 +45,12 @@ class FormList extends React.Component {
           message.warn('请输入姓名。', MESSAGE_DURATION_TIME)
           return false
         }
-        if(!values['phone'] && !values['email']) {
+        if(!values['mobile'] && !values['email']) {
           message.warn('手机号和邮箱必须选择输入其中一项。', MESSAGE_DURATION_TIME)
           return false
         }
-        if(values['phone']){
-          if(!validateTel(values['phone'])) {
+        if(values['mobile']){
+          if(!validateTel(values['mobile'])) {
             message.warn('请输入正确格式的手机号，目前仅支持中国大陆区域的手机号码。', MESSAGE_DURATION_TIME)
             return false
           }
@@ -74,7 +74,7 @@ class FormList extends React.Component {
   //验证账户,失去焦点
   verifyByBlur = (name) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if(name === 'phone') { //输入框是账户
+      if(name === 'mobile') { //输入框是账户
         if(!validateTel(values[name])) {
           message.warn('请输入正确格式的手机号，目前仅支持中国大陆区域的手机号码。', MESSAGE_DURATION_TIME)
           this.setState({
@@ -120,12 +120,12 @@ class FormList extends React.Component {
   //获取验证码
   getVerifyCode = (calback) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!validateTel(values['phone'])) {
+      if(!validateTel(values['mobile'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
         return false
       }
       const obj = {
-        mobile: values['phone'],
+        mobile: values['mobile'],
         type: '1'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
@@ -149,13 +149,13 @@ class FormList extends React.Component {
         </FormItem>
         {/* 电话 */}
         <FormItem  style={{marginTop: 0}}>
-          {getFieldDecorator('phone', {
+          {getFieldDecorator('mobile', {
             rules: [{ required: false, message: '请输入手机号', whitespace: true }],
           })(
             <Input
               style={{height: '40px',fontSize: 16}}
               maxLength={40} placeholder="手机号"
-              onBlur = {this.verifyByBlur.bind(null, 'phone')}
+              onBlur = {this.verifyByBlur.bind(null, 'mobile')}
             />
           )}
         </FormItem>

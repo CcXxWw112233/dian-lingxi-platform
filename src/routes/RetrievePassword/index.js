@@ -9,16 +9,25 @@ import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import DragMove from '../../components/DragMove'
+const getEffectOrReducerByName = name => `retrievePassword/${name}`
 
 const RetrievePassword = (options) => {
   const { dispatch, products } = options
+  const formListProps = {
+    formSubmit(data) {
+      dispatch({
+        type: getEffectOrReducerByName('formSubmit'),
+        payload: data
+      })
+    },
+  }
   return (
     <div className={globalClassNmae['page_style_1']}>
       <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
         border: '1px solid rgba(217,217,217,1)',
         borderRadius: '4px'}}>
         <TopContent text={'找回密码'} hidenDescription={true}/>
-        <FormList />
+        <FormList {...formListProps}/>
         <div style={{fontSize: 14, color: '#595959',width: 252,margin: '0 auto', marginBottom: 60}}>如无法通过手机或邮箱找回请发送邮件至support@ProductName.com 寻求帮助</div>
       </div>
       <Copyright />
@@ -27,7 +36,7 @@ const RetrievePassword = (options) => {
 };
 
 // export default Products;
-export default connect(({ login }) => ({
-  login,
+export default connect(({ retrievePassword }) => ({
+  retrievePassword,
 }))(RetrievePassword);
 
