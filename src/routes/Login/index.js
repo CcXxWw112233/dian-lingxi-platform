@@ -11,7 +11,7 @@ import Copyright from '../../components/Copyright'
 
 const getEffectOrReducerByName = name => `login/${name}`
 const Login = (options) => {
-  const { dispatch, products } = options
+  const { dispatch } = options
   //传给表单
   const formListProps = {
     formSubmit(data) {
@@ -30,6 +30,17 @@ const Login = (options) => {
       })
     }
   }
+  //传给底部
+  const BottomContentProps = {
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    }
+  }
   return (
     <div className={globalClassNmae['page_style_1']}>
       <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
@@ -37,7 +48,7 @@ const Login = (options) => {
         borderRadius: '4px'}}>
         <TopContent text={'欢迎来到'} productName={'productname'}/>
         <FormList {...formListProps}/>
-        <BottomContent type={'login'}/>
+        <BottomContent {...BottomContentProps} type={'login'}/>
       </div>
       <Copyright />
     </div>

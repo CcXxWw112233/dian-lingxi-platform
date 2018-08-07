@@ -50,7 +50,7 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/Login/'),
     }, {
       path: '/register',
-      // models: () => [import('./models/register')],
+      models: () => [import('./models/register')],
       component: () => import('./routes/Register/'),
     }, {
       path: '/registerSuccess',

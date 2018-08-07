@@ -39,10 +39,10 @@ export default class VerificationCode extends React.Component{
     }, 1000)
   }
   render() {
-    const { text, style } = this.props
+    const { text, style, getVerifyCode } = this.props
     const buttonDisabled = this.state.buttonDisabled
     return (
-      <Button style={{...style, color: !buttonDisabled ? 'rgba(0,0,0,.65)' : 'rgba(0,0,0,.25)',}} disabled={this.state.buttonDisabled} onClick={this.buttonClick}>{this.state.initTimeText}</Button>
+      <Button style={{...style, color: !buttonDisabled ? 'rgba(0,0,0,.65)' : 'rgba(0,0,0,.25)',}} disabled={this.state.buttonDisabled} onClick={getVerifyCode.bind(null, this.buttonClick)}>{this.state.initTimeText}</Button>
     );
   }
 

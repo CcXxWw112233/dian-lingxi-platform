@@ -8,17 +8,47 @@ import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
+const getEffectOrReducerByName = name => `register/${name}`
 
 const Register = (options) => {
-  const { dispatch, products } = options
+  const { dispatch } = options
+  //传给表单
+  const formListProps = {
+    formSubmit(data) {
+      dispatch({
+        type: getEffectOrReducerByName('formSubmit'),
+        payload: data
+      })
+    },
+    getVerificationcode(data, calback) {
+      dispatch({
+        type: getEffectOrReducerByName('getVerificationcode'),
+        payload: {
+          data,
+          calback
+        }
+      })
+    }
+  }
+  //传给底部
+  const BottomContentProps = {
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    }
+  }
   return (
     <div className={globalClassNmae.page_style_2}>
       <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
         border: '1px solid rgba(217,217,217,1)',
         borderRadius: '4px'}}>
         <TopContent text={'欢迎加入'} productName={'productname'}/>
-        <FormList />
-        <BottomContent type={'register'}/>
+        <FormList {...formListProps} />
+        <BottomContent {...BottomContentProps} type={'register'}/>
       </div>
       <Copyright />
     </div>

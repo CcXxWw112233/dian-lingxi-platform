@@ -34,17 +34,17 @@ class FormList extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         if(!validateTel(values['account']) && !validateEmail(values['account'])) { //输入既不满足手机号又不满足邮箱
-          message.warn('请输入正确的手机号或邮箱', MESSAGE_DURATION_TIME)
+          message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
           return false
         }
         if(this.state.loginType === 'password') {
           if(!validatePassword(values['password'])) {
-            message.warn('密码至少为包含字母与数字的6位数字符串', MESSAGE_DURATION_TIME)
+            message.warn('密码至少为包含字母与数字的6位数字符串。', MESSAGE_DURATION_TIME)
             return false
           }
         }else{
           if(!values['verifycode']){
-            message.warn('请输入短信验证码', MESSAGE_DURATION_TIME)
+            message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
             return false
           }
         }
@@ -58,7 +58,7 @@ class FormList extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(name === 'account') { //输入框是账户
         if(!validateTel(values[name]) && !validateEmail(values[name])) { //输入既不满足手机号又不满足邮箱
-          message.warn('请输入正确的手机号或邮箱', MESSAGE_DURATION_TIME)
+          message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
         }
         if(validateTel(values[name])) { //如果用户输入的是手机号
 
@@ -139,7 +139,7 @@ class FormList extends React.Component {
               <Input
                 style={{height: '40px',fontSize: 16, color: '#8C8C8C'}}
                 prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-                maxLength={6} placeholder={loginType === 'password'? '密码' : '验证码'}
+                maxLength={32} placeholder={loginType === 'password'? '密码' : '验证码'}
                 type={accountType === 'email' ? 'password' : (loginType === 'password'? 'password' : 'text')}
               />
             )}

@@ -32,10 +32,10 @@ export default function request(options = {}) {
       }
     })
       .then(res => {
-        console.log(res)
         resolve(res.data);
       })
-      .catch(error => {
+      .catch((error, e) => {
+        console.log(error)
         reject(error)
       });
   })

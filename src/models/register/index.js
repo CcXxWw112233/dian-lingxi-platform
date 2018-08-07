@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/login'
+import { formSubmit, requestVerifyCode } from '../../services/register'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -6,12 +6,12 @@ import { routerRedux } from "dva/router";
 
 
 export default {
-  namespace: 'login',
+  namespace: 'register',
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname === '/login') {
+        if (location.pathname === '/register') {
         }
       })
     },
