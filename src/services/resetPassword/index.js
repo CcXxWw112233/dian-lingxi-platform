@@ -19,3 +19,11 @@ export async function requestVerifyCode(data) {
     data,
   });
 }
+//验证token
+export async function initConfirm(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/email/confirm`,
+    method: 'GET',
+    params
+  });
+}

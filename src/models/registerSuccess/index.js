@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/register'
+import { initConfirm } from '../../services/registerSuccess'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -16,28 +16,37 @@ export default {
             type: 'updateDatas',
             payload: queryString.parse(location.search)
           })
+          const param =  queryString.parse(location.search)
+          if(param.type !== 'register') { //如果不是从注册页面进来，而是从邮件验证进来
+            dispatch({
+              type: 'initConfirm',
+              payload: {
+                token: param.token
+              }
+            })
+          }
         }
       })
     },
   },
   effects: {
-    * formSubmit({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(formSubmit, payload)
+    * initConfirm({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(initConfirm, payload)
+      let verifyResult //验证结果，成功或者失败
       if(isApiResponseOk(res)) {
-        message.success(res.message, MESSAGE_DURATION_TIME)
+        // message.success(res.message, MESSAGE_DURATION_TIME)
+        verifyResult = true
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        verifyResult = false
       }
-    },
-    * getVerificationcode({ payload }, { select, call, put }) { //获取验证码
-      const { data, calback } = payload
-      calback && typeof calback === 'function' ? calback() : ''
-      let res = yield call(requestVerifyCode, data)
-      if(isApiResponseOk(res)) {
-        message.success(res.message, MESSAGE_DURATION_TIME)
-      }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          loadFlag: true, // 验证结束标志
+          verifyResult
+        },
+      })
     },
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

@@ -1,26 +1,54 @@
-import { formSubmit, requestVerifyCode } from '../../services/resetPassword'
+import { formSubmit, requestVerifyCode, initConfirm } from '../../services/resetPassword'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
+import { routerRedux, Route } from "dva/router";
 import queryString from 'query-string';
-
+import globalStyles from '../../globalset/css/globalClassName.less'
+import RetrievePassword from '../../routes/RetrievePassword'
+let dispatchGlobalThisModel
 export default {
   namespace: 'resetPassword',
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatchGlobalThisModel = dispatch
       history.listen((location) => {
         if (location.pathname === '/resetPassword') {
           dispatch({
             type: 'updateDatas',
             payload: queryString.parse(location.search)
           })
+          const param =  queryString.parse(location.search)
+          if(param.token) { //如果是从邮件验证进来
+            dispatch({
+              type: 'initConfirm',
+              payload: {
+                token: param.token
+              }
+            })
+          }
         }
       })
     },
   },
   effects: {
+    * initConfirm({ payload }, { select, call, put, dispatch }) { //token验证
+      let res = yield call(initConfirm, payload)
+      if(isApiResponseOk(res)) {
+        // message.success(res.message, MESSAGE_DURATION_TIME)
+      }else{
+        //
+        message.warn((<span style={{color: '#000'}}>邮件信息已过期，请重新找回密码。<span style={{cursor: 'pointer'}} className={globalStyles.link_mouse} onClick={ () => {
+          dispatchGlobalThisModel({
+            type: 'routingJump',
+            payload: {
+              route: '/retrievePassword'
+            }
+          })
+        }}>找回密码</span></span>), MESSAGE_DURATION_TIME)
+      }
+    },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       const { accountType = '', mobile = '', email = '' } = payload
       console.log(payload)

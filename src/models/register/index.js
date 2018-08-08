@@ -28,7 +28,7 @@ export default {
         message.success(res.message, MESSAGE_DURATION_TIME)
         yield put(routerRedux.push({
           pathname: '/registerSuccess',
-          search: queryString.stringify({ mobile, email })
+          search: queryString.stringify({ mobile, email, type: 'register' })
         }))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
