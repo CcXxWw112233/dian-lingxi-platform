@@ -19,7 +19,6 @@ class FormList extends React.Component {
 
   state={}
   componentWillReceiveProps(nextProps){
-    console.log(nextProps)
     const { showGetVerifyCode } = nextProps.datas
     if(showGetVerifyCode) {
       setTimeout(function () {

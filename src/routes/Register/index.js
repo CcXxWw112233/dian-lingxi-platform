@@ -28,6 +28,15 @@ const Register = (options) => {
           calback
         }
       })
+    },
+    checkAccountRestered(data) {
+      console.log(data)
+      dispatch({
+        type: getEffectOrReducerByName('checkAccountRestered'),
+        payload: {
+          ...data,
+        }
+      })
     }
   }
   //传给底部

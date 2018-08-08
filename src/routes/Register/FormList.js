@@ -4,9 +4,8 @@ import React from 'react'
 import indexStyle from './index.less'
 import VerificationCode from  '../../components/VerificationCode'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
-import {message} from "antd/lib/index";
+import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
-
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -84,6 +83,7 @@ class FormList extends React.Component {
           this.setState({
             phoneBlurCheck: true
           })
+          this.props.checkAccountRestered({[name]: values[name], accountType: name})
         }
       }else if(name === 'password') {
         if(!validatePassword(values[name])) { //
@@ -106,6 +106,7 @@ class FormList extends React.Component {
           this.setState({
             emailBlurCheck: true
           })
+          this.props.checkAccountRestered({[name]: values[name], accountType: name})
         }
       } else {
       }

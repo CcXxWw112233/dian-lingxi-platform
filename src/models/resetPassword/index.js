@@ -5,7 +5,8 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux, Route } from "dva/router";
 import queryString from 'query-string';
 import globalStyles from '../../globalset/css/globalClassName.less'
-import RetrievePassword from '../../routes/RetrievePassword'
+import MessageRoute from '../../components/MessageRoute'
+
 let dispatchGlobalThisModel
 export default {
   namespace: 'resetPassword',
@@ -33,20 +34,31 @@ export default {
     },
   },
   effects: {
-    * initConfirm({ payload }, { select, call, put, dispatch }) { //token验证
+    * initConfirm({ payload }, { select, call, put }) { //token验证
       let res = yield call(initConfirm, payload)
       if(isApiResponseOk(res)) {
         // message.success(res.message, MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            email: res.data.email,
+          },
+        })
       }else{
-        //
-        message.warn((<span style={{color: '#000'}}>邮件信息已过期，请重新找回密码。<span style={{cursor: 'pointer'}} className={globalStyles.link_mouse} onClick={ () => {
+        const props = {
+          dispatch: dispatchGlobalThisModel,
+          discriptionText: '邮件信息已过期，即将跳转到找回密码页面',
+          jumpText: '立即跳转',
+          isNeedimeDown: true
+        }
+        message.warn(<MessageRoute {...props}/>, MESSAGE_DURATION_TIME, function () {
           dispatchGlobalThisModel({
             type: 'routingJump',
             payload: {
               route: '/retrievePassword'
             }
           })
-        }}>找回密码</span></span>), MESSAGE_DURATION_TIME)
+        })
       }
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单

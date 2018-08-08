@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/register'
+import { formSubmit, requestVerifyCode, checkAccountRestered } from '../../services/register'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -47,6 +47,17 @@ export default {
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
+    },
+    * checkAccountRestered ({ payload }, { select, call, put }) {
+      const { mobile, email, accountType } = payload
+      let res = yield call(checkAccountRestered, payload)
+      if(isApiResponseOk(res)) {
+        if(res.data) {
+          message.warn(accountType === 'mobile' ? '该手机号已被注册' : '该邮箱已被注册', MESSAGE_DURATION_TIME)
+        }
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
     }
   },
 

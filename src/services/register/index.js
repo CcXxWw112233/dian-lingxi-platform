@@ -18,3 +18,16 @@ export async function requestVerifyCode(data) {
     data,
   });
 }
+
+//验证邮箱或手机号是否已注册
+export async function checkAccountRestered(data) {
+  const { accountType, email = '', mobile = '' } = data
+  return request({
+    url: `${REQUEST_DOMAIN}/user/${accountType}/check`,
+    method: 'GET',
+    params:{
+      email,
+      mobile
+    },
+  });
+}

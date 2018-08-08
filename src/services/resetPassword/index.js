@@ -8,7 +8,7 @@ export async function formSubmit(data) {
     url: `${REQUEST_DOMAIN}/user/reset/password/${accountType}`,
     method: 'PUT',
     data,
-  });
+  }, { clooseLoading: true });
 }
 
 //获取验证码

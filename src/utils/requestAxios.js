@@ -1,4 +1,7 @@
+import { message } from 'antd';
 import axios from 'axios'
+
+let loading ;
 axios.interceptors.request.use(
   config => {
     return config;
@@ -8,7 +11,7 @@ axios.interceptors.request.use(
   }
 );
 
-export default function request(options = {}) {
+export default function request(options = {}, elseSet = {}) {
   const {
     url = '',
     headers = {},
@@ -21,6 +24,8 @@ export default function request(options = {}) {
     header['content-type'] = 'application/x-www-form-urlencoded'
   }
   return new Promise((resolve, reject) => {
+    const { clooseLoading = false } = elseSet
+    clooseLoading ? loading = message.loading('加载中...', 0):''
     axios({
       ...{
         url,
@@ -36,7 +41,9 @@ export default function request(options = {}) {
       })
       .catch((error, e) => {
         console.log(error)
-        reject(error)
-      });
+        // reject(error)
+      }).finally(() => {
+        setTimeout(loading,0);
+     });
   })
 }

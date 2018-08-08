@@ -13,7 +13,7 @@ const getEffectOrReducerByName = name => `resetPassword/${name}`
 const ResetPassword = (options) => {
   const { dispatch } = options
   const { datas = {} } = options.resetPassword
-  console.log(datas)
+  // console.log(datas)
   //传给表单
   const formListProps = {
     datas,
