@@ -1,5 +1,6 @@
 import { formSubmit, requestVerifyCode, initConfirm } from '../../services/resetPassword'
 import { isApiResponseOk } from '../../utils/handleResponseData'
+// import  '../../components/Message'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux, Route } from "dva/router";
@@ -15,6 +16,7 @@ export default {
     setup({ dispatch, history }) {
       dispatchGlobalThisModel = dispatch
       history.listen((location) => {
+        message.destroy()
         if (location.pathname === '/resetPassword') {
           dispatch({
             type: 'updateDatas',
@@ -49,7 +51,7 @@ export default {
           dispatch: dispatchGlobalThisModel,
           discriptionText: '邮件信息已过期，即将跳转到找回密码页面',
           jumpText: '立即跳转',
-          isNeedimeDown: true
+          isNeedTimeDown: true
         }
         message.warn(<MessageRoute {...props}/>, MESSAGE_DURATION_TIME, function () {
           dispatchGlobalThisModel({

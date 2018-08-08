@@ -13,6 +13,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
+        message.destroy()
         if (location.pathname === '/register') {
 
         }

@@ -22,7 +22,7 @@ const RetrievePassword = (options) => {
     },
   }
   return (
-    <div className={globalClassNmae['page_style_1']}>
+    <div className={globalClassNmae['page_style_1']} >
       <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
         border: '1px solid rgba(217,217,217,1)',
         borderRadius: '4px'}}>

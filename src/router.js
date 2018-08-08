@@ -26,7 +26,7 @@
 // export default RouterConfig;
 import React from 'react'
 import PropTypes from 'prop-types'
-import  './components/Message'
+// import  './components/Message'
 import { Switch, Route, Redirect, routerRedux, Router } from 'dva/router'
 import dynamic from 'dva/dynamic'
 const { ConnectedRouter } = routerRedux

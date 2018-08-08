@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="邮件连接页面判断，注册邮件，充值密码邮件或">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="页面逻辑联调结束">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/components/Message/index.js" afterPath="$PROJECT_DIR$/src/components/Message/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/globalset/js/constant.js" afterPath="$PROJECT_DIR$/src/globalset/js/constant.js" />
+      <change beforePath="$PROJECT_DIR$/src/models/login/index.js" afterPath="$PROJECT_DIR$/src/models/login/index.js" />
       <change beforePath="$PROJECT_DIR$/src/models/register/index.js" afterPath="$PROJECT_DIR$/src/models/register/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/models/registerSuccess/index.js" afterPath="$PROJECT_DIR$/src/models/registerSuccess/index.js" />
       <change beforePath="$PROJECT_DIR$/src/models/resetPassword/index.js" afterPath="$PROJECT_DIR$/src/models/resetPassword/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/models/retrievePassword/index.js" afterPath="$PROJECT_DIR$/src/models/retrievePassword/index.js" />
       <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Register/FormList.js" afterPath="$PROJECT_DIR$/src/routes/Register/FormList.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Register/index.js" afterPath="$PROJECT_DIR$/src/routes/Register/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" afterPath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Login/index.js" afterPath="$PROJECT_DIR$/src/routes/Login/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" afterPath="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" afterPath="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/ResetPassword/index.js" afterPath="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/register/index.js" afterPath="$PROJECT_DIR$/src/services/register/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/resetPassword/index.js" afterPath="$PROJECT_DIR$/src/services/resetPassword/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/requestAxios.js" afterPath="$PROJECT_DIR$/src/utils/requestAxios.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" afterPath="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -26,7 +28,76 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="router.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/router.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="29" column="32" lean-forward="true" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+              <folding>
+                <element signature="e#1129#1154#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="13" column="25" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#93#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/registerSuccess/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/resetPassword/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="325">
+              <caret line="18" column="25" lean-forward="false" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#89#0" expanded="true" />
+                <element signature="e#193#223#0" expanded="true" />
+                <element signature="e#2626#3101#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/models/retrievePassword/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -50,6 +121,8 @@
       <find>console.</find>
       <find>mobile</find>
       <find>MessageRoute</find>
+      <find>isNeedimeDown</find>
+      <find>outestContainer</find>
       <find>message</find>
     </findStrings>
     <dirStrings>
@@ -67,9 +140,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/globalset/css/mixin.scss" />
-        <option value="$PROJECT_DIR$/src/globalset/css/variableFunc.scss" />
-        <option value="$PROJECT_DIR$/src/globalset/css/constant.scss" />
         <option value="$PROJECT_DIR$/src/globalset/css/globalClassName.scss" />
         <option value="$PROJECT_DIR$/src/globalset/css/mixin.less" />
         <option value="$PROJECT_DIR$/src/globalset/css/variableFunc.less" />
@@ -85,11 +155,9 @@
         <option value="$PROJECT_DIR$/src/components/BottomContent/index.less" />
         <option value="$PROJECT_DIR$/.eslintrc" />
         <option value="$PROJECT_DIR$/src/components/TopContentTwo/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
         <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.less" />
         <option value="$PROJECT_DIR$/src/assets/emainTemplate.html" />
         <option value="$PROJECT_DIR$/src/assets/emailTemplate.html" />
-        <option value="$PROJECT_DIR$/src/routes/Login/index.js" />
         <option value="$PROJECT_DIR$/src/components/VerificationCode/index.js" />
         <option value="$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Login/FormList.js" />
@@ -98,26 +166,31 @@
         <option value="$PROJECT_DIR$/src/components/TopContent/index.js" />
         <option value="$PROJECT_DIR$/src/components/TopContentTwo/index.js" />
         <option value="$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js" />
-        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
         <option value="$PROJECT_DIR$/src/components/DragMove/index.js" />
         <option value="$PROJECT_DIR$/src/components/DragValidation/index.less" />
         <option value="$PROJECT_DIR$/src/components/DragValidation/index.js" />
         <option value="$PROJECT_DIR$/src/services/registerSuccess/index.js" />
         <option value="$PROJECT_DIR$/src/globalset/css/globalClassName.less" />
-        <option value="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
-        <option value="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
         <option value="$PROJECT_DIR$/src/services/resetPassword/index.js" />
         <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
-        <option value="$PROJECT_DIR$/src/components/MessageRoute/index.js" />
         <option value="$PROJECT_DIR$/src/services/register/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Register/index.js" />
-        <option value="$PROJECT_DIR$/src/models/register/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Register/FormList.js" />
-        <option value="$PROJECT_DIR$/src/router.js" />
-        <option value="$PROJECT_DIR$/src/components/Message/index.js" />
         <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
+        <option value="$PROJECT_DIR$/src/components/MessageRoute/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/ResetPassword/FormList.js" />
+        <option value="$PROJECT_DIR$/src/routes/Register/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/ResetPassword/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/RetrievePassword/index.js" />
+        <option value="$PROJECT_DIR$/src/components/Message/index.js" />
+        <option value="$PROJECT_DIR$/src/router.js" />
+        <option value="$PROJECT_DIR$/src/routes/Login/index.js" />
+        <option value="$PROJECT_DIR$/src/globalset/js/constant.js" />
+        <option value="$PROJECT_DIR$/src/models/login/index.js" />
+        <option value="$PROJECT_DIR$/src/models/register/index.js" />
         <option value="$PROJECT_DIR$/src/models/registerSuccess/index.js" />
         <option value="$PROJECT_DIR$/src/models/resetPassword/index.js" />
+        <option value="$PROJECT_DIR$/src/models/retrievePassword/index.js" />
       </list>
     </option>
   </component>
@@ -178,7 +251,54 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="globalset" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="login" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="register" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="registerSuccess" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="resetPassword" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="retrievePassword" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -253,7 +373,7 @@
       <workItem from="1533172209250" duration="36308000" />
       <workItem from="1533274928046" duration="15411000" />
       <workItem from="1533690189827" duration="9055000" />
-      <workItem from="1533705961685" duration="14513000" />
+      <workItem from="1533705961685" duration="21347000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -332,11 +452,18 @@
       <option name="project" value="LOCAL" />
       <updated>1533699801836</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="页面逻辑联调结束">
+      <created>1533724626502</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1533724626502</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="93641000" />
+    <option name="totallyTimeSpent" value="100475000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -350,7 +477,7 @@
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28277355" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22643554" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -376,7 +503,8 @@
     <MESSAGE value="拖拽组件" />
     <MESSAGE value="验证码" />
     <MESSAGE value="邮件连接页面判断，注册邮件，充值密码邮件或" />
-    <option name="LAST_COMMIT_MESSAGE" value="邮件连接页面判断，注册邮件，充值密码邮件或" />
+    <MESSAGE value="页面逻辑联调结束" />
+    <option name="LAST_COMMIT_MESSAGE" value="页面逻辑联调结束" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -407,7 +535,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/components/Example/index.js" />
     <entry file="file://$PROJECT_DIR$/src/components/DragMove/index.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -472,19 +599,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Login/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="97" column="69" lean-forward="false" selection-start-line="97" selection-start-column="69" selection-end-line="97" selection-end-column="69" />
-          <folding>
-            <element signature="e#46#211#0" expanded="true" />
-            <element signature="e#1106#1271#0" expanded="false" />
-            <element signature="e#1304#1548#0" expanded="false" />
-            <element signature="e#1675#2062#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
@@ -523,16 +637,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="419">
-          <caret line="84" column="32" lean-forward="false" selection-start-line="84" selection-start-column="32" selection-end-line="84" selection-end-column="32" />
-          <folding>
-            <element signature="e#46#211#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/DragMove/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="590">
@@ -548,14 +652,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="21" column="152" lean-forward="false" selection-start-line="21" selection-start-column="152" selection-end-line="21" selection-end-column="152" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/DragValidation/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
@@ -563,14 +659,6 @@
           <folding>
             <element signature="e#0#26#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-100">
-          <caret line="16" column="16" lean-forward="true" selection-start-line="16" selection-start-column="16" selection-end-line="16" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -602,16 +690,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/retrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-75">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#60#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/globalset/css/constant.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
@@ -627,47 +705,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#22#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/antd/lib/message/index.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="215">
           <caret line="18" column="14" lean-forward="false" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="16" column="8" lean-forward="true" selection-start-line="16" selection-start-column="8" selection-end-line="16" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#46#211#0" expanded="false" />
-            <element signature="e#1082#1357#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/globalset/js/constant.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="36" lean-forward="false" selection-start-line="0" selection-start-column="32" selection-end-line="0" selection-end-column="36" />
           <folding />
         </state>
       </provider>
@@ -690,16 +731,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/services/login/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -710,31 +741,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="664">
-          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="60" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/VerificationCode/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
           <caret line="23" column="6" lean-forward="true" selection-start-line="23" selection-start-column="6" selection-end-line="23" selection-end-column="6" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/MessageRoute/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -758,55 +769,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="2" column="29" lean-forward="false" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="29" />
+        <state relative-caret-position="228">
+          <caret line="4713" column="12" lean-forward="false" selection-start-line="4713" selection-start-column="12" selection-end-line="4713" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="17" column="16" lean-forward="false" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Login/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="1" column="159" lean-forward="false" selection-start-line="1" selection-start-column="152" selection-end-line="1" selection-end-column="159" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Register/FormList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
+        <state relative-caret-position="-5">
           <caret line="3" column="37" lean-forward="false" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/router.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="28" column="30" lean-forward="true" selection-start-line="28" selection-start-column="30" selection-end-line="28" selection-end-column="30" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Message/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding>
-            <element signature="e#23#49#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="4" column="27" lean-forward="true" selection-start-line="4" selection-start-column="27" selection-end-line="4" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="73" column="0" lean-forward="true" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="7" lean-forward="true" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
           <folding>
+            <element signature="e#0#26#0" expanded="false" />
             <element signature="e#365#1253#0" expanded="false" />
             <element signature="e#1295#1616#0" expanded="false" />
             <element signature="e#1645#2267#0" expanded="false" />
@@ -815,22 +815,154 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/registerSuccess/index.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
+          <folding>
+            <element signature="e#46#211#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="53" column="49" lean-forward="false" selection-start-line="53" selection-start-column="49" selection-end-line="53" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="635">
+          <caret line="46" column="15" lean-forward="false" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="15" />
+          <folding>
+            <element signature="e#46#211#0" expanded="false" />
+            <element signature="e#1072#1347#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="24" column="53" lean-forward="false" selection-start-line="24" selection-start-column="53" selection-end-line="24" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="42" column="53" lean-forward="false" selection-start-line="42" selection-start-column="53" selection-end-line="42" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="22" column="5" lean-forward="true" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/MessageRoute/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="11" column="21" lean-forward="false" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/globalset/js/constant.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="1" column="39" lean-forward="false" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Message/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
-          <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
+          <caret line="12" column="42" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1100">
+          <caret line="44" column="52" lean-forward="false" selection-start-line="44" selection-start-column="52" selection-end-line="44" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="29" column="32" lean-forward="true" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+          <folding>
+            <element signature="e#1129#1154#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="13" column="25" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/register/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#93#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/registerSuccess/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/resetPassword/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="68" column="59" lean-forward="true" selection-start-line="68" selection-start-column="59" selection-end-line="68" selection-end-column="59" />
+        <state relative-caret-position="325">
+          <caret line="18" column="25" lean-forward="false" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
           <folding>
             <element signature="e#0#89#0" expanded="true" />
-            <element signature="e#2561#3036#0" expanded="false" />
+            <element signature="e#193#223#0" expanded="true" />
+            <element signature="e#2626#3101#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/retrievePassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>

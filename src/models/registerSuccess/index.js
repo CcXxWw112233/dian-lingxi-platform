@@ -10,6 +10,7 @@ export default {
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
+      message.destroy()
       history.listen((location) => {
         if (location.pathname === '/registerSuccess') {
           dispatch({

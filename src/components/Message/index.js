@@ -4,7 +4,10 @@ import { message } from 'antd'
 
 message.config({
   top: 50,
-  duration: 10,
+  duration: 3,
   maxCount: 1,
+  // getContainer:() => document.getElementsByClassName('page_style_1'),
 });
 
+console.log(document.getElementsByClassName('page_style_1'))
+console.log(document.getElementById('ss'))

@@ -4,7 +4,7 @@ import React from 'react'
 import indexStyle from './index.less'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import VerificationCode from  '../../components/VerificationCode'
-import {message} from "antd/lib/index";
+import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
 
 
