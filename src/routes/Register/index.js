@@ -52,14 +52,18 @@ const Register = (options) => {
   }
   return (
     <div className={globalClassNmae.page_style_2}>
-      <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
-        border: '1px solid rgba(217,217,217,1)',
-        borderRadius: '4px'}}>
-        <TopContent text={'欢迎加入'} productName={'productname'}/>
-        <FormList {...formListProps} />
-        <BottomContent {...BottomContentProps} type={'register'}/>
-      </div>
-      <Copyright />
+      <QueueAnim  type="top">
+        <div key={'reigster'}>
+          <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
+            border: '1px solid rgba(217,217,217,1)',
+            borderRadius: '4px'}}>
+            <TopContent text={'欢迎加入'} productName={'productname'}/>
+            <FormList {...formListProps} />
+            <BottomContent {...BottomContentProps} type={'register'}/>
+          </div>
+          <Copyright />
+        </div>
+      </QueueAnim>
     </div>
   );
 };

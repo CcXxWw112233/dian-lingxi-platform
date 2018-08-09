@@ -24,11 +24,15 @@ const RegisterSuccess = (options) => {
   }
   return (
     <div className={globalClassNmae.page_style_1} style={{paddingTop: 108}}>
-      <div style={{ maxWidth: 472,margin: '0 auto',width: '100%',}}>
-        <TopContentTwo />
-        <CheckMain  {...CheckMainProps}/>
-      </div>
-      <Copyright />
+      <QueueAnim  type="top">
+        <div key={'one'}>
+          <div style={{ maxWidth: 472,margin: '0 auto',width: '100%',}}>
+            <TopContentTwo />
+            <CheckMain  {...CheckMainProps}/>
+          </div>
+          <Copyright />
+        </div>
+      </QueueAnim>
     </div>
   );
 };

@@ -41,15 +41,19 @@ const ResetPassword = (options) => {
   }
   return (
     <div className={globalClassNmae['page_style_1']} >
-      <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
-        border: '1px solid rgba(217,217,217,1)',
-        borderRadius: '4px'}}>
-        <TopContent text={'重置密码'} hidenDescription={true}/>
-        <FormList {...formListProps}/>
-        <div style={{height: 40}}></div>
-        {/*<BottomContent type={'register'}/>*/}
-      </div>
-      <Copyright />
+      <QueueAnim  type="top">
+        <div key={'one'}>
+          <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
+            border: '1px solid rgba(217,217,217,1)',
+            borderRadius: '4px'}}>
+            <TopContent text={'重置密码'} hidenDescription={true}/>
+            <FormList {...formListProps}/>
+            <div style={{height: 40}}></div>
+            {/*<BottomContent type={'register'}/>*/}
+          </div>
+          <Copyright />
+        </div>
+      </QueueAnim>
     </div>
   );
 };
