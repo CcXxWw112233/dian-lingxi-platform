@@ -2,6 +2,7 @@
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import React from 'react'
 import indexStyle from './index.less'
+import globalStyles from '../../globalset/css/globalClassName.less'
 import VerificationCodeTwo from  '../../components/VerificationCodeTwo'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
@@ -18,6 +19,9 @@ class FormList extends React.Component {
   state={
     accountType: 'phone',    //账户类型，默认手机号，可选email
     loginType: 'password', //登录方式,验证码登录
+    isMobile: false, //验证输入过程是手机号的时候,是否正确手机号，用来判断是否获取验证码按钮 样式
+    verifyCodeButtonClicked: false, //验证码按钮是否点击过，用来作为密码框输入时判断，如果没有点击过直接输入则是password类型，隐藏按钮
+    isShowCodeButton: true, //是否显示验证码按钮
   }
 
   //  重置表单
@@ -77,15 +81,35 @@ class FormList extends React.Component {
   //验证账户，输入过程
   verifyAccountByChange = (e,name) => {
     const value = e.target.value
+    let loginType =this.state.loginType
     if(name === 'account') { //输入框是账户
       let accountType = ''
-      if(!isNaN(value) && validateTel(value)) { //如果用户输入的是手机号,纯数字
+      let isMobile = !!validateTel(value)
+      if(!isNaN(value)) { //如果用户输入的是手机号,纯数字 && validateTel(value)
         accountType = 'phone'
       } else {
         accountType = 'email'
+        loginType = 'password'
       }
+
       this.setState({
-        accountType
+        accountType,
+        isMobile,
+        loginType
+      })
+    }
+  }
+  //密码输入过程验证
+  loginTypeByChange = (e) => {
+    const value = e.target.value
+    if(!this.state.verifyCodeButtonClicked || this.state.loginType === 'password') {
+      this.setState({
+        isShowCodeButton: false
+      })
+    }
+    if(!value) {
+      this.setState({
+        isShowCodeButton: true
       })
     }
   }
@@ -98,7 +122,8 @@ class FormList extends React.Component {
         return false
       }
       this.setState({
-        loginType: 'verifycode'
+        loginType: 'verifycode',
+        verifyCodeButtonClicked: true,
       })
       const obj = {
         mobile: values['account'],
@@ -111,7 +136,7 @@ class FormList extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { loginType, accountType} = this.state
+    const { loginType, accountType, isShowCodeButton} = this.state
 
     return (
       <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
@@ -141,14 +166,15 @@ class FormList extends React.Component {
                 prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
                 maxLength={32} placeholder={loginType === 'password'? '密码' : '验证码'}
                 type={accountType === 'email' ? 'password' : (loginType === 'password'? 'password' : 'text')}
+                onChange= {(e) => this.loginTypeByChange(e)}
               />
             )}
           </FormItem>
-          {accountType === 'phone'? (
+          {accountType === 'phone' && isShowCodeButton ? (
             <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
               <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
               {/*<div>获取验证码</div>*/}
-              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
+              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={this.state.isMobile ? globalStyles.link_mouse : ''} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
             </div>
           ) : ('')}
         </div>

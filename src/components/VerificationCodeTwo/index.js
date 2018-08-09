@@ -47,7 +47,8 @@ export default class VerificationCodeTwo extends React.Component{
     const { text, style, getVerifyCode } = this.props
     const buttonDisabled = this.state.buttonDisabled
     return (
-      <div style={{...style, color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)',}} onClick={getVerifyCode.bind(null, this.buttonClick)}>{this.state.initTimeText}</div>
+      <divc className={this.props.className} style={{...style,}} onClick={getVerifyCode.bind(null, this.buttonClick)}>{this.state.initTimeText}</divc>
+    // color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)'
     );
   }
 
