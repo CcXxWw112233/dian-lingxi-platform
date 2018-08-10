@@ -37,14 +37,6 @@ const Routers = function ({ history, app }) {
   //   component: () => import('./routes/error'),
   // })
   const routes = [
-    // {
-    //   path: '/login',
-    //   component: () => import('./routes/dashboard/'),
-    // }, {
-    //   path: '/setting',
-    //   models: app,
-    //   component: () => import('./routes/setting/'),
-    // },
     {
       path: '/login',
       models: () => [import('./models/login')],
@@ -65,17 +57,21 @@ const Routers = function ({ history, app }) {
       path: '/retrievePassword',
       models: () => [import('./models/retrievePassword')],
       component: () => import('./routes/RetrievePassword/'),
+    }, {
+      path: '/technological',
+      models: () => [import('./models/technological')],
+      component: () => import('./routes/Technological/'),
     }
 
   ]
-
+  //去掉exact
   return (
     <Router history={history}>
       <Switch>
         {
           routes.map(({ path, ...dynamics }, key) => (
             <Route key={key}
-                   exact
+                   // exact
                    path={path}
                    component={dynamic({
                      app,
