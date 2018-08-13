@@ -59,26 +59,27 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/RetrievePassword/'),
     }, {
       path: '/technological',
-      models: () => [import('./models/technological')],
+      models: () => [import('./models/technological'), import('./models/technological/accountSet')],
       component: () => import('./routes/Technological/'),
-    }
-
+    },
   ]
   //去掉exact
   return (
     <Router history={history}>
       <Switch>
         {
-          routes.map(({ path, ...dynamics }, key) => (
-            <Route key={key}
-                   // exact
-                   path={path}
-                   component={dynamic({
-                     app,
-                     ...dynamics,
-                   })}
-            />
-          ))
+          routes.map(({ path, ...dynamics }, key) => {
+            return (
+              <Route key={key}
+                // exact
+                     path={path}
+                     component={dynamic({
+                       app,
+                       ...dynamics,
+                     })}
+              />
+            )
+          })
         }
       </Switch>
     </Router>
