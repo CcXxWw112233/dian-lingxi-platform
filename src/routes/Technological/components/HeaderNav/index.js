@@ -1,7 +1,8 @@
 import React from 'react';
 import indexStyle from './index.less'
 import { Link } from 'dva/router'
-import { Input, Icon, Menu, Dropdown, Tooltip, Avatar, Card} from 'antd'
+import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card} from 'antd'
+const TabPane = Tabs.TabPane;
 
 export default class HeaderNav extends React.Component{
   constructor(props) {
@@ -9,22 +10,44 @@ export default class HeaderNav extends React.Component{
   }
   state = {
     menuVisible: false,
+    defaultChooseTab: '', //tab选择标志
   };
 
+  //蓝色按钮下拉菜单
   handleMenuClick = (e) => {
-    console.log(e.key === '6')
     if (e.key === '6') {
+      this.routeingJump('/technological/accoutSet')
       this.setState({ menuVisible: false });
     }
+    this.setState({
+      defaultChooseTab: ''
+    })
   }
-
+  //下拉菜单显示状态改变
   handleVisibleChange = (flag) => {
     this.setState({ menuVisible: flag });
   }
-  menuItemClick(route) {
+  //tab
+  tabItemClick = (key) => {
+    let route
+    switch (key) {
+      case '1':
+        break
+      case '2':
+        break
+      case '3':
+        route = 'project'
+        break
+    }
+    this.setState({
+      defaultChooseTab: key
+    })
+    this.routeingJump(`/technological/${route}`)
+  }
+  //路由跳转
+  routeingJump(route) {
     this.props.routingJump(route)
   }
-
   render() {
     const menu = (
       <Card className={indexStyle.menuDiv}  selectable={false}>
@@ -66,7 +89,7 @@ export default class HeaderNav extends React.Component{
               </div>
             </Tooltip>
           </Menu.Item>
-          {/*onClick={this.menuItemClick.bind(this,'/technological/accoutSet')}*/}
+          {/*onClick={this.routeingJump.bind(this,'/technological/accoutSet')}*/}
           <Menu.Item key="6" style={{padding:0,margin: 0}}>
             <div className={indexStyle.itemDiv} >
               <span className={indexStyle.specificalItem}><Icon type="schedule" /><span className={indexStyle.specificalItemText}>账户设置</span></span>
@@ -94,7 +117,7 @@ export default class HeaderNav extends React.Component{
         </Menu>
       </Card>
     );
-
+    const { defaultChooseTab } = this.state
     return(
       <div className={indexStyle.out}>
         <div className={indexStyle.out_left}>
@@ -104,9 +127,9 @@ export default class HeaderNav extends React.Component{
             <div className={indexStyle.out_left_left}>迪</div>
           </Dropdown>
           <div className={indexStyle.out_left_right}>
-            <span>动态</span>
-            <span>工作台</span>
-            <span>项目</span>
+            <span className={defaultChooseTab==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
+            <span className={defaultChooseTab==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
+            <span className={defaultChooseTab==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
           </div>
         </div>
         <div className={indexStyle.out_right}>

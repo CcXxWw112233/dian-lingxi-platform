@@ -235,7 +235,7 @@ class PersonalInfoForm extends React.Component {
         <FormItem
           {...formItemLayout}
         >
-          <Button type="primary" htmlType="submit" style={{marginLeft: 94,width: 80, height: 40,fontSize:16}}>确认</Button>
+          <Button type="primary" htmlType="submit" style={{marginLeft: 112,width: 80, height: 40,fontSize:16}}>确认</Button>
         </FormItem>
       </Form>
     );

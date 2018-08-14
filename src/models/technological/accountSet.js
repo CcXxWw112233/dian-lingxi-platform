@@ -12,9 +12,9 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/technological/accoutSet') {
-          console.log(1)
+          // console.log(1)
         }else{
-          console.log(2)
+          // console.log(2)
         }
       })
     },

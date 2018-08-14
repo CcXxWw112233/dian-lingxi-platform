@@ -41,6 +41,9 @@ const Technological = (options) => {
     {
       path: '/technological/accoutSet',
       component: () => import('./components/AccountSet'),
+    }, {
+      path: '/technological/project',
+      component: () => import('./components/Project'),
     }
   ]
 
