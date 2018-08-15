@@ -1,10 +1,9 @@
 import React from 'react';
 import {connect} from "dva/index";
-import Header from './Header'
-import ProjectList from './ProjectList'
+
 const getEffectOrReducerByName = name => `project/${name}`
 
-const Project = (props) => {
+const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
   const prjectListProps = {
     modal,
@@ -26,8 +25,7 @@ const Project = (props) => {
   }
   return(
     <div>
-      <Header/>
-      <ProjectList {...prjectListProps} routingJump={routingJump}/>
+      this is projectdetail
     </div>
   )
 };
@@ -36,6 +34,6 @@ const Project = (props) => {
 function mapStateToProps({ modal, project, loading }) {
   return { modal, model: project, loading }
 }
-export default connect(mapStateToProps)(Project)
+export default connect(mapStateToProps)(ProjectDetail)
 
 

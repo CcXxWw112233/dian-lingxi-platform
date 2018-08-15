@@ -98,7 +98,7 @@ export default class CollectionProject extends React.Component{
     return (
       <Card style={{position: 'relative',height: 'auto'}}>
         <div className={indexStyle.listOutmask}></div>
-        <div className={indexStyle.listOut}>
+        <div className={indexStyle.listOut} onClick={this.props.routingJump.bind(null,'/technological/projectDetail')}>
           <div className={indexStyle.left}>
             <div className = {indexStyle.top}>
               <span>[项目实例]关于切从未如此一目了然</span>
@@ -108,7 +108,7 @@ export default class CollectionProject extends React.Component{
                       onMouseLeave={this.starMouseLeave.bind(this)}
                       onClick={this.starClick.bind(this)}
                       type={starType} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
-                  <Dropdown overlay={menu} >
+                  <Dropdown overlay={menu} trigger={['click']} >
                     <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px'}}/>
                   </Dropdown>
               </span>

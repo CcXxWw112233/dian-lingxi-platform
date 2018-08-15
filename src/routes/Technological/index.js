@@ -44,6 +44,9 @@ const Technological = (options) => {
     }, {
       path: '/technological/project',
       component: () => import('./components/Project'),
+    }, {
+      path: '/technological/projectDetail',
+      component: () => import('./components/ProjectDetail'),
     }
   ]
 

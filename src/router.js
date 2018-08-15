@@ -59,7 +59,11 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/RetrievePassword/'),
     }, {
       path: '/technological',
-      models: () => [import('./models/technological'), import('./models/technological/accountSet')],
+      models: () => [import('./models/technological'),
+        import('./models/technological/accountSet'),
+        import('./models/technological/project'),
+        import('./models/modal')
+      ],
       component: () => import('./routes/Technological/'),
     },
   ]

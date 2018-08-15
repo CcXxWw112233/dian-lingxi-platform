@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="项目、界面">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,11 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.js">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
+            <state relative-caret-position="384">
+              <caret line="36" column="53" lean-forward="false" selection-start-line="36" selection-start-column="53" selection-end-line="36" selection-end-column="53" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -29,70 +33,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Header.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="42" column="6" lean-forward="false" selection-start-line="42" selection-start-column="6" selection-end-line="42" selection-end-column="33" />
+            <state relative-caret-position="0">
+              <caret line="15" column="3" lean-forward="true" selection-start-line="15" selection-start-column="3" selection-end-line="15" selection-end-column="3" />
               <folding>
-                <element signature="e#0#25#0" expanded="true" />
-                <element signature="e#210#446#0" expanded="false" />
-                <element signature="e#481#1021#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProjectList.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="22" column="116" lean-forward="false" selection-start-line="22" selection-start-column="116" selection-end-line="22" selection-end-column="116" />
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CollectionProject.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/CollectionProject.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="7" column="37" lean-forward="false" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
-                <element signature="e#342#1827#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ElseProject.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="60" column="29" lean-forward="false" selection-start-line="60" selection-start-column="29" selection-end-line="60" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
-                <element signature="e#438#582#0" expanded="false" />
-                <element signature="e#602#748#0" expanded="false" />
-                <element signature="e#763#884#0" expanded="false" />
-                <element signature="e#981#1054#0" expanded="false" />
-                <element signature="e#1067#1555#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1200">
-              <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
-              <folding>
-                <element signature="e#726#2178#0" expanded="false" />
-                <element signature="e#1135#1174#0" expanded="false" />
+                <element signature="e#0#26#0" expanded="true" />
+                <element signature="e#668#1044#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -112,7 +60,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>formItemLayout</find>
       <find>fnMove</find>
       <find>left</find>
       <find>needY</find>
@@ -142,6 +89,7 @@
       <find>menuItemClick</find>
       <find>selectable</find>
       <find>page_card</find>
+      <find>projectNameMouseOVer</find>
     </findStrings>
     <dirStrings>
       <dir>W:\work\newdicolla-platform\src</dir>
@@ -158,12 +106,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/components/DragValidation/index.less" />
-        <option value="$PROJECT_DIR$/src/components/DragValidation/index.js" />
-        <option value="$PROJECT_DIR$/src/services/registerSuccess/index.js" />
-        <option value="$PROJECT_DIR$/src/services/resetPassword/index.js" />
-        <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
-        <option value="$PROJECT_DIR$/src/services/register/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Register/FormList.js" />
         <option value="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
         <option value="$PROJECT_DIR$/src/components/MessageRoute/index.js" />
@@ -189,7 +131,6 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet2/index.js" />
         <option value="$PROJECT_DIR$/src/models/technological/technologicalAccountSet.js" />
         <option value="$PROJECT_DIR$/src/index.js" />
-        <option value="$PROJECT_DIR$/src/router.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/Menu.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js" />
@@ -198,17 +139,24 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.less" />
         <option value="$PROJECT_DIR$/src/models/technological/accountSet.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.less.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.less" />
         <option value="$PROJECT_DIR$/src/globalset/css/globalClassName.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/CollectionProject.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.less" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.less" />
+        <option value="$PROJECT_DIR$/src/models/technological/project.js" />
+        <option value="$PROJECT_DIR$/src/models/global.js" />
+        <option value="$PROJECT_DIR$/src/models/modal.js" />
+        <option value="$PROJECT_DIR$/src/router.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/index.js" />
       </list>
     </option>
   </component>
@@ -270,12 +218,6 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="globalset" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -312,7 +254,7 @@
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="HeaderNav" type="462c0819:PsiDirectoryNode" />
+              <item name="Project" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -321,7 +263,7 @@
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -349,16 +291,16 @@
     <property name="node.js.selected.package.standard" value="W:\work\newdicolla-platform\node_modules\eslint" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components" />
-      <recent name="W:\work\newdicolla-platform\src\models" />
-      <recent name="W:\work\newdicolla-platform\src\routes" />
-      <recent name="W:\work\newdicolla-platform\src\components" />
-      <recent name="W:\work\newdicolla-platform\src\services" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="W:\work\newdicolla-platform\src\routes\Technological" />
       <recent name="W:\work\dian-platform" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\work\newdicolla-platform\src\models" />
+      <recent name="W:\work\newdicolla-platform\src\models\technological" />
+      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components" />
+      <recent name="W:\work\newdicolla-platform\src\routes" />
+      <recent name="W:\work\newdicolla-platform\src\components" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -404,7 +346,7 @@
       <workItem from="1534208280557" duration="9848000" />
       <workItem from="1534225485269" duration="20479000" />
       <workItem from="1534294180839" duration="9480000" />
-      <workItem from="1534306365486" duration="1447000" />
+      <workItem from="1534306365486" duration="17122000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -539,11 +481,18 @@
       <option name="project" value="LOCAL" />
       <updated>1534304954218</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="项目、界面">
+      <created>1534307819850</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1534307819850</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201290000" />
+    <option name="totallyTimeSpent" value="216965000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -556,7 +505,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18093175" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28277355" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -614,86 +563,15 @@
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="9" />
+      <option name="time" value="10" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="7" lean-forward="true" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="635">
-          <caret line="46" column="15" lean-forward="false" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/globalset/js/constant.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="1" column="39" lean-forward="false" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/registerSuccess/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/retrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/index.html" />
-    <entry file="file://$PROJECT_DIR$/src/components/Message/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="22" column="3" lean-forward="true" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/ResetPassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="36" column="17" lean-forward="true" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/RegisterSuccess/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="350">
           <caret line="22" column="5" lean-forward="true" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="48" column="10" lean-forward="true" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
         </state>
       </provider>
     </entry>
@@ -751,6 +629,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="520">
           <caret line="99" column="3" lean-forward="false" selection-start-line="99" selection-start-column="3" selection-end-line="104" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -772,13 +651,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -808,6 +680,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1000">
           <caret line="44" column="17" lean-forward="false" selection-start-line="44" selection-start-column="6" selection-end-line="44" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -823,17 +696,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1794">
-          <caret line="197" column="88" lean-forward="false" selection-start-line="197" selection-start-column="88" selection-end-line="197" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="607">
           <caret line="142" column="33" lean-forward="false" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="33" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#59#84#0" expanded="false" />
+            <element signature="e#1158#1323#0" expanded="false" />
+            <element signature="e#1356#1600#0" expanded="false" />
+            <element signature="e#1746#2649#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -843,20 +716,6 @@
           <caret line="45" column="31" lean-forward="true" selection-start-line="45" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#59#84#0" expanded="true" />
-            <element signature="e#1156#1321#0" expanded="false" />
-            <element signature="e#1354#1598#0" expanded="false" />
-            <element signature="e#1744#2647#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -871,13 +730,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/technological/accountSet.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="14" lean-forward="true" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
@@ -886,42 +738,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/router.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1375">
-          <caret line="80" column="13" lean-forward="false" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
-          <folding>
-            <element signature="e#1129#1154#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-            <element signature="e#668#1044#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less.js" />
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1450">
           <caret line="76" column="43" lean-forward="true" selection-start-line="76" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -937,6 +759,181 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="42" column="17" lean-forward="false" selection-start-line="42" selection-start-column="1" selection-end-line="42" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="54" column="14" lean-forward="false" selection-start-line="54" selection-start-column="14" selection-end-line="54" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
+          <folding>
+            <element signature="e#726#2178#0" expanded="false" />
+            <element signature="e#1135#1174#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1502">
+          <caret line="197" column="88" lean-forward="false" selection-start-line="197" selection-start-column="88" selection-end-line="197" selection-end-column="88" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#59#84#0" expanded="false" />
+            <element signature="e#2164#2408#0" expanded="false" />
+            <element signature="e#2515#3418#0" expanded="false" />
+            <element signature="e#3472#4281#0" expanded="false" />
+            <element signature="e#4290#4505#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="20" column="36" lean-forward="true" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#59#84#0" expanded="false" />
+            <element signature="e#1156#1321#0" expanded="false" />
+            <element signature="e#1354#1598#0" expanded="false" />
+            <element signature="e#1744#2647#0" expanded="false" />
+            <element signature="e#2668#7221#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="22" column="3" lean-forward="true" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/DragValidation/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3400">
+          <caret line="4" column="21" lean-forward="false" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="18" column="15" lean-forward="false" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="42" column="6" lean-forward="false" selection-start-line="42" selection-start-column="6" selection-end-line="42" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#25#0" expanded="false" />
+            <element signature="e#210#446#0" expanded="false" />
+            <element signature="e#481#1021#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/technological/accountSet.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="14" lean-forward="true" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/modal.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="11" column="37" lean-forward="false" selection-start-line="11" selection-start-column="37" selection-end-line="11" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/page.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-300">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/globalModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="64" column="30" lean-forward="false" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/technological/project.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="28" column="17" lean-forward="false" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Register/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="10" column="59" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1550">
+          <caret line="163" column="31" lean-forward="false" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#681#907#0" expanded="false" />
+            <element signature="e#1105#2027#0" expanded="false" />
+            <element signature="e#1284#1542#0" expanded="false" />
+            <element signature="e#5260#6131#0" expanded="false" />
+            <element signature="e#5469#5762#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -951,50 +948,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
-          <folding>
-            <element signature="e#726#2178#0" expanded="false" />
-            <element signature="e#1135#1174#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="350">
-          <caret line="42" column="6" lean-forward="false" selection-start-line="42" selection-start-column="6" selection-end-line="42" selection-end-column="33" />
+          <caret line="14" column="17" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
-            <element signature="e#210#446#0" expanded="false" />
-            <element signature="e#481#1021#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="54" column="14" lean-forward="false" selection-start-line="54" selection-start-column="14" selection-end-line="54" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="22" column="116" lean-forward="false" selection-start-line="22" selection-start-column="116" selection-end-line="22" selection-end-column="116" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="60" column="29" lean-forward="false" selection-start-line="60" selection-start-column="29" selection-end-line="60" selection-end-column="29" />
+        <state relative-caret-position="339">
+          <caret line="100" column="118" lean-forward="false" selection-start-line="100" selection-start-column="118" selection-end-line="100" selection-end-column="118" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
             <element signature="e#438#582#0" expanded="false" />
@@ -1002,6 +969,38 @@
             <element signature="e#763#884#0" expanded="false" />
             <element signature="e#981#1054#0" expanded="false" />
             <element signature="e#1067#1555#0" expanded="false" />
+            <element signature="e#1839#2672#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="29" column="21" lean-forward="false" selection-start-line="29" selection-start-column="21" selection-end-line="29" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="15" column="3" lean-forward="true" selection-start-line="15" selection-start-column="3" selection-end-line="15" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#668#1044#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="36" column="53" lean-forward="false" selection-start-line="36" selection-start-column="53" selection-end-line="36" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
