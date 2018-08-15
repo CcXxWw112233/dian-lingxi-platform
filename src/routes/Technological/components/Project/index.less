@@ -53,7 +53,6 @@
            height: 20px;
            width: 20px;
            border-radius: 18px;
-           background-color: #0C68FF;
            margin-left: 8px;
          }
          .taskManImag:nth-child(1){
@@ -76,10 +75,19 @@
         font-family: PingFangSC-Regular;
         color: #262626;
         font-size: 16px;
-        width: 320px;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap
+        display: flex;
+        span{
+          display: inline-block;
+          max-width: 320px;
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap
+        }
+        .nameHoverMenu{display: inline-block;}
+
+      }
+      .top:hover{
+        .nameHoverMenu{display: inline-block;}
       }
     }
     .right{
@@ -96,6 +104,20 @@
     }
   }
 }
+.elseProjectMemu{
+  padding: 4px 10px;
+}
+.elseProjectDangerMenu{
+  width: 100%;
+  height: 100%;
+  color: #F5222D ;
+  padding: 4px 10px;
+
+}
+.elseProjectDangerMenu:hover ,.elseProjectDangerMenu:active{
+  background: #FFE7E8;
+}
+
 .addListItem{
   cursor: pointer;
   height: 30px;
