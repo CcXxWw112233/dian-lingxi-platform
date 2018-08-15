@@ -1,12 +1,13 @@
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox } from 'antd'
 
 export default class CollectionProject extends React.Component{
   state = {
     starType: 'star-o',
-    starOpacity: 0.6
+    starOpacity: 0.6,
+    isSoundsEvrybody: false
   }
 
   //星星样式变化start-------------------------
@@ -35,14 +36,31 @@ export default class CollectionProject extends React.Component{
     })
   }
   //星星样式变化end-------------------------
- confirm() {
+
+  //出现confirm-------------start
+  setIsSoundsEvrybody(e){
+    this.setState({
+      isSoundsEvrybody: e.target.checked
+    })
+  }
+  confirm() {
     Modal.confirm({
-      title: 'Confirm',
-      content: <div>sss</div>,
+      title: '确认要退出该项目吗？',
+      content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
+                  <span >退出后将无法获取该项目的相关动态</span>
+                  <div style={{marginTop:20,}}>
+                    <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
+                  </div>
+               </div>,
       okText: '确认',
       cancelText: '取消',
+      onOk()  {
+      }
     });
   }
+  //出现confirm-------------end
+
+  //菜单按钮点击
   handleMenuClick(e) {
     const { key } = e
     console.log(e)
