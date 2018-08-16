@@ -10,32 +10,6 @@ export default class CollectionProject extends React.Component{
     isSoundsEvrybody: false
   }
 
-  //星星样式变化start-------------------------
-  starMouseOver() {
-    if(this.state.starType === 'star'){
-      return false
-    }
-    this.setState({
-      starType: 'star-o',
-      starOpacity: 1
-    })
-  }
-  starMouseLeave() {
-    if(this.state.starType === 'star'){
-      return false
-    }
-    this.setState({
-      starType: 'star-o',
-      starOpacity: 0.6
-    })
-  }
-  starClick() {
-    this.setState({
-      starType: this.state.starType === 'star' ? 'star-o' : 'star',
-      starOpacity: 1
-    })
-  }
-  //星星样式变化end-------------------------
 
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
@@ -68,6 +42,43 @@ export default class CollectionProject extends React.Component{
       this.confirm()
     }
   }
+
+  //项目列表点击---------------------
+
+  //星星样式变化start
+  starMouseOver() {
+    if(this.state.starType === 'star'){
+      return false
+    }
+    this.setState({
+      starType: 'star-o',
+      starOpacity: 1
+    })
+  }
+  starMouseLeave() {
+    if(this.state.starType === 'star'){
+      return false
+    }
+    this.setState({
+      starType: 'star-o',
+      starOpacity: 0.6
+    })
+  }
+  starClick(e) {
+    e.stopPropagation();
+    this.setState({
+      starType: this.state.starType === 'star' ? 'star-o' : 'star',
+      starOpacity: 1
+    })
+  }
+  //星星样式变化end
+  //...菜单变化点击
+  ellipsisClick(e) {
+    e.stopPropagation();
+  }
+  projectListItemClick(route,e,a) {
+    this.props.routingJump(route)
+  }
   render() {
     const taskMan = [1,2,3,4,5,6,7,8]
     const { starType,starOpacity } = this.state
@@ -98,7 +109,7 @@ export default class CollectionProject extends React.Component{
     return (
       <Card style={{position: 'relative',height: 'auto'}}>
         <div className={indexStyle.listOutmask}></div>
-        <div className={indexStyle.listOut} onClick={this.props.routingJump.bind(null,'/technological/projectDetail')}>
+        <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, '/technological/projectDetail')}>
           <div className={indexStyle.left}>
             <div className = {indexStyle.top}>
               <span>[项目实例]关于切从未如此一目了然</span>
@@ -109,7 +120,7 @@ export default class CollectionProject extends React.Component{
                       onClick={this.starClick.bind(this)}
                       type={starType} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
                   <Dropdown overlay={menu} trigger={['click']} >
-                    <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px'}}/>
+                    <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px'}} onClick={this.ellipsisClick}/>
                   </Dropdown>
               </span>
             </div>

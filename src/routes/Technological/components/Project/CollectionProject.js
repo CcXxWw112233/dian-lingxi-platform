@@ -14,7 +14,6 @@ export default class CollectionProject extends React.Component{
             <div className = {indexStyle.top}>
               <span>[项目实例]关于切从未如此一目了然</span>
               <Icon className={indexStyle.star} type="star" style={{margin: '4px 0 0 8px',color: '#FAAD14'}} />
-
             </div>
             <div className ={indexStyle.bottom}>
               {taskMan.map((value, key) => {

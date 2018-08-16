@@ -51,7 +51,7 @@ const Technological = (options) => {
   ]
 
   return (
-      <div className={globalClassNmae.page_style_3} >
+      <div className={globalClassNmae.page_style_3} style={{ display: 'flex',  flexDirection: 'column'}}>
         <HeaderNav {...HeaderNavProps}/>
         {
           routes.map(({ path, ...dynamics }, key) =>{
