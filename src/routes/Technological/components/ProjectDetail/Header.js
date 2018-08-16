@@ -3,6 +3,7 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox } from 'antd'
 
 export default class Header extends React.Component {
+
   setProjectInfoDisplay() {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay })
   }
@@ -68,12 +69,13 @@ export default class Header extends React.Component {
     return (
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
-           <div>
-             <Icon type="left-square-o" className={indexStyle.projectNameIcon}/><span className={indexStyle.projectName}>关于工作的关于工作的一切从未如此一目了然</span>
-             <Icon className={indexStyle.star} type="star" style={{margin: '4px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
-             <Dropdown overlay={menu} trigger={['click']} >
-               <Icon type="ellipsis"  style={{fontSize:24,margin: '0 0 0 8px'}}/>
-             </Dropdown>
+           <div className={indexStyle.left_top}>
+              <Icon type="left-square-o" className={indexStyle.projectNameIcon}/>
+               <span className={indexStyle.projectName}>关于工作的关于工ss作的一切从未如此一目了然</span>
+               <Icon className={indexStyle.star} type="star" style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
+               <Dropdown overlay={menu} trigger={['click']} >
+                 <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px'}}/>
+               </Dropdown>
            </div>
            <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>
              {projectInfoDisplay ? (

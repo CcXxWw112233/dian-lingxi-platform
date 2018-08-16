@@ -16,6 +16,9 @@ body { height: 100%; padding: 0; margin: 0; }
   border-top: 1px solid #E8E8E8;
   .left{
     margin-left: 20px;
+    .left_top{
+      display: flex;
+    }
     .displayProjectinfo{
       height: 20px;
       border: 1px solid rgba(217,217,217,1);;
@@ -30,6 +33,7 @@ body { height: 100%; padding: 0; margin: 0; }
     .projectNameIcon{
       font-size: 20px;
       color: #BFBFBF;
+      margin-top: 4px;
     }
     .projectNameIcon:hover{
       color: #595959;
@@ -38,6 +42,11 @@ body { height: 100%; padding: 0; margin: 0; }
       font-size: 20px;
       color: #262626;
       margin-left: 40px;
+      max-width: 500px;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+      //display: inline-block;
     }
   }
   .right{
@@ -72,9 +81,3 @@ body { height: 100%; padding: 0; margin: 0; }
   background: #FFE7E8;
 }
 
-//项目详细信息
-.detailInfo{
-  width: 372px;
-  background-color: #FFFFFF;
-  flex: 1;
-}

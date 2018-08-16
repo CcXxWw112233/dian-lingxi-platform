@@ -7,9 +7,20 @@ const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
+  const { datas:{projectInfoDisplay} } = model
   const HeaderListProps = {
     modal,
     model,
+  }
+  const DetailInfoProps = {
+    modal,
+    model,
+    showModal() {
+      dispatch({ type: 'modal/showModal' })
+    },
+    hideModal() {
+      dispatch({ type: 'modal/hideModal' })
+    }
   }
   const routingJump = (path) => {
     dispatch({
@@ -25,10 +36,12 @@ const ProjectDetail = (props) => {
       payload:payload
     })
   }
+  //display: 'flex',  flexDirection: 'column',flex: 1
   return(
-    <div style={{ display: 'flex',  flexDirection: 'column',flex: 1}}>
+    <div style={{ height: '100%' ,position: 'relative'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
-      <DetailInfo />
+
+      <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
     </div>
   )
 };

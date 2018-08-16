@@ -49,9 +49,9 @@ const Technological = (options) => {
       component: () => import('./components/ProjectDetail'),
     }
   ]
-
+  // display: 'flex',  flexDirection: 'column',
   return (
-      <div className={globalClassNmae.page_style_3} style={{ display: 'flex',  flexDirection: 'column'}}>
+      <div className={globalClassNmae.page_style_3} style={{ minWidth:1200}}>
         <HeaderNav {...HeaderNavProps}/>
         {
           routes.map(({ path, ...dynamics }, key) =>{
