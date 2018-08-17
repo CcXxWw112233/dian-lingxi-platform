@@ -2,12 +2,14 @@ import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox } from 'antd'
-
+import detailInfoStyle from '../ProjectDetail/DetailInfo.less'
 export default class CollectionProject extends React.Component{
   state = {
     starType: 'star-o',
     starOpacity: 0.6,
-    isSoundsEvrybody: false
+    isSoundsEvrybody: false,
+    ellipsisShow: false,//是否出现...菜单
+    dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
   }
 
 
@@ -36,8 +38,12 @@ export default class CollectionProject extends React.Component{
 
   //菜单按钮点击
   handleMenuClick(e) {
+    e.domEvent.stopPropagation();
+    this.setState({
+      ellipsisShow: false,
+      dropdownVisibleChangeValue:false
+    })
     const { key } = e
-    console.log(e)
     if('4' === key) {
       this.confirm()
     }
@@ -45,7 +51,7 @@ export default class CollectionProject extends React.Component{
 
   //项目列表点击---------------------
 
-  //星星样式变化start
+  //星星样式变化start----------------
   starMouseOver() {
     if(this.state.starType === 'star'){
       return false
@@ -71,17 +77,35 @@ export default class CollectionProject extends React.Component{
       starOpacity: 1
     })
   }
-  //星星样式变化end
+  //星星样式变化end--------------
+
   //...菜单变化点击
   ellipsisClick(e) {
     e.stopPropagation();
+  }
+  setEllipsisShow() {
+    this.setState({
+      ellipsisShow: true
+    })
+  }
+  setEllipsisHide() {
+    this.setState({
+      ellipsisShow: false
+    })
+  }
+  onDropdownVisibleChange(visible){
+    this.setState({
+      dropdownVisibleChangeValue: visible,
+    })
   }
   projectListItemClick(route,e,a) {
     this.props.routingJump(route)
   }
   render() {
     const taskMan = [1,2,3,4,5,6,7,8]
-    const { starType,starOpacity } = this.state
+    const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue } = this.state
+    console.log(ellipsisShow , dropdownVisibleChangeValue)
+
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
@@ -106,12 +130,56 @@ export default class CollectionProject extends React.Component{
         </Menu.Item>
       </Menu>
     );
+    const manImageDropdown = (
+      <div className={detailInfoStyle.manImageDropdown}>
+        <div className={detailInfoStyle.manImageDropdown_top}>
+          <div className={detailInfoStyle.left}>
+            <img src="" />
+          </div>
+          <div className={detailInfoStyle.right}>
+            <div className={detailInfoStyle.name}>贝克汉姆</div>
+            <Tooltip title="30% 过期 / 30% 完成 / 40% 正在进行">
+              <div className={detailInfoStyle.percent}>
+                <div style={{width: '30%'}}></div>
+                <div style={{width: '30%'}}></div>
+                <div style={{width: '40%'}}></div>
+              </div>
+            </Tooltip>
+          </div>
+        </div>
+        <div className={detailInfoStyle.manImageDropdown_middle}>
+          <div className={detailInfoStyle.detailItem}>
+            <div>姓名：</div>
+            <div> 啥进度和啥进度和啥进度和啥进度和啥进度和啥进度和</div>
+          </div>
+          <div className={detailInfoStyle.detailItem}>
+            <div>组织：</div>
+            <div> 啥进度和啥进度和啥进度和啥进度和啥进度和啥进度和</div>
+          </div>
+          <div className={detailInfoStyle.detailItem}>
+            <div>邮箱：</div>
+            <div> 啥进度和啥进度和啥进度和啥进度和啥进度和啥进度和</div>
+          </div>
+          <div className={detailInfoStyle.detailItem}>
+            <div>手机：</div>
+            <div> 啥进度和啥进度和啥进度和啥进度和啥进度和啥进度和</div>
+          </div>
+          <div className={detailInfoStyle.detailItem}>
+            <div>微信：</div>
+            <div> 啥进度和啥进度和啥进度和啥进度和啥进度和啥进度和</div>
+          </div>
+        </div>
+        <div className={detailInfoStyle.manImageDropdown_bott}>
+          <img src="" />
+        </div>
+      </div>
+    )
     return (
       <Card style={{position: 'relative',height: 'auto'}}>
         <div className={indexStyle.listOutmask}></div>
         <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, '/technological/projectDetail')}>
           <div className={indexStyle.left}>
-            <div className = {indexStyle.top}>
+            <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <span>[项目实例]关于切从未如此一目了然</span>
               <span className={indexStyle.nameHoverMenu} >
                 <Icon className={indexStyle.star}
@@ -119,15 +187,19 @@ export default class CollectionProject extends React.Component{
                       onMouseLeave={this.starMouseLeave.bind(this)}
                       onClick={this.starClick.bind(this)}
                       type={starType} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
-                  <Dropdown overlay={menu} trigger={['click']} >
-                    <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px'}} onClick={this.ellipsisClick}/>
+                  <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
+                    <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
                   </Dropdown>
               </span>
             </div>
             <div className ={indexStyle.bottom}>
               {taskMan.map((value, key) => {
                 if(key < 7) {
-                  return (<img src="" key={key} className={indexStyle.taskManImag}></img>)
+                  return (
+                    <Dropdown overlay={manImageDropdown}>
+                      <img src="" key={key} className={indexStyle.taskManImag}></img>
+                    </Dropdown>
+                  )
                 }
               })}
               {taskMan.length > 7? (

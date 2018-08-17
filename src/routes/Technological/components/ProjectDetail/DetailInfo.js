@@ -78,11 +78,13 @@ export default class DetailInfo extends React.Component {
           </div>
           <div className={detailInfoStyle.right}>
             <div className={detailInfoStyle.name}>贝克汉姆</div>
-            <div className={detailInfoStyle.percent}>
-              <Tooltip title="3 done / 3 in progress / 4 to do">
-                <Progress percent={60} successPercent={30} width={164}  strokeWidth ={6} showInfo={false} style={{color: '#8c8c8c'}}/>
-              </Tooltip>
-            </div>
+            <Tooltip title="30% 过期 / 30% 完成 / 40% 正在进行">
+              <div className={detailInfoStyle.percent}>
+                  <div style={{width: '30%'}}></div>
+                  <div style={{width: '30%'}}></div>
+                  <div style={{width: '40%'}}></div>
+              </div>
+            </Tooltip>
           </div>
         </div>
         <div className={detailInfoStyle.manImageDropdown_middle}>
