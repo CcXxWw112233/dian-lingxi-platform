@@ -22,7 +22,6 @@ export default {
             }
           })
         }else{
-          console.log(2)
         }
       })
     },
