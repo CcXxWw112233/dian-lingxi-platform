@@ -196,7 +196,7 @@ export default class CollectionProject extends React.Component{
               {taskMan.map((value, key) => {
                 if(key < 7) {
                   return (
-                    <Dropdown overlay={manImageDropdown}>
+                    <Dropdown overlay={manImageDropdown} key={key}>
                       <img src="" key={key} className={indexStyle.taskManImag}></img>
                     </Dropdown>
                   )

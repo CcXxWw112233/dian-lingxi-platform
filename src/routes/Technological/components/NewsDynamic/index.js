@@ -1,13 +1,15 @@
 import React from 'react';
 import {connect} from "dva/index";
-import Header from './Header'
-import ProjectList from './ProjectList'
+import Header from  './Header'
+import FirstEntry from './FirstEntry'
+import NewsList from './NewsList'
 import QueueAnim from  'rc-queue-anim'
 
-const getEffectOrReducerByName = name => `project/${name}`
+const getEffectOrReducerByName = name => `newsDynamic/${name}`
 
-const Project = (props) => {
+const NewsDynamic = (props) => {
   const { dispatch, model, modal } = props
+  const { datas: { isFirstEntry } = false } = model
   const prjectListProps = {
     modal,
     model,
@@ -28,18 +30,22 @@ const Project = (props) => {
   }
   return(
     <div>
-      <Header/>
+        <Header/>
       <QueueAnim  type="top">
-        <ProjectList {...prjectListProps} routingJump={routingJump} key={'1'}/>
+        {isFirstEntry ? (
+          <FirstEntry key={'1'}></FirstEntry>
+        ) : (
+          <NewsList key={'2'} />
+        )}
       </QueueAnim>
     </div>
   )
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, project, loading }) {
-  return { modal, model: project, loading }
+function mapStateToProps({ modal, newsDynamic, loading }) {
+  return { modal, model: newsDynamic, loading }
 }
-export default connect(mapStateToProps)(Project)
+export default connect(mapStateToProps)(NewsDynamic)
 
 

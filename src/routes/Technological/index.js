@@ -47,6 +47,9 @@ const Technological = (options) => {
     }, {
       path: '/technological/projectDetail',
       component: () => import('./components/ProjectDetail'),
+    }, {
+      path: '/technological/newsDynamic',
+      component: () => import('./components/NewsDynamic'),
     }
   ]
   // display: 'flex',  flexDirection: 'column',

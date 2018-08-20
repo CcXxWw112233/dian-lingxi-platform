@@ -32,6 +32,7 @@ export default class HeaderNav extends React.Component{
     let route
     switch (key) {
       case '1':
+        route = 'newsDynamic'
         break
       case '2':
         break
