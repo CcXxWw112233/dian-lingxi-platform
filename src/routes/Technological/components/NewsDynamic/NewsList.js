@@ -3,7 +3,7 @@ import { Card, Icon, Input } from 'antd'
 import NewsListStyle from './NewsList.less'
 import QueueAnim from  'rc-queue-anim'
 import { newsDynamicHandleTime } from '../../../../utils/util'
-
+import Comment from './Comment'
 
 export default class NewsList extends React.Component {
 
@@ -53,7 +53,7 @@ export default class NewsList extends React.Component {
           <img src="" />
         </div>
         <div  className={NewsListStyle.news_4_bottom}>
-          <img src="" /><Input placeholder={'发表评论'}/>
+          <Comment />
         </div>
       </div>
     )
