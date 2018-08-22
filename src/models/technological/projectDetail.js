@@ -18,7 +18,9 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload:{
-              projectInfoDisplay: true
+              projectInfoDisplay: false, //项目详情是否出现
+              isInitEntry: false, //是否初次进来
+              taskItemList: [{ishas: true},{ishas: true}], //任务列表
             }
           })
         }else{

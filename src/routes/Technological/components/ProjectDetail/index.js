@@ -2,12 +2,14 @@ import React from 'react';
 import {connect} from "dva/index";
 import Header from './Header'
 import DetailInfo from './DetailInfo'
+import CreateTask from  './CreateTask'
 
 const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
-  const { datas:{projectInfoDisplay} } = model
+  const { datas:{ projectInfoDisplay, taskItemList } } = model
+  console.log(taskItemList)
   const HeaderListProps = {
     modal,
     model,
@@ -22,6 +24,21 @@ const ProjectDetail = (props) => {
       dispatch({ type: 'modal/hideModal' })
     }
   }
+
+  const CreateTaskProps = {
+    modal,
+    model,
+    addTaskItem() {
+      taskItemList.push({})
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: {
+          taskItemList
+        }
+      })
+    }
+  }
+
   const routingJump = (path) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
@@ -36,12 +53,12 @@ const ProjectDetail = (props) => {
       payload:payload
     })
   }
-  //display: 'flex',  flexDirection: 'column',flex: 1
+
   return(
     <div style={{ height: '100%' ,position: 'relative'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
-
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
+      <CreateTask  {...CreateTaskProps}/>
     </div>
   )
 };

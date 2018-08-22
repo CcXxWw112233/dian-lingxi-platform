@@ -31,7 +31,7 @@ class AddModalForm extends React.Component {
 
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤三：邀请他人一起参加项目</div>
+        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起参加项目</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>

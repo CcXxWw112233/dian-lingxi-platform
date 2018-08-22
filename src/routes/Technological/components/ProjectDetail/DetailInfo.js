@@ -68,7 +68,7 @@ export default class DetailInfo extends React.Component {
 
   render() {
     const { editDetaiDescription } = this.state
-    const { projectInfoDisplay } = this.props
+    const { projectInfoDisplay, isInitEntry } = this.props.model.datas
     const avatarList = [1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (
       <div className={detailInfoStyle.manImageDropdown}>
@@ -126,51 +126,54 @@ export default class DetailInfo extends React.Component {
       </div>
     )
     return (
-      <div className={projectInfoDisplay?detailInfoStyle.detailInfo : detailInfoStyle.detailInfo_2}>
-        <div className={detailInfoStyle.top}>
-          <div className={detailInfoStyle.topItem}>
-            <div>27</div>
-            <div>剩余任务</div>
+      <div >
+        <div className={projectInfoDisplay?detailInfoStyle.detailInfo : detailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
+          <div className={detailInfoStyle.top}>
+            <div className={detailInfoStyle.topItem}>
+              <div>27</div>
+              <div>剩余任务</div>
+            </div>
+            <div className={detailInfoStyle.topItem}>
+              <div style={{color: '#8c8c8c'}}>27</div>
+              <div>已完成</div>
+            </div>
+            <div className={detailInfoStyle.topItem}>
+              <div >27</div>
+              <div>距离下一节点</div>
+            </div>
           </div>
-          <div className={detailInfoStyle.topItem}>
-            <div style={{color: '#8c8c8c'}}>27</div>
-            <div>已完成</div>
-          </div>
-          <div className={detailInfoStyle.topItem}>
-            <div >27</div>
-            <div>距离下一节点</div>
-          </div>
-        </div>
-        <div className={detailInfoStyle.manImageList}>
-          {
-            avatarList.map((value, key) => {
-              if(key < avatarList.length - 1) {
-                return(
-                  <div className={detailInfoStyle.manImageItem} key={ key }>
-                    <div className={detailInfoStyle.delete} onClick={this.confirm.bind(this)}>
-                      <Icon type="close" />
+          <div className={detailInfoStyle.manImageList}>
+            {
+              avatarList.map((value, key) => {
+                if(key < avatarList.length - 1) {
+                  return(
+                    <div className={detailInfoStyle.manImageItem} key={ key }>
+                      <div className={detailInfoStyle.delete} onClick={this.confirm.bind(this)}>
+                        <Icon type="close" />
+                      </div>
+                      <Dropdown overlay={manImageDropdown}>
+                        <img src=""  />
+                      </Dropdown>
                     </div>
-                    <Dropdown overlay={manImageDropdown}>
-                      <img src=""  />
-                    </Dropdown>
-                  </div>
-                )
-              }else{
-                return(
-                  <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.props.showModal}>
-                    <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold'}}/>
-                  </div>
-                )
-              }
-            })
-          }
-        </div>
-        {!editDetaiDescription?(
-          <div className={detailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
-            {this.state.detaiDescriptionValue}
+                  )
+                }else{
+                  return(
+                    <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.props.showModal}>
+                      <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold'}}/>
+                    </div>
+                  )
+                }
+              })
+            }
           </div>
-        ) : ( EditArea)}
-        <AddModalForm {...this.props} />
+          {!editDetaiDescription?(
+            <div className={detailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
+              {this.state.detaiDescriptionValue}
+            </div>
+          ) : ( EditArea)}
+          <AddModalForm {...this.props} />
+        </div>
+        <div className={projectInfoDisplay?detailInfoStyle.maskShow : detailInfoStyle.maskHide} style={{display: isInitEntry ? 'block': 'none'}}></div>
       </div>
     )
   }

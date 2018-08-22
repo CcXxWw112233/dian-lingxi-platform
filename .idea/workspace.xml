@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="动态页">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.less" afterPath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.less" />
+      <change beforePath="$PROJECT_DIR$/src/models/technological/projectDetail.js" afterPath="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -18,63 +23,66 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="NewsList.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-100">
-              <caret line="2" column="43" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-              <folding>
-                <element signature="e#483#774#0" expanded="false" />
-                <element signature="e#816#1010#0" expanded="false" />
-                <element signature="e#1156#1243#0" expanded="false" />
-                <element signature="e#1254#1740#0" expanded="false" />
-                <element signature="e#2025#2592#0" expanded="false" />
-                <element signature="e#2632#3323#0" expanded="false" />
-                <element signature="e#3394#4153#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Comment.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="31" column="14" lean-forward="true" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
+            <state relative-caret-position="598">
+              <caret line="60" column="14" lean-forward="false" selection-start-line="60" selection-start-column="14" selection-end-line="60" selection-end-column="14" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
+                <element signature="e#925#1051#0" expanded="false" />
+                <element signature="e#1087#1190#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Comment.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.less">
+      <file leaf-file-name="CreateTask.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="25" column="10" lean-forward="true" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-              <folding />
+            <state relative-caret-position="250">
+              <caret line="10" column="43" lean-forward="true" selection-start-line="10" selection-start-column="43" selection-end-line="10" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#25#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NewsList.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.less">
+      <file leaf-file-name="CreateItem.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="923">
-              <caret line="204" column="0" lean-forward="true" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
+            <state relative-caret-position="400">
+              <caret line="34" column="12" lean-forward="true" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="12" />
               <folding>
-                <element signature="e#63#415#0" expanded="false" />
-                <element signature="e#619#1627#0" expanded="false" />
-                <element signature="e#801#1326#0" expanded="false" />
-                <element signature="e#1339#1621#0" expanded="false" />
-                <element signature="e#1642#1782#0" expanded="false" />
-                <element signature="e#1833#1891#0" expanded="false" />
-                <element signature="e#1905#2069#0" expanded="false" />
-                <element signature="e#2194#2282#0" expanded="false" />
-                <element signature="e#2303#2367#0" expanded="false" />
-                <element signature="e#2532#2628#0" expanded="false" />
-                <element signature="e#2651#2721#0" expanded="false" />
+                <element signature="e#0#25#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CreateTask.less" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.less">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="48" column="10" lean-forward="false" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+              <folding>
+                <element signature="e#46#543#0" expanded="false" />
+                <element signature="e#544#1041#0" expanded="false" />
+                <element signature="e#1412#1891#0" expanded="false" />
+                <element signature="e#1516#1627#0" expanded="false" />
+                <element signature="e#1645#1721#0" expanded="false" />
+                <element signature="e#1739#1814#0" expanded="false" />
+                <element signature="e#1901#2365#0" expanded="false" />
+                <element signature="e#2122#2149#0" expanded="false" />
+                <element signature="e#2171#2361#0" expanded="false" />
+                <element signature="e#2376#3278#0" expanded="false" />
+                <element signature="e#2433#2951#0" expanded="false" />
+                <element signature="e#2680#2711#0" expanded="false" />
+                <element signature="e#2735#2945#0" expanded="false" />
+                <element signature="e#3289#3560#0" expanded="false" />
+                <element signature="e#3578#3746#0" expanded="false" />
+                <element signature="e#3767#3964#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -86,18 +94,14 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="Less File" />
         <option value="HTML File" />
+        <option value="Less File" />
         <option value="JavaScript File" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>avatar</find>
-      <find>handleClick</find>
-      <find>menuItemClick</find>
-      <find>selectable</find>
       <find>page_card</find>
       <find>projectNameMouseOVer</find>
       <find>elseProjectMemu</find>
@@ -124,6 +128,10 @@
       <find>'</find>
       <find>mention</find>
       <find>10px</find>
+      <find>detailInfo</find>
+      <find>mask</find>
+      <find>projectInfoDisplay</find>
+      <find>maskHide</find>
     </findStrings>
     <replaceStrings>
       <replace>46px</replace>
@@ -145,15 +153,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/globalset/css/mixin.less" />
-        <option value="$PROJECT_DIR$/src/models/technological/index.js" />
-        <option value="$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet2/index.js" />
-        <option value="$PROJECT_DIR$/src/models/technological/technologicalAccountSet.js" />
-        <option value="$PROJECT_DIR$/src/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/Menu.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js" />
@@ -170,12 +169,7 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/CollectionProject.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/index.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Header.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/FirstEntry.less" />
@@ -189,13 +183,27 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/newsList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/index.js" />
-        <option value="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
         <option value="$PROJECT_DIR$/src/utils/util.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreatTask.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItem.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemOne.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwoChirldren.js" />
+        <option value="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.less" />
       </list>
     </option>
   </component>
@@ -281,6 +289,13 @@
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Login" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -298,7 +313,26 @@
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="NewsDynamic" type="462c0819:PsiDirectoryNode" />
+              <item name="Project" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+              <item name="TaskItemComponent" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -310,8 +344,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -334,16 +368,17 @@
     <property name="node.js.selected.package.standard" value="W:\work\newdicolla-platform\node_modules\eslint" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\TaskItemComponent" />
+      <recent name="W:\work\newdicolla-platform\src\routes\Technological" />
+      <recent name="W:\work\dian-platform" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\NewsDynamic" />
       <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail" />
       <recent name="W:\work\newdicolla-platform\src\models\technological" />
       <recent name="W:\work\newdicolla-platform\src\models" />
       <recent name="W:\work\newdicolla-platform\src\routes\Technological\components" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological" />
-      <recent name="W:\work\dian-platform" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -396,7 +431,8 @@
       <workItem from="1534495225107" duration="1257000" />
       <workItem from="1534727305244" duration="10318000" />
       <workItem from="1534743636156" duration="22852000" />
-      <workItem from="1534813808441" duration="18508000" />
+      <workItem from="1534813808441" duration="19350000" />
+      <workItem from="1534899797719" duration="29838000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -580,31 +616,38 @@
       <option name="project" value="LOCAL" />
       <updated>1534767746018</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="评论">
+      <created>1534844262124</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1534844262124</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="303738000" />
+    <option name="totallyTimeSpent" value="334418000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19336143" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12892741" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13434453" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -634,7 +677,8 @@
     <MESSAGE value="项目详情界面ui完成" />
     <MESSAGE value="项目详情界面ui完成 优化" />
     <MESSAGE value="动态页" />
-    <option name="LAST_COMMIT_MESSAGE" value="动态页" />
+    <MESSAGE value="评论" />
+    <option name="LAST_COMMIT_MESSAGE" value="评论" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -670,84 +714,11 @@
           <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="14" />
+      <option name="time" value="15" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/Login/FormList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-893">
-          <caret line="111" column="30" lean-forward="true" selection-start-line="111" selection-start-column="30" selection-end-line="111" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
-          <caret line="142" column="33" lean-forward="false" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="33" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-            <element signature="e#59#84#0" expanded="false" />
-            <element signature="e#1158#1323#0" expanded="false" />
-            <element signature="e#1356#1600#0" expanded="false" />
-            <element signature="e#1746#2649#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="12" column="21" lean-forward="false" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less.js" />
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="6" column="47" lean-forward="false" selection-start-line="6" selection-start-column="47" selection-end-line="6" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1502">
-          <caret line="197" column="88" lean-forward="false" selection-start-line="197" selection-start-column="88" selection-end-line="197" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="20" column="36" lean-forward="true" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-            <element signature="e#59#84#0" expanded="false" />
-            <element signature="e#1156#1321#0" expanded="false" />
-            <element signature="e#1354#1598#0" expanded="false" />
-            <element signature="e#1744#2647#0" expanded="false" />
-            <element signature="e#2668#7221#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="22" column="3" lean-forward="true" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/RetrievePassword/FormList.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="84">
@@ -798,13 +769,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="63" column="9" lean-forward="true" selection-start-line="63" selection-start-column="9" selection-end-line="63" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/Header.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="346">
@@ -812,47 +776,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="40" column="53" lean-forward="false" selection-start-line="40" selection-start-column="53" selection-end-line="40" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
           <caret line="85" column="44" lean-forward="false" selection-start-line="85" selection-start-column="32" selection-end-line="85" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="94" column="6" lean-forward="true" selection-start-line="94" selection-start-column="6" selection-end-line="94" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="152" column="57" lean-forward="true" selection-start-line="152" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-            <element signature="e#845#918#0" expanded="false" />
-            <element signature="e#931#1370#0" expanded="false" />
-            <element signature="e#1466#1531#0" expanded="false" />
-            <element signature="e#1746#1976#0" expanded="false" />
-            <element signature="e#2202#3805#0" expanded="false" />
-            <element signature="e#4502#4952#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="165" column="24" lean-forward="false" selection-start-line="165" selection-start-column="24" selection-end-line="165" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -945,23 +872,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="45" column="31" lean-forward="true" selection-start-line="45" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-80">
-          <caret line="10" column="14" lean-forward="false" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-288">
@@ -1001,13 +911,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/technological/projectDetail.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/handleResponseData.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1026,14 +929,48 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
           <caret line="1" column="17" lean-forward="false" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+            <element signature="e#955#2095#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="2" column="43" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding>
+            <element signature="e#483#774#0" expanded="false" />
+            <element signature="e#816#1010#0" expanded="false" />
+            <element signature="e#1156#1243#0" expanded="false" />
+            <element signature="e#1254#1740#0" expanded="false" />
+            <element signature="e#2025#2592#0" expanded="false" />
+            <element signature="e#2632#3323#0" expanded="false" />
+            <element signature="e#3394#4153#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.less">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="923">
-          <caret line="204" column="0" lean-forward="true" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
+        <state relative-caret-position="577">
+          <caret line="204" column="0" lean-forward="false" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
           <folding>
             <element signature="e#63#415#0" expanded="false" />
             <element signature="e#619#1627#0" expanded="false" />
@@ -1050,36 +987,189 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/NewsList.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-100">
-          <caret line="2" column="43" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-          <folding>
-            <element signature="e#483#774#0" expanded="false" />
-            <element signature="e#816#1010#0" expanded="false" />
-            <element signature="e#1156#1243#0" expanded="false" />
-            <element signature="e#1254#1740#0" expanded="false" />
-            <element signature="e#2025#2592#0" expanded="false" />
-            <element signature="e#2632#3323#0" expanded="false" />
-            <element signature="e#3394#4153#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="25" column="10" lean-forward="true" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+        <state relative-caret-position="225">
+          <caret line="11" column="111" lean-forward="false" selection-start-line="11" selection-start-column="111" selection-end-line="11" selection-end-column="111" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js">
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="31" column="14" lean-forward="true" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
+        <state relative-caret-position="305">
+          <caret line="33" column="84" lean-forward="false" selection-start-line="33" selection-start-column="84" selection-end-line="33" selection-end-column="84" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="49" column="28" lean-forward="true" selection-start-line="49" selection-start-column="1" selection-end-line="49" selection-end-column="28" />
+          <folding>
+            <element signature="e#1563#1845#0" expanded="false" />
+            <element signature="e#1860#2835#0" expanded="false" />
+            <element signature="e#2844#2963#0" expanded="false" />
+            <element signature="e#2977#3040#0" expanded="false" />
+            <element signature="e#3074#4527#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="2" column="38" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="170" column="48" lean-forward="true" selection-start-line="170" selection-start-column="48" selection-end-line="170" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#845#918#0" expanded="false" />
+            <element signature="e#931#1370#0" expanded="false" />
+            <element signature="e#1466#1531#0" expanded="false" />
+            <element signature="e#1560#1635#0" expanded="false" />
+            <element signature="e#1746#1976#0" expanded="false" />
+            <element signature="e#2227#3830#0" expanded="false" />
+            <element signature="e#3866#4398#0" expanded="false" />
+            <element signature="e#4593#5069#0" expanded="false" />
+            <element signature="e#5080#6067#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/antd/lib/checkbox/Checkbox.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="31" column="21" lean-forward="false" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/@types/react/index.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="307" column="17" lean-forward="false" selection-start-line="307" selection-start-column="17" selection-end-line="307" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="48" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwoChirldren.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="421">
+          <caret line="20" column="52" lean-forward="false" selection-start-line="20" selection-start-column="52" selection-end-line="20" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="32" column="32" lean-forward="false" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemOne.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="7" column="11" lean-forward="true" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="25" column="12" lean-forward="true" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#624#737#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/technological/projectDetail.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="21" column="42" lean-forward="true" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="34" column="12" lean-forward="true" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="598">
+          <caret line="60" column="14" lean-forward="false" selection-start-line="60" selection-start-column="14" selection-end-line="60" selection-end-column="14" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#925#1051#0" expanded="false" />
+            <element signature="e#1087#1190#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="10" column="43" lean-forward="true" selection-start-line="10" selection-start-column="43" selection-end-line="10" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="48" column="10" lean-forward="false" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+          <folding>
+            <element signature="e#46#543#0" expanded="false" />
+            <element signature="e#544#1041#0" expanded="false" />
+            <element signature="e#1412#1891#0" expanded="false" />
+            <element signature="e#1516#1627#0" expanded="false" />
+            <element signature="e#1645#1721#0" expanded="false" />
+            <element signature="e#1739#1814#0" expanded="false" />
+            <element signature="e#1901#2365#0" expanded="false" />
+            <element signature="e#2122#2149#0" expanded="false" />
+            <element signature="e#2171#2361#0" expanded="false" />
+            <element signature="e#2376#3278#0" expanded="false" />
+            <element signature="e#2433#2951#0" expanded="false" />
+            <element signature="e#2680#2711#0" expanded="false" />
+            <element signature="e#2735#2945#0" expanded="false" />
+            <element signature="e#3289#3560#0" expanded="false" />
+            <element signature="e#3578#3746#0" expanded="false" />
+            <element signature="e#3767#3964#0" expanded="false" />
           </folding>
         </state>
       </provider>

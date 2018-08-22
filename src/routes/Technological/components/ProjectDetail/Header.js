@@ -9,7 +9,7 @@ export default class Header extends React.Component {
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
   }
   setProjectInfoDisplay() {
-    this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay })
+    this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry:  true })
   }
 
   //出现confirm-------------start

@@ -17,9 +17,27 @@
   from {  left: -100%;}
   to {  left: 0;}
 }
-
+@keyframes maskShow
+{
+  from {  background-color: rgba(255,255,255,0);}
+  to { background-color: rgba(0,0,0,.6);}
+}
+@-webkit-keyframes maskShow{
+  from {  background-color: rgba(255,255,255,0);}
+  to { background-color: rgba(0,0,0,.6);}
+}
+@keyframes maskHide
+{
+  from {  background: rgba(0,0,0,.6);}
+  to { background: rgba(255,255,255,0);}
+}
+@-webkit-keyframes maskHide{
+  from {  background: rgba(0,0,0,.6);}
+  to { background: rgba(255,255,255,0);}
+}
 //项目详细信息
 .detailInfo, .detailInfo_2{
+  z-index: 10;
   position: absolute;
   width: 372px;
   background-color: #FFFFFF;
@@ -37,7 +55,27 @@
   animation:mymove 500ms ease;
   -webkit-animation:mymove 500ms ease; /* Safari 和 Chrome */
 }
-
+.maskShow {
+  z-index: 9;
+  position: absolute;
+  background-color: rgba(0,0,0,.6);
+  width: 100%;
+  height: 100%;
+}
+.maskHide {
+  position: absolute;
+  z-index: 9;
+  width: 100%;
+  height: 100%;
+}
+.maskShow {
+  animation:maskShow 500ms ease;
+  -webkit-animation:maskShow 500ms ease; /* Safari 和 Chrome */
+}
+.maskHide {
+  animation:maskHide 500ms ease;
+  -webkit-animation:maskHide 500ms ease; /* Safari 和 Chrome */
+}
 
 .top{
   display: flex;
