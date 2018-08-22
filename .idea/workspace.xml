@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/projectDetail.js" afterPath="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -432,7 +425,7 @@
       <workItem from="1534727305244" duration="10318000" />
       <workItem from="1534743636156" duration="22852000" />
       <workItem from="1534813808441" duration="19350000" />
-      <workItem from="1534899797719" duration="29838000" />
+      <workItem from="1534899797719" duration="29873000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -623,11 +616,18 @@
       <option name="project" value="LOCAL" />
       <updated>1534844262124</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary=" 任务列表">
+      <created>1534938829739</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1534938829739</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="334418000" />
+    <option name="totallyTimeSpent" value="334453000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -678,7 +678,8 @@
     <MESSAGE value="项目详情界面ui完成 优化" />
     <MESSAGE value="动态页" />
     <MESSAGE value="评论" />
-    <option name="LAST_COMMIT_MESSAGE" value="评论" />
+    <MESSAGE value=" 任务列表" />
+    <option name="LAST_COMMIT_MESSAGE" value=" 任务列表" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
