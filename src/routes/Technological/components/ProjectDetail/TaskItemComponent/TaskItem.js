@@ -9,6 +9,10 @@ const Panel = Collapse.Panel
 
 export default class TaskItem extends React.Component {
 
+  addItem() {
+    // console.log(this)
+    this.props.setDrawerVisibleOpen()
+  }
   render() {
     return (
       <div className={CreateTaskStyle.taskItem}>
@@ -19,7 +23,7 @@ export default class TaskItem extends React.Component {
           <ItemOne key={'1'}/>
           <ItemTwo key={'2'}/>
 
-          <div  key={'add'} className={CreateTaskStyle.addItem}>
+          <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.addItem.bind(this)}>
             <Icon type="plus-circle-o" />
           </div>
         </QueueAnim>

@@ -173,7 +173,8 @@ export default class DetailInfo extends React.Component {
           ) : ( EditArea)}
           <AddModalForm {...this.props} />
         </div>
-        <div className={projectInfoDisplay?detailInfoStyle.maskShow : detailInfoStyle.maskHide} style={{display: isInitEntry ? 'block': 'none'}}></div>
+        {/*style={{display: isInitEntry ? 'block': 'none'}}*/}
+        <div className={projectInfoDisplay?detailInfoStyle.maskShow : detailInfoStyle.maskHide} ></div>
       </div>
     )
   }

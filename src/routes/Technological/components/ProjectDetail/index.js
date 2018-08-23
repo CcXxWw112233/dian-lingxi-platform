@@ -3,13 +3,14 @@ import {connect} from "dva/index";
 import Header from './Header'
 import DetailInfo from './DetailInfo'
 import CreateTask from  './CreateTask'
+import DrawerContent from './TaskItemComponent/DrawerContent'
+
 
 const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
   const { datas:{ projectInfoDisplay, taskItemList } } = model
-  console.log(taskItemList)
   const HeaderListProps = {
     modal,
     model,
@@ -59,6 +60,8 @@ const ProjectDetail = (props) => {
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       <CreateTask  {...CreateTaskProps}/>
+      {/*<DrawerContent />*/}
+
     </div>
   )
 };
