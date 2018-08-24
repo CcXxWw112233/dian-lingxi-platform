@@ -3,7 +3,7 @@ import DrawerContentStyles from './DrawerContent.less'
 import { Icon } from 'antd'
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
-const initEditContent = '<p style="font-size: 12px">Hello World!</p>'
+const initEditContent = '<p style="font-size: 14px">这是第一次</p>'
 
 let that
 export default class DrawContent extends React.Component {
@@ -14,6 +14,27 @@ export default class DrawContent extends React.Component {
   render() {
     that = this
     const { isCheck, editContent } = this.state
+    const editorProps = {
+      height: 0,
+      contentFormat: 'html',
+      initialContent: editContent,
+      onHTMLChange:(e) => {
+        console.log(e)
+        this.setState({
+          editContent: e
+        })
+      },
+      onBlur: () => {
+        console.log('ss')
+      },
+      fontSizes: [14],
+      controls: [
+        'text-color', 'bold', 'italic', 'underline', 'strike-through',
+        'text-align', 'headings', 'list_ul',
+        'list_ol', 'blockquote', 'code', 'split', 'media'
+      ]
+    }
+
     return(
       <div className={DrawerContentStyles.DrawerContentOut}>
 
@@ -57,20 +78,3 @@ export default class DrawContent extends React.Component {
 
 }
 
-const editorProps = {
-  height: 0,
-  contentFormat: 'html',
-  initialContent: '',
-  onHTMLChange: function(e){
-    console.log(e)
-    that.setState({
-      editContent: e
-    })
-  },
-  fontSizes: [14],
-  controls: [
-    'text-color', 'bold', 'italic', 'underline', 'strike-through',
-     'text-align', 'headings', 'list_ul',
-    'list_ol', 'blockquote', 'code', 'split', 'media'
-  ]
-}
