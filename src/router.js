@@ -38,6 +38,11 @@ const Routers = function ({ history, app }) {
   // })
   const routes = [
     {
+      path: '/',
+      // models: () => [import('./models/login')],
+      component: () => import('./routes/Login/'),
+      redirect:  '/login'
+    }, {
       path: '/login',
       models: () => [import('./models/login')],
       component: () => import('./routes/Login/'),
@@ -77,7 +82,7 @@ const Routers = function ({ history, app }) {
           routes.map(({ path, ...dynamics }, key) => {
             return (
               <Route key={key}
-                // exact
+                     exact={path.indexOf('/technological') === -1 ? true : false}
                      path={path}
                      component={dynamic({
                        app,

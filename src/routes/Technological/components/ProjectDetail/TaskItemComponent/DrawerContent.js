@@ -3,20 +3,17 @@ import DrawerContentStyles from './DrawerContent.less'
 import { Icon } from 'antd'
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
+const initEditContent = '<p style="font-size: 12px">Hello World!</p>'
 
+let that
 export default class DrawContent extends React.Component {
   state = {
-    isCheck: true
-  }
-  handleEditChange = (content) => {
-    console.log(content)
-  }
-
-  handleEditRawChange = (rawContent) => {
-    console.log(rawContent)
+    isCheck: true,
+    editContent: initEditContent
   }
   render() {
-    const { isCheck } = this.state
+    that = this
+    const { isCheck, editContent } = this.state
     return(
       <div className={DrawerContentStyles.DrawerContentOut}>
 
@@ -48,7 +45,7 @@ export default class DrawContent extends React.Component {
 
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_4}>
-            点击卡片上的任意内容可进入编辑模式，例如通过修改项目归属来进行跨项目移动任务、给任务指派负责人、设置任务截止时间、设置任务提醒等等等，此处是任务的描述，可以添加富文本内容，无论是链接 http://new-di.com 还是图文并茂↓都支持：
+            <div dangerouslySetInnerHTML={{__html: editContent}}></div>
           </div>
         </div>
         <div className={DrawerContentStyles.editorWraper}>
@@ -60,24 +57,20 @@ export default class DrawContent extends React.Component {
 
 }
 
-
 const editorProps = {
   height: 0,
   contentFormat: 'html',
-  initialContent: '<p style="font-size: 12px">Hello World!</p>',
-  onChange: this.handleEditChange,
-  onRawChange: this.handleEditRawChange,
-  fontSizes: [12],
+  initialContent: '',
+  onHTMLChange: function(e){
+    console.log(e)
+    that.setState({
+      editContent: e
+    })
+  },
+  fontSizes: [14],
   controls: [
-    'text-color', 'bold', 'italic', 'underline','font-size',, 'strike-through',
+    'text-color', 'bold', 'italic', 'underline', 'strike-through',
      'text-align', 'headings', 'list_ul',
     'list_ol', 'blockquote', 'code', 'split', 'media'
   ]
 }
-
-const   excludeControls = [
-  'undo','redo', 'split', 'font-size', 'font-family', 'line-height', 'letter-spacing',
-  'indent','text-color', 'bold', 'italic', 'underline',  'underline', 'strike-through',
-  'superscript', 'subscript', 'remove-styles', 'emoji', 'text-align', 'split', 'headings', 'list_ul',
-  'list_ol', 'blockquote', 'code', 'split', 'link', 'split', 'hr', 'split', 'media', 'clear'
-]
