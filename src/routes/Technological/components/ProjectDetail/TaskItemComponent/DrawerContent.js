@@ -3,6 +3,8 @@ import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Tag, Input  } from 'antd'
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
+import DCAddChirlrenTask from './DCAddChirlrenTask'
+
 const initEditContent = '<p style="font-size: 14px">这是第一次</p>'
 
 let that
@@ -143,6 +145,11 @@ export default class DrawContent extends React.Component {
 
           </div>
         </div>
+
+        <div className={DrawerContentStyles.spaceLine}></div>
+
+        {/*添加子任务*/}
+        <DCAddChirlrenTask />
 
         <div className={DrawerContentStyles.spaceLine}></div>
 

@@ -111,4 +111,37 @@
     border: 1px solid rgba(232,232,232,1);
     margin-top: 20px;
   }
+
+  .contain_7{
+    margin-top: 20px;
+    font-size: 14px;
+    color: #d9d9d9;
+    display: flex;
+    .contain_7_add{
+      width: 100px;
+      padding: 0;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      input{
+        border: none;
+        outline: none;
+        color: #595959;
+      }
+      input::input-placeholder{color: #d9d9d9  ;} /* 有些资料显示需要写，有些显示不需要，但是在编辑器webstorm中该属性不被识别 */
+      ::-webkit-input-placeholder { /* WebKit browsers */
+        color: #d9d9d9;
+      }
+      :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color: #d9d9d9;
+      }
+      ::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color: #d9d9d9;
+      }
+      :-ms-input-placeholder { /* Internet Explorer 10+ */
+        color: #d9d9d9;
+      }
+    }
+  }
 }
