@@ -9,22 +9,29 @@ export default class ItemTwo extends React.Component {
   state = {
     isCheck: false
   }
-  itemOneClick() {
+  itemOneClick(e) {
+    e.stopPropagation();
     this.setState({
       isCheck: !this.state.isCheck
     })
   }
+  seeDetailInfo() {
+    this.props.setDrawerVisibleOpen()
+  }
   render() {
     const { isCheck } = this.state
     return (
-      <div  key={'2'} className={CreateTaskStyle.item_2}>
-        <div className={CreateTaskStyle.item_2_top} onClick={this.itemOneClick.bind(this)}>
-          <div className={isCheck? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox}>
+      <div  key={'2'} className={CreateTaskStyle.item_2} >
+        <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this)}>
+          <div className={isCheck? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>
           <div>安康市大家可能速度看是多么安康市大家可能速度看是多么安</div>
           <div>
             <img src="" />
+          </div>
+          <div>
+            <Icon type="ellipsis"  style={{fontSize:16}}/>
           </div>
         </div>
         <div className={CreateTaskStyle.item_2_bott}>

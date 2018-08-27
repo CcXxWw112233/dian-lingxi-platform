@@ -61,7 +61,6 @@ const ProjectDetail = (props) => {
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       <CreateTask  {...CreateTaskProps}/>
       {/*<DrawerContent />*/}
-
     </div>
   )
 };

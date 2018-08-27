@@ -20,8 +20,8 @@ export default class TaskItem extends React.Component {
           任务看板形态<Icon type="right" className={[CreateTaskStyle.nextIcon]}/>
         </div>
         <QueueAnim >
-          <ItemOne key={'1'}/>
-          <ItemTwo key={'2'}/>
+          <ItemOne key={'1'} {...this.props} />
+          <ItemTwo key={'2'} {...this.props} />
 
           <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.addItem.bind(this)}>
             <Icon type="plus-circle-o" />

@@ -9,7 +9,7 @@ import { Drawer } from 'antd'
 export default class CreateTask extends React.Component {
 
   state = {
-    drawerVisible: true,
+    drawerVisible: false,
   }
   setDrawerVisibleOpen() {
     this.setState({
