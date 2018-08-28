@@ -56,7 +56,7 @@ const ProjectDetail = (props) => {
   }
 
   return(
-    <div style={{ height: '100%' ,position: 'relative'}}>
+    <div style={{ height: '100%' ,position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       <CreateTask  {...CreateTaskProps}/>
