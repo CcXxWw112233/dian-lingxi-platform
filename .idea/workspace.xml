@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="d">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" afterPath="$PROJECT_DIR$/package-lock.json" />
-      <change beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change beforePath="$PROJECT_DIR$/src/models/login/index.js" afterPath="$PROJECT_DIR$/src/models/login/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/index.js" afterPath="$PROJECT_DIR$/src/models/technological/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/technological/index.js" afterPath="$PROJECT_DIR$/src/services/technological/index.js" />
       <change beforePath="$PROJECT_DIR$/src/utils/requestAxios.js" afterPath="$PROJECT_DIR$/src/utils/requestAxios.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -50,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/src/utils/requestAxios.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="335">
-              <caret line="54" column="9" lean-forward="false" selection-start-line="54" selection-start-column="9" selection-end-line="54" selection-end-column="9" />
+              <caret line="54" column="19" lean-forward="true" selection-start-line="54" selection-start-column="19" selection-end-line="54" selection-end-column="19" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -443,7 +436,7 @@
       <workItem from="1535166296059" duration="4168000" />
       <workItem from="1535331332876" duration="35031000" />
       <workItem from="1535417985935" duration="10867000" />
-      <workItem from="1535434464260" duration="22929000" />
+      <workItem from="1535434464260" duration="22973000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -704,16 +697,23 @@
       <option name="project" value="LOCAL" />
       <updated>1535449727472</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="登陆跳转">
+      <created>1535460162713</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1535460162713</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="459286000" />
+    <option name="totallyTimeSpent" value="459330000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17702845" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17702845" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -741,7 +741,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="稍微修改" />
     <MESSAGE value="登录界面" />
     <MESSAGE value="登录界面,注册界面，注册成功，找回密码，重置密码界面ui" />
     <MESSAGE value="拖拽组件" />
@@ -766,7 +765,8 @@
     <MESSAGE value="任务添加弹窗继续" />
     <MESSAGE value="添加任务分组拖拽" />
     <MESSAGE value="评论组件" />
-    <option name="LAST_COMMIT_MESSAGE" value="评论组件" />
+    <MESSAGE value="登陆跳转" />
+    <option name="LAST_COMMIT_MESSAGE" value="登陆跳转" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1309,7 +1309,7 @@
     <entry file="file://$PROJECT_DIR$/src/utils/requestAxios.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="335">
-          <caret line="54" column="9" lean-forward="false" selection-start-line="54" selection-start-column="9" selection-end-line="54" selection-end-column="9" />
+          <caret line="54" column="19" lean-forward="true" selection-start-line="54" selection-start-column="19" selection-end-line="54" selection-end-column="19" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>

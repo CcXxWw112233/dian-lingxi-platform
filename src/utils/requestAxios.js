@@ -51,7 +51,7 @@ export default function request(options = {}, elseSet = {}) {
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
             case 401:
-              // window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+              window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
               break
             default:
               break
