@@ -6,6 +6,7 @@ import 'braft-editor/dist/braft.css'
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
+import Comment from '../../NewsDynamic/Comment'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -375,13 +376,20 @@ export default class DrawContent extends React.Component {
           </div>
         </div>
 
-        <div className={DrawerContentStyles.spaceLine}></div>
+        <div  className={DrawerContentStyles.divContent_1}>
+          <div className={DrawerContentStyles.spaceLine}></div>
+        </div>
 
         {/*添加子任务*/}
         <DCAddChirdrenTask />
 
-        <div className={DrawerContentStyles.spaceLine}></div>
+        <div  className={DrawerContentStyles.divContent_1}>
+          <div className={DrawerContentStyles.spaceLine} ></div>
+        </div>
 
+        <div className={DrawerContentStyles.divContent_2} style={{marginTop: 20}}>
+          <Comment leftSpaceDivWH={26}></Comment>
+        </div>
 
       </div>
     )
