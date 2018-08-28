@@ -3,8 +3,10 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
+import Cookies from 'js-cookie'
+import QueryString from 'querystring'
 
-
+let redirectLocation
 export default {
   namespace: 'login',
   state: [],
@@ -13,6 +15,7 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/login') {
+          redirectLocation = location.search.replace('?redirect=','')
         }
       })
     },
@@ -21,7 +24,12 @@ export default {
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       let res = yield call(formSubmit, payload)
       if(isApiResponseOk(res)) {
+
+        const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         message.success('登录成功', MESSAGE_DURATION_TIME)
+        yield put(routerRedux.push(redirectLocation))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

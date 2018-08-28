@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/login'
+import { getUSerInfo, requestVerifyCode } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -18,16 +18,19 @@ export default {
               chirldRoute: location.pathname.replace('/technological',''),
             }
           })
+          dispatch({
+            type:'getUSerInfo',
+          })
         }else{
         }
       })
     },
   },
   effects: {
-    * formSubmit({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(formSubmit, payload)
+    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(getUSerInfo, payload)
       if(isApiResponseOk(res)) {
-        message.success('登录成功', MESSAGE_DURATION_TIME)
+        console.log(res)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
