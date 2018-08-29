@@ -12,11 +12,16 @@ import ClassBasicModel from '../../models/technological'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 const Technological = (options) => {
-  const { dispatch, history, technological } = options
+  const { dispatch, history, technological, model } = options
   const app = dva();
-
   //导航栏props-------------
   const HeaderNavProps = {
+    technological,
+    logout() {
+      dispatch({
+        type: getEffectOrReducerByName('logout'),
+      })
+    },
     setChirldrenRoute(data) {
       const chirldRoute = data
       dispatch({
@@ -73,8 +78,11 @@ const Technological = (options) => {
 };
 
 // export default Products;
-export default connect(({ technological }) => ({
-  technological,
-}))(Technological);
+export default connect(({ technological }) => {
+  return({
+    technological,
+  })
+
+})(Technological);
 
 

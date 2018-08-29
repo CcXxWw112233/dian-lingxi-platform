@@ -1,4 +1,4 @@
-import { getUSerInfo, requestVerifyCode } from '../../services/technological'
+import { getUSerInfo, logout } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -10,17 +10,17 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        message.destroy()
+        // message.destroy()
         if (location.pathname.indexOf('/technological') !== -1) {
-          dispatch({
-            type:'updateDatas',
-            payload: {
-              chirldRoute: location.pathname.replace('/technological',''),
-            }
-          })
-          dispatch({
-            type:'getUSerInfo',
-          })
+          // dispatch({
+          //   type:'updateDatas',
+          //   payload: {
+          //     chirldRoute: location.pathname.replace('/technological',''),
+          //   }
+          // })
+          // dispatch({
+          //   type:'getUSerInfo',
+          // })
         }else{
         }
       })
@@ -30,21 +30,25 @@ export default {
     * getUSerInfo({ payload }, { select, call, put }) { //提交表单
       let res = yield call(getUSerInfo, payload)
       if(isApiResponseOk(res)) {
-        console.log(res)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userInfo: res.data
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getVerificationcode({ payload }, { select, call, put }) { //获取验证码
-      const { data, calback } = payload
-      calback && typeof calback === 'function' ? calback() : ''
-      let res = yield call(requestVerifyCode, data)
+    * logout({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
-        message.success(res.message, MESSAGE_DURATION_TIME)
+        yield put(routerRedux.push('/login'));
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

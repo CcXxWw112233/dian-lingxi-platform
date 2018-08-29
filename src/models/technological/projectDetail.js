@@ -13,7 +13,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        message.destroy()
+        // message.destroy()
         if (location.pathname === '/technological/projectDetail') {
           dispatch({
             type: 'updateDatas',

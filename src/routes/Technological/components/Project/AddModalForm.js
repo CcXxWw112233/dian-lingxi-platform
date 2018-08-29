@@ -8,6 +8,24 @@ class AddModalForm extends React.Component {
   state = {
     step: 1
   }
+  //表单输入时记录值
+  boardNameChange(e){
+    const value = e.target.value
+    this.setState({
+      board_name: value
+    })
+  }
+  descriptionChange(e){
+    this.setState({
+      description: e.target.value
+    })
+  }
+  usersChange(e) {
+    this.setState({
+      users: e.target.value
+    })
+    console.log(this.state.users)
+  }
   //下一步
   nextStep = () => {
     this.setState({
@@ -30,9 +48,10 @@ class AddModalForm extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
       if (!err) {
-        this.props.handleSubmit ? this.props.handleSubmit(values) : false
+        values['board_name'] = this.state.board_name
+        values['description'] = this.state.description
+        this.props.addNewProject ? this.props.addNewProject(values) : false
       }
     });
   }
@@ -46,18 +65,21 @@ class AddModalForm extends React.Component {
         <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤一：给你的项目起个名称</div>
         {/* 项目名称 */}
         <FormItem style={{width: 336}}>
-          {getFieldDecorator('name', {
-            rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+          {getFieldDecorator('board_name', {
+            // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <Input placeholder="输入项目名称" style={{height: 40}}/>
+            <Input placeholder="输入项目名称"
+                   onChange={this.boardNameChange.bind(this)}
+                   style={{height: 40}}/>
           )}
         </FormItem>
         {/* 项目描述 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('description', {
-            rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+            // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}} placeholder="项目描述（选填)"/>
+            <TextArea style={{height: 208}} placeholder="项目描述（选填)"
+                      onChange={this.descriptionChange.bind(this)}/>
           )}
         </FormItem>
         {/* 确认 */}
@@ -115,7 +137,7 @@ class AddModalForm extends React.Component {
           </FormItem>
           <FormItem style={{width: 392}}>
             {getFieldDecorator('name', {
-              rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+              // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
             })(
               <div style={{display: 'flex',justifyContent: 'space-between',}}>
                 <div style={{textAlign: 'left',lineHeight: 1}}>
@@ -141,10 +163,11 @@ class AddModalForm extends React.Component {
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>
-          {getFieldDecorator('othersInfo', {
-            rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+          {getFieldDecorator('users', {
+            // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
+            <TextArea style={{height: 208}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"
+                       onChange={this.usersChange.bind(this)}/>
           )}
         </FormItem>
         <div style={{marginTop :-10}}>

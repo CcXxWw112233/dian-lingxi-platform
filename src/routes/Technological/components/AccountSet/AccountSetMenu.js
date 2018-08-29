@@ -23,13 +23,13 @@ export default class AccountSetMenu extends React.Component {
     let Dom
     switch (this.state.SelectedKeys) {
       case '1':
-        Dom =  <PersonalInfoForm/>
+        Dom =  <PersonalInfoForm {...this.props} handleMenuClick={this.handleMenuClick.bind(this)}/>
         break
       case '2':
-        Dom = <BindAccountForm/>
+        Dom = <BindAccountForm {...this.props}/>
         break
       case '3':
-        Dom = <ChangePasswordForm />
+        Dom = <ChangePasswordForm {...this.props} />
         break
       default:
         return ''
@@ -45,6 +45,8 @@ export default class AccountSetMenu extends React.Component {
           <Menu
             onClick={this.handleMenuClick}
             style={{ width: 222, height: '100%' }}
+            defaultOpenKeys={[SelectedKeys]}
+            selectedKeys={[SelectedKeys]}
             defaultSelectedKeys={[SelectedKeys]}
             mode="inline"
           >

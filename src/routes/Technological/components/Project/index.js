@@ -16,6 +16,28 @@ const Project = (props) => {
     },
     hideModal() {
       dispatch({ type: 'modal/hideModal' })
+    },
+    addNewProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addNewProject'),
+        payload: data
+      })
+    },
+    collectionProject(id) {
+      dispatch({
+        type: getEffectOrReducerByName('collectionProject'),
+        payload: {
+          id
+        }
+      })
+    },
+    cancelCollection(id) {
+      dispatch({
+        type: getEffectOrReducerByName('cancelCollection'),
+        payload: {
+          id
+        }
+      })
     }
   }
   const routingJump = (path) => {

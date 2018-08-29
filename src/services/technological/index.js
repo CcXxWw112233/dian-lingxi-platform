@@ -1,5 +1,6 @@
 import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import Cookies from 'js-cookie'
 
 //获取用户信息
 export async function getUSerInfo(params) {
@@ -10,20 +11,17 @@ export async function getUSerInfo(params) {
 }
 
 
-//d登录
-export async function formSubmit(data) {
+//退出登录
+export async function logout(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/signin`,
-    method: 'POST',
-    data,
+    url: `${REQUEST_DOMAIN}/user/logout`,
+    method: 'GET',
+    params: {
+      accessToken:  Cookies.get('Authorization'),
+      refreshToken: Cookies.get('refreshToken')
+    },
   });
 }
 
-//获取验证码
-export async function requestVerifyCode(data) {
-  return request({
-    url: `${REQUEST_DOMAIN}/sms/code/send`,
-    method: 'POST',
-    data,
-  });
-}
+
+

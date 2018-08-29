@@ -27,14 +27,41 @@ class PersonalInfoForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.props.handleSubmit ? this.props.handleSubmit(values) : false
+        console.log(values)
+        this.props.updateUserInfo ? this.props.updateUserInfo(values) : false
       }
     });
+  }
+
+  gotoMemuSecond() {
+    this.props.handleMenuClick({key: '2'})
   }
 
   render() {
     const that = this
     const { getFieldDecorator } = this.props.form;
+    const { accountSet = {} } = this.props
+    const { datas = {} } = accountSet
+    const { userInfo = {} } = datas
+    const {
+      orgnization,
+      aboutMe,
+      avatar,
+      createTime,
+      email,
+      job,
+      fullName,
+      id,
+      lastLoginTime,
+      mobile,
+      nickname,
+      phone,
+      qq,
+      status,
+      updateTime,
+      username,
+      wechat,
+    } = userInfo
     // 表单样式设置
     const formItemLayout = {
       labelCol: {
@@ -46,23 +73,7 @@ class PersonalInfoForm extends React.Component {
         sm: { span: 16 },
       },
     };
-    const tailFormItemLayout = {
-      labelCol: {
-        xs: { span: 10 },
-        sm: { span: 2 },
-      },
-      wrapperCol: {
-        xs: {
-          span: 4,
-          offset: 2,
-        },
-        sm: {
-          span: 6,
-          offset: 2,
-        },
-      },
-    };
-    const { name, job, ognization, weixin, email, mobile, avatar } = {}
+
     const { avatarUrl, uploading } = this.state
     const uploadProps = {
       name: 'file',
@@ -110,8 +121,8 @@ class PersonalInfoForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('title', {
-            initialValue: name || undefined,
+          {getFieldDecorator('full_name', {
+            initialValue: fullName || undefined,
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>
@@ -142,8 +153,8 @@ class PersonalInfoForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('ognization', {
-            initialValue: ognization || undefined,
+          {getFieldDecorator('orgnization', {
+            initialValue: orgnization || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>
@@ -163,8 +174,8 @@ class PersonalInfoForm extends React.Component {
           })(
             <div style={{display: 'flex'}}>
               <div className={indexStyle.avatar}>
-                {avatarUrl?(
-                  <img src={avatarUrl} style={{width:'100%',height: '100%',borderRadius: 40}}></img>
+                {avatar?(
+                  <img src={avatar} style={{width:'100%',height: '100%',borderRadius: 40}}></img>
                 ):(
                   <Icon type="user" style={{fontSize: 28, color: '#ffffff',display: 'inline-block',margin: '0 auto',marginTop:6}}/>
                 )}
@@ -196,7 +207,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: email || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16,color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }}>修改</Button></div>
+            <div style={{marginLeft: 12, fontSize: 16,color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*手机号*/}
@@ -212,7 +223,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: mobile || undefined,
             rules: [{ required: false }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16 ,color: '#262626'}}>{ email || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }}>修改</Button></div>
+            <div style={{marginLeft: 12, fontSize: 16 ,color: '#262626'}}>{ mobile || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*  微信 */}
@@ -224,9 +235,9 @@ class PersonalInfoForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('weixin', {
-            initialValue: weixin || undefined,
-            rules: [{ required: false, message: '请输入组织', whitespace: true }],
+          {getFieldDecorator('wechat', {
+            initialValue: wechat || undefined,
+            rules: [{ required: false, message: '请输入微信', whitespace: true }],
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>
           )}

@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/login'
+import { getProjectList, addNewProject, updateProject, deleteProject, archivedProject, cancelCollection, projectDetail, addMenbersInProject, quitProject, collectionProject} from '../../services/technological/project'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -10,9 +10,14 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        message.destroy()
+        // message.destroy()
         if (location.pathname === '/technological/project') {
-          // console.log(1)
+          dispatch({
+            type: 'getProjectList',
+            payload: {
+              type: '1'
+            }
+          })
         }else{
           // console.log(2)
         }
@@ -20,10 +25,58 @@ export default {
     },
   },
   effects: {
-    * formSubmit({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(formSubmit, payload)
+    * getProjectList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectList, payload)
       if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectList: res.data
+          }
+        })
       }else{
+
+      }
+    },
+    * addNewProject({ payload }, { select, call, put }) {
+      let res = yield call(addNewProject, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+    * collectionProject({ payload }, { select, call, put }) {
+      const { id } = payload
+      let res = yield call(collectionProject, id)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+    * cancelCollection({ payload }, { select, call, put }) {
+      const { id } = payload
+      let res = yield call(cancelCollection, id)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
       }
     },
     * routingJump({ payload }, { call, put }) {

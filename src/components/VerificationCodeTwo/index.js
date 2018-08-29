@@ -4,7 +4,7 @@ let interval = null
 const initTimeValue = 60
 let initTime = initTimeValue
 
-//参见登陆界面验证码
+//参见登录界面验证码
 export default class VerificationCodeTwo extends React.Component{
 
   constructor(props) {

@@ -15,7 +15,8 @@ axios.interceptors.request.use(
 );
 
 export default function request(options = {}, elseSet = {}) {
-  console.log(window.location)
+  const { isNotLoading } = elseSet
+  loading = !isNotLoading ? message.loading('加载中...', 0) : ''
   const {
     url = '',
     headers = {},
@@ -28,12 +29,10 @@ export default function request(options = {}, elseSet = {}) {
   const refreshToken = Cookies.get('refreshToken')
 
   header['Authorization'] =  Authorization//refreshToken
-  if (!header['content-type']) {
-    header['content-type'] = 'application/x-www-form-urlencoded'
-  }
+  header['refreshToken'] =  refreshToken
   return new Promise((resolve, reject) => {
     const { clooseLoading = false } = elseSet
-    clooseLoading ? loading = message.loading('加载中...', 0):''
+    // clooseLoading ? loading = message.loading('加载中...', 0):''
     axios({
       ...{
         url,
@@ -59,6 +58,7 @@ export default function request(options = {}, elseSet = {}) {
         }
       }).finally(() => {
         setTimeout(loading,0);
+        // message.destroy()
       });
   })
 }

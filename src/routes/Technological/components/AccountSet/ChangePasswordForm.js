@@ -27,7 +27,7 @@ class ChangePasswordForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.props.handleSubmit ? this.props.handleSubmit(values) : false
+        this.props.changePassWord ? this.props.changePassWord(values) : false
       }
     });
   }
@@ -46,59 +46,6 @@ class ChangePasswordForm extends React.Component {
         sm: { span: 16 },
       },
     };
-    const tailFormItemLayout = {
-      labelCol: {
-        xs: { span: 10 },
-        sm: { span: 2 },
-      },
-      wrapperCol: {
-        xs: {
-          span: 4,
-          offset: 2,
-        },
-        sm: {
-          span: 6,
-          offset: 2,
-        },
-      },
-    };
-    const { name, job, ognization, weixin, email, mobile, avatar } = {}
-    const { avatarUrl, uploading } = this.state
-    const uploadProps = {
-      name: 'file',
-      action: '//jsonplaceholder.typicode.com/posts/',
-      headers: {
-        authorization: 'authorization-text',
-      },
-      onChange({ file, fileList, event }) {
-        if (file.status === 'uploading') {
-          that.setState({
-            uploading: true
-          })
-        }
-        if (file.status !== 'uploading') {
-          that.setState({
-            uploading: false
-          })
-          if (file.response && file.response.data) {
-            that.setState({
-              avatarUrl: file.response.data
-            })
-          }
-        }
-        if (file.status === 'done') {
-          message.success(`头像上传成功。`);
-          that.setState({
-            uploading: false
-          })
-        } else if (file.status === 'error') {
-          message.error(`头像上传失败。`);
-          that.setState({
-            uploading: false
-          })
-        }
-      },
-    };
     return (
       <Form onSubmit={this.handleSubmit} style={{padding:'20px 0',width: 600}}>
         {/* 当前密码 */}
@@ -110,7 +57,7 @@ class ChangePasswordForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('currentPassword', {
+          {getFieldDecorator('old_password', {
             rules: [{ required: false, message: '请输入当前密码', whitespace: true }],
           })(
             <Input placeholder="请输入当前密码" className={indexStyle.personInfoInput} type={'password'}/>
@@ -125,10 +72,10 @@ class ChangePasswordForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('newPassword', {
+          {getFieldDecorator('new_password', {
             rules: [{ required: false, message: '请输入新密码', whitespace: true }],
           })(
-            <Input placeholder="密码（数字，字母，至少6位）" className={indexStyle.personInfoInput}/>
+            <Input placeholder="密码（数字，字母，至少6位）" className={indexStyle.personInfoInput} type={'password'} />
           )}
         </FormItem>
         {/* 再次输入 */}
@@ -143,7 +90,7 @@ class ChangePasswordForm extends React.Component {
           {getFieldDecorator('confirmPassword', {
             rules: [{ required: false, message: '确认输入新密码', whitespace: true }],
           })(
-            <Input placeholder="确认输入新密码" className={indexStyle.personInfoInput}/>
+            <Input placeholder="确认输入新密码" className={indexStyle.personInfoInput} type={'password'} />
           )}
         </FormItem>
         {/* 确认 */}

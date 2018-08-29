@@ -1,9 +1,9 @@
 import React from 'react';
 import indexStyle from './index.less'
 import { Link } from 'dva/router'
-import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card} from 'antd'
+import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from 'antd'
 const TabPane = Tabs.TabPane;
-
+const SubMenu = Menu.SubMenu
 export default class HeaderNav extends React.Component{
   constructor(props) {
     super(props)
@@ -49,15 +49,47 @@ export default class HeaderNav extends React.Component{
   routeingJump(route) {
     this.props.routingJump(route)
   }
+  logout() {
+    const that = this;
+    Modal.confirm({
+      title: '确定退出登录？',
+      okText: '确认',
+      onOk: that.props.logout,
+      cancelText: '取消',
+    });
+
+  }
   render() {
+    const { technological = {} } = this.props
+    const { datas = {} } = technological
+    const { userInfo = {} } = datas
+    const {
+      orgnization = '组织',
+      aboutMe,
+      avatar,
+      createTime,
+      email,
+      fullName,
+      id,
+      lastLoginTime,
+      mobile,
+      nickname,
+      phone,
+      qq,
+      status,
+      updateTime,
+      username,
+      wechat,
+    } = userInfo
     const menu = (
-      <Card className={indexStyle.menuDiv}  selectable={false}>
-        <div className={indexStyle.triangle}></div>
-        <Menu onClick={this.handleMenuClick} >
+      //
+      <Card  className={indexStyle.menuDiv} >
+        <div className={indexStyle.triangle} ></div>
+        <Menu onClick={this.handleMenuClick} selectable={false} >
           <Menu.Item key="1" style={{padding:0,margin: 0, height: 48,paddingTop:4,boxSizing: 'border-box'}}>
-            <Tooltip placement="top" title={'合创迪安(深圳)有限公爱啥啥大伤口就会司'}>
+            <Tooltip placement="top" title={'即将上线'}>
               <div style={{width: '100%',height:'100%',padding:'0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
-                 合创迪安(asdasdasdasdasdasdasdad深圳
+                {orgnization}
               </div>
             </Tooltip>
           </Menu.Item>
@@ -100,24 +132,29 @@ export default class HeaderNav extends React.Component{
           <Menu.Item key="7" style={{height: 64,padding:0,margin: 0}}>
             <div className={indexStyle.itemDiv_2}>
               <div className={indexStyle.avatar}>
-                <Icon type="user" style={{fontSize: 28, color: '#ffffff',display: 'inline-block',margin: '0 auto',marginTop:6}}/>
+                {avatar ? (
+                  <img src={avatar} alt="" />
+                ) : (
+                  <Icon type="user" style={{fontSize: 28, color: '#ffffff',display: 'inline-block',margin: '0 auto',marginTop:6}}/>
+                )}
               </div>
               <div className={indexStyle.description}>
-                <Tooltip placement="topRight" title={'comeonbeibiasdaasdasdasdasasdadasd'}>
-                   <p>comeonbeibiasdaasdasdasdasasdadasd</p>
+                <Tooltip placement="topRight" title={fullName}>
+                   <p>{fullName}</p>
                 </Tooltip>
-                <Tooltip placement="topLeft" title={'110poskn@213.com'}>
-                  <p>110poskn@213.com</p>
+                <Tooltip placement="topLeft" title={email}>
+                  <p>{email}</p>
                 </Tooltip>
               </div>
               <div style={{marginLeft: 14}}>
-                <Icon type="login" style={{fontSize: 18}}/>
+                <Icon type="login" style={{fontSize: 18}} onClick={this.logout.bind(this)}/>
               </div>
             </div>
           </Menu.Item>
         </Menu>
       </Card>
     );
+
     const { defaultChooseTab } = this.state
     return(
       <div className={indexStyle.out}>

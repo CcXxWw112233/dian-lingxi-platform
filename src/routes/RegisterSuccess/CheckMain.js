@@ -51,7 +51,7 @@ const CheckMain = (props) => {
     <div className={indexStyles.tip_1}>你的账户：{ email || mobile }注册成功</div>
     <div className={indexStyles.tip_2}>{email ? '激活邮件已发送到你的邮箱中，邮件有效期为24小时。请及时登录邮箱，点击邮箱中的链接激活账户。':''}</div>
     <div className={indexStyles.buttonOuter}>
-      {email? (<Button type="primary" style={{height: 40,marginRight: 16}} onClick={linkEmailLoginHash.bind(null,email)}>查看邮箱</Button>):''}<Button  style={{height: 40}} onClick={routingJump.bind(null, '/login')}>返回登陆</Button>
+      {email? (<Button type="primary" style={{height: 40,marginRight: 16}} onClick={linkEmailLoginHash.bind(null,email)}>查看邮箱</Button>):''}<Button  style={{height: 40}} onClick={routingJump.bind(null, '/login')}>返回登录</Button>
     </div>
   </div>)
   const typeVerifyNode = (<div>
@@ -68,7 +68,7 @@ const CheckMain = (props) => {
     )}
     <div className={indexStyles.tip_1}>{verifyResult ? '验证成功' : '验证失败'}</div>
     <div className={indexStyles.buttonOuter}>
-      <Button  style={{height: 40}} onClick={routingJump.bind(null, '/login')}>返回登陆</Button>
+      <Button  style={{height: 40}} onClick={routingJump.bind(null, '/login')}>返回登录</Button>
     </div>
   </div>)
 
