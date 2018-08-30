@@ -21,8 +21,8 @@ class ShowAddMenberModal extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       values['board_id'] = this.props.board_id
       values['users'] = "15288887777,15288889999"
-      console.log(values)
       if (!err) {
+        this.props.setShowAddMenberModalVisibile()
         this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
       }
     });

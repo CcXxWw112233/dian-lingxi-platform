@@ -36,12 +36,11 @@ export default class CollectionProject extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk() {
-         that.props.quitProject({id: board_id})
+         that.props.quitProject({board_id})
       }
     });
   }
   //出现confirm-------------end
-
   //添加项目组成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
@@ -228,7 +227,7 @@ export default class CollectionProject extends React.Component{
       <div>
         <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
           <div className={indexStyle.listOutmask}></div>
-          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, '/technological/projectDetail')}>
+          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail?board_id=${board_id}`)}>
             <div className={indexStyle.left}>
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
                 <span>{board_name}</span>

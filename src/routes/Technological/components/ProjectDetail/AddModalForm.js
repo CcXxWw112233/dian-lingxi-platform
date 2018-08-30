@@ -19,9 +19,10 @@ class AddModalForm extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
+      values['board_id'] = this.props.board_id
+      values['users'] = '15289744455,11098555@163.com'
       if (!err) {
-        this.props.handleSubmit ? this.props.handleSubmit(values) : false
+        this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
       }
     });
   }

@@ -97,3 +97,9 @@ export const newsDynamicHandleTime = (timeStamp) => {
   }
   return DateDescription
 }
+
+export const getUrlQueryString = (href,name) => {
+  const reg = new RegExp(name +"=([^&]*)");
+  const r = href.match(reg)//window.location.href.match(reg);
+  if(r!=null)return  unescape(r[1]); return null;
+}

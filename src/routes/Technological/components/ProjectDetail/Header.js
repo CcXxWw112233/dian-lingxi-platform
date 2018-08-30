@@ -1,10 +1,15 @@
 import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox } from 'antd'
+import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 
+let is_starinit = null
 export default class Header extends React.Component {
 
   state = {
+    isInitEntry: true, // isinitEntry isCollection用于处理收藏
+    isCollection: false,
+    ShowAddMenberModalVisibile: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
   }
@@ -18,34 +23,75 @@ export default class Header extends React.Component {
       isSoundsEvrybody: e.target.checked
     })
   }
-  confirm() {
+  confirm(board_id ) {
+    const that = this
     Modal.confirm({
       title: '确认要退出该项目吗？',
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
         <span >退出后将无法获取该项目的相关动态</span>
-        <div style={{marginTop:20,}}>
-          <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
-        </div>
+        {/*<div style={{marginTop:20,}}>*/}
+        {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
+        {/*</div>*/}
       </div>,
       okText: '确认',
       cancelText: '取消',
-      onOk()  {
+      onOk() {
+        that.props.quitProject({ board_id})
       }
     });
   }
   //出现confirm-------------end
+  //添加项目组成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
 
   //菜单按钮点击
-  handleMenuClick(e) {
-    const { key } = e
+  handleMenuClick(board_id, e ) {
+    e.domEvent.stopPropagation();
     this.setState({
       ellipsisShow: false,
       dropdownVisibleChangeValue:false
     })
-    if('4' === key) {
-      this.confirm()
+    const { key } = e
+    switch (key) {
+      case '1':
+        this.setShowAddMenberModalVisibile()
+        break
+      case '2':
+        this.props.archivedProject({board_id, is_archived: '1'})
+        break
+      case '3':
+        this.props.deleteProject(board_id)
+        break
+      case '4':
+        this.confirm(board_id )
+        break
+      default:
+        return
     }
   }
+
+  //收藏
+  starClick(id, e) {
+    e.stopPropagation();
+    const { itemDetailInfo = {}} = this.props
+    const { is_star } = itemDetailInfo
+    this.setState({
+      isInitEntry: false,
+      isCollection:  this.state.isInitEntry ? (is_starinit === '1' ? false: true ) : !this.state.isCollection,
+    },function () {
+      if(this.state.isCollection) {
+        this.props.collectionProject(id)
+      }else{
+        this.props.cancelCollection(id)
+      }
+    })
+  }
+
+
   //...菜单变化点击
   ellipsisClick(e) {
     e.stopPropagation();
@@ -67,10 +113,13 @@ export default class Header extends React.Component {
   }
 
   render() {
-    const {datas: { projectInfoDisplay } } = this.props.model
-    const { ellipsisShow, dropdownVisibleChangeValue} = this.state
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {} } } = this.props.model
+    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
+    const { board_name, board_id, is_star } = projectDetailInfoData
+    is_starinit = is_star
+
     const menu = (
-      <Menu onClick={this.handleMenuClick.bind(this)}>
+      <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
             邀请成员加入
@@ -94,12 +143,16 @@ export default class Header extends React.Component {
       </Menu>
     );
     return (
+      <div>
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <Icon type="left-square-o" className={indexStyle.projectNameIcon}/>
-               <span className={indexStyle.projectName}>关于工作的关于工ss作的一切从未如此一目了然</span>
-               <Icon className={indexStyle.star} type="star" style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
+               <span className={indexStyle.projectName}>{board_name}</span>
+               <Icon className={indexStyle.star}
+                     onClick={this.starClick.bind(this, board_id)}
+                     type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}
+                     style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
                <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)} >
                  <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}}/>
                </Dropdown>
@@ -126,17 +179,8 @@ export default class Header extends React.Component {
           </div>
         </div>
       </div>
-    )
+      <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+      </div>
+  )
   }
 }
-{/*<div className={indexStyle.out}>*/}
-  {/*<Dropdown overlay={menu}>*/}
-    {/*<div className={indexStyle.left}>全部项目 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>*/}
-  {/*</Dropdown>*/}
-  {/*<div className={indexStyle.right}>*/}
-    {/*<Dropdown overlay={menu_2}>*/}
-      {/*<div>按参与关系排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>*/}
-    {/*</Dropdown>*/}
-    {/*<Icon type="appstore-o"  style={{fontSize:20,marginTop:14,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:20,marginTop:14,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:20,marginTop:14,marginLeft:16}}/>*/}
-  {/*</div>*/}
-{/*</div>*/}

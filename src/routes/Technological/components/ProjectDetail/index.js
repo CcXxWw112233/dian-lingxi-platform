@@ -14,6 +14,48 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    collectionProject(id) {
+      dispatch({
+        type: getEffectOrReducerByName('collectionProject'),
+        payload: {
+          id
+        }
+      })
+    },
+    cancelCollection(id) {
+      dispatch({
+        type: getEffectOrReducerByName('cancelCollection'),
+        payload: {
+          id
+        }
+      })
+    },
+    quitProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('quitProject'),
+        payload: data
+      })
+    },
+    deleteProject(id) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteProject'),
+        payload: {
+          id
+        }
+      })
+    },
+    archivedProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('archivedProject'),
+        payload: data
+      })
+    },
+    addMenbersInProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addMenbersInProject'),
+        payload: data
+      })
+    }
   }
   const DetailInfoProps = {
     modal,
@@ -23,9 +65,27 @@ const ProjectDetail = (props) => {
     },
     hideModal() {
       dispatch({ type: 'modal/hideModal' })
+    },
+    removeMenbers(data) {
+      dispatch({
+        type: getEffectOrReducerByName('removeMenbers'),
+        payload: data
+      })
+    },
+    updateProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateProject'),
+        payload: data
+      })
+    },
+    addMenbersInProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addMenbersInProject'),
+        payload: data
+      })
+      this.hideModal()
     }
   }
-
   const CreateTaskProps = {
     modal,
     model,
@@ -37,7 +97,75 @@ const ProjectDetail = (props) => {
           taskItemList
         }
       })
-    }
+    },
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName('getTaskGroupList'),
+        payload: data
+      })
+    },
+    addTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('addTask'),
+        payload: data
+      })
+    },
+    updateTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('updateTask'),
+        payload: data
+      })
+    },
+    deleteTask(id){
+      dispatch({
+        type: getEffectOrReducerByName('deleteTask'),
+        payload: {
+          id
+        }
+      })
+    },
+    archivedTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('archivedTask'),
+        payload: data
+      })
+    },
+    changeTaskType(data){
+      dispatch({
+        type: getEffectOrReducerByName('changeTaskType'),
+        payload: data
+      })
+    },
+    addChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('addChirldTask'),
+        payload: data
+      })
+    },
+    addTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName('addTaskExecutor'),
+        payload: data
+      })
+    },
+    completeTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('completeTask'),
+        payload: data
+      })
+    },
+    addTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName('addTaskTag'),
+        payload: data
+      })
+    },
+    removeTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName('removeTaskTag'),
+        payload: data
+      })
+    },
   }
 
   const routingJump = (path) => {
