@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="项目接口联调">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/components/BottomContent/index.js" afterPath="$PROJECT_DIR$/src/components/BottomContent/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js" afterPath="$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/globalset/js/constant.js" afterPath="$PROJECT_DIR$/src/globalset/js/constant.js" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/accountSet.js" afterPath="$PROJECT_DIR$/src/models/technological/accountSet.js" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/index.js" afterPath="$PROJECT_DIR$/src/models/technological/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/newsDynamic.js" afterPath="$PROJECT_DIR$/src/models/technological/newsDynamic.js" />
       <change beforePath="$PROJECT_DIR$/src/models/technological/project.js" afterPath="$PROJECT_DIR$/src/models/technological/project.js" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/projectDetail.js" afterPath="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" afterPath="$PROJECT_DIR$/src/routes/RegisterSuccess/CheckMain.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.less" afterPath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.less" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/technological/accountSet.js" afterPath="$PROJECT_DIR$/src/services/technological/accountSet.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/technological/index.js" afterPath="$PROJECT_DIR$/src/services/technological/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/services/technological/project.js" afterPath="$PROJECT_DIR$/src/services/technological/project.js" />
       <change beforePath="$PROJECT_DIR$/src/utils/requestAxios.js" afterPath="$PROJECT_DIR$/src/utils/requestAxios.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -43,12 +24,19 @@
       <file leaf-file-name="project.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models/technological/project.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="121">
-              <caret line="67" column="22" lean-forward="false" selection-start-line="67" selection-start-column="6" selection-end-line="67" selection-end-column="22" />
+            <state relative-caret-position="351">
+              <caret line="82" column="54" lean-forward="false" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
               <folding>
                 <element signature="e#0#216#0" expanded="true" />
                 <element signature="e#936#1179#0" expanded="false" />
                 <element signature="e#1237#1470#0" expanded="false" />
+                <element signature="e#1532#1793#0" expanded="false" />
+                <element signature="e#1854#2114#0" expanded="false" />
+                <element signature="e#2171#2402#0" expanded="false" />
+                <element signature="e#2463#2698#0" expanded="false" />
+                <element signature="e#2763#3002#0" expanded="false" />
+                <element signature="e#3061#3318#0" expanded="false" />
+                <element signature="e#3367#3448#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -58,9 +46,14 @@
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="500">
-              <caret line="35" column="56" lean-forward="false" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="56" />
+              <caret line="24" column="39" lean-forward="false" selection-start-line="24" selection-start-column="39" selection-end-line="24" selection-end-column="39" />
               <folding>
-                <element signature="e#439#490#0" expanded="false" />
+                <element signature="e#700#836#0" expanded="false" />
+                <element signature="e#863#998#0" expanded="false" />
+                <element signature="e#1022#1132#0" expanded="false" />
+                <element signature="e#1156#1288#0" expanded="false" />
+                <element signature="e#1316#1430#0" expanded="false" />
+                <element signature="e#1462#1580#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -69,8 +62,8 @@
       <file leaf-file-name="ProjectList.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="20" column="12" lean-forward="true" selection-start-line="20" selection-start-column="12" selection-end-line="20" selection-end-column="12" />
+            <state relative-caret-position="1030">
+              <caret line="46" column="30" lean-forward="false" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="30" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -81,32 +74,23 @@
       <file leaf-file-name="ElseProject.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="775">
-              <caret line="198" column="12" lean-forward="true" selection-start-line="198" selection-start-column="12" selection-end-line="198" selection-end-column="12" />
+            <state relative-caret-position="275">
+              <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
               <folding>
-                <element signature="e#699#1187#0" expanded="false" />
-                <element signature="e#1251#1454#0" expanded="false" />
-                <element signature="e#1538#1682#0" expanded="false" />
-                <element signature="e#1702#1848#0" expanded="false" />
-                <element signature="e#2416#2446#0" expanded="false" />
-                <element signature="e#2467#2524#0" expanded="false" />
-                <element signature="e#2545#2603#0" expanded="false" />
-                <element signature="e#2638#2713#0" expanded="false" />
-                <element signature="e#2748#2787#0" expanded="false" />
-                <element signature="e#3116#3949#0" expanded="false" />
-                <element signature="e#3996#6019#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="project.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/services/technological/project.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="48" column="38" lean-forward="false" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="38" />
-              <folding>
-                <element signature="e#0#47#0" expanded="true" />
+                <element signature="e#0#25#0" expanded="true" />
+                <element signature="e#737#810#0" expanded="false" />
+                <element signature="e#832#1407#0" expanded="false" />
+                <element signature="e#1487#1592#0" expanded="false" />
+                <element signature="e#1637#2151#0" expanded="false" />
+                <element signature="e#2235#2379#0" expanded="false" />
+                <element signature="e#2399#2545#0" expanded="false" />
+                <element signature="e#3151#3181#0" expanded="false" />
+                <element signature="e#3202#3259#0" expanded="false" />
+                <element signature="e#3280#3338#0" expanded="false" />
+                <element signature="e#3373#3448#0" expanded="false" />
+                <element signature="e#3483#3522#0" expanded="false" />
+                <element signature="e#3868#4855#0" expanded="false" />
+                <element signature="e#4895#6918#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -115,8 +99,8 @@
       <file leaf-file-name="requestAxios.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/requestAxios.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="17" column="22" lean-forward="false" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="22" />
+            <state relative-caret-position="935">
+              <caret line="61" column="10" lean-forward="false" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -138,9 +122,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>disX</find>
-      <find>img</find>
-      <find>eftSpaceDivWH</find>
       <find>queryString</find>
       <find>window</find>
       <find>put</find>
@@ -154,7 +135,6 @@
       <find>登陆</find>
       <find>重置账户密码请求</find>
       <find>message</find>
-      <find>menu</find>
       <find>console</find>
       <find>GET</find>
       <find>projectNameMouseOVer</find>
@@ -168,6 +148,10 @@
       <find>collectionProject</find>
       <find>starClick</find>
       <find>starType</find>
+      <find>manImageDropdown</find>
+      <find>map</find>
+      <find>showAddMenberModal</find>
+      <find>menu</find>
     </findStrings>
     <replaceStrings>
       <replace>46px</replace>
@@ -193,8 +177,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreatTask.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItem.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwoChirldren.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.less" />
@@ -234,15 +216,17 @@
         <option value="$PROJECT_DIR$/src/globalset/js/constant.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
         <option value="$PROJECT_DIR$/src/models/technological/newsDynamic.js" />
         <option value="$PROJECT_DIR$/src/models/technological/index.js" />
         <option value="$PROJECT_DIR$/src/models/technological/accountSet.js" />
-        <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
         <option value="$PROJECT_DIR$/src/services/technological/project.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
         <option value="$PROJECT_DIR$/src/models/technological/project.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/showAddMenberModal.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ShowAddMenberModal.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
+        <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
       </list>
     </option>
@@ -287,6 +271,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -358,6 +344,15 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -370,14 +365,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../it-meum-operative-platform" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="W:\work\newdicolla-platform\node_modules\eslint" />
@@ -465,7 +458,8 @@
       <workItem from="1535331332876" duration="35031000" />
       <workItem from="1535417985935" duration="10867000" />
       <workItem from="1535434464260" duration="22989000" />
-      <workItem from="1535504265279" duration="36526000" />
+      <workItem from="1535504265279" duration="36591000" />
+      <workItem from="1535591044309" duration="9760000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -740,11 +734,18 @@
       <option name="project" value="LOCAL" />
       <updated>1535460181215</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="项目接口联调">
+      <created>1535549440136</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1535549440136</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="495872000" />
+    <option name="totallyTimeSpent" value="505697000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -753,7 +754,6 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -767,6 +767,7 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -777,7 +778,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="登录界面" />
     <MESSAGE value="登录界面,注册界面，注册成功，找回密码，重置密码界面ui" />
     <MESSAGE value="拖拽组件" />
     <MESSAGE value="验证码" />
@@ -802,7 +802,8 @@
     <MESSAGE value="添加任务分组拖拽" />
     <MESSAGE value="评论组件" />
     <MESSAGE value="登陆跳转" />
-    <option name="LAST_COMMIT_MESSAGE" value="登陆跳转" />
+    <MESSAGE value="项目接口联调" />
+    <option name="LAST_COMMIT_MESSAGE" value="项目接口联调" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -834,7 +835,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js</url>
-          <line>212</line>
+          <line>241</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -843,37 +844,11 @@
           <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="19" />
+      <option name="time" value="20" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-185">
-          <caret line="7" column="21" lean-forward="false" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="47" column="28" lean-forward="false" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="55" column="3" lean-forward="true" selection-start-line="55" selection-start-column="3" selection-end-line="55" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-            <element signature="e#960#1086#0" expanded="false" />
-            <element signature="e#1122#1225#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/FirstEntry.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1450">
@@ -1010,7 +985,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
           <caret line="23" column="49" lean-forward="false" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1018,7 +992,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
           <caret line="33" column="50" lean-forward="false" selection-start-line="33" selection-start-column="47" selection-end-line="33" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1026,7 +999,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="377">
           <caret line="37" column="58" lean-forward="false" selection-start-line="37" selection-start-column="55" selection-end-line="37" selection-end-column="58" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1120,7 +1092,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="145">
           <caret line="111" column="34" lean-forward="true" selection-start-line="111" selection-start-column="34" selection-end-line="111" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1183,22 +1154,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
           <caret line="1" column="33" lean-forward="false" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="47" column="24" lean-forward="false" selection-start-line="47" selection-start-column="24" selection-end-line="47" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-            <element signature="e#679#767#0" expanded="false" />
-            <element signature="e#817#877#0" expanded="false" />
-            <element signature="e#897#970#0" expanded="false" />
-            <element signature="e#1005#1315#0" expanded="false" />
-            <element signature="e#2629#5797#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1206,7 +1161,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="257">
           <caret line="50" column="10" lean-forward="false" selection-start-line="50" selection-start-column="10" selection-end-line="50" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1254,9 +1208,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
           <caret line="16" column="27" lean-forward="true" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1264,9 +1215,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
           <caret line="13" column="27" lean-forward="true" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1274,10 +1222,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="14" column="27" lean-forward="true" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
-          <folding>
-            <element signature="e#828#1121#0" expanded="false" />
-            <element signature="e#1181#1496#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1285,40 +1229,85 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="13" column="27" lean-forward="true" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-          <folding>
-            <element signature="e#905#1205#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/requestAxios.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="17" column="22" lean-forward="false" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/services/technological/project.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="48" column="38" lean-forward="false" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="38" />
+        <state relative-caret-position="460">
+          <caret line="79" column="22" lean-forward="false" selection-start-line="79" selection-start-column="22" selection-end-line="79" selection-end-column="22" />
           <folding>
-            <element signature="e#0#47#0" expanded="true" />
+            <element signature="e#0#47#0" expanded="false" />
+            <element signature="n#!!block;n#getProjectList#0" expanded="false" />
+            <element signature="n#!!block;n#addNewProject#0" expanded="false" />
+            <element signature="n#!!block;n#updateProject#0" expanded="false" />
+            <element signature="n#!!block;n#cancelCollection#0" expanded="false" />
+            <element signature="n#!!block;n#projectDetail#0" expanded="false" />
+            <element signature="n#!!block;n#collectionProject#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/technological/project.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="67" column="22" lean-forward="false" selection-start-line="67" selection-start-column="6" selection-end-line="67" selection-end-column="22" />
+        <state relative-caret-position="351">
+          <caret line="82" column="54" lean-forward="false" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
           <folding>
             <element signature="e#0#216#0" expanded="true" />
             <element signature="e#936#1179#0" expanded="false" />
             <element signature="e#1237#1470#0" expanded="false" />
+            <element signature="e#1532#1793#0" expanded="false" />
+            <element signature="e#1854#2114#0" expanded="false" />
+            <element signature="e#2171#2402#0" expanded="false" />
+            <element signature="e#2463#2698#0" expanded="false" />
+            <element signature="e#2763#3002#0" expanded="false" />
+            <element signature="e#3061#3318#0" expanded="false" />
+            <element signature="e#3367#3448#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="66" column="12" lean-forward="true" selection-start-line="66" selection-start-column="12" selection-end-line="66" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#25#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="146" column="28" lean-forward="false" selection-start-line="146" selection-start-column="25" selection-end-line="146" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="910">
+          <caret line="210" column="15" lean-forward="false" selection-start-line="210" selection-start-column="15" selection-end-line="210" selection-end-column="15" />
+          <folding>
+            <element signature="e#679#767#0" expanded="false" />
+            <element signature="e#817#877#0" expanded="false" />
+            <element signature="e#897#970#0" expanded="false" />
+            <element signature="e#2629#5797#0" expanded="false" />
+            <element signature="e#5831#6762#0" expanded="false" />
+            <element signature="e#6802#7533#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ShowAddMenberModal.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="22" column="19" lean-forward="true" selection-start-line="22" selection-start-column="19" selection-end-line="22" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1326,39 +1315,57 @@
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
-          <caret line="35" column="56" lean-forward="false" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="56" />
+          <caret line="24" column="39" lean-forward="false" selection-start-line="24" selection-start-column="39" selection-end-line="24" selection-end-column="39" />
           <folding>
-            <element signature="e#439#490#0" expanded="false" />
+            <element signature="e#700#836#0" expanded="false" />
+            <element signature="e#863#998#0" expanded="false" />
+            <element signature="e#1022#1132#0" expanded="false" />
+            <element signature="e#1156#1288#0" expanded="false" />
+            <element signature="e#1316#1430#0" expanded="false" />
+            <element signature="e#1462#1580#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="20" column="12" lean-forward="true" selection-start-line="20" selection-start-column="12" selection-end-line="20" selection-end-column="12" />
+        <state relative-caret-position="1030">
+          <caret line="46" column="30" lean-forward="false" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="30" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/requestAxios.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="935">
+          <caret line="61" column="10" lean-forward="false" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="198" column="12" lean-forward="true" selection-start-line="198" selection-start-column="12" selection-end-line="198" selection-end-column="12" />
+        <state relative-caret-position="275">
+          <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
           <folding>
-            <element signature="e#699#1187#0" expanded="false" />
-            <element signature="e#1251#1454#0" expanded="false" />
-            <element signature="e#1538#1682#0" expanded="false" />
-            <element signature="e#1702#1848#0" expanded="false" />
-            <element signature="e#2416#2446#0" expanded="false" />
-            <element signature="e#2467#2524#0" expanded="false" />
-            <element signature="e#2545#2603#0" expanded="false" />
-            <element signature="e#2638#2713#0" expanded="false" />
-            <element signature="e#2748#2787#0" expanded="false" />
-            <element signature="e#3116#3949#0" expanded="false" />
-            <element signature="e#3996#6019#0" expanded="false" />
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#737#810#0" expanded="false" />
+            <element signature="e#832#1407#0" expanded="false" />
+            <element signature="e#1487#1592#0" expanded="false" />
+            <element signature="e#1637#2151#0" expanded="false" />
+            <element signature="e#2235#2379#0" expanded="false" />
+            <element signature="e#2399#2545#0" expanded="false" />
+            <element signature="e#3151#3181#0" expanded="false" />
+            <element signature="e#3202#3259#0" expanded="false" />
+            <element signature="e#3280#3338#0" expanded="false" />
+            <element signature="e#3373#3448#0" expanded="false" />
+            <element signature="e#3483#3522#0" expanded="false" />
+            <element signature="e#3868#4855#0" expanded="false" />
+            <element signature="e#4895#6918#0" expanded="false" />
           </folding>
         </state>
       </provider>

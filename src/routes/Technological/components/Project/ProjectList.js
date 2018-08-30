@@ -5,6 +5,7 @@ import { Icon, Menu, Dropdown, Tooltip, Collapse, Card } from 'antd'
 import CollectionProject from './CollectionProject'
 import ElseProject from './ElseProject'
 import AddModalForm from "./AddModalForm";
+import ShowAddMenberModal from './ShowAddMenberModal'
 
 const Panel = Collapse.Panel
 
@@ -43,6 +44,7 @@ export default class Projectlist extends React.Component {
           </Panel>
         </Collapse>
         <AddModalForm {...this.props}></AddModalForm>
+        {/*<ShowAddMenberModal {...this.props}></ShowAddMenberModal>*/}
       </div>
     )
   }

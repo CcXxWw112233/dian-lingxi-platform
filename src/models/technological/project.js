@@ -79,6 +79,64 @@ export default {
 
       }
     },
+
+    * quitProject({ payload }, { select, call, put }) {
+      let res = yield call(quitProject, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * archivedProject({ payload }, { select, call, put }) {
+      let res = yield call(archivedProject, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * addMenbersInProject({ payload }, { select, call, put }) {
+      let res = yield call(addMenbersInProject, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * deleteProject({ payload }, { select, call, put }) {
+      const { id } = payload
+      let res = yield call(deleteProject, id)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProjectList',
+          payload: {
+            type: '1'
+          }
+        })
+      }else{
+
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

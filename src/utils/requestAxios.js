@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 import _ from "lodash";
 
 
-let loading ;
+let loading = null ;
 axios.interceptors.request.use(
   config => {
     return config;
@@ -57,8 +57,9 @@ export default function request(options = {}, elseSet = {}) {
           }
         }
       }).finally(() => {
-        setTimeout(loading,0);
         // message.destroy()
+        setTimeout(
+          loading,200);
       });
   })
 }

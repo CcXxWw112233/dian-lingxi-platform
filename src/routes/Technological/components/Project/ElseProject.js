@@ -1,13 +1,17 @@
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form } from 'antd'
 import detailInfoStyle from '../ProjectDetail/DetailInfo.less'
+import ShowAddMenberModal from './ShowAddMenberModal'
+
+let is_starinit = null
 export default class CollectionProject extends React.Component{
   state = {
-    starType: 'star-o',
-    isInitEntry: true,
+    ShowAddMenberModalVisibile: false,
     starOpacity: 0.6,
+    isInitEntry: true,
+    isCollection: false,
     isSoundsEvrybody: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
@@ -19,33 +23,55 @@ export default class CollectionProject extends React.Component{
       isSoundsEvrybody: e.target.checked
     })
   }
-  confirm() {
+  confirm(board_id ) {
+    const that = this
     Modal.confirm({
       title: '确认要退出该项目吗？',
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
                   <span >退出后将无法获取该项目的相关动态</span>
-                  <div style={{marginTop:20,}}>
-                    <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
-                  </div>
+                  {/*<div style={{marginTop:20,}}>*/}
+                    {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
+                  {/*</div>*/}
                </div>,
       okText: '确认',
       cancelText: '取消',
-      onOk()  {
+      onOk() {
+         that.props.quitProject({id: board_id})
       }
     });
   }
   //出现confirm-------------end
 
+  //添加项目组成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+
   //菜单按钮点击
-  handleMenuClick(e) {
+  handleMenuClick(board_id, e ) {
     e.domEvent.stopPropagation();
     this.setState({
       ellipsisShow: false,
       dropdownVisibleChangeValue:false
     })
     const { key } = e
-    if('4' === key) {
-      this.confirm()
+    switch (key) {
+      case '1':
+        this.setShowAddMenberModalVisibile()
+        break
+      case '2':
+        this.props.archivedProject({board_id, is_archived: '1'})
+        break
+      case '3':
+        this.props.deleteProject(board_id)
+        break
+      case '4':
+        this.confirm(board_id )
+        break
+      default:
+        return
     }
   }
 
@@ -75,18 +101,18 @@ export default class CollectionProject extends React.Component{
     const { is_star } = itemDetailInfo
     this.setState({
       isInitEntry: false,
+    },function () {
+      this.setState({
+        isCollection: is_starinit === '1' ? false : this.state.isInitEntry ? false : !this.state.isCollection,
+        starOpacity: 1
+      },function () {
+        if(this.state.isCollection) {
+          this.props.collectionProject(id)
+        }else{
+          this.props.cancelCollection(id)
+        }
+      })
     })
-    this.setState({
-      starType: this.state.starType === 'star' ? 'star-o' : 'star',
-      starOpacity: 1
-    })
-    if(this.state.starType === 'star' || is_star === '1'){
-      console.log(1)
-      // this.props.cancelCollection(id)
-    }else{
-      console.log(2)
-      // this.props.collectionProject(id)
-    }
   }
   //星星样式变化end--------------
 
@@ -114,36 +140,38 @@ export default class CollectionProject extends React.Component{
   }
 
   render() {
-    const taskMan = [1,2,3,4,5,6,7,8]
-    const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry } = this.state
-
+    const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
     const { itemDetailInfo = {}} = this.props
-    const { data = [], board_id, board_name, is_star, user_count } = itemDetailInfo // data为项目参与人信息
-
-    const menu = (
-      <Menu onClick={this.handleMenuClick.bind(this)}>
-        <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            邀请成员加入
-          </div>
-        </Menu.Item>
-        <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            项目归档
-          </div>
-        </Menu.Item>
-        <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            删除项目
-          </div>
-        </Menu.Item>
-        <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectDangerMenu}>
-            退出项目
-          </div>
-        </Menu.Item>
-      </Menu>
-    );
+    const { data = [], board_id, board_name, is_star, user_count, is_create } = itemDetailInfo // data为项目参与人信息
+    is_starinit = is_star
+    const menu = (board_id) => {
+      return (
+        <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
+          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              邀请成员加入
+            </div>
+          </Menu.Item>
+          <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              项目归档
+            </div>
+          </Menu.Item>
+          <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              删除项目
+            </div>
+          </Menu.Item>
+          {is_create !== '1'? (
+            <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+              <div className={indexStyle.elseProjectDangerMenu}>
+                退出项目
+              </div>
+            </Menu.Item>
+          ) : ('')}
+        </Menu>
+      );
+    }
     const manImageDropdown = (props) =>{
       const { avatar, email, full_name, mobile, user_id, user_name, we_chat = '无' } = props
       return  (
@@ -197,64 +225,67 @@ export default class CollectionProject extends React.Component{
     }
 
     return (
-      <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
-        <div className={indexStyle.listOutmask}></div>
-        <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, '/technological/projectDetail')}>
-          <div className={indexStyle.left}>
-            <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
-              <span>{board_name}</span>
-              <span className={indexStyle.nameHoverMenu} >
-                <Icon className={indexStyle.star}
-                      onMouseOver={this.starMouseOver.bind(this)}
-                      onMouseLeave={this.starMouseLeave.bind(this)}
-                      onClick={this.starClick.bind(this, board_id)}
-                      type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(starType)} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
-                  <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
-                    <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
-                  </Dropdown>
-              </span>
-            </div>
-            <div className ={indexStyle.bottom}>
-              {data.map((value, key) => {
-                const { avatar, email, full_name, mobile, user_id, user_name } = value
-                if(key < 7) {
-                  return (
-                    <Dropdown overlay={manImageDropdown(value)} key={key}>
-                      {avatar? (
-                        <img src="" key={key} className={indexStyle.taskManImag}></img>
-                      ):(
-                        <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                          <Icon type={'user'} style={{color: '#8c8c8c'}}/>
-                        </div>
-                      )
-                      }
+      <div>
+        <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
+          <div className={indexStyle.listOutmask}></div>
+          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, '/technological/projectDetail')}>
+            <div className={indexStyle.left}>
+              <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
+                <span>{board_name}</span>
+                <span className={indexStyle.nameHoverMenu} >
+                  <Icon className={indexStyle.star}
+                        onMouseOver={this.starMouseOver.bind(this)}
+                        onMouseLeave={this.starMouseLeave.bind(this)}
+                        onClick={this.starClick.bind(this, board_id)}
+                        type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
+                    <Dropdown overlay={menu(board_id)} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
+                      <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
                     </Dropdown>
-                  )
-                }
-              })}
-              {data.length > 7? (
-                <div style={{display: 'flex',fontSize: 12}}>
-                  <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize:18}}/></div>{user_count}位任务执行人
-                </div>
-              ) : ('')}
+                </span>
+              </div>
+              <div className ={indexStyle.bottom}>
+                {data.map((value, key) => {
+                  const { avatar, email, full_name, mobile, user_id, user_name } = value
+                  if(key < 7) {
+                    return (
+                      <Dropdown overlay={manImageDropdown(value)} key={key}>
+                        {avatar? (
+                          <img src="" key={key} className={indexStyle.taskManImag}></img>
+                        ):(
+                          <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2',textAlign:'center'}}>
+                            <Icon type={'user'} style={{color: '#8c8c8c'}}/>
+                          </div>
+                        )
+                        }
+                      </Dropdown>
+                    )
+                  }
+                })}
+                {data.length > 7? (
+                  <div style={{display: 'flex',fontSize: 12}}>
+                    <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize:18}}/></div>{user_count}位任务执行人
+                  </div>
+                ) : ('')}
+              </div>
+            </div>
+            <div className={indexStyle.right}>
+              <div className={indexStyle.rightItem}>
+                <div>0</div>
+                <div>剩余任务</div>
+              </div>
+              <div className={indexStyle.rightItem}>
+                <div style={{color: '#8c8c8c'}}>0</div>
+                <div>已完成</div>
+              </div>
+              <div className={indexStyle.rightItem}>
+                <div >0</div>
+                <div>距离下一节点</div>
+              </div>
             </div>
           </div>
-          <div className={indexStyle.right}>
-            <div className={indexStyle.rightItem}>
-              <div>0</div>
-              <div>剩余任务</div>
-            </div>
-            <div className={indexStyle.rightItem}>
-              <div style={{color: '#8c8c8c'}}>0</div>
-              <div>已完成</div>
-            </div>
-            <div className={indexStyle.rightItem}>
-              <div >0</div>
-              <div>距离下一节点</div>
-            </div>
-          </div>
-        </div>
-      </Card>
+        </Card>
+        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+      </div>
     )
   }
 }

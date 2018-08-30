@@ -22,6 +22,7 @@ const Project = (props) => {
         type: getEffectOrReducerByName('addNewProject'),
         payload: data
       })
+      dispatch({ type: 'modal/hideModal' })
     },
     collectionProject(id) {
       dispatch({
@@ -37,6 +38,33 @@ const Project = (props) => {
         payload: {
           id
         }
+      })
+    },
+
+    quitProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('quitProject'),
+        payload: data
+      })
+    },
+    deleteProject(id) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteProject'),
+        payload: {
+          id
+        }
+      })
+    },
+    archivedProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('archivedProject'),
+        payload: data
+      })
+    },
+    addMenbersInProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addMenbersInProject'),
+        payload: data
       })
     }
   }
