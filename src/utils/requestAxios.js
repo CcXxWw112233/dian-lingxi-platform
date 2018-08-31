@@ -16,7 +16,6 @@ axios.interceptors.request.use(
 
 export default function request(options = {}, elseSet = {}) {
   const { isNotLoading } = elseSet
-  loading = !isNotLoading ? message.loading('加载中...', 0) : ''
   const {
     url = '',
     headers = {},
@@ -24,6 +23,7 @@ export default function request(options = {}, elseSet = {}) {
     params = {},
     data = {},
   } = options;
+  loading = !isNotLoading ? message.loading('加载中...', 0) : ''
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
@@ -58,8 +58,7 @@ export default function request(options = {}, elseSet = {}) {
         }
       }).finally(() => {
         // message.destroy()
-        setTimeout(
-          loading,200);
+        setTimeout(loading,0);
       });
   })
 }

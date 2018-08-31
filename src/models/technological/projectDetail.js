@@ -26,15 +26,23 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload:{
-              projectInfoDisplay: true, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
-              isInitEntry: true, //是否初次进来
-              taskItemList: [], //任务列表
+              projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
+              isInitEntry: false, //是否初次进来
+              drawContent: {}, //右方抽屉内容
             }
           })
           dispatch({
             type: 'projectDetailInfo',
             payload:{
               id: getUrlQueryString(location.search, 'board_id')
+            }
+          })
+          dispatch({
+            type: 'getTaskGroupList',
+            payload: {
+              type: '2',
+              board_id: getUrlQueryString(location.search, 'board_id'),
+              arrange_type: '1'
             }
           })
         }else{
@@ -47,6 +55,7 @@ export default {
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
       const { id } = payload
       let res = yield call(projectDetailInfo, id)
+      message.destroy()
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -151,7 +160,12 @@ export default {
     * getTaskGroupList({ payload }, { select, call, put }) { //
       let res = yield call(getTaskGroupList, payload)
       if(isApiResponseOk(res)) {
-
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            taskGroupList: res.data
+          }
+        })
       }else{
       }
     },
@@ -159,15 +173,28 @@ export default {
     * addTask({ payload }, { select, call, put }) { //
       let res = yield call(addTask, payload)
       if(isApiResponseOk(res)) {
-
+         yield put({
+           type: 'getTaskGroupList',
+           payload: {
+             type: '2',
+             board_id: getUrlQueryString(search, 'board_id'),
+             arrange_type: '1'
+           }
+         })
       }else{
       }
     },
 
     * updateTask({ payload }, { select, call, put }) { //
-      let res = yield call(updateTask, payload)
+      const { updateObj } = payload
+      let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
-
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     drawContent
+        //   }
+        // })
       }else{
       }
     },

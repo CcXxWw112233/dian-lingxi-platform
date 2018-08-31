@@ -62,10 +62,11 @@ export default class CreateTask extends React.Component {
   }
 
   // 右方抽屉弹窗---start
-  setDrawerVisibleOpen() {
+  setDrawerVisibleOpen(data) {
     this.setState({
       drawerVisible: true,
     })
+    this.props.updateDatas(data)
   }
   setDrawerVisibleClose() {
     this.setState({
@@ -78,7 +79,7 @@ export default class CreateTask extends React.Component {
     e.stopPropagation();
   }
   render() {
-    const { datas:{ taskItemList } } = this.props.model
+    const { datas:{ taskGroupList = [] }, drawContent  } = this.props.model
     return (
       <div className={CreateTaskStyle.outerMost}
            style={{
@@ -87,9 +88,11 @@ export default class CreateTask extends React.Component {
            onMouseDown={this.fnDown.bind(this)}
            ref={'outerMost'}
       >
-        {taskItemList.map((value, key) => {
+        {taskGroupList.map((value, key) => {
             return (
-              <TaskItem key={key} setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
+              <TaskItem key={key} taskItemValue={value}
+                        {...this.props}
+                        setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
             )
           })}
           <CreateItem  {...this.props}  ></CreateItem>
@@ -102,7 +105,9 @@ export default class CreateTask extends React.Component {
           maskStyle={{top: 64}}
           style={{marginTop: 64,}}
         >
-          <DrawerContent />
+          <DrawerContent
+            {...this.props}
+          />
         </Drawer>
       </div>
     )

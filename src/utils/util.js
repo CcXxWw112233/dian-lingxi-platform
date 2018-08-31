@@ -98,8 +98,27 @@ export const newsDynamicHandleTime = (timeStamp) => {
   return DateDescription
 }
 
+//获取url参数
 export const getUrlQueryString = (href,name) => {
   const reg = new RegExp(name +"=([^&]*)");
   const r = href.match(reg)//window.location.href.match(reg);
   if(r!=null)return  unescape(r[1]); return null;
+}
+
+//对象深拷贝
+export const deepClone = (obj) => {
+  if(!obj) {
+    return
+  }
+  var newObj = obj.constructor === Array ? []:{};
+  if(typeof obj !== 'object'){
+    return
+  }else{
+    for(var i in obj){
+      if(obj.hasOwnProperty(i)){
+        newObj[i] = typeof obj[i] === 'object'?deepClone(obj[i]):obj[i];
+      }
+    }
+  }
+  return newObj
 }

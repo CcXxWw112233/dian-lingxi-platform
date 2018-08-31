@@ -7,21 +7,18 @@ import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
 import Comment from '../../NewsDynamic/Comment'
+import { deepClone } from '../../../../../utils/util'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-const initEditContent = '<p style="font-size: 14px">这是第一次</p>'
-const initTitle = '安康市大家可能速度看'
-
 let that
 export default class DrawContent extends React.Component {
   state = {
     isCheck: true,
-    title: initTitle,
+    title: '',
     titleIsEdit: false,
-    editContent: initEditContent,
     isInEdit: false,
     tagArray: [122,111,555,888],
     isInAddTag: false,
@@ -35,6 +32,7 @@ export default class DrawContent extends React.Component {
     startTime: '',
     endTime: '',
   }
+
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
@@ -62,12 +60,23 @@ export default class DrawContent extends React.Component {
       isCheck: !this.state.isCheck
     })
   }
-  titleTextAreaChange(e) {
-    this.setState({
-      title: e.target.value
-    })
+  titleTextAreaChangeBlur(e) {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id, description, due_time, start_time } = drawContent
+    drawContent['card_name'] = e.target.value
+    const updateObj ={
+      card_id,
+      name: e.target.value,
+      card_name: e.target.value,
+      due_time,
+      description,
+      start_time,
+    }
+    // const newDrawContent = {...drawContent,card_name: e.target.value,}
+    this.props.updateTask({updateObj})
+    this.props.updateDatas({drawContent})
   }
-  setTitleIsEdit(titleIsEdit,e) {
+  setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
     this.setState({
       titleIsEdit: titleIsEdit
@@ -150,6 +159,18 @@ export default class DrawContent extends React.Component {
     })
   }
   drawerContentOutClick(e) {
+    if(this.state.isInEdit){
+      const { datas:{ drawContent = {} } } = this.props.model
+      const { card_id, description, due_time, start_time, card_name } = drawContent
+      const updateObj ={
+        card_id,
+        description,
+        card_name,
+        due_time,
+        start_time,
+      }
+      this.props.updateTask({updateObj})
+    }
     this.setState({
       isInEdit: false,
       titleIsEdit: false,
@@ -179,15 +200,20 @@ export default class DrawContent extends React.Component {
 
   render() {
     that = this
-    const { isCheck, title, titleIsEdit, editContent, isInEdit, tagArray, isInAddTag, isSetedChargeMan, isSetedStartTime, isSetedEndTime, isSetedAlarm, List, alarmTime, startTime, endTime} = this.state
+    const { isCheck, titleIsEdit, isInEdit, tagArray, isInAddTag, isSetedChargeMan, isSetedStartTime, isSetedEndTime, isSetedAlarm, List, alarmTime, startTime, endTime} = this.state
+
+    const { datas:{ drawContent = {} } } = this.props.model
+    let { card_id, card_name, chirl_data=[], start_time, due_time, description } = drawContent
+    description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+
     const editorProps = {
       height: 0,
       contentFormat: 'html',
-      initialContent: editContent,
+      initialContent: description,
       onHTMLChange:(e) => {
-        this.setState({
-          editContent: e
-        })
+        const { datas:{ drawContent = {} } } = this.props.model
+        drawContent['description'] = e
+        this.props.updateDatas({drawContent})
       },
       fontSizes: [14],
       controls: [
@@ -247,6 +273,7 @@ export default class DrawContent extends React.Component {
     return(
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
 
+        {/*项目挪动*/}
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_1}>
             <Dropdown overlay={projectGroupMenu}>
@@ -262,22 +289,24 @@ export default class DrawContent extends React.Component {
           </div>
         </div>
 
+        {/*标题*/}
         <div className={DrawerContentStyles.divContent_2}>
            <div className={DrawerContentStyles.contain_2}>
              <div onClick={this.setIsCheck.bind(this)} className={isCheck? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
                <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
              </div>
              {!titleIsEdit ? (
-               <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{title}</div>
+               <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
              ) : (
-               <TextArea defaultValue={title} autosize
-                         onChange={this.titleTextAreaChange.bind(this)}
+               <TextArea defaultValue={card_name} autosize
+                         onBlur={this.titleTextAreaChangeBlur.bind(this)}
                          onClick={this.setTitleIsEdit.bind(this, true)}
                          style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
              )}
            </div>
         </div>
 
+        {/*第三行设置*/}
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_3}>
             <div>
@@ -337,7 +366,7 @@ export default class DrawContent extends React.Component {
         {!isInEdit ? (
           <div className={DrawerContentStyles.divContent_1} >
             <div className={DrawerContentStyles.contain_4} onClick={this.goEdit.bind(this)}>
-              <div dangerouslySetInnerHTML={{__html: editContent}}></div>
+              <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: description}}></div>
             </div>
           </div>
         ) : (
@@ -387,6 +416,7 @@ export default class DrawContent extends React.Component {
           <div className={DrawerContentStyles.spaceLine} ></div>
         </div>
 
+        {/*评论*/}
         <div className={DrawerContentStyles.divContent_2} style={{marginTop: 20}}>
           <Comment leftSpaceDivWH={26}></Comment>
         </div>

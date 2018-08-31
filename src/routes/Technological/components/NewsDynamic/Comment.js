@@ -15,7 +15,7 @@ export default class Comment extends React.Component {
   MentionSpacerClick() {
   }
   MentionEditorChange(e) {
-    console.log(e.target)
+    // console.log(e.target)
   }
   render() {
     const { leftSpaceDivWH = 40 } = this.props
