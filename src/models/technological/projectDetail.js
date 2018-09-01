@@ -227,7 +227,10 @@ export default {
     * addChirldTask({ payload }, { select, call, put }) { //
       let res = yield call(addChirldTask, payload)
       if(isApiResponseOk(res)) {
-
+       yield put({
+         type: 'putTask',
+         payload
+       })
       }else{
       }
     },
@@ -260,6 +263,22 @@ export default {
       let res = yield call(removeTaskTag, payload)
       if(isApiResponseOk(res)) {
 
+      }else{
+      }
+    },
+
+    * putTask({ payload }, { select, call, put }) {
+      let res = yield call(getTaskGroupList,  {type: '2', board_id: getUrlQueryString(search, 'board_id'), arrange_type: '1'})
+      const { taskGroupListIndex, taskGroupListIndex_index } = payload
+      console.log(res.data[taskGroupListIndex].card_data[taskGroupListIndex_index])
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            taskGroupList: res.data,
+            drawContent: res.data[taskGroupListIndex].card_data[taskGroupListIndex_index]
+          }
+        })
       }else{
       }
     },

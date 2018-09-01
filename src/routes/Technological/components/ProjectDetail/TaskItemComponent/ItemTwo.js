@@ -25,7 +25,7 @@ export default class ItemTwo extends React.Component {
 
     return (
       <div  key={'2'} className={CreateTaskStyle.item_2} >
-        <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this,{drawContent:itemValue})}>
+        <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this,{drawContent:itemValue, taskGroupListIndex: this.props.taskGroupListIndex, taskGroupListIndex_index: this.props.taskGroupListIndex_index})}>
           <div className={isCheck? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>

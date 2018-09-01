@@ -42,7 +42,9 @@ export default class TaskItem extends React.Component {
         <QueueAnim >
           {card_data.map((value,key) => {
             return(
-              <ItemTwo itemValue={value} {...this.props} key={key} {...this.props} />
+              <ItemTwo itemValue={value} {...this.props}
+                       taskGroupListIndex_index={key}
+                       key={key} {...this.props} />
             )
           })}
           {!isAddEdit ? (

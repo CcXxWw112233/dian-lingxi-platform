@@ -15,13 +15,15 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   render() {
     const { isCheck } = this.state
+    const { chirldTaskItemValue } = this.props
+    const { card_id, card_name, due_time, is_check = false } = chirldTaskItemValue
     return (
       <div   className={DrawerContentStyles.taskItem}>
-      <div key={'1'} className={DrawerContentStyles.item_1} onClick={this.itemOneClick.bind(this)}>
-        <div className={isCheck? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox}>
+      <div key={'1'} className={DrawerContentStyles.item_1} >
+        <div className={isCheck? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
           <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
         </div>
-        <div>安康市大家可能速度看是多么安康市大家可能速度看是多么安</div>
+        <div>{card_name}<span style={{color: '#d5d5d5'}}>{due_time}</span></div>
       </div>
       </div>
     )

@@ -20,17 +20,11 @@ export default class DrawContent extends React.Component {
     title: '',
     titleIsEdit: false,
     isInEdit: false,
-    tagArray: [122,111,555,888],
     isInAddTag: false,
     // 第二行状态
     isSetedChargeMan: false,
-    isSetedStartTime: false,
-    isSetedEndTime: false,
     isSetedAlarm: false,
-    List: ['子任务子任务子任务子任务子任务子任务',2,3,4],
     alarmTime: '',
-    startTime: '',
-    endTime: '',
   }
 
   //firstLine -------start
@@ -68,9 +62,6 @@ export default class DrawContent extends React.Component {
       card_id,
       name: e.target.value,
       card_name: e.target.value,
-      due_time,
-      description,
-      start_time,
     }
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
@@ -87,9 +78,9 @@ export default class DrawContent extends React.Component {
   //第二行状态栏编辑------------------start
     //设置任务负责人组件---------------start
   setList(arr) {
-    this.setState({
-      List: arr
-    })
+    const { projectDetailInfoData = {}  } = this.props.model
+    projectDetailInfoData['data'] = arr
+    this.props.updateDatas({projectDetailInfoData})
   }
   chirldrenTaskChargeChange() {
     this.setState({
@@ -134,17 +125,29 @@ export default class DrawContent extends React.Component {
   }
     //开始时间
   startDatePickerChange(e, timeString) {
-    this.setState({
-      isSetedStartTime: true,
-      startTime: timeString
-    })
+
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    drawContent['start_time'] = timeString
+    const updateObj ={
+      card_id,
+      start_time: timeString,
+    }
+    this.props.updateTask({updateObj})
+    this.props.updateDatas({drawContent})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
-    this.setState({
-      isSetedEndTime: true,
-      endTime: timeString
-    })
+
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    drawContent['due_time'] = timeString
+    const updateObj ={
+      card_id,
+      due_time: timeString,
+    }
+    this.props.updateTask({updateObj})
+    this.props.updateDatas({drawContent})
   }
   //第二行状态栏编辑------------------end
 
@@ -165,9 +168,6 @@ export default class DrawContent extends React.Component {
       const updateObj ={
         card_id,
         description,
-        card_name,
-        due_time,
-        start_time,
       }
       this.props.updateTask({updateObj})
     }
@@ -184,7 +184,16 @@ export default class DrawContent extends React.Component {
     const n =  Math.floor(Math.random() * colorArr.length + 1)-1;
     return colorArr[n]
   }
-  tagClose(e) {
+  tagClose({ label_id, label_name, key}) {
+    const { datas:{ drawContent = {}} } = this.props.model
+    const { card_id } = drawContent
+    drawContent['label_data'].splice(key, 1)
+    const keyCode = label_id? 'label_id':'label_name'
+    this.props.removeTaskTag({
+      card_id,
+      [keyCode]: label_id || label_name,
+    })
+    this.props.updateDatas({drawContent})
   }
   addTag() {
     this.setState({
@@ -195,15 +204,28 @@ export default class DrawContent extends React.Component {
     this.setState({
       isInAddTag: false
     })
+    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { card_id } = drawContent
+    const { board_id } = projectDetailInfoData
+    drawContent['label_data'].push({label_name: e.target.value})
+    this.props.addTaskTag({
+      card_id,
+      board_id,
+      name: e.target.value,
+      label_name: e.target.value,
+    })
+    this.props.updateDatas({drawContent})
   }
   //标签-------------end
 
   render() {
     that = this
-    const { isCheck, titleIsEdit, isInEdit, tagArray, isInAddTag, isSetedChargeMan, isSetedStartTime, isSetedEndTime, isSetedAlarm, List, alarmTime, startTime, endTime} = this.state
+    const { isCheck, titleIsEdit, isInEdit, isInAddTag, isSetedChargeMan,  isSetedAlarm, alarmTime} = this.state
 
-    const { datas:{ drawContent = {} } } = this.props.model
-    let { card_id, card_name, chirl_data=[], start_time, due_time, description } = drawContent
+    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { data = [] } = projectDetailInfoData //任务执行人列表
+    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
+    label_data = label_data || []
     description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
 
     const editorProps = {
@@ -313,7 +335,7 @@ export default class DrawContent extends React.Component {
               {!isSetedChargeMan ? (
                  <div>
                    <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
-                   <Dropdown overlay={<DCMenuItemOne List={List} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+                   <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
                      <span>指派负责人</span>
                    </Dropdown>
                  </div>
@@ -328,21 +350,21 @@ export default class DrawContent extends React.Component {
               <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             </div>
             <div>
-              {isSetedStartTime && isSetedEndTime ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-              <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{!isSetedStartTime ? '开始' : startTime}
+              {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
+              <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? (start_time.substring(0, 10)) : '开始' }
                 <DatePicker
                   onChange={this.startDatePickerChange.bind(this)}
                   placeholder={'开始时间'}
-                  style={{opacity: 0, width: !isSetedStartTime? 16 : 70, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !isSetedStartTime? 8 : 0,zIndex:1}} />
+                  style={{opacity: 0, width: !start_time? 16 : 70, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
               </span>
                &nbsp;
-              {isSetedStartTime && isSetedEndTime ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
+              {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
               &nbsp;
-              <span style={{position: 'relative'}}>{!isSetedEndTime ? '截止时间' : endTime}
+              <span style={{position: 'relative'}}>{due_time ? due_time.substring(0, 10) : '截止时间'}
                 <DatePicker
                   placeholder={'截止时间'}
                   onChange={this.endDatePickerChange.bind(this)}
-                  style={{opacity: 0, width: !isSetedEndTime? 50 : 70, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
+                  style={{opacity: 0, width: !due_time? 50 : 70, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
               </span>
             </div>
             <div>
@@ -387,9 +409,9 @@ export default class DrawContent extends React.Component {
         {/*标签*/}
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_5}>
-            {tagArray.map((value, key) => {
+            {label_data.map((value, key) => {
               return(
-                <Tag closable onClose={this.tagClose.bind(this)} key={key} color={this.randomColorArray()}>{value}</Tag>
+                <Tag closable onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})} key={key} color={this.randomColorArray()}>{value.label_name}</Tag>
               )
             })}
             <div>
@@ -404,13 +426,15 @@ export default class DrawContent extends React.Component {
 
           </div>
         </div>
+        {child_data.length?(
+          <div  className={DrawerContentStyles.divContent_1}>
+            <div className={DrawerContentStyles.spaceLine}></div>
+          </div>
+        ):('')}
 
-        <div  className={DrawerContentStyles.divContent_1}>
-          <div className={DrawerContentStyles.spaceLine}></div>
-        </div>
 
         {/*添加子任务*/}
-        <DCAddChirdrenTask />
+        <DCAddChirdrenTask {...this.props}/>
 
         <div  className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.spaceLine} ></div>

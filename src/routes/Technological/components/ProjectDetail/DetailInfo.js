@@ -79,8 +79,9 @@ export default class DetailInfo extends React.Component {
 
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
-    const { board_id, board_name, data = [], description } = projectDetailInfoData //data是参与人列表
+    let { board_id, board_name, data = [], description } = projectDetailInfoData //data是参与人列表
 
+    data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
       const { full_name, email, img, mobile, user_name, user_id, we_chat='无'} = props

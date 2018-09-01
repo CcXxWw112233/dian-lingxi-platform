@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="项目模块接口联调基本完成 ， 任务模块接口函数定义">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment=" 任务模块接口联调：1 。。。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/assets/test.html" afterPath="$PROJECT_DIR$/src/assets/test.html" />
       <change beforePath="$PROJECT_DIR$/src/models/technological/projectDetail.js" afterPath="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js" />
       <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/requestAxios.js" afterPath="$PROJECT_DIR$/src/utils/requestAxios.js" />
-      <change beforePath="$PROJECT_DIR$/src/utils/util.js" afterPath="$PROJECT_DIR$/src/utils/util.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -29,10 +29,11 @@
       <file leaf-file-name="projectDetail.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models/technological/projectDetail.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="303">
-              <caret line="189" column="48" lean-forward="false" selection-start-line="189" selection-start-column="48" selection-end-line="189" selection-end-column="48" />
+            <state relative-caret-position="679">
+              <caret line="272" column="56" lean-forward="false" selection-start-line="272" selection-start-column="56" selection-end-line="272" selection-end-column="56" />
               <folding>
                 <element signature="e#0#107#0" expanded="true" />
+                <element signature="e#1923#2236#0" expanded="false" />
                 <element signature="e#2295#2564#0" expanded="false" />
                 <element signature="e#2623#2892#0" expanded="false" />
                 <element signature="e#2955#3097#0" expanded="false" />
@@ -43,15 +44,16 @@
                 <element signature="e#4043#4181#0" expanded="false" />
                 <element signature="e#4278#4526#0" expanded="false" />
                 <element signature="e#4579#4910#0" expanded="false" />
+                <element signature="e#4966#5253#0" expanded="false" />
                 <element signature="e#5309#5446#0" expanded="false" />
                 <element signature="e#5504#5619#0" expanded="false" />
                 <element signature="e#5679#5796#0" expanded="false" />
-                <element signature="e#5855#5971#0" expanded="false" />
-                <element signature="e#6032#6150#0" expanded="false" />
-                <element signature="e#6208#6323#0" expanded="false" />
-                <element signature="e#6379#6492#0" expanded="false" />
-                <element signature="e#6551#6667#0" expanded="false" />
-                <element signature="e#6732#6813#0" expanded="false" />
+                <element signature="e#5855#6042#0" expanded="false" />
+                <element signature="e#6103#6221#0" expanded="false" />
+                <element signature="e#6279#6394#0" expanded="false" />
+                <element signature="e#6450#6563#0" expanded="false" />
+                <element signature="e#6622#6738#0" expanded="false" />
+                <element signature="e#7420#7501#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -60,8 +62,8 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="347">
-              <caret line="112" column="14" lean-forward="false" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="14" />
+            <state relative-caret-position="140">
+              <caret line="182" column="6" lean-forward="true" selection-start-line="182" selection-start-column="6" selection-end-line="182" selection-end-column="6" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
                 <element signature="e#466#1399#0" expanded="false" />
@@ -94,45 +96,40 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DrawerContent.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DrawerContent.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-22">
-              <caret line="149" column="0" lean-forward="true" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+            <state relative-caret-position="20">
+              <caret line="225" column="12" lean-forward="false" selection-start-line="225" selection-start-column="12" selection-end-line="225" selection-end-column="12" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
-                <element signature="e#1076#1100#0" expanded="false" />
-                <element signature="e#1128#1182#0" expanded="false" />
-                <element signature="e#1195#1322#0" expanded="false" />
-                <element signature="e#1385#1452#0" expanded="false" />
-                <element signature="e#1482#1977#0" expanded="false" />
-                <element signature="e#1682#1818#0" expanded="false" />
-                <element signature="e#2011#2099#0" expanded="false" />
-                <element signature="e#2205#2253#0" expanded="false" />
-                <element signature="e#2284#2345#0" expanded="false" />
-                <element signature="e#2369#2430#0" expanded="false" />
-                <element signature="e#2500#2991#0" expanded="false" />
-                <element signature="e#3042#3132#0" expanded="false" />
-                <element signature="e#3181#3267#0" expanded="false" />
-                <element signature="e#3355#3385#0" expanded="false" />
-                <element signature="e#3398#3476#0" expanded="false" />
-                <element signature="e#3504#3935#0" expanded="false" />
-                <element signature="e#3704#3808#0" expanded="false" />
-                <element signature="e#4014#4222#0" expanded="false" />
-                <element signature="e#4237#4242#0" expanded="false" />
-                <element signature="e#4254#4309#0" expanded="false" />
-                <element signature="e#4330#4386#0" expanded="false" />
-                <element signature="e#5423#5770#0" expanded="false" />
-                <element signature="e#5815#6667#0" expanded="false" />
-                <element signature="e#6708#7178#0" expanded="false" />
-                <element signature="e#7336#7930#0" expanded="false" />
-                <element signature="e#7957#8947#0" expanded="false" />
-                <element signature="e#8977#11728#0" expanded="false" />
-                <element signature="e#12300#12619#0" expanded="false" />
-                <element signature="e#12646#13512#0" expanded="false" />
-                <element signature="e#13522#13652#0" expanded="false" />
-                <element signature="e#13713#13844#0" expanded="false" />
-                <marker date="1535712106008" expanded="true" signature="4822:4870" ph="..." />
+                <element signature="e#911#935#0" expanded="false" />
+                <element signature="e#963#1017#0" expanded="false" />
+                <element signature="e#1030#1157#0" expanded="false" />
+                <element signature="e#1220#1287#0" expanded="false" />
+                <element signature="e#1517#1600#0" expanded="false" />
+                <element signature="e#1793#1881#0" expanded="false" />
+                <element signature="e#2261#2322#0" expanded="false" />
+                <element signature="e#2392#2883#0" expanded="false" />
+                <element signature="e#3283#3579#0" expanded="false" />
+                <element signature="e#3667#3697#0" expanded="false" />
+                <element signature="e#3710#3788#0" expanded="false" />
+                <element signature="e#3816#4190#0" expanded="false" />
+                <element signature="e#4269#4477#0" expanded="false" />
+                <element signature="e#4519#4854#0" expanded="false" />
+                <element signature="e#4866#4921#0" expanded="false" />
+                <element signature="e#4942#5405#0" expanded="false" />
+                <element signature="e#5996#6481#0" expanded="false" />
+                <element signature="e#6512#6859#0" expanded="false" />
+                <element signature="e#6904#7756#0" expanded="false" />
+                <element signature="e#7797#8267#0" expanded="false" />
+                <element signature="e#8425#9019#0" expanded="false" />
+                <element signature="e#9046#10036#0" expanded="false" />
+                <element signature="e#12861#13143#0" expanded="false" />
+                <element signature="e#13380#13699#0" expanded="false" />
+                <element signature="e#13726#14668#0" expanded="false" />
+                <element signature="e#14935#15066#0" expanded="false" />
+                <marker date="1535793410804" expanded="true" signature="5911:5959" ph="..." />
               </folding>
             </state>
           </provider>
@@ -141,10 +138,11 @@
       <file leaf-file-name="DCAddChirdrenTask.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="5" column="53" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+            <state relative-caret-position="946">
+              <caret line="91" column="71" lean-forward="false" selection-start-line="91" selection-start-column="71" selection-end-line="91" selection-end-column="71" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
+                <element signature="e#1236#1542#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -153,8 +151,8 @@
       <file leaf-file-name="DCAddChirdrenTaskItem.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-150">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="625">
+              <caret line="25" column="23" lean-forward="false" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="23" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -162,26 +160,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DCMenuItemOne.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DCMenuItemOne.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="17" column="53" lean-forward="true" selection-start-line="17" selection-start-column="53" selection-end-line="17" selection-end-column="53" />
+            <state relative-caret-position="625">
+              <caret line="28" column="93" lean-forward="false" selection-start-line="28" selection-start-column="93" selection-end-line="28" selection-end-column="93" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="util.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/util.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="104" column="49" lean-forward="true" selection-start-line="104" selection-start-column="49" selection-end-line="104" selection-end-column="49" />
-              <folding>
-                <element signature="e#352#856#0" expanded="false" />
-                <element signature="e#923#2837#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -201,36 +186,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>starOpacity</find>
-      <find>starMouseLeave</find>
-      <find>starClick</find>
-      <find>starType</find>
-      <find>manImageDropdown</find>
-      <find>map</find>
-      <find>showAddMenberModal</find>
-      <find>menu</find>
-      <find>isInitEntry</find>
-      <find>avatarList</find>
-      <find>detaiDescriptionValue</find>
-      <find>confirm</find>
-      <find>updateProject</find>
-      <find>collectionProject</find>
-      <find>cancelCollection</find>
-      <find>ShowAddMenberModalVisibile</find>
-      <find>addMenbersInProject</find>
       <find>setShowAddMenberModalVisibile</find>
       <find>is_starinit</find>
       <find>isCollection</find>
       <find>is_star</find>
       <find>MentionEditorChange</find>
       <find>title</find>
-      <find>setDrawerVisibleOpen</find>
       <find>drawContent</find>
       <find>console</find>
       <find>DCAddChirdrenTaskItem</find>
       <find>titleIsEdit</find>
       <find>initTitle</find>
       <find>editContent</find>
+      <find>tagArray</find>
+      <find>addTaskItem</find>
+      <find>isSelectCalendarIcon</find>
+      <find>chirldrenTaskChargeChange</find>
+      <find>chargeMan</find>
+      <find>tagClose</find>
+      <find>map</find>
+      <find>setDrawerVisibleOpen</find>
+      <find>seeDetailInfo</find>
+      <find>startTime</find>
+      <find>start_time</find>
+      <find>endTime</find>
+      <find>isSetedStartTime</find>
+      <find>isSetedEndTime</find>
+      <find>updateTask</find>
+      <find>List</find>
+      <find>due_time</find>
+      <find>taskGroupList</find>
     </findStrings>
     <replaceStrings>
       <replace>46px</replace>
@@ -258,8 +243,6 @@
       <list>
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddItem.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirlrenTask.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemOne.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.less" />
@@ -288,25 +271,27 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/showAddMenberModal.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/index.js" />
-        <option value="$PROJECT_DIR$/src/assets/test.html" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/AddModalForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ShowAddMenberModal.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
         <option value="$PROJECT_DIR$/src/services/technological/project.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
         <option value="$PROJECT_DIR$/src/services/technological/prjectDetail.js" />
         <option value="$PROJECT_DIR$/src/services/technological/task.js" />
         <option value="$PROJECT_DIR$/src/utils/requestAxios.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/NewsDynamic/Comment.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js" />
         <option value="$PROJECT_DIR$/src/utils/util.js" />
+        <option value="$PROJECT_DIR$/src/assets/test.html" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js" />
         <option value="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" />
       </list>
     </option>
   </component>
@@ -351,6 +336,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -386,13 +372,6 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="technological" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -409,15 +388,6 @@
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="NewsDynamic" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -461,7 +431,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -558,7 +527,8 @@
       <workItem from="1535504265279" duration="36591000" />
       <workItem from="1535591044309" duration="10517000" />
       <workItem from="1535607243814" duration="18543000" />
-      <workItem from="1535677223233" duration="26606000" />
+      <workItem from="1535677223233" duration="27459000" />
+      <workItem from="1535766737266" duration="22237000" />
     </task>
     <task id="LOCAL-00001" summary="去掉idea">
       <created>1533110126961</created>
@@ -854,11 +824,18 @@
       <option name="project" value="LOCAL" />
       <updated>1535625703530</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary=" 任务模块接口联调：1 。。。">
+      <created>1535712228958</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1535712228958</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="551603000" />
+    <option name="totallyTimeSpent" value="574693000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -868,10 +845,10 @@
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1928494" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11375948" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -891,7 +868,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="验证码" />
     <MESSAGE value="邮件连接页面判断，注册邮件，充值密码邮件或" />
     <MESSAGE value="页面逻辑联调结束" />
     <MESSAGE value="message全局api" />
@@ -916,7 +892,8 @@
     <MESSAGE value="项目接口联调" />
     <MESSAGE value="项目接口联调 小功能" />
     <MESSAGE value="项目模块接口联调基本完成 ， 任务模块接口函数定义" />
-    <option name="LAST_COMMIT_MESSAGE" value="项目模块接口联调基本完成 ， 任务模块接口函数定义" />
+    <MESSAGE value=" 任务模块接口联调：1 。。。" />
+    <option name="LAST_COMMIT_MESSAGE" value=" 任务模块接口联调：1 。。。" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -952,37 +929,28 @@
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
-          <line>151</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js</url>
           <line>29</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
-          <line>62</line>
+          <line>126</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="25" />
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
+          <line>139</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="27" />
+      <option name="time" value="30" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -1015,14 +983,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="417">
           <caret line="36" column="40" lean-forward="false" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
-          <folding>
-            <element signature="e#1655#1820#0" expanded="false" />
-            <element signature="e#1895#2798#0" expanded="false" />
-            <element signature="e#3401#3843#0" expanded="false" />
-            <element signature="e#3871#4329#0" expanded="false" />
-            <element signature="e#4357#5537#0" expanded="false" />
-            <element signature="e#6777#7225#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1030,7 +990,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
           <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1053,18 +1012,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="305">
           <caret line="87" column="62" lean-forward="false" selection-start-line="87" selection-start-column="62" selection-end-line="87" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-            <element signature="e#462#649#0" expanded="false" />
-            <element signature="e#781#1075#0" expanded="false" />
-            <element signature="e#1931#2349#0" expanded="false" />
-            <element signature="e#2399#2680#0" expanded="false" />
-            <element signature="e#2691#2972#0" expanded="false" />
-            <element signature="e#2983#3267#0" expanded="false" />
-            <element signature="e#3278#3557#0" expanded="false" />
-            <element signature="e#3650#3940#0" expanded="false" />
-            <element signature="e#4032#4986#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1177,13 +1124,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="14" column="20" lean-forward="false" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
@@ -1240,26 +1180,6 @@
             <element signature="e#2763#3002#0" expanded="false" />
             <element signature="e#3061#3318#0" expanded="false" />
             <element signature="e#3367#3448#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-394">
-          <caret line="14" column="28" lean-forward="false" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-            <element signature="e#1033#1106#0" expanded="false" />
-            <element signature="e#1123#1641#0" expanded="false" />
-            <element signature="e#1737#1802#0" expanded="false" />
-            <element signature="e#1831#1906#0" expanded="false" />
-            <element signature="e#1927#2003#0" expanded="false" />
-            <element signature="e#2027#2276#0" expanded="false" />
-            <element signature="e#2701#4715#0" expanded="false" />
-            <element signature="e#2812#4701#0" expanded="false" />
-            <element signature="e#5501#5974#0" expanded="false" />
-            <element signature="e#6514#6970#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1352,14 +1272,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-125">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwoChirldren.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -1399,39 +1311,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="14" column="34" lean-forward="true" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="83" column="48" lean-forward="true" selection-start-line="83" selection-start-column="48" selection-end-line="83" selection-end-column="48" />
-          <folding>
-            <element signature="e#457#639#0" expanded="false" />
-            <element signature="e#666#1070#0" expanded="false" />
-            <element signature="e#1097#1610#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="725">
-          <caret line="44" column="32" lean-forward="false" selection-start-line="44" selection-start-column="32" selection-end-line="44" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/util.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
+        <state relative-caret-position="425">
           <caret line="104" column="49" lean-forward="true" selection-start-line="104" selection-start-column="49" selection-end-line="104" selection-end-column="49" />
           <folding>
             <element signature="e#352#856#0" expanded="false" />
@@ -1440,10 +1322,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="16" column="19" lean-forward="false" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="83" column="18" lean-forward="false" selection-start-line="83" selection-start-column="18" selection-end-line="83" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#1033#1106#0" expanded="false" />
+            <element signature="e#1123#1641#0" expanded="false" />
+            <element signature="e#1737#1802#0" expanded="false" />
+            <element signature="e#1831#1906#0" expanded="false" />
+            <element signature="e#1927#2003#0" expanded="false" />
+            <element signature="e#2027#2276#0" expanded="false" />
+            <element signature="e#2721#4735#0" expanded="false" />
+            <element signature="e#2832#4721#0" expanded="false" />
+            <element signature="e#5521#5994#0" expanded="false" />
+            <element signature="e#6534#6990#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="28" column="32" lean-forward="true" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/ItemTwo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="27" column="227" lean-forward="false" selection-start-line="27" selection-start-column="227" selection-end-line="27" selection-end-column="227" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/TaskItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="44" column="17" lean-forward="false" selection-start-line="44" selection-start-column="17" selection-end-line="44" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/CreateTask.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="93" column="42" lean-forward="false" selection-start-line="93" selection-start-column="24" selection-end-line="93" selection-end-column="42" />
+          <folding>
+            <element signature="e#457#639#0" expanded="false" />
+            <element signature="e#666#1070#0" expanded="false" />
+            <element signature="e#1097#1610#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="112" column="14" lean-forward="false" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="14" />
+        <state relative-caret-position="140">
+          <caret line="182" column="6" lean-forward="true" selection-start-line="182" selection-start-column="6" selection-end-line="182" selection-end-column="6" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
             <element signature="e#466#1399#0" expanded="false" />
@@ -1477,10 +1423,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/technological/projectDetail.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="189" column="48" lean-forward="false" selection-start-line="189" selection-start-column="48" selection-end-line="189" selection-end-column="48" />
+        <state relative-caret-position="679">
+          <caret line="272" column="56" lean-forward="false" selection-start-line="272" selection-start-column="56" selection-end-line="272" selection-end-column="56" />
           <folding>
             <element signature="e#0#107#0" expanded="true" />
+            <element signature="e#1923#2236#0" expanded="false" />
             <element signature="e#2295#2564#0" expanded="false" />
             <element signature="e#2623#2892#0" expanded="false" />
             <element signature="e#2955#3097#0" expanded="false" />
@@ -1491,43 +1438,24 @@
             <element signature="e#4043#4181#0" expanded="false" />
             <element signature="e#4278#4526#0" expanded="false" />
             <element signature="e#4579#4910#0" expanded="false" />
+            <element signature="e#4966#5253#0" expanded="false" />
             <element signature="e#5309#5446#0" expanded="false" />
             <element signature="e#5504#5619#0" expanded="false" />
             <element signature="e#5679#5796#0" expanded="false" />
-            <element signature="e#5855#5971#0" expanded="false" />
-            <element signature="e#6032#6150#0" expanded="false" />
-            <element signature="e#6208#6323#0" expanded="false" />
-            <element signature="e#6379#6492#0" expanded="false" />
-            <element signature="e#6551#6667#0" expanded="false" />
-            <element signature="e#6732#6813#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="17" column="53" lean-forward="true" selection-start-line="17" selection-start-column="53" selection-end-line="17" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#5855#6042#0" expanded="false" />
+            <element signature="e#6103#6221#0" expanded="false" />
+            <element signature="e#6279#6394#0" expanded="false" />
+            <element signature="e#6450#6563#0" expanded="false" />
+            <element signature="e#6622#6738#0" expanded="false" />
+            <element signature="e#7420#7501#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-150">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="5" column="53" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        <state relative-caret-position="625">
+          <caret line="25" column="23" lean-forward="false" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="23" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
@@ -1536,42 +1464,66 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-22">
-          <caret line="149" column="0" lean-forward="true" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+        <state relative-caret-position="20">
+          <caret line="225" column="12" lean-forward="false" selection-start-line="225" selection-start-column="12" selection-end-line="225" selection-end-column="12" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
-            <element signature="e#1076#1100#0" expanded="false" />
-            <element signature="e#1128#1182#0" expanded="false" />
-            <element signature="e#1195#1322#0" expanded="false" />
-            <element signature="e#1385#1452#0" expanded="false" />
-            <element signature="e#1482#1977#0" expanded="false" />
-            <element signature="e#1682#1818#0" expanded="false" />
-            <element signature="e#2011#2099#0" expanded="false" />
-            <element signature="e#2205#2253#0" expanded="false" />
-            <element signature="e#2284#2345#0" expanded="false" />
-            <element signature="e#2369#2430#0" expanded="false" />
-            <element signature="e#2500#2991#0" expanded="false" />
-            <element signature="e#3042#3132#0" expanded="false" />
-            <element signature="e#3181#3267#0" expanded="false" />
-            <element signature="e#3355#3385#0" expanded="false" />
-            <element signature="e#3398#3476#0" expanded="false" />
-            <element signature="e#3504#3935#0" expanded="false" />
-            <element signature="e#3704#3808#0" expanded="false" />
-            <element signature="e#4014#4222#0" expanded="false" />
-            <element signature="e#4237#4242#0" expanded="false" />
-            <element signature="e#4254#4309#0" expanded="false" />
-            <element signature="e#4330#4386#0" expanded="false" />
-            <element signature="e#5423#5770#0" expanded="false" />
-            <element signature="e#5815#6667#0" expanded="false" />
-            <element signature="e#6708#7178#0" expanded="false" />
-            <element signature="e#7336#7930#0" expanded="false" />
-            <element signature="e#7957#8947#0" expanded="false" />
-            <element signature="e#8977#11728#0" expanded="false" />
-            <element signature="e#12300#12619#0" expanded="false" />
-            <element signature="e#12646#13512#0" expanded="false" />
-            <element signature="e#13522#13652#0" expanded="false" />
-            <element signature="e#13713#13844#0" expanded="false" />
-            <marker date="1535712106008" expanded="true" signature="4822:4870" ph="..." />
+            <element signature="e#911#935#0" expanded="false" />
+            <element signature="e#963#1017#0" expanded="false" />
+            <element signature="e#1030#1157#0" expanded="false" />
+            <element signature="e#1220#1287#0" expanded="false" />
+            <element signature="e#1517#1600#0" expanded="false" />
+            <element signature="e#1793#1881#0" expanded="false" />
+            <element signature="e#2261#2322#0" expanded="false" />
+            <element signature="e#2392#2883#0" expanded="false" />
+            <element signature="e#3283#3579#0" expanded="false" />
+            <element signature="e#3667#3697#0" expanded="false" />
+            <element signature="e#3710#3788#0" expanded="false" />
+            <element signature="e#3816#4190#0" expanded="false" />
+            <element signature="e#4269#4477#0" expanded="false" />
+            <element signature="e#4519#4854#0" expanded="false" />
+            <element signature="e#4866#4921#0" expanded="false" />
+            <element signature="e#4942#5405#0" expanded="false" />
+            <element signature="e#5996#6481#0" expanded="false" />
+            <element signature="e#6512#6859#0" expanded="false" />
+            <element signature="e#6904#7756#0" expanded="false" />
+            <element signature="e#7797#8267#0" expanded="false" />
+            <element signature="e#8425#9019#0" expanded="false" />
+            <element signature="e#9046#10036#0" expanded="false" />
+            <element signature="e#12861#13143#0" expanded="false" />
+            <element signature="e#13380#13699#0" expanded="false" />
+            <element signature="e#13726#14668#0" expanded="false" />
+            <element signature="e#14935#15066#0" expanded="false" />
+            <marker date="1535793410804" expanded="true" signature="5911:5959" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTask.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="946">
+          <caret line="91" column="71" lean-forward="false" selection-start-line="91" selection-start-column="71" selection-end-line="91" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#1236#1542#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="187" column="5" lean-forward="false" selection-start-line="187" selection-start-column="5" selection-end-line="187" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="28" column="93" lean-forward="false" selection-start-line="28" selection-start-column="93" selection-end-line="28" selection-end-column="93" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
