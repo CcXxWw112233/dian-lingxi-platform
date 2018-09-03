@@ -8,8 +8,8 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
   quitProject
 } from "../../services/technological/project";
-import { getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag } from "../../services/technological/task";
-
+import { getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
+import { selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex } from './select'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -203,7 +203,16 @@ export default {
       const { id } = payload
       let res = yield call(deleteTask, id)
       if(isApiResponseOk(res)) {
-
+        const taskGroupList = yield select(selectTaskGroupList)
+        const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
+        const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+        taskGroupList[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            taskGroupList
+          }
+        })
       }else{
       }
     },
@@ -270,7 +279,7 @@ export default {
     * putTask({ payload }, { select, call, put }) {
       let res = yield call(getTaskGroupList,  {type: '2', board_id: getUrlQueryString(search, 'board_id'), arrange_type: '1'})
       const { taskGroupListIndex, taskGroupListIndex_index } = payload
-      console.log(res.data[taskGroupListIndex].card_data[taskGroupListIndex_index])
+      // console.log(res.data[taskGroupListIndex].card_data[taskGroupListIndex_index])
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -279,6 +288,14 @@ export default {
             drawContent: res.data[taskGroupListIndex].card_data[taskGroupListIndex_index]
           }
         })
+      }else{
+      }
+    },
+
+    * removeProjectMenbers({ payload }, { select, call, put }) { //
+      let res = yield call(removeProjectMenbers, payload)
+      if(isApiResponseOk(res)) {
+
       }else{
       }
     },

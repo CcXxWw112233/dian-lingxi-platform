@@ -51,6 +51,7 @@ class AddModalForm extends React.Component {
       if (!err) {
         values['board_name'] = this.state.board_name
         values['description'] = this.state.description
+        values['users'] = '15289745555,15888880000'
         this.props.addNewProject ? this.props.addNewProject(values) : false
       }
     });

@@ -23,12 +23,12 @@ export default class DCAddChirdrenTask extends React.Component{
     })
   }
   //设置子任务负责人组件---------------start
-  setList(arr) {
-    this.setState({
-      List: arr
-    })
+  setList(id) {
+    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange() {
+  chirldrenTaskChargeChange(user_id) {
     this.setState({
       isSelectUserIcon: true
     })
@@ -74,12 +74,13 @@ export default class DCAddChirdrenTask extends React.Component{
     const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar } = this.state
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
+    const { data = [] } = projectDetailInfoData //任务执行人列表
 
     return(
       <div className={DrawerContentStyles.divContent_1}>
         {child_data.map((value, key) => {
           return (
-            <DCAddChirdrenTaskItem chirldTaskItemValue ={value} key={key} />
+            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={key} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
@@ -89,8 +90,10 @@ export default class DCAddChirdrenTask extends React.Component{
                 <Icon type="plus" style={{marginRight: 4}}/>
                 <input onFocus={this.addInputFocus.bind(this)} placeholder={'子任务'} onChange={this.setchirldTaskNameChange.bind(this)}/>
               </div>
-              <div style={{display: isShowUserCalendar ? 'block':'block'}}>
-                <Dropdown overlay={<DCMenuItemOne List={List} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+              <div style={{display: isShowUserCalendar ? 'block':'none'}}>
+                <Dropdown overlay={
+                  <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+                }>
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>
                 </Dropdown>
                 <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>

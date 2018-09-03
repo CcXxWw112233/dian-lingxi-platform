@@ -16,13 +16,11 @@ const MenuItemGroup = Menu.ItemGroup;
 let that
 export default class DrawContent extends React.Component {
   state = {
-    isCheck: true,
     title: '',
     titleIsEdit: false,
     isInEdit: false,
     isInAddTag: false,
     // 第二行状态
-    isSetedChargeMan: false,
     isSetedAlarm: false,
     alarmTime: '',
   }
@@ -33,16 +31,26 @@ export default class DrawContent extends React.Component {
     console.log(e)
   }
   topRightMenuClick({key}) {
-    if(key === '2') {
-      this.confirm()
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    if(key === '1') {
+      this.props.archivedTask({
+        card_id,
+        is_archived: '1'
+      })
+    }else if(key === '2') {
+      this.confirm(card_id)
     }
   }
-  confirm() {
+  confirm(card_id) {
+    const that = this
     Modal.confirm({
       title: '确认删除该任务吗？',
       okText: '确认',
       cancelText: '取消',
       onOk()  {
+        that.props.setDrawerVisibleClose()
+        that.props.deleteTask(card_id)
       }
     });
   }
@@ -50,9 +58,15 @@ export default class DrawContent extends React.Component {
 
   //标题-------start
   setIsCheck() {
-    this.setState({
-      isCheck: !this.state.isCheck
-    })
+    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { is_realize = '0', card_id } = drawContent
+    const obj = {
+      card_id,
+      is_realize: is_realize === '1' ? '0' : '1'
+    }
+    this.props.completeTask(obj)
+    drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
+    this.props.updateDatas({drawContent})
   }
   titleTextAreaChangeBlur(e) {
     const { datas:{ drawContent = {} } } = this.props.model
@@ -77,20 +91,22 @@ export default class DrawContent extends React.Component {
 
   //第二行状态栏编辑------------------start
     //设置任务负责人组件---------------start
-  setList(arr) {
-    const { projectDetailInfoData = {}  } = this.props.model
-    projectDetailInfoData['data'] = arr
-    this.props.updateDatas({projectDetailInfoData})
+  setList(id) {
+    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange() {
-    this.setState({
-      isSetedChargeMan: true
+  chirldrenTaskChargeChange({ user_id, full_name, img }) {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    drawContent['full_name'] = full_name
+    drawContent['img'] = img
+    this.props.addTaskExecutor({
+      card_id,
+      users: user_id
     })
   }
   setChargeManIsSelf() {
-    this.setState({
-      isSetedChargeMan: true
-    })
   }
     //设置任务负责人组件---------------end
     //设置提醒
@@ -220,11 +236,11 @@ export default class DrawContent extends React.Component {
 
   render() {
     that = this
-    const { isCheck, titleIsEdit, isInEdit, isInAddTag, isSetedChargeMan,  isSetedAlarm, alarmTime} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime} = this.state
 
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
+    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', full_name, img } = drawContent
     label_data = label_data || []
     description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
 
@@ -314,7 +330,7 @@ export default class DrawContent extends React.Component {
         {/*标题*/}
         <div className={DrawerContentStyles.divContent_2}>
            <div className={DrawerContentStyles.contain_2}>
-             <div onClick={this.setIsCheck.bind(this)} className={isCheck? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
+             <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
                <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
              </div>
              {!titleIsEdit ? (
@@ -332,7 +348,7 @@ export default class DrawContent extends React.Component {
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_3}>
             <div>
-              {!isSetedChargeMan ? (
+              {!full_name ? (
                  <div>
                    <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
                    <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
@@ -340,10 +356,18 @@ export default class DrawContent extends React.Component {
                    </Dropdown>
                  </div>
                 ) : (
+                <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
                   <div>
-                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} />
-                    <span  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 80}}>我是啊啊sssss啊</span>
+                    {img? (
+                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={img} />
+                    ) : (
+                      <span style={{width: 20, height: 20, borderRadius: 20, backgroundColor: '#f5f5f5', display: 'inline-block', marginRight: 8, textAlign: 'center'}}>
+                        <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
+                      </span>
+                    )}
+                    <span  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 80}}>{full_name}</span>
                   </div>
+                </Dropdown>
                 )}
             </div>
             <div>

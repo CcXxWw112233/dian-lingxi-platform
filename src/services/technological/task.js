@@ -32,7 +32,7 @@ export async function updateTask(data) {
 // 删除任务
 export async function deleteTask(id) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/card/${id}`,
     method: 'DELETE',
     data: {
       id
@@ -80,7 +80,7 @@ export async function addTaskExecutor(data) {
 export async function completeTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/realize`,
-    method: 'POST',
+    method: 'PUT',
     data,
   });
 }
@@ -98,6 +98,15 @@ export async function addTaskTag(data) {
 export async function removeTaskTag(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/label`,
+    method: 'DELETE',
+    data,
+  });
+}
+
+// 移出项目成员
+export async function removeProjectMenbers(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/remove`,
     method: 'DELETE',
     data,
   });

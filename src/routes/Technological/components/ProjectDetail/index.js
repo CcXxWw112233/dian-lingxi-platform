@@ -10,7 +10,7 @@ const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
-  const { datas:{ projectInfoDisplay, taskItemList } } = model
+  const { datas:{ projectInfoDisplay, taskGroupList } } = model
   const HeaderListProps = {
     modal,
     model,
@@ -90,11 +90,11 @@ const ProjectDetail = (props) => {
     modal,
     model,
     addTaskItem() {
-      taskItemList.push({})
+      taskGroupList.push({})
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
-          taskItemList
+          taskGroupList
         }
       })
     },
@@ -166,6 +166,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    removeProjectMenbers(data){
+      dispatch({
+        type: getEffectOrReducerByName('removeProjectMenbers'),
+        payload: data
+      })
+    }
   }
 
   const routingJump = (path) => {
