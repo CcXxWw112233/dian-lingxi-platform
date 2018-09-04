@@ -7,6 +7,8 @@ import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
 import Comment from '../../NewsDynamic/Comment'
+import Cookies from 'js-cookie'
+
 import { deepClone } from '../../../../../utils/util'
 
 const TextArea = Input.TextArea
@@ -28,7 +30,24 @@ export default class DrawContent extends React.Component {
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
-    console.log(e)
+    const pathArr = e.keyPath
+    const parentKey = Number(pathArr[1])
+    const childKey = Number(pathArr[0])
+
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
+    const { card_id } = drawContent
+    const list_id = projectGoupList[parentKey].list_data[childKey].list_id
+    const board_id = projectGoupList[parentKey].board_id
+    const requestObj = {
+      card_id,
+      list_id,
+      board_id,
+    }
+    const indexObj = {
+      taskGroupListIndex: childKey,
+      taskGroupListIndex_index: 0
+    }
+    this.props.changeTaskType({requestObj, indexObj})
   }
   topRightMenuClick({key}) {
     const { datas:{ drawContent = {} } } = this.props.model
@@ -98,9 +117,12 @@ export default class DrawContent extends React.Component {
   }
   chirldrenTaskChargeChange({ user_id, full_name, img }) {
     const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    drawContent['full_name'] = full_name
-    drawContent['img'] = img
+    const { card_id, executors=[] } = drawContent
+    executors[0] = {
+      user_id,
+      user_name: full_name,
+      avatar: img
+    }
     this.props.addTaskExecutor({
       card_id,
       users: user_id
@@ -221,16 +243,16 @@ export default class DrawContent extends React.Component {
       isInAddTag: false
     })
     const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
-    const { card_id } = drawContent
+    const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
-    drawContent['label_data'].push({label_name: e.target.value})
+    label_data.push({label_name: e.target.value})
     this.props.addTaskTag({
       card_id,
       board_id,
       name: e.target.value,
       label_name: e.target.value,
+      length: label_data.length
     })
-    this.props.updateDatas({drawContent})
   }
   //标签-------------end
 
@@ -238,9 +260,19 @@ export default class DrawContent extends React.Component {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime} = this.state
 
-    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
+
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', full_name, img } = drawContent
+    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [] } = drawContent
+
+    let executor = {//任务执行人信息
+      user_id: '',
+      user_name: '',
+      avatar: '',
+    }
+    if(executors.length) {
+      executor = executors[0]
+    }
     label_data = label_data || []
     description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
 
@@ -274,22 +306,15 @@ export default class DrawContent extends React.Component {
 
     const projectGroupMenu = (
       <Menu onClick={this.projectGroupMenuClick.bind(this)} mode="vertical">
-        <SubMenu key="sub1" title={<span>Navigation One</span>}>
-            <Menu.Item key="1">Option 1</Menu.Item>
-            <Menu.Item key="2">Option 2</Menu.Item>
-            <Menu.Item key="3">Option 3</Menu.Item>
-            <Menu.Item key="4">Option 4</Menu.Item>
-        </SubMenu>
-        <SubMenu key="sub2" title={<span>Navigation Two</span>}>
-          <Menu.Item key="5">Option 5</Menu.Item>
-          <Menu.Item key="6">Option 6</Menu.Item>
-        </SubMenu>
-        <SubMenu key="sub4" title={<span>Navigation Three</span>}>
-          <Menu.Item key="9">Option 9</Menu.Item>
-          <Menu.Item key="10">Option 10</Menu.Item>
-          <Menu.Item key="11">Option 11</Menu.Item>
-          <Menu.Item key="12">Option 12</Menu.Item>
-        </SubMenu>
+        {projectGoupList.map((value, key) => {
+          return (
+            <SubMenu key={key} title={<span>{value.board_name + value.board_id}</span>}>
+              {value.list_data.map((value2, key2) => {
+                return (<Menu.Item key={key2}>{ value2.list_name + value2.list_id }</Menu.Item>)
+              })}
+            </SubMenu>
+            )
+        })}
       </Menu>
     )
 
@@ -348,7 +373,7 @@ export default class DrawContent extends React.Component {
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_3}>
             <div>
-              {!full_name ? (
+              {!executor.user_id ? (
                  <div>
                    <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
                    <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
@@ -357,15 +382,15 @@ export default class DrawContent extends React.Component {
                  </div>
                 ) : (
                 <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
-                  <div>
-                    {img? (
-                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={img} />
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    {executor.avatar? (
+                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={executor.avatar} />
                     ) : (
-                      <span style={{width: 20, height: 20, borderRadius: 20, backgroundColor: '#f5f5f5', display: 'inline-block', marginRight: 8, textAlign: 'center'}}>
+                      <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center',justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
                         <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
-                      </span>
+                      </div>
                     )}
-                    <span  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 80}}>{full_name}</span>
+                    <div  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80}}>{executor.user_name || '佚名'}</div>
                   </div>
                 </Dropdown>
                 )}
@@ -466,7 +491,7 @@ export default class DrawContent extends React.Component {
 
         {/*评论*/}
         <div className={DrawerContentStyles.divContent_2} style={{marginTop: 20}}>
-          <Comment leftSpaceDivWH={26}></Comment>
+          <Comment {...this.props} leftSpaceDivWH={26}></Comment>
         </div>
 
       </div>

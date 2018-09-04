@@ -4,6 +4,7 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form } from 'antd'
 import detailInfoStyle from '../ProjectDetail/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
+import Cookies from 'js-cookie'
 
 let is_starinit = null
 export default class CollectionProject extends React.Component{
@@ -134,7 +135,8 @@ export default class CollectionProject extends React.Component{
       dropdownVisibleChangeValue: visible,
     })
   }
-  projectListItemClick(route,e,a) {
+  projectListItemClick(route,board_id,a) {
+    Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump(route)
   }
 
@@ -227,7 +229,7 @@ export default class CollectionProject extends React.Component{
       <div>
         <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
           <div className={indexStyle.listOutmask}></div>
-          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail?board_id=${board_id}`)}>
+          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail`,board_id)}>
             <div className={indexStyle.left}>
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
                 <span>{board_name}</span>

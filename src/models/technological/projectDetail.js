@@ -8,12 +8,13 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
   quitProject
 } from "../../services/technological/project";
-import { getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
-import { selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex } from './select'
+import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
+import { selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import Cookies from "js-cookie";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
-let search = null
+let board_id
 export default {
   namespace: 'projectDetail',
   state: [],
@@ -21,7 +22,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
-        search = location.search
+        board_id = Cookies.get('board_id')
         if (location.pathname === '/technological/projectDetail') {
           dispatch({
             type: 'updateDatas',
@@ -29,19 +30,27 @@ export default {
               projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
               isInitEntry: false, //是否初次进来
               drawContent: {}, //右方抽屉内容
+              projectDetailInfoData: {}, //项目详情
+              cardCommentList: [], //任务评论列表
+              projectGoupList: [], //项目分组列表
             }
           })
           dispatch({
             type: 'projectDetailInfo',
             payload:{
-              id: getUrlQueryString(location.search, 'board_id')
+              id: board_id
+            }
+          })
+          dispatch({
+            type: 'getProjectGoupList',
+            payload:{
             }
           })
           dispatch({
             type: 'getTaskGroupList',
             payload: {
               type: '2',
-              board_id: getUrlQueryString(location.search, 'board_id'),
+              board_id: board_id,
               arrange_type: '1'
             }
           })
@@ -73,7 +82,7 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: getUrlQueryString(search, 'board_id')
+            id: board_id
           }
         })
       }else{
@@ -86,7 +95,7 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: getUrlQueryString(search, 'board_id')
+            id: board_id
           }
         })
       }else{
@@ -137,7 +146,7 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: getUrlQueryString(search, 'board_id')
+            id: board_id
           }
         })
       }else{
@@ -157,6 +166,17 @@ export default {
     //项目增删改查--end
 
     //任务---start
+
+    * addTaskGroup({ payload }, { select, call, put }) { //
+      let res = yield call(addTaskGroup, payload)
+      const { length } = payload
+      const taskGroupList = yield select(selectTaskGroupList)
+      if(isApiResponseOk(res)) {
+        taskGroupList[length].list_id = res.data.id
+      }else{
+      }
+    },
+
     * getTaskGroupList({ payload }, { select, call, put }) { //
       let res = yield call(getTaskGroupList, payload)
       if(isApiResponseOk(res)) {
@@ -177,7 +197,7 @@ export default {
            type: 'getTaskGroupList',
            payload: {
              type: '2',
-             board_id: getUrlQueryString(search, 'board_id'),
+             board_id: board_id,
              arrange_type: '1'
            }
          })
@@ -226,20 +246,48 @@ export default {
     },
 
     * changeTaskType({ payload }, { select, call, put }) { //
-      let res = yield call(changeTaskType, payload)
+      const { requestObj, indexObj } = payload
+      const { board_id } = requestObj
+      const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
+      let res = yield call(changeTaskType, requestObj)
+
       if(isApiResponseOk(res)) {
+        Cookies.set('board_id', board_id,{expires: 30, path: ''})
+
+        yield  put({
+          type: 'projectDetailInfo',
+          payload:{
+            id: Cookies.get('board_id')
+          }
+        })
+        yield  put({
+          type: 'getProjectGoupList',
+          payload:{
+          }
+        })
+        yield  put({
+          type: 'putTask',
+          payload: indexObj
+        })
 
       }else{
       }
     },
 
     * addChirldTask({ payload }, { select, call, put }) { //
-      let res = yield call(addChirldTask, payload)
+      const { length } = payload
+      const newPayload = {...payload}
+      newPayload.executors ? delete newPayload.executors: ''
+      let res = yield call(addChirldTask, newPayload)
+      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-       yield put({
-         type: 'putTask',
-         payload
-       })
+        drawContent.child_data[length -1] = res.data || payload
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            drawContent,
+          }
+        })
       }else{
       }
     },
@@ -261,9 +309,17 @@ export default {
     },
 
     * addTaskTag({ payload }, { select, call, put }) { //
+      const { length } = payload
       let res = yield call(addTaskTag, payload)
+      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-
+        drawContent.label_data[length-1].label_id = res.data.label_id
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            drawContent
+          }
+        })
       }else{
       }
     },
@@ -277,7 +333,7 @@ export default {
     },
 
     * putTask({ payload }, { select, call, put }) {
-      let res = yield call(getTaskGroupList,  {type: '2', board_id: getUrlQueryString(search, 'board_id'), arrange_type: '1'})
+      let res = yield call(getTaskGroupList,  {type: '2', board_id: Cookies.get('board_id'), arrange_type: '1'})
       const { taskGroupListIndex, taskGroupListIndex_index } = payload
       // console.log(res.data[taskGroupListIndex].card_data[taskGroupListIndex_index])
       if(isApiResponseOk(res)) {
@@ -300,7 +356,61 @@ export default {
       }
     },
 
+    * getProjectGoupList({ payload }, { select, call, put }) { //
+      let res = yield call(getProjectGoupList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectGoupList: res.data
+          }
+        })
+      } else {
+
+      }
+    },
+
     //任务---end
+
+    //评论---start
+    * getCardCommentList({ payload }, { select, call, put }) { //
+      const { id } = payload
+      yield put({
+        type: 'updateDatas',
+        payload:{
+          cardCommentList: []
+        }
+      })
+      let res = yield call(getCardCommentList, id)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            cardCommentList: res.data
+          }
+        })
+      }else{
+      }
+    },
+
+    * addCardNewComment({ payload }, { select, call, put }) { //
+      let res = yield call(addCardNewComment, payload)
+      if(isApiResponseOk(res)) {
+        const { card_id } = payload
+        let res = yield call(getCardCommentList, card_id)
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload:{
+              cardCommentList: res.data
+            }
+          })
+        }else{
+        }
+      }else{
+      }
+    },
+    //评论--end
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

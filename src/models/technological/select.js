@@ -3,3 +3,4 @@ export const selectTaskGroupList = state => state[(`projectDetail`)].datas.taskG
 export const selectTaskGroupListIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex
 export const selectTaskGroupListIndexIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex_index
 
+export const selectDrawContent = state => state[(`projectDetail`)].datas.drawContent

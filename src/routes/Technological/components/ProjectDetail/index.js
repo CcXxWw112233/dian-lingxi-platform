@@ -89,13 +89,10 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
-    addTaskItem() {
-      taskGroupList.push({})
+    addTaskGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: {
-          taskGroupList
-        }
+        type: getEffectOrReducerByName('addTaskGroup'),
+        payload: data,
       })
     },
     getTaskGroupList(data){
@@ -169,6 +166,20 @@ const ProjectDetail = (props) => {
     removeProjectMenbers(data){
       dispatch({
         type: getEffectOrReducerByName('removeProjectMenbers'),
+        payload: data
+      })
+    },
+    getCardCommentList(id) {
+      dispatch({
+        type: getEffectOrReducerByName('getCardCommentList'),
+        payload: {
+          id
+        }
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addCardNewComment'),
         payload: data
       })
     }

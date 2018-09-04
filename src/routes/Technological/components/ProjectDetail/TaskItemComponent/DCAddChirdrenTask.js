@@ -14,7 +14,7 @@ export default class DCAddChirdrenTask extends React.Component{
     List: [1,2,3,4],
     due_time: '', //日期选择后的日期‘2018-08-07’
     name: '',
-    chargeMan: '', //子任务负责人
+    executors: [],
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -28,29 +28,36 @@ export default class DCAddChirdrenTask extends React.Component{
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange(user_id) {
+  chirldrenTaskChargeChange(data) {
+    let executors = []
+    executors.push(data)
     this.setState({
-      isSelectUserIcon: true
+      isSelectUserIcon: true,
+      executors
     })
   }
 
   //设置子任务负责人组件---------------end
+
+  //添加子任务
   addChirldTask() {
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
-    const { card_id, child_data = [] } = drawContent
+    const { card_id, child_data = [], list_id } = drawContent
     const { board_id } = projectDetailInfoData
     const  obj = {
       card_id,
       board_id,
+      list_id,
       name: this.state.name,
-      users: '',
-      due_time: this.state.dateString,
+      executors: this.state.executors,
+      users: this.state.executors.length ? this.state.executors[0].user_id : '',
+      due_time: this.state.due_time,
       card_name: this.state.name,
       taskGroupListIndex: this.props.model.datas.taskGroupListIndex,
-      taskGroupListIndex_index: this.props.model.datas.taskGroupListIndex_index
+      taskGroupListIndex_index: this.props.model.datas.taskGroupListIndex_index,
+      length: child_data.length,
     }
     drawContent['child_data'].push(obj)
-    this.props.updateDatas({drawContent})
     this.props.addChirldTask(obj)
     this.setState({
       isShowUserCalendar: false
@@ -97,7 +104,7 @@ export default class DCAddChirdrenTask extends React.Component{
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>
                 </Dropdown>
                 <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>
-                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 114,zIndex:2}} />
+                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 90,zIndex:2}} />
                 <Button onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
               </div>
             </div>

@@ -30,13 +30,16 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   chirldrenTaskChargeChange({ user_id, full_name, img }) {
     const { datas:{ drawContent = {} } } = this.props.model
-    const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const { card_id } = drawContent
-    chirldTaskItemValue['full_name'] = full_name
-    chirldTaskItemValue['img'] = img
+    const { chirldTaskItemValue } = this.props
+    const { card_id, executors=[] } = chirldTaskItemValue
+    executors[0] = {
+      user_id,
+      user_name: full_name,
+      avatar: img
+    }
     this.props.addTaskExecutor({
       card_id,
-      users: user_id
+      users: user_id,
     })
   }
   datePickerChange(date, dateString) {
@@ -52,9 +55,17 @@ export default class DCAddChirdrenTaskItem extends React.Component{
 
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const { card_id, card_name, due_time, is_realize = '0', full_name, img } = chirldTaskItemValue
+    const { card_id, card_name, due_time, is_realize = '0' ,executors = []} = chirldTaskItemValue
     const { datas:{ projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
+    let executor = {//任务执行人信息
+      user_id: '',
+      user_name: '',
+      avatar: '',
+    }
+    if(executors.length) {
+      executor = executors[0]
+    }
 
     const imgOrAvatar = (img) => {
       return  img ? (
@@ -74,13 +85,13 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           <div className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>
-          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time}{due_time ? '截止':''}</span></div>
+          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? due_time.substring(0, 10)+ '截止' : ''}</span></div>
           <div style={{position:'relative', height: 22,display: 'flex', justifyContent: 'align-items'}}>
             <Dropdown overlay={
               <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
             }>
-              {full_name? (
-                imgOrAvatar(img)
+              {executor.user_id? (
+                imgOrAvatar(executor.avatar)
               ) : (
                 <div>
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>

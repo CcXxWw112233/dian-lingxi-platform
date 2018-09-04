@@ -4,6 +4,7 @@ import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
+const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
 const Dragger = Upload.Dragger
@@ -14,10 +15,26 @@ export default class Comment extends React.Component {
   }
   MentionSpacerClick() {
   }
-  MentionEditorChange(e) {
-    // console.log(e.target)
+  MentionEditorChange(e,value) {
+    this.setState({
+      editText: toString(e)
+    })
   }
+  submitComment() {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    this.props.addCardNewComment({
+      card_id,
+      comment: this.state.editText
+    })
+  }
+
+
   render() {
+
+    const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { img } = projectDetailInfoData
+
     const { leftSpaceDivWH = 40 } = this.props
     const props = {
       name: 'file',
@@ -39,12 +56,18 @@ export default class Comment extends React.Component {
           <div style={{width: leftSpaceDivWH, height: leftSpaceDivWH}}>
           </div>
           <div className={CommentStyles.right}>
-            <CommentListItem />
+            <CommentListItem {...this.props}/>
           </div>
         </div>
         <div className={CommentStyles.out}>
           <div>
-            <img src="" className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
+            {img?(
+              <img src={img} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
+            ): (
+              <div style={{width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
+                <Icon type={'user'} style={{fontSize: 16, marginTop: 4, color: '#8c8c8c'}}/>
+              </div>
+            )}
           </div>
           {/*<Dragger {...props} >*/}
           <div className={CommentStyles.right}>
@@ -75,7 +98,7 @@ export default class Comment extends React.Component {
                       {/*</Dragger>*/}
                     </div>
                   <div  className={CommentStyles.functionBar_right}>
-                    <Button type={'primary'} style={{height:24,width: 58,marginRight: 12}}>发布</Button>
+                    <Button type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
                   </div>
                 </div>
               </div>

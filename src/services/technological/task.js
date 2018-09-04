@@ -2,6 +2,15 @@
 import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
+//新增任务分组
+export async function addTaskGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists`,
+    method: 'POST',
+    data,
+  });
+}
+
 // 任务列表
 export async function getTaskGroupList(params) {
   return request({
@@ -109,5 +118,32 @@ export async function removeProjectMenbers(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/remove`,
     method: 'DELETE',
     data,
+  });
+}
+
+
+// 评论列表
+export async function getCardCommentList(id) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/comment/list/${id}`,
+    method: 'GET',
+  });
+}
+
+// 新增评论
+export async function addCardNewComment(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/comment`,
+    method: 'POST',
+    data
+  });
+}
+
+
+//获取项目分组列表
+export async function getProjectGoupList() {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/card_lists`,
+    method: 'GET',
   });
 }

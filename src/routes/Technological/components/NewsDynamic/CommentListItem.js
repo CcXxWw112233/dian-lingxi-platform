@@ -4,11 +4,9 @@ import CommentStyles from './Comment.less'
 
 const Dragger = Upload.Dragger
 
-const arr = [1,2,3,4,5,6,7,8,9,12,11,12,13,14,15,16,17,18,19,20,21]
 export default class CommentListItem extends React.Component {
   state = {
     closeNormal: true,
-    commentListArr: arr
   }
 
   boxOnMouseOver() {
@@ -24,16 +22,19 @@ export default class CommentListItem extends React.Component {
 
 
   render() {
-    const { closeNormal, commentListArr } = this.state
-    const listItem = (key) => (
+
+    const { datas:{ projectDetailInfoData = {}, cardCommentList = [] } } = this.props.model
+
+    const { closeNormal } = this.state
+    const listItem = (value) => (
       <div className={CommentStyles.commentListItem}>
-        <div><span>我</span>{key}</div>
-        <div>今天 12:30</div>
+        <div><span>{value.text}</span></div>
+        <div>{value.createTime?value.createTime.substring(0, 16): ''}</div>
       </div>
     )
     return (
       <div className={CommentStyles.commentListItemBox}>
-        {commentListArr.length > 20 ?(
+        {cardCommentList.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(
               <div>
@@ -47,13 +48,13 @@ export default class CommentListItem extends React.Component {
           </div>
         ) : ('')}
         <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
-          {commentListArr.map((value, key) => {
+          {cardCommentList.map((value, key) => {
             if(closeNormal && key > 19) {
               return false
             }
             return (
               <div key={key}>
-                {listItem(key)}
+                {listItem(value)}
               </div>
             )
           })}

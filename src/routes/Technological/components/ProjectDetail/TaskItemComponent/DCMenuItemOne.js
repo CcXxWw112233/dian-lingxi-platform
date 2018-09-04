@@ -22,7 +22,7 @@ const DCMenuItemOne = (props) => {
           const { user_id, full_name, img } = value
           return(
             <div style={{position: 'relative'}} key={key}  >
-              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name, img })}}>
+              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || '佚名', img })}}>
                 <div className={DrawerContentStyles.menuOneitemDiv} >
                   {value.img?(
                     <img src={value.img} className={DrawerContentStyles.avatar} />
