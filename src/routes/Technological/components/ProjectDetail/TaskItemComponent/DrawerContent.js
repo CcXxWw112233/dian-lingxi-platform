@@ -260,9 +260,12 @@ export default class DrawContent extends React.Component {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime} = this.state
 
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
+    //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
 
-    const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_name } = projectDetailInfoData //任务执行人列表
+    const { list_name } = taskGroupList[taskGroupListIndex]
+
     let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [] } = drawContent
 
     let executor = {//任务执行人信息
@@ -341,7 +344,7 @@ export default class DrawContent extends React.Component {
           <div className={DrawerContentStyles.contain_1}>
             <Dropdown overlay={projectGroupMenu}>
               <div className={DrawerContentStyles.left}>
-                <span>项目实例 </span> <Icon type="right" /> <span>任务看板形态</span>
+                <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
               </div>
             </Dropdown>
             <Dropdown overlay={topRightMenu}>

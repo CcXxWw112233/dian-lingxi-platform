@@ -253,7 +253,6 @@ export default {
 
       if(isApiResponseOk(res)) {
         Cookies.set('board_id', board_id,{expires: 30, path: ''})
-
         yield  put({
           type: 'projectDetailInfo',
           payload:{
@@ -269,7 +268,6 @@ export default {
           type: 'putTask',
           payload: indexObj
         })
-
       }else{
       }
     },
@@ -335,11 +333,12 @@ export default {
     * putTask({ payload }, { select, call, put }) {
       let res = yield call(getTaskGroupList,  {type: '2', board_id: Cookies.get('board_id'), arrange_type: '1'})
       const { taskGroupListIndex, taskGroupListIndex_index } = payload
-      // console.log(res.data[taskGroupListIndex].card_data[taskGroupListIndex_index])
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload:{
+            taskGroupListIndex,
+            taskGroupListIndex_index,
             taskGroupList: res.data,
             drawContent: res.data[taskGroupListIndex].card_data[taskGroupListIndex_index]
           }

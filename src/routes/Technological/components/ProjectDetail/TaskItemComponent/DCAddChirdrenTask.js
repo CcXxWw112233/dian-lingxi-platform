@@ -15,6 +15,8 @@ export default class DCAddChirdrenTask extends React.Component{
     due_time: '', //日期选择后的日期‘2018-08-07’
     name: '',
     executors: [],
+    saveDisabled: true,
+    isCanBlurDo: true, //input失焦是否可以触发设置区域隐藏标志
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -36,7 +38,6 @@ export default class DCAddChirdrenTask extends React.Component{
       executors
     })
   }
-
   //设置子任务负责人组件---------------end
 
   //添加子任务
@@ -60,20 +61,43 @@ export default class DCAddChirdrenTask extends React.Component{
     drawContent['child_data'].push(obj)
     this.props.addChirldTask(obj)
     this.setState({
-      isShowUserCalendar: false
+      isShowUserCalendar: false,
+      name: ''
+    })
+  }
+
+  setAreaMouseOver() {
+    this.setState({
+      isCanBlurDo: false
+    })
+  }
+  setAreaMouseLeave() {
+    this.setState({
+      isCanBlurDo: true
     })
   }
 
   //子任务名称设置
   setchirldTaskNameChange(e) {
     this.setState({
-      name: e.target.value
+      name: e.target.value,
+      saveDisabled: e.target.value ? false : true
     })
   }
-
-  addInputFocus() {
+  setchirldTaskNameBlur(e) {
+    if(!this.state.isCanBlurDo) {
+      return false
+    }
     this.setState({
-      isShowUserCalendar: true
+      isShowUserCalendar: false,
+      saveDisabled: true,
+      name: ''
+    })
+  }
+  addInputFocus(e) {
+    this.setState({
+      isShowUserCalendar: true,
+      saveDisabled: e.target.value ? false : true
     })
   }
 
@@ -95,9 +119,14 @@ export default class DCAddChirdrenTask extends React.Component{
             <div className={DrawerContentStyles.contain_7_add}>
               <div>
                 <Icon type="plus" style={{marginRight: 4}}/>
-                <input onFocus={this.addInputFocus.bind(this)} placeholder={'子任务'} onChange={this.setchirldTaskNameChange.bind(this)}/>
+                <input onFocus={this.addInputFocus.bind(this)}
+                       placeholder={'子任务'}
+                       onChange={this.setchirldTaskNameChange.bind(this)}
+                       onBlur={this.setchirldTaskNameBlur.bind(this)}
+                       value={this.state.name}
+                />
               </div>
-              <div style={{display: isShowUserCalendar ? 'block':'none'}}>
+              <div style={{display: isShowUserCalendar ? 'block':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
                   <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
                 }>
@@ -105,7 +134,7 @@ export default class DCAddChirdrenTask extends React.Component{
                 </Dropdown>
                 <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>
                 <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 90,zIndex:2}} />
-                <Button onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
+                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
               </div>
             </div>
           </div>
