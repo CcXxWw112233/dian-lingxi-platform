@@ -28,6 +28,8 @@ export default {
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        Cookies.set('is401', false, {expires: 30, path: ''})
+
         message.success('登录成功', MESSAGE_DURATION_TIME)
         yield put(routerRedux.push(redirectLocation))
       }else{

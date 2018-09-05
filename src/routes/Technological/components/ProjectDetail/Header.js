@@ -77,20 +77,21 @@ export default class Header extends React.Component {
   //收藏
   starClick(id, e) {
     e.stopPropagation();
-    const { itemDetailInfo = {}} = this.props
-    const { is_star } = itemDetailInfo
     this.setState({
       isInitEntry: false,
-      isCollection:  this.state.isInitEntry ? (is_starinit === '1' ? false: true ) : !this.state.isCollection,
     },function () {
-      if(this.state.isCollection) {
-        this.props.collectionProject(id)
-      }else{
-        this.props.cancelCollection(id)
-      }
+      this.setState({
+        isCollection: is_starinit === '1' ? false : this.state.isInitEntry ? false : !this.state.isCollection,
+        starOpacity: 1
+      },function () {
+        if(this.state.isCollection) {
+          this.props.collectionProject(id)
+        }else{
+          this.props.cancelCollection(id)
+        }
+      })
     })
   }
-
 
   //...菜单变化点击
   ellipsisClick(e) {

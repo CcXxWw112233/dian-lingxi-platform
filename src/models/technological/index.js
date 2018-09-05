@@ -10,7 +10,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        // message.destroy()
+        message.destroy()
         if (location.pathname.indexOf('/technological') !== -1) {
           // dispatch({
           //   type:'updateDatas',

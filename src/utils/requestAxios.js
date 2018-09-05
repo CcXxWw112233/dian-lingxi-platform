@@ -4,7 +4,11 @@ import Cookies from 'js-cookie'
 import _ from "lodash";
 
 
-let loading = null ;
+function messageLoading(url) {
+  return (
+    message.loading('加载中...', 0)
+  )
+}
 axios.interceptors.request.use(
   config => {
     return config;
@@ -23,7 +27,7 @@ export default function request(options = {}, elseSet = {}) {
     params = {},
     data = {},
   } = options;
-  loading = !isNotLoading ? message.loading('加载中...', 0) : ''
+  let loading = !isNotLoading ? messageLoading(url) : ''
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
@@ -32,7 +36,6 @@ export default function request(options = {}, elseSet = {}) {
   header['refreshToken'] =  refreshToken
   return new Promise((resolve, reject) => {
     const { clooseLoading = false } = elseSet
-    // clooseLoading ? loading = message.loading('加载中...', 0):''
     axios({
       ...{
         url,
@@ -50,7 +53,12 @@ export default function request(options = {}, elseSet = {}) {
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
             case 401:
-              window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+              const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
+              if(!is401) {
+                Cookies.set('is401', true, {expires: 30, path: ''})
+                window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+              }else{
+              }
               break
             default:
               break

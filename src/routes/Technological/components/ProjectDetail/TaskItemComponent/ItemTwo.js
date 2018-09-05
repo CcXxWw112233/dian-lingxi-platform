@@ -34,7 +34,15 @@ export default class ItemTwo extends React.Component {
   }
   render() {
     const { itemValue = {} } = this.props
-    const { card_id, card_name, child_data=[], is_realize = '0' } = itemValue
+    const { card_id, card_name, child_data=[], is_realize = '0', executors = [] } = itemValue
+    let executor = {//任务执行人信息
+      user_id: '',
+      user_name: '',
+      avatar: '',
+    }
+    if(executors.length) {
+      executor = executors[0]
+    }
     return (
       <div  key={'2'} className={CreateTaskStyle.item_2} >
         <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this,{drawContent:itemValue, taskGroupListIndex: this.props.taskGroupListIndex, taskGroupListIndex_index: this.props.taskGroupListIndex_index})}>
@@ -43,7 +51,16 @@ export default class ItemTwo extends React.Component {
           </div>
           <div>{card_name}</div>
           <div>
-            <img src="" />
+            {executor.user_id? (
+              executor.avatar ? (
+                <img src={executor.avatar} />
+              ): (
+                <div style={{height:20,width: 20,borderRadius:16,paddingTop: 4,backgroundColor:'#e8e8e8',textAlign: 'center',margin:'0 12px',}}>
+                  <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c', display: 'block',}}/>
+                </div>
+              )
+            ): ('')}
+
           </div>
           <div>
             <Icon type="ellipsis"  style={{fontSize:16}}/>

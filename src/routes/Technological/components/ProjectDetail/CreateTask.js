@@ -45,6 +45,9 @@ export default class CreateTask extends React.Component {
     let target = event.target || event.srcElement;
 
     //可以改变position位置的判断
+    if(!this.props.model.datas.taskGroupList) {
+      return false
+    }
     if(this.state.needX < 0 && (event.clientX - this.disX) < -(this.props.model.datas.taskGroupList.length * 314)){
        return false
     }

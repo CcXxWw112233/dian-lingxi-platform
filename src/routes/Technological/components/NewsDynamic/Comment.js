@@ -33,6 +33,13 @@ export default class Comment extends React.Component {
   render() {
 
     const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { data = [] } = projectDetailInfoData
+    let suggestions = []
+    for(let val of data) {
+      if(val['full_name']) {
+        suggestions.push(val['full_name'])
+      }
+    }
     const { img } = projectDetailInfoData
 
     const { leftSpaceDivWH = 40 } = this.props
@@ -78,7 +85,7 @@ export default class Comment extends React.Component {
                   onChange ={this.MentionEditorChange.bind(this)}
                   className={CommentStyles.mention}
                   style={{ width: '100%',border:' none', outline: 'none', height: 48}}
-                  suggestions={['afc163', 'benjycui', 'yiminghe', 'RaoHai', '中文', 'にほんご']}
+                  suggestions={suggestions}
                 />
               <div className={CommentStyles.functionBar}>
                   <div  className={CommentStyles.functionBar_left}>

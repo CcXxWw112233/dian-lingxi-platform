@@ -21,7 +21,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        // message.destroy()
+        message.destroy()
         board_id = Cookies.get('board_id')
         if (location.pathname === '/technological/projectDetail') {
           dispatch({
@@ -54,6 +54,30 @@ export default {
               arrange_type: '1'
             }
           })
+          // new Promise(function () {
+          //   dispatch({
+          //     type: 'projectDetailInfo',
+          //     payload:{
+          //       id: board_id
+          //     }
+          //   })
+          //   dispatch({
+          //     type: 'getProjectGoupList',
+          //     payload:{
+          //     }
+          //   })
+          //   dispatch({
+          //     type: 'getTaskGroupList',
+          //     payload: {
+          //       type: '2',
+          //       board_id: board_id,
+          //       arrange_type: '1'
+          //     }
+          //   })
+          // }).finally(() => {
+          //   message.destroy()
+          // })
+
         }else{
         }
       })
@@ -64,7 +88,6 @@ export default {
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
       const { id } = payload
       let res = yield call(projectDetailInfo, id)
-      message.destroy()
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -179,6 +202,7 @@ export default {
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
       let res = yield call(getTaskGroupList, payload)
+      // message.destroy()
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
