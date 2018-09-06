@@ -9,6 +9,14 @@ export async function getProjectList(params) {
     params
   });
 }
+//获取app标
+export async function getAppsList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/app`,
+    method: 'GET',
+    params
+  });
+}
 
 //新增项目
 export async function addNewProject(data) {

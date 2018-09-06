@@ -1,18 +1,36 @@
 import React from 'react'
-import { Modal, Form, Button, Input } from 'antd'
+import { Modal, Form, Button, Input, message } from 'antd'
 import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
+import StepTwoList from './StepTwoList'
+import { validateTel, validateEmail } from '../../../../utils/verify'
+import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
+
+
 class AddModalForm extends React.Component {
   state = {
-    step: 1
+    step: 1,
+    appsArray: [],
+    stepOneContinueDisabled: true,
+    stepTwoContinueDisabled: true,
+    stepThreeContinueDisabled: true,
+    completeValidation: false, //完成滑块验证
+  }
+  componentWillReceiveProps(nextProps) {
+    const { datas:{ appsList }} = nextProps.model
+    this.setState({
+      appsArray: new Array(appsList.length)
+    })
   }
   //表单输入时记录值
   boardNameChange(e){
     const value = e.target.value
     this.setState({
-      board_name: value
+      board_name: value,
+      stepOneContinueDisabled: !e.target.value
     })
   }
   descriptionChange(e){
@@ -24,7 +42,6 @@ class AddModalForm extends React.Component {
     this.setState({
       users: e.target.value
     })
-    console.log(this.state.users)
   }
   //下一步
   nextStep = () => {
@@ -34,8 +51,10 @@ class AddModalForm extends React.Component {
   }
   //监听是否完成验证
   listenCompleteValidation = (e) => {
+    // console.log(e)
     this.setState({
-      completeValidation: e
+      completeValidation: e,
+      stepThreeContinueDisabled: !e
     })
   }
   onCancel = () => {
@@ -44,6 +63,32 @@ class AddModalForm extends React.Component {
     })
     this.props.hideModal()
   }
+
+  //step 2 表单单项button点击
+  stepTwoButtonClick(data) {
+    const { isAdd, id, itemKey } = data
+    const appsArray = this.state.appsArray
+    if(isAdd) {
+      appsArray[itemKey] = id
+    }else{
+      appsArray[itemKey] = 'itemIsNull'
+    }
+    this.setState({
+      appsArray
+    },function () {
+      let stepTwoContinueDisabled = true
+      console.log(this.state.appsArray)
+      for(let val of this.state.appsArray) {
+        if(val && val !== 'itemIsNull') {
+          stepTwoContinueDisabled = false
+          break
+        }
+      }
+      this.setState({
+        stepTwoContinueDisabled
+      })
+    })
+  }
   // 提交表单
   handleSubmit = (e) => {
     e.preventDefault();
@@ -51,14 +96,42 @@ class AddModalForm extends React.Component {
       if (!err) {
         values['board_name'] = this.state.board_name
         values['description'] = this.state.description
-        values['users'] = '15289745555,15888880000'
+        let appsString = ''
+        for(let val of this.state.appsArray) {
+          if(val && val !== 'itemIsNull') {
+            appsString += val+','
+          }
+        }
+        values['apps'] = appsString
+
+        //参与人
+        if(this.state.users) {
+          let users = this.state.users.replace(/\n/gim,',') //替代换行符
+          let usersArr = users.split(',')   //转成数组
+          let usersNewArr = []
+          for(let val of usersArr) {
+            if(val) {
+              usersNewArr.push(val)
+            }
+          }
+          users = usersNewArr.join(',')
+          for(let val of usersNewArr ) {
+            if(!validateTel(val) && !validateEmail(val)) {
+              message.warn('请正确输入被邀请人的手机号或者邮箱。',MESSAGE_DURATION_TIME)
+              return false
+            }
+          }
+          values['users'] = users
+        }
         this.props.addNewProject ? this.props.addNewProject(values) : false
       }
     });
   }
   render() {
-    const { step } = this.state
+    const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled } = this.state
     const { modal: { modalVisible }, model, handleCancel } = this.props;
+    const { datas = { }} = model
+    const { appsList = [] } = datas
     const { getFieldDecorator } = this.props.form;
 
     const step_1 = (
@@ -79,83 +152,29 @@ class AddModalForm extends React.Component {
           {getFieldDecorator('description', {
             // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}} placeholder="项目描述（选填)"
+            <TextArea style={{height: 208,resize: 'none'}} placeholder="项目描述（选填)"
                       onChange={this.descriptionChange.bind(this)}/>
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={stepOneContinueDisabled}  onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
         </FormItem>
       </Form>
     )
+
     const step_2 = (
-      <div style={{margin: '0 auto',width: 392}}>
+      <div style={{margin: '0 auto',width: 392, height: 'auto'}}>
         <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤二：选择本项目具备的功能</div>
-        <Form  style={{margin: '0 auto',width: 392}}>
-          <FormItem style={{width: 392}}>
-            {getFieldDecorator('zhaobiao', {
-            })(
-              <div style={{display: 'flex',justifyContent: 'space-between',marginTop: 20}}>
-                <div style={{textAlign: 'left',lineHeight: 1}}>
-                  <span style={{fontSize: 16, color: '#000'}}>招标</span><br/>
-                  <span style={{fontSize: 12, color: '#8c8c8c',display:'inline-block',marginTop: 4}}>将项目发布到平台，招募合作投资商、设计院或咨询机构。</span>
-                </div>
-                <div>
-                  <Button disabled onClick={this.nextStep} style={{width: 80, height: 32}}>未开放</Button>
-                </div>
-              </div>
-            )}
-          </FormItem>
-          <FormItem style={{width: 392}}>
-            {getFieldDecorator('name', {
-            })(
-              <div style={{display: 'flex',justifyContent: 'space-between',}}>
-                <div style={{textAlign: 'left',lineHeight: 1}}>
-                  <span style={{fontSize: 16, color: '#000'}}>流程</span><br/>
-                  <span style={{fontSize: 12, color: '#8c8c8c',display:'inline-block',marginTop: 4}}>把控项目进度，明确多方在合同上的交付、时间等要求。</span>
-                </div>
-                <div>
-                  <Button disabled onClick={this.nextStep} style={{width: 80, height: 32}}>未开放</Button>
-                </div>
-              </div>
-            )}
-          </FormItem>
-          <FormItem style={{width: 392}}>
-            {getFieldDecorator('name', {
-            })(
-              <div style={{display: 'flex',justifyContent: 'space-between',}}>
-                <div style={{textAlign: 'left',lineHeight: 1}}>
-                  <span style={{fontSize: 16, color: '#000'}}>任务</span><br/>
-                  <span style={{fontSize: 12, color: '#8c8c8c',display:'inline-block',marginTop: 4}}>分解任务与管理工作进度。</span>
-                </div>
-                <div>
-                  <Button disabled onClick={this.nextStep} style={{width: 80, height: 32}}>未开放</Button>
-                </div>
-              </div>
-            )}
-          </FormItem>
-          <FormItem style={{width: 392}}>
-            {getFieldDecorator('name', {
-              // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
-            })(
-              <div style={{display: 'flex',justifyContent: 'space-between',}}>
-                <div style={{textAlign: 'left',lineHeight: 1}}>
-                  <span style={{fontSize: 16, color: '#000'}}>文档</span><br/>
-                  <span style={{fontSize: 12, color: '#8c8c8c',display:'inline-block',marginTop: 4}}>项目内的共享资料，版本管理（加密传输，授权使用）。</span>
-                </div>
-                <div>
-                  <Button disabled onClick={this.nextStep} style={{width: 80, height: 32}}>未开放</Button>
-                </div>
-              </div>
-            )}
-          </FormItem>
-
-        </Form>
-
-
-        <Button type="primary" onClick={this.nextStep} style={{width: 208,marginTop: 20, height: 40}}>跳过</Button>
+        <div  style={{margin: '0 auto',width: 392}}>
+          {appsList.map((value, key) => {
+            return (
+              <StepTwoList itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+            )
+          })}
+        </div>
+        <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 208,marginTop: 20,marginBottom: 40, height: 40}}>下一步</Button>
       </div>
     )
     const step_3 = (
@@ -167,7 +186,7 @@ class AddModalForm extends React.Component {
           {getFieldDecorator('users', {
             // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"
+            <TextArea style={{height: 208,resize: 'none'}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"
                        onChange={this.usersChange.bind(this)}/>
           )}
         </FormItem>
@@ -177,7 +196,7 @@ class AddModalForm extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>创建项目</Button>
+          <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>完成创建</Button>
         </FormItem>
       </Form>
     )
@@ -185,14 +204,14 @@ class AddModalForm extends React.Component {
     return(
       <div>
         <Modal
-          visible={modalVisible}
+          visible={modalVisible} //modalVisible
           width={472}
           footer={null}
           destroyOnClose
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
         >
-          <div style={{height: 440}}>
+          <div style={{height: step=== 2 ? 'auto':440}}>
             {step === 1 ? (
               step_1
             ) : (

@@ -116,7 +116,7 @@ export default class Header extends React.Component {
   render() {
     const {datas: { projectInfoDisplay, projectDetailInfoData = {} } } = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
-    const { board_name, board_id, is_star } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create } = projectDetailInfoData
     is_starinit = is_star
 
     const menu = (
@@ -136,11 +136,14 @@ export default class Header extends React.Component {
             删除项目
           </div>
         </Menu.Item>
-        <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectDangerMenu}>
-            退出项目
-          </div>
-        </Menu.Item>
+        {is_create !== '1'? (
+          <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={indexStyle.elseProjectDangerMenu}>
+              退出项目
+            </div>
+          </Menu.Item>
+        ) : ('')}
+
       </Menu>
     );
     return (

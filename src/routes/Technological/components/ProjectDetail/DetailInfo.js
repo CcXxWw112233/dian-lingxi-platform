@@ -1,8 +1,11 @@
 import React from 'react'
 import detailInfoStyle from './DetailInfo.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button } from 'antd'
+import ShowAddMenberModal from '../Project/ShowAddMenberModal'
+
 import AddModalForm from './AddModalForm'
 const TextArea = Input.TextArea
+
 
 const detaiDescription = '欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。d如果使用中需要问题，可以随时联系我们进行交流或反馈：support@ProductName.com'
 
@@ -12,7 +15,8 @@ export default class DetailInfo extends React.Component {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
     isSoundsEvrybody_2: false,//edit是否通知项目所有人
     editDetaiDescription :false ,//是否处于编辑状态
-    detaiDescriptionValue: ''
+    detaiDescriptionValue: '',
+    ShowAddMenberModalVisibile: false
   }
   componentWillReceiveProps (props) {
     const {datas: {projectDetailInfoData = {}}} = props.model
@@ -74,6 +78,14 @@ export default class DetailInfo extends React.Component {
     })
   }
   //点击区域描述可编辑区域-----------end
+
+  //点击添加成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+
 
   render() {
 
@@ -148,7 +160,7 @@ export default class DetailInfo extends React.Component {
       </div>
     )
     return (
-      <div >
+      <div>
         <div className={projectInfoDisplay?detailInfoStyle.detailInfo : detailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
           <div className={detailInfoStyle.top}>
             <div className={detailInfoStyle.topItem}>
@@ -186,7 +198,7 @@ export default class DetailInfo extends React.Component {
                   )
                 }else{
                   return(
-                    <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.props.showModal}>
+                    <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                       <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold',marginTop: 8}}/>
                     </div>
                   )
@@ -199,9 +211,8 @@ export default class DetailInfo extends React.Component {
               {detaiDescriptionValue}
             </div>
           ) : ( EditArea)}
-          <AddModalForm {...this.props} board_id={board_id} />
+          <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         </div>
-        {/*style={{display: isInitEntry ? 'block': 'none'}}*/}
         <div className={projectInfoDisplay?detailInfoStyle.maskShow : detailInfoStyle.maskHide} ></div>
       </div>
     )

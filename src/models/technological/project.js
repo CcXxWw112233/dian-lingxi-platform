@@ -1,4 +1,4 @@
-import { getProjectList, addNewProject, updateProject, deleteProject, archivedProject, cancelCollection, projectDetail, addMenbersInProject, quitProject, collectionProject} from '../../services/technological/project'
+import { getAppsList, getProjectList, addNewProject, updateProject, deleteProject, archivedProject, cancelCollection, projectDetail, addMenbersInProject, quitProject, collectionProject} from '../../services/technological/project'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -18,6 +18,10 @@ export default {
               type: '1'
             }
           })
+          dispatch({
+            type: 'getAppsList',
+          })
+
         }else{
           // console.log(2)
         }
@@ -25,6 +29,20 @@ export default {
     },
   },
   effects: {
+    * getAppsList({ payload }, { select, call, put }) {
+      let res = yield call(getAppsList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            appsList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
       if(isApiResponseOk(res)) {

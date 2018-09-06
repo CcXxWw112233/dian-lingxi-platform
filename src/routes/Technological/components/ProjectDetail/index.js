@@ -40,7 +40,8 @@ const ProjectDetail = (props) => {
       dispatch({
         type: getEffectOrReducerByName('deleteProject'),
         payload: {
-          id
+          id,
+          isJump: true
         }
       })
     },
@@ -201,7 +202,7 @@ const ProjectDetail = (props) => {
   }
 
   return(
-    <div style={{ height: '100%' ,position: 'relative',width: '100%', overflow: 'hidden'}}>
+    <div style={{ minHeight: '100%', height: 'auto' ,position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       <CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>

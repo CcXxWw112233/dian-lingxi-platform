@@ -1,15 +1,28 @@
 import React from 'react'
-import { Modal, Form, Button, Input } from 'antd'
+import { Modal, Form, Button, Input, message } from 'antd'
 import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
+import {validateEmail, validateTel} from "../../../../utils/verify";
+import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 class ShowAddMenberModal extends React.Component {
 
+  state = {
+    stepThreeContinueDisabled: true,
+    completeValidation: false, //完成滑块验证
+    users: ''
+  }
   //监听是否完成验证
   listenCompleteValidation = (e) => {
     this.setState({
-      completeValidation: e
+      completeValidation: e,
+      stepThreeContinueDisabled: !e
+    })
+  }
+  usersChange(e) {
+    this.setState({
+      users: e.target.value
     })
   }
   onCancel = () => {
@@ -19,9 +32,26 @@ class ShowAddMenberModal extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      values['board_id'] = this.props.board_id
-      values['users'] = "15288887777,15288889999"
       if (!err) {
+        values['board_id'] = this.props.board_id
+        if(this.state.users) {
+          let users = this.state.users.replace(/\n/gim,',') //替代换行符
+          let usersArr = users.split(',')   //转成数组
+          let usersNewArr = []
+          for(let val of usersArr) {
+            if(val) {
+              usersNewArr.push(val)
+            }
+          }
+          users = usersNewArr.join(',')
+          for(let val of usersNewArr ) {
+            if(!validateTel(val) && !validateEmail(val)) {
+              message.warn('请正确输入被邀请人的手机号或者邮箱。',MESSAGE_DURATION_TIME)
+              return false
+            }
+          }
+          values['users'] = users
+        }
         this.props.setShowAddMenberModalVisibile()
         this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
       }
@@ -30,6 +60,7 @@ class ShowAddMenberModal extends React.Component {
   render() {
     const { modalVisible  } = this.props;
     const { getFieldDecorator } = this.props.form;
+    const { stepThreeContinueDisabled } = this.state
 
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
@@ -40,7 +71,9 @@ class ShowAddMenberModal extends React.Component {
           {getFieldDecorator('othersInfo', {
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
+            <TextArea style={{height: 208}}
+                      onChange={this.usersChange.bind(this)}
+                      placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
           )}
         </FormItem>
         <div style={{marginTop :-10}}>
@@ -49,7 +82,7 @@ class ShowAddMenberModal extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>创建项目</Button>
+          <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>创建项目</Button>
         </FormItem>
       </Form>
     )

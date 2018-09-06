@@ -178,10 +178,17 @@ export default {
     },
 
     * deleteProject({ payload }, { select, call, put }) {
-      const { id } = payload
+      const { id, isJump } = payload
       let res = yield call(deleteProject, id)
       if(isApiResponseOk(res)) {
-
+        if(isJump) {
+          yield put({
+            type: 'routingJump',
+            payload: {
+              route: '/technological/project'
+            }
+          })
+        }
       }else{
 
       }

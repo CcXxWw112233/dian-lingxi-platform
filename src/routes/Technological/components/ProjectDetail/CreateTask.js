@@ -113,7 +113,7 @@ export default class CreateTask extends React.Component {
         >
           <DrawerContent
             {...this.props}
-            setDrawerVisibleClose={this.setDrawerVisibleClose.bi}
+            setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)}
           />
         </Drawer>
       </div>

@@ -6,6 +6,12 @@ export const  isSameWeek = (oldTimestamp,nowTimestamp) => {
   return parseInt((old_count + 3) / 7) == parseInt((now_other + 3) / 7);
 }
 
+//日期转换为时间戳
+export const timeToTimestamp = (dateString) => { // 示例 '2014-04-23 18:55:49'
+  const date = new Date(dateString)
+  return date.getTime()
+}
+//时间戳转日期
 export const timestampToTime = (timestamp, flag) => {
   let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + '年';
