@@ -12,23 +12,14 @@ import ClassBasicModel from '../../models/technological'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 const Technological = (options) => {
-  const { dispatch, history, technological, model } = options
+  const { dispatch, model } = options
   const app = dva();
   //导航栏props-------------
   const HeaderNavProps = {
-    technological,
+    model,
     logout() {
       dispatch({
         type: getEffectOrReducerByName('logout'),
-      })
-    },
-    setChirldrenRoute(data) {
-      const chirldRoute = data
-      dispatch({
-        type: getEffectOrReducerByName('setChirldrenRoute'),
-        payload: {
-          chirldRoute,
-        },
       })
     },
     routingJump(path) {
@@ -38,8 +29,15 @@ const Technological = (options) => {
           route:path,
         },
       })
+    },
+    updateDatas (payload) {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas') ,
+        payload:payload
+      })
     }
   }
+
   //-----------------
 
   const routes = [
@@ -57,7 +55,6 @@ const Technological = (options) => {
       component: () => import('./components/NewsDynamic'),
     }
   ]
-  // display: 'flex',  flexDirection: 'column',
   return (
       <div className={globalClassNmae.page_style_3} style={{ minWidth:1200}}>
         <HeaderNav {...HeaderNavProps}/>
@@ -78,11 +75,16 @@ const Technological = (options) => {
 };
 
 // export default Products;
-export default connect(({ technological }) => {
-  return({
-    technological,
-  })
+// export default connect(({ technological }) => {
+//   return({
+//     technological,
+//   })
+//
+// })(Technological);
 
-})(Technological);
 
-
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ modal, technological, loading }) {
+  return { modal, model: technological, loading }
+}
+export default connect(mapStateToProps)(Technological)

@@ -10,17 +10,16 @@ export default class HeaderNav extends React.Component{
   }
   state = {
     menuVisible: false,
-    defaultChooseTab: '', //tab选择标志
   };
 
   //蓝色按钮下拉菜单
   handleMenuClick = (e) => {
     if (e.key === '6') {
-      this.routeingJump('/technological/accoutSet')
+      this.props.routingJump('/technological/accoutSet')
       this.setState({ menuVisible: false });
     }
-    this.setState({
-      defaultChooseTab: ''
+    this.props.updateDatas({
+      naviHeadTabIndex: '4'
     })
   }
   //下拉菜单显示状态改变
@@ -38,16 +37,14 @@ export default class HeaderNav extends React.Component{
         break
       case '3':
         route = 'project'
+        this.props.updateDatas({
+          naviHeadTabIndex: key
+        })
+        this.props.routingJump(`/technological/${route}`)
+        break
+      default:
         break
     }
-    this.setState({
-      defaultChooseTab: key
-    })
-    this.routeingJump(`/technological/${route}`)
-  }
-  //路由跳转
-  routeingJump(route) {
-    this.props.routingJump(route)
   }
   logout() {
     const that = this;
@@ -60,8 +57,7 @@ export default class HeaderNav extends React.Component{
 
   }
   render() {
-    const { technological = {} } = this.props
-    const { datas = {} } = technological
+    const { datas = {} } = this.props.model
     const { userInfo = {} } = datas
     const {
       orgnization = '组织',
@@ -155,7 +151,7 @@ export default class HeaderNav extends React.Component{
       </Card>
     );
 
-    const { defaultChooseTab } = this.state
+    const { datas:{naviHeadTabIndex} } = this.props.model
     return(
       <div className={indexStyle.out}>
         <div className={indexStyle.out_left}>
@@ -165,9 +161,9 @@ export default class HeaderNav extends React.Component{
             <div className={indexStyle.out_left_left}>迪</div>
           </Dropdown>
           <div className={indexStyle.out_left_right}>
-            <span className={defaultChooseTab==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
-            <span className={defaultChooseTab==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
-            <span className={defaultChooseTab==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
+            <span style={{color: '#e8e8e8'}} className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
+            <span  style={{color: '#e8e8e8'}} className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
+            <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
           </div>
         </div>
         <div className={indexStyle.out_right}>

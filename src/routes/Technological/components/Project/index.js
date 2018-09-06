@@ -79,9 +79,9 @@ const Project = (props) => {
   return(
     <div>
       <Header/>
-      <QueueAnim  type="top">
+      {/*<QueueAnim  type="top">*/}
         <ProjectList {...prjectListProps} routingJump={routingJump} key={'1'}/>
-      </QueueAnim>
+      {/*</QueueAnim>*/}
     </div>
   )
 };

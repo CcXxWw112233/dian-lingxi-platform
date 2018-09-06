@@ -186,12 +186,12 @@ export default class CollectionProject extends React.Component{
               )}
             </div>
             <div className={detailInfoStyle.right}>
-              <div className={detailInfoStyle.name}>{full_name}</div>
-              <Tooltip title="30% 过期 / 30% 完成 / 40% 正在进行">
+              <div className={detailInfoStyle.name}>{full_name || '佚名'}</div>
+              <Tooltip title="该功能即将上线">
                 <div className={detailInfoStyle.percent}>
-                  <div style={{width: '30%'}}></div>
-                  <div style={{width: '30%'}}></div>
-                  <div style={{width: '40%'}}></div>
+                  <div style={{width: '0'}}></div>
+                  <div style={{width: '0'}}></div>
+                  <div style={{width: '100%'}}></div>
                 </div>
               </Tooltip>
             </div>

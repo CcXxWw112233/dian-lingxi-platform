@@ -3,6 +3,8 @@ import React from 'react'
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import moment from 'moment';
 import indexStyle from './index.less'
+import {validateEmail, validatePassword, validateTel} from '../../../../utils/verify'
+import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -16,20 +18,37 @@ class ChangePasswordForm extends React.Component {
     uploading: false, //是否正在上传
     avatarUrl: ''
   }
-  // 设置表单，上传文件后设置{name：url}
-  setFormUploadValue = (name, fileurl) => {
-    this.props.form.setFieldsValue({
-      image: fileurl
-    })
-  }
+
   // 提交表单
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        if(!values['old_password']) {
+          message.warn('请输入当前密码。', MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(!validatePassword(values['new_password'])) {
+          message.warn('新密码至少为包含字母与数字的6位数字符串。', MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(values['new_password'] !== values['confirmPassword']) {
+          message.warn('输入新密码不一致。', MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.changePassWord ? this.props.changePassWord(values) : false
       }
     });
+  }
+
+  currentPasswordBlur(e) {
+
+  }
+  passwordBlur(e) {
+
+  }
+  comfirPasswordBlur(e) {
+
   }
 
   render() {
@@ -60,7 +79,11 @@ class ChangePasswordForm extends React.Component {
           {getFieldDecorator('old_password', {
             rules: [{ required: false, message: '请输入当前密码', whitespace: true }],
           })(
-            <Input placeholder="请输入当前密码" className={indexStyle.personInfoInput} type={'password'}/>
+            <Input placeholder="请输入当前密码"
+                   className={indexStyle.personInfoInput}
+                   type={'password'}
+                   onBlur={this.currentPasswordBlur.bind(this)}
+            />
           )}
         </FormItem>
         {/* 新密码 */}
@@ -75,7 +98,9 @@ class ChangePasswordForm extends React.Component {
           {getFieldDecorator('new_password', {
             rules: [{ required: false, message: '请输入新密码', whitespace: true }],
           })(
-            <Input placeholder="密码（数字，字母，至少6位）" className={indexStyle.personInfoInput} type={'password'} />
+            <Input placeholder="密码（数字，字母，至少6位）"
+                   onBlur={this.passwordBlur.bind(this)}
+                   className={indexStyle.personInfoInput} type={'password'} />
           )}
         </FormItem>
         {/* 再次输入 */}
@@ -90,7 +115,9 @@ class ChangePasswordForm extends React.Component {
           {getFieldDecorator('confirmPassword', {
             rules: [{ required: false, message: '确认输入新密码', whitespace: true }],
           })(
-            <Input placeholder="确认输入新密码" className={indexStyle.personInfoInput} type={'password'} />
+            <Input placeholder="确认输入新密码"
+                   onBlur={this.comfirPasswordBlur.bind(this)}
+                   className={indexStyle.personInfoInput} type={'password'} />
           )}
         </FormItem>
         {/* 确认 */}
