@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="x详情页面重构">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="路由重定向">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -308,14 +307,7 @@
       <workItem from="1536195215411" duration="10063000" />
       <workItem from="1536212518660" duration="22611000" />
       <workItem from="1536281629086" duration="12390000" />
-      <workItem from="1536299312718" duration="16642000" />
-    </task>
-    <task id="LOCAL-00005" summary="稍微修改">
-      <created>1533113963779</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1533113963779</updated>
+      <workItem from="1536299312718" duration="17008000" />
     </task>
     <task id="LOCAL-00006" summary="登录界面">
       <created>1533123493184</created>
@@ -653,11 +645,18 @@
       <option name="project" value="LOCAL" />
       <updated>1536318818431</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="路由重定向">
+      <created>1536320805226</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1536320805226</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="726722000" />
+    <option name="totallyTimeSpent" value="727088000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -690,7 +689,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="项目详情界面ui完成" />
     <MESSAGE value="项目详情界面ui完成 优化" />
     <MESSAGE value="动态页" />
     <MESSAGE value="评论" />
@@ -715,7 +713,8 @@
     <MESSAGE value="创建项目 添加参与者" />
     <MESSAGE value="项目详情apps点击项" />
     <MESSAGE value="x详情页面重构" />
-    <option name="LAST_COMMIT_MESSAGE" value="x详情页面重构" />
+    <MESSAGE value="路由重定向" />
+    <option name="LAST_COMMIT_MESSAGE" value="路由重定向" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1397,7 +1396,7 @@
         <state relative-caret-position="400">
           <caret line="16" column="42" lean-forward="false" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="42" />
           <folding>
-            <element signature="e#2#28#0" expanded="true" />
+            <element signature="e#2#28#0" expanded="false" />
           </folding>
         </state>
       </provider>
