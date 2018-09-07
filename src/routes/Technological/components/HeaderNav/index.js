@@ -152,6 +152,7 @@ export default class HeaderNav extends React.Component{
     );
 
     const { datas:{naviHeadTabIndex} } = this.props.model
+
     return(
       <div className={indexStyle.out}>
         <div className={indexStyle.out_left}>

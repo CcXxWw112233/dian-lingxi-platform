@@ -40,7 +40,7 @@ const Routers = function ({ history, app }) {
     {
       path: '/',
       models: () => [import('./models/technological')],
-      component: () => import('./routes/Technological/'),
+      component: () => import('./routes/Technological/index'),
     }, {
       path: '/login',
       models: () => [import('./models/login')],
