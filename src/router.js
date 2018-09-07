@@ -39,8 +39,8 @@ const Routers = function ({ history, app }) {
   const routes = [
     {
       path: '/',
-      models: () => [import('./models/technological')],
-      component: () => import('./routes/Technological/index'),
+      models: () => [import('./models/initRouteRedirect')],
+      component: () => import('./routes/InitRouteRedirect/index'),
     }, {
       path: '/login',
       models: () => [import('./models/login')],
