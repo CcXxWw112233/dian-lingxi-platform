@@ -4,8 +4,13 @@ import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 
 let is_starinit = null
-export default class Header extends React.Component {
+const appsList = [
+  {
+    key: '1',
+  }
+]
 
+export default class Header extends React.Component {
   state = {
     isInitEntry: true, // isinitEntry isCollection用于处理收藏
     isCollection: false,
@@ -47,7 +52,6 @@ export default class Header extends React.Component {
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
-
   //菜单按钮点击
   handleMenuClick(board_id, e ) {
     e.domEvent.stopPropagation();
@@ -73,7 +77,6 @@ export default class Header extends React.Component {
         return
     }
   }
-
   //收藏
   starClick(id, e) {
     e.stopPropagation();
@@ -113,10 +116,20 @@ export default class Header extends React.Component {
     })
   }
 
+  //右方app应用点击
+  appClick(key) {
+    this.props.updateDatas({
+      appsSelectKey: key
+    })
+    this.props.appsSelect({
+      appsSelectKey: key
+    })
+  }
+
   render() {
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {} } } = this.props.model
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey } } = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
-    const { board_name, board_id, is_star, is_create } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create, app_data = [] } = projectDetailInfoData
     is_starinit = is_star
 
     const menu = (
@@ -172,10 +185,12 @@ export default class Header extends React.Component {
          </div>
         <div className={indexStyle.right}>
           <div className={indexStyle.right_top} >
-            <span>招标</span>
-            <span>流程</span>
-            <span>任务</span>
-            <span>文档</span>
+            {app_data.map((value, itemkey) => {
+              const { app_name, key } = value
+              return (
+                <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_name}</div>
+              )
+            })}
           </div>
           <div className={indexStyle.right_bott}>
             <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>

@@ -10,7 +10,7 @@ const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
-  const { datas:{ projectInfoDisplay, taskGroupList } } = model
+  const { datas:{ projectInfoDisplay, taskGroupList, appsSelectKey } } = model
   const HeaderListProps = {
     modal,
     model,
@@ -54,6 +54,12 @@ const ProjectDetail = (props) => {
     addMenbersInProject(data) {
       dispatch({
         type: getEffectOrReducerByName('addMenbersInProject'),
+        payload: data
+      })
+    },
+    appsSelect(data) {
+      dispatch({
+        type: getEffectOrReducerByName('appsSelect'),
         payload: data
       })
     }
@@ -205,7 +211,9 @@ const ProjectDetail = (props) => {
     <div style={{ minHeight: '100%', height: 'auto' ,position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
       <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
-      <CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>
+      {appsSelectKey === 3 ?(
+        <CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>
+      ) : ('未开放')}
       {/*<DrawerContent />*/}
     </div>
   )

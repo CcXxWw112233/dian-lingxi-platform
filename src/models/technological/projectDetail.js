@@ -9,90 +9,140 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
-import { selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
 let board_id
+// appsSelectKey 项目详情里面应用的app标志
 export default {
   namespace: 'projectDetail',
-  state: [],
+  state: [{
+  }],
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
         message.destroy()
         board_id = Cookies.get('board_id')
+        dispatch({
+          type: 'updateDatas',
+          payload:{
+            projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
+            isInitEntry: false, //是否初次进来
+            drawContent: {}, //右方抽屉内容
+            projectDetailInfoData: {}, //项目详情
+            cardCommentList: [], //任务评论列表
+            projectGoupList: [], //项目分组列表
+            taskGroupList: [],  //任务列表
+            appsSelectKey: undefined, //应用key
+            appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
+          }
+        })
         if (location.pathname === '/technological/projectDetail') {
           dispatch({
-            type: 'updateDatas',
-            payload:{
-              projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
-              isInitEntry: false, //是否初次进来
-              drawContent: {}, //右方抽屉内容
-              projectDetailInfoData: {}, //项目详情
-              cardCommentList: [], //任务评论列表
-              projectGoupList: [], //项目分组列表
-            }
-          })
-          dispatch({
-            type: 'projectDetailInfo',
+            type: 'initProjectDetail',
             payload:{
               id: board_id
             }
           })
-          dispatch({
-            type: 'getProjectGoupList',
-            payload:{
-            }
-          })
-          dispatch({
-            type: 'getTaskGroupList',
-            payload: {
-              type: '2',
-              board_id: board_id,
-              arrange_type: '1'
-            }
-          })
-          // new Promise(function () {
-          //   dispatch({
-          //     type: 'projectDetailInfo',
-          //     payload:{
-          //       id: board_id
-          //     }
-          //   })
-          //   dispatch({
-          //     type: 'getProjectGoupList',
-          //     payload:{
-          //     }
-          //   })
-          //   dispatch({
-          //     type: 'getTaskGroupList',
-          //     payload: {
-          //       type: '2',
-          //       board_id: board_id,
-          //       arrange_type: '1'
-          //     }
-          //   })
-          // }).finally(() => {
-          //   message.destroy()
-          // })
-
         }else{
+
         }
       })
     },
   },
   effects: {
-    //项目增删改查--start
-    * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
+
+    //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
+    * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload
       let res = yield call(projectDetailInfo, id)
+      const appsSelectKey = yield select(selectAppsSelectKey)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload:{
-            projectDetailInfoData: res.data
+            projectDetailInfoData: res.data,
+            appsSelectKey: appsSelectKey || (res.data.app_data[0]? res.data.app_data[0].key : 1),//设置默认
+            appsSelectKeyIsAreadyClickArray: [res.data.app_data[0]? res.data.app_data[0].key : 1] //设置默认
+          }
+        })
+        if(res.data.app_data[0] ) {
+          if( res.data.app_data[0].key === 3) { //任务
+            yield put({
+              type: 'getProjectGoupList'
+            })
+            yield put({
+              type: 'getTaskGroupList',
+              payload: {
+                type: '2',
+                board_id: board_id,
+                arrange_type: '1'
+              }
+            })
+          }else if(res.data.app_data[0].key === 2){ //流程
+
+          }
+        }
+
+      }else{
+      }
+    },
+    //点击app选项，将点击过的key push进数组，根据已经点击过的数组判断不在重新拉取数据
+    * appsSelect({ payload }, { select, call, put }) {
+      const { appsSelectKey } = payload
+      let appsSelectKeyIsAreadyClickArray = []
+      appsSelectKeyIsAreadyClickArray = yield select(selectAppsSelectKeyIsAreadyClickArray)
+      let flag = true
+      for (let val of appsSelectKeyIsAreadyClickArray) {
+        if(appsSelectKey === val) {
+          flag = false
+        }
+      }
+      appsSelectKeyIsAreadyClickArray.push(appsSelectKey)
+      const newAppsSelectKeyIsAreadyClickArray = Array.from(new Set(appsSelectKeyIsAreadyClickArray))
+      yield put({
+        type: 'updateDatas',
+        payload:{
+          appsSelectKeyIsAreadyClickArray: newAppsSelectKeyIsAreadyClickArray
+        }
+      })
+      if(!flag) {
+        return false
+      }
+
+      if( appsSelectKey === 3) { //任务
+        yield put({
+          type: 'getProjectGoupList'
+        })
+        yield put({
+          type: 'getTaskGroupList',
+          payload: {
+            type: '2',
+            board_id: board_id,
+            arrange_type: '1'
+          }
+        })
+      }else if(appsSelectKey === 2){ //流程
+
+      }
+
+
+
+    },
+
+    //项目增删改查--start
+    * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
+      const { id } = payload
+      let res = yield call(projectDetailInfo, id)
+      const appsSelectKey = yield select(selectAppsSelectKey)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            projectDetailInfoData: res.data,
+            appsSelectKey: appsSelectKey || (res.data.app_data[0]? res.data.app_data[0].key : 1)
           }
         })
       }else{
