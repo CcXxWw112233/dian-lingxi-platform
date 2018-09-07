@@ -67,6 +67,7 @@ export default class DrawContent extends React.Component {
       title: '确认删除该任务吗？',
       okText: '确认',
       cancelText: '取消',
+      zIndex: 2000,
       onOk()  {
         that.props.setDrawerVisibleClose()
         that.props.deleteTask(card_id)
@@ -311,9 +312,9 @@ export default class DrawContent extends React.Component {
       <Menu onClick={this.projectGroupMenuClick.bind(this)} mode="vertical">
         {projectGoupList.map((value, key) => {
           return (
-            <SubMenu key={key} title={<span>{value.board_name + value.board_id}</span>}>
+            <SubMenu key={key} title={<span>{value.board_name}</span>}>
               {value.list_data.map((value2, key2) => {
-                return (<Menu.Item key={key2}>{ value2.list_name + value2.list_id }</Menu.Item>)
+                return (<Menu.Item key={key2}>{ value2.list_name }</Menu.Item>)
               })}
             </SubMenu>
             )

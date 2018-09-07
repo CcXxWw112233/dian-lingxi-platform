@@ -28,7 +28,7 @@ export default class Header extends React.Component {
       isSoundsEvrybody: e.target.checked
     })
   }
-  confirm(board_id ) {
+  confirm(board_id) {
     const that = this
     Modal.confirm({
       title: '确认要退出该项目吗？',
@@ -38,6 +38,7 @@ export default class Header extends React.Component {
         {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
         {/*</div>*/}
       </div>,
+      zIndex: 2000,
       okText: '确认',
       cancelText: '取消',
       onOk() {

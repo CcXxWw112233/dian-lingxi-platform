@@ -3,7 +3,9 @@ import {connect} from "dva/index";
 import Header from './Header'
 import DetailInfo from './DetailInfo'
 import CreateTask from  './CreateTask'
-import DrawerContent from './TaskItemComponent/DrawerContent'
+
+import { Drawer } from 'antd'
+import DrawDetailInfo from './DrawDetailInfo'
 
 
 const getEffectOrReducerByName = name => `projectDetail/${name}`
@@ -208,13 +210,24 @@ const ProjectDetail = (props) => {
   }
 
   return(
-    <div style={{ minHeight: '100%', height: 'auto' ,position: 'relative',width: '100%', overflow: 'hidden'}}>
+    <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
-      <DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
+      {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
+      {/*左边抽屉*/}
+      <Drawer
+        placement="left"
+        closable={false}
+        visible={projectInfoDisplay}
+        width={420}
+        top={172}
+        maskStyle={{top: 0, }}
+        style={{zIndex: 200,}}
+      >
+        <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
+      </Drawer>
       {appsSelectKey === 3 ?(
         <CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>
-      ) : ('未开放')}
-      {/*<DrawerContent />*/}
+      ) : ('')}
     </div>
   )
 };

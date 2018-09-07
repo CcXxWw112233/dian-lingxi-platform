@@ -108,6 +108,7 @@ export default class CreateTask extends React.Component {
           onClose={this.setDrawerVisibleClose.bind(this)}
           visible={this.state.drawerVisible}
           width={520}
+          zIndex={1004}
           maskStyle={{top: 64}}
           style={{marginTop: 64,}}
         >

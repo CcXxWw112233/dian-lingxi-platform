@@ -71,7 +71,7 @@ class ShowAddMenberModal extends React.Component {
           {getFieldDecorator('othersInfo', {
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208}}
+            <TextArea style={{height: 208, resize:'none'}}
                       onChange={this.usersChange.bind(this)}
                       placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
           )}
@@ -82,7 +82,7 @@ class ShowAddMenberModal extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>创建项目</Button>
+          <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>发送邀请</Button>
         </FormItem>
       </Form>
     )
@@ -92,6 +92,7 @@ class ShowAddMenberModal extends React.Component {
         <Modal
           visible={modalVisible}
           width={472}
+          zIndex={1006}
           footer={null}
           destroyOnClose
           style={{textAlign:'center'}}
