@@ -1,7 +1,7 @@
 //创建分组
 
 import React from 'react'
-import CreateTaskStyle from '../CreateTask.less'
+import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, Input } from 'antd'
 
 const Panel = Collapse.Panel

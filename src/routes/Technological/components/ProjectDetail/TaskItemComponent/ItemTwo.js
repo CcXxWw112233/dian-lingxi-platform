@@ -1,6 +1,6 @@
 //任务
 import React from 'react'
-import CreateTaskStyle from '../CreateTask.less'
+import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from  'rc-queue-anim'

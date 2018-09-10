@@ -1,6 +1,6 @@
 //子任务
 import React from 'react'
-import CreateTaskStyle from '../CreateTask.less'
+import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse } from 'antd'
 import QueueAnim from  'rc-queue-anim'
 const Panel = Collapse.Panel

@@ -1,15 +1,14 @@
 import React from 'react'
-import DrawDetailInfoStyle from './DrawDetailInfo.less'
+import detailInfoStyle from './DetailInfo.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button } from 'antd'
-import ShowAddMenberModal from '../Project/ShowAddMenberModal'
+import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 
-import AddModalForm from './AddModalForm'
 const TextArea = Input.TextArea
 
 
 const detaiDescription = '欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。d如果使用中需要问题，可以随时联系我们进行交流或反馈：support@ProductName.com'
 
-export default class DrawDetailInfo extends React.Component {
+export default class DetailInfo extends React.Component {
 
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
@@ -35,11 +34,10 @@ export default class DrawDetailInfo extends React.Component {
     const that = this
     Modal.confirm({
       title: '确认将他移出项目吗？',
-      zIndex: 2000,
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
         <span >退出后将无法获取该项目的相关动态</span>
         {/*<div style={{marginTop:20,}}>*/}
-        {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
+          {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
         {/*</div>*/}
       </div>,
       okText: '确认',
@@ -99,9 +97,9 @@ export default class DrawDetailInfo extends React.Component {
     const manImageDropdown = (props) => {
       const { full_name, email, img, mobile, user_name, user_id, we_chat='无'} = props
       return (
-        <div className={DrawDetailInfoStyle.manImageDropdown}>
-          <div className={DrawDetailInfoStyle.manImageDropdown_top}>
-            <div className={DrawDetailInfoStyle.left}>
+        <div className={detailInfoStyle.manImageDropdown}>
+          <div className={detailInfoStyle.manImageDropdown_top}>
+            <div className={detailInfoStyle.left}>
               {img?(
                 <img src={img} />
               ):(
@@ -110,10 +108,10 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               )}
             </div>
-            <div className={DrawDetailInfoStyle.right}>
-              <div className={DrawDetailInfoStyle.name}>{full_name || '佚名'}</div>
+            <div className={detailInfoStyle.right}>
+              <div className={detailInfoStyle.name}>{full_name || '佚名'}</div>
               <Tooltip title="该功能即将上线">
-                <div className={DrawDetailInfoStyle.percent}>
+                <div className={detailInfoStyle.percent}>
                   <div style={{width: '0'}}></div>
                   <div style={{width: '0'}}></div>
                   <div style={{width: '100%'}}></div>
@@ -121,37 +119,37 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             </div>
           </div>
-          <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
-            <div className={DrawDetailInfoStyle.detailItem}>
+          <div className={detailInfoStyle.manImageDropdown_middle}>
+            <div className={detailInfoStyle.detailItem}>
               <div>姓名：</div>
               <div>{full_name}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
+            <div className={detailInfoStyle.detailItem}>
               <div>组织：</div>
               <div>无</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
+            <div className={detailInfoStyle.detailItem}>
               <div>邮箱：</div>
               <div>{email}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
+            <div className={detailInfoStyle.detailItem}>
               <div>手机：</div>
               <div>{mobile}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
+            <div className={detailInfoStyle.detailItem}>
               <div>微信：</div>
               <div>{we_chat}</div>
             </div>
           </div>
-          {/*<div className={DrawDetailInfoStyle.manImageDropdown_bott}>*/}
-          {/*<img src="" />*/}
+          {/*<div className={detailInfoStyle.manImageDropdown_bott}>*/}
+            {/*<img src="" />*/}
           {/*</div>*/}
         </div>
       )
     }
     const EditArea = (
       <div>
-        <TextArea defaultValue={description || detaiDescriptionValue} autosize className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
+        <TextArea defaultValue={description || detaiDescriptionValue} autosize className={detailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
         <div style={{ textAlign: 'right'}}>
           <div>
             <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
@@ -161,45 +159,45 @@ export default class DrawDetailInfo extends React.Component {
       </div>
     )
     return (
-      <div className={DrawDetailInfoStyle.detailInfoOut}>
-        <div className={projectInfoDisplay?DrawDetailInfoStyle.detailInfo : DrawDetailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
-          <div className={DrawDetailInfoStyle.top}>
-            <div className={DrawDetailInfoStyle.topItem}>
+      <div className={detailInfoStyle.detailInfoOut}>
+        <div className={projectInfoDisplay?detailInfoStyle.detailInfo : detailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
+          <div className={detailInfoStyle.top}>
+            <div className={detailInfoStyle.topItem}>
               <div>0</div>
               <div>剩余任务</div>
             </div>
-            <div className={DrawDetailInfoStyle.topItem}>
+            <div className={detailInfoStyle.topItem}>
               <div style={{color: '#8c8c8c'}}>0</div>
               <div>已完成</div>
             </div>
-            <div className={DrawDetailInfoStyle.topItem}>
+            <div className={detailInfoStyle.topItem}>
               <div >0</div>
               <div>距离下一节点</div>
             </div>
           </div>
-          <div className={DrawDetailInfoStyle.manImageList}>
+          <div className={detailInfoStyle.manImageList}>
             {
               avatarList.map((value, key) => {
                 if(key < avatarList.length - 1) {
                   const { img, user_id } = value
                   return(
-                    <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
-                      <div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>
+                    <div className={detailInfoStyle.manImageItem} key={ key }>
+                      <div className={detailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>
                         <Icon type="close" />
                       </div>
                       <Dropdown overlay={manImageDropdown(value)}>
                         {img?(<img src={img}  />): (
-                          <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                            <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
-                          </div>
-                        )
+                            <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>
+                              <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
+                            </div>
+                          )
                         }
                       </Dropdown>
                     </div>
                   )
                 }else{
                   return(
-                    <div className={DrawDetailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                    <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                       <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold',marginTop: 8}}/>
                     </div>
                   )
@@ -208,12 +206,13 @@ export default class DrawDetailInfo extends React.Component {
             }
           </div>
           {!editDetaiDescription?(
-            <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
+            <div className={detailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
               {detaiDescriptionValue}
             </div>
           ) : ( EditArea)}
         </div>
         <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <div className={projectInfoDisplay?detailInfoStyle.maskShow : detailInfoStyle.maskHide} ></div>
       </div>
     )
   }

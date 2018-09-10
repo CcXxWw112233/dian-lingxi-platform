@@ -1,11 +1,12 @@
 import React from 'react';
 import {connect} from "dva/index";
 import Header from './Header'
-import DetailInfo from './DetailInfo'
-import CreateTask from  './CreateTask'
+import DetailInfo from './DetailInfo/DetailInfo'
+import CreateTask from './TaskItemComponent/CreateTask'
+import FileModule  from './FileModule'
 
 import { Drawer } from 'antd'
-import DrawDetailInfo from './DrawDetailInfo'
+import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
 
 
 const getEffectOrReducerByName = name => `projectDetail/${name}`
@@ -209,6 +210,19 @@ const ProjectDetail = (props) => {
     })
   }
 
+  const filterAppsModule = (appsSelectKey) => {
+    let appFace = (<div></div>)
+    switch (appsSelectKey) {
+      case 3:
+        appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
+        break
+      default:
+        appFace = (<FileModule />)
+        break
+    }
+    return appFace
+  }
+
   return(
     <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
@@ -225,9 +239,8 @@ const ProjectDetail = (props) => {
       >
         <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       </Drawer>
-      {appsSelectKey === 3 ?(
-        <CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>
-      ) : ('')}
+      {/*应用界面*/}
+      {filterAppsModule(appsSelectKey)}
     </div>
   )
 };

@@ -1,8 +1,8 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import TaskItem from './TaskItemComponent/TaskItem'
-import CreateItem from './TaskItemComponent/CreateItem'
-import DrawerContent from './TaskItemComponent/DrawerContent'
+import TaskItem from './TaskItem'
+import CreateItem from './CreateItem'
+import DrawerContent from './DrawerContent'
 import { Drawer } from 'antd'
 
 const documentWidth = document.querySelector('body').offsetWidth

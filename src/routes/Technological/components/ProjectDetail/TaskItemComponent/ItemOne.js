@@ -1,5 +1,5 @@
 import React from 'react'
-import CreateTaskStyle from '../CreateTask.less'
+import CreateTaskStyle from './CreateTask.less'
 import DrawerContentStyles from  './DrawerContent.less'
 import { Icon, Checkbox, Collapse, Menu } from 'antd'
 import QueueAnim from  'rc-queue-anim'

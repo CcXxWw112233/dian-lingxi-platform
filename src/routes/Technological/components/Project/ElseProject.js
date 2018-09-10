@@ -2,7 +2,7 @@ import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form } from 'antd'
-import detailInfoStyle from '../ProjectDetail/DetailInfo.less'
+import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
 

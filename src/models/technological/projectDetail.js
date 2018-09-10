@@ -23,20 +23,23 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        message.destroy()
+        // message.destroy()
         board_id = Cookies.get('board_id')
         dispatch({
           type: 'updateDatas',
           payload:{
+            //全局任务key
+            appsSelectKey: undefined, //应用key
+            appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
+            //项目详情和任务
             projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
-            isInitEntry: false, //是否初次进来
-            drawContent: {}, //右方抽屉内容
-            projectDetailInfoData: {}, //项目详情
+            isInitEntry: false, //是否初次进来项目详情
+            drawContent: {}, //任务右方抽屉内容
+            projectDetailInfoData: {}, //项目详情全部数据
             cardCommentList: [], //任务评论列表
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
-            appsSelectKey: undefined, //应用key
-            appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
+            // 文档
           }
         })
         if (location.pathname === '/technological/projectDetail') {

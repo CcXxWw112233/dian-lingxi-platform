@@ -10,7 +10,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        message.destroy()
+        // message.destroy()
         if (location.pathname === '/technological/project') {
           dispatch({
             type: 'getProjectList',
@@ -21,7 +21,6 @@ export default {
           dispatch({
             type: 'getAppsList',
           })
-
         }else{
           // console.log(2)
         }

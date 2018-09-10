@@ -56,7 +56,7 @@ const Technological = (options) => {
     }
   ]
   return (
-      <div className={globalClassNmae.page_style_3} style={{ minWidth:1200}}>
+      <div className={globalClassNmae.page_style_3} style={{ minWidth:1200, position: 'relative'}}>
         <HeaderNav {...HeaderNavProps}/>
         {
           routes.map(({ path, ...dynamics }, key) =>{
