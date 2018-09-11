@@ -124,7 +124,7 @@ export default class HeaderNav extends React.Component{
               <span className={indexStyle.specificalItem}><Icon type="schedule" /><span className={indexStyle.specificalItemText}>账户设置</span></span>
             </div>
           </Menu.Item>
-          <Menu.Divider key="none_2"  style={{height: 64,padding:0,margin: 0}}/>
+          <Menu.Divider key="none_2"  style={{height: 0,padding:0,margin: 0}}/>
           <Menu.Item key="7" style={{height: 64,padding:0,margin: 0}}>
             <div className={indexStyle.itemDiv_2}>
               <div className={indexStyle.avatar}>
