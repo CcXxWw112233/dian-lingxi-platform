@@ -40,6 +40,12 @@ export default {
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
             // 文档
+            fileList: [], //文档列表
+            filedata_1: [], //文档列表--文件夹
+            filedata_2: [], //文档列表--文件
+            selectedRowKeys: [],//选择的列表项
+            isInAddDirectory: false, //是否正在创建文件家判断标志
+            moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -56,7 +62,6 @@ export default {
     },
   },
   effects: {
-
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload
@@ -84,7 +89,36 @@ export default {
                 arrange_type: '1'
               }
             })
-          }else if(res.data.app_data[0].key === 2){ //流程
+          }else if(res.data.app_data[0].key === 2){ //文档
+            const filedata_1 = [];
+            const filedata_2 = [];
+            for (let i = 0; i < 6; i++) {
+              filedata_1.push({
+                id: i+5,
+                name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+                size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
+                updateTime: '这是文件夹',
+                founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+                type: '1'
+              });
+              filedata_2.push({
+                id: i+5,
+                name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+                size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
+                updateTime: '这是文件',
+                founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+                type: '0'
+              })
+            }
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                filedata_1,
+                filedata_2,
+                fileList: [...filedata_1, ...filedata_2]
+              }
+            })
+          }else {
 
           }
         }
@@ -495,6 +529,9 @@ export default {
     },
     //评论--end
 
+    //文档----------start
+
+    //文档----------end
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

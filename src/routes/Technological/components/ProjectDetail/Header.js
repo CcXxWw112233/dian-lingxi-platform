@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyle from './index.less'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 
 let is_starinit = null
@@ -22,6 +22,7 @@ export default class Header extends React.Component {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry:  true })
   }
 
+  //项目操作----------------start
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
     this.setState({
@@ -96,7 +97,6 @@ export default class Header extends React.Component {
       })
     })
   }
-
   //...菜单变化点击
   ellipsisClick(e) {
     e.stopPropagation();
@@ -116,7 +116,9 @@ export default class Header extends React.Component {
       dropdownVisibleChangeValue: visible,
     })
   }
+  //项目操作---------------end
 
+  //右方部分点击-----------------start
   //右方app应用点击
   appClick(key) {
     this.props.updateDatas({
@@ -126,13 +128,76 @@ export default class Header extends React.Component {
       appsSelectKey: key
     })
   }
+  //文档操作----start
+  createDirectory() {
+    const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
+    if(isInAddDirectory) { //正在创建的过程中不能添加多个
+      return false
+    }
+    const obj = {
+      id: '',
+      name: '',
+      size: '-',
+      updateTime: '-',
+      founder: `-`,
+      type: '1',
+      isInAdd: true
+    }
+    fileList.unshift(obj)
+    filedata_1.unshift(obj)
+    this.props.updateDatas({fileList, filedata_1, isInAddDirectory: true})
+  }
+  collectionFile() {
+
+  }
+  downLoadFile() {
+
+    //将要进行多文件下载的mp3文件地址，以组数的形式存起来（这里只例了3个地址）
+    let mp3arr = ["http://pe96wftsc.bkt.clouddn.com/ea416183ad91220856c8ff792e5132e1.zip?e=1536660365&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:XK9eRCWcG8yDztiL7zct2jrpIvc=","http://pe96wftsc.bkt.clouddn.com/2fc83d8439ab0d4507dc7154f3d50d3.pdf?e=1536659325&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:DGertCGKCr3Y407F6fY9ZGgkP4M=", "http://pe96wftsc.bkt.clouddn.com/ec611c887680f9264bb5db8e4cb33141.docx?e=1536659379&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:9IkALD1DjOBvQtv3uAvtzk5y694=",];
+
+    const download = (name, href) => {
+      var a = document.createElement("a"), //创建a标签
+        e = document.createEvent("MouseEvents"); //创建鼠标事件对象
+      e.initEvent("click", false, false); //初始化事件对象
+      a.href = href; //设置下载地址
+      a.download = name; //设置下载文件名
+      a.dispatchEvent(e); //给指定的元素，执行事件click事件
+    }
+    let iframes = ''
+    for (let index = 0; index < mp3arr.length; index++) {
+      // const iframe = '<iframe style="display: none;" class="multi-download"  src="'+mp3arr[index]+'"></iframe>'
+      // iframes += iframe
+      window.open(mp3arr[index])
+      // download('第'+ index +'个文件', mp3arr[index]);
+    }
+    this.setState({
+      iframes
+    })
+  }
+  moveFile() {
+    this.props.updateDatas({
+      copyOrMove: '0',//copy是1
+      moveToDirectoryVisiblie: true
+    })
+  }
+  copyFile() {
+    this.props.updateDatas({
+      copyOrMove: '1',//copy是1
+      moveToDirectoryVisiblie: true
+    })
+  }
+  deleteFile() {
+
+  }
+  //文档操作 ---end
+
+  //右方部分点击-----------------end
 
   render() {
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey } } = this.props.model
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [] }} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
     const { board_name, board_id, is_star, is_create, app_data = [] } = projectDetailInfoData
     is_starinit = is_star
-
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
@@ -160,6 +225,75 @@ export default class Header extends React.Component {
 
       </Menu>
     );
+    const appsOperator = (appsSelectKey) => {  //右方操作图标
+      let operatorConent = ''
+      switch (appsSelectKey) {
+        case 3:
+          operatorConent = (
+            <div>
+              <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
+              <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+            </div>
+          )
+          break
+        case 2:
+          if(selectedRowKeys.length) {
+            operatorConent = (
+              <div style={{display: 'flex',alignItems: 'center',color: '#595959' }} className={indexStyle.fileOperator}>
+                <div dangerouslySetInnerHTML={{__html: this.state.iframes}}></div>
+                <div style={{marginTop: 18}}>
+                  <span style={{color: '#8c8c8c'}}>
+                    已选择{selectedRowKeys.length}项
+                  </span>
+                  <span style={{marginLeft:14}}>
+                    取消
+                  </span>
+                  <span style={{marginLeft:14}}>
+                    反选
+                  </span>
+                </div>
+                <Button style={{height: 24, marginTop:16,marginLeft:14}} >
+                  <Icon type="star" />收藏
+                </Button>
+                <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.downLoadFile.bind(this)} >
+                  <Icon type="download" />下载
+                </Button>
+                <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.moveFile.bind(this)}>
+                  <Icon type="export" />移动
+                </Button>
+                <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.copyFile.bind(this)}>
+                  <Icon type="copy" />复制
+                </Button>
+                <Button style={{height: 24, marginTop:16,marginLeft:14, backgroundColor: '#f5f5f5', color: 'red'}} >
+                  <Icon type="delete" />移动到回收站
+                </Button>
+                <div>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                </div>
+              </div>
+            )
+          }else {
+            operatorConent = (
+              <div style={{display: 'flex',alignItems: 'center', }}>
+                <Upload action="//jsonplaceholder.typicode.com/posts/" directory multiple showUploadList={false}>
+                  <Button style={{height: 24, marginTop:16,}} type={'primary'}>
+                    <Icon type="upload" />上传
+                  </Button>
+                </Upload>
+                <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.createDirectory.bind(this)}>
+                  <Icon type="plus" />创建文件夹
+                </Button>
+                <div>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                </div>
+              </div>
+            )
+          }
+        default:
+          break
+      }
+      return operatorConent
+    }
     return (
       <div>
       <div className={indexStyle.headout}>
@@ -194,8 +328,7 @@ export default class Header extends React.Component {
             })}
           </div>
           <div className={indexStyle.right_bott}>
-            <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
-            <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+            {appsOperator(appsSelectKey)}
           </div>
         </div>
       </div>

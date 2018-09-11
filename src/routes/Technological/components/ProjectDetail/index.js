@@ -194,6 +194,11 @@ const ProjectDetail = (props) => {
       })
     }
   }
+  const FileModuleProps = {
+    modal,
+    model,
+
+  }
 
   const routingJump = (path) => {
     dispatch({
@@ -217,12 +222,11 @@ const ProjectDetail = (props) => {
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
         break
       default:
-        appFace = (<FileModule />)
+        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
         break
     }
     return appFace
   }
-
   return(
     <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />

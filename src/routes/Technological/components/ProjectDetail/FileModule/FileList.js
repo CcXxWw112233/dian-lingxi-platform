@@ -1,34 +1,28 @@
 
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input } from 'antd';
+import CreatDirector from './CreatDirector'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
+
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
-// let da=['dfdsfs','1211','455','.dewdw','445fsdf','r45','_fsdf','d_tthg','东方闪电','啊啊']
-// da.sort(function(a,b){
-//   return a.localeCompare(b);
-// });
-// console.log(da);
-// let aa = [21,52,32]
-// aa.sort(function(a,b){
-//   return a - b;
-// });
-// console.log(aa);
-
 
 export default class FileList extends React.Component {
   state = {
-    selectedRowKeys: [],//选择的列表项
     //排序，tru为升序，false为降序
     nameSort: true,
     sizeSort: true,
     founderSort: true,
   };
+  //table变换
+  handleChange = (pagination, filters, sorter) => {
 
+  }
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+    this.props.updateDatas({ selectedRowKeys });
+    console.log(selectedRowKeys)
   }
 
   //item操作
@@ -36,27 +30,26 @@ export default class FileList extends React.Component {
     console.log(id)
   }
 
-  //table变换
-  handleChange = (pagination, filters, sorter) => {
-
-  }
-
-  //列表排序
-  normalSort(data, key, state) {
-    if (!data || !Array.isArray(data)) {
-      return false
-    }
+  //列表排序, 有限排序文件夹
+  normalSort(filedata_1, filedata_2, key, state) {
     const that = this
-    data.sort(function(a,b){
+    filedata_1.sort(function(a,b){
       if(that.state[state]) {
         return a[key].localeCompare(b[key]);
       } else {
         return b[key].localeCompare(a[key]);
       }
     });
-   this.setState({
-     dataSource: data
-   })
+    filedata_2.sort(function(a,b){
+      if(that.state[state]) {
+        return a[key].localeCompare(b[key]);
+      } else {
+        return b[key].localeCompare(a[key]);
+      }
+    });
+    this.props.updateDatas({
+      fileList: [...filedata_1, ...filedata_2]
+    })
   }
   fiterSizeUnit(size) {
     let transSize
@@ -72,54 +65,107 @@ export default class FileList extends React.Component {
     }
     return transSize
   }
-  sizeSort(data, key, state) {
-    if (!data || !Array.isArray(data)) {
-      return false
-    }
+  sizeSort(filedata_1, filedata_2, key, state) {
     const that = this
-    data.sort(function(a, b){
+    filedata_1.sort(function(a, b){
       if(that.state[state]) {
         return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key]);
       } else {
         return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
       }
     });
-    this.setState({
-      dataSource: data
+    filedata_2.sort(function(a, b){
+      if(that.state[state]) {
+        return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key]);
+      } else {
+        return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
+      }
+    });
+    this.props.updateDatas({
+      fileList: [...filedata_1, ...filedata_2]
     })
   }
   listSort(key) {
-    const { dataSource } = this.props
+    const { datas = {} } = this.props.model
+    const {  fileList, filedata_1, filedata_2, selectedRowKeys } = datas
     switch (key) {
       case '1':
         this.setState({
           nameSort: !this.state.nameSort
         },function () {
-          this.normalSort(dataSource, 'name', 'nameSort')
+          this.normalSort(filedata_1, filedata_2, 'name', 'nameSort')
         })
         break
       case '2':
         this.setState({
           sizeSort: !this.state.sizeSort
         },function () {
-          this.sizeSort(dataSource, 'size', 'sizeSort')
+          this.sizeSort(filedata_1, filedata_2, 'size', 'sizeSort')
         })
         break
       case '3':
         this.setState({
           founderSort: !this.state.founderSort
         },function () {
-          this.normalSort(dataSource, 'founder', 'founderSort')
+          this.normalSort(filedata_1, filedata_2, 'founder', 'founderSort')
         })
         break
       default:
         break
     }
+    //排序的时候清空掉所选项
+    this.props.updateDatas({selectedRowKeys: []})
+
   }
 
+  //文件名类型
+  judgeFileType(fileName) {
+    let themeCode = ''
+    const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase()
+    switch (type) {
+      case '.xls':
+        themeCode = '&#xe6d5;'
+        break
+      case '.png':
+        themeCode = '&#xe6d4;'
+        break
+      case '.xlsx':
+        themeCode = '&#xe6d3;'
+        break
+      case '.ppt':
+        themeCode = '&#xe6d2;'
+        break
+      case '.gif':
+        themeCode = '&#xe6d1;'
+        break
+      case '.jpeg':
+        themeCode = '&#xe6d0;'
+        break
+      case '.pdf':
+        themeCode = '&#xe6cf;'
+        break
+      case '.docx':
+        themeCode = '&#xe6ce;'
+        break
+      case 'txt':
+        themeCode = '&#xe6cd;'
+        break
+      case '.doc':
+        themeCode = '&#xe6cc;'
+        break
+      case '.jpg':
+        themeCode = '&#xe6cb;'
+        break
+      default:
+        themeCode = '&#xe6cb;'
+        break
+    }
+    return themeCode
+  }
   render() {
-    const { dataSource } = this.props
-    const { selectedRowKeys, nameSort, sizeSort, founderSort, } = this.state;
+    const { datas = {} } = this.props.model
+    const { selectedRowKeys, fileList } = datas
+    const {  nameSort, sizeSort, founderSort, } = this.state;
 
     const operationMenu = (id) => {
       return (
@@ -136,8 +182,18 @@ export default class FileList extends React.Component {
     const columns = [
       {
         title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >文件名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
-        dataIndex: 'name',
         key: 'name',
+        render: ({type, name, isInAdd}) => {
+          if(isInAdd) {
+            return(
+              <CreatDirector {...this.props} />
+            )
+          }else {
+            return(type === '1' ?
+              (<span><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{name}</span>)
+              : (<span><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(name)}}></i>{name}</span>))
+          }
+        }
       }, {
         title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '2')}>大小<Icon type={sizeSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         dataIndex: 'size',
@@ -167,9 +223,15 @@ export default class FileList extends React.Component {
     return (
       <div className={indexStyles.tableOut} style={{minHeight: (bodyOffsetHeight)}}>
         <Table
-          rowSelection={{selectedRowKeys, onChange: this.onSelectChange,}}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+            getCheckboxProps: data => ({
+              disabled: data.isInAdd === true, // Column configuration not to be checked
+            }),
+          }}
           columns={columns}
-          dataSource={dataSource}
+          dataSource={fileList}
           pagination={false}
           rowClassName={indexStyles.tableRow}
           onChange={this.handleChange.bind(this)}

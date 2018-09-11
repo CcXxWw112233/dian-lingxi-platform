@@ -113,7 +113,7 @@ export default class DragValidation extends React.Component{
     this.handleNeedXTouch('', 'up')
   }
   handleNeedXTouch = (event ,type) => {
-    let needX
+    let needX = 0
     if(type === 'move') { //滑动过程中
       const positionSubstract = event.touches[0].clientX - this.disX //元素距离父元素坐边距离
       if( positionSubstract <= 0){ //点击拖动做位置边界判断

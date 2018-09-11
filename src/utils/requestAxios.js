@@ -47,9 +47,13 @@ export default function request(options = {}, elseSet = {}) {
       }
     })
       .then(res => {
+        setTimeout(loading,0);
+
         resolve(res.data);
       })
       .catch((error, e) => {
+        setTimeout(loading,0);
+
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
             case 401:
@@ -64,9 +68,6 @@ export default function request(options = {}, elseSet = {}) {
               break
           }
         }
-      }).finally(() => {
-        // message.destroy()
-        setTimeout(loading,0);
-      });
+      })
   })
 }

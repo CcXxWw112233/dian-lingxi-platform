@@ -1,5 +1,6 @@
 html,
 body { height: 100%; padding: 0; margin: 0; }
+@import "../../../../globalset/css/constant";
 
 //头部
 .headout {
@@ -98,3 +99,11 @@ body { height: 100%; padding: 0; margin: 0; }
   background: #FFE7E8;
 }
 
+.fileOperator{
+  span:nth-child(2):hover, span:nth-child(3):hover{
+    color: @color-link-hover;
+  }
+  span:nth-child(2):active, span:nth-child(3):active{
+    color: @color-link-active;
+  }
+}
