@@ -8,6 +8,7 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
   quitProject
 } from "../../services/technological/project";
+import { getFileList,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
@@ -46,6 +47,9 @@ export default {
             selectedRowKeys: [],//选择的列表项
             isInAddDirectory: false, //是否正在创建文件家判断标志
             moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+            breadcrumbList: [{id: '123456', name: '根目录', type: '1'}],  //文档路劲面包屑
+            currentParrentDirectoryId: '123456', //文档当前文件夹父级文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级
+            isInOpenFile:　false, //当前是否再打开文件状态，用来判断文件详情是否显示
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -55,6 +59,10 @@ export default {
               id: board_id
             }
           })
+
+          dispatch({
+            type: 'test',
+          })
         }else{
 
         }
@@ -62,6 +70,38 @@ export default {
     },
   },
   effects: {
+    * test({ payload }, { select, call, put }) {
+      const filedata_1 = [];
+      const filedata_2 = [];
+      for (let i = 0; i < 6; i++) {
+        filedata_1.push({
+          id: i+5,
+          name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+          size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
+          updateTime: '这是文件夹',
+          founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+          type: '1',
+          parrentId: '123456', //这个用来做点击文件夹判定
+        });
+        filedata_2.push({
+          id: i+5,
+          name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+          size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
+          updateTime: '这是文件',
+          founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
+          type: '0',
+          parrentId: '123456'
+        })
+      }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          filedata_1,
+          filedata_2,
+          fileList: [...filedata_1, ...filedata_2]
+        }
+      })
+    },
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload
@@ -99,7 +139,8 @@ export default {
                 size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
                 updateTime: '这是文件夹',
                 founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                type: '1'
+                type: '1',
+                parrentId: '123456', //这个用来做点击文件夹判定
               });
               filedata_2.push({
                 id: i+5,
@@ -107,7 +148,8 @@ export default {
                 size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
                 updateTime: '这是文件',
                 founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                type: '0'
+                type: '0',
+                parrentId: '123456'
               })
             }
             yield put({
@@ -530,6 +572,110 @@ export default {
     //评论--end
 
     //文档----------start
+    * getFileList({ payload }, { select, call, put }) {
+      let res = yield call(getFileList, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileCopy({ payload }, { select, call, put }) {
+      let res = yield call(fileCopy, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileDownload({ payload }, { select, call, put }) {
+      let res = yield call(fileDownload, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileRemove({ payload }, { select, call, put }) {
+      let res = yield call(fileRemove, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileMove({ payload }, { select, call, put }) {
+      let res = yield call(fileMove, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileUpload({ payload }, { select, call, put }) {
+      let res = yield call(fileUpload, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileVersionist({ payload }, { select, call, put }) {
+      let res = yield call(fileVersionist, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * recycleBinList({ payload }, { select, call, put }) {
+      let res = yield call(recycleBinList, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * deleteFile({ payload }, { select, call, put }) {
+      let res = yield call(deleteFile, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * restoreFile({ payload }, { select, call, put }) {
+      let res = yield call(restoreFile, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * getFolderList({ payload }, { select, call, put }) {
+      let res = yield call(getFolderList, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * addNewFolder({ payload }, { select, call, put }) {
+      let res = yield call(addNewFolder, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * updateFolder({ payload }, { select, call, put }) {
+      let res = yield call(updateFolder, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
 
     //文档----------end
     * routingJump({ payload }, { call, put }) {

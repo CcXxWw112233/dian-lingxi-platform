@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyle from './index.less'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 
 let is_starinit = null
@@ -194,6 +194,7 @@ export default class Header extends React.Component {
   //右方部分点击-----------------end
 
   render() {
+    const that = this
     const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [] }} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
     const { board_name, board_id, is_star, is_create, app_data = [] } = projectDetailInfoData
@@ -225,6 +226,31 @@ export default class Header extends React.Component {
 
       </Menu>
     );
+    //文件上传
+    const uploadProps = {
+      name: 'file',
+      action: '//jsonplaceholder.typicode.com/posts/',
+      headers: {
+        authorization: 'authorization-text',
+      },
+      onChange({ file, fileList, event }) {
+        let loading = message.loading('正在上传...', 0)
+        if (file.status === 'uploading') {
+          that.setState({
+            uploading: true
+          })
+        }
+        if (file.status !== 'uploading') {
+          setTimeout(loading,0);
+        }
+        if (file.status === 'done') {
+          message.success(`上传成功。`);
+        } else if (file.status === 'error') {
+          message.error(`上传失败。`);
+        }
+      },
+    };
+
     const appsOperator = (appsSelectKey) => {  //右方操作图标
       let operatorConent = ''
       switch (appsSelectKey) {
@@ -275,7 +301,7 @@ export default class Header extends React.Component {
           }else {
             operatorConent = (
               <div style={{display: 'flex',alignItems: 'center', }}>
-                <Upload action="//jsonplaceholder.typicode.com/posts/" directory multiple showUploadList={false}>
+                <Upload {...uploadProps} directory multiple showUploadList={false}>
                   <Button style={{height: 24, marginTop:16,}} type={'primary'}>
                     <Icon type="upload" />上传
                   </Button>

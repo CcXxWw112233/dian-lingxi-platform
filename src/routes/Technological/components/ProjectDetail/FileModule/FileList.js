@@ -162,6 +162,29 @@ export default class FileList extends React.Component {
     }
     return themeCode
   }
+
+  //文件夹或文件点击
+  open(data) {
+    const { datas = {} } = this.props.model
+    const { breadcrumbList = [], currentParrentDirectoryId } = datas
+    const { parrentId, id } = data
+    if(parrentId === currentParrentDirectoryId){
+      breadcrumbList.push(data)
+    }else {
+      breadcrumbList[breadcrumbList.length - 1] = data
+    }
+    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: id})
+  }
+  openDirectory(data) {
+    this.open(data)
+    //接下来做文件夹请求的操作带id
+  }
+  openFile(data) {
+    this.open(data)
+    //接下来打开文件
+    this.props.updateDatas({isInOpenFile: true})
+  }
+
   render() {
     const { datas = {} } = this.props.model
     const { selectedRowKeys, fileList } = datas
@@ -183,15 +206,15 @@ export default class FileList extends React.Component {
       {
         title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >文件名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         key: 'name',
-        render: ({type, name, isInAdd}) => {
+        render: ({type, name, isInAdd, id, parrentId}) => {
           if(isInAdd) {
             return(
               <CreatDirector {...this.props} />
             )
           }else {
             return(type === '1' ?
-              (<span><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{name}</span>)
-              : (<span><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(name)}}></i>{name}</span>))
+              (<span onClick={this.openDirectory.bind(this,{type, name, isInAdd, id, parrentId} )}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{name}</span>)
+              : (<span onClick={this.openFile.bind(this,{type, name, isInAdd, id, parrentId} )} ><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(name)}}></i>{name}</span>))
           }
         }
       }, {

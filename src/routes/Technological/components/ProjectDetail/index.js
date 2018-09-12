@@ -8,7 +8,6 @@ import FileModule  from './FileModule'
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
 
-
 const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
@@ -197,7 +196,84 @@ const ProjectDetail = (props) => {
   const FileModuleProps = {
     modal,
     model,
-
+    getFileList(params){
+      dispatch({
+        type: getEffectOrReducerByName('getFileList'),
+        payload: params
+      })
+    },
+    fileCopy(data){
+      dispatch({
+        type: getEffectOrReducerByName('fileCopy'),
+        payload: data
+      })
+    },
+    fileDownload(params){
+      dispatch({
+        type: getEffectOrReducerByName('fileDownload'),
+        payload: params
+      })
+    },
+    fileRemove(data){
+      dispatch({
+        type: getEffectOrReducerByName('fileRemove'),
+        payload: data
+      })
+    },
+    fileMove(data){
+      dispatch({
+        type: getEffectOrReducerByName('fileMove'),
+        payload: data
+      })
+    },
+    fileUpload(data){
+      dispatch({
+        type: getEffectOrReducerByName('fileUpload'),
+        payload: data
+      })
+    },
+    fileVersionist(params){
+      dispatch({
+        type: getEffectOrReducerByName('fileVersionist'),
+        payload: params
+      })
+    },
+    recycleBinList(params){
+      dispatch({
+        type: getEffectOrReducerByName('recycleBinList'),
+        payload: params
+      })
+    },
+    deleteFile(data){
+      dispatch({
+        type: getEffectOrReducerByName('deleteFile'),
+        payload: data
+      })
+    },
+    restoreFile(data){
+      dispatch({
+        type: getEffectOrReducerByName('restoreFile'),
+        payload: data
+      })
+    },
+    getFolderList(params){
+      dispatch({
+        type: getEffectOrReducerByName('getFolderList'),
+        payload: params
+      })
+    },
+    addNewFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName('addNewFolder'),
+        payload: data
+      })
+    },
+    updateFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName('updateFolder'),
+        payload: data
+      })
+    },
   }
 
   const routingJump = (path) => {
