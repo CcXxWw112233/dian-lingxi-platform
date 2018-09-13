@@ -4,30 +4,29 @@ import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 
 export default class FileDetailContent extends React.Component {
-  state = {
-    currentVersionKey: 0
-  }
+
   versionItemClick({value, key}){
-    this.setState({
-      currentVersionKey: key
-    })
+    const { file_id } = value
+    this.props.updateDatas({filePreviewCurrentVersionKey: key})
+    this.props.filePreview({id: file_id})
+
   }
   render() {
+    const { datas: { isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0 } }= this.props.model
+
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
     }
-    const  src = ''
-    const versionList = [1,2,3]
-    const { currentVersionKey } = this.state
 
     const getVersionItem = (value, key ) => {
+      const { file_name, creator, update_time, file_size } = value
       return (
         <div className={indexStyles.versionInfoListItem} key ={key} onClick={this.versionItemClick.bind(this,{value, key})}>
-          <div className={currentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
-          <div className={indexStyles.name}>闫世伟</div>
-          <div className={indexStyles.info}>上传于2018-08-19 25:33</div>
-          <div className={indexStyles.size}>265.9mb</div>
+          <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
+          <div className={indexStyles.name}>{creator}</div>
+          <div className={indexStyles.info}>上传于{update_time}</div>
+          <div className={indexStyles.size}>{file_size}</div>
         </div>
       )
     }
@@ -35,12 +34,12 @@ export default class FileDetailContent extends React.Component {
     return (
       <div className={indexStyles.fileDetailContentOut}>
         <div className={indexStyles.fileDetailContentLeft}
-             dangerouslySetInnerHTML={{__html: getIframe(src)}}></div>
-        <div className={indexStyles.fileDetailContentRight}>
+             dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
           <div className={indexStyles.fileDetailContentRight_top}>
              <div>版本信息</div>
              <div className={indexStyles.versionInfoList}>
-               {versionList.map((value, key ) => {
+               {filePreviewCurrentVersionList.map((value, key ) => {
                  return getVersionItem(value, key )
                })}
              </div>

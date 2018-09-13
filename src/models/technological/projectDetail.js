@@ -8,9 +8,9 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
   quitProject
 } from "../../services/technological/project";
-import { getFileList,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
+import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
-import { selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -47,9 +47,16 @@ export default {
             selectedRowKeys: [],//选择的列表项
             isInAddDirectory: false, //是否正在创建文件家判断标志
             moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-            breadcrumbList: [{id: '123456', name: '根目录', type: '1'}],  //文档路劲面包屑
-            currentParrentDirectoryId: '123456', //文档当前文件夹父级文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级
-            isInOpenFile:　false, //当前是否再打开文件状态，用来判断文件详情是否显示
+            breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+            currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+            isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+            treeFolderData: {}, //文件夹树状结构
+            filePreviewIsUsable: true, //文件是否可以预览标记
+            filePreviewUrl: '',  //预览文件url
+            filePreviewCurrentId: '', //当前预览的文件id
+            filePreviewCurrentVersionId: '', //当前预览文件版本id
+            filePreviewCurrentVersionList: [], //预览文件的版本列表
+            filePreviewCurrentVersionKey: 0, //预览文件选中的key
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -58,10 +65,6 @@ export default {
             payload:{
               id: board_id
             }
-          })
-
-          dispatch({
-            type: 'test',
           })
         }else{
 
@@ -105,19 +108,19 @@ export default {
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload
-      let res = yield call(projectDetailInfo, id)
+      let result = yield call(projectDetailInfo, id)
       const appsSelectKey = yield select(selectAppsSelectKey)
-      if(isApiResponseOk(res)) {
+      if(isApiResponseOk(result)) {
         yield put({
           type: 'updateDatas',
           payload:{
-            projectDetailInfoData: res.data,
-            appsSelectKey: appsSelectKey || (res.data.app_data[0]? res.data.app_data[0].key : 1),//设置默认
-            appsSelectKeyIsAreadyClickArray: [res.data.app_data[0]? res.data.app_data[0].key : 1] //设置默认
+            projectDetailInfoData: result.data,
+            appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1),//设置默认
+            appsSelectKeyIsAreadyClickArray: [result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
           }
         })
-        if(res.data.app_data[0] ) {
-          if( res.data.app_data[0].key === 3) { //任务
+        if(result.data.app_data[0] ) {
+          if( result.data.app_data[0].key === 3) { //任务
             yield put({
               type: 'getProjectGoupList'
             })
@@ -129,35 +132,24 @@ export default {
                 arrange_type: '1'
               }
             })
-          }else if(res.data.app_data[0].key === 2){ //文档
-            const filedata_1 = [];
-            const filedata_2 = [];
-            for (let i = 0; i < 6; i++) {
-              filedata_1.push({
-                id: i+5,
-                name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
-                updateTime: '这是文件夹',
-                founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                type: '1',
-                parrentId: '123456', //这个用来做点击文件夹判定
-              });
-              filedata_2.push({
-                id: i+5,
-                name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
-                updateTime: '这是文件',
-                founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-                type: '0',
-                parrentId: '123456'
-              })
-            }
+          }else if(result.data.app_data[0].key === 2){ //文档
             yield put({
               type: 'updateDatas',
               payload: {
-                filedata_1,
-                filedata_2,
-                fileList: [...filedata_1, ...filedata_2]
+                breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
+                currentParrentDirectoryId: result.data.folder_id,
+              }
+            })
+            yield put({
+              type: 'getFileList',
+              payload: {
+                folder_id: result.data.folder_id
+              }
+            })
+            yield put({
+              type: 'getFolderList',
+              payload: {
+                board_id: board_id
               }
             })
           }else {
@@ -210,6 +202,207 @@ export default {
 
 
     },
+
+    //文档----------start
+    * getFileList({ payload }, { select, call, put }) {
+      let res = yield call(getFileList, payload)
+      if(isApiResponseOk(res)) {
+        const filedata_1 = res.data.folder_data;
+        for(let val of filedata_1) {
+          val['file_name'] = val['folder_name']
+          val['file_id'] = val['folder_id']
+        }
+        const filedata_2 = res.data.file_data;
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filedata_1,
+            filedata_2,
+            fileList: [...filedata_1, ...filedata_2]
+          }
+        })
+      }else{
+
+      }
+    },
+    * filePreview({ payload }, { select, call, put }) {
+      let res = yield call(filePreview, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewIsUsable: res.data.isUsable,
+            filePreviewUrl: res.data.url
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * fileUpload({ payload }, { select, call, put }) {
+      let res = yield call(fileUpload, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileCopy({ payload }, { select, call, put }) {
+      let res = yield call(fileCopy, payload)
+      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            selectedRowKeys: []
+          }
+        })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: currentParrentDirectoryId
+          }
+        })
+      }else{
+
+      }
+    },
+    * fileDownload({ payload }, { select, call, put }) {
+      let res = yield call(fileDownload, payload)
+      if(isApiResponseOk(res)) {
+         const data = res.data
+        if(data && data.length) {
+           for (let val of data ) {
+             window.open(val)
+           }
+        }
+      }else{
+
+      }
+    },
+    * fileRemove({ payload }, { select, call, put }) {
+      let res = yield call(fileRemove, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * fileMove({ payload }, { select, call, put }) {
+      let res = yield call(fileMove, payload)
+      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            selectedRowKeys: []
+          }
+        })
+         yield put({
+           type: 'getFileList',
+           payload: {
+             folder_id: currentParrentDirectoryId
+           }
+         })
+      }else{
+
+      }
+    },
+    * fileVersionist({ payload }, { select, call, put }) {
+      let res = yield call(fileVersionist, payload)
+      const { isNeedPreviewFile } = payload //是否需要重新读取文档
+      const breadcrumbList = yield select(selectBreadcrumbList)
+      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+
+      if(isApiResponseOk(res)) {
+        breadcrumbList[breadcrumbList.length - 1] = res.data[0]
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            filePreviewCurrentVersionList: res.data,
+            breadcrumbList,
+          }
+        })
+        if(isNeedPreviewFile) {
+          yield put({
+            type: 'filePreview',
+            payload: {
+              id: res.data[0].file_id
+            }
+          })
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: currentParrentDirectoryId,
+            }
+          })
+        }
+      }else{
+
+      }
+    },
+    * recycleBinList({ payload }, { select, call, put }) {
+      let res = yield call(recycleBinList, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * deleteFile({ payload }, { select, call, put }) {
+      let res = yield call(deleteFile, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * restoreFile({ payload }, { select, call, put }) {
+      let res = yield call(restoreFile, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    * getFolderList({ payload }, { select, call, put }) {
+      let res = yield call(getFolderList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            treeFolderData: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * addNewFolder({ payload }, { select, call, put }) {
+      let res = yield call(addNewFolder, payload)
+      const { parent_id } = payload
+      if(isApiResponseOk(res)) {
+         yield put({
+           type: 'getFileList',
+           payload: {
+             folder_id: parent_id
+           }
+         })
+      }else{
+
+      }
+    },
+    * updateFolder({ payload }, { select, call, put }) {
+      let res = yield call(updateFolder, payload)
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
+    },
+    //文档----------end
+
 
     //项目增删改查--start
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
@@ -571,113 +764,7 @@ export default {
     },
     //评论--end
 
-    //文档----------start
-    * getFileList({ payload }, { select, call, put }) {
-      let res = yield call(getFileList, payload)
-      if(isApiResponseOk(res)) {
 
-      }else{
-
-      }
-    },
-    * fileCopy({ payload }, { select, call, put }) {
-      let res = yield call(fileCopy, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * fileDownload({ payload }, { select, call, put }) {
-      let res = yield call(fileDownload, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * fileRemove({ payload }, { select, call, put }) {
-      let res = yield call(fileRemove, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * fileMove({ payload }, { select, call, put }) {
-      let res = yield call(fileMove, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * fileUpload({ payload }, { select, call, put }) {
-      let res = yield call(fileUpload, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * fileVersionist({ payload }, { select, call, put }) {
-      let res = yield call(fileVersionist, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * recycleBinList({ payload }, { select, call, put }) {
-      let res = yield call(recycleBinList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * deleteFile({ payload }, { select, call, put }) {
-      let res = yield call(deleteFile, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * restoreFile({ payload }, { select, call, put }) {
-      let res = yield call(restoreFile, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * getFolderList({ payload }, { select, call, put }) {
-      let res = yield call(getFolderList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * addNewFolder({ payload }, { select, call, put }) {
-      let res = yield call(addNewFolder, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * updateFolder({ payload }, { select, call, put }) {
-      let res = yield call(updateFolder, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-
-    //文档----------end
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

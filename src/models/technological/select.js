@@ -7,3 +7,6 @@ export const selectTaskGroupListIndex = state => state[(`projectDetail`)].datas.
 export const selectTaskGroupListIndexIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex_index //当前选中任务分组里的任务index
 export const selectDrawContent = state => state[(`projectDetail`)].datas.drawContent  //任务右方抽屉
 
+//文档
+export const selectCurrentParrentDirectoryId = state => state[(`projectDetail`)].datas.currentParrentDirectoryId  //当前文件夹id
+export const selectBreadcrumbList= state => state[(`projectDetail`)].datas.breadcrumbList  //面包屑路径

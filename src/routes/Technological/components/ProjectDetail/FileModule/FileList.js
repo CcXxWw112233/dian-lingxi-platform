@@ -13,7 +13,7 @@ export default class FileList extends React.Component {
     //排序，tru为升序，false为降序
     nameSort: true,
     sizeSort: true,
-    founderSort: true,
+    creatorSort: true,
   };
   //table变换
   handleChange = (pagination, filters, sorter) => {
@@ -26,8 +26,8 @@ export default class FileList extends React.Component {
   }
 
   //item操作
-  operationMenuClick(id) {
-    console.log(id)
+  operationMenuClick(file_id) {
+    console.log(file_id)
   }
 
   //列表排序, 有限排序文件夹
@@ -51,14 +51,14 @@ export default class FileList extends React.Component {
       fileList: [...filedata_1, ...filedata_2]
     })
   }
-  fiterSizeUnit(size) {
+  fiterSizeUnit(file_size) {
     let transSize
-    const sizeTransNumber = parseFloat(size)
-    if(size.indexOf('G') !== -1){
+    const sizeTransNumber = parseFloat(file_size)
+    if(file_size.indexOf('G') !== -1){
       transSize = 1024*1024*1024* sizeTransNumber
-    }else if(size.indexOf('MB') !== -1){
+    }else if(file_size.indexOf('MB') !== -1){
       transSize = 1024*1024 * sizeTransNumber
-    }else if(size.indexOf('KB') !== -1){
+    }else if(file_size.indexOf('KB') !== -1){
       transSize = 1024 * sizeTransNumber
     }else{
       transSize = sizeTransNumber
@@ -93,21 +93,21 @@ export default class FileList extends React.Component {
         this.setState({
           nameSort: !this.state.nameSort
         },function () {
-          this.normalSort(filedata_1, filedata_2, 'name', 'nameSort')
+          this.normalSort(filedata_1, filedata_2, 'file_name', 'nameSort')
         })
         break
       case '2':
         this.setState({
           sizeSort: !this.state.sizeSort
         },function () {
-          this.sizeSort(filedata_1, filedata_2, 'size', 'sizeSort')
+          this.sizeSort(filedata_1, filedata_2, 'file_size', 'sizeSort')
         })
         break
       case '3':
         this.setState({
-          founderSort: !this.state.founderSort
+          creatorSort: !this.state.creatorSort
         },function () {
-          this.normalSort(filedata_1, filedata_2, 'founder', 'founderSort')
+          this.normalSort(filedata_1, filedata_2, 'creator', 'creatorSort')
         })
         break
       default:
@@ -164,35 +164,42 @@ export default class FileList extends React.Component {
   }
 
   //文件夹或文件点击
-  open(data) {
+  open(data,type) {
     const { datas = {} } = this.props.model
     const { breadcrumbList = [], currentParrentDirectoryId } = datas
-    const { parrentId, id } = data
-    if(parrentId === currentParrentDirectoryId){
+    const { belong_folder_id, file_id } = data
+    if(belong_folder_id === currentParrentDirectoryId){
       breadcrumbList.push(data)
     }else {
       breadcrumbList[breadcrumbList.length - 1] = data
     }
-    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: id})
+    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: type === '1' ?file_id : currentParrentDirectoryId})
   }
   openDirectory(data) {
-    this.open(data)
+    this.open(data, '1')
     //接下来做文件夹请求的操作带id
+    const { file_id } = data
+    this.props.getFileList({
+      folder_id: file_id
+    })
   }
   openFile(data) {
-    this.open(data)
+    this.open(data, '2')
+    const { file_id, version_id } = data
     //接下来打开文件
-    this.props.updateDatas({isInOpenFile: true})
+    this.props.updateDatas({isInOpenFile: true, filePreviewCurrentId: file_id, filePreviewCurrentVersionId: version_id})
+    this.props.filePreview({id: file_id})
+    this.props.fileVersionist({version_id : version_id})
   }
 
   render() {
     const { datas = {} } = this.props.model
     const { selectedRowKeys, fileList } = datas
-    const {  nameSort, sizeSort, founderSort, } = this.state;
+    const {  nameSort, sizeSort, creatorSort, } = this.state;
 
-    const operationMenu = (id) => {
+    const operationMenu = (file_id) => {
       return (
-        <Menu onClick={this.operationMenuClick.bind(this, id)}>
+        <Menu onClick={this.operationMenuClick.bind(this, file_id)}>
           <Menu.Item key="1">收藏</Menu.Item>
           <Menu.Item key="2">下载</Menu.Item>
           <Menu.Item key="3">移动</Menu.Item>
@@ -205,37 +212,38 @@ export default class FileList extends React.Component {
     const columns = [
       {
         title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >文件名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
-        key: 'name',
-        render: ({type, name, isInAdd, id, parrentId}) => {
+        key: 'file_name',
+        render: (data) => {
+          const {type, file_name, isInAdd} = data
           if(isInAdd) {
             return(
               <CreatDirector {...this.props} />
             )
           }else {
             return(type === '1' ?
-              (<span onClick={this.openDirectory.bind(this,{type, name, isInAdd, id, parrentId} )}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{name}</span>)
-              : (<span onClick={this.openFile.bind(this,{type, name, isInAdd, id, parrentId} )} ><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(name)}}></i>{name}</span>))
+              (<span onClick={this.openDirectory.bind(this,data)} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{file_name}</span>)
+              : (<span onClick={this.openFile.bind(this,data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>))
           }
         }
       }, {
         title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '2')}>大小<Icon type={sizeSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
-        dataIndex: 'size',
-        key: 'size',
+        dataIndex: 'file_size',
+        key: 'file_size',
       }, {
         title: '更新时间',
-        dataIndex: 'updateTime',
-        key: 'updateTime',
+        dataIndex: 'update_time',
+        key: 'update_time',
       },  {
-        title:<div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={founderSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
-        dataIndex: 'founder',
-        key: 'founder',
+        title:<div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={creatorSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        dataIndex: 'creator',
+        key: 'creator',
       },
       {
         title: '操作',
         key: 'operation',
-        render: ({id}) =>
+        render: ({file_id}) =>
           <div>
-            <Dropdown overlay={operationMenu(id)}>
+            <Dropdown overlay={operationMenu(file_id)}>
               <Icon type="ellipsis" theme="outlined" style={{fontSize: 22, color: '#000000'}}/>
             </Dropdown>
           </div>,
@@ -250,13 +258,13 @@ export default class FileList extends React.Component {
             selectedRowKeys,
             onChange: this.onSelectChange,
             getCheckboxProps: data => ({
-              disabled: data.isInAdd === true, // Column configuration not to be checked
+              disabled: data.isInAdd === true || data.type === '1', // Column configuration not to be checked
+              name: data.file_id,
             }),
           }}
           columns={columns}
           dataSource={fileList}
           pagination={false}
-          rowClassName={indexStyles.tableRow}
           onChange={this.handleChange.bind(this)}
         />
       </div>

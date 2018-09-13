@@ -3,20 +3,28 @@ import { Input, Button } from 'antd'
 
 export default class CreatDirector extends React.Component {
   state = {
-    name: ''
+    file_name: ''
   }
   nameInputChange(e) {
     this.setState({
-      name: e.target.value
+      file_name: e.target.value
     })
   }
   onOk() {
-    if(!this.state.name) {
+    if(!this.state.file_name) {
       return false
     }
+    const {datas: { projectDetailInfoData = {}, currentParrentDirectoryId }} = this.props.model
+    const { board_id } = projectDetailInfoData
+
     const { datas: { fileList = [], filedata_1 = [] } } = this.props.model
     fileList.shift()
     filedata_1.shift()
+    this.props.addNewFolder({
+      board_id,
+      folder_name:  this.state.file_name,
+      parent_id: currentParrentDirectoryId
+    })
     this.props.updateDatas({fileList, filedata_1, isInAddDirectory: false})
   }
   onCancel() {

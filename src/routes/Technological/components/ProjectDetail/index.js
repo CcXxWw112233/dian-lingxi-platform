@@ -274,6 +274,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    filePreview(params) {
+      dispatch({
+        type: getEffectOrReducerByName('filePreview'),
+        payload: params
+      })
+    }
   }
 
   const routingJump = (path) => {
@@ -305,7 +311,7 @@ const ProjectDetail = (props) => {
   }
   return(
     <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
-      <Header {...HeaderListProps} routingJump={routingJump} updateDatas={updateDatas} />
+      <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}
       <Drawer

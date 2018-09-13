@@ -2,6 +2,8 @@ import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
+import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
+import Cookies from 'js-cookie'
 
 let is_starinit = null
 const appsList = [
@@ -129,17 +131,35 @@ export default class Header extends React.Component {
     })
   }
   //文档操作----start
+  quitOperateFile() {
+    this.props.updateDatas({
+      selectedRowKeys: [],
+    })
+  }
+  reverseSelection() {
+    const {datas: {  selectedRowKeys = [], fileList = []}} = this.props.model
+    const newSelectedRowKeys = []
+    for (let i = 0; i < fileList.length; i++) {
+      for (let val of selectedRowKeys) {
+        if(val !== i){
+          console.log(i)
+          newSelectedRowKeys.push(i)
+        }
+      }
+    }
+    this.props.updateDatas({selectedRowKeys: newSelectedRowKeys})
+  }
   createDirectory() {
     const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
     if(isInAddDirectory) { //正在创建的过程中不能添加多个
       return false
     }
     const obj = {
-      id: '',
-      name: '',
-      size: '-',
-      updateTime: '-',
-      founder: `-`,
+      file_id: '',
+      file_name: '',
+      file_size: '-',
+      update_time: '-',
+      creator: `-`,
       type: '1',
       isInAdd: true
     }
@@ -151,28 +171,35 @@ export default class Header extends React.Component {
 
   }
   downLoadFile() {
+    const { datas: { fileList, selectedRowKeys } } = this.props.model
+    let chooseArray = []
+    for(let i=0; i < selectedRowKeys.length; i++ ){
+      chooseArray.push(fileList[selectedRowKeys[i]].file_id)
+    }
+    const ids = chooseArray.join(',')
+    this.props.fileDownload({ids})
 
     //将要进行多文件下载的mp3文件地址，以组数的形式存起来（这里只例了3个地址）
-    let mp3arr = ["http://pe96wftsc.bkt.clouddn.com/ea416183ad91220856c8ff792e5132e1.zip?e=1536660365&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:XK9eRCWcG8yDztiL7zct2jrpIvc=","http://pe96wftsc.bkt.clouddn.com/2fc83d8439ab0d4507dc7154f3d50d3.pdf?e=1536659325&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:DGertCGKCr3Y407F6fY9ZGgkP4M=", "http://pe96wftsc.bkt.clouddn.com/ec611c887680f9264bb5db8e4cb33141.docx?e=1536659379&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:9IkALD1DjOBvQtv3uAvtzk5y694=",];
+    // let mp3arr = ["http://pe96wftsc.bkt.clouddn.com/ea416183ad91220856c8ff792e5132e1.zip?e=1536660365&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:XK9eRCWcG8yDztiL7zct2jrpIvc=","http://pe96wftsc.bkt.clouddn.com/2fc83d8439ab0d4507dc7154f3d50d3.pdf?e=1536659325&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:DGertCGKCr3Y407F6fY9ZGgkP4M=", "http://pe96wftsc.bkt.clouddn.com/ec611c887680f9264bb5db8e4cb33141.docx?e=1536659379&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:9IkALD1DjOBvQtv3uAvtzk5y694=",];
 
-    const download = (name, href) => {
-      var a = document.createElement("a"), //创建a标签
-        e = document.createEvent("MouseEvents"); //创建鼠标事件对象
-      e.initEvent("click", false, false); //初始化事件对象
-      a.href = href; //设置下载地址
-      a.download = name; //设置下载文件名
-      a.dispatchEvent(e); //给指定的元素，执行事件click事件
-    }
-    let iframes = ''
-    for (let index = 0; index < mp3arr.length; index++) {
+    // const download = (name, href) => {
+    //   var a = document.createElement("a"), //创建a标签
+    //     e = document.createEvent("MouseEvents"); //创建鼠标事件对象
+    //   e.initEvent("click", false, false); //初始化事件对象
+    //   a.href = href; //设置下载地址
+    //   a.download = name; //设置下载文件名
+    //   a.dispatchEvent(e); //给指定的元素，执行事件click事件
+    // }
+    // let iframes = ''
+    // for (let index = 0; index < mp3arr.length; index++) {
       // const iframe = '<iframe style="display: none;" class="multi-download"  src="'+mp3arr[index]+'"></iframe>'
       // iframes += iframe
-      window.open(mp3arr[index])
+      // window.open(mp3arr[index])
       // download('第'+ index +'个文件', mp3arr[index]);
-    }
-    this.setState({
-      iframes
-    })
+    // }
+    // this.setState({
+    //   iframes
+    // })
   }
   moveFile() {
     this.props.updateDatas({
@@ -195,9 +222,9 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [] }} = this.props.model
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId }} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
-    const { board_name, board_id, is_star, is_create, app_data = [] } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
     is_starinit = is_star
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
@@ -229,22 +256,34 @@ export default class Header extends React.Component {
     //文件上传
     const uploadProps = {
       name: 'file',
-      action: '//jsonplaceholder.typicode.com/posts/',
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+      data: {
+        board_id,
+        folder_id,
+        type: '1',
+        upload_type: '1'
+      },
       headers: {
-        authorization: 'authorization-text',
+        Authorization: Cookies.get('Authorization'),
+        refreshToken : Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }
+        let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        let loading = message.loading('正在上传...', 0)
         if (file.status === 'uploading') {
-          that.setState({
-            uploading: true
-          })
-        }
-        if (file.status !== 'uploading') {
-          setTimeout(loading,0);
+
+        }else{
+          // message.destroy()
         }
         if (file.status === 'done') {
           message.success(`上传成功。`);
+          that.props.getFileList({folder_id: currentParrentDirectoryId})
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
         }
@@ -263,7 +302,7 @@ export default class Header extends React.Component {
           )
           break
         case 2:
-          if(selectedRowKeys.length) {
+          if(selectedRowKeys.length) { //选择文件会改变
             operatorConent = (
               <div style={{display: 'flex',alignItems: 'center',color: '#595959' }} className={indexStyle.fileOperator}>
                 <div dangerouslySetInnerHTML={{__html: this.state.iframes}}></div>
@@ -271,12 +310,12 @@ export default class Header extends React.Component {
                   <span style={{color: '#8c8c8c'}}>
                     已选择{selectedRowKeys.length}项
                   </span>
-                  <span style={{marginLeft:14}}>
+                  <span style={{marginLeft:14}} onClick={this.quitOperateFile.bind(this)}>
                     取消
                   </span>
-                  <span style={{marginLeft:14}}>
-                    反选
-                  </span>
+                  {/*<span style={{marginLeft:14}} onClick={this.reverseSelection.bind(this)}>*/}
+                    {/*反选*/}
+                  {/*</span>*/}
                 </div>
                 <Button style={{height: 24, marginTop:16,marginLeft:14}} >
                   <Icon type="star" />收藏
@@ -301,7 +340,7 @@ export default class Header extends React.Component {
           }else {
             operatorConent = (
               <div style={{display: 'flex',alignItems: 'center', }}>
-                <Upload {...uploadProps} directory multiple showUploadList={false}>
+                <Upload {...uploadProps} showUploadList={false}>
                   <Button style={{height: 24, marginTop:16,}} type={'primary'}>
                     <Icon type="upload" />上传
                   </Button>

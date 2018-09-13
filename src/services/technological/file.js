@@ -1,11 +1,11 @@
 //项目归档
-import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FILE} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
 //文件列表包括文件夹
 export async function getFileList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file`,
+    url: `${REQUEST_DOMAIN_FILE}/file`,
     method: 'GET',
     params,
   });
@@ -14,7 +14,7 @@ export async function getFileList(params) {
 // 复制文件到某一个文件夹
 export async function fileCopy(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/copy`,
+    url: `${REQUEST_DOMAIN_FILE}/file/copy`,
     method: 'PUT',
     data,
   });
@@ -23,7 +23,16 @@ export async function fileCopy(data) {
 //文件下载
 export async function fileDownload(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/download`,
+    url: `${REQUEST_DOMAIN_FILE}/file/download`,
+    method: 'GET',
+    params,
+  });
+}
+
+//文件预览
+export async function filePreview(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/preview`,
     method: 'GET',
     params,
   });
@@ -32,7 +41,7 @@ export async function fileDownload(params) {
 // 把文件文件夹 放入回收站
 export async function fileRemove(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/remove`,
+    url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'POST',
     data,
   });
@@ -40,7 +49,7 @@ export async function fileRemove(data) {
 // 把文件文件夹 移入到某一个文件夹
 export async function fileMove(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/remove`,
+    url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'PUT',
     data,
   });
@@ -49,7 +58,7 @@ export async function fileMove(data) {
 // 文件上传
 export async function fileUpload(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/upload`,
+    url: `${REQUEST_DOMAIN_FILE}/file/upload`,
     method: 'PUT',
     data,
   });
@@ -58,7 +67,7 @@ export async function fileUpload(data) {
 //文件版本列表
 export async function fileVersionist(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/file/version_list`,
+    url: `${REQUEST_DOMAIN_FILE}/file/version_list`,
     method: 'GET',
     params,
   });
@@ -67,7 +76,7 @@ export async function fileVersionist(params) {
 //回收站列表
 export async function recycleBinList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/recycle_bin`,
+    url: `${REQUEST_DOMAIN_FILE}/recycle_bin`,
     method: 'GET',
     params,
   });
@@ -76,7 +85,7 @@ export async function recycleBinList(params) {
 //删除文件/文件夹
 export async function deleteFile(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/recycle_bin`,
+    url: `${REQUEST_DOMAIN_FILE}/recycle_bin`,
     method: 'POST',
     data,
   });
@@ -84,7 +93,7 @@ export async function deleteFile(data) {
 //还原文件/文件夹
 export async function restoreFile(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/recycle_bin/restore`,
+    url: `${REQUEST_DOMAIN_FILE}/recycle_bin/restore`,
     method: 'POST',
     data,
   });
@@ -94,7 +103,7 @@ export async function restoreFile(data) {
 //文件夹树形列表
 export async function getFolderList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/folder`,
+    url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'GET',
     params,
   });
@@ -102,7 +111,7 @@ export async function getFolderList(params) {
 //新建文件夹
 export async function addNewFolder(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/folder`,
+    url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'POST',
     data,
   });
@@ -110,7 +119,7 @@ export async function addNewFolder(data) {
 //更新文件夹
 export async function updateFolder(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/folder`,
+    url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'PUT',
     data,
   });
