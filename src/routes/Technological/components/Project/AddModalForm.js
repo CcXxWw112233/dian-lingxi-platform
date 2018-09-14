@@ -20,7 +20,7 @@ class AddModalForm extends React.Component {
     completeValidation: false, //完成滑块验证
   }
   componentWillReceiveProps(nextProps) {
-    const { datas:{ appsList }} = nextProps.model
+    const { datas:{ appsList = [] }} = nextProps.model
     this.setState({
       appsArray: new Array(appsList.length)
     })

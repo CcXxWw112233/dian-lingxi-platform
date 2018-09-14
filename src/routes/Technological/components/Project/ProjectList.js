@@ -28,7 +28,7 @@ export default class Projectlist extends React.Component {
             {star.map((value, key) => (
               <ElseProject {...this.props} itemDetailInfo={value} key={key}/>
             ))}
-            {addItem}
+            {/*{addItem}*/}
           </Panel>
           <Panel header="我管理的项目" key="2"  style={customPanelStyle}>
             {create.map((value, key) => (
@@ -40,7 +40,7 @@ export default class Projectlist extends React.Component {
             {participate.map((value, key) => (
               <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
             ))}
-            {addItem}
+            {/*{addItem}*/}
           </Panel>
         </Collapse>
         <AddModalForm {...this.props}></AddModalForm>
