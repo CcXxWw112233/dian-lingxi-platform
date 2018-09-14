@@ -6,11 +6,7 @@ import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 
 let is_starinit = null
-const appsList = [
-  {
-    key: '1',
-  }
-]
+
 
 export default class Header extends React.Component {
   state = {
@@ -204,17 +200,28 @@ export default class Header extends React.Component {
   moveFile() {
     this.props.updateDatas({
       copyOrMove: '0',//copy是1
+      openMoveDirectoryType: '1',
       moveToDirectoryVisiblie: true
     })
   }
   copyFile() {
     this.props.updateDatas({
       copyOrMove: '1',//copy是1
+      openMoveDirectoryType: '1',
       moveToDirectoryVisiblie: true
     })
   }
   deleteFile() {
-
+    const { datas: { fileList, selectedRowKeys, projectDetailInfoData= {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    let chooseArray = []
+    for(let i=0; i < selectedRowKeys.length; i++ ){
+      chooseArray.push({type: fileList[selectedRowKeys[i]].type,id: fileList[selectedRowKeys[i]].file_id})
+    }
+    this.props.fileRemove({
+      board_id,
+      arrays: JSON.stringify(chooseArray),
+    })
   }
   //文档操作 ---end
 
@@ -260,7 +267,7 @@ export default class Header extends React.Component {
       action: `${REQUEST_DOMAIN_FILE}/file/upload`,
       data: {
         board_id,
-        folder_id,
+        folder_id: currentParrentDirectoryId,
         type: '1',
         upload_type: '1'
       },
@@ -301,7 +308,7 @@ export default class Header extends React.Component {
             </div>
           )
           break
-        case 2:
+        case 4:
           if(selectedRowKeys.length) { //选择文件会改变
             operatorConent = (
               <div style={{display: 'flex',alignItems: 'center',color: '#595959' }} className={indexStyle.fileOperator}>
@@ -317,9 +324,9 @@ export default class Header extends React.Component {
                     {/*反选*/}
                   {/*</span>*/}
                 </div>
-                <Button style={{height: 24, marginTop:16,marginLeft:14}} >
-                  <Icon type="star" />收藏
-                </Button>
+                {/*<Button style={{height: 24, marginTop:16,marginLeft:14}} >*/}
+                  {/*<Icon type="star" />收藏*/}
+                {/*</Button>*/}
                 <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.downLoadFile.bind(this)} >
                   <Icon type="download" />下载
                 </Button>
@@ -329,7 +336,7 @@ export default class Header extends React.Component {
                 <Button style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.copyFile.bind(this)}>
                   <Icon type="copy" />复制
                 </Button>
-                <Button style={{height: 24, marginTop:16,marginLeft:14, backgroundColor: '#f5f5f5', color: 'red'}} >
+                <Button style={{height: 24, marginTop:16,marginLeft:14, backgroundColor: '#f5f5f5', color: 'red'}} onClick={this.deleteFile.bind(this)}>
                   <Icon type="delete" />移动到回收站
                 </Button>
                 <div>

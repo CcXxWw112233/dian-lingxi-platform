@@ -26,8 +26,42 @@ export default class FileList extends React.Component {
   }
 
   //item操作
-  operationMenuClick(file_id) {
-    console.log(file_id)
+  operationMenuClick(data, e) {
+    const { file_id, type } = data
+    const { datas: { projectDetailInfoData= {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    const { key } = e
+    switch (key) {
+      case '1':
+        break
+      case '2':
+        this.props.fileDownload({ids: file_id})
+        break
+      case '3':
+        this.props.updateDatas({
+          copyOrMove: '0',
+          openMoveDirectoryType: '2',
+          moveToDirectoryVisiblie: true,
+          currentFileListMenuOperatorId: file_id
+        })
+        break
+      case '4':
+        this.props.updateDatas({
+          copyOrMove: '1',
+          openMoveDirectoryType: '2',
+          moveToDirectoryVisiblie: true,
+          currentFileListMenuOperatorId: file_id
+        })
+        break
+      case '5':
+        this.props.fileRemove({
+          board_id,
+          arrays: JSON.stringify([{type, id: file_id}])
+        })
+        break
+      default:
+        break
+    }
   }
 
   //列表排序, 有限排序文件夹
@@ -197,10 +231,10 @@ export default class FileList extends React.Component {
     const { selectedRowKeys, fileList } = datas
     const {  nameSort, sizeSort, creatorSort, } = this.state;
 
-    const operationMenu = (file_id) => {
+    const operationMenu = (data) => {
       return (
-        <Menu onClick={this.operationMenuClick.bind(this, file_id)}>
-          <Menu.Item key="1">收藏</Menu.Item>
+        <Menu onClick={this.operationMenuClick.bind(this, data)}>
+          {/*<Menu.Item key="1">收藏</Menu.Item>*/}
           <Menu.Item key="2">下载</Menu.Item>
           <Menu.Item key="3">移动</Menu.Item>
           <Menu.Item key="4">复制</Menu.Item>
@@ -241,9 +275,9 @@ export default class FileList extends React.Component {
       {
         title: '操作',
         key: 'operation',
-        render: ({file_id}) =>
-          <div>
-            <Dropdown overlay={operationMenu(file_id)}>
+        render: (data) =>
+          <div style={{cursor: 'pointer'}}>
+            <Dropdown overlay={operationMenu(data)} trigger={'click'}>
               <Icon type="ellipsis" theme="outlined" style={{fontSize: 22, color: '#000000'}}/>
             </Dropdown>
           </div>,
@@ -257,10 +291,10 @@ export default class FileList extends React.Component {
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,
-            getCheckboxProps: data => ({
-              disabled: data.isInAdd === true || data.type === '1', // Column configuration not to be checked
-              name: data.file_id,
-            }),
+            // getCheckboxProps: data => ({
+            //   disabled: data.isInAdd === true || data.type === '1', // Column configuration not to be checked
+            //   name: data.file_id,
+            // }),
           }}
           columns={columns}
           dataSource={fileList}

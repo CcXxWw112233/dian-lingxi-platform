@@ -6,6 +6,7 @@ import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {REQUEST_DOMAIN_FILE} from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 
+
 export default class Header extends React.Component {
   state = {}
   closeFile() {
@@ -19,6 +20,49 @@ export default class Header extends React.Component {
       isExpandFrame: !isExpandFrame,
     })
   }
+  fileDownload(filePreviewCurrentId) {
+    this.props.fileDownload({ids: filePreviewCurrentId})
+  }
+  //item操作
+  operationMenuClick(data, e) {
+    const { file_id, type } = data
+    const { datas: { projectDetailInfoData= {},  breadcrumbList = [] } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    const { key } = e
+    switch (key) {
+      case '1':
+        break
+      case '2':
+        this.props.fileDownload({ids: file_id})
+        break
+      case '3':
+        this.props.updateDatas({
+          copyOrMove: '0',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '4':
+        this.props.updateDatas({
+          copyOrMove: '1',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '5':
+        this.props.fileRemove({
+          board_id,
+          arrays: JSON.stringify([{type, id: file_id}])
+        })
+        breadcrumbList.splice(breadcrumbList.length - 1, 1)
+        this.props.updateDatas({isInOpenFile: false})
+        break
+      default:
+        break
+    }
+  }
+
+
   render() {
     const that = this
     const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
@@ -61,6 +105,17 @@ export default class Header extends React.Component {
         }
       },
     };
+    const operationMenu = (data) => {
+      return (
+        <Menu onClick={this.operationMenuClick.bind(this, data)}>
+          {/*<Menu.Item key="1">收藏</Menu.Item>*/}
+          <Menu.Item key="2">下载</Menu.Item>
+          <Menu.Item key="3">移动</Menu.Item>
+          <Menu.Item key="4">复制</Menu.Item>
+          <Menu.Item key="5" >移到回收站</Menu.Item>
+        </Menu>
+      )
+    }
 
     return (
       <div className={indexStyles.fileDetailHead}>
@@ -73,14 +128,16 @@ export default class Header extends React.Component {
               <Icon type="upload" />更新版本
             </Button>
           </Upload>
-          <Button style={{height: 24, marginLeft:14}} >
+          <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
             <Icon type="download" />下载
           </Button>
-          <Button style={{height: 24, marginLeft:14}} >
-            <Icon type="star" />收藏
-          </Button>
+          {/*<Button style={{height: 24, marginLeft:14}} >*/}
+            {/*<Icon type="star" />收藏*/}
+          {/*</Button>*/}
           <div style={{cursor: 'pointer'}}>
-            <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
+            <Dropdown overlay={operationMenu({ file_id: filePreviewCurrentId, type: '2' } )}>
+              <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
+            </Dropdown>
             <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>
           </div>

@@ -303,8 +303,9 @@ const ProjectDetail = (props) => {
       case 3:
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
         break
-      default:
+      case 4:
         appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+      default:
         break
     }
     return appFace

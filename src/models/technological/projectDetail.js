@@ -47,6 +47,8 @@ export default {
             selectedRowKeys: [],//选择的列表项
             isInAddDirectory: false, //是否正在创建文件家判断标志
             moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+            openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+            currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
             breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
             currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
             isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
@@ -117,6 +119,9 @@ export default {
             projectDetailInfoData: result.data,
             appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1),//设置默认
             appsSelectKeyIsAreadyClickArray: [result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
+            //文档需要数据初始化
+            breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
+            currentParrentDirectoryId: result.data.folder_id,
           }
         })
         if(result.data.app_data[0] ) {
@@ -132,14 +137,7 @@ export default {
                 arrange_type: '1'
               }
             })
-          }else if(result.data.app_data[0].key === 2){ //文档
-            yield put({
-              type: 'updateDatas',
-              payload: {
-                breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
-                currentParrentDirectoryId: result.data.folder_id,
-              }
-            })
+          }else if(result.data.app_data[0].key === 4){ //文档
             yield put({
               type: 'getFileList',
               payload: {
@@ -197,6 +195,20 @@ export default {
         })
       }else if(appsSelectKey === 2){ //流程
 
+      }else if(appsSelectKey === 4) { //文档
+        const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: currentParrentDirectoryId
+          }
+        })
+        yield put({
+          type: 'getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
       }
 
 
@@ -264,6 +276,12 @@ export default {
             folder_id: currentParrentDirectoryId
           }
         })
+        yield put({
+          type: 'getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
       }else{
 
       }
@@ -283,8 +301,26 @@ export default {
     },
     * fileRemove({ payload }, { select, call, put }) {
       let res = yield call(fileRemove, payload)
+      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
       if(isApiResponseOk(res)) {
-
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            selectedRowKeys: []
+          }
+        })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: currentParrentDirectoryId
+          }
+        })
+        yield put({
+          type: 'getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
       }else{
 
       }
@@ -305,6 +341,12 @@ export default {
              folder_id: currentParrentDirectoryId
            }
          })
+         yield put({
+           type: 'getFolderList',
+           payload: {
+             board_id: board_id
+           }
+          })
       }else{
 
       }
@@ -389,6 +431,12 @@ export default {
              folder_id: parent_id
            }
          })
+        yield put({
+          type: 'getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
       }else{
 
       }
