@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="文档接口联调‘ --jieshu">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
+      <change beforePath="$PROJECT_DIR$/src/models/login/index.js" afterPath="$PROJECT_DIR$/src/models/login/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -153,7 +152,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FileList.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FileList.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileList.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="419">
@@ -173,6 +172,18 @@
                 <marker date="1536918882222" expanded="true" signature="8951:8963" ph="..." />
                 <marker date="1536918882222" expanded="true" signature="8984:9486" ph="..." />
                 <marker date="1536918882222" expanded="true" signature="9000:9473" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="350">
+              <caret line="17" column="62" lean-forward="false" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
+              <folding>
+                <element signature="e#0#68#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -259,7 +270,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/ChangePasswordForm.js" />
         <option value="$PROJECT_DIR$/src/utils/util.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/StepTwoList.js" />
         <option value="$PROJECT_DIR$/src/models/technological/index.js" />
@@ -310,6 +320,7 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
+        <option value="$PROJECT_DIR$/src/models/login/index.js" />
       </list>
     </option>
   </component>
@@ -372,13 +383,14 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="login" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -545,14 +557,7 @@
       <workItem from="1536626709716" duration="33859000" />
       <workItem from="1536716199379" duration="28125000" />
       <workItem from="1536801041809" duration="35684000" />
-      <workItem from="1536887128451" duration="27911000" />
-    </task>
-    <task id="LOCAL-00014" summary="message全局api">
-      <created>1533788215819</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1533788215819</updated>
+      <workItem from="1536887128451" duration="28616000" />
     </task>
     <task id="LOCAL-00015" summary="项目模块流程试行">
       <created>1533894966869</created>
@@ -890,11 +895,18 @@
       <option name="project" value="LOCAL" />
       <updated>1536919016758</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="文档接口联调‘ --jieshu">
+      <created>1536923124019</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1536923124019</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="884983000" />
+    <option name="totallyTimeSpent" value="885688000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1024,7 +1036,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/webpack.prod.config.js" />
     <entry file="file://$PROJECT_DIR$/config/webpack.base.config.js" />
     <entry file="file://$PROJECT_DIR$/index.html" />
     <entry file="file://$PROJECT_DIR$/node_modules/.bin/webpack" />
@@ -1546,7 +1557,7 @@
         <state relative-caret-position="100">
           <caret line="22" column="33" lean-forward="false" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1588,6 +1599,16 @@
             <marker date="1536918882222" expanded="true" signature="8951:8963" ph="..." />
             <marker date="1536918882222" expanded="true" signature="8984:9486" ph="..." />
             <marker date="1536918882222" expanded="true" signature="9000:9473" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="17" column="62" lean-forward="false" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
           </folding>
         </state>
       </provider>

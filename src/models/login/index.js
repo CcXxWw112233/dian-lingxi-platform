@@ -15,6 +15,7 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/login') {
+          Cookies.set('is401', false, {expires: 30, path: ''})
           redirectLocation = location.search.replace('?redirect=','')
         }
       })
