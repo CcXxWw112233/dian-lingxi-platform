@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="文档接口联调‘ --jieshu">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/models/login/index.js" afterPath="$PROJECT_DIR$/src/models/login/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -121,11 +121,10 @@
       <file leaf-file-name="Header.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="269" column="44" lean-forward="false" selection-start-line="269" selection-start-column="19" selection-end-line="269" selection-end-column="44" />
+            <state relative-caret-position="143">
+              <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
               <folding>
                 <element signature="e#868#941#0" expanded="false" />
-                <element signature="e#962#1502#0" expanded="false" />
                 <element signature="e#1581#1686#0" expanded="false" />
                 <element signature="e#1730#2244#0" expanded="false" />
                 <element signature="e#2271#2709#0" expanded="false" />
@@ -152,7 +151,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FileList.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="FileList.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileList.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="419">
@@ -177,18 +176,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="17" column="62" lean-forward="false" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
-              <folding>
-                <element signature="e#0#68#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -203,8 +190,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>size</find>
-      <find>founder</find>
       <find>founderSort</find>
       <find>type</find>
       <find>REQUEST_DOMAIN_FILE</find>
@@ -225,13 +210,15 @@
       <find>appsList</find>
       <find>breadcrumbList</find>
       <find>operationMenuClick</find>
-      <find>openMoveDirectoryType</find>
       <find>currentParrentDirectoryId</find>
       <find>child_data</find>
       <find>onSelect</find>
       <find>getFolderList</find>
       <find>getFileList</find>
       <find>operationMenu</find>
+      <find>Modal.confirm</find>
+      <find>openMoveDirectoryType</find>
+      <find>comfirm</find>
       <find>treeFolderData</find>
     </findStrings>
     <replaceStrings>
@@ -255,8 +242,9 @@
       <dir>W:\work\newdicolla-platform\src\routes\Technological</dir>
       <dir>W:\work\newdicolla-platform\node_modules</dir>
       <dir>W:\work\newdicolla-platform\config</dir>
-      <dir>W:\work\newdicolla-platform\src</dir>
       <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\FileModule</dir>
+      <dir>W:\work\newdicolla-platform\src\models</dir>
+      <dir>W:\work\newdicolla-platform\src</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -297,7 +285,6 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/MoveToDirectors.js" />
         <option value="$PROJECT_DIR$/src/components/DragValidation/index.js" />
         <option value="$PROJECT_DIR$/src/globalset/css/theme.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/index.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileDetail/index.js" />
@@ -321,6 +308,7 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
         <option value="$PROJECT_DIR$/src/models/login/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
       </list>
     </option>
   </component>
@@ -389,13 +377,6 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="login" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -420,7 +401,7 @@
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="Project" type="462c0819:PsiDirectoryNode" />
+              <item name="HeaderNav" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -557,14 +538,7 @@
       <workItem from="1536626709716" duration="33859000" />
       <workItem from="1536716199379" duration="28125000" />
       <workItem from="1536801041809" duration="35684000" />
-      <workItem from="1536887128451" duration="28616000" />
-    </task>
-    <task id="LOCAL-00015" summary="项目模块流程试行">
-      <created>1533894966869</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1533894966869</updated>
+      <workItem from="1536887128451" duration="29432000" />
     </task>
     <task id="LOCAL-00016" summary="二级路由及model,账户设置页面">
       <created>1534156005235</created>
@@ -902,11 +876,18 @@
       <option name="project" value="LOCAL" />
       <updated>1536923124019</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="login设置cookie">
+      <created>1536923858363</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1536923858363</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="885688000" />
+    <option name="totallyTimeSpent" value="886504000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -920,7 +901,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34994584" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3618635" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -939,7 +920,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="富文本 添加标签" />
     <MESSAGE value="添加子任务部分" />
     <MESSAGE value="任务添加弹窗继续" />
     <MESSAGE value="添加任务分组拖拽" />
@@ -964,7 +944,8 @@
     <MESSAGE value="文件查看，接口函数定义" />
     <MESSAGE value="文档接口联调‘" />
     <MESSAGE value="文档接口联调‘ --jieshu" />
-    <option name="LAST_COMMIT_MESSAGE" value="文档接口联调‘ --jieshu" />
+    <MESSAGE value="login设置cookie" />
+    <option name="LAST_COMMIT_MESSAGE" value="login设置cookie" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1094,14 +1075,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DetailInfo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="81" column="2" lean-forward="false" selection-start-line="81" selection-start-column="2" selection-end-line="81" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/ShowAddMenberModal.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
@@ -1177,17 +1150,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="370">
           <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="122" column="48" lean-forward="false" selection-start-line="122" selection-start-column="48" selection-end-line="122" selection-end-column="48" />
-          <folding>
-            <element signature="e#678#725#0" expanded="false" />
-            <element signature="e#3955#4909#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1330,38 +1292,6 @@
           <folding>
             <element signature="e#220#624#0" expanded="false" />
             <element signature="e#648#1031#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="269" column="44" lean-forward="false" selection-start-line="269" selection-start-column="19" selection-end-line="269" selection-end-column="44" />
-          <folding>
-            <element signature="e#868#941#0" expanded="false" />
-            <element signature="e#962#1502#0" expanded="false" />
-            <element signature="e#1581#1686#0" expanded="false" />
-            <element signature="e#1730#2244#0" expanded="false" />
-            <element signature="e#2271#2709#0" expanded="false" />
-            <element signature="e#2743#2773#0" expanded="false" />
-            <element signature="e#2794#2851#0" expanded="false" />
-            <element signature="e#2872#2930#0" expanded="false" />
-            <element signature="e#2965#3040#0" expanded="false" />
-            <element signature="e#3132#3258#0" expanded="false" />
-            <element signature="e#3297#3365#0" expanded="false" />
-            <element signature="e#3387#3768#0" expanded="false" />
-            <element signature="e#3789#4260#0" expanded="false" />
-            <element signature="e#4280#4286#0" expanded="false" />
-            <element signature="e#4304#5870#0" expanded="false" />
-            <element signature="e#4451#4519#0" expanded="false" />
-            <element signature="e#4598#4638#0" expanded="false" />
-            <element signature="e#5152#5189#0" expanded="false" />
-            <element signature="e#5884#6026#0" expanded="false" />
-            <element signature="e#6040#6182#0" expanded="false" />
-            <element signature="e#6198#6631#0" expanded="false" />
-            <element signature="e#7119#8021#0" expanded="false" />
-            <element signature="e#12437#14617#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1567,7 +1497,7 @@
         <state relative-caret-position="250">
           <caret line="31" column="18" lean-forward="true" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1577,6 +1507,66 @@
         <state relative-caret-position="-778">
           <caret line="245" column="20" lean-forward="true" selection-start-line="245" selection-start-column="20" selection-end-line="245" selection-end-column="20" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DetailInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="42" column="19" lean-forward="true" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+          <folding>
+            <element signature="e#868#941#0" expanded="false" />
+            <element signature="e#1581#1686#0" expanded="false" />
+            <element signature="e#1730#2244#0" expanded="false" />
+            <element signature="e#2271#2709#0" expanded="false" />
+            <element signature="e#2743#2773#0" expanded="false" />
+            <element signature="e#2794#2851#0" expanded="false" />
+            <element signature="e#2872#2930#0" expanded="false" />
+            <element signature="e#2965#3040#0" expanded="false" />
+            <element signature="e#3132#3258#0" expanded="false" />
+            <element signature="e#3297#3365#0" expanded="false" />
+            <element signature="e#3387#3768#0" expanded="false" />
+            <element signature="e#3789#4260#0" expanded="false" />
+            <element signature="e#4280#4286#0" expanded="false" />
+            <element signature="e#4304#5870#0" expanded="false" />
+            <element signature="e#4451#4519#0" expanded="false" />
+            <element signature="e#4598#4638#0" expanded="false" />
+            <element signature="e#5152#5189#0" expanded="false" />
+            <element signature="e#5884#6026#0" expanded="false" />
+            <element signature="e#6040#6182#0" expanded="false" />
+            <element signature="e#6198#6631#0" expanded="false" />
+            <element signature="e#7119#8021#0" expanded="false" />
+            <element signature="e#12437#14617#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="53" column="19" lean-forward="false" selection-start-line="53" selection-start-column="19" selection-end-line="53" selection-end-column="19" />
+          <folding>
+            <element signature="e#678#725#0" expanded="false" />
+            <element signature="e#3975#4929#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="17" column="62" lean-forward="false" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1599,16 +1589,6 @@
             <marker date="1536918882222" expanded="true" signature="8951:8963" ph="..." />
             <marker date="1536918882222" expanded="true" signature="8984:9486" ph="..." />
             <marker date="1536918882222" expanded="true" signature="9000:9473" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/login/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="17" column="62" lean-forward="false" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#68#0" expanded="true" />
           </folding>
         </state>
       </provider>

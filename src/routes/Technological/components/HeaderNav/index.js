@@ -51,6 +51,7 @@ export default class HeaderNav extends React.Component{
     Modal.confirm({
       title: '确定退出登录？',
       okText: '确认',
+      zIndex: 2000,
       onOk: that.props.logout,
       cancelText: '取消',
     });
