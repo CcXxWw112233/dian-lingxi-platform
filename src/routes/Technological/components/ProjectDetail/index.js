@@ -4,6 +4,7 @@ import Header from './Header'
 import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
+import ProcessIndex from './Process'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -281,6 +282,10 @@ const ProjectDetail = (props) => {
       })
     }
   }
+  const ProcessProps = {
+    modal,
+    model,
+  }
 
   const routingJump = (path) => {
     dispatch({
@@ -300,6 +305,9 @@ const ProjectDetail = (props) => {
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
+      case 2:
+        appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
+            break
       case 3:
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
         break

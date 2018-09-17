@@ -4,6 +4,7 @@ import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
+import MenuSearch from '../TecPublic/MenuSearch'
 
 let is_starinit = null
 
@@ -300,6 +301,16 @@ export default class Header extends React.Component {
     const appsOperator = (appsSelectKey) => {  //右方操作图标
       let operatorConent = ''
       switch (appsSelectKey) {
+        case 2:
+          operatorConent = (
+            <div  style={{color:'#595959'}}>
+              <Dropdown overlay={<MenuSearch />}>
+                 <span>请选择流程 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
+              </Dropdown>
+              <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+            </div>
+          )
+          break
         case 3:
           operatorConent = (
             <div>

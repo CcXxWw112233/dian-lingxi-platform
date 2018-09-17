@@ -59,6 +59,10 @@ export default {
             filePreviewCurrentVersionId: '', //当前预览文件版本id
             filePreviewCurrentVersionList: [], //预览文件的版本列表
             filePreviewCurrentVersionKey: 0, //预览文件选中的key
+            //流程
+            process: {
+
+            }
           }
         })
         if (location.pathname === '/technological/projectDetail') {

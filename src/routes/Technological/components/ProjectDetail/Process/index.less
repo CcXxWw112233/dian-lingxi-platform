@@ -1,0 +1,50 @@
+.processOut {
+  width: 100%;
+  background-color: #F5F5F5;
+  position: relative;
+}
+
+
+.welcomProcessOut{
+  margin-left: 104px;
+  margin-top: 80px;
+  max-width: 1100px;
+  .description{
+    font-size: 14px;
+    color: #595959;
+    line-height: 26px;
+  }
+  .open{
+    display: flex;
+    ul,li{padding:0;margin:0;}
+    margin-top: 30px;
+    .openLeft, .openRight{
+      padding: 10px 0 10px 0 ;
+      width: 400px;
+      .title{
+        font-size: 16px;
+        color: #000000;
+        font-weight: bold;
+        margin-bottom: 16px;
+      }
+      .listItem{
+        display: flex;
+        color: #000000;
+        align-items: center;
+        >div:nth-child(1){
+          height: 4px;
+          width: 4px;
+          margin-right: 4px;
+          border-radius: 4px;
+          background-color: #000000;
+        }
+      }
+    }
+    .openLeft{
+      border-right: 1px solid #e5e5e5;
+    }
+    .openRight{
+      padding-left: 40px;
+    }
+  }
+}

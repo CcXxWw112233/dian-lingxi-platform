@@ -191,7 +191,7 @@ export default class FileList extends React.Component {
         themeCode = '&#xe6cb;'
         break
       default:
-        themeCode = '&#xe6cb;'
+        themeCode = ''
         break
     }
     return themeCode
