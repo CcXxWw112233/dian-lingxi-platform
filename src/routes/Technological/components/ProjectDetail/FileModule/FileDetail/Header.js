@@ -3,7 +3,7 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, Upload, message } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
-import {REQUEST_DOMAIN_FILE} from "../../../../../../globalset/js/constant";
+import {REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 
 
@@ -87,6 +87,9 @@ export default class Header extends React.Component {
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
         }
         let loading = message.loading('正在上传...', 0)
       },
@@ -102,6 +105,9 @@ export default class Header extends React.Component {
           that.props.fileVersionist({version_id : filePreviewCurrentVersionId, isNeedPreviewFile: true})
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
+          setTimeout(function () {
+            message.destroy()
+          },2000)
         }
       },
     };

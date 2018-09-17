@@ -277,7 +277,7 @@ export default class FileList extends React.Component {
         key: 'operation',
         render: (data) =>
           <div style={{cursor: 'pointer'}}>
-            <Dropdown overlay={operationMenu(data)} trigger={'click'}>
+            <Dropdown overlay={operationMenu(data)} trigger={['click']}>
               <Icon type="ellipsis" theme="outlined" style={{fontSize: 22, color: '#000000'}}/>
             </Dropdown>
           </div>,

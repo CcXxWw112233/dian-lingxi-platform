@@ -3,6 +3,8 @@ import React from 'react'
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import moment from 'moment';
 import indexStyle from './index.less'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE} from "../../../../globalset/js/constant";
+import Cookies from 'js-cookie'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -77,11 +79,23 @@ class PersonalInfoForm extends React.Component {
     const { avatarUrl, uploading } = this.state
     const uploadProps = {
       name: 'file',
-      action: '//jsonplaceholder.typicode.com/posts/',
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN}/user/upload`,
       headers: {
-        authorization: 'authorization-text',
+        Authorization: Cookies.get('Authorization'),
+        refreshToken : Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
       },
       onChange({ file, fileList, event }) {
+        console.log(file)
         if (file.status === 'uploading') {
           that.setState({
             uploading: true
@@ -106,6 +120,15 @@ class PersonalInfoForm extends React.Component {
           message.error(`头像上传失败。`);
           that.setState({
             uploading: false
+          })
+        }
+        if (file.response && file.response.code === 0) {
+          const { accountSet = {} } = that.props
+          const { datas = {} } = accountSet
+          const { userInfo = {} } = datas
+          userInfo['avatar'] = file.response.data.avatar
+          that.props.updateDatas({
+            userInfo
           })
         }
       },

@@ -26,12 +26,17 @@ const AccountSet = (options) => {
       })
     }
   }
-
+  const updateDatas = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas') ,
+      payload:payload
+    })
+  }
     return(
       <div>
         <div style={{height: 48,width:1152,margin:'0 auto'}}></div>
         <div  style={{width:1152,margin:'0 auto'}} className={indexStyle.page_card_2}>
-          <AccountSetMenu {...menuFormProps}></AccountSetMenu>
+          <AccountSetMenu {...menuFormProps} updateDatas={updateDatas}></AccountSetMenu>
         </div>
       </div>
     )

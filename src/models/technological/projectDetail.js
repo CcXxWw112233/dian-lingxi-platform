@@ -61,7 +61,13 @@ export default {
             filePreviewCurrentVersionKey: 0, //预览文件选中的key
             //流程
             process: {
-
+              editProcessList:[
+                {
+                  title: '',
+                  type: '1',
+                  formVal: {},
+                }
+              ], //编辑步骤json数组
             }
           }
         })
