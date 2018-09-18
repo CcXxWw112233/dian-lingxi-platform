@@ -1,0 +1,101 @@
+@import "../../../../../../globalset/css/constant";
+.toptitle{
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #8c8c8c;
+  >div:nth-child(1){
+    margin-right: 10px;
+    background: #1890FF;
+    border-radius: 4px;
+    height: 20px;
+    width: 20px;
+  }
+}
+.editorWraper{
+  background: #FFFFFF;
+  margin-top: 14px;
+  color: #595959;
+  font-size: 14px;
+  border: 1px solid rgba(217,217,217,1);
+  border-radius: 4px;
+}
+
+.ConfirmInfoOut_1{
+  .ConfirmInfoOut_1_top{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   >div{
+     height: 46px;
+   }
+   .ConfirmInfoOut_1_top_left{
+     width: 40%;
+     margin-right: 5%;
+     display: flex;
+     align-items: center;
+     .ConfirmInfoOut_1_top_left_left{
+       background: #FFFFFF;
+       height: 40px;
+       width: 40px;
+       line-height: 36px;
+       border-radius: 40px;
+       border: 2px solid rgba(140,140,140,1);
+       font-size: 20px;
+       text-align: center;
+       margin-right: 12px;
+     }
+     .ConfirmInfoOut_1_top_left_right{
+       flex: 1;
+       div:nth-child(1){
+         font-size: 16px;
+         color: #595959;
+       }
+       div:nth-child(2){
+         font-size: 14px;
+         color: #8c8c8c;
+       }
+     }
+   }
+   .ConfirmInfoOut_1_top_right{
+     flex: 1;
+     display: flex;
+     color: @color-link-normal;
+     font-size: 14px;
+     justify-content: flex-end;
+     align-items: center;
+     >div{
+       cursor: pointer;
+        margin-right: 8px;
+     }
+   }
+ }
+  .ConfirmInfoOut_1_bott{
+    padding-top: 6px;
+    display: flex;
+    .ConfirmInfoOut_1_bott_left{
+      width: 40px;
+      margin-right: 12px;
+    }
+    .ConfirmInfoOut_1_bott_right{
+      flex: 1;
+      .ConfirmInfoOut_1_bott_right_dec{
+        font-size: 12px;
+        color: #595959;
+      }
+      .ConfirmInfoOut_1_bott_right_operate{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 20px;
+        div:nth-child(1){
+          font-size: 14px;
+          cursor: pointer;
+          margin-right: 14px;
+          color: @color-link-normal;
+        }
+      }
+    }
+
+  }
+}

@@ -3,7 +3,7 @@ import MenuSearchStyles from './MenuSearch.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
 
 const MenuSearch = (props) => {
-  const { menuSortList = [] } = props
+  const { menuSortList = [1,2,3] } = props
   // const handleMenuIconDelete = ({key, user_id}) =>{
   //   execusorList.splice(key,1)
   //   props.setMenuSearchList && props.setMenuSearchList(user_id)
@@ -27,7 +27,7 @@ const MenuSearch = (props) => {
                     <img src={value.img} className={MenuSearchStyles.avatar} />
                   ):(
                     <div style={{height:20,width: 20,borderRadius:20,backgroundColor:'#f2f2f2',textAlign: 'center'}}>
-                      <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
+                      <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c',marginLeft: 4, marginTop: 4,display: 'block'}}/>
                     </div>
                   )}
                   <span >{value.full_name || '名称未设置'}</span>
@@ -37,6 +37,9 @@ const MenuSearch = (props) => {
             </div>
           )
         })}
+        <div style={{width: 160, height: 32,borderTop: '1px solid #f2f2f2', lineHeight:'32px', cursor: 'pointer', margin: '0 auto',textAlign: 'center'}}>
+          <Icon type={'plus'}/>
+        </div>
       </div>
     </div>
   )

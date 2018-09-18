@@ -14,14 +14,20 @@ export default class AccountSetMenu extends React.Component {
   }
   //选择菜单
   handleMenuClick = (e) => {
-    this.setState({
+    // this.setState({
+    //   SelectedKeys: e.key
+    // })
+    this.props.updateDatas({
       SelectedKeys: e.key
     })
   }
   //返回所选菜单对应内容
   filterFormComponet() {
+    const {datas = { }} = this.props.accountSet
+    const { SelectedKeys } = datas
+
     let Dom
-    switch (this.state.SelectedKeys) {
+    switch (SelectedKeys) {
       case '1':
         Dom =  <PersonalInfoForm {...this.props} handleMenuClick={this.handleMenuClick.bind(this)}/>
         break
@@ -37,7 +43,8 @@ export default class AccountSetMenu extends React.Component {
     return Dom
   }
   render() {
-    const { SelectedKeys } = this.state
+    const {datas = { }} = this.props.accountSet
+    const { SelectedKeys } = datas
     return (
       <div className={indexStyle.menuOut}>
         {/*左边菜单*/}

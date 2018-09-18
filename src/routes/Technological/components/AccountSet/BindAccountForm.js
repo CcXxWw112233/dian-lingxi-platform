@@ -5,7 +5,7 @@ import moment from 'moment';
 import indexStyle from './index.less'
 import VerificationCodeTwo from '../../../../components/VerificationCodeTwo'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import {validateTel} from "../../../../utils/verify";
+import {validateTel, validateEmail} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 
 const FormItem = Form.Item;
@@ -18,28 +18,31 @@ const RangePicker = DatePicker.RangePicker
 class BindAccountForm extends React.Component {
   state = {
     uploading: false, //是否正在上传
-    avatarUrl: ''
-  }
-  // 设置表单，上传文件后设置{name：url}
-  setFormUploadValue = (name, fileurl) => {
-    this.props.form.setFieldsValue({
-      image: fileurl
-    })
+    avatarUrl: '',
+    isMobile: false,
+    isHasCode: false,
+    isEmail: false,
   }
   // 提交表单
-  handleSubmit = (e) => {
-    e.preventDefault();
+  formButtonSubmit(type) {
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
       if (!err) {
-        this.props.handleSubmit ? this.props.handleSubmit(values) : false
+        if(type === 'email') {
+          this.props.checkEmailIsRegisted({
+            email: values['email']
+          })
+        }else if(type === 'mobile') {
+          this.props.checkMobileIsRegisted({
+            mobile: values['mobile'],
+            code: values['code']
+          })
+        }
       }
     });
   }
   //获取验证码
   getVerifyCode = (calback) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
       if(!validateTel(values['mobile'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
         return false
@@ -52,8 +55,27 @@ class BindAccountForm extends React.Component {
       // calback && typeof calback === 'function' ? calback() : ''
     })
   }
+  mobileChange(e) {
+    const value = e.target.value
+    const isMobile = validateTel(value)
+    this.setState({
+      isMobile
+    })
+  }
+  codeChange(e){
+    const value = e.target.value
+    this.setState({
+      isHasCode: !!value
+    })
+  }
+  emailChange(e) {
+    const value = e.target.value
+    const isEmail = validateEmail(value)
+    this.setState({
+      isEmail
+    })
+  }
   render() {
-    const that = this
     const { getFieldDecorator } = this.props.form;
     // 表单样式设置
     const formItemLayout = {
@@ -66,59 +88,8 @@ class BindAccountForm extends React.Component {
         sm: { span: 10 },
       },
     };
-    const tailFormItemLayout = {
-      labelCol: {
-        xs: { span: 10 },
-        sm: { span: 2 },
-      },
-      wrapperCol: {
-        xs: {
-          span: 4,
-          offset: 2,
-        },
-        sm: {
-          span: 6,
-          offset: 2,
-        },
-      },
-    };
     const { email, mobile } = {}
-    const { avatarUrl, uploading } = this.state
-    const uploadProps = {
-      name: 'file',
-      action: '//jsonplaceholder.typicode.com/posts/',
-      headers: {
-        authorization: 'authorization-text',
-      },
-      onChange({ file, fileList, event }) {
-        if (file.status === 'uploading') {
-          that.setState({
-            uploading: true
-          })
-        }
-        if (file.status !== 'uploading') {
-          that.setState({
-            uploading: false
-          })
-          if (file.response && file.response.data) {
-            that.setState({
-              avatarUrl: file.response.data
-            })
-          }
-        }
-        if (file.status === 'done') {
-          message.success(`头像上传成功。`);
-          that.setState({
-            uploading: false
-          })
-        } else if (file.status === 'error') {
-          message.error(`头像上传失败。`);
-          that.setState({
-            uploading: false
-          })
-        }
-      },
-    };
+    const { isMobile, isHasCode,  isEmail } = this.state
     return (
       <div>
         {/*修改邮箱*/}
@@ -136,13 +107,13 @@ class BindAccountForm extends React.Component {
               initialValue: email || undefined,
               rules: [{ required: false, message: '请输入邮箱', whitespace: true }],
             })(
-              <Input placeholder="" className={indexStyle.personInfoInput}/>
+              <Input placeholder="" className={indexStyle.personInfoInput}b onChange={this.emailChange.bind(this)}/>
             )}
           </FormItem>
           {/* 确认 */}
           <FormItem
           >
-            <Button type="primary" htmlType="submit" style={{height: 40, marginLeft: 48}}>发送邮件验证</Button>
+            <Button type="primary" onClick={this.formButtonSubmit.bind(this,'email')} style={{height: 40, marginLeft: 48}} disabled={!isEmail}>发送邮件验证</Button>
           </FormItem>
         </Form>
         <Alert
@@ -167,10 +138,10 @@ class BindAccountForm extends React.Component {
           >
             {getFieldDecorator('mobile', {
               initialValue: mobile || undefined,
-              rules: [{ required: false, message: '请输入邮箱', whitespace: false }],
+              rules: [{ required: false, message: '', whitespace: false }],
             })(
               <div className={indexStyle.personInfoInput}>
-                <Input placeholder=""  style={{width: 160,height: 40}} />
+                <Input placeholder=""  style={{width: 160,height: 40}} onChange={this.mobileChange.bind(this)}/>
               </div>
             )}
           </FormItem>
@@ -183,19 +154,19 @@ class BindAccountForm extends React.Component {
               })(
                 <Input
                   style={{height: '40px',fontSize: 16, color: '#8C8C8C',width: 240}}
-                  maxLength={10}
+                  maxLength={10} onChange={this.codeChange.bind(this)}
                 />
               )}
             </FormItem>
               <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
                 <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
                 {/*<div>获取验证码</div>*/}
-                <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={this.state.isMobile ? globalStyles.link_mouse : ''} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
+                <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile ? globalStyles.link_mouse : ''} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
               </div>
           </div>
           {/* 确认 */}
           <FormItem>
-            <Button type="primary" htmlType="submit" style={{height: 40, marginLeft: 12,}}>修改</Button>
+            <Button type="primary" htmlType="submit" onClick={this.formButtonSubmit.bind(this,'mobile')} style={{height: 40, marginLeft: 12,}} disabled={!isMobile || !isHasCode}>修改</Button>
           </FormItem>
         </Form>
       </div>

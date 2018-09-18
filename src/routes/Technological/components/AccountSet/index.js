@@ -24,7 +24,34 @@ const AccountSet = (options) => {
           data
         }
       })
-    }
+    },
+    updateDatas(data) {
+      dispatch({
+        type: 'updateDatas',
+        payload: data
+      })
+    },
+    getVerificationcode(data, calback) {
+      dispatch({
+        type:getEffectOrReducerByName('getVerificationcode'),
+        payload: {
+          data,
+          calback
+        }
+      })
+    },
+    checkMobileIsRegisted(data) {
+      dispatch({
+        type:getEffectOrReducerByName('checkMobileIsRegisted'),
+        payload: { data }
+      })
+    },
+    checkEmailIsRegisted(data) {
+      dispatch({
+        type:getEffectOrReducerByName('checkEmailIsRegisted'),
+        payload: { data }
+      })
+    },
   }
   const updateDatas = (payload) => {
     dispatch({

@@ -5,6 +5,7 @@ import EditFormOne from './EditFormOne'
 import EditFormTwo from './EditFormTwo'
 import EditFormFour from './EditFormFour'
 import EditFormFive from './EditFormFive'
+import SaveTemplate from './SaveTemplate'
 
 export default class EditProcess extends React.Component {
   state = {}
@@ -45,6 +46,8 @@ export default class EditProcess extends React.Component {
           <Button style={{marginTop: 14}}>直接启动</Button>
           <Button  style={{marginTop: 14, color: 'red'}}>退出编辑</Button>
         </div>
+        <SaveTemplate {...this.props}/>
+
       </div>
     )
   }

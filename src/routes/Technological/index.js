@@ -9,6 +9,10 @@ import dva from "dva/index";
 
 import modelExtend from 'dva-model-extend'
 import ClassBasicModel from '../../models/technological'
+import { LocaleProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import 'moment/locale/zh-cn';
+
 
 const getEffectOrReducerByName = name => `technological/${name}`
 const Technological = (options) => {
@@ -56,6 +60,7 @@ const Technological = (options) => {
     }
   ]
   return (
+    <LocaleProvider locale={zh_CN}>
       <div className={globalClassNmae.page_style_3} style={{ minWidth:1200, position: 'relative'}}>
         <HeaderNav {...HeaderNavProps}/>
         {
@@ -71,6 +76,7 @@ const Technological = (options) => {
           )})
         }
       </div>
+    </LocaleProvider>
   );
 };
 
