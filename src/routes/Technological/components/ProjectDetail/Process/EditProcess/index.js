@@ -2,6 +2,9 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Icon, Button } from 'antd'
 import EditFormOne from './EditFormOne'
+import EditFormTwo from './EditFormTwo'
+import EditFormFour from './EditFormFour'
+import EditFormFive from './EditFormFive'
 
 export default class EditProcess extends React.Component {
   state = {}
@@ -33,7 +36,7 @@ export default class EditProcess extends React.Component {
             </div>
           </div>
           <div className={indexStyles.editFormCard}>
-            <EditFormOne />
+            <EditFormFive {...this.props} />
           </div>
         </div>
         <div className={indexStyles.editProcessRight}>

@@ -6,7 +6,7 @@ const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
 
-export default class EditFormOne extends React.Component {
+export default class EditFormTwo extends React.Component {
   state={
     ratioValue: 1
   }
@@ -28,9 +28,9 @@ export default class EditFormOne extends React.Component {
         <div className={indexStyles.editTop}>
           <div className={indexStyles.editTop_left}></div>
           <div className={indexStyles.editTop_right}>
-            <div>里程碑</div>
+            <div>上传</div>
             <div>
-              通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在流程中的任意步骤。
+              通过上传文件来触发的步骤称之为上传，适用于引导用户在流程中按要求提交需收集的文件。
             </div>
           </div>
         </div>
@@ -52,6 +52,29 @@ export default class EditFormOne extends React.Component {
             <div className={indexStyles.editBottItem_right}>
               <TextArea style={{height: 72,resize: 'none'}} placeholder="输入描述"/>
 
+            </div>
+          </div>
+          <div className={indexStyles.editBottItem}>
+            <div className={indexStyles.editBottItem_left}>
+              <span>要求</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>上传数量、格式<br/>及大小</span>
+            </div>
+            <div className={indexStyles.editBottItem_right}>
+              <div style={{color: '#262626'}}>
+                限制上传数量为&nbsp;&nbsp;<InputNumber style={{width: 70}} defaultValue={0} min={0} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}>（0为不限制）</span>
+              </div>
+              <div style={{color: '#262626'}}>
+                限制文件格式为&nbsp;&nbsp;
+                <Checkbox.Group style={{color: '#262626',marginTop: 14}} onChange={this.checkBoxOnChange.bind(this)}>
+                  <Checkbox value="1" style={{color: '#262626'}}>文档</Checkbox>
+                  <Checkbox value="2" style={{color: '#262626'}}>图像</Checkbox>
+                  <Checkbox value="3" style={{color: '#262626'}}>音频</Checkbox>
+                  <Checkbox value="4" style={{color: '#262626'}}>视频</Checkbox>
+                </Checkbox.Group>
+              </div>
+              <div style={{color: '#262626',marginTop: 14}}>
+                限制文件大小为&nbsp;&nbsp;<InputNumber style={{width: 70}} defaultValue={0} min={0} />&nbsp;&nbsp;MB<span style={{color: '#8c8c8c'}}>（0为不限制）</span>
+              </div>
             </div>
           </div>
           <div className={indexStyles.editBottItem}>
@@ -105,7 +128,7 @@ export default class EditFormOne extends React.Component {
               <Checkbox.Group style={{ width: '100%' }} onChange={this.checkBoxOnChange.bind(this)}>
                 <Checkbox value="1" className={indexStyles.checkBox}>可撤回</Checkbox>
                 <Checkbox value="2" className={indexStyles.checkBox}>须填写意见</Checkbox>
-              </Checkbox.Group>,
+              </Checkbox.Group>
             </div>
           </div>
           <div style={{textAlign: 'center'}}>

@@ -6,7 +6,7 @@ const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
 
-export default class EditFormOne extends React.Component {
+export default class EditFormFour extends React.Component {
   state={
     ratioValue: 1
   }
@@ -28,9 +28,9 @@ export default class EditFormOne extends React.Component {
         <div className={indexStyles.editTop}>
           <div className={indexStyles.editTop_left}></div>
           <div className={indexStyles.editTop_right}>
-            <div>里程碑</div>
+            <div>抄送</div>
             <div>
-              通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在流程中的任意步骤。
+              通过抄送流程上文来触发的步骤称之为抄送，适用于针对上文流程中的信息进行风险或结果知会的场景使用。
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default class EditFormOne extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span  style={{fontSize: 14}}>描述</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
+              <span style={{fontSize: 12,color: '#8c8c8c'}}>说明步骤的意义</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <TextArea style={{height: 72,resize: 'none'}} placeholder="输入描述"/>
@@ -72,12 +72,11 @@ export default class EditFormOne extends React.Component {
           </div>
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span>推进人</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
+              <span>抄送人</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>支持系统内成员与电子邮件地址</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.ratioOnChange.bind(this)} value={this.state.ratioValue}>
-                <Radio className={indexStyles.ratio} value={1}>任何人</Radio>
                 <Radio className={indexStyles.ratio}value={2}>启动流程时指定</Radio>
                 <Radio className={indexStyles.ratio} value={3}>固定人选</Radio>
               </RadioGroup>

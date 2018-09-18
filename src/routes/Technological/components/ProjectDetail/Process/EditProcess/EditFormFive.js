@@ -1,12 +1,12 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,Tooltip } from 'antd';
 import indexStyles from './index.less'
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
 
-export default class EditFormOne extends React.Component {
+export default class EditFormFive extends React.Component {
   state={
     ratioValue: 1
   }
@@ -28,9 +28,9 @@ export default class EditFormOne extends React.Component {
         <div className={indexStyles.editTop}>
           <div className={indexStyles.editTop_left}></div>
           <div className={indexStyles.editTop_right}>
-            <div>里程碑</div>
+            <div>审批</div>
             <div>
-              通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在流程中的任意步骤。
+              通过审批结果来触发的步骤称之为审批，适用于针对上文流程中的信息进行风险确认的场景使用。
             </div>
           </div>
         </div>
@@ -56,6 +56,30 @@ export default class EditFormOne extends React.Component {
           </div>
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
+              <span>审批模式</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>针对多审批人时<br/>的通过标准设定</span>
+            </div>
+            <div className={indexStyles.editBottItem_right}>
+              <RadioGroup onChange={this.ratioOnChange.bind(this)} value={this.state.ratioValue}>
+                <Radio value={1}>串签</Radio>
+                <Tooltip title="依照审批人设置顺序推进审批。">
+                  <span style={{cursor:'pointer',marginTop:0,marginLeft:-8,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
+                </Tooltip>
+                <Radio value={2}>并签</Radio>
+                <Tooltip title="所有审批人同时开展审批。">
+                  <span style={{cursor:'pointer',marginTop:0,marginLeft:-8,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
+                </Tooltip>
+                <Radio value={3}>汇签</Radio>
+                <Input  style={{width:60}}/>  &nbsp; %  通过
+                <Tooltip title="审批过程不公开其他审批人的意见，通过率达到设定的标准后触发流转，随后再公开所有审批意见。">
+                  <span style={{cursor:'pointer',marginTop:0,marginLeft:6,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
+                </Tooltip>
+              </RadioGroup>
+            </div>
+          </div>
+
+          <div className={indexStyles.editBottItem}>
+            <div className={indexStyles.editBottItem_left}>
               <span>完成期限</span><br/>
               <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>
             </div>
@@ -72,7 +96,7 @@ export default class EditFormOne extends React.Component {
           </div>
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span>推进人</span><br/>
+              <span>审批人</span><br/>
               <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
             </div>
             <div className={indexStyles.editBottItem_right}>

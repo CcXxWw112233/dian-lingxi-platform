@@ -6,7 +6,7 @@ const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
 
-export default class EditFormOne extends React.Component {
+export default class EditFormThree extends React.Component {
   state={
     ratioValue: 1
   }
@@ -28,7 +28,7 @@ export default class EditFormOne extends React.Component {
         <div className={indexStyles.editTop}>
           <div className={indexStyles.editTop_left}></div>
           <div className={indexStyles.editTop_right}>
-            <div>里程碑</div>
+            <div>填写</div>
             <div>
               通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在流程中的任意步骤。
             </div>
