@@ -6,7 +6,7 @@ import MenuSearchMultiple  from './MenuSearchMultiple'
 const { RangePicker } = DatePicker;
 
 //里程碑确认信息
-export default class ConfirmInfoOne extends React.Component {
+export default class ConfirmInfoFour extends React.Component {
   state = {
     due_time: '',
     excutors: [1,2,3,4,5,6,7],
@@ -52,13 +52,25 @@ export default class ConfirmInfoOne extends React.Component {
           <img src={img} style={{width: 18, height: 18,marginRight:8,borderRadius: 16, margin:'0 8px'}} />
         </div>
       ):(
-        <div style={{lineHeight: '18px',height:18,width: 16,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
+        <div style={{lineHeight: '18px',height:18,width: 18,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
           <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
         </div>
       )
     }
 
-
+    const imgOrAvatar2 = (img) => {
+      return  img ? (
+        <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
+          <img src={img} style={{width: 26, height: 26,borderRadius: 22, }} />
+          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+        </div>
+      ):(
+        <div style={{lineHeight: '26px',height:26,width: 26,borderRadius:22,backgroundColor:'#e8e8e8',marginRight:10,textAlign: 'center',marginTop: 2,position: 'relative'}}>
+          <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
+          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+        </div>
+      )
+    }
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
@@ -66,8 +78,8 @@ export default class ConfirmInfoOne extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>1</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
-                <div>这是里程碑</div>
-                <div>里程碑</div>
+                <div>这是抄送</div>
+                <div>抄送</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
@@ -100,6 +112,18 @@ export default class ConfirmInfoOne extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>这是节点步骤的描述内容，流程启动后不可编辑。借此顺便说明一下：步骤卡片默认会展开正在进行中的几点，可以手动收起可展开搜索节点进行内容查看。font-size:12px; line-height:20px;</div>
+
+              <div className={indexStyles.copy}>
+                 <div className={indexStyles.title}>
+                   抄送对象:
+                 </div>
+                 <div className={indexStyles.imglist}>
+                   {[1,2,3].map((value, key) => {
+                     return(imgOrAvatar2('ss'))
+                   })}
+                 </div>
+              </div>
+
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 <div>重新指派推进人</div>
                 <Button type={'primary'}>完成</Button>

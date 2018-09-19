@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="账户设置">
+    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/models/technological/accountSet.js" afterPath="$PROJECT_DIR$/src/models/technological/accountSet.js" />
-      <change beforePath="$PROJECT_DIR$/src/router.js" afterPath="$PROJECT_DIR$/src/router.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js" />
+      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,7 +19,75 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="350">
+              <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="325">
+              <caret line="46" column="19" lean-forward="true" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#25#0" expanded="true" />
+                <element signature="e#502#669#0" expanded="false" />
+                <element signature="e#710#881#0" expanded="false" />
+                <element signature="e#993#1100#0" expanded="false" />
+                <element signature="e#1111#1231#0" expanded="false" />
+                <element signature="e#1242#1367#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConfirmInfoFour.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoFour.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1308">
+              <caret line="62" column="78" lean-forward="false" selection-start-line="62" selection-start-column="78" selection-end-line="62" selection-end-column="78" />
+              <folding>
+                <element signature="e#5875#6049#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.less" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="533">
+              <caret line="225" column="17" lean-forward="true" selection-start-line="225" selection-start-column="17" selection-end-line="225" selection-end-column="17" />
+              <folding>
+                <element signature="e#61#274#0" expanded="false" />
+                <element signature="e#288#434#0" expanded="false" />
+                <element signature="e#442#571#0" expanded="false" />
+                <element signature="e#572#677#0" expanded="false" />
+                <element signature="e#678#809#0" expanded="false" />
+                <element signature="e#810#917#0" expanded="false" />
+                <element signature="e#1271#1372#0" expanded="false" />
+                <element signature="e#1529#2541#0" expanded="false" />
+                <element signature="e#1670#2286#0" expanded="false" />
+                <element signature="e#2087#2281#0" expanded="false" />
+                <element signature="e#2317#2538#0" expanded="false" />
+                <element signature="e#2714#2766#0" expanded="false" />
+                <element signature="e#2870#2928#0" expanded="false" />
+                <element signature="e#2971#3250#0" expanded="false" />
+                <element signature="e#3278#3365#0" expanded="false" />
+                <element signature="e#3386#3417#0" expanded="false" />
+                <element signature="e#3436#4132#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -31,12 +101,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>appClick</find>
-      <find>appsSelect</find>
-      <find>appsSelectKey</find>
-      <find>var</find>
-      <find>14px</find>
-      <find>200px</find>
       <find>'</find>
       <find>Tooltip</find>
       <find>AddModalFormStyles</find>
@@ -61,6 +125,12 @@
       <find>SelectedKeys</find>
       <find>getUrlQueryString</find>
       <find>queryString</find>
+      <find>animation</find>
+      <find>setIsShowBottDetail</find>
+      <find>isShowBottDetail</find>
+      <find>uploadArea_right</find>
+      <find>ConfirmInfoOut_1_bottNormal</find>
+      <find>imgOrAvatar</find>
     </findStrings>
     <replaceStrings>
       <replace>46px</replace>
@@ -75,7 +145,6 @@
       <replace>filePreviewCurrentVersionKey</replace>
     </replaceStrings>
     <dirStrings>
-      <dir>W:\work\newdicolla-platform\src\routes</dir>
       <dir>W:\work\newdicolla-platform</dir>
       <dir>W:\work\newdicolla-platform\src\routes\Technological\components\Project</dir>
       <dir>W:\work\newdicolla-platform\src\routes\Technological</dir>
@@ -86,6 +155,7 @@
       <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail</dir>
       <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\TaskItemComponent</dir>
       <dir>W:\work\newdicolla-platform\src\models</dir>
+      <dir>W:\work\newdicolla-platform\src\routes</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -102,8 +172,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileDetail/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileDetail/index.less" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/CreatDirector.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/BreadCrumbFileNav.js" />
@@ -115,7 +183,6 @@
         <option value="$PROJECT_DIR$/src/assets/test.html" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/MoveToDirectory.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
         <option value="$PROJECT_DIR$/src/models/login/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/TecPublic/MenuSearch.less" />
@@ -139,11 +206,8 @@
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/TecPublic/MenuSearch.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/confirmInfoOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/index.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/MenuSearchMultiple.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less" />
         <option value="$PROJECT_DIR$/src/services/technological/accountSet.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js" />
         <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js" />
@@ -153,6 +217,12 @@
         <option value="$PROJECT_DIR$/src/router.js" />
         <option value="$PROJECT_DIR$/src/models/emailRedirect/index.js" />
         <option value="$PROJECT_DIR$/src/models/technological/accountSet.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoTwo.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less" />
+        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoFour.js" />
       </list>
     </option>
   </component>
@@ -243,27 +313,6 @@
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="login" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="register" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="resetPassword" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -279,6 +328,54 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="Technological" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+              <item name="FileModule" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+              <item name="Process" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+              <item name="Technological" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
+              <item name="Process" type="462c0819:PsiDirectoryNode" />
+              <item name="ProcessStartConfirm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
@@ -324,9 +421,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\Process\ProcessStartConfirm" />
       <recent name="W:\work\newdicolla-platform\src\services" />
       <recent name="W:\work\newdicolla-platform\src\models" />
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\Process\ProcessStartConfirm" />
       <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\Process\EditProcess" />
       <recent name="W:\work\newdicolla-platform\src\services\technological" />
     </key>
@@ -417,14 +514,7 @@
       <workItem from="1537169201860" duration="16400000" />
       <workItem from="1537233191018" duration="10572000" />
       <workItem from="1537250589772" duration="22706000" />
-      <workItem from="1537319227516" duration="2806000" />
-    </task>
-    <task id="LOCAL-00021" summary="项目、界面 列表操作页">
-      <created>1534328948915</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1534328948915</updated>
+      <workItem from="1537319227516" duration="18236000" />
     </task>
     <task id="LOCAL-00022" summary="项目详情界面">
       <created>1534393845677</created>
@@ -762,11 +852,18 @@
       <option name="project" value="LOCAL" />
       <updated>1537276988901</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="邮箱手机号更改绑定">
+      <created>1537322476423</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1537322476423</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="952021000" />
+    <option name="totallyTimeSpent" value="967451000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -775,11 +872,12 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2708559" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19934994" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -788,7 +886,6 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -799,7 +896,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="登陆跳转" />
     <MESSAGE value="项目接口联调" />
     <MESSAGE value="项目接口联调 小功能" />
     <MESSAGE value="项目模块接口联调基本完成 ， 任务模块接口函数定义" />
@@ -824,7 +920,8 @@
     <MESSAGE value="MLGB" />
     <MESSAGE value="流程除了填写之外的表单" />
     <MESSAGE value="账户设置" />
-    <option name="LAST_COMMIT_MESSAGE" value="账户设置" />
+    <MESSAGE value="邮箱手机号更改绑定" />
+    <option name="LAST_COMMIT_MESSAGE" value="邮箱手机号更改绑定" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -890,52 +987,11 @@
           <option name="timeStamp" value="51" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="58" />
+      <option name="time" value="59" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1375">
-          <caret line="130" column="19" lean-forward="false" selection-start-line="130" selection-start-column="19" selection-end-line="130" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormThree.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="8" column="34" lean-forward="false" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/_antd@3.9.2@antd/lib/tooltip/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="31" column="14" lean-forward="false" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormFive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="117" column="16" lean-forward="true" selection-start-line="117" selection-start-column="16" selection-end-line="117" selection-end-column="16" />
-          <folding>
-            <element signature="e#59#84#0" expanded="false" />
-            <element signature="e#797#1100#0" expanded="false" />
-            <element signature="e#1158#1585#0" expanded="false" />
-            <element signature="e#1596#2039#0" expanded="false" />
-            <element signature="e#3718#4578#0" expanded="false" />
-            <element signature="e#3773#3959#0" expanded="false" />
-            <element signature="e#3972#4561#0" expanded="false" />
-            <element signature="e#4589#5687#0" expanded="false" />
-            <element signature="e#5698#6606#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormFour.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="133">
@@ -972,6 +1028,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="22" column="18" lean-forward="true" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1001,6 +1058,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1008,6 +1066,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10">
           <caret line="71" column="5" lean-forward="true" selection-start-line="71" selection-start-column="5" selection-end-line="71" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1072,13 +1131,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/globalset/css/constant.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="2" column="27" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1110,6 +1162,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="194">
           <caret line="79" column="5" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding>
+            <element signature="e#2250#2703#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1135,56 +1190,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="43" column="42" lean-forward="false" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-            <element signature="e#408#575#0" expanded="false" />
-            <element signature="e#616#787#0" expanded="false" />
-            <element signature="e#899#1006#0" expanded="false" />
-            <element signature="e#1017#1137#0" expanded="false" />
-            <element signature="e#1148#1273#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/MenuSearchMultiple.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-5">
           <caret line="2" column="60" lean-forward="true" selection-start-line="2" selection-start-column="60" selection-end-line="2" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
           <folding>
             <element signature="e#0#25#0" expanded="false" />
-            <element signature="e#1335#1652#0" expanded="false" />
-            <element signature="e#1665#3018#0" expanded="false" />
-            <element signature="e#2403#2910#0" expanded="false" />
-            <element signature="e#2535#2889#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="567">
-          <caret line="93" column="29" lean-forward="false" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -1386,7 +1398,7 @@
         <state relative-caret-position="325">
           <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1396,7 +1408,7 @@
         <state relative-caret-position="750">
           <caret line="36" column="78" lean-forward="false" selection-start-line="36" selection-start-column="78" selection-end-line="36" selection-end-column="78" />
           <folding>
-            <element signature="e#0#59#0" expanded="true" />
+            <element signature="e#0#59#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1406,6 +1418,135 @@
         <state relative-caret-position="495">
           <caret line="74" column="29" lean-forward="true" selection-start-line="74" selection-start-column="29" selection-end-line="74" selection-end-column="29" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#25#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="12" column="27" lean-forward="false" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
+          <folding>
+            <element signature="e#940#1480#0" expanded="false" />
+            <element signature="e#2264#2581#0" expanded="false" />
+            <element signature="e#2665#3317#0" expanded="false" />
+            <element signature="e#3332#3839#0" expanded="false" />
+            <element signature="e#3464#3818#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="5" column="76" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding>
+            <element signature="e#1#26#0" expanded="false" />
+            <element signature="e#392#485#0" expanded="false" />
+            <element signature="e#610#697#0" expanded="false" />
+            <element signature="e#740#1688#0" expanded="false" />
+            <element signature="e#1757#2239#0" expanded="false" />
+            <element signature="e#2267#2680#0" expanded="false" />
+            <element signature="e#2728#3318#0" expanded="false" />
+            <element signature="e#3335#4200#0" expanded="false" />
+            <element signature="e#4238#5145#0" expanded="false" />
+            <element signature="e#5178#5627#0" expanded="false" />
+            <element signature="e#5650#5792#0" expanded="false" />
+            <element signature="e#5810#6115#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/globalset/css/constant.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="2" column="27" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoTwo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="117" column="8" lean-forward="false" selection-start-line="117" selection-start-column="8" selection-end-line="118" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#25#0" expanded="false" />
+            <element signature="e#572#630#0" expanded="false" />
+            <element signature="e#651#740#0" expanded="false" />
+            <element signature="e#1069#1609#0" expanded="false" />
+            <element signature="e#1648#2555#0" expanded="false" />
+            <element signature="e#2714#3152#0" expanded="false" />
+            <element signature="e#4008#5894#0" expanded="false" />
+            <element signature="e#6395#6886#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="46" column="19" lean-forward="true" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#502#669#0" expanded="false" />
+            <element signature="e#710#881#0" expanded="false" />
+            <element signature="e#993#1100#0" expanded="false" />
+            <element signature="e#1111#1231#0" expanded="false" />
+            <element signature="e#1242#1367#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="225" column="17" lean-forward="true" selection-start-line="225" selection-start-column="17" selection-end-line="225" selection-end-column="17" />
+          <folding>
+            <element signature="e#61#274#0" expanded="false" />
+            <element signature="e#288#434#0" expanded="false" />
+            <element signature="e#442#571#0" expanded="false" />
+            <element signature="e#572#677#0" expanded="false" />
+            <element signature="e#678#809#0" expanded="false" />
+            <element signature="e#810#917#0" expanded="false" />
+            <element signature="e#1271#1372#0" expanded="false" />
+            <element signature="e#1529#2541#0" expanded="false" />
+            <element signature="e#1670#2286#0" expanded="false" />
+            <element signature="e#2087#2281#0" expanded="false" />
+            <element signature="e#2317#2538#0" expanded="false" />
+            <element signature="e#2714#2766#0" expanded="false" />
+            <element signature="e#2870#2928#0" expanded="false" />
+            <element signature="e#2971#3250#0" expanded="false" />
+            <element signature="e#3278#3365#0" expanded="false" />
+            <element signature="e#3386#3417#0" expanded="false" />
+            <element signature="e#3436#4132#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoFour.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1308">
+          <caret line="62" column="78" lean-forward="false" selection-start-line="62" selection-start-column="78" selection-end-line="62" selection-end-column="78" />
+          <folding>
+            <element signature="e#5875#6049#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
