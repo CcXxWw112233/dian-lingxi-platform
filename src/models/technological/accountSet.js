@@ -18,7 +18,6 @@ export default {
             type: 'getUserInfo'
           })
           const SelectedKeys = queryString.parse(location.search).selectedKeys
-          console.log(SelectedKeys)
           dispatch({
             type: 'updateDatas',
             payload: {
