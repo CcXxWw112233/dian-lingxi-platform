@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DrawDetailInfo.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DrawDetailInfo.js" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" afterPath="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" />
+    <list default="true" id="2792e6ad-f76f-4e70-b0d9-7a01cbc98b60" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
     </list>
-    <ignored path="$PROJECT_DIR$/.tmp/" />
-    <ignored path="$PROJECT_DIR$/temp/" />
-    <ignored path="$PROJECT_DIR$/tmp/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,189 +11,27 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="CSS File" />
-        <option value="HTML File" />
-        <option value="Less File" />
-        <option value="JavaScript File" />
-      </list>
-    </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>MenuSearchMultiple</find>
-      <find>Dropdown</find>
-      <find>chirldrenTaskChargeChange</find>
-      <find>isMobile</find>
-      <find>email</find>
-      <find>disabled</find>
-      <find>map</find>
-      <find>mobileChange</find>
-      <find>getVerifyCode</find>
-      <find>getVerificationcode</find>
-      <find>code</find>
-      <find>filterFormComponet</find>
-      <find>handleMenuClick</find>
-      <find>SelectedKeys</find>
-      <find>getUrlQueryString</find>
-      <find>queryString</find>
-      <find>animation</find>
-      <find>setIsShowBottDetail</find>
-      <find>isShowBottDetail</find>
-      <find>uploadArea_right</find>
-      <find>ConfirmInfoOut_1_bottNormal</find>
-      <find>imgOrAvatar</find>
-      <find>usersChange</find>
-      <find>apps</find>
-      <find>itemIsNull</find>
-      <find>appsArray</find>
-      <find>outerMost</find>
-      <find>manImageDropdown</find>
-      <find>src</find>
-      <find>img</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>46px</replace>
-      <replace>right</replace>
-      <replace>300px</replace>
-      <replace>登录</replace>
-      <replace>taskGroupList</replace>
-      <replace>cardCommentList</replace>
-      <replace>naviHeadTabIndex</replace>
-      <replace>DrawDetailInfoStyle</replace>
-      <replace>file_id</replace>
-      <replace>filePreviewCurrentVersionKey</replace>
-    </replaceStrings>
-    <dirStrings>
-      <dir>W:\work\newdicolla-platform</dir>
-      <dir>W:\work\newdicolla-platform\src\routes\Technological\components\Project</dir>
-      <dir>W:\work\newdicolla-platform\src\routes\Technological</dir>
-      <dir>W:\work\newdicolla-platform\node_modules</dir>
-      <dir>W:\work\newdicolla-platform\config</dir>
-      <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\FileModule</dir>
-      <dir>W:\work\newdicolla-platform\src</dir>
-      <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail</dir>
-      <dir>W:\work\newdicolla-platform\src\models</dir>
-      <dir>W:\work\newdicolla-platform\src\routes</dir>
-      <dir>W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\TaskItemComponent</dir>
-    </dirStrings>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="8" column="5" lean-forward="false" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/MoveToDirectory.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ProjectList.js" />
-        <option value="$PROJECT_DIR$/src/models/login/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/TecPublic/MenuSearch.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/WelcomProcess.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileList.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileDetail/Header.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Header.js" />
-        <option value="$PROJECT_DIR$/src/globalset/js/constant.js" />
-        <option value="$PROJECT_DIR$/src/models/technological/projectDetail.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/PersonalInfoForm.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormTwo.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormFour.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormFive.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/SaveTemplate.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/TecPublic/MenuSearch.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/confirmInfoOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/MenuSearchMultiple.js" />
-        <option value="$PROJECT_DIR$/src/services/technological/accountSet.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/BindAccountForm.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/AccountSet/AccountSetMenu.js" />
-        <option value="$PROJECT_DIR$/src/routes/EmailRedirect/index.js" />
-        <option value="$PROJECT_DIR$/src/services/emailRedirect/index.js" />
-        <option value="$PROJECT_DIR$/src/router.js" />
-        <option value="$PROJECT_DIR$/src/models/emailRedirect/index.js" />
-        <option value="$PROJECT_DIR$/src/models/technological/accountSet.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoOne.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoTwo.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoFour.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/ProcessStartConfirm/ConfirmInfoFive.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormThree.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/index.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/Process/EditProcess/EditFormThree_One.js" />
-        <option value="$PROJECT_DIR$/src/components/VerificationCodeTwo/index.js" />
-        <option value="$PROJECT_DIR$/src/routes/Login/FormList.js" />
-        <option value="$PROJECT_DIR$/public/index.html" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/AddModalForm.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/CreateTask.less" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DrawDetailInfo.js" />
-        <option value="$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCMenuItemOne.js" />
-      </list>
-    </option>
-  </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
-    <package-json value="$PROJECT_DIR$/package.json" />
-  </component>
-  <component name="JsFlowSettings">
-    <service-enabled>true</service-enabled>
-    <exe-path />
-    <other-services-enabled>true</other-services-enabled>
-    <auto-save>true</auto-save>
-  </component>
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
-  </component>
-  <component name="NodeModulesDirectoryManager">
-    <handled-path value="$PROJECT_DIR$/node_modules" />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="63" />
-    <option name="y" value="53" />
-    <option name="width" value="1564" />
-    <option name="height" value="1000" />
-  </component>
-  <component name="ProjectInspectionProfilesVisibleTreeState">
-    <entry key="Project Default">
-      <profile-state>
-        <expanded-state>
-          <State>
-            <id />
-          </State>
-          <State>
-            <id>Code quality toolsJavaScript</id>
-          </State>
-          <State>
-            <id>JavaScript</id>
-          </State>
-        </expanded-state>
-        <selected-state>
-          <State>
-            <id>JSLint</id>
-          </State>
-        </selected-state>
-      </profile-state>
-    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -230,57 +61,7 @@
             <path>
               <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
               <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
-              <item name="DetailInfo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="newdicolla-platform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newdicolla-platform" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="Technological" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="ProjectDetail" type="462c0819:PsiDirectoryNode" />
-              <item name="TaskItemComponent" type="462c0819:PsiDirectoryNode" />
+              <item name="mock" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -289,44 +70,6 @@
       <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
-  </component>
-  <component name="PropertiesComponent">
-    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../it-meum-operative-platform" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.selected.package.eslint" value="W:\work\newdicolla-platform\node_modules\eslint" />
-    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
-    <property name="JavaScriptWeakerCompletionTypeGuess" value="false" />
-    <property name="HbShouldOpenHtmlAsHb" value="" />
-    <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="list.type.of.created.stylesheet" value="Less" />
-    <property name="jsx.switch.disabled" value="true" />
-    <property name="RELEASE_customTagCommitMessage_text" value="Tagging version %name%" />
-    <property name="HOTFIX_customHotfixCommitMessage_text" value="Tagging hotfix %name%" />
-    <property name="node.js.path.for.package.standard" value="project" />
-    <property name="node.js.detected.package.standard" value="true" />
-    <property name="node.js.selected.package.standard" value="W:\work\newdicolla-platform\node_modules\eslint" />
-    <property name="SearchEverywhereHistoryKey" value="o&#9;ACTION&#9;null" />
-    <property name="node.js.path.for.package.jscs" value="project" />
-    <property name="node.js.detected.package.jscs" value="true" />
-    <property name="node.js.selected.package.jscs" value="" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\TaskItemComponent" />
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\DetailInfo" />
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological" />
-      <recent name="W:\work\dian-platform" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\Process\ProcessStartConfirm" />
-      <recent name="W:\work\newdicolla-platform\src\services" />
-      <recent name="W:\work\newdicolla-platform\src\models" />
-      <recent name="W:\work\newdicolla-platform\src\routes\Technological\components\ProjectDetail\Process\EditProcess" />
-      <recent name="W:\work\newdicolla-platform\src\services\technological" />
-    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -347,418 +90,10 @@
     <configuration />
   </component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="fb15e892-6eef-4ada-9d98-7c330fe51f58" name="Default" comment="" />
-      <created>1533102853015</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1533102853015</updated>
-      <workItem from="1533102855872" duration="2613000" />
-      <workItem from="1533105492957" duration="1178000" />
-      <workItem from="1533106716716" duration="2212000" />
-      <workItem from="1533109153800" duration="140000" />
-      <workItem from="1533109307850" duration="118000" />
-      <workItem from="1533109465563" duration="4506000" />
-      <workItem from="1533113991133" duration="7169000" />
-      <workItem from="1533172209250" duration="36308000" />
-      <workItem from="1533274928046" duration="15411000" />
-      <workItem from="1533690189827" duration="9055000" />
-      <workItem from="1533705961685" duration="21410000" />
-      <workItem from="1533776306546" duration="8003000" />
-      <workItem from="1533794467214" duration="2905000" />
-      <workItem from="1533863125781" duration="20441000" />
-      <workItem from="1534123067812" duration="27693000" />
-      <workItem from="1534208280557" duration="9848000" />
-      <workItem from="1534225485269" duration="20479000" />
-      <workItem from="1534294180839" duration="9480000" />
-      <workItem from="1534306365486" duration="17227000" />
-      <workItem from="1534380896653" duration="10018000" />
-      <workItem from="1534397935633" duration="15944000" />
-      <workItem from="1534467292084" duration="7771000" />
-      <workItem from="1534495225107" duration="1257000" />
-      <workItem from="1534727305244" duration="10318000" />
-      <workItem from="1534743636156" duration="22852000" />
-      <workItem from="1534813808441" duration="19350000" />
-      <workItem from="1534899797719" duration="29899000" />
-      <workItem from="1534986782785" duration="28382000" />
-      <workItem from="1535072459364" duration="23430000" />
-      <workItem from="1535166296059" duration="4168000" />
-      <workItem from="1535331332876" duration="35031000" />
-      <workItem from="1535417985935" duration="10867000" />
-      <workItem from="1535434464260" duration="22989000" />
-      <workItem from="1535504265279" duration="36591000" />
-      <workItem from="1535591044309" duration="10517000" />
-      <workItem from="1535607243814" duration="18543000" />
-      <workItem from="1535677223233" duration="27459000" />
-      <workItem from="1535766737266" duration="22296000" />
-      <workItem from="1535936020209" duration="27091000" />
-      <workItem from="1536021864463" duration="36798000" />
-      <workItem from="1536108580840" duration="26375000" />
-      <workItem from="1536195215411" duration="10063000" />
-      <workItem from="1536212518660" duration="22611000" />
-      <workItem from="1536281629086" duration="12390000" />
-      <workItem from="1536299312718" duration="18204000" />
-      <workItem from="1536540634626" duration="27954000" />
-      <workItem from="1536582174938" duration="3166000" />
-      <workItem from="1536626709716" duration="33859000" />
-      <workItem from="1536716199379" duration="28125000" />
-      <workItem from="1536801041809" duration="35684000" />
-      <workItem from="1536887128451" duration="29541000" />
-      <workItem from="1537146589124" duration="12924000" />
-      <workItem from="1537169201860" duration="16400000" />
-      <workItem from="1537233191018" duration="10572000" />
-      <workItem from="1537250589772" duration="22706000" />
-      <workItem from="1537319227516" duration="18363000" />
-      <workItem from="1537405792262" duration="16052000" />
-    </task>
-    <task id="LOCAL-00024" summary="项目详情界面ui完成 优化">
-      <created>1534479110771</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1534479110771</updated>
-    </task>
-    <task id="LOCAL-00025" summary="动态页">
-      <created>1534738514898</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1534738514898</updated>
-    </task>
-    <task id="LOCAL-00026" summary="动态页">
-      <created>1534767746018</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1534767746018</updated>
-    </task>
-    <task id="LOCAL-00027" summary="评论">
-      <created>1534844262124</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1534844262124</updated>
-    </task>
-    <task id="LOCAL-00028" summary=" 任务列表">
-      <created>1534938829739</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1534938829739</updated>
-    </task>
-    <task id="LOCAL-00029" summary=" 任务列表">
-      <created>1534938849974</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1534938849974</updated>
-    </task>
-    <task id="LOCAL-00030" summary=" 任务列表 右方抽屉">
-      <created>1535026376114</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1535026376114</updated>
-    </task>
-    <task id="LOCAL-00031" summary="富文本 路由'/'">
-      <created>1535078671640</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1535078671640</updated>
-    </task>
-    <task id="LOCAL-00032" summary="富文本 路由'/'">
-      <created>1535081794330</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1535081794330</updated>
-    </task>
-    <task id="LOCAL-00033" summary="富文本 添加标签">
-      <created>1535102957855</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1535102957856</updated>
-    </task>
-    <task id="LOCAL-00034" summary="添加子任务部分">
-      <created>1535182959880</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1535182959880</updated>
-    </task>
-    <task id="LOCAL-00035" summary="任务添加弹窗继续">
-      <created>1535374758357</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1535374758357</updated>
-    </task>
-    <task id="LOCAL-00036" summary="添加任务分组拖拽">
-      <created>1535428223875</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1535428223875</updated>
-    </task>
-    <task id="LOCAL-00037" summary="评论组件">
-      <created>1535449727472</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1535449727472</updated>
-    </task>
-    <task id="LOCAL-00038" summary="登陆跳转">
-      <created>1535460162713</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1535460162713</updated>
-    </task>
-    <task id="LOCAL-00039" summary="登陆跳转">
-      <created>1535460181215</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1535460181215</updated>
-    </task>
-    <task id="LOCAL-00040" summary="项目接口联调">
-      <created>1535549440136</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1535549440136</updated>
-    </task>
-    <task id="LOCAL-00041" summary="项目接口联调 小功能">
-      <created>1535601026576</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1535601026576</updated>
-    </task>
-    <task id="LOCAL-00042" summary="项目模块接口联调基本完成 ， 任务模块接口函数定义">
-      <created>1535625703530</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1535625703530</updated>
-    </task>
-    <task id="LOCAL-00043" summary=" 任务模块接口联调：1 。。。">
-      <created>1535712228958</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1535712228958</updated>
-    </task>
-    <task id="LOCAL-00044" summary=" 任务模块接口联调：2 。。。">
-      <created>1535794687433</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1535794687433</updated>
-    </task>
-    <task id="LOCAL-00045" summary=" 任务模块接口联调：2 。。。">
-      <created>1535979468773</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1535979468773</updated>
-    </task>
-    <task id="LOCAL-00046" summary="  任务执行人 ，改变任务分组，添加任务分组，改变任务类型">
-      <created>1536066698651</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1536066698651</updated>
-    </task>
-    <task id="LOCAL-00047" summary="任务面板 打通">
-      <created>1536121025735</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1536121025735</updated>
-    </task>
-    <task id="LOCAL-00048" summary="message bug修复， 提及">
-      <created>1536147404829</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1536147404829</updated>
-    </task>
-    <task id="LOCAL-00049" summary="navTab修正，账户设置，退出登录，dropDown参与者信息">
-      <created>1536207746924</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1536207746924</updated>
-    </task>
-    <task id="LOCAL-00050" summary="创建项目 添加参与者">
-      <created>1536236517743</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1536236517743</updated>
-    </task>
-    <task id="LOCAL-00051" summary="项目详情apps点击项">
-      <created>1536296682144</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1536296682144</updated>
-    </task>
-    <task id="LOCAL-00052" summary="x详情页面重构">
-      <created>1536315240416</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1536315240417</updated>
-    </task>
-    <task id="LOCAL-00053" summary="x详情页面重构">
-      <created>1536318818431</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1536318818431</updated>
-    </task>
-    <task id="LOCAL-00054" summary="路由重定向">
-      <created>1536320805226</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1536320805226</updated>
-    </task>
-    <task id="LOCAL-00055" summary="路由重定向">
-      <created>1536321133670</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1536321133670</updated>
-    </task>
-    <task id="LOCAL-00056" summary="路由重定向">
-      <created>1536331007510</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1536331007510</updated>
-    </task>
-    <task id="LOCAL-00057" summary="任务文件结构规范化，文档模块新增">
-      <created>1536585279200</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1536585279200</updated>
-    </task>
-    <task id="LOCAL-00058" summary="文档">
-      <created>1536671057722</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1536671057722</updated>
-    </task>
-    <task id="LOCAL-00059" summary="header hover查看个人信息样式问题修复">
-      <created>1536671325061</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1536671325061</updated>
-    </task>
-    <task id="LOCAL-00060" summary="文件查看，接口函数定义">
-      <created>1536754783833</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1536754783833</updated>
-    </task>
-    <task id="LOCAL-00061" summary="文档接口联调‘">
-      <created>1536845262044</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1536845262044</updated>
-    </task>
-    <task id="LOCAL-00062" summary="文档接口联调‘ --jieshu">
-      <created>1536919016757</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1536919016758</updated>
-    </task>
-    <task id="LOCAL-00063" summary="文档接口联调‘ --jieshu">
-      <created>1536923124019</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1536923124019</updated>
-    </task>
-    <task id="LOCAL-00064" summary="login设置cookie">
-      <created>1536923858363</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1536923858363</updated>
-    </task>
-    <task id="LOCAL-00065" summary="退出登录comfirm层级设置">
-      <created>1536926097356</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1536926097356</updated>
-    </task>
-    <task id="LOCAL-00066" summary="退出登录comfirm层级设置">
-      <created>1537167959620</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1537167959621</updated>
-    </task>
-    <task id="LOCAL-00067" summary="MLGB">
-      <created>1537189065122</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1537189065123</updated>
-    </task>
-    <task id="LOCAL-00068" summary="流程除了填写之外的表单">
-      <created>1537244690951</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1537244690952</updated>
-    </task>
-    <task id="LOCAL-00069" summary="账户设置">
-      <created>1537276988901</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1537276988901</updated>
-    </task>
-    <task id="LOCAL-00070" summary="邮箱手机号更改绑定">
-      <created>1537322476423</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1537322476423</updated>
-    </task>
-    <task id="LOCAL-00071" summary="流程节点确认项">
-      <created>1537351832558</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1537351832558</updated>
-    </task>
-    <task id="LOCAL-00072" summary="1.项目添加后填写邀请人apps消失修复&#10;2.任务界面添加分组不实时显示&#10;3.添加meta头">
-      <created>1537430389494</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1537430389495</updated>
-    </task>
-    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="983630000" />
+    <option name="totallyTimeSpent" value="19000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -784,119 +119,11 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="项目模块接口联调基本完成 ， 任务模块接口函数定义" />
-    <MESSAGE value=" 任务模块接口联调：1 。。。" />
-    <MESSAGE value=" 任务模块接口联调：2 。。。" />
-    <MESSAGE value="  任务执行人 ，改变任务分组，添加任务分组，改变任务类型" />
-    <MESSAGE value="任务面板 打通" />
-    <MESSAGE value="message bug修复， 提及" />
-    <MESSAGE value="navTab修正，账户设置，退出登录，dropDown参与者信息" />
-    <MESSAGE value="创建项目 添加参与者" />
-    <MESSAGE value="项目详情apps点击项" />
-    <MESSAGE value="x详情页面重构" />
-    <MESSAGE value="路由重定向" />
-    <MESSAGE value="任务文件结构规范化，文档模块新增" />
-    <MESSAGE value="文档" />
-    <MESSAGE value="header hover查看个人信息样式问题修复" />
-    <MESSAGE value="文件查看，接口函数定义" />
-    <MESSAGE value="文档接口联调‘" />
-    <MESSAGE value="文档接口联调‘ --jieshu" />
-    <MESSAGE value="login设置cookie" />
-    <MESSAGE value="退出登录comfirm层级设置" />
-    <MESSAGE value="MLGB" />
-    <MESSAGE value="流程除了填写之外的表单" />
-    <MESSAGE value="账户设置" />
-    <MESSAGE value="邮箱手机号更改绑定" />
-    <MESSAGE value="流程节点确认项" />
-    <MESSAGE value="1.项目添加后填写邀请人apps消失修复&#10;2.任务界面添加分组不实时显示&#10;3.添加meta头" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.项目添加后填写邀请人apps消失修复&#10;2.任务界面添加分组不实时显示&#10;3.添加meta头" />
-  </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Login/FormList.js</url>
-          <line>27</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Login/index.js</url>
-          <line>15</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Register/FormList.js</url>
-          <line>34</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DetailInfo.js</url>
-          <line>74</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/Project/ElseProject.js</url>
-          <line>242</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/DetailInfo/DetailInfo.js</url>
-          <line>32</line>
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
-          <line>382</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
-          <line>264</line>
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DrawerContent.js</url>
-          <line>31</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/HeaderNav/index.js</url>
-          <line>29</line>
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/FileDetail/index.js</url>
-          <line>1</line>
-          <option name="timeStamp" value="45" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/FileModule/MoveToDirectory.js</url>
-          <line>38</line>
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="60" />
-    </breakpoint-manager>
+    <breakpoint-manager />
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/routes/Technological/components/ProjectDetail/TaskItemComponent/DCAddChirdrenTaskItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="79" column="5" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
-          <folding>
-            <element signature="e#2250#2703#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/globalset/css/globalClassName.less">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="214">
@@ -1304,7 +531,7 @@
         <state relative-caret-position="626">
           <caret line="185" column="0" lean-forward="true" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
           <folding>
-            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!doc" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1353,7 +580,7 @@
         <state relative-caret-position="228">
           <caret line="88" column="38" lean-forward="false" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1371,7 +598,7 @@
         <state relative-caret-position="218">
           <caret line="253" column="34" lean-forward="false" selection-start-line="253" selection-start-column="31" selection-end-line="253" selection-end-column="34" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
             <element signature="e#3975#4962#0" expanded="false" />
             <element signature="e#5002#7017#0" expanded="false" />
           </folding>
@@ -1383,7 +610,7 @@
         <state relative-caret-position="218">
           <caret line="103" column="32" lean-forward="false" selection-start-line="103" selection-start-column="26" selection-end-line="103" selection-end-column="32" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1403,6 +630,14 @@
           <folding>
             <marker date="1536313433153" expanded="true" signature="7757:7805" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="8" column="5" lean-forward="false" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
