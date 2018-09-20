@@ -174,7 +174,7 @@ class FormList extends React.Component {
             <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
               <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
               {/*<div>获取验证码</div>*/}
-              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={this.state.isMobile ? globalStyles.link_mouse : ''} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
+              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={this.state.isMobile ? globalStyles.link_mouse : ''} style={{height: '38px',marginTop:1,backgroundColor:'#ffffff',fontSize: 16,width: 120,textAlign: 'center'}} text={'获取验证码'}/>
             </div>
           ) : ('')}
         </div>

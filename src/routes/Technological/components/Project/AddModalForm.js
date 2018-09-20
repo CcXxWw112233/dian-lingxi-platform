@@ -22,9 +22,9 @@ class AddModalForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { datas = {}} = nextProps.model
     const { appsList = [] } = datas
-    this.setState({
-      appsArray: new Array(appsList.length)
-    })
+    // this.setState({
+    //   appsArray: new Array(appsList.length)
+    // })
   }
   //表单输入时记录值
   boardNameChange(e){
@@ -206,6 +206,7 @@ class AddModalForm extends React.Component {
       <div>
         <Modal
           visible={modalVisible} //modalVisible
+          maskClosable={false}
           width={472}
           footer={null}
           destroyOnClose

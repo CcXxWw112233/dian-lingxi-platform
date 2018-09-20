@@ -5,6 +5,7 @@ import indexStyles from './index.less'
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
+import EditFormThree_One from './EditFormThree_One'
 
 export default class EditFormThree extends React.Component {
   state={
@@ -54,6 +55,17 @@ export default class EditFormThree extends React.Component {
 
             </div>
           </div>
+
+          <div className={indexStyles.editBottItem}>
+            <div className={indexStyles.editBottItem_left}>
+              <span  style={{fontSize: 14}}>表单</span><br/>
+              <span style={{fontSize: 12,color: '#8c8c8c'}}>上传数量、格式<br/>及大小</span>
+            </div>
+            <div className={indexStyles.editBottItem_right}>
+              <EditFormThree_One {...this.props}/>
+            </div>
+          </div>
+
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>完成期限</span><br/>

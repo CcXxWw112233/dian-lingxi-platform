@@ -3,6 +3,7 @@ import indexStyles from './index.less'
 import { Icon, Button } from 'antd'
 import EditFormOne from './EditFormOne'
 import EditFormTwo from './EditFormTwo'
+import EditFormThree from './EditFormThree'
 import EditFormFour from './EditFormFour'
 import EditFormFive from './EditFormFive'
 import SaveTemplate from './SaveTemplate'
@@ -37,7 +38,7 @@ export default class EditProcess extends React.Component {
             </div>
           </div>
           <div className={indexStyles.editFormCard}>
-            <EditFormFive {...this.props} />
+            <EditFormThree {...this.props} />
           </div>
         </div>
         <div className={indexStyles.editProcessRight}>

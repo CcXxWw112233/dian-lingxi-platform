@@ -10,8 +10,8 @@ export default class ProcessIndex extends React.Component {
     return (
       <div className={indexStyles.processOut}>
         {/*<WelcomProcess {...this.props}/>*/}
-        {/*<EditProcess {...this.props}/>*/}
-        <ProcessStartConfirm {...this.props}></ProcessStartConfirm>
+        <EditProcess {...this.props}/>
+        {/*<ProcessStartConfirm {...this.props}></ProcessStartConfirm>*/}
       </div>
     )
   }

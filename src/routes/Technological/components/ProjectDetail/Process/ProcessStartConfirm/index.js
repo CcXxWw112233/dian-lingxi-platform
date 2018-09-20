@@ -4,6 +4,7 @@ import BraftEditor from 'braft-editor'
 import ConfirmInfoOne from './ConfirmInfoOne'
 import ConfirmInfoTwo from './ConfirmInfoTwo'
 import ConfirmInfoFour from './ConfirmInfoFour'
+import ConfirmInfoFive from './ConfirmInfoFive'
 
 import indexStyles from './index.less'
 
@@ -44,7 +45,7 @@ export default class ProcessStartConfirm extends React.Component {
           </div>
           <div style={{marginTop: 14}}>
             {/*<ConfirmInfoOne {...this.props}/>*/}
-            <ConfirmInfoFour {...this.props}/>
+            <ConfirmInfoFive {...this.props}/>
           </div>
         </Card>
       </div>
