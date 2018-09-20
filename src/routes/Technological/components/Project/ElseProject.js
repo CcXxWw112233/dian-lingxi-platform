@@ -179,7 +179,7 @@ export default class CollectionProject extends React.Component{
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>
             <div className={detailInfoStyle.left}>
-              {avatar ? (<img src="" />) : (
+              {avatar ? (<img src={avatar} />) : (
                 <div  style={{backgroundColor: '#f2f2f2',textAlign:'center',width: 32, height: 32, borderRadius: 32}}>
                   <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20,marginTop: 6}}/>
                 </div>
@@ -251,7 +251,7 @@ export default class CollectionProject extends React.Component{
                     return (
                       <Dropdown overlay={manImageDropdown(value)} key={key}>
                         {avatar? (
-                          <img src="" key={key} className={indexStyle.taskManImag}></img>
+                          <img src={avatar} key={key} className={indexStyle.taskManImag}></img>
                         ):(
                           <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2',textAlign:'center'}}>
                             <Icon type={'user'} style={{color: '#8c8c8c'}}/>

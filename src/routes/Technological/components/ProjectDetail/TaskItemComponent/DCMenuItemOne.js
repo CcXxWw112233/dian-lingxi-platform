@@ -19,16 +19,16 @@ const DCMenuItemOne = (props) => {
           <Input placeholder={'请输入负责人名称'}  style={{width: 160, marginTop: 6}}/>
         </div>
         {execusorList.map((value, key) => {
-          const { user_id, full_name, img } = value
+          const { user_id, full_name, avatar } = value
           return(
             <div style={{position: 'relative'}} key={key}  >
-              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || '佚名', img })}}>
+              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || '佚名', avatar })}}>
                 <div className={DrawerContentStyles.menuOneitemDiv} >
-                  {value.img?(
-                    <img src={value.img} className={DrawerContentStyles.avatar} />
+                  {value.avatar?(
+                    <img src={value.avatar} className={DrawerContentStyles.avatar} />
                   ):(
                     <div style={{height:20,width: 20,borderRadius:20,backgroundColor:'#f2f2f2',textAlign: 'center'}}>
-                      <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
+                      <Icon type={'user'} style={{fontSize:12,marginLeft: 4, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
                     </div>
                   )}
                   <span >{value.full_name || '名称未设置'}</span>

@@ -95,13 +95,13 @@ export default class DrawDetailInfo extends React.Component {
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
-      const { full_name, email, img, mobile, user_name, user_id, we_chat='无'} = props
+      const { full_name, email, avatar, mobile, user_name, user_id, we_chat='无'} = props
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
             <div className={DrawDetailInfoStyle.left}>
-              {img?(
-                <img src={img} />
+              {avatar?(
+                <img src={avatar} />
               ):(
                 <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2',textAlign:'center'}}>
                   <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
@@ -179,14 +179,14 @@ export default class DrawDetailInfo extends React.Component {
             {
               avatarList.map((value, key) => {
                 if(key < avatarList.length - 1) {
-                  const { img, user_id } = value
+                  const { avatar, user_id } = value
                   return(
                     <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
                       <div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>
                         <Icon type="close" />
                       </div>
                       <Dropdown overlay={manImageDropdown(value)}>
-                        {img?(<img src={img}  />): (
+                        {avatar?(<img src={avatar}  />): (
                           <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>
                             <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
                           </div>
