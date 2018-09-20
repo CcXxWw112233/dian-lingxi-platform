@@ -58,10 +58,14 @@ export default class DCAddChirdrenTask extends React.Component{
       taskGroupListIndex_index: this.props.model.datas.taskGroupListIndex_index,
       length: child_data.length,
     }
-    drawContent['child_data'].push(obj)
+    drawContent['child_data'].unshift(obj)
     this.props.addChirldTask(obj)
     this.setState({
       isShowUserCalendar: false,
+      isSelectUserIcon: false, // default '#8c8c8c, hover #595959
+      isSelectCalendarIcon: false,
+      due_time: '', //日期选择后的日期‘2018-08-07’
+      executors: [],
       name: ''
     })
   }
@@ -90,6 +94,10 @@ export default class DCAddChirdrenTask extends React.Component{
     }
     this.setState({
       isShowUserCalendar: false,
+      isSelectUserIcon: false, // default '#8c8c8c, hover #595959
+      isSelectCalendarIcon: false,
+      due_time: '', //日期选择后的日期‘2018-08-07’
+      executors: [],
       saveDisabled: true,
       name: ''
     })

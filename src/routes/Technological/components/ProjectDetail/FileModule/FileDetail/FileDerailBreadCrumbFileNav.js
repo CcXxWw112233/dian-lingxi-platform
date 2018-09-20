@@ -14,6 +14,9 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
     breadcrumbList.splice(key + 1, breadcrumbList.length - key - 1) //删除当前点击后面的元素下标
     this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: file_id, isInOpenFile: false})
     //这里执行请求列表元素
+    this.props.getFileList({
+      folder_id: file_id
+    })
   }
   fileListItemClick(e) {
     const key = Number(e.key)

@@ -686,17 +686,17 @@ export default {
     * addChirldTask({ payload }, { select, call, put }) { //
       const { length } = payload
       const newPayload = {...payload}
-      newPayload.executors ? delete newPayload.executors: ''
+      newPayload.executors ? delete newPayload.executors: '' //去掉不需要的数据
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
         drawContent.child_data[length -1] = res.data || payload
-        yield put({
-          type: 'updateDatas',
-          payload:{
-            drawContent,
-          }
-        })
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload:{
+        //     drawContent,
+        //   }
+        // })
       }else{
       }
     },
@@ -712,7 +712,12 @@ export default {
     * completeTask({ payload }, { select, call, put }) { //
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
-
+          yield put({
+            type: 'projectDetailInfo',
+            payload:{
+              id: board_id
+            }
+          })
       }else{
       }
     },

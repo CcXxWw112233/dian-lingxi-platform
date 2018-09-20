@@ -7,7 +7,7 @@ import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
 
 let is_starinit = null
-export default class CollectionProject extends React.Component{
+export default class ElseProject extends React.Component{
   state = {
     ShowAddMenberModalVisibile: false,
     starOpacity: 0.6,
@@ -143,7 +143,9 @@ export default class CollectionProject extends React.Component{
   render() {
     const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
     const { itemDetailInfo = {}} = this.props
-    const { data = [], board_id, board_name, is_star, user_count, is_create } = itemDetailInfo // data为项目参与人信息
+    const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
+    console.log(itemDetailInfo)
+
     is_starinit = is_star
     const menu = (board_id) => {
       return (
@@ -271,17 +273,17 @@ export default class CollectionProject extends React.Component{
             </div>
             <div className={indexStyle.right}>
               <div className={indexStyle.rightItem}>
-                <div>0</div>
+                <div>{residue_quantity || '0'}</div>
                 <div>剩余任务</div>
               </div>
               <div className={indexStyle.rightItem}>
-                <div style={{color: '#8c8c8c'}}>0</div>
+                <div style={{color: '#8c8c8c'}}>{realize_quantity || '0'}</div>
                 <div>已完成</div>
               </div>
-              <div className={indexStyle.rightItem}>
-                <div >0</div>
-                <div>距离下一节点</div>
-              </div>
+              {/*<div className={indexStyle.rightItem}>*/}
+                {/*<div >0</div>*/}
+                {/*<div>距离下一节点</div>*/}
+              {/*</div>*/}
             </div>
           </div>
         </Card>

@@ -13,16 +13,10 @@ export default class DrawDetailInfo extends React.Component {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
     isSoundsEvrybody_2: false,//edit是否通知项目所有人
     editDetaiDescription :false ,//是否处于编辑状态
-    detaiDescriptionValue: '',
+    detaiDescriptionValue: detaiDescription,
     ShowAddMenberModalVisibile: false
   }
-  componentWillReceiveProps (props) {
-    const {datas: {projectDetailInfoData = {}}} = props.model
-    const {description} = projectDetailInfoData
-    this.setState({
-      detaiDescriptionValue: description || detaiDescription
-    })
-  }
+
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
     this.setState({
@@ -64,11 +58,15 @@ export default class DrawDetailInfo extends React.Component {
     this.setState({
       detaiDescriptionValue: e.target.value
     })
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    projectDetailInfoData['description'] = e.target.value
   }
   editSave(board_id,e) {
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+
     const obj = {
       isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
-      description: this.state.detaiDescriptionValue,
+      description: projectDetailInfoData['description'],
       board_id
     }
     this.props.updateProject(obj)
@@ -90,7 +88,7 @@ export default class DrawDetailInfo extends React.Component {
 
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
-    let { board_id, board_name, data = [], description } = projectDetailInfoData //data是参与人列表
+    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
@@ -163,17 +161,17 @@ export default class DrawDetailInfo extends React.Component {
         <div className={projectInfoDisplay?DrawDetailInfoStyle.detailInfo : DrawDetailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
           <div className={DrawDetailInfoStyle.top}>
             <div className={DrawDetailInfoStyle.topItem}>
-              <div>0</div>
+              <div>{residue_quantity || '0'}</div>
               <div>剩余任务</div>
             </div>
             <div className={DrawDetailInfoStyle.topItem}>
-              <div style={{color: '#8c8c8c'}}>0</div>
+              <div style={{color: '#8c8c8c'}}>{realize_quantity || '0'}</div>
               <div>已完成</div>
             </div>
-            <div className={DrawDetailInfoStyle.topItem}>
-              <div >0</div>
-              <div>距离下一节点</div>
-            </div>
+            {/*<div className={DrawDetailInfoStyle.topItem}>*/}
+              {/*<div >0</div>*/}
+              {/*<div>距离下一节点</div>*/}
+            {/*</div>*/}
           </div>
           <div className={DrawDetailInfoStyle.manImageList}>
             {
@@ -207,7 +205,7 @@ export default class DrawDetailInfo extends React.Component {
           </div>
           {!editDetaiDescription?(
             <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
-              {detaiDescriptionValue}
+              {description || detaiDescriptionValue}
             </div>
           ) : ( EditArea)}
         </div>

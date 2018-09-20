@@ -116,13 +116,13 @@ export default class DrawContent extends React.Component {
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange({ user_id, full_name, img }) {
+  chirldrenTaskChargeChange({ user_id, full_name, avatar }) {
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id, executors=[] } = drawContent
     executors[0] = {
       user_id,
       user_name: full_name,
-      avatar: img
+      avatar: avatar
     }
     this.props.addTaskExecutor({
       card_id,

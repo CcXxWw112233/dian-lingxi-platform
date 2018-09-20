@@ -28,14 +28,14 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange({ user_id, full_name, img }) {
+  chirldrenTaskChargeChange({ user_id, full_name, avatar }) {
     const { datas:{ drawContent = {} } } = this.props.model
     const { chirldTaskItemValue } = this.props
     const { card_id, executors=[] } = chirldTaskItemValue
     executors[0] = {
       user_id,
       user_name: full_name,
-      avatar: img
+      avatar: avatar
     }
     this.props.addTaskExecutor({
       card_id,
@@ -74,7 +74,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
         </div>
       ):(
         <div style={{height:16,width: 16,borderRadius:16,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 12px',marginTop: 2,}}>
-          <Icon type={'user'} style={{fontSize:10, marginTop: 4,color: '#8c8c8c', display: 'block',}}/>
+          <Icon type={'user'} style={{fontSize:10, marginTop: 4,marginLeft:2,color: '#8c8c8c', display: 'block',}}/>
         </div>
       )
     }

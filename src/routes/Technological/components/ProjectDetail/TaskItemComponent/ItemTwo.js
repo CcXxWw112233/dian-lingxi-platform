@@ -56,7 +56,7 @@ export default class ItemTwo extends React.Component {
                 <img src={executor.avatar} />
               ): (
                 <div style={{height:20,width: 20,borderRadius:16,paddingTop: 4,backgroundColor:'#e8e8e8',textAlign: 'center',margin:'0 12px',}}>
-                  <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c', display: 'block',}}/>
+                  <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c', display: 'block',marginLeft: 4}}/>
                 </div>
               )
             ): ('')}
