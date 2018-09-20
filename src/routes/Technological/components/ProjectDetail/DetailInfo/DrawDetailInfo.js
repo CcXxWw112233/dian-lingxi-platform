@@ -56,7 +56,7 @@ export default class DrawDetailInfo extends React.Component {
   }
   textAreaChange(e) {
     this.setState({
-      detaiDescriptionValue: e.target.value
+      detaiDescriptionValue: e.target.value || detaiDescription
     })
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     projectDetailInfoData['description'] = e.target.value
@@ -89,6 +89,8 @@ export default class DrawDetailInfo extends React.Component {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
+
+    console.log('des',description)
 
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
