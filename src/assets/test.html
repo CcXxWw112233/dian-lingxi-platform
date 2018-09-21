@@ -8,10 +8,23 @@
 <form method="post" method="post" action="./a.json"   enctype="multipart/form-data" role="form">
   <input type="file" name="file">
   <button type="submit" >提交</button>
+  <p>要使用的图像：</p>
+  <img id="tulip" src="./yay.jpg" alt="The Tulip" />
+
+  <p>画布：</p>
+  <canvas id="myCanvas" width="500" height="300" style="border:1px solid #d3d3d3;background:#ffffff;">
+    Your browser does not support the HTML5 canvas tag.
+  </canvas>
 </form>
 </body>
 <script type="text/javascript">
   window.onload = function () {
+
+    var c=document.getElementById("myCanvas");
+    var ctx=c.getContext("2d");
+    var img=document.getElementById("tulip");
+    ctx.drawImage(img,10,10);
+
     const testData = [{
       folder_id: '111',
       folder_name: '一级',

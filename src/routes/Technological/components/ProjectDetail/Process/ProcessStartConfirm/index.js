@@ -45,7 +45,7 @@ export default class ProcessStartConfirm extends React.Component {
           </div>
           <div style={{marginTop: 14}}>
             {/*<ConfirmInfoOne {...this.props}/>*/}
-            <ConfirmInfoFive {...this.props}/>
+            <ConfirmInfoTwo {...this.props}/>
           </div>
         </Card>
       </div>
