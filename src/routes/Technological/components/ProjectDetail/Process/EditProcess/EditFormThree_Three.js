@@ -1,7 +1,8 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Input, Checkbox, Select } from 'antd'
+import { Input, Checkbox, Select, Button, DatePicker } from 'antd'
 const Option = Select.Option;
+const { MonthPicker, RangePicker } = DatePicker
 
 export default class EditFormThree_One extends React.Component {
 
@@ -19,28 +20,38 @@ export default class EditFormThree_One extends React.Component {
                <Input style={{width: 68, height: 24}}/>
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
-               <p>默认填写</p>
-               <Input style={{width: 154, height: 24}}/>
-             </div>
-             <div  className={indexStyles.EditFormThreeOneOutItem}>
-               <p>校验规则</p>
-               <Select defaultValue={''} style={{ width: 106}} size={'small'}>
-                 <Option value="">不校验格式</Option>
-                 <Option value="mobile">手机号码</Option>
-                 <Option value="tel">座机</Option>
-                 <Option value="ID_card">身份证号码</Option>
-                 <Option value="chinese_name">中文名（2-6）个汉字</Option>
-                 <Option value="url">网址</Option>
-                 <Option value="qq">QQ号</Option>
-                 <Option value="postal_code">邮政编码</Option>
-                 <Option value="positive_integer">正整数</Option>
-                 <Option value="negative">负数</Option>
-                 <Option value="two_decimal_places">精确到两位小数</Option>
+               <p>模式</p>
+               <Select defaultValue={'SINGL'} style={{ width: 74}} size={'small'}>
+                 <Option value="SINGL">单个</Option>
+                 <Option value="MULTI">多个</Option>
                </Select>
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
-               <p>长度</p>
-               <Input style={{width: 36, height: 24}}/>
+               <p>精确度</p>
+               <Select defaultValue={'DATE_TIME'} style={{ width: 110}} size={'small'}>
+                 <Option value="DATE_TIME">日期 + 时分</Option>
+                 <Option value="DATE">日期</Option>
+               </Select>
+             </div>
+             <div  className={indexStyles.EditFormThreeOneOutItem}>
+               <p>预设值</p>
+               {!true? (
+                 <DatePicker
+                   style={{width: 110, height: 24}}
+                   size={'small'}
+                   showTime
+                   allowClear={false}
+                   format="YYYY-MM-DD HH:mm"
+                   placeholder=""
+                 />
+               ) : (<RangePicker
+                 size={'small'}
+                 style={{width: 110, height: 24}}
+                 showTime={{ format: 'HH:mm' }}
+                 format="YYYY-MM-DD HH:mm"
+                 placeholder={[]}
+               />)}
+
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem} style={{textAlign: 'center'}}>
                <p>必填</p>

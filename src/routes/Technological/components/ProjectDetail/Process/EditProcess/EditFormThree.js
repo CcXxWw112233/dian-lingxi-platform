@@ -6,6 +6,8 @@ const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
 const { toString, toContentState } = Mention;
 import EditFormThree_One from './EditFormThree_One'
+import EditFormThree_Two from './EditFormThree_Two'
+import EditFormThree_Three from './EditFormThree_Three'
 
 export default class EditFormThree extends React.Component {
   state={
@@ -63,6 +65,12 @@ export default class EditFormThree extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <EditFormThree_One {...this.props}/>
+              <EditFormThree_Two {...this.props}/>
+              <EditFormThree_Three {...this.props}/>
+
+              <div style={{width: 20, height: 20,cursor: 'pointer', borderRadius: 18,marginTop: 10, alignItems: 'center', border:'2px solid #595959', textAlign: "center",display: 'flex'}}>
+                <Icon type="plus" theme="outlined" style={{fontSize:12, color:"#262626",marginLeft:2 }}/>
+              </div>
             </div>
           </div>
 
@@ -117,7 +125,7 @@ export default class EditFormThree extends React.Component {
               <Checkbox.Group style={{ width: '100%' }} onChange={this.checkBoxOnChange.bind(this)}>
                 <Checkbox value="1" className={indexStyles.checkBox}>可撤回</Checkbox>
                 <Checkbox value="2" className={indexStyles.checkBox}>须填写意见</Checkbox>
-              </Checkbox.Group>,
+              </Checkbox.Group>
             </div>
           </div>
           <div style={{textAlign: 'center'}}>

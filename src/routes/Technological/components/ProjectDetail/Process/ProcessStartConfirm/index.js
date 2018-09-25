@@ -3,6 +3,7 @@ import { Card, Input } from 'antd'
 import BraftEditor from 'braft-editor'
 import ConfirmInfoOne from './ConfirmInfoOne'
 import ConfirmInfoTwo from './ConfirmInfoTwo'
+import ConfirmInfoThree from './ConfirmInfoThree'
 import ConfirmInfoFour from './ConfirmInfoFour'
 import ConfirmInfoFive from './ConfirmInfoFive'
 
@@ -46,6 +47,7 @@ export default class ProcessStartConfirm extends React.Component {
           <div style={{marginTop: 14}}>
             {/*<ConfirmInfoOne {...this.props}/>*/}
             <ConfirmInfoTwo {...this.props}/>
+            <ConfirmInfoThree {...this.props}/>
           </div>
         </Card>
       </div>

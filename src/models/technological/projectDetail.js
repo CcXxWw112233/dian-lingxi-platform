@@ -41,34 +41,44 @@ export default {
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
             // 文档
-            fileList: [], //文档列表
-            filedata_1: [], //文档列表--文件夹
-            filedata_2: [], //文档列表--文件
-            selectedRowKeys: [],//选择的列表项
-            isInAddDirectory: false, //是否正在创建文件家判断标志
-            moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-            openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
-            currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-            breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
-            currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
-            isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
-            treeFolderData: {}, //文件夹树状结构
-            filePreviewIsUsable: true, //文件是否可以预览标记
-            filePreviewUrl: '',  //预览文件url
-            filePreviewCurrentId: '', //当前预览的文件id
-            filePreviewCurrentVersionId: '', //当前预览文件版本id
-            filePreviewCurrentVersionList: [], //预览文件的版本列表
-            filePreviewCurrentVersionKey: 0, //预览文件选中的key
+            // fileList: [], //文档列表
+            // filedata_1: [], //文档列表--文件夹
+            // filedata_2: [], //文档列表--文件
+            // selectedRowKeys: [],//选择的列表项
+            // isInAddDirectory: false, //是否正在创建文件家判断标志
+            // moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+            // openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+            // currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
+            // breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+            // currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+            // isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+            // treeFolderData: {}, //文件夹树状结构
+            // filePreviewIsUsable: true, //文件是否可以预览标记
+            // filePreviewUrl: '',  //预览文件url
+            // filePreviewCurrentId: '', //当前预览的文件id
+            // filePreviewCurrentVersionId: '', //当前预览文件版本id
+            // filePreviewCurrentVersionList: [], //预览文件的版本列表
+            // filePreviewCurrentVersionKey: 0, //预览文件选中的key
+
             //流程
-            process: {
-              editProcessList:[
-                {
-                  title: '',
-                  type: '1',
-                  formVal: {},
-                }
-              ], //编辑步骤json数组
-            }
+            node_type: '1', //节点类型
+            currentEditStep: 0, //编辑第几步，默认 0
+            processEditDatas: [
+               {
+                "name":"编辑节点名称",//节点名称
+                "node_type":"1",//节点类型：1代表里程碑节点
+                "description":"",
+                "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+                "deadline_value":"",//完成期限值
+                "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+                "assignees":"",//推进人(id) 多个逗号隔开
+                "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+                "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+                "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
+              },
+
+            ], //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+            processEditDatasRecords: [[],] //每一步的每一个类型，记录，数组的全部数据step * type
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -85,38 +95,6 @@ export default {
     },
   },
   effects: {
-    * test({ payload }, { select, call, put }) {
-      const filedata_1 = [];
-      const filedata_2 = [];
-      for (let i = 0; i < 6; i++) {
-        filedata_1.push({
-          id: i+5,
-          name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-          size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
-          updateTime: '这是文件夹',
-          founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-          type: '1',
-          parrentId: '123456', //这个用来做点击文件夹判定
-        });
-        filedata_2.push({
-          id: i+5,
-          name: `${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-          size:`${20+i}${i % 2 === 0 ? 'MB' : 'G' }` ,
-          updateTime: '这是文件',
-          founder: ` ${20 + parseFloat(10 * Math.random()).toFixed(2)}`,
-          type: '0',
-          parrentId: '123456'
-        })
-      }
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          filedata_1,
-          filedata_2,
-          fileList: [...filedata_1, ...filedata_2]
-        }
-      })
-    },
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload

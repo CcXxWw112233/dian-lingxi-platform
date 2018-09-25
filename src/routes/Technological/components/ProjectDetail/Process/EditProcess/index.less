@@ -60,6 +60,12 @@
       box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);
       cursor: pointer;
     }
+    .addItem:hover{
+      background-color: #F5F5F5;
+    }
+    .addItem:active {
+      background-color: #f2f2f2;
+    }
   }
   .editProcessMiddle {
     margin-left: 20px;
@@ -174,6 +180,7 @@
     .editBottItem_right{
       flex: 1;
       .EditFormThreeOneOut{
+        margin-top: 10px;
         display: flex;
         align-items: center;
         .EditFormThreeOneOut_delete{
@@ -199,12 +206,23 @@
           height: 70px;
           display: flex;
           align-items: center;
+          padding: 6px 12px;
           .EditFormThreeOneOut_form_left{
             width: 28px;
+            height: 28px;
             margin-right: 12px;
           }
           .EditFormThreeOneOut_form_right{
+            display: flex;
             flex: 1;
+            .EditFormThreeOneOutItem{
+              font-size: 12px;
+              margin-right: 8px;
+              p{
+                color: #8c8c8c;
+                margin-bottom: 4px;
+              }
+            }
           }
         }
       }

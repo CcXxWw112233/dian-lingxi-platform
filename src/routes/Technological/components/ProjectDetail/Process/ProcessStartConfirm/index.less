@@ -101,6 +101,8 @@
 }
 
 .ConfirmInfoOut_1{
+  margin-top: 16px;
+  margin-bottom: 60px;
   .ConfirmInfoOut_1_top{
    display: flex;
    justify-content: space-between;
@@ -229,7 +231,58 @@
         }
       }
 
-      //  审批
+      //  填写
+      .fill{
+        margin-top: 14px;
+        .EditFormThreeOneOut{
+          margin-top: 10px;
+          display: flex;
+          align-items: center;
+          .EditFormThreeOneOut_delete{
+            height: 18px;
+            width: 18px;
+            border-radius: 18px;
+            text-align: center;
+            background-color: red;
+            margin-right: 14px;
+            >div{
+              background-color: #FFFFFF;
+              height: 2px;
+              width: 10px;
+              margin: 0 auto;
+              margin-top: 8px;
+            }
+          }
+          .EditFormThreeOneOut_form{
+            background: #FBFBFB;
+            flex: 1;
+            border: 1px solid rgba(217,217,217,1);
+            border-radius: 4px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            .EditFormThreeOneOut_form_left{
+              width: 28px;
+              height: 28px;
+              margin-right: 12px;
+            }
+            .EditFormThreeOneOut_form_right{
+              display: flex;
+              flex: 1;
+              .EditFormThreeOneOutItem{
+                font-size: 12px;
+                margin-right: 8px;
+                p{
+                  color: #8c8c8c;
+                  margin-bottom: 4px;
+                }
+              }
+            }
+          }
+        }
+
+      }
 
     }
   }
