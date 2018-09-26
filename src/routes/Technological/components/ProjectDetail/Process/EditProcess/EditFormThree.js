@@ -10,22 +10,109 @@ import EditFormThree_Two from './EditFormThree_Two'
 import EditFormThree_Three from './EditFormThree_Three'
 
 export default class EditFormThree extends React.Component {
-  state={
-    ratioValue: 1
+  //更新
+  updateEdit(data, key) { //更新单个数组单个属性
+    const { value } = data
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    processEditDatas[processCurrentEditStep][key] = value
+
+    //更新processEditDatasRecords操作解构赋值避免操作污染
+    const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
+    let newAlltypedata = [...alltypedata]
+    let obj = {}
+    for (let i=0; i < newAlltypedata.length; i++ ) {
+      if(newAlltypedata[i]['node_type'] === '3') {
+        obj = {...newAlltypedata[i]}
+        obj[key] = value
+        newAlltypedata[i] = obj
+      }
+    }
+    processEditDatasRecords[processCurrentEditStep] = {
+      node_type: '3',
+      alltypedata: newAlltypedata
+    }
+    ///更新processEditDatasRecords操作解构赋值避免操作污染
+
+    this.props.updateDatas({
+      processEditDatas,
+      processEditDatasRecords
+    })
+    // for(let i = 0 ; i < processEditDatasRecords.length; i ++ ){
+    //   console.log( processEditDatasRecords[i]['alltypedata'][0])
+    // }
   }
-  ratioOnChange(e) {
-    this.setState({
-      ratioValue: e.target.value
+  //名称
+  nameChange(e) {
+    this.updateEdit({value: e.target.value}, 'name')
+  }
+  //描述
+  descriptionChange(e) {
+    this.updateEdit({value: e.target.value}, 'description')
+  }
+  //完成类型
+  deadlineChange(e) {
+    this.updateEdit({value: e.target.value}, 'deadline_type')
+  }
+  //完成时间
+  deadlineDayChange(value) {
+    this.updateEdit({value: value.toString()}, 'deadline_value')
+  }
+  // 是否工作日
+  isWorkdayChange(e) {
+    this.updateEdit({value: e.target.checked? '1':'0'}, 'is_workday')
+  }
+  //推进人类型
+  assigneeTypeChange(e) {
+    this.updateEdit({value: e.target.value}, 'assignee_type')
+  }
+  //提及
+  mentionOnChange(contentState){
+    const str = toString(contentState)
+    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    this.updateEdit({value: str}, 'assignees')
+  }
+  //流转类型
+  transferModeChange(e) {
+    this.updateEdit({value: e.target.value}, 'transfer_mode')
+  }
+  //可撤回
+  enableRevocationChange(e) {
+    this.updateEdit({value: e.target.checked? '1':'0'}, 'enable_revocation')
+  }
+  //是否填写意见
+  enableOpinionChange(e) {
+    this.updateEdit({value: e.target.checked? '1':'0'}, 'enable_opinion')
+  }
+  //删除
+  deleteProcessStep(){
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    if(!processEditDatas.length || !processEditDatasRecords.length) {
+      return false
+    }
+    if(processEditDatasRecords.length) {
+      processEditDatasRecords.splice(processCurrentEditStep, 1)
+    }
+    if(processEditDatas.length) {
+      processEditDatas.splice(processCurrentEditStep, 1)
+    }
+    this.props.updateDatas({
+      processEditDatasRecords,
+      processEditDatas,
+      processCurrentEditStep: processCurrentEditStep - 1
     })
   }
-  mentionOnSelect(e) {
 
-  }
-  mentionOnChange(contentState){
-    console.log(toString(contentState));
-  }
-  checkBoxOnChange() {}
   render() {
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
+    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion } = processEditDatas[processCurrentEditStep]
+    //推进人一项
+    const users = projectDetailInfoData.data
+    let suggestions = []
+    for(let i = 0; i < users.length; i++) {
+      suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
+    // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
     return (
       <div className={indexStyles.editFormOut}>
         <div className={indexStyles.editTop}>
@@ -38,26 +125,27 @@ export default class EditFormThree extends React.Component {
           </div>
         </div>
         <div className={indexStyles.editBott}>
+          {/*名称*/}
           <div className={indexStyles.editBottItem}>
-             <div className={indexStyles.editBottItem_left}>
-               <span  style={{fontSize: 14}}>名称</span><br/>
-               <span  style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
-             </div>
-             <div className={indexStyles.editBottItem_right}>
-               <Input placeholder="输入步骤名称" style={{height: 40}}/>
-             </div>
-           </div>
+            <div className={indexStyles.editBottItem_left}>
+              <span  style={{fontSize: 14}}>名称</span><br/>
+              <span  style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
+            </div>
+            <div className={indexStyles.editBottItem_right}>
+              <Input value={name} placeholder="输入步骤名称" style={{height: 40}} onChange={this.nameChange.bind(this)}/>
+            </div>
+          </div>
+          {/*描述*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span  style={{fontSize: 14}}>描述</span><br/>
               <span style={{fontSize: 12,color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <TextArea style={{height: 72,resize: 'none'}} placeholder="输入描述"/>
-
+              <TextArea value={description} style={{height: 72,resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
             </div>
           </div>
-
+          {/*表单*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span  style={{fontSize: 14}}>表单</span><br/>
@@ -73,64 +161,66 @@ export default class EditFormThree extends React.Component {
               </div>
             </div>
           </div>
-
+          {/*完成期限*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>完成期限</span><br/>
               <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <RadioGroup onChange={this.ratioOnChange.bind(this)} value={this.state.ratioValue}>
-                <Radio className={indexStyles.ratio} value={1}>无限期</Radio>
-                <Radio className={indexStyles.ratio}value={2}>启动流程时指定</Radio>
-                <Radio className={indexStyles.ratio} value={3}>固定天数</Radio>
+              <RadioGroup onChange={this.deadlineChange.bind(this)} value={deadline_type}>
+                <Radio className={indexStyles.ratio} value={'1'}>无限期</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>
               </RadioGroup>
               <div>
-                <Input style={{width:70, height: 32,marginRight: 8}}/>天 <Checkbox style={{margin: '8px 8px 0 12px '}}/>只计算工作日
+                <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
               </div>
             </div>
           </div>
+          {/*推进人*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>推进人</span><br/>
               <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <RadioGroup onChange={this.ratioOnChange.bind(this)} value={this.state.ratioValue}>
-                <Radio className={indexStyles.ratio} value={1}>任何人</Radio>
-                <Radio className={indexStyles.ratio}value={2}>启动流程时指定</Radio>
-                <Radio className={indexStyles.ratio} value={3}>固定人选</Radio>
+              <RadioGroup onChange={this.assigneeTypeChange.bind(this)} value={assignee_type} >
+                <Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>
+                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
                 <Mention
                   style={{ width: '100%', height: 70 }}
                   onChange={this.mentionOnChange.bind(this)}
-                  defaultValue={toContentState('@afc163')}
-                  suggestions={['afc163', 'benjycui', 'yiminghe', 'RaoHai', '中文', 'にほんご']}
-                  onSelect={this.mentionOnSelect.bind(this)}
+                  defaultValue={toContentState(defaultAssignees)}
+                  suggestions={suggestions}
                 />
               </div>
             </div>
           </div>
+          {/*流转*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>流转</span><br/>
               <span style={{fontSize: 12, color: '#8c8c8c'}}>设置流转逻辑</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <RadioGroup onChange={this.ratioOnChange.bind(this)} value={this.state.ratioValue}>
-                <Radio className={indexStyles.ratio} value={1}>自由选择</Radio>
-                <Radio className={indexStyles.ratio}value={2}>下一步</Radio>
+              <RadioGroup onChange={this.transferModeChange.bind(this)} value={transfer_mode}>
+                <Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>下一步</Radio>
               </RadioGroup>
-              <Checkbox.Group style={{ width: '100%' }} onChange={this.checkBoxOnChange.bind(this)}>
-                <Checkbox value="1" className={indexStyles.checkBox}>可撤回</Checkbox>
-                <Checkbox value="2" className={indexStyles.checkBox}>须填写意见</Checkbox>
-              </Checkbox.Group>
+              <Checkbox value="1"  onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
+              <Checkbox value="2" onChange={this.enableOpinionChange.bind(this)} checked={enable_opinion === '1'} className={indexStyles.checkBox}>须填写意见</Checkbox>
             </div>
           </div>
+          {/*删除*/}
           <div style={{textAlign: 'center'}}>
-            <Button style={{color: 'red',margin: '0 auto'}}>删除步骤</Button>
+            <Button style={{color: 'red',margin: '0 auto'}} onClick={this.deleteProcessStep.bind(this)}>删除步骤</Button>
           </div>
+
         </div>
       </div>
     )
