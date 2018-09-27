@@ -186,6 +186,7 @@ export default {
               },
             ] ,//每一步的每一个类型，记录，数组的全部数据step * type
             processTemplateList: [], //流程模板列表
+            templateInfo: {},  //所选择的流程模板的信息数据
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -349,6 +350,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
+            templateInfo: res.data,
             processEditDatas: res.data.nodes
           }
         })

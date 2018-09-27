@@ -3,18 +3,19 @@ import MenuSearchStyles from './MenuSearch.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
 
 const MenuSearchMultiple = (props) => {
-  const { menuSortList = [1,2,3] } = props
+  const { usersArray = [] } = props
 
-  const handleMenuReallyClick = (data) => {
-    console.log(data)
-    const { excutors = [] } = props
-
+  const menuDeselect = ({ item, key, selectedKeys }) => {
+    props.setAssignees && props.setAssignees(selectedKeys)
+  }
+  const menuSelect = ({ item, key, selectedKeys }) => {
+    props.setAssignees && props.setAssignees(selectedKeys)
   }
   return (
-    <Menu multiple style={{padding: 8}} onClick={handleMenuReallyClick}>
+    <Menu multiple style={{padding: 8}} onDeselect={menuDeselect} onSelect={menuSelect}>
       <Input/>
       {
-        menuSortList.map((val, key) => {
+        usersArray.map((val, key) => {
           return (
             <Menu.Item style={{height: 32,lineHeight: '32px'}} key={key}>
               {val}

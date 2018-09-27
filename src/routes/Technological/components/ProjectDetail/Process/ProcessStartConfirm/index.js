@@ -32,11 +32,13 @@ export default class ProcessStartConfirm extends React.Component {
   }
   render() {
     const { stepContinueDisabled } = this.state
-    const { datas: { processEditDatas = [] } } = this.props.model
+    const { datas: { processEditDatas = [], templateInfo = {} } } = this.props.model
+    const { name, description } = templateInfo
+
     const editorProps = {
       height: 0,
       contentFormat: 'html',
-      initialContent: '',
+      initialContent: description,
       onHTMLChange:(e) => {
         // const { datas:{ drawContent = {} } } = this.props.model
         // drawContent['description'] = e
@@ -50,24 +52,24 @@ export default class ProcessStartConfirm extends React.Component {
       ]
     }
 
-    const filterItem = (value) => {
+    const filterItem = (value, key) => {
       const { node_type } = value
       let containner = (<div></div>)
        switch (node_type) {
          case '1':
-           containner = (<ConfirmInfoOne {...this.props}/>)
+           containner = (<ConfirmInfoOne itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '2':
-           containner = (<ConfirmInfoTwo {...this.props}/>)
+           containner = (<ConfirmInfoTwo  itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '3':
-           containner = (<ConfirmInfoThree {...this.props}/>)
+           containner = (<ConfirmInfoThree  itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '4':
-           containner = (<ConfirmInfoFour {...this.props}/>)
+           containner = (<ConfirmInfoFour  itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '5':
-           containner = (<ConfirmInfoFive {...this.props}/>)
+           containner = (<ConfirmInfoFive  itemKey={key} itemValue={value} {...this.props}/>)
            break
          default:
            containner = (<div></div>)
@@ -84,14 +86,14 @@ export default class ProcessStartConfirm extends React.Component {
             {/*<div>投决立项</div>*/}
           {/*</div>*/}
           <div style={{marginTop: 14}}>
-            <Input  style={{height: 40,fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
+            <Input defaultValue={name} style={{height: 40,fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
           </div>
           <div className={indexStyles.editorWraper}>
             <BraftEditor {...editorProps} style={{fontSize:12}}/>
           </div>
           <div style={{marginTop: 14}}>
             {processEditDatas.map((value, key) => {
-              return (<div key={key}>{filterItem(value)}</div>)
+              return (<div key={key}>{filterItem(value, key)}</div>)
             })}
           </div>
           <div style={{textAlign: 'center',marginTop: 40}} onClick={this.startProcess.bind(this)}>

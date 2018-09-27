@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
 import MenuSearchMultiple  from './MenuSearchMultiple'
 
 const { RangePicker } = DatePicker;
@@ -9,7 +9,6 @@ const { RangePicker } = DatePicker;
 export default class ConfirmInfoOne extends React.Component {
   state = {
     due_time: '',
-    excutors: [1,2,3,4,5,6,7],
     isShowBottDetail: false, //是否显示底部详情
   }
   datePickerChange(date, dateString) {
@@ -17,10 +16,24 @@ export default class ConfirmInfoOne extends React.Component {
       due_time:dateString
     })
   }
-  setExcutors(data) {
-    const { excutors } = this.state
-    this.setState({
-      excutors: data
+  setAssignees(data) {
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey  } = this.props
+    //从项目详情拿到推进人
+    let assigneesArray = []
+    const users = projectDetailInfoData.data
+    for(let i = 0; i < users.length; i++) {
+      assigneesArray.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    //设置推进人
+    let willSetAssigneesArray = []
+    for(let i=0; i < data.length; i++) {
+      willSetAssigneesArray.push(assigneesArray[data[i]])
+    }
+    const str = willSetAssigneesArray.join(',')
+    processEditDatas[itemKey]['assignees'] = str
+    this.props.updateDatas({
+      processEditDatas
     })
   }
   setIsShowBottDetail() {
@@ -44,8 +57,20 @@ export default class ConfirmInfoOne extends React.Component {
   };
 
   render() {
-    const { due_time, excutors = [], isShowBottDetail } = this.state
-    const data = []
+    const { due_time, isShowBottDetail } = this.state
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey  } = this.props
+    const { name, description, assignees, assignee_type, deadline_type, deadline_value } = processEditDatas[itemKey]
+
+    //推进人来源
+    let usersArray = []
+    const users = projectDetailInfoData.data
+    for(let i = 0; i < users.length; i++) {
+      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    //推进人
+    const assigneesArray = assignees ? assignees.split(',') : []
+
     const imgOrAvatar = (img) => {
       return  img ? (
         <div>
@@ -57,34 +82,71 @@ export default class ConfirmInfoOne extends React.Component {
         </div>
       )
     }
-
+    const filterAssignee = (assignee_type) => {
+      let container = (<div></div>)
+      switch (assignee_type) {
+        case '1':
+          container = (<div style={{color: '#595959'}}>任何人</div>)
+          break
+        case '2':
+          container = (
+            <div>
+              <Dropdown overlay={<MenuSearchMultiple  usersArray={usersArray} setAssignees={this.setAssignees.bind(this)} />}>
+                {assigneesArray.length? (
+                  <div  style={{display: 'flex'}}>
+                    {assigneesArray.map((value, key)=>{
+                      if (key < 6)
+                        return(
+                          <Tooltip  key={key} placement="top" title={value}>
+                            <div>{imgOrAvatar()}</div>
+                          </Tooltip>
+                        )
+                    })}
+                    {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+                  </div>
+                ) : (
+                  <div>
+                    设置推进人
+                  </div>
+                )}
+              </Dropdown>
+            </div>)
+          break
+        case '3':
+          container = (
+            <div style={{display: 'flex'}}>
+              {assigneesArray.map((value, key)=>{
+                if (key < 6)
+                  return(
+                    <Tooltip  key={key} placement="top" title={value}>
+                      <div>{imgOrAvatar()}</div>
+                    </Tooltip>
+                  )
+              })}
+              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+            </div>
+          )
+          break
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>1</div>
+              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>{itemKey+1}</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
-                <div>这是里程碑</div>
+                <div>{name}</div>
                 <div>里程碑</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
-              <div>
-                <Dropdown overlay={<MenuSearchMultiple excutors={excutors} execusorList={data} setExcutors={this.setExcutors.bind(this)} />}>
-                  {excutors.length? (
-                      <div style={{display: 'flex'}}>
-                        {excutors.map((value, key)=>{
-                          if (key < 6)
-                            return(<div key={key}>{imgOrAvatar()}</div>)
-                        })}
-                        {excutors.length >6?(<span style={{color: '#595959'}}>{`等${excutors.length}人`}</span>): ('') }
-                      </div>
-                  ) : (<span>设置负责人</span>)}
-                </Dropdown>
-
-              </div>
+              {filterAssignee(assignee_type)}
               <div style={{position: 'relative', color: due_time? '#595959': '#1890FF' }}>
                 {due_time || '设置截止时间'}
                 <DatePicker  onChange={this.datePickerChange.bind(this)}
@@ -99,11 +161,7 @@ export default class ConfirmInfoOne extends React.Component {
           <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={'ConfirmInfoOut_1_bott'} >
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
-              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>这是节点步骤的描述内容，流程启动后不可编辑。借此顺便说明一下：步骤卡片默认会展开正在进行中的几点，可以手动收起可展开搜索节点进行内容查看。font-size:12px; line-height:20px;</div>
-              <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                <div>重新指派推进人</div>
-                <Button type={'primary'}>完成</Button>
-              </div>
+              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
             </div>
           </div>
         </Card>
