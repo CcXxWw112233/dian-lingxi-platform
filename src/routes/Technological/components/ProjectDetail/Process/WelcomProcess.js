@@ -1,12 +1,19 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Button, Icon, Input, Dropdown } from 'antd'
+import { Button, Icon, Input, Dropdown, Menu } from 'antd'
 import MenuSearchStyles from  '../../TecPublic/MenuSearch.less'
 
 export default class WelcomProcess extends React.Component {
   state = {}
-  handleMenuReallyClick = (data) => {
-    this.props.chirldrenTaskChargeChange(data)
+  handleMenuReallyClick = (e) => {
+    const { key } = e
+    const { datas: { processTemplateList = [] } } = this.props.model
+    const { template_name, template_id, template_no } = processTemplateList[Number(key)]
+    this.props.updateDatas({
+      processPageFlagStep: '3'
+    })
+    //此处为启动流程界面查询逻辑(查询模板信息)
+    this.props.getTemplateInfo && this.props.getTemplateInfo(template_id)
   }
   startEdit() {
     this.props.updateDatas({
@@ -14,35 +21,23 @@ export default class WelcomProcess extends React.Component {
     })
   }
   render() {
+    const { datas: { processTemplateList = [] } } = this.props.model
 
-    const MenuSearch = ({ menuSortList = [] }) => {
+    const MenuSearch = (processTemplateList) => {
       return (
-        <div className={MenuSearchStyles.menuOneout}>
-          <div className={MenuSearchStyles.menuOne}>
-            <div style={{width: 160, height: 42, margin: '0 auto'}}>
-              <Input placeholder={'请输入'}  style={{width: 160, marginTop: 6}}/>
-            </div>
-            {menuSortList.map((value, key) => {
-              const { user_id, full_name, img } = value
-              return(
-                <div style={{position: 'relative'}} key={key}  >
-                  <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{this.handleMenuReallyClick.bind(this)}}>
-                    <div className={MenuSearchStyles.menuOneitemDiv} >
-                      {value.img?(
-                        <img src={value.img} className={MenuSearchStyles.avatar} />
-                      ):(
-                        <div style={{height:20,width: 20,borderRadius:20,backgroundColor:'#f2f2f2',textAlign: 'center'}}>
-                          <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
-                        </div>
-                      )}
-                      <span >{value.full_name || '名称未设置'}</span>
-                    </div>
-                  </div>
-                </div>
+        <Menu style={{padding: 8}} onClick={this.handleMenuReallyClick.bind(this)}>
+          <Input placeholder={'搜索流程'} subMenuKey={'2'} style={{marginBottom: 10}}/>
+          {
+            processTemplateList.map((value, key) => {
+              const { template_name, template_id, template_no } = value
+              return (
+                <Menu.Item style={{height: 32,lineHeight: '22px'}} key={key} >
+                  {template_name}
+                </Menu.Item>
               )
-            })}
-          </div>
-        </div>
+            })
+          }
+        </Menu>
       )
     }
     return (
@@ -62,7 +57,7 @@ export default class WelcomProcess extends React.Component {
               <div></div>
               <div>你之前创建过跟这件事情相关的流程模板；</div>
             </div>
-            <Dropdown overlay={MenuSearch({})}>
+            <Dropdown overlay={MenuSearch(processTemplateList)}>
               <Button style={{width: 110,marginTop: 20}}>选择模板<Icon type={'down'} style={{fontSize: 12}}/></Button>
             </Dropdown>
           </div>

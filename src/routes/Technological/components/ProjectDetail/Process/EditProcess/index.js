@@ -156,7 +156,7 @@ const recordItemobjs = {
       "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-      "requires_data":{
+      "require_data":{
         "limit_file_num":"0",//限制文件上传数量 0=不限制
         "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
         "limit_file_size":"20"//限制文件大小
@@ -174,7 +174,7 @@ const recordItemobjs = {
       "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-      "forms_data":[
+      "form_data":[
         {
           "field_type":"1",//字段类型 1=输入框
           "property_name":"输入框",//属性名称(标题)

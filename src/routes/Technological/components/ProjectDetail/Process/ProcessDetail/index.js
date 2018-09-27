@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Icon } from 'antd'
-import ConfirmInfoTwo from '../ProcessStartConfirm/ConfirmInfoTwo'
+import DetailConfirmInfoTwo from './DetailConfirmInfoTwo'
 
 import sssimg from '../../../../../../assets/yay.jpg'
 
@@ -158,10 +158,10 @@ export default class ProcessDetail extends React.Component {
                  步骤详情
               </div>
               <div className={indexStyles.processPointItem}>
-                <ConfirmInfoTwo />
+                <DetailConfirmInfoTwo />
               </div>
               <div className={indexStyles.processPointItem}>
-                <ConfirmInfoTwo />
+                <DetailConfirmInfoTwo />
               </div>
             </div>
           </div>

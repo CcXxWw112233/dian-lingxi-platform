@@ -10,5 +10,5 @@ export function handleErrorResponse(data) {
 }
 //判断是否返回正常
 export const isApiResponseOk = (response) => {
-  return response && response.code === INT_REQUEST_OK
+  return response && Number(response.code) === INT_REQUEST_OK
 }

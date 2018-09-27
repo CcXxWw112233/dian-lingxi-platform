@@ -89,7 +89,7 @@ export default class ConfirmInfoFour extends React.Component {
                       <div style={{display: 'flex'}}>
                         {excutors.map((value, key)=>{
                           if (key < 6)
-                            return(imgOrAvatar())
+                            return(<div key={key}>{imgOrAvatar()}</div>)
                         })}
                         {excutors.length >6?(<span style={{color: '#595959'}}>{`等${excutors.length}人`}</span>): ('') }
                       </div>
@@ -119,7 +119,7 @@ export default class ConfirmInfoFour extends React.Component {
                  </div>
                  <div className={indexStyles.imglist}>
                    {[1,2,3].map((value, key) => {
-                     return(imgOrAvatar2('ss'))
+                     return(<div key={key}>{imgOrAvatar2()}</div>)
                    })}
                  </div>
               </div>

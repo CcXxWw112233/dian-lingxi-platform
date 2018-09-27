@@ -33,11 +33,17 @@ class SaveTemplate extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        values['board_id'] = this.props.board_id
+        const { datas: { projectDetailInfoData = {}, processEditDatas } } = this.props.model
+        const { board_id } = projectDetailInfoData
+        values['board_id'] = board_id
+        values['is_retain'] = '1'
+        values['node_data'] = JSON.stringify(processEditDatas)
+        values['template_no'] = ''
+        values['type'] = '1'
+        // console.log(values)
         this.props.setSaveTemplateModalVisible()
-
         //发送请求
-        this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
+        this.props.saveProcessTemplate ? this.props.saveProcessTemplate(values) : false
       }
     });
   }
@@ -64,7 +70,7 @@ class SaveTemplate extends React.Component {
           })(
             <TextArea style={{height: 208, resize:'none'}}
                       onChange={this.descriptionChange.bind(this)}
-                      placeholder="模板描述（选填）" maxlength={300}/>
+                      placeholder="模板描述（选填）" maxLength={300}/>
           )}
         </FormItem>
         {/* 确认 */}

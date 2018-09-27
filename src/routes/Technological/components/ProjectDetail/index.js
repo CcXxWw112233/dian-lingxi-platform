@@ -285,6 +285,24 @@ const ProjectDetail = (props) => {
   const ProcessProps = {
     modal,
     model,
+    getProcessTemplateList(data){
+      dispatch({
+        type: getEffectOrReducerByName('saveProcessTemplate'),
+        payload: data
+      })
+    },
+    saveProcessTemplate(data){
+      dispatch({
+        type: getEffectOrReducerByName('saveProcessTemplate'),
+        payload: data
+      })
+    },
+    getTemplateInfo(id) {
+      dispatch({
+        type: getEffectOrReducerByName('getTemplateInfo'),
+        payload: id
+      })
+    }
   }
 
   const routingJump = (path) => {
@@ -305,13 +323,13 @@ const ProjectDetail = (props) => {
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
-      case 2:
+      case '2':
         appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
-            break
-      case 3:
+        break
+      case '3':
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
         break
-      case 4:
+      case '4':
         appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
       default:
         break

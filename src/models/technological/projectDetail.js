@@ -12,6 +12,7 @@ import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileU
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo } from '../../services/technological/process'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -71,6 +72,7 @@ export default {
                 "description":"",
                 "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
                 "deadline_value":"1",//完成期限值
+                "is_workday":"0",
                 "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
                 "assignees":"",//推进人(id) 多个逗号隔开
                 "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
@@ -106,7 +108,7 @@ export default {
                     "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
                     "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
                     "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-                    "requires_data":{
+                    "require_data":{
                       "limit_file_num":"0",//限制文件上传数量 0=不限制
                       "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
                       "limit_file_size":"20"//限制文件大小
@@ -124,7 +126,7 @@ export default {
                     "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
                     "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
                     "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-                    "forms_data":[
+                    "form_data":[
                       {
                         "field_type":"1",//字段类型 1=输入框
                         "property_name":"输入框",//属性名称(标题)
@@ -182,7 +184,8 @@ export default {
                   },
                 ]
               },
-            ] //每一步的每一个类型，记录，数组的全部数据step * type
+            ] ,//每一步的每一个类型，记录，数组的全部数据step * type
+            processTemplateList: [], //流程模板列表
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -217,7 +220,7 @@ export default {
           }
         })
         if(result.data.app_data[0] ) {
-          if( result.data.app_data[0].key === 3) { //任务
+          if( result.data.app_data[0].key === '3') { //任务
             yield put({
               type: 'getProjectGoupList'
             })
@@ -229,7 +232,7 @@ export default {
                 arrange_type: '1'
               }
             })
-          }else if(result.data.app_data[0].key === 4){ //文档
+          }else if(result.data.app_data[0].key === '4'){ //文档
             yield put({
               type: 'getFileList',
               payload: {
@@ -242,8 +245,13 @@ export default {
                 board_id: board_id
               }
             })
-          }else {
-
+          }else if(result.data.app_data[0].key === '2') {
+            yield put({
+              type: 'getProcessTemplateList',
+              payload: {
+                board_id: board_id
+              }
+            })
           }
         }
 
@@ -273,7 +281,7 @@ export default {
         return false
       }
 
-      if( appsSelectKey === 3) { //任务
+      if( appsSelectKey === '3') { //任务
         yield put({
           type: 'getProjectGoupList'
         })
@@ -285,9 +293,9 @@ export default {
             arrange_type: '1'
           }
         })
-      }else if(appsSelectKey === 2){ //流程
+      }else if(appsSelectKey === '2'){ //流程
 
-      }else if(appsSelectKey === 4) { //文档
+      }else if(appsSelectKey === '4') { //文档
         const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
         yield put({
           type: 'getFileList',
@@ -305,6 +313,48 @@ export default {
 
 
 
+    },
+
+    //流程
+    * getProcessTemplateList({ payload }, { select, call, put }) {
+      let res = yield call(getProcessTemplateList, payload)
+      if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload:{
+              processTemplateList: res.data || []
+            }
+          })
+      }else{
+
+      }
+    },
+    * saveProcessTemplate({ payload }, { select, call, put }) {
+      let res = yield call(saveProcessTemplate, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessTemplateList',
+          payload: {
+            board_id: board_id
+          }
+        })
+        message.success('模板保存成功', MESSAGE_DURATION_TIME)
+      }else{
+
+      }
+    },
+    * getTemplateInfo({ payload }, { select, call, put }) {
+      let res = yield call(getTemplateInfo, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processEditDatas: res.data.nodes
+          }
+        })
+      }else{
+
+      }
     },
 
     //文档----------start

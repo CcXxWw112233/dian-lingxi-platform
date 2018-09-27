@@ -1,12 +1,12 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Card, Input, Icon, DatePicker, Dropdown, Button } from 'antd'
-import MenuSearchMultiple  from './MenuSearchMultiple'
+import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 
 const { RangePicker } = DatePicker;
 
 //里程碑确认信息
-export default class ConfirmInfoFive extends React.Component {
+export default class DetailConfirmInfoFour extends React.Component {
   state = {
     due_time: '',
     excutors: [1,2,3,4,5,6,7],
@@ -33,14 +33,14 @@ export default class ConfirmInfoFive extends React.Component {
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
     if (typeof window.getComputedStyle == "undefined") return;
-    const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
-    element.style.height = "auto";
-    const targetHeight = window.getComputedStyle(element).height;
-    element.style.height = height;
-    element.offsetWidth;
-    if (time) element.style.transition = "height "+ time +"ms";
-    element.style.height = type ? targetHeight : 0;
+      const height = window.getComputedStyle(element).height;
+      element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+      element.style.height = "auto";
+      const targetHeight = window.getComputedStyle(element).height;
+      element.style.height = height;
+      element.offsetWidth;
+      if (time) element.style.transition = "height "+ time +"ms";
+      element.style.height = type ? targetHeight : 0;
   };
 
   render() {
@@ -60,28 +60,17 @@ export default class ConfirmInfoFive extends React.Component {
 
     const imgOrAvatar2 = (img) => {
       return  img ? (
-        <div style={{display: 'flex',alignItems: 'center'}}>
-          <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
-            <img src={img} style={{width: 26, height: 26,borderRadius: 22, }} />
-            <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
-          </div>
-          <div>
-            <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-          </div>
+        <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
+          <img src={img} style={{width: 26, height: 26,borderRadius: 22, }} />
+          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
         </div>
       ):(
-        <div style={{display: 'flex',alignItems: 'center'}}>
-          <div style={{lineHeight: '26px',height:26,width: 26,borderRadius:22,backgroundColor:'#e8e8e8',marginRight:10,textAlign: 'center',marginTop: 2,position: 'relative'}}>
-            <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
-            <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
-          </div>
-          <div>
-            <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-          </div>
+        <div style={{lineHeight: '26px',height:26,width: 26,borderRadius:22,backgroundColor:'#e8e8e8',marginRight:10,textAlign: 'center',marginTop: 2,position: 'relative'}}>
+          <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
+          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
         </div>
       )
     }
-
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
@@ -89,21 +78,21 @@ export default class ConfirmInfoFive extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>1</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
-                <div>这是审批</div>
-                <div>审批</div>
+                <div>这是抄送</div>
+                <div>抄送</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               <div>
                 <Dropdown overlay={<MenuSearchMultiple excutors={excutors} execusorList={data} setExcutors={this.setExcutors.bind(this)} />}>
                   {excutors.length? (
-                    <div style={{display: 'flex'}}>
-                      {excutors.map((value, key)=>{
-                        if (key < 6)
-                          return(<div key={key}>{imgOrAvatar()}</div>)
-                      })}
-                      {excutors.length >6?(<span style={{color: '#595959'}}>{`等${excutors.length}人`}</span>): ('') }
-                    </div>
+                      <div style={{display: 'flex'}}>
+                        {excutors.map((value, key)=>{
+                          if (key < 6)
+                            return(<div key={key}>{imgOrAvatar()}</div>)
+                        })}
+                        {excutors.length >6?(<span style={{color: '#595959'}}>{`等${excutors.length}人`}</span>): ('') }
+                      </div>
                   ) : (<span>设置负责人</span>)}
                 </Dropdown>
 
@@ -125,20 +114,19 @@ export default class ConfirmInfoFive extends React.Component {
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>这是节点步骤的描述内容，流程启动后不可编辑。借此顺便说明一下：步骤卡片默认会展开正在进行中的几点，可以手动收起可展开搜索节点进行内容查看。font-size:12px; line-height:20px;</div>
 
               <div className={indexStyles.copy}>
-                <div className={indexStyles.title}>
-                  审批人:汇签 > 50%
-                </div>
-                <div className={indexStyles.imglist}>
-                  {[1,2,3].map((value, key) => {
-                    return(<div key={key}>{imgOrAvatar2()}</div>)
-                  })}
-                </div>
+                 <div className={indexStyles.title}>
+                   抄送对象:
+                 </div>
+                 <div className={indexStyles.imglist}>
+                   {[1,2,3].map((value, key) => {
+                     return(<div key={key}>{imgOrAvatar2()}</div>)
+                   })}
+                 </div>
               </div>
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                <div>转办该审批</div>
-                <Button style={{marginRight: 14}}>拒绝</Button>
-                <Button >通过</Button>
+                <div>重新指派推进人</div>
+                <Button type={'primary'}>完成</Button>
               </div>
             </div>
           </div>

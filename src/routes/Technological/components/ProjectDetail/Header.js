@@ -308,7 +308,7 @@ export default class Header extends React.Component {
     const appsOperator = (appsSelectKey) => {  //右方操作图标
       let operatorConent = ''
       switch (appsSelectKey) {
-        case 2:
+        case '2':
           operatorConent = (
             <div  style={{color:'#595959'}}>
               <Dropdown overlay={<MenuSearch />}>
@@ -318,7 +318,7 @@ export default class Header extends React.Component {
             </div>
           )
           break
-        case 3:
+        case '3':
           operatorConent = (
             <div>
               <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
@@ -326,7 +326,7 @@ export default class Header extends React.Component {
             </div>
           )
           break
-        case 4:
+        case '4':
           if(selectedRowKeys.length) { //选择文件会改变
             operatorConent = (
               <div style={{display: 'flex',alignItems: 'center',color: '#595959' }} className={indexStyle.fileOperator}>

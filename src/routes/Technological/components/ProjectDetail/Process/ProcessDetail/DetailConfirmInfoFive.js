@@ -1,12 +1,12 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Card, Input, Icon, DatePicker, Dropdown, Button } from 'antd'
-import MenuSearchMultiple  from './MenuSearchMultiple'
+import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 
 const { RangePicker } = DatePicker;
 
 //里程碑确认信息
-export default class ConfirmInfoFive extends React.Component {
+export default class DetailConfirmInfoFive extends React.Component {
   state = {
     due_time: '',
     excutors: [1,2,3,4,5,6,7],
