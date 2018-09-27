@@ -83,7 +83,7 @@ export default class EditFormFour extends React.Component {
   //删除
   deleteProcessStep(){
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
-    if(!processEditDatas.length || !processEditDatasRecords.length) {
+    if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
     if(processEditDatasRecords.length) {
@@ -95,7 +95,7 @@ export default class EditFormFour extends React.Component {
     this.props.updateDatas({
       processEditDatasRecords,
       processEditDatas,
-      processCurrentEditStep: processCurrentEditStep - 1
+      processCurrentEditStep: processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0
     })
   }
 

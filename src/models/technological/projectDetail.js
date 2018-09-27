@@ -61,22 +61,9 @@ export default {
             // filePreviewCurrentVersionKey: 0, //预览文件选中的key
 
             //流程
-
+            processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面
             node_type: '1', //节点类型
             processCurrentEditStep: 0, //编辑第几步，默认 0
-            processCurrentEditData: {
-              "name":"编辑节点名称",//节点名称
-              "node_type":"1",//节点类型：1代表里程碑节点
-              "description":"",
-              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-              "deadline_value":"3",//完成期限值
-              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
-              "assignees":"",//审批人(id) 多个逗号隔开
-              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
-              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
-              "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
-            },
-
             processEditDatas: [
               {
                 "name":"编辑节点名称",//节点名称
@@ -90,7 +77,6 @@ export default {
                 "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
                 "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
               },
-
             ], //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
             processEditDatasRecords: [
               { 'node_type': '1',

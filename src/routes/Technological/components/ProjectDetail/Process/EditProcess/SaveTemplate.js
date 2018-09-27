@@ -26,9 +26,7 @@ class SaveTemplate extends React.Component {
     })
   }
   onCancel = () => {
-    this.props.updateDatas({
-      SaveTemplateModalVisible: false
-    })
+    this.props.setSaveTemplateModalVisible()
   }
   // 提交表单
   handleSubmit = (e) => {
@@ -36,16 +34,15 @@ class SaveTemplate extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_id'] = this.props.board_id
-        this.props.updateDatas({
-          SaveTemplateModalVisible: false
-        })
+        this.props.setSaveTemplateModalVisible()
+
+        //发送请求
         this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
       }
     });
   }
   render() {
-    const { datas :{SaveTemplateModalVisible } } = this.props.model;
-    // const { SaveTemplateModalVisible } = datas
+    const { saveTemplateModalVisible } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { stepContinueDisabled } = this.state
 
@@ -54,25 +51,25 @@ class SaveTemplate extends React.Component {
         <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>保存为模板</div>
         <FormItem style={{width: 336}}>
           {getFieldDecorator('name', {
-            rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+            rules: [{ required: false, message: '', whitespace: true }],
           })(
-            <Input  placeholder={'输入模板名称'} style={{height: 40}} onChange={this.nameChange.bind(this)}/>
+            <Input  placeholder={'输入模板名称'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50}/>
           )}
         </FormItem>
 
         {/* 描述 */}
         <FormItem style={{width: 336}}>
-          {getFieldDecorator('othersInfo', {
+          {getFieldDecorator('description', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
             <TextArea style={{height: 208, resize:'none'}}
                       onChange={this.descriptionChange.bind(this)}
-                      placeholder="模板描述（选填）"/>
+                      placeholder="模板描述（选填）" maxlength={300}/>
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>发送邀请</Button>
+          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>保存</Button>
         </FormItem>
       </Form>
     )
@@ -80,10 +77,11 @@ class SaveTemplate extends React.Component {
     return(
       <div>
         <Modal
-          visible={SaveTemplateModalVisible} //SaveTemplateModalVisible
+          visible={saveTemplateModalVisible} //saveTemplateModalVisible
           width={472}
           zIndex={1006}
           footer={null}
+          maskClosable={false}
           destroyOnClose
           style={{textAlign:'center'}}
           onCancel={this.onCancel}

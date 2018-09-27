@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Input } from 'antd'
+import { Card, Input, Button } from 'antd'
 import BraftEditor from 'braft-editor'
 import ConfirmInfoOne from './ConfirmInfoOne'
 import ConfirmInfoTwo from './ConfirmInfoTwo'
@@ -12,6 +12,11 @@ import indexStyles from './index.less'
 export default class ProcessStartConfirm extends React.Component {
   state = {
 
+  }
+  startProcess() {
+    this.props.updateDatas({
+      processPageFlagStep: '4',
+    })
   }
   render() {
     const editorProps = {
@@ -48,6 +53,9 @@ export default class ProcessStartConfirm extends React.Component {
             {/*<ConfirmInfoOne {...this.props}/>*/}
             <ConfirmInfoTwo {...this.props}/>
             <ConfirmInfoThree {...this.props}/>
+          </div>
+          <div style={{textAlign: 'center',marginTop: 40}} onClick={this.startProcess.bind(this)}>
+            <Button style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'}>开始流程</Button>
           </div>
         </Card>
       </div>

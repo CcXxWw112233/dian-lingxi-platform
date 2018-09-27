@@ -15,8 +15,6 @@ export default class EditFormTwo extends React.Component {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
     processEditDatas[processCurrentEditStep][key] = value
 
-    let aa = Object.assign({},processEditDatasRecords[processCurrentEditStep+1] )
-
     //更新processEditDatasRecords操作解构赋值避免操作污染
     const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     let newAlltypedata = [...alltypedata]
@@ -24,9 +22,7 @@ export default class EditFormTwo extends React.Component {
     for (let i = 0; i < newAlltypedata.length; i++ ) {
       if(newAlltypedata[i]['node_type'] === '2') {
         obj = {...newAlltypedata[i]}
-        console.log(obj)
         obj[key] = value
-        console.log(obj)
         newAlltypedata[i] = obj
       }
     }
@@ -90,7 +86,7 @@ export default class EditFormTwo extends React.Component {
   //删除
   deleteProcessStep(){
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
-    if(!processEditDatas.length || !processEditDatasRecords.length) {
+    if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
     if(processEditDatasRecords.length) {
@@ -102,14 +98,13 @@ export default class EditFormTwo extends React.Component {
     this.props.updateDatas({
       processEditDatasRecords,
       processEditDatas,
-      processCurrentEditStep: processCurrentEditStep - 1
+      processCurrentEditStep: processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0
     })
   }
   limitFileNumChange(value) {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { requires_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = requires_data
-    console.log(limit_file_num)
     let obj = {
       limit_file_num:  value.toString(),
       limit_file_type,
@@ -118,12 +113,36 @@ export default class EditFormTwo extends React.Component {
     this.updateEdit({value: obj }, 'requires_data')
 
   }
+  limitFileSizeChange(value) {
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
+    const { requires_data } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    console.log(limit_file_num)
+    let obj = {
+      limit_file_num,
+      limit_file_type,
+      limit_file_size: value.toString(),
+    }
+    this.updateEdit({value: obj }, 'requires_data')
+  }
+  limitFileTypeChange(values) {
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
+    const { requires_data } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    let obj = {
+      limit_file_num,
+      limit_file_type: values.join(','),
+      limit_file_size,
+    }
+    this.updateEdit({value: obj }, 'requires_data')
+  }
+
   render() {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
     const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, requires_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = requires_data
 
-
+    const limit_file_type_default = limit_file_type.split(',')
     //推进人一项
     const users = projectDetailInfoData.data
     let suggestions = []
@@ -177,7 +196,7 @@ export default class EditFormTwo extends React.Component {
               </div>
               <div style={{color: '#262626'}}>
                 限制文件格式为&nbsp;&nbsp;
-                <Checkbox.Group style={{color: '#262626',marginTop: 14}}>
+                <Checkbox.Group defaultValue={limit_file_type_default} onChange={this.limitFileTypeChange.bind(this)} style={{color: '#262626',marginTop: 14}}>
                   <Checkbox value="1" style={{color: '#262626'}}>文档</Checkbox>
                   <Checkbox value="2" style={{color: '#262626'}}>图像</Checkbox>
                   <Checkbox value="3" style={{color: '#262626'}}>音频</Checkbox>
@@ -185,7 +204,7 @@ export default class EditFormTwo extends React.Component {
                 </Checkbox.Group>
               </div>
               <div style={{color: '#262626',marginTop: 14}}>
-                限制文件大小为&nbsp;&nbsp;<InputNumber style={{width: 70}} defaultValue={0} min={0} max={UPLOAD_PROCESS_FILE_SIZE} />&nbsp;&nbsp;MB<span style={{color: '#8c8c8c'}}>（最大为{UPLOAD_PROCESS_FILE_SIZE}MB）</span>
+                限制文件大小为&nbsp;&nbsp;<InputNumber value={Number(limit_file_size)}  onChange={this.limitFileSizeChange.bind(this)} style={{width: 70}} defaultValue={0} min={0} max={UPLOAD_PROCESS_FILE_SIZE} />&nbsp;&nbsp;MB<span style={{color: '#8c8c8c'}}>（最大为{UPLOAD_PROCESS_FILE_SIZE}MB）</span>
               </div>
             </div>
           </div>

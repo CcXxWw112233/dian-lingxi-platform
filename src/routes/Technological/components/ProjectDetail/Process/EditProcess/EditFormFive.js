@@ -83,7 +83,7 @@ export default class EditFormFive extends React.Component {
   //删除
   deleteProcessStep(){
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
-    if(!processEditDatas.length || !processEditDatasRecords.length) {
+    if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
     if(processEditDatasRecords.length) {
@@ -95,13 +95,19 @@ export default class EditFormFive extends React.Component {
     this.props.updateDatas({
       processEditDatasRecords,
       processEditDatas,
-      processCurrentEditStep: processCurrentEditStep - 1
+      processCurrentEditStep: processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0
     })
   }
 
+  approveTypeChange(e) {
+    this.updateEdit({value: e.target.value}, 'approve_type')
+  }
+  approveValueChange(value) {
+    this.updateEdit({value: value.toString()}, 'approve_value')
+  }
   render() {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
-    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion } = processEditDatas[processCurrentEditStep]
+    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion,approve_value, approve_type } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
     let suggestions = []
@@ -150,17 +156,17 @@ export default class EditFormFive extends React.Component {
               <span style={{fontSize: 12, color: '#8c8c8c'}}>针对多审批人时<br/>的通过标准设定</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <RadioGroup>
-                <Radio value={1}>串签</Radio>
+              <RadioGroup onChange={this.approveTypeChange.bind(this)} value={approve_type}>
+                <Radio value={'1'}>串签</Radio>
                 <Tooltip title="依照审批人设置顺序推进审批。">
                   <span style={{cursor:'pointer',marginTop:0,marginLeft:-8,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
                 </Tooltip>
-                <Radio value={2}>并签</Radio>
+                <Radio value={'2'}>并签</Radio>
                 <Tooltip title="所有审批人同时开展审批。">
                   <span style={{cursor:'pointer',marginTop:0,marginLeft:-8,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
                 </Tooltip>
-                <Radio value={3}>汇签</Radio>
-                <Input  style={{width:60}}/>  &nbsp; %  通过
+                <Radio value={'3'}>汇签</Radio>
+                <InputNumber  min={0} max={100} value={Number(approve_value)}  onChange={this.approveValueChange.bind(this)}  style={{width:60}}/>  &nbsp; %  通过
                 <Tooltip title="审批过程不公开其他审批人的意见，通过率达到设定的标准后触发流转，随后再公开所有审批意见。">
                   <span style={{cursor:'pointer',marginTop:0,marginLeft:6,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
                 </Tooltip>

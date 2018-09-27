@@ -86,7 +86,7 @@ export default class EditFormOne extends React.Component {
   //删除
   deleteProcessStep(){
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
-    if(!processEditDatas.length || !processEditDatasRecords.length) {
+    if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
     if(processEditDatasRecords.length) {
@@ -98,7 +98,7 @@ export default class EditFormOne extends React.Component {
     this.props.updateDatas({
       processEditDatasRecords,
       processEditDatas,
-      processCurrentEditStep: processCurrentEditStep - 1
+      processCurrentEditStep: processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0
     })
   }
 
@@ -113,6 +113,14 @@ export default class EditFormOne extends React.Component {
     }
     let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
+
+    // let obj = {}
+    // const arr1 = [{a:1,b:2},{a:11, b:22}]
+    // const arr2 = [{a:3,b:4},{a:33, b:44}]
+    // obj = arr1[0]
+    // obj=arr2[0]
+    // console.log(arr1)
+    // console.log(arr2)
 
     return (
       <div className={indexStyles.editFormOut}>

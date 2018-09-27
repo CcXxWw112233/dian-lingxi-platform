@@ -8,6 +8,11 @@ export default class WelcomProcess extends React.Component {
   handleMenuReallyClick = (data) => {
     this.props.chirldrenTaskChargeChange(data)
   }
+  startEdit() {
+    this.props.updateDatas({
+      processPageFlagStep: '2'
+    })
+  }
   render() {
 
     const MenuSearch = ({ menuSortList = [] }) => {
@@ -72,7 +77,7 @@ export default class WelcomProcess extends React.Component {
               <div></div>
               <div>按需选择是否保存为模板便于后续管理同类事情；</div>
             </div>
-            <Button type={'primary'} style={{width: 190,marginTop: 20}}>引导我开始创建新的流程</Button>
+            <Button type={'primary'} style={{width: 190,marginTop: 20}} onClick={this.startEdit.bind(this)}>引导我开始创建新的流程</Button>
           </div>
         </div>
       </div>
