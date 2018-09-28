@@ -10,28 +10,28 @@ import ConfirmInfoFive from './ConfirmInfoFive'
 import indexStyles from './index.less'
 
 export default class ProcessStartConfirm extends React.Component {
-  state = {
-    stepContinueDisabled: true,
-  }
 
   nameChange(e) {
     const value = e.target.value
-    let flag = true
-    if(value) {
-      flag = false
-    }
-    this.setState({
-      stepContinueDisabled: flag
+    const { datas: { templateInfo = {} } } = this.props.model
+    templateInfo['name'] = value
+    this.props.updateDatas({
+      templateInfo
     })
   }
 
   startProcess() {
-    this.props.updateDatas({
-      processPageFlagStep: '4',
+    const { datas: { processEditDatas, templateInfo = {}  } } = this.props.model
+    const { name, description, id } = templateInfo
+    this.props.createProcess({
+      description,
+      name,
+      nodes: JSON.stringify(processEditDatas),
+      template_id: id,
     })
   }
   render() {
-    const { stepContinueDisabled } = this.state
+    const that = this
     const { datas: { processEditDatas = [], templateInfo = {} } } = this.props.model
     const { name, description } = templateInfo
 
@@ -40,9 +40,9 @@ export default class ProcessStartConfirm extends React.Component {
       contentFormat: 'html',
       initialContent: description,
       onHTMLChange:(e) => {
-        // const { datas:{ drawContent = {} } } = this.props.model
-        // drawContent['description'] = e
-        // this.props.updateDatas({drawContent})
+        const { datas:{ templateInfo = {} } } = this.props.model
+        templateInfo['description'] = e
+        this.props.updateDatas({templateInfo})
       },
       fontSizes: [14],
       controls: [
@@ -97,7 +97,7 @@ export default class ProcessStartConfirm extends React.Component {
             })}
           </div>
           <div style={{textAlign: 'center',marginTop: 40}} onClick={this.startProcess.bind(this)}>
-            <Button disabled={stepContinueDisabled} style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'}>开始流程</Button>
+            <Button disabled={!!!name} style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'}>开始流程</Button>
           </div>
         </Card>
       </div>

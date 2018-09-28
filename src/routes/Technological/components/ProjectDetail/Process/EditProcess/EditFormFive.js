@@ -66,7 +66,7 @@ export default class EditFormFive extends React.Component {
   mentionOnChange(contentState){
     const str = toString(contentState)
     const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
-    this.updateEdit({value: str}, 'assignees')
+    this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型
   transferModeChange(e) {
@@ -198,7 +198,7 @@ export default class EditFormFive extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.assigneeTypeChange.bind(this)} value={assignee_type} >
-                <Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>
+                {/*<Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>*/}
                 <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>

@@ -62,11 +62,19 @@ export default class EditFormFour extends React.Component {
   assigneeTypeChange(e) {
     this.updateEdit({value: e.target.value}, 'assignee_type')
   }
+  ccTypeChange(e) {
+    this.updateEdit({value: e.target.value}, 'cc_type')
+  }
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
     const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
-    this.updateEdit({value: str}, 'assignees')
+    this.updateEdit({value: newStr}, 'assignees')
+  }
+  mentionOnChange2(contentState){
+    const str = toString(contentState)
+    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    this.updateEdit({value: newStr}, 'recipients')
   }
   //流转类型
   transferModeChange(e) {
@@ -101,7 +109,7 @@ export default class EditFormFour extends React.Component {
 
   render() {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
-    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion } = processEditDatas[processCurrentEditStep]
+    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, cc_type, recipients } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
     let suggestions = []
@@ -109,7 +117,12 @@ export default class EditFormFour extends React.Component {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
     let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
-    // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
+    //抄送人
+    let suggestions2 = []
+    for(let i = 0; i < users.length; i++) {
+      suggestions2.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    let defaultRecipients = recipients ? `${recipients.replace(/,/gim,'@ ')}` : ''
 
     return (
       <div className={indexStyles.editFormOut}>
@@ -163,12 +176,12 @@ export default class EditFormFour extends React.Component {
           {/*推进人*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span>抄送人</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>支持系统内成员与电子邮件地址</span>
+              <span>推进人</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.assigneeTypeChange.bind(this)} value={assignee_type} >
-                {/*<Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>*/}
+                <Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>
                 <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
@@ -179,6 +192,29 @@ export default class EditFormFour extends React.Component {
                   onChange={this.mentionOnChange.bind(this)}
                   defaultValue={toContentState(defaultAssignees)}
                   suggestions={suggestions}
+                />
+              </div>
+            </div>
+          </div>
+          {/*抄送人*/}
+          <div className={indexStyles.editBottItem}>
+            <div className={indexStyles.editBottItem_left}>
+              <span>抄送人</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>支持系统内成员与电子邮件地址</span>
+            </div>
+            <div className={indexStyles.editBottItem_right}>
+              <RadioGroup onChange={this.ccTypeChange.bind(this)} value={cc_type} >
+                {/*<Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>*/}
+                <Radio className={indexStyles.ratio}value={'1'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio} value={'2'}>固定人选</Radio>
+              </RadioGroup>
+              <div>
+                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
+                <Mention
+                  style={{ width: '100%', height: 70 }}
+                  onChange={this.mentionOnChange2.bind(this)}
+                  defaultValue={toContentState(defaultRecipients)}
+                  suggestions={suggestions2}
                 />
               </div>
             </div>

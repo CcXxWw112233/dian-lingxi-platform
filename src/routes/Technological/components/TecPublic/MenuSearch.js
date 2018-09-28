@@ -3,45 +3,155 @@ import MenuSearchStyles from './MenuSearch.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
 
 const MenuSearch = (props) => {
-  const { menuSortList = [1,2,3] } = props
-  // const handleMenuIconDelete = ({key, user_id}) =>{
-  //   execusorList.splice(key,1)
-  //   props.setMenuSearchList && props.setMenuSearchList(user_id)
-  // }
-  const handleMenuReallyClick = (data) => {
-    props.chirldrenTaskChargeChange(data)
+  const {datas: { processList = []}} = props.model
+
+  const menuSelect = ({ item, key, selectedKeys }) => {
+    props.getProcessInfo(key)
+  }
+  const addProcess = () => {
+    props.updateDatas({
+      processInfo: {},
+      processPageFlagStep: '1',
+      node_type: '1', //节点类型
+      processCurrentEditStep: 0, //编辑第几步，默认 0
+      processEditDatas: [
+        {
+          "name":"编辑节点名称",//节点名称
+          "node_type":"1",//节点类型：1代表里程碑节点
+          "description":"",
+          "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+          "deadline_value":"1",//完成期限值
+          "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+          "assignees":"",//推进人(id) 多个逗号隔开
+          "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+          "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+          "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
+        },
+      ], //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+      processEditDatasRecords: [
+        { 'node_type': '1',
+          'alltypedata': [
+            {
+              "name":"编辑节点名称",//节点名称
+              "node_type":"1",//节点类型：1代表里程碑节点
+              "description":"",
+              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+              "deadline_value":"1",//完成期限值
+              "is_workday":"0",
+              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+              "assignees":"",//审批人(id) 多个逗号隔开
+              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+              "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
+            },
+            {
+              "name":"编辑节点名称",
+              "node_type":"2",//节点类型：2代表上传节点
+              "description":"",
+              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+              "deadline_value":"1",//完成期限值
+              "is_workday":"0",
+              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+              "assignees":"",//审批人(id) 多个逗号隔开
+              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+              "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
+              "requires_data":{
+                "limit_file_num":"0",//限制文件上传数量 0=不限制
+                "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
+                "limit_file_size":"20"//限制文件大小
+              }
+            },
+            {
+              "name":"编辑节点名称",
+              "node_type":"3",//节点类型：3代表填写节点
+              "description":"",
+              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+              "deadline_value":"1",//完成期限值
+              "is_workday":"0",
+              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+              "assignees":"",//审批人(id) 多个逗号隔开
+              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+              "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
+              "forms_data":[
+                {
+                  "field_type":"1",//字段类型 1=输入框
+                  "property_name":"输入框",//属性名称(标题)
+                  "default_value":"默认值",//默认值
+                  "verification_rule":"email",//校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
+                  "val_length":"20",//长度
+                  "is_required":"1"//是否必须 1=必须 0=不是必须
+                },
+                {
+                  "field_type":"2",//字段类型 2=日期选择
+                  "property_name":"日期选择",//属性名称(标题)
+                  "default_value":"默认值",//默认值
+                  "verification_rule":"SINGLE_DATE_TIME",//校验规则 单个+日期+时分 = SINGLE_DATE_TIME ,单个+日期 = SINGLE_DATE,多个+日期+时分 = MULTI_DATE_TIME ,多个+日期 = MULTI_DATE
+                  "is_required":"1"//是否必须 1=必须 0=不是必须
+                },
+                {
+                  "field_type":"3",//字段类型 3=下拉框
+                  "property_name":"下拉框",//属性名称(标题)
+                  "default_value":"默认值",//默认值(预设值)
+                  "verification_rule":"redio",//校验规则 redio = 单选， multiple = 多选 ，province = 省市区
+                  "is_required":"1",//是否必须 1=必须 0=不是必须
+                  "options_data":[
+                    "one","two"
+                  ]
+                }
+              ]
+            },
+            {
+              "name":"编辑节点名称",
+              "node_type":"4",//节点类型：4代表抄送节点
+              "description":"",
+              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+              "deadline_value":"1",//完成期限值
+              "is_workday":"0",
+              "assignee_type":"1",//抄送人类型 2=启动流程时指定 3=固定人选
+              "assignees":"",//抄送人 多个逗号隔开（传的是邮箱）
+              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+              "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
+            },
+            {
+              "name":"编辑节点名称",
+              "node_type":"5",//节点类型：5代表审批节点
+              "description":"",
+              "approve_type":"1",//审批模式 1=串签 2=并签 3=汇签
+              "approve_value":"",//汇签值 当approve_type=3 时该字段有效
+              "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+              "deadline_value":"1",//完成期限值
+              "is_workday":"0",
+              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+              "assignees":"",//审批人(id) 多个逗号隔开
+              "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+              "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
+              "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
+            },
+          ]
+        },
+      ] //每一步的每一个类型，记录，数组的全部数据step * type
+    })
   }
   return (
-    <div className={MenuSearchStyles.menuOneout}>
-      <div className={MenuSearchStyles.menuOne}>
-        <div style={{width: 160, height: 42, margin: '0 auto'}}>
-          <Input placeholder={'请输入'}  style={{width: 160, marginTop: 6}}/>
-        </div>
-        {menuSortList.map((value, key) => {
-          const { user_id, full_name, img } = value
-          return(
-            <div style={{position: 'relative'}} key={key}  >
-              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || '佚名', img })}}>
-                <div className={MenuSearchStyles.menuOneitemDiv} >
-                  {value.img?(
-                    <img src={value.img} className={MenuSearchStyles.avatar} />
-                  ):(
-                    <div style={{height:20,width: 20,borderRadius:20,backgroundColor:'#f2f2f2',textAlign: 'center'}}>
-                      <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c',marginLeft: 4, marginTop: 4,display: 'block'}}/>
-                    </div>
-                  )}
-                  <span >{value.full_name || '名称未设置'}</span>
-                </div>
-              </div>
-              {/*<Icon type="close-circle" style={{fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={()=>{handleMenuIconDelete({key,user_id: value.user_id})}}/>*/}
-            </div>
+    <Menu  style={{padding: 8}}  onSelect={menuSelect}>
+      <Input/>
+      {
+        processList.map((val, key) => {
+          const { name, id } = val
+          return (
+            <Menu.Item style={{height: 32,lineHeight: '32px'}} key={id}>
+              {name}
+            </Menu.Item>
           )
-        })}
-        <div style={{width: 160, height: 32,borderTop: '1px solid #f2f2f2', lineHeight:'32px', cursor: 'pointer', margin: '0 auto',textAlign: 'center'}}>
-          <Icon type={'plus'}/>
-        </div>
+        })
+      }
+      <div onClick={addProcess} style={{minWidth: 160, height: 32,borderTop: '1px solid #f2f2f2', lineHeight:'32px', cursor: 'pointer', margin: '0 auto',textAlign: 'center'}}>
+        <Icon type={'plus'}/>
       </div>
-    </div>
+    </Menu>
   )
 }
 

@@ -231,9 +231,10 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId }} = this.props.model
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}}} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
+    const processName = processInfo.name
     is_starinit = is_star
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
@@ -311,8 +312,8 @@ export default class Header extends React.Component {
         case '2':
           operatorConent = (
             <div  style={{color:'#595959'}}>
-              <Dropdown overlay={<MenuSearch />}>
-                 <span>请选择流程 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
+              <Dropdown overlay={<MenuSearch {...this.props}/>}>
+                 <span>{processName || '请选择流程 '}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
               </Dropdown>
               <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
             </div>

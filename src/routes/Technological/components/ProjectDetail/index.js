@@ -65,7 +65,14 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('appsSelect'),
         payload: data
       })
-    }
+    },
+    getProcessInfo(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProcessInfo'),
+        payload: data
+      })
+    },
+
   }
   const DetailInfoProps = {
     modal,
@@ -302,7 +309,38 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('getTemplateInfo'),
         payload: id
       })
-    }
+    },
+    directStartSaveTemplate(id) {
+      dispatch({
+        type: getEffectOrReducerByName('directStartSaveTemplate'),
+        payload: id
+      })
+    },
+    getProcessList(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProcessList'),
+        payload: data
+      })
+    },
+    createProcess(data){
+      dispatch({
+        type: getEffectOrReducerByName('createProcess'),
+        payload: data
+      })
+    },
+    completeProcessTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('completeProcessTask'),
+        payload: data
+      })
+    },
+    getProcessInfo(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProcessInfo'),
+        payload: data
+      })
+    },
+
   }
 
   const routingJump = (path) => {

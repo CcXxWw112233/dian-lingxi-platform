@@ -28,11 +28,53 @@ export async function getTemplateInfo(id) {
   });
 }
 
-//获取流程信息
-export async function getProcessDetailInfo(params) {
+//获取流程列表
+export async function getProcessList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/file`,
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow`,
     method: 'GET',
     params,
+  });
+}
+
+//创建流程
+export async function createProcess(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow`,
+    method: 'POST',
+    data,
+  });
+}
+
+//完成流程任务
+export async function completeProcessTask(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow`,
+    method: 'PUT',
+    data,
+  });
+}
+//获取流程信息
+export async function getProcessInfo(id) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/${id}`,
+    method: 'GET',
+  });
+}
+
+//表单设值并完成这个表单的任务
+export async function fillFormComplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/form`,
+    method: 'POST',
+    data,
+  });
+}
+//流程文件上传
+export async function processFileUpload(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/upload`,
+    method: 'POST',
+    data,
   });
 }

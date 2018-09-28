@@ -145,7 +145,7 @@ export default class EditProcess extends React.Component {
           "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
           "deadline_value":"1",//完成期限值
           "is_workday":"0",
-          "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+          "assignee_type":"2",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
           "assignees":"",//审批人(id) 多个逗号隔开
           "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
           "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
@@ -306,8 +306,14 @@ export default class EditProcess extends React.Component {
     })
   }
   directStart(){
-    this.props.updateDatas({
-      processPageFlagStep: '3',
+    const { datas: { projectDetailInfoData = {}, processEditDatas } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    this.props.directStartSaveTemplate({
+      board_id,
+      is_retain: '0',
+      node_data: JSON.stringify(processEditDatas),
+      type: '1',
+      template_no: '',
     })
   }
 

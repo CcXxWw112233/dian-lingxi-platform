@@ -2,6 +2,10 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Icon } from 'antd'
 import DetailConfirmInfoTwo from './DetailConfirmInfoTwo'
+import DetailConfirmInfoOne from './DetailConfirmInfoOne'
+import DetailConfirmInfoThree from './DetailConfirmInfoThree'
+import DetailConfirmInfoFour from './DetailConfirmInfoFour'
+import DetailConfirmInfoFive from './DetailConfirmInfoFive'
 
 import sssimg from '../../../../../../assets/yay.jpg'
 
@@ -19,6 +23,9 @@ export default class ProcessDetail extends React.Component {
     this.initCanvas()
   }
   initCanvas() {
+    const { datas: { processInfo = {} }} = this.props.model
+    const { nodes=[] } = processInfo
+
     const defaultProps = {
       canvaswidth: 210,// 画布宽度
       canvasheight: 210,// 画布高度
@@ -44,7 +51,7 @@ export default class ProcessDetail extends React.Component {
     let circle = ele.getContext("2d");
 
     //创建多个圆弧
-    const length = 6
+    const length = nodes.length
     for (let i = 0; i < length; i++) {
       circle.beginPath();//开始一个新的路径
       circle.save()
@@ -73,17 +80,40 @@ export default class ProcessDetail extends React.Component {
     circle.restore()
     circle.closePath()
 
-    const img = document.getElementById('node_img')
-    circle.drawImage(img,20,20);
+    // const img = document.getElementById('node_img')
+    // circle.drawImage(img,20,20);
   }
 
-
-
-
-
-
   render() {
-    const data = [1, 2, 3, 4,7,8,9,10]
+    const { datas: { processInfo = {} }} = this.props.model
+    const { name, description, nodes=[] } = processInfo
+    console.log('processInfo', processInfo)
+
+    const filterForm = (value, key) => {
+      const { node_type } = value
+      let container = (<div></div>)
+      switch (node_type) {
+        case '1':
+          container = (<DetailConfirmInfoOne {...this.props} itemKey={key} itemValue={value} />)
+          break;
+        case '2':
+          container = (<DetailConfirmInfoTwo {...this.props} itemKey={key} itemValue={value} />)
+          break;
+        case '3':
+          container = (<DetailConfirmInfoThree {...this.props} itemKey={key} itemValue={value} />)
+          break;
+        case '4':
+          container = (<DetailConfirmInfoFour {...this.props} itemKey={key} itemValue={value} />)
+          break;
+        case '5':
+          container = (<DetailConfirmInfoFive {...this.props} itemKey={key} itemValue={value} />)
+          break;
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
 
     return (
       <div className={indexStyles.processDetailOut_out} style={{minHeight: bodyHeight}}>
@@ -91,38 +121,36 @@ export default class ProcessDetail extends React.Component {
         <div className={indexStyles.topTitle}>
           <div className={indexStyles.topTitle_left}>
             <div></div>
-            <div>项目施工方招募确认</div>
+            <div>{name}</div>
           </div>
           <div className={indexStyles.topTitle_right}>
            <Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>
           </div>
         </div>
 
-        <div className={indexStyles.userJoin}>
-          {data.map((value, key) => {
-            const { avatar, email, full_name, mobile, user_id, user_name } = value
-            if(key < 7) {
-              return (
-                avatar? (
-                  <img src={avatar} key={key} className={indexStyles.taskManImag}></img>
-                ):(
-                  <div className={indexStyles.taskManImag} >
-                    <Icon type={'user'} style={{color: '#8c8c8c'}}/>
-                  </div>
-                )
-              )
-            }
-          })}
-          {data.length > 7? (
-            <div style={{display: 'flex',fontSize: 12}}>
-              <div className={indexStyles.manwrap} ><Icon type="ellipsis" style={{fontSize:18, marginTop: 2}}/></div>{data.length}位任务执行人
-            </div>
-          ) : ('')}
-        </div>
-
-        <div className={indexStyles.description}>
-          这是一段示例简介：项目负责人一定是公司执行合伙人，如项目来源于公司员工需要与公司执行合伙人共同负责项目发起，项目负责人一定是公司执行合伙人方能进入公司的业务流程。项目来源已合伙人身份进入公司业务流程，执行合伙人可以指定公司业务人进行发起初审项目申请，申请表发至公司每位执行合伙人每周例会或者其他会议上进行投票表决是否初步立项。
-        </div>
+        {/*<div className={indexStyles.userJoin}>*/}
+          {/*{data.map((value, key) => {*/}
+            {/*const { avatar, email, full_name, mobile, user_id, user_name } = value*/}
+            {/*if(key < 7) {*/}
+              {/*return (*/}
+                {/*avatar? (*/}
+                  {/*<img src={avatar} key={key} className={indexStyles.taskManImag}></img>*/}
+                {/*):(*/}
+                  {/*<div className={indexStyles.taskManImag} key={key}>*/}
+                    {/*<Icon type={'user'} style={{color: '#8c8c8c'}}/>*/}
+                  {/*</div>*/}
+                {/*)*/}
+              {/*)*/}
+            {/*}*/}
+          {/*})}*/}
+          {/*{data.length > 7? (*/}
+            {/*<div style={{display: 'flex',fontSize: 12}}>*/}
+              {/*<div className={indexStyles.manwrap} ><Icon type="ellipsis" style={{fontSize:18, marginTop: 2}}/></div>{data.length}位任务执行人*/}
+            {/*</div>*/}
+          {/*) : ('')}*/}
+        {/*</div>*/}
+          {/*描述*/}
+        <div className={indexStyles.description}  dangerouslySetInnerHTML = {{ __html:description }}></div>
 
         <div className={indexStyles.bottContainer}>
           <div className={indexStyles.bottContainer_left}>
@@ -133,12 +161,12 @@ export default class ProcessDetail extends React.Component {
               <img id="node_img" src={sssimg} style={{position: 'absolute',width: 20, height: 20,bottom: 0,left:95}}/>
             </div>
           </div>
-          <div className={indexStyles.bottContainer_right}>
+          <div className={indexStyles.bottContainer_right} >
             <div className={indexStyles.news}>
               <div className={indexStyles.newsTitle}>最新动态</div>
-              <div className={indexStyles.newsList}>
+              <div className={indexStyles.newsList} style={{display: 'none'}}>
                 {[1,2,2,3].map((value, key) => {
-                  return(<div className={indexStyles.newsItem}>
+                  return(<div className={indexStyles.newsItem} key={key}>
                     <div className={indexStyles.newsItem_left}>
                       <div className={indexStyles.newsItem_left_l}></div>
                       <div className={indexStyles.newsItem_left_r}>呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵</div>
@@ -157,16 +185,16 @@ export default class ProcessDetail extends React.Component {
               <div className={indexStyles.processPointTitle}>
                  步骤详情
               </div>
-              <div className={indexStyles.processPointItem}>
-                <DetailConfirmInfoTwo />
-              </div>
-              <div className={indexStyles.processPointItem}>
-                <DetailConfirmInfoTwo />
-              </div>
+              {nodes.map((value, key) => {
+                return (
+                  <div className={indexStyles.processPointItem} key={key}>
+                    {filterForm(value, key)}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
-
 
       </div>
       </div>

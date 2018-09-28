@@ -9,9 +9,6 @@ export default class WelcomProcess extends React.Component {
     const { key } = e
     const { datas: { processTemplateList = [] } } = this.props.model
     const { template_name, template_id, template_no } = processTemplateList[Number(key)]
-    this.props.updateDatas({
-      processPageFlagStep: '3'
-    })
     //此处为启动流程界面查询逻辑(查询模板信息)
     this.props.getTemplateInfo && this.props.getTemplateInfo(template_id)
   }

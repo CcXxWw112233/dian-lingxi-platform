@@ -12,7 +12,7 @@ import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileU
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo } from '../../services/technological/process'
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -70,6 +70,8 @@ export default {
             processEditDatasRecords:processEditDatasRecordsConstant ,//每一步的每一个类型，记录，数组的全部数据step * type
             processTemplateList: [], //流程模板列表
             templateInfo: {},  //所选择的流程模板的信息数据
+            processInfo: {},  //所选中的流程的信息
+            processList: [],   //流程列表
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -136,6 +138,14 @@ export default {
                 board_id: board_id
               }
             })
+            yield put({
+              type: 'getProcessList',
+              payload: {
+                board_id: board_id,
+                type: '1'
+              }
+            })
+
           }
         }
 
@@ -213,6 +223,7 @@ export default {
 
       }
     },
+    //保存流程模板
     * saveProcessTemplate({ payload }, { select, call, put }) {
       let res = yield call(saveProcessTemplate, payload)
       if(isApiResponseOk(res)) {
@@ -227,6 +238,18 @@ export default {
 
       }
     },
+    // 直接启动时保存模板但不保留，查询该模板，将数据保留用于启动流程
+    * directStartSaveTemplate({ payload }, { select, call, put }) {
+      let res = yield call(saveProcessTemplate, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getTemplateInfo',
+          payload: res.data.flow_template_id
+        })
+      }else{
+
+      }
+    },
     * getTemplateInfo({ payload }, { select, call, put }) {
       let res = yield call(getTemplateInfo, payload)
       if(isApiResponseOk(res)) {
@@ -234,7 +257,66 @@ export default {
           type: 'updateDatas',
           payload: {
             templateInfo: res.data,
-            processEditDatas: res.data.nodes
+            processEditDatas: res.data.nodes,
+            processPageFlagStep: '3'
+          }
+        })
+      }else{
+
+      }
+    },
+    * getProcessList({ payload }, { select, call, put }) {
+      let res = yield call(getProcessList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * createProcess({ payload }, { select, call, put }) {
+      const res = yield call(createProcess, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessList',
+          payload: {
+            board_id: board_id,
+            type: '1'
+          }
+        })
+        yield put({
+          type: 'getProcessInfo',
+          payload:  res.data.id
+        })
+      }else{
+        message.warn(res.message)
+      }
+    },
+    * getProcessInfo({ payload }, { select, call, put }) {
+      let res = yield call(getProcessInfo, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processInfo: res.data,
+            processPageFlagStep: '4'
+          }
+        })
+      }else{
+
+      }
+    },
+    * completeProcessTask({ payload }, { select, call, put }) {
+      let res = yield call(completeProcessTask, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+
           }
         })
       }else{
