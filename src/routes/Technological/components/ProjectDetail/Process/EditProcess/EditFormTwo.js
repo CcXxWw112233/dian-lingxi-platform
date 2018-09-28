@@ -103,46 +103,46 @@ export default class EditFormTwo extends React.Component {
   }
   limitFileNumChange(value) {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
-    const { requires_data } = processEditDatas[processCurrentEditStep]
-    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    const { require_data } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = require_data
     let obj = {
       limit_file_num:  value.toString(),
       limit_file_type,
       limit_file_size,
     }
-    this.updateEdit({value: obj }, 'requires_data')
+    this.updateEdit({value: obj }, 'require_data')
 
   }
   limitFileSizeChange(value) {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
-    const { requires_data } = processEditDatas[processCurrentEditStep]
-    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    const { require_data } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = require_data
     console.log(limit_file_num)
     let obj = {
       limit_file_num,
       limit_file_type,
       limit_file_size: value.toString(),
     }
-    this.updateEdit({value: obj }, 'requires_data')
+    this.updateEdit({value: obj }, 'require_data')
   }
   limitFileTypeChange(values) {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
-    const { requires_data } = processEditDatas[processCurrentEditStep]
-    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    const { require_data } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = require_data
     let obj = {
       limit_file_num,
       limit_file_type: values.join(','),
       limit_file_size,
     }
-    this.updateEdit({value: obj }, 'requires_data')
+    this.updateEdit({value: obj }, 'require_data')
   }
 
   render() {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
-    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, requires_data } = processEditDatas[processCurrentEditStep]
-    const { limit_file_num, limit_file_type, limit_file_size } = requires_data
+    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, require_data = {} } = processEditDatas[processCurrentEditStep]
+    const { limit_file_num, limit_file_type, limit_file_size } = require_data
 
-    const limit_file_type_default = limit_file_type.split(',')
+    const limit_file_type_default = limit_file_type?limit_file_type.split(','):[]
     //推进人一项
     const users = projectDetailInfoData.data
     let suggestions = []

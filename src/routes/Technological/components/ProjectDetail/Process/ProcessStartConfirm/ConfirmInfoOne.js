@@ -2,6 +2,7 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
 import MenuSearchMultiple  from './MenuSearchMultiple'
+import { timeToTimestamp } from '../../../../../../utils/util'
 
 const { RangePicker } = DatePicker;
 
@@ -15,6 +16,14 @@ export default class ConfirmInfoOne extends React.Component {
     this.setState({
       due_time:dateString
     })
+    console.log(timeToTimestamp(dateString))
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey  } = this.props
+    processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
+    this.props.updateDatas({
+      processEditDatas
+    })
+
   }
   setAssignees(data) {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
@@ -60,8 +69,7 @@ export default class ConfirmInfoOne extends React.Component {
     const { due_time, isShowBottDetail } = this.state
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey  } = this.props
-    const { name, description, assignees, assignee_type, deadline_type, deadline_value } = processEditDatas[itemKey]
-
+    const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday } = processEditDatas[itemKey]
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -70,7 +78,6 @@ export default class ConfirmInfoOne extends React.Component {
     }
     //推进人
     const assigneesArray = assignees ? assignees.split(',') : []
-
     const imgOrAvatar = (img) => {
       return  img ? (
         <div>
@@ -133,6 +140,33 @@ export default class ConfirmInfoOne extends React.Component {
       }
       return container
     }
+    const filterDueTime = (deadline_type) => {
+      let container = (<div></div>)
+      switch (deadline_type) {
+        case '1':
+          container = (<div style={{color: '#595959'}}>无限期</div>)
+          break
+        case '2':
+          container = (
+            <div style={{position: 'relative' }}>
+              {due_time || '设置截止时间'}
+              <DatePicker  onChange={this.datePickerChange.bind(this)}
+                           placeholder={'选择截止时间'}
+                           showTime
+                           format="YYYY-MM-DD HH:mm"
+                           style={{opacity: 0,height: 16, width: 70,background: '#000000',position: 'absolute',right: 0,zIndex:2,cursor:'pointer'}} />
+            </div>
+          )
+          break
+        case '3':
+          container = (<div style={{color: '#595959'}}>{`${is_workday === '0'? '固定': '工作日'}${deadline_value}天`}</div>)
+          break
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
@@ -147,14 +181,7 @@ export default class ConfirmInfoOne extends React.Component {
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
-              <div style={{position: 'relative', color: due_time? '#595959': '#1890FF' }}>
-                {due_time || '设置截止时间'}
-                <DatePicker  onChange={this.datePickerChange.bind(this)}
-                             placeholder={'选择截止时间'}
-                             showTime
-                             format="YYYY-MM-DD HH:mm"
-                             style={{opacity: 0,height: 16, width: 70,background: '#000000',position: 'absolute',right: 0,zIndex:2,cursor:'pointer'}} />
-              </div>
+              {filterDueTime(deadline_type)}
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
