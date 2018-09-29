@@ -47,6 +47,7 @@ export default {
             userInfo: res.data,
           }
         })
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

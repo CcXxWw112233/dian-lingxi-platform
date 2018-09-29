@@ -334,6 +334,18 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    rebackProcessTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('rebackProcessTask'),
+        payload: data
+      })
+    },
+    resetAsignees(data) {
+      dispatch({
+        type: getEffectOrReducerByName('resetAsignees'),
+        payload: data
+      })
+    },
     getProcessInfo(data){
       dispatch({
         type: getEffectOrReducerByName('getProcessInfo'),

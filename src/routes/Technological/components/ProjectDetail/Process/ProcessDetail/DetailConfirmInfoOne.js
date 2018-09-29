@@ -4,6 +4,7 @@ import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
+import Cookies from "js-cookie";
 
 const { RangePicker } = DatePicker;
 
@@ -18,7 +19,6 @@ export default class DetailConfirmInfoOne extends React.Component {
     this.setState({
       due_time:dateString
     })
-    console.log(timeToTimestamp(dateString))
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey  } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
@@ -27,24 +27,32 @@ export default class DetailConfirmInfoOne extends React.Component {
     })
 
   }
-  setAssignees(data) {
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+  setAssignees(data) { //替换掉当前操作人
+    const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey  } = this.props
-    //从项目详情拿到推进人
-    let assigneesArray = []
-    const users = projectDetailInfoData.data
-    for(let i = 0; i < users.length; i++) {
-      assigneesArray.push(users[i].user_id)
+    const { assignees = [] } = processEditDatas[itemKey]
+    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const currentUserId= userInfo.id //当前用户id, 用于替换
+    const users = projectDetailInfoData.data //项目参与人
+    //将当前用户替换成所选用户
+    let willSetAssignee = ''
+    for(let i = 0; i < assignees.length; i++) {
+      if(assignees[i].user_id === currentUserId) {
+        assignees[i] = users[data[0]]
+        willSetAssignee =  users[data[0]].user_id
+        break;
+      }
     }
-    //设置推进人
-    let willSetAssigneesArray = []
-    for(let i=0; i < data.length; i++) {
-      willSetAssigneesArray.push(assigneesArray[data[i]])
-    }
-    const str = willSetAssigneesArray.join(',')
-    processEditDatas[itemKey]['assignees'] = str
+
+    processEditDatas[itemKey]['assignees'] = assignees
     this.props.updateDatas({
       processEditDatas
+    })
+    //重新指派推进人接口
+    this.props.resetAsignees({
+      assignee: willSetAssignee,
+      flow_node_instance_id: processEditDatas[itemKey].id,
+      instance_id: processInfo.id,
     })
   }
   setIsShowBottDetail() {
@@ -67,8 +75,9 @@ export default class DetailConfirmInfoOne extends React.Component {
     element.style.height = type ? targetHeight : 0;
   };
 
-  setOpinionModalVisible() {
+  setOpinionModalVisible(operateType) {
     this.setState({
+      operateType, //1完成 0 撤回
       opinionModalVisible: !this.state.opinionModalVisible
     })
   }
@@ -76,9 +85,9 @@ export default class DetailConfirmInfoOne extends React.Component {
   render() {
     const { due_time, isShowBottDetail } = this.state
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
-    const { itemKey } = this.props //所属列表位置
+    const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort } = processEditDatas[itemKey]
+    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
     console.log( processEditDatas[itemKey])
     //推进人来源
     let usersArray = []
@@ -88,6 +97,17 @@ export default class DetailConfirmInfoOne extends React.Component {
     }
     //推进人
     const assigneesArray = assignees || []
+    //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
+    let currentUserCanOperate = false
+    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const currentUserId= userInfo.id //当前用户id, 用于替换
+    for(let i = 0; i <assignees.length; i++) {
+      if(assignees[i].user_id === currentUserId) {
+        currentUserCanOperate = true
+        break
+      }
+    }
+
     const imgOrAvatar = (img) => {
       return  img ? (
         <div>
@@ -109,10 +129,10 @@ export default class DetailConfirmInfoOne extends React.Component {
           container = (
               <div  style={{display: 'flex'}}>
                 {assigneesArray.map((value, key)=>{
-                  const { avatar, name } = value
+                  const { avatar, name, mobile, email } = value
                   if (key <= 6)
                     return(
-                      <Tooltip  key={key} placement="top" title={name || '佚名'}>
+                      <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
                         <div>{imgOrAvatar(avatar)}</div>
                       </Tooltip>
                     )
@@ -163,13 +183,56 @@ export default class DetailConfirmInfoOne extends React.Component {
       }
       return container
     }
+    const filterBorderStyle = (sort) => {
+      if (Number(sort) < Number(curr_node_sort)) {
+        return {border:'2px solid rgba(83,196,26,1)'}
+      }else if(Number(sort) === Number(curr_node_sort)) {
+        return {border:'2px solid rgba(24,144,255,1)'}
+      }else if(Number(sort) > Number(curr_node_sort)) {
+       return {border:'2px solid rgba(140,140,140,1)'}
+      }else {}
+    }
+    const filterBottOperate = () => {
+      let container = (<div></div>)
+      if(currentUserCanOperate || assignee_type === '1') {
+        if (Number(sort) < Number(curr_node_sort)) {
+          container = (
+            <div>
+              {enable_revocation === '1' ? (
+              <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+                <Button  onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
+              </div>
+              ):(<div></div>)}
+            </div>
+          )
+        } else if (Number(sort) === Number(curr_node_sort)) {
+          container = (
+            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+                                                     setAssignees={this.setAssignees.bind(this)}/>}>
+                {assignee_type !== '1'? (<div>重新指派推进人</div>) : (<div></div>)}
+              </Dropdown>
+              <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>
+            </div>
+          )
+        } else if (Number(sort) > Number(curr_node_sort)) {
+          container = (
+            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+            </div>
+          )
+        } else {
+        }
+      }else {
+      }
+      return container
+    }
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>{itemKey + 1}</div>
+              <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
                 <div>里程碑</div>
@@ -186,14 +249,12 @@ export default class DetailConfirmInfoOne extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                <div>重新指派推进人</div>
-                <Button type={'primary'}>完成</Button>
+                {filterBottOperate()}
               </div>
             </div>
           </div>
         </Card>
-        <OpinionModal {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
-
+        <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
       </div>
     )
   }

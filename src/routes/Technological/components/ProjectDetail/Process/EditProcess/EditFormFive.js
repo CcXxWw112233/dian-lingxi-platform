@@ -165,11 +165,11 @@ export default class EditFormFive extends React.Component {
                 <Tooltip title="所有审批人同时开展审批。">
                   <span style={{cursor:'pointer',marginTop:0,marginLeft:-8,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
                 </Tooltip>
-                <Radio value={'3'}>汇签</Radio>
-                <InputNumber  min={0} max={100} value={Number(approve_value)}  onChange={this.approveValueChange.bind(this)}  style={{width:60}}/>  &nbsp; %  通过
-                <Tooltip title="审批过程不公开其他审批人的意见，通过率达到设定的标准后触发流转，随后再公开所有审批意见。">
-                  <span style={{cursor:'pointer',marginTop:0,marginLeft:6,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>
-                </Tooltip>
+                {/*<Radio value={'3'}>汇签</Radio>*/}
+                {/*<InputNumber  min={0} max={100} value={Number(approve_value)}  onChange={this.approveValueChange.bind(this)}  style={{width:60}}/>  &nbsp; %  通过*/}
+                {/*<Tooltip title="审批过程不公开其他审批人的意见，通过率达到设定的标准后触发流转，随后再公开所有审批意见。">*/}
+                  {/*<span style={{cursor:'pointer',marginTop:0,marginLeft:6,marginRight:20,lineHeight: '18px',textAlign: 'center',display: 'inline-block', borderRadius: 20,height: 18,width: 18,color: '#ffffff',backgroundColor: '#e5e5e5'}}>?</span>*/}
+                {/*</Tooltip>*/}
               </RadioGroup>
             </div>
           </div>

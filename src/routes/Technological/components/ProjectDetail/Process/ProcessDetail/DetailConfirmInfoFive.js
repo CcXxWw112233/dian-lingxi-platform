@@ -1,26 +1,57 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
-
+import OpinionModal from './OpinionModal'
+import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
+import Cookies from "js-cookie";
 const { RangePicker } = DatePicker;
 
 //里程碑确认信息
 export default class DetailConfirmInfoFive extends React.Component {
   state = {
+    opinionModalVisible: false,
     due_time: '',
-    excutors: [1,2,3,4,5,6,7],
     isShowBottDetail: false, //是否显示底部详情
   }
   datePickerChange(date, dateString) {
     this.setState({
       due_time:dateString
     })
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey  } = this.props
+    processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
+    this.props.updateDatas({
+      processEditDatas
+    })
+
   }
-  setExcutors(data) {
-    const { excutors } = this.state
-    this.setState({
-      excutors: data
+  setAssignees(data) { //替换掉当前操作人
+    const { datas: { processEditDatas = [], projectDetailInfoData = [],  processInfo = {} } } = this.props.model
+    const { itemKey  } = this.props
+    const { assignees = [] } = processEditDatas[itemKey]
+    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const currentUserId= userInfo.id //当前用户id, 用于替换
+    const users = projectDetailInfoData.data //项目参与人
+    //将当前用户替换成所选用户
+    let willSetAssignee = ''
+    for(let i = 0; i < assignees.length; i++) {
+      if(assignees[i].user_id === currentUserId) {
+        assignees[i] = users[data[0]]
+        willSetAssignee =  users[data[0]].user_id
+        break;
+      }
+    }
+
+    processEditDatas[itemKey]['assignees'] = assignees
+    this.props.updateDatas({
+      processEditDatas
+    })
+    //重新指派推进人接口
+    this.props.resetAsignees({
+      assignee: willSetAssignee,
+      flow_node_instance_id: processEditDatas[itemKey].id,
+      instance_id: processInfo.id,
     })
   }
   setIsShowBottDetail() {
@@ -43,41 +74,247 @@ export default class DetailConfirmInfoFive extends React.Component {
     element.style.height = type ? targetHeight : 0;
   };
 
+  setOpinionModalVisible(operateType) {
+    this.setState({
+      operateType, //1完成 0 撤回
+      opinionModalVisible: !this.state.opinionModalVisible
+    })
+  }
+
   render() {
-    const { due_time, excutors = [], isShowBottDetail } = this.state
-    const data = []
+    const { due_time, isShowBottDetail } = this.state
+    const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
+    const { itemKey, itemValue } = this.props //所属列表位置
+    const { curr_node_sort } = processInfo //当前节点
+    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, approve_type, approve_value } = processEditDatas[itemKey]
+    console.log( processEditDatas[itemKey])
+    //推进人来源
+    let usersArray = []
+    const users = projectDetailInfoData.data
+    for(let i = 0; i < users.length; i++) {
+      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    //推进人
+    const assigneesArray = assignees || []
+    //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
+    let currentUserCanOperate = false
+    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const currentUserId= userInfo.id //当前用户id, 用于替换
+    for(let i = 0; i <assignees.length; i++) {
+      if(assignees[i].user_id === currentUserId) {
+        currentUserCanOperate = true
+        break
+      }
+    }
+
     const imgOrAvatar = (img) => {
       return  img ? (
         <div>
           <img src={img} style={{width: 18, height: 18,marginRight:8,borderRadius: 16, margin:'0 8px'}} />
         </div>
       ):(
-        <div style={{lineHeight: '18px',height:18,width: 18,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
+        <div style={{lineHeight: '18px',height:18,width: 16,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
           <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
         </div>
       )
     }
+    const filterAssignee = (assignee_type) => {
+      let container = (<div></div>)
+      switch (assignee_type) {
+        case '1':
+          container = (<div style={{color: '#595959'}}>任何人</div>)
+          break
+        case '2':
+          container = (
+            <div  style={{display: 'flex'}}>
+              {assigneesArray.map((value, key)=>{
+                const { avatar, name, mobile, email } = value
+                if (key <= 6)
+                  return(
+                    <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
+                      <div>{imgOrAvatar(avatar)}</div>
+                    </Tooltip>
+                  )
+              })}
+              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+            </div>)
+          break
+        case '3':
+          container = (
+            <div  style={{display: 'flex'}}>
+              {assigneesArray.map((value, key)=>{
+                const { avatar, name } = value
+                if (key <= 6)
+                  return(
+                    <Tooltip  key={key} placement="top" title={name || '佚名'}>
+                      <div>{imgOrAvatar(avatar)}</div>
+                    </Tooltip>
+                  )
+              })}
+              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+            </div>)
+          break
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
+    const filterDueTime = (deadline_type) => {
+      let container = (<div></div>)
+      switch (deadline_type) {
+        case '1':
+          container = (<div style={{color: '#595959'}}>无限期</div>)
+          break
+        case '2':
+          container = (
+            <div style={{position: 'relative' }}  style={{color: '#595959'}}>
+              {timestampToTimeNormal(deadline_value, '-',true)}
+            </div>
+          )
+          break
+        case '3':
+          container = (<div style={{color: '#595959'}}>{`${is_workday === '0'? '固定': '工作日'}${deadline_value}天`}</div>)
+          break
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
+    const filterBorderStyle = (sort) => {
+      if (Number(sort) < Number(curr_node_sort)) {
+        return {border:'2px solid rgba(83,196,26,1)'}
+      }else if(Number(sort) === Number(curr_node_sort)) {
+        return {border:'2px solid rgba(24,144,255,1)'}
+      }else if(Number(sort) > Number(curr_node_sort)) {
+        return {border:'2px solid rgba(140,140,140,1)'}
+      }else {}
+    }
+    const filterBottOperate = () => {
+      let container = (<div></div>)
+      if(currentUserCanOperate || assignee_type === '1') {
+        if (Number(sort) < Number(curr_node_sort)) {
+          container = (
+            <div>
+              {enable_revocation === '1' ? (
+                <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+                  <Button  onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
+                </div>
+              ):(<div></div>)}
+            </div>
+          )
+        } else if (Number(sort) === Number(curr_node_sort)) {
+          container = (
+            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+                                                     setAssignees={this.setAssignees.bind(this)}/>}>
+                {assignee_type !== '1'? (<div>转办该审批</div>) : (<div></div>)}
+              </Dropdown>
+              <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>通过</Button>
+            </div>
+          )
+        } else if (Number(sort) > Number(curr_node_sort)) {
+          container = (
+            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+            </div>
+          )
+        } else {
+        }
+      }else {
+      }
+      return container
+    }
+    const filterSeeAssignee = (assignee_type) => {
+      let container = (<div></div>)
+      switch (assignee_type) {
+        case '1':
+          container = (<div style={{color: '#595959'}}>任何人</div>)
+          break
+        case '2':
+          container = (
+            <div  style={{display: 'flex'}}>
+              {assigneesArray.map((value, key)=>{
+                const { avatar, name, mobile, email } = value
+                if (key <= 20)
+                  return(
+                    <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
+                      <div>{imgOrAvatar2(value)}</div>
+                    </Tooltip>
+                  )
+              })}
+              {assigneesArray.length >20?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+            </div>
+          )
+          break
+        case '3':
+          container = (
+            <div  style={{display: 'flex'}}>
+              {assigneesArray.map((value, key)=>{
+                const { avatar, name, mobile, email } = value
+                if (key <= 20)
+                  return(
+                    <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
+                      <div>{imgOrAvatar2(value)}</div>
+                    </Tooltip>
+                  )
+              })}
+              {assigneesArray.length >20?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+            </div>
+          )
+          break
+        default:
+          container = (<div></div>)
+          break
+      }
+      return container
+    }
 
-    const imgOrAvatar2 = (img) => {
-      return  img ? (
+    const imgOrAvatar2 = (value) => {
+      const { avatar, name, mobile, email, processed } = value
+      return  avatar ? (
         <div style={{display: 'flex',alignItems: 'center'}}>
           <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
-            <img src={img} style={{width: 26, height: 26,borderRadius: 22, }} />
-            <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+            <img src={avatar} style={{width: 26, height: 26,borderRadius: 22, }} />
+            {processed !== '0' ? (
+              <div
+                style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,
+                  backgroundColor:  processed === '1'?'blue':(processed === '2'? 'green': 'red'),
+                  borderRadius: 8,textAlign:'center'}}></div>
+            ) : (
+              <div></div>
+            )}
           </div>
-          <div>
-            <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-          </div>
+          {
+            approve_type === '1' ? (
+              <div>
+                <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
+              </div>
+            ) : (
+              <div></div>
+            )
+          }
         </div>
       ):(
         <div style={{display: 'flex',alignItems: 'center'}}>
           <div style={{lineHeight: '26px',height:26,width: 26,borderRadius:22,backgroundColor:'#e8e8e8',marginRight:10,textAlign: 'center',marginTop: 2,position: 'relative'}}>
             <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
-            <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+            {processed !== '0' ? (
+              <div
+                style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,
+                  backgroundColor:  processed === '1'? 'blue': processed === '2'? 'green': 'red',
+                  borderRadius: 8,textAlign:'center'}}></div>
+            ) : (
+              <div></div>
+            )}
           </div>
-          <div>
-            <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-          </div>
+          {
+            approve_type === '1' ? (
+              <div>
+                <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
+              </div>
+            ) : (<div></div>)
+          }
         </div>
       )
     }
@@ -87,62 +324,50 @@ export default class DetailConfirmInfoFive extends React.Component {
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>1</div>
+              <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
-                <div>这是审批</div>
+                <div>{name}</div>
                 <div>审批</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
-              <div>
-                <Dropdown overlay={<MenuSearchMultiple excutors={excutors} execusorList={data} setExcutors={this.setExcutors.bind(this)} />}>
-                  {excutors.length? (
-                    <div style={{display: 'flex'}}>
-                      {excutors.map((value, key)=>{
-                        if (key < 6)
-                          return(<div key={key}>{imgOrAvatar()}</div>)
-                      })}
-                      {excutors.length >6?(<span style={{color: '#595959'}}>{`等${excutors.length}人`}</span>): ('') }
-                    </div>
-                  ) : (<span>设置负责人</span>)}
-                </Dropdown>
-
-              </div>
-              <div style={{position: 'relative', color: due_time? '#595959': '#1890FF' }}>
-                {due_time || '设置截止时间'}
-                <DatePicker  onChange={this.datePickerChange.bind(this)}
-                             placeholder={'选择截止时间'}
-                             showTime
-                             format="YYYY-MM-DD HH:mm"
-                             style={{opacity: 0,height: 16, width: 70,background: '#000000',position: 'absolute',right: 0,zIndex:2,cursor:'pointer'}} />
-              </div>
+              {filterAssignee(assignee_type)}
+              {filterDueTime(deadline_type)}
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
           <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={'ConfirmInfoOut_1_bott'} >
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
-              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>这是节点步骤的描述内容，流程启动后不可编辑。借此顺便说明一下：步骤卡片默认会展开正在进行中的几点，可以手动收起可展开搜索节点进行内容查看。font-size:12px; line-height:20px;</div>
+              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
 
               <div className={indexStyles.copy}>
+                {/*<div className={indexStyles.title}>*/}
+                  {/*审批人:汇签 > 50%*/}
+                {/*</div>*/}
+                {/*<div className={indexStyles.imglist}>*/}
+                  {/*{[1,2,3].map((value, key) => {*/}
+                    {/*return(<div key={key}>{imgOrAvatar2()}</div>)*/}
+                  {/*})}*/}
+                {/*</div>*/}
                 <div className={indexStyles.title}>
-                  审批人:汇签 > 50%
+                  审批人: {approve_type === '1'? ('串签'):(approve_type === '2'?('并签'):(`汇签 > ${approve_value || 0}%`))}
                 </div>
                 <div className={indexStyles.imglist}>
-                  {[1,2,3].map((value, key) => {
-                    return(<div key={key}>{imgOrAvatar2()}</div>)
-                  })}
+                  {filterSeeAssignee(assignee_type)}
                 </div>
               </div>
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                <div>转办该审批</div>
-                <Button style={{marginRight: 14}}>拒绝</Button>
-                <Button >通过</Button>
+                {/*<div>转办该审批</div>*/}
+                {/*<Button style={{marginRight: 14}}>拒绝</Button>*/}
+                {/*<Button >通过</Button>*/}
+                {filterBottOperate()}
               </div>
             </div>
           </div>
         </Card>
+        <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
       </div>
     )
   }

@@ -241,7 +241,7 @@ export default class ConfirmInfoFive extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>{itemKey + 1}</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
-                <div>这是审批</div>
+                <div>{name}</div>
                 <div>审批</div>
               </div>
             </div>
@@ -254,7 +254,7 @@ export default class ConfirmInfoFive extends React.Component {
           <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={'ConfirmInfoOut_1_bott'} >
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
-              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>这是节点步骤的描述内容，流程启动后不可编辑。借此顺便说明一下：步骤卡片默认会展开正在进行中的几点，可以手动收起可展开搜索节点进行内容查看。font-size:12px; line-height:20px;</div>
+              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
 
               <div className={indexStyles.copy}>
                 <div className={indexStyles.title}>

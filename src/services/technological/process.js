@@ -49,11 +49,29 @@ export async function createProcess(data) {
 //完成流程任务
 export async function completeProcessTask(data) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow`,
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/complete`,
     method: 'PUT',
     data,
   });
 }
+//撤回流程任务
+export async function rebackProcessTask(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/recall`,
+    method: 'PUT',
+    data,
+  });
+}
+
+//重新指定推进人
+export async function resetAsignees(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reassign_assignee`,
+    method: 'PUT',
+    data,
+  });
+}
+
 //获取流程信息
 export async function getProcessInfo(id) {
   return request({

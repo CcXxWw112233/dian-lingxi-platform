@@ -30,7 +30,8 @@ const MenuSearch = (props) => {
         },
       ], //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
       processEditDatasRecords: [
-        { 'node_type': '1',
+        {
+          'node_type': '1',
           'alltypedata': [
             {
               "name":"编辑节点名称",//节点名称
@@ -57,7 +58,7 @@ const MenuSearch = (props) => {
               "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
               "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
               "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-              "requires_data":{
+              "require_data":{
                 "limit_file_num":"0",//限制文件上传数量 0=不限制
                 "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
                 "limit_file_size":"20"//限制文件大小
@@ -75,7 +76,7 @@ const MenuSearch = (props) => {
               "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
               "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
               "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
-              "forms_data":[
+              "form_data":[
                 {
                   "field_type":"1",//字段类型 1=输入框
                   "property_name":"输入框",//属性名称(标题)
@@ -112,6 +113,8 @@ const MenuSearch = (props) => {
               "is_workday":"0",
               "assignee_type":"1",//抄送人类型 2=启动流程时指定 3=固定人选
               "assignees":"",//抄送人 多个逗号隔开（传的是邮箱）
+              "cc_type":"1",//抄送人类型 1=启动流程时指定 2=固定人选
+              "recipients":"",//抄送人 多个逗号隔开（传的是邮箱）
               "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
               "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
               "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
@@ -125,13 +128,13 @@ const MenuSearch = (props) => {
               "deadline_type":"1",//完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
               "deadline_value":"1",//完成期限值
               "is_workday":"0",
-              "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+              "assignee_type":"2",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
               "assignees":"",//审批人(id) 多个逗号隔开
               "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
               "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
               "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
             },
-          ]
+          ],
         },
       ] //每一步的每一个类型，记录，数组的全部数据step * type
     })

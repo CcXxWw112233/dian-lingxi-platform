@@ -52,7 +52,7 @@ export default class ConfirmInfoFour extends React.Component {
     let recipientsArray = []
     const users = projectDetailInfoData.data
     for(let i = 0; i < users.length; i++) {
-      recipientsArray.push(users[i].full_name || users[i].email || users[i].mobile)
+      recipientsArray.push(users[i].user_id)
     }
     //设置推进人
     let willSetAssigneesArray = []
@@ -233,7 +233,7 @@ export default class ConfirmInfoFour extends React.Component {
           container = (
             <div style={{display: 'flex'}}>
               {recipientsArray.map((value, key)=>{
-                if (key < 6)
+                if (key <= 20)
                   return(
                     <Tooltip  key={key} placement="top" title={value}>
                       <div>{imgOrAvatar2()}</div>

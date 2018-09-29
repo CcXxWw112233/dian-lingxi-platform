@@ -12,7 +12,7 @@ const MenuSearchMultiple = (props) => {
     props.setAssignees && props.setAssignees(selectedKeys)
   }
   return (
-    <Menu multiple style={{padding: 8}} onDeselect={menuDeselect} onSelect={menuSelect}>
+    <Menu multiple={!props.noMutiple} style={{padding: 8}} onDeselect={menuDeselect} onSelect={menuSelect}>
       <Input/>
       {
         usersArray.map((val, key) => {

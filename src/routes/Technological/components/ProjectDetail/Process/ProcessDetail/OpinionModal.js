@@ -21,6 +21,9 @@ class OpinionModal extends React.Component {
     })
   }
   onCancel = () => {
+    this.setState({
+      stepContinueDisabled: true
+    })
     this.props.setOpinionModalVisible()
   }
   // 提交表单
@@ -28,15 +31,24 @@ class OpinionModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { itemValue } = this.props
+        const { operateType, itemValue } = this.props
+        const { datas:{processInfo = {}} } = this.props.model
+        const  instance_id  = processInfo.id
+        const { id } = itemValue
+        values['flow_node_instance_id'] = id
+        values['instance_id'] = instance_id
         this.props.setOpinionModalVisible()
         //发送请求
-        this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
+        if(operateType === '1') {
+          this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
+        }else if(operateType === '0') {
+          this.props.rebackProcessTask ?this.props.rebackProcessTask(values) : false
+        }
       }
     });
   }
   render() {
-    const { opinionModalVisible } = this.props;
+    const { opinionModalVisible, enableOpinion } = this.props; //enableOpinion为是否需要填写意见1是0否
     const { getFieldDecorator } = this.props.form;
     const { stepContinueDisabled } = this.state
 
@@ -51,12 +63,12 @@ class OpinionModal extends React.Component {
           })(
             <TextArea style={{height: 208, resize:'none'}}
                       onChange={this.descriptionChange.bind(this)}
-                      placeholder="请输入意见" maxLength={1000}/>
+                      placeholder={`请输入意见${enableOpinion === '1'? '(必填)': '(选填)'}`} maxLength={1000}/>
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>保存</Button>
+          <Button type="primary" disabled={enableOpinion === '1' ?stepContinueDisabled : false} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>保存</Button>
         </FormItem>
       </Form>
     )
