@@ -11,7 +11,9 @@ import sssimg from '../../../../../../assets/yay.jpg'
 
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProcessDetail extends React.Component {
-  state = {}
+  state = {
+
+  }
   constructor(props) {
     super(props)
     this.initCanvas = this.initCanvas.bind(this)
@@ -22,9 +24,10 @@ export default class ProcessDetail extends React.Component {
   componentDidUpdate() {
     this.initCanvas()
   }
+
+
   initCanvas() {
-    const { datas: { processInfo = {} }} = this.props.model
-    const { nodes=[] } = processInfo
+    const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
 
     const defaultProps = {
       canvaswidth: 210,// 画布宽度
@@ -51,7 +54,7 @@ export default class ProcessDetail extends React.Component {
     let circle = ele.getContext("2d");
 
     //创建多个圆弧
-    const length = nodes.length
+    const length = processEditDatas.length
     for (let i = 0; i < length; i++) {
       circle.beginPath();//开始一个新的路径
       circle.save()
@@ -85,8 +88,8 @@ export default class ProcessDetail extends React.Component {
   }
 
   render() {
-    const { datas: { processInfo = {} }} = this.props.model
-    const { name, description, nodes=[] } = processInfo
+    const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
+    const { name, description } = processInfo
     console.log('processInfo', processInfo)
 
     const filterForm = (value, key) => {
@@ -185,7 +188,7 @@ export default class ProcessDetail extends React.Component {
               <div className={indexStyles.processPointTitle}>
                  步骤详情
               </div>
-              {nodes.map((value, key) => {
+              {processEditDatas.map((value, key) => {
                 return (
                   <div className={indexStyles.processPointItem} key={key}>
                     {filterForm(value, key)}
@@ -197,6 +200,7 @@ export default class ProcessDetail extends React.Component {
         </div>
 
       </div>
+
       </div>
     )
   }

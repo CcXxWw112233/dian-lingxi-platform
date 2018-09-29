@@ -32,7 +32,7 @@ export default class ConfirmInfoOne extends React.Component {
     let assigneesArray = []
     const users = projectDetailInfoData.data
     for(let i = 0; i < users.length; i++) {
-      assigneesArray.push(users[i].full_name || users[i].email || users[i].mobile)
+      assigneesArray.push(users[i].user_id)
     }
     //设置推进人
     let willSetAssigneesArray = []

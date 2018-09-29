@@ -312,7 +312,7 @@ export default class EditProcess extends React.Component {
     this.props.directStartSaveTemplate({
       board_id,
       is_retain: '0',
-      node_data: JSON.stringify(processEditDatas),
+      node_data: processEditDatas,
       type: '1',
       template_no: '',
     })

@@ -299,10 +299,20 @@ export default {
     * getProcessInfo({ payload }, { select, call, put }) {
       let res = yield call(getProcessInfo, payload)
       if(isApiResponseOk(res)) {
+        //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
+        const curr_node_id = res.data.curr_node_id
+        let curr_node_sort
+        for (let i=0; i<res.data.nodes.length; i++ ) {
+          if(curr_node_id === res.data.nodes[i].id) {
+            curr_node_sort = res.data.nodes[i].sort
+            break
+          }
+        }
         yield put({
           type: 'updateDatas',
           payload: {
-            processInfo: res.data,
+            processInfo: {...res.data, curr_node_sort},
+            processEditDatas: res.data.nodes || [] ,
             processPageFlagStep: '4'
           }
         })
