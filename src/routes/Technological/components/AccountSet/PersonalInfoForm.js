@@ -47,20 +47,20 @@ class PersonalInfoForm extends React.Component {
     const { userInfo = {} } = datas
     const {
       orgnization,
-      aboutMe,
+      about_me,
       avatar,
-      createTime,
+      create_time,
       email,
       job,
-      fullName,
+      full_name,
       id,
-      lastLoginTime,
+      last_login_time,
       mobile,
       nickname,
       phone,
       qq,
       status,
-      updateTime,
+      update_time,
       username,
       wechat,
     } = userInfo
@@ -145,7 +145,7 @@ class PersonalInfoForm extends React.Component {
           )}
         >
           {getFieldDecorator('full_name', {
-            initialValue: fullName || undefined,
+            initialValue: full_name || undefined,
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>
