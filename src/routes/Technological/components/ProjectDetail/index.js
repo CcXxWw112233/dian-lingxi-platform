@@ -340,6 +340,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    rejectProcessTask(data) {
+      dispatch({
+        type: getEffectOrReducerByName('rejectProcessTask'),
+        payload: data
+      })
+    },
     resetAsignees(data) {
       dispatch({
         type: getEffectOrReducerByName('resetAsignees'),

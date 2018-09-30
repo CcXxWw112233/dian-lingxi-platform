@@ -37,12 +37,14 @@ class OpinionModal extends React.Component {
         const { id } = itemValue
         values['flow_node_instance_id'] = id
         values['instance_id'] = instance_id
-        this.props.setOpinionModalVisible()
+        this.onCancel()
         //发送请求
         if(operateType === '1') {
           this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
         }else if(operateType === '0') {
           this.props.rebackProcessTask ?this.props.rebackProcessTask(values) : false
+        } else if(operateType === '2') {
+          this.props.rejectProcessTask ?this.props.rejectProcessTask(values) : false
         }
       }
     });
@@ -68,7 +70,7 @@ class OpinionModal extends React.Component {
         </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={enableOpinion === '1' ?stepContinueDisabled : false} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>保存</Button>
+          <Button type="primary" disabled={enableOpinion === '1' ?stepContinueDisabled : false} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>确定</Button>
         </FormItem>
       </Form>
     )

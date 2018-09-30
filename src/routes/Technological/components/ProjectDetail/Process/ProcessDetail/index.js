@@ -28,7 +28,7 @@ export default class ProcessDetail extends React.Component {
 
   initCanvas() {
     const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
-
+    const { curr_node_sort } = processInfo
     const defaultProps = {
       canvaswidth: 210,// 画布宽度
       canvasheight: 210,// 画布高度
@@ -59,32 +59,40 @@ export default class ProcessDetail extends React.Component {
       circle.beginPath();//开始一个新的路径
       circle.save()
       circle.lineWidth = lineWidth;
-      circle.strokeStyle = i % 2 === 0 ? 'green': 'red';
+      let color = 'rgba(83,196,26,1)'
+      if( Number(curr_node_sort) === Number(processEditDatas[i].sort)){
+        color = 'rgba(24,144,255,1)'
+      }else if(Number(processEditDatas[i].sort) < Number(curr_node_sort)){
+        color = 'rgba(83,196,26,1)'
+      }else if(Number(processEditDatas[i].sort) > Number(curr_node_sort)){
+        color = '#f2f2f2'
+      }
+      circle.strokeStyle = color; //curr_node_sort
       circle.arc(x0, y0, r,0.6* Math.PI + i*1.83/length* Math.PI ,  0.6* Math.PI + i*1.83/length* Math.PI + 1.83/length* Math.PI - 0.03*Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
       circle.stroke();//对当前路径进行描边
       circle.restore()
       circle.closePath()
     }
-    circle.beginPath();//开始一个新的路径
-    circle.save()
-    circle.font = '14px Arial'
-    circle.fillStyle='#8c8c8c'
-    circle.textAlign = 'center'
-    circle.fillText(`逾期1天`,105,90);
-    circle.restore()
-    circle.closePath()
 
-    circle.beginPath();//开始一个新的路径
-    circle.save()
-    circle.font = '20px Arial'
-    circle.fillStyle='#595959'
-    circle.textAlign = 'center'
-    circle.fillText(`2/4`,105,114);
-    circle.restore()
-    circle.closePath()
+    //文字描述 --------
+    // circle.beginPath();//开始一个新的路径
+    // circle.save()
+    // circle.font = '14px Arial'
+    // circle.fillStyle='#8c8c8c'
+    // circle.textAlign = 'center'
+    // circle.fillText(`逾期1天`,105,90);
+    // circle.restore()
+    // circle.closePath()
+    //
+    // circle.beginPath();//开始一个新的路径
+    // circle.save()
+    // circle.font = '20px Arial'
+    // circle.fillStyle='#595959'
+    // circle.textAlign = 'center'
+    // circle.fillText(`2/4`,105,114);
+    // circle.restore()
+    // circle.closePath()
 
-    // const img = document.getElementById('node_img')
-    // circle.drawImage(img,20,20);
   }
 
   render() {

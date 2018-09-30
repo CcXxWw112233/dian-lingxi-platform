@@ -135,7 +135,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { due_time, isShowBottDetail } = this.state
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
-    const { curr_node_sort } = processInfo //当前节点
+    const { curr_node_sort, status } = processInfo //当前节点
     const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation,require_data={} } = processEditDatas[itemKey]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
@@ -259,9 +259,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
     }
     const filterBottOperate = () => {
       let container = (<div></div>)
-      if(currentUserCanOperate || assignee_type === '1') {
+      if((currentUserCanOperate || assignee_type === '1') && status !== '3') {
         if (Number(sort) < Number(curr_node_sort)) {
-          container = (
+          if(Number(curr_node_sort) - Number(sort) === 1) { //相邻才能有撤回
+            container = (
             <div>
               {enable_revocation === '1' ? (
                 <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
@@ -270,6 +271,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
               ):(<div></div>)}
             </div>
           )
+          }
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>

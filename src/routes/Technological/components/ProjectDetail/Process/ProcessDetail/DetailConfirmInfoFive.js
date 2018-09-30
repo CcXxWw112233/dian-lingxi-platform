@@ -76,7 +76,7 @@ export default class DetailConfirmInfoFive extends React.Component {
 
   setOpinionModalVisible(operateType) {
     this.setState({
-      operateType, //1完成 0 撤回
+      operateType, //1完成 0 撤回 2审批的拒绝
       opinionModalVisible: !this.state.opinionModalVisible
     })
   }
@@ -85,7 +85,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     const { due_time, isShowBottDetail } = this.state
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
-    const { curr_node_sort } = processInfo //当前节点
+    const { curr_node_sort, status } = processInfo //当前节点
     const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, approve_type, approve_value } = processEditDatas[itemKey]
     console.log( processEditDatas[itemKey])
     //推进人来源
@@ -193,17 +193,19 @@ export default class DetailConfirmInfoFive extends React.Component {
     }
     const filterBottOperate = () => {
       let container = (<div></div>)
-      if(currentUserCanOperate || assignee_type === '1') {
+      if((currentUserCanOperate || assignee_type === '1') && status !== '3') {
         if (Number(sort) < Number(curr_node_sort)) {
-          container = (
-            <div>
-              {enable_revocation === '1' ? (
-                <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                  <Button  onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
-                </div>
-              ):(<div></div>)}
-            </div>
-          )
+          if(Number(curr_node_sort) - Number(sort) === 1) { //相邻才能有撤回
+            container = (
+              <div>
+                {enable_revocation === '1' ? (
+                  <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+                    <Button onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
+                  </div>
+                ) : (<div></div>)}
+              </div>
+            )
+          }
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
@@ -211,7 +213,8 @@ export default class DetailConfirmInfoFive extends React.Component {
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>转办该审批</div>) : (<div></div>)}
               </Dropdown>
-              <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>通过</Button>
+              {/*<Button onClick={this.setOpinionModalVisible.bind(this, '2')} style={{marginRight: 14}}>拒绝</Button>*/}
+              <Button onClick={this.setOpinionModalVisible.bind(this, '1')}>通过</Button>
             </div>
           )
         } else if (Number(sort) > Number(curr_node_sort)) {
@@ -255,7 +258,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                 if (key <= 20)
                   return(
                     <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
-                      <div>{imgOrAvatar2(value)}</div>
+                      <div>{imgOrAvatar2(value, key)}</div>
                     </Tooltip>
                   )
               })}
@@ -270,7 +273,7 @@ export default class DetailConfirmInfoFive extends React.Component {
       return container
     }
 
-    const imgOrAvatar2 = (value) => {
+    const imgOrAvatar2 = (value, key) => {
       const { avatar, name, mobile, email, processed } = value
       return  avatar ? (
         <div style={{display: 'flex',alignItems: 'center'}}>
@@ -279,7 +282,7 @@ export default class DetailConfirmInfoFive extends React.Component {
             {processed !== '0' ? (
               <div
                 style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,
-                  backgroundColor:  processed === '1'?'blue':(processed === '2'? 'green': 'red'),
+                  backgroundColor:  processed === '1'?'rgba(24,144,255,1)':(processed === '2'? 'rgba(83,196,26,1)': 'red'),
                   borderRadius: 8,textAlign:'center'}}></div>
             ) : (
               <div></div>
@@ -287,9 +290,11 @@ export default class DetailConfirmInfoFive extends React.Component {
           </div>
           {
             approve_type === '1' ? (
-              <div>
-                <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-              </div>
+              Number(key) === assigneesArray.length - 1 ? (<div></div>): (
+                <div>
+                  <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
+                </div>
+              )
             ) : (
               <div></div>
             )
@@ -302,7 +307,7 @@ export default class DetailConfirmInfoFive extends React.Component {
             {processed !== '0' ? (
               <div
                 style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,
-                  backgroundColor:  processed === '1'? 'blue': processed === '2'? 'green': 'red',
+                  backgroundColor:  processed === '1'? 'rgba(24,144,255,1)': processed === '2'? 'rgba(83,196,26,1)': 'red',
                   borderRadius: 8,textAlign:'center'}}></div>
             ) : (
               <div></div>
@@ -310,10 +315,14 @@ export default class DetailConfirmInfoFive extends React.Component {
           </div>
           {
             approve_type === '1' ? (
-              <div>
-                <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
-              </div>
-            ) : (<div></div>)
+              Number(key) === assigneesArray.length - 1 ? (<div></div>): (
+                <div>
+                  <Icon type="swap-right" theme="outlined" style={{fontSize:12,marginRight:10,color: '#8c8c8c'}} />
+                </div>
+              )
+            ) : (
+              <div></div>
+            )
           }
         </div>
       )

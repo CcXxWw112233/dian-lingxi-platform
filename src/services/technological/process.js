@@ -62,6 +62,15 @@ export async function rebackProcessTask(data) {
     data,
   });
 }
+//拒绝
+export async function rejectProcessTask(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reject`,
+    method: 'PUT',
+    data,
+  });
+}
+
 
 //重新指定推进人
 export async function resetAsignees(data) {

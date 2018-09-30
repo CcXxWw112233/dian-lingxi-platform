@@ -12,7 +12,7 @@ import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileU
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees } from '../../services/technological/process'
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -308,6 +308,7 @@ export default {
             break
           }
         }
+        curr_node_sort = curr_node_sort || res.data.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
         yield put({
           type: 'updateDatas',
           payload: {
@@ -334,6 +335,18 @@ export default {
     },
     * rebackProcessTask({ payload }, { select, call, put }) {
       let res = yield call(rebackProcessTask, payload)
+      const { instance_id } = payload
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessInfo',
+          payload:  instance_id
+        })
+      }else{
+
+      }
+    },
+    * rejectProcessTask({ payload }, { select, call, put }) {
+      let res = yield call(rejectProcessTask, payload)
       const { instance_id } = payload
       if(isApiResponseOk(res)) {
         yield put({
