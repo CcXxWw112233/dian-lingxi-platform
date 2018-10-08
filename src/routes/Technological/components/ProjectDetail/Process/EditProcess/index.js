@@ -381,7 +381,7 @@ export default class EditProcess extends React.Component {
             <div className={indexStyles.right}>
               <div className={node_type === '1' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '1')}>里程碑</div>
               <div className={node_type === '2' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '2')}>上传</div>
-              {/*<div className={node_type === '3' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '3')}>填写</div>*/}
+              <div className={node_type === '3' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '3')}>填写</div>
               <div className={node_type === '4' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '4')}>抄送</div>
               <div className={node_type === '5' ? indexStyles.selectType : ''} onClick={this.nodeTypeClick.bind(this, '5')}>审批</div>
             </div>

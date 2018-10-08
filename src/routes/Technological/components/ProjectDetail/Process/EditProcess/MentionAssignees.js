@@ -7,15 +7,16 @@ export default class MentionAssignees extends React.Component {
 
   mentionOnChange(contentState){
     const str = toString(contentState)
-    this.props.mentionOnChange(str)
+    this.props.mentionOnChange(contentState)
   }
 
   render() {
     const { defaultAssignees, suggestions, mentionOnChange } = this.props
+    const { datas: { processCurrentEditStep = 0, } } = this.props.model
 
     return(
       <div>
-      <Mention
+        <Mention
         style={{ width: '100%', height: 70 }}
         onChange={this.mentionOnChange.bind(this)}
         value={toContentState(defaultAssignees)}

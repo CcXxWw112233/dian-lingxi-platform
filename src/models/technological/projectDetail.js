@@ -63,8 +63,8 @@ export default {
             // filePreviewCurrentVersionKey: 0, //预览文件选中的key
 
             //流程
-            processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面
-            node_type: '1', //节点类型
+            processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+            node_type: '1', //节点类型， 默认1
             processCurrentEditStep: 0, //编辑第几步，默认 0
             processEditDatas: processEditDatasConstant, //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
             processEditDatasRecords:processEditDatasRecordsConstant ,//每一步的每一个类型，记录，数组的全部数据step * type
@@ -188,7 +188,19 @@ export default {
           }
         })
       }else if(appsSelectKey === '2'){ //流程
-
+        yield put({
+          type: 'getProcessTemplateList',
+          payload: {
+            board_id: board_id
+          }
+        })
+        yield put({
+          type: 'getProcessList',
+          payload: {
+            board_id: board_id,
+            type: '1'
+          }
+        })
       }else if(appsSelectKey === '4') { //文档
         const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
         yield put({

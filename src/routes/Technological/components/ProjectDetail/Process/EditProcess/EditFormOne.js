@@ -103,7 +103,7 @@ export default class EditFormOne extends React.Component {
   }
 
   render() {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}, } } = this.props.model
     const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
@@ -113,14 +113,6 @@ export default class EditFormOne extends React.Component {
     }
     let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
-
-    // let obj = {}
-    // const arr1 = [{a:1,b:2},{a:11, b:22}]
-    // const arr2 = [{a:3,b:4},{a:33, b:44}]
-    // obj = arr1[0]
-    // obj=arr2[0]
-    // console.log(arr1)
-    // console.log(arr2)
 
     return (
       <div className={indexStyles.editFormOut}>
@@ -184,13 +176,13 @@ export default class EditFormOne extends React.Component {
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>
-                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
-                <Mention
-                  style={{ width: '100%', height: 70 }}
-                  onChange={this.mentionOnChange.bind(this)}
-                  defaultValue={toContentState(defaultAssignees)}
-                  suggestions={suggestions}
-                />
+                <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
+                {/*<Mention*/}
+                  {/*style={{ width: '100%', height: 70 }}*/}
+                  {/*onChange={this.mentionOnChange.bind(this)}*/}
+                  {/*defaultValue={toContentState(defaultAssignees)}*/}
+                  {/*suggestions={suggestions}*/}
+                {/*/>*/}
               </div>
             </div>
           </div>
