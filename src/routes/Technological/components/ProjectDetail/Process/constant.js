@@ -64,28 +64,26 @@ export const processEditDatasRecordsConstant = [
         "form_data":[
           {
             "field_type":"1",//字段类型 1=输入框
-            "property_name":"输入框",//属性名称(标题)
-            "default_value":"默认值",//默认值
-            "verification_rule":"email",//校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
+            "property_name":"",//属性名称(标题)输入框
+            "default_value":"",//默认值 默认值
+            "verification_rule":"",//校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
             "val_length":"20",//长度
             "is_required":"1"//是否必须 1=必须 0=不是必须
           },
           {
             "field_type":"2",//字段类型 2=日期选择
-            "property_name":"日期选择",//属性名称(标题)
-            "default_value":"默认值",//默认值
+            "property_name":"",//属性名称(标题)日期选择
+            "default_value":"",//默认值 默认值
             "verification_rule":"SINGLE_DATE_TIME",//校验规则 单个+日期+时分 = SINGLE_DATE_TIME ,单个+日期 = SINGLE_DATE,多个+日期+时分 = MULTI_DATE_TIME ,多个+日期 = MULTI_DATE
             "is_required":"1"//是否必须 1=必须 0=不是必须
           },
           {
             "field_type":"3",//字段类型 3=下拉框
-            "property_name":"下拉框",//属性名称(标题)
-            "default_value":"默认值",//默认值(预设值)
+            "property_name":"",//属性名称(标题) 下拉框
+            "default_value":"",//默认值(预设值)默认值
             "verification_rule":"redio",//校验规则 redio = 单选， multiple = 多选 ，province = 省市区
             "is_required":"1",//是否必须 1=必须 0=不是必须
-            "options_data":[
-              "one","two"
-            ]
+            "options_data":[]
           }
         ]
       },

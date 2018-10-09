@@ -12,7 +12,6 @@ class EditFormThreeTwoModal extends React.Component {
   }
 
   selectionsChange(e) {
-    console.log(e.target.value)
     this.setState({
       selections: e.target.value
     })
@@ -35,20 +34,19 @@ class EditFormThreeTwoModal extends React.Component {
               selectionsNewArr.push(val)
             }
           }
-          selections = selectionsNewArr.join(',')
-          values['selections'] = selections
+          values['selections'] = selectionsNewArr
         }
         this.props.setShowModalVisibile()
-        console.log(values['selections'])
         // 此处设置状态管理数据
+        this.props.optionsDataChange(values['selections'])
       }
     });
   }
   render() {
-    const { modalVisible  } = this.props;
+    const { modalVisible, options_data  } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    const  editSelectionsText =  `asd,ss,122`
+    const  editSelectionsText =  options_data.join(',')
     const newEditSelectionsText = editSelectionsText.replace(/\,/gim, `\n`)
 
     const step_3 = (

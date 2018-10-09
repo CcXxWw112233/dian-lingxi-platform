@@ -1,6 +1,6 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Menu, Dropdown } from 'antd';
 import indexStyles from './index.less'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt,validateNegative,validateTwoDecimal, } from '../../../../../../utils/verify'
 
@@ -104,9 +104,52 @@ export default class EditFormThree extends React.Component {
     })
   }
 
+  //表单填写项
+  menuAddFormClick({ key }) {
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
+    const { form_data=[] } = processEditDatas[processCurrentEditStep]
+    //推进人一项
+    let obj = {}
+    switch (key){
+      case '1':
+        obj =  { //输入框
+          "field_type":"1",
+          "property_name":"",
+          "default_value":"",
+          "verification_rule":"",
+          "val_length":"20",
+          "is_required":"1"
+        }
+        break
+      case '2':
+        obj = { //日期
+          "field_type":"2",
+          "property_name":"",
+          "default_value":"",
+          "verification_rule":"SINGLE_DATE_TIME",
+          "is_required":"1"
+        }
+        break
+      case '3': //下拉
+        obj=  {
+          "field_type":"3",
+          "property_name":"",
+          "default_value":"",
+          "verification_rule":"redio",
+          "is_required":"1",
+          "options_data":[]
+        }
+        break
+      default:
+        break
+    }
+    form_data.push(obj)
+    this.updateEdit({value: form_data}, 'form_data')
+  }
+
   render() {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
-    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion } = processEditDatas[processCurrentEditStep]
+    const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, form_data=[] } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
     let suggestions = []
@@ -115,6 +158,39 @@ export default class EditFormThree extends React.Component {
     }
     let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
+
+    const filterForm = (value, key) => {
+      const { field_type } = value
+      let container = (<div></div>)
+      switch (field_type) {
+        case '1':
+          container = (
+            <EditFormThree_One {...this.props} itemKey={key} itemValue={value} updateEdit={this.updateEdit.bind(this)} />
+          )
+          break
+        case '3':
+          container = (
+            <EditFormThree_Two {...this.props} itemKey={key} itemValue={value} updateEdit={this.updateEdit.bind(this)} />
+          )
+          break
+        case '2':
+          container = (
+            <EditFormThree_Three {...this.props} itemKey={key} itemValue={value} updateEdit={this.updateEdit.bind(this)} />
+          )
+          break
+        default:
+          break
+      }
+      return container
+    }
+    const menuAddForm = (
+      <Menu onClick={this.menuAddFormClick.bind(this)}>
+        <Menu.Item key="1">文本框</Menu.Item>
+        <Menu.Item key="2">日期</Menu.Item>
+        <Menu.Item key="3">下拉选项</Menu.Item>
+      </Menu>
+    );
+
     return (
       <div className={indexStyles.editFormOut}>
         <div className={indexStyles.editTop}>
@@ -151,16 +227,17 @@ export default class EditFormThree extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span  style={{fontSize: 14}}>表单</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>上传数量、格式<br/>及大小</span>
+              <span style={{fontSize: 12,color: '#8c8c8c'}}>填写项</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <EditFormThree_One {...this.props}/>
-              <EditFormThree_Two {...this.props}/>
-              <EditFormThree_Three {...this.props}/>
-
-              <div style={{width: 20, height: 20,cursor: 'pointer', borderRadius: 18,marginTop: 10, alignItems: 'center', border:'2px solid #595959', textAlign: "center",display: 'flex'}}>
-                <Icon type="plus" theme="outlined" style={{fontSize:12, color:"#262626",marginLeft:2 }}/>
-              </div>
+              {form_data.map((value, key) => {
+                return (<div key={key}>{filterForm(value, key)}</div>)
+              })}
+              <Dropdown overlay={menuAddForm}>
+                <div style={{width: 20, height: 20,cursor: 'pointer', borderRadius: 18,marginTop: 10, alignItems: 'center', border:'2px solid #595959', textAlign: "center",display: 'flex'}}>
+                  <Icon type="plus" theme="outlined" style={{fontSize:12, color:"#262626",marginLeft:2 }}/>
+                </div>
+              </Dropdown>
             </div>
           </div>
           {/*完成期限*/}

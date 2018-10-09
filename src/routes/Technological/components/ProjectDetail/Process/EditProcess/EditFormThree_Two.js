@@ -16,8 +16,38 @@ export default class EditFormThree_One extends React.Component {
       modalVisible: !this.state.modalVisible
     })
   }
-
+  updateEdit(data, key) {
+    const { itemKey } = this.props
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { form_data=[] } = processEditDatas[processCurrentEditStep]
+    form_data[itemKey][key] = data.value
+    this.props.updateEdit({value: form_data }, 'form_data')
+  }
+  propertyNameChange(e) {
+    this.updateEdit({value: e.target.value}, 'property_name')
+  }
+  isRequiredCheck (e) {
+    this.updateEdit({value: e.target.checked? '1':'0'}, 'is_required')
+  }
+  verificationRuleChange(value) {
+    this.updateEdit({value: value}, 'verification_rule')
+  }
+  defaultValueChange(value) {
+    let newValue = value
+    if (typeof value === 'object'){
+      newValue = value.join(',')
+    }
+    this.updateEdit({value: newValue}, 'default_value')
+  }
+  optionsDataChange(value) {
+    this.updateEdit({value: value}, 'options_data')
+  }
   render() {
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { form_data=[] } = processEditDatas[processCurrentEditStep]
+    const { itemKey } = this.props
+    const { property_name, default_value, verification_rule, options_data = [], is_required, } = form_data[itemKey]
+
     return (
       <div className={indexStyles.EditFormThreeOneOut}>
          <div className={indexStyles.EditFormThreeOneOut_delete}>
@@ -28,7 +58,7 @@ export default class EditFormThree_One extends React.Component {
            <div className={indexStyles.EditFormThreeOneOut_form_right}>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
                <p>标题</p>
-               <Input style={{width: 68, height: 24}}/>
+               <Input value={property_name} style={{width: 68, height: 24}} onChange={this.propertyNameChange.bind(this)}/>
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
                <p>选项</p>
@@ -36,26 +66,33 @@ export default class EditFormThree_One extends React.Component {
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
                <p>默认值</p>
-               <Select defaultValue={''} style={{ width: 88}} size={'small'}>
-                 <Option value="">不校验格式</Option>
-                 <Option value="mobile">手机号码</Option>
+               {/*mode=*/}
+               <Select value={verification_rule === 'multiple'? default_value.split(','):default_value} style={{ width: 88}} size={'small'} mode={verification_rule === 'multiple' ? 'multiple' : ''} maxTagCount={0} onChange={this.defaultValueChange.bind(this)} >
+                 {options_data.map((value, key) => {
+                   return ( <Option value={value} key={key}>{value}</Option>)
+                 } )}
                </Select>
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem}>
                <p>预设规则</p>
-               <Select defaultValue={'redio'} style={{ width: 86}} size={'small'}>
+               <Select value={verification_rule} style={{ width: 86}} size={'small'}  onChange={this.verificationRuleChange.bind(this)}>
                  <Option value="redio">单选</Option>
-                 <Option value="mobile">多选</Option>
+                 <Option value="multiple">多选</Option>
                  <Option value="province">省市区</Option>
                </Select>
              </div>
              <div  className={indexStyles.EditFormThreeOneOutItem} style={{textAlign: 'center'}}>
                <p>必填</p>
-               <Checkbox />
+               <Checkbox onChange={this.isRequiredCheck.bind(this)} checked={is_required === '1'} />
              </div>
            </div>
          </div>
-         <EditFormThreeTwoModal modalVisible={this.state.modalVisible} setShowModalVisibile={this.setShowModalVisibile.bind(this)} {...this.props}/>
+         <EditFormThreeTwoModal
+           optionsDataChange={this.optionsDataChange.bind(this)}
+           options_data={options_data}
+           modalVisible={this.state.modalVisible}
+           setShowModalVisibile={this.setShowModalVisibile.bind(this)}
+           {...this.props}/>
       </div>
     )
   }
