@@ -1,6 +1,8 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Input, Checkbox, Select, InputNumber } from 'antd'
+import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt,validateNegative,validateTwoDecimal, } from '../../../../../../utils/verify'
+
 const Option = Select.Option;
 
 export default class EditFormThree_One extends React.Component {

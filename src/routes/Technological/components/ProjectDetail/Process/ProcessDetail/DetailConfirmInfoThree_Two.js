@@ -2,6 +2,7 @@ import React from 'react'
 import { Input, Select, Cascader } from 'antd'
 import indexStyles from './index.less'
 import { areaData } from "../../../../../../utils/areaData";
+import {validateFixedTel, validateTel} from "../../../../../../utils/verify";
 
 const Option = Select.Option;
 
@@ -10,9 +11,25 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
     console.log(value)
   }
 
+  updateEdit(data, key) {
+    const { itemKey, parentItemKey } = this.props
+    const { datas: {  processEditDatas = [], } } = this.props.model
+    const { form_data=[] } = processEditDatas[parentItemKey]
+    form_data[itemKey][key] = data.value
+    this.props.updateDatas({
+      processEditDatas
+    })
+  }
 
+  defaultValueChange(verification_rule, e) {
+    this.updateEdit({value: e.target.value}, 'default_value')
+  }
 
   render() {
+    const { datas: {  processEditDatas = [] } } = this.props.model
+    const { itemKey, parentItemKey } = this.props
+    const { form_data=[] } = processEditDatas[parentItemKey]
+    const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
 
     const multipleSelectChildren = [];
     for (let i = 10; i < 36; i++) {
@@ -69,7 +86,7 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
         <div className={indexStyles.EditFormThreeOneOut_form}>
           <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
-            {fiterSelect('multiple')}
+            {fiterSelect(verification_rule)}
           </div>
         </div>
       </div>

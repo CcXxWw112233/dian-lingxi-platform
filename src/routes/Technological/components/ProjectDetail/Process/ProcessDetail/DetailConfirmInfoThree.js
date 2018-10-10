@@ -90,8 +90,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
-    console.log( processEditDatas[itemKey])
+    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, form_data=[]  } = processEditDatas[itemKey]
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -232,6 +231,31 @@ export default class DetailConfirmInfoThree extends React.Component {
       return container
     }
 
+    const filterForm = (value, key) => {
+      const { field_type } = value
+      let container = (<div></div>)
+      switch (field_type) {
+        case '1':
+          container = (
+            <ConfirmInfoThreeOne {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value} />
+          )
+          break
+        case '3':
+          container = (
+            <ConfirmInfoThreeTwo {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
+          )
+          break
+        case '2':
+          container = (
+            <ConfirmInfoThreeThree {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
+          )
+          break
+        default:
+          break
+      }
+      return container
+    }
+
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
@@ -255,9 +279,12 @@ export default class DetailConfirmInfoThree extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
               <div className={indexStyles.fill}>
-                <ConfirmInfoThreeOne {...this.props}/>
-                <ConfirmInfoThreeTwo  {...this.props} />
-                <ConfirmInfoThreeThree   {...this.props}/>
+                {/*<ConfirmInfoThreeOne {...this.props}/>*/}
+                {/*<ConfirmInfoThreeTwo  {...this.props} />*/}
+                {/*<ConfirmInfoThreeThree   {...this.props}/>*/}
+                {form_data.map((value, key) => {
+                  return (<div key={key}>{filterForm(value, key)}</div>)
+                })}
               </div>
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
