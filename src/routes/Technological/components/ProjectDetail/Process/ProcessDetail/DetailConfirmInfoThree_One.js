@@ -68,7 +68,7 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
   render() {
     const { verificationIsTrue } = this.state
     const { datas: {  processEditDatas = [] } } = this.props.model
-    const { itemKey, parentItemKey } = this.props
+    const { itemKey, parentItemKey, FormCanEdit } = this.props
     const { form_data=[] } = processEditDatas[parentItemKey]
     const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
 
@@ -125,7 +125,7 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
                 <div style={{display:'flex',alignItems: 'center'}}><div style={{maxWidth: 200, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{property_name}</div> [{filterVerificationName(verification_rule)}]  ({is_required === '1' ? '必填': '选填'})</div>
                 <div style={{color: '#F5222D', display: verificationIsTrue? 'none': 'block'}}>格式错误，请重新填写！</div>
               </div>
-              <Input value={default_value}   style={{ height: 24, width: '100%',marginTop: 4, border: verificationIsTrue? '': '1px solid #F5222D'  }} onChange={this.defaultValueChange.bind(this,verification_rule)}/>
+              <Input value={default_value} disabled={FormCanEdit}  style={{ height: 24, width: '100%',marginTop: 4, border: verificationIsTrue? '': '1px solid #F5222D'  }} onChange={this.defaultValueChange.bind(this,verification_rule)}/>
             </div>
           </div>
         </div>

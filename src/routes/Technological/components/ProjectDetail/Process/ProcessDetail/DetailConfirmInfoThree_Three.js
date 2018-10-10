@@ -27,7 +27,7 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
 
   render() {
     const { datas: {  processEditDatas = [] } } = this.props.model
-    const { itemKey, parentItemKey } = this.props
+    const { itemKey, parentItemKey,FormCanEdit } = this.props
     const { form_data=[] } = processEditDatas[parentItemKey]
     const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
 
@@ -46,11 +46,12 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
           <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
             <div  className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
-              <p>{property_name}</p>
+              <p>{property_name}({is_required === '1' ? '必填': '选填'})</p>
               {mode_0==='SINGLE'? (
                 <DatePicker
                   style={{width: '100%', height: 24}}
                   size={'small'}
+                  disabled={FormCanEdit}
                   showTime={mode_1 === 'DATE_TIME'}
                   allowClear={false}
                   format={mode_1 === 'DATE_TIME' ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD"}
@@ -60,6 +61,7 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
                 />
               ) : (<RangePicker
                 size={'small'}
+                disabled={FormCanEdit}
                 style={{width: '100%', height: 24}}
                 showTime={mode_1 === 'DATE_TIME'?{ format: 'HH:mm' } :false}
                 format={mode_1 === 'DATE_TIME' ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD"}

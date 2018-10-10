@@ -42,6 +42,15 @@ export default class EditFormThree_One extends React.Component {
   optionsDataChange(value) {
     this.updateEdit({value: value}, 'options_data')
   }
+  deleteItemForm() {
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { form_data=[] } = processEditDatas[processCurrentEditStep]
+    const { itemKey } = this.props
+    form_data.splice(itemKey, 1)
+    this.props.updateDatas({
+      processEditDatas
+    })
+  }
   render() {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
@@ -50,7 +59,7 @@ export default class EditFormThree_One extends React.Component {
 
     return (
       <div className={indexStyles.EditFormThreeOneOut}>
-         <div className={indexStyles.EditFormThreeOneOut_delete}>
+         <div className={indexStyles.EditFormThreeOneOut_delete} onClick={this.deleteItemForm.bind(this)}>
            <div></div>
          </div>
          <div className={indexStyles.EditFormThreeOneOut_form}>
@@ -67,7 +76,8 @@ export default class EditFormThree_One extends React.Component {
              <div  className={indexStyles.EditFormThreeOneOutItem}>
                <p>默认值</p>
                {/*mode=*/}
-               <Select value={verification_rule === 'multiple'? default_value.split(','):default_value} style={{ width: 88}} size={'small'} mode={verification_rule === 'multiple' ? 'multiple' : ''} maxTagCount={0} onChange={this.defaultValueChange.bind(this)} >
+               {/*filter(d=>d)去掉假值*/}
+               <Select value={verification_rule === 'multiple'? default_value.split(',').filter(d=>d):default_value} style={{ width: 88}} size={'small'} mode={verification_rule === 'multiple' ? 'multiple' : ''} maxTagCount={0} onChange={this.defaultValueChange.bind(this)} >
                  {options_data.map((value, key) => {
                    return ( <Option value={value} key={key}>{value}</Option>)
                  } )}

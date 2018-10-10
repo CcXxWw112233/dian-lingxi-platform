@@ -213,7 +213,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>转办该审批</div>) : (<div></div>)}
               </Dropdown>
-              {/*<Button onClick={this.setOpinionModalVisible.bind(this, '2')} style={{marginRight: 14}}>拒绝</Button>*/}
+              <Button onClick={this.setOpinionModalVisible.bind(this, '2')} style={{marginRight: 14}}>拒绝</Button>
               <Button onClick={this.setOpinionModalVisible.bind(this, '1')}>通过</Button>
             </div>
           )
@@ -242,7 +242,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                 if (key <= 20)
                   return(
                     <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
-                      <div>{imgOrAvatar2(value)}</div>
+                      <div>{imgOrAvatar2(value, key)}</div>
                     </Tooltip>
                   )
               })}

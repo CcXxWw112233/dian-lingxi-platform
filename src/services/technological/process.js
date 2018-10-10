@@ -92,7 +92,7 @@ export async function getProcessInfo(id) {
 //表单设值并完成这个表单的任务
 export async function fillFormComplete(data) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/form`,
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/form`,
     method: 'POST',
     data,
   });

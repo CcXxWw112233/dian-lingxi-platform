@@ -52,7 +52,7 @@ export default class ProcessDetail extends React.Component {
     } = defaultProps
     let ele = document.getElementById("time_graph_canvas")
     let circle = ele.getContext("2d");
-
+    circle.clearRect(0,0,210,210);//清空
     //创建多个圆弧
     const length = processEditDatas.length
     for (let i = 0; i < length; i++) {

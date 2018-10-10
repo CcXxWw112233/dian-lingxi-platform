@@ -334,6 +334,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    fillFormComplete(data) {
+      dispatch({
+        type: getEffectOrReducerByName('fillFormComplete'),
+        payload: data
+      })
+    },
     rebackProcessTask(data){
       dispatch({
         type: getEffectOrReducerByName('rebackProcessTask'),

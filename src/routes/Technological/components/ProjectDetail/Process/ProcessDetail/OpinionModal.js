@@ -31,16 +31,28 @@ class OpinionModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { operateType, itemValue } = this.props
+        const { operateType, itemValue, isFillForm, form_id, form_data } = this.props //isFillForm form_id填写表单的特殊处理
         const { datas:{processInfo = {}} } = this.props.model
-        const  instance_id  = processInfo.id
+        const  instance_id  = processInfo.id //流程实例id
         const { id } = itemValue
         values['flow_node_instance_id'] = id
         values['instance_id'] = instance_id
         this.onCancel()
         //发送请求
         if(operateType === '1') {
-          this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
+          if(isFillForm) { //填写
+            const obj = {
+              form_id,
+              instance_id,
+              flow_instance_id: instance_id,
+              node_id: id,
+              values:JSON.stringify(form_data),
+              message: values['message']
+            }
+            this.props.fillFormComplete ? this.props.fillFormComplete(obj): false
+          }else {
+            this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
+          }
         }else if(operateType === '0') {
           this.props.rebackProcessTask ?this.props.rebackProcessTask(values) : false
         } else if(operateType === '2') {

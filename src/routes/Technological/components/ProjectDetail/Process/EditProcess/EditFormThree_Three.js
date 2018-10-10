@@ -43,6 +43,15 @@ export default class EditFormThree_One extends React.Component {
     this.updateEdit({value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}`}, 'default_value')
   }
 
+  deleteItemForm() {
+    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { form_data=[] } = processEditDatas[processCurrentEditStep]
+    const { itemKey } = this.props
+    form_data.splice(itemKey, 1)
+    this.props.updateDatas({
+      processEditDatas
+    })
+  }
   render() {
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
@@ -60,7 +69,7 @@ export default class EditFormThree_One extends React.Component {
 
     return (
       <div className={indexStyles.EditFormThreeOneOut}>
-         <div className={indexStyles.EditFormThreeOneOut_delete}>
+         <div className={indexStyles.EditFormThreeOneOut_delete} onClick={this.deleteItemForm.bind(this)}>
            <div></div>
          </div>
          <div className={indexStyles.EditFormThreeOneOut_form}>

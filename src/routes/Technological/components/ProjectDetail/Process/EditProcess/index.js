@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Icon, Button } from 'antd'
+import { Icon, Button, message } from 'antd'
 import EditFormOne from './EditFormOne'
 import EditFormTwo from './EditFormTwo'
 import EditFormThree from './EditFormThree'
@@ -15,6 +15,10 @@ export default class EditProcess extends React.Component {
   }
   nodeTypeClick(node_type) {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    if(processCurrentEditStep===0 && node_type === '5') {
+      message.warn('流程节点第一步不能为审批类型')
+      return false
+    }
     const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     processEditDatasRecords[processCurrentEditStep] = {
       'node_type': node_type,

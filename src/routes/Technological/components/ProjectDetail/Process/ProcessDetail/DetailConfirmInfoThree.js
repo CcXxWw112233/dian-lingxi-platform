@@ -90,7 +90,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, form_data=[]  } = processEditDatas[itemKey]
+    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, form_data=[], form_id  } = processEditDatas[itemKey]
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -100,7 +100,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     //推进人
     const assigneesArray = assignees || []
     //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
-    let currentUserCanOperate = false
+    let currentUserCanOperate = assignee_type === '1'
     const userInfo = JSON.parse(Cookies.get('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
     for(let i = 0; i <assignees.length; i++) {
@@ -231,23 +231,30 @@ export default class DetailConfirmInfoThree extends React.Component {
       return container
     }
 
+    const FormCanEdit = ()=> { //表单是否可编辑
+      let noCando = true
+      if(currentUserCanOperate && (Number(sort) === Number(curr_node_sort))) {
+        noCando = false
+      }
+      return noCando
+    }
     const filterForm = (value, key) => {
       const { field_type } = value
       let container = (<div></div>)
       switch (field_type) {
         case '1':
           container = (
-            <ConfirmInfoThreeOne {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value} />
+            <ConfirmInfoThreeOne FormCanEdit={FormCanEdit()} {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value} />
           )
           break
         case '3':
           container = (
-            <ConfirmInfoThreeTwo {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
+            <ConfirmInfoThreeTwo FormCanEdit={FormCanEdit()} {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
           )
           break
         case '2':
           container = (
-            <ConfirmInfoThreeThree {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
+            <ConfirmInfoThreeThree FormCanEdit={FormCanEdit()} {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value}  />
           )
           break
         default:
@@ -255,7 +262,6 @@ export default class DetailConfirmInfoThree extends React.Component {
       }
       return container
     }
-
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
@@ -293,7 +299,7 @@ export default class DetailConfirmInfoThree extends React.Component {
             </div>
           </div>
         </Card>
-        <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
+        <OpinionModal isFillForm={true} form_data={form_data} form_id={form_id} itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
       </div>
     )
   }
