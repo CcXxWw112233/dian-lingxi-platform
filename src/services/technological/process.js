@@ -100,7 +100,7 @@ export async function fillFormComplete(data) {
 //流程文件上传
 export async function processFileUpload(data) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/upload`,
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
     method: 'POST',
     data,
   });

@@ -4,6 +4,7 @@ import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Toolt
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
+import { createProcess, getProcessList } from '../../../../../../services/technological/process'
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
@@ -18,6 +19,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     opinionModalVisible: false,
     due_time: '',
     isShowBottDetail: false, //是否显示底部详情
+    fileList: [],
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -132,7 +134,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
 
   render() {
     const that = this
-    const { due_time, isShowBottDetail } = this.state
+    const { due_time, isShowBottDetail, fileList } = this.state
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
@@ -153,7 +155,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       }
     }
 
-    console.log( processEditDatas[itemKey])
+    // console.log( processEditDatas[itemKey])
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -341,7 +343,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       name: 'file',
       multiple: true,
       withCredentials:true,
-      action: `${REQUEST_DOMAIN_FLOWS}/workflow/node/upload`,
+      action: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
       data: {
         flow_instance_id : processInfo.id,
         node_fileupload_id : processEditDatas[itemKey].id
@@ -350,28 +352,63 @@ export default class DetailConfirmInfoTwo extends React.Component {
         Authorization: Cookies.get('Authorization'),
         refreshToken : Cookies.get('refreshToken'),
       },
+      fileList: this.state.fileList,
       beforeUpload(e) {
+        console.log('beforeUpload', e)
+        if(fileList.length >= limit_file_num ) { //已经上传的文件达到限制
+          message.warn(`上传文件数量最大为${limit_file_num}个`)
+          return false
+        }
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false
         }else if(e.size > Number(limit_file_size) * 1024 * 1024) {
           message.error(`上传文件不能文件超过${Number(limit_file_size)}MB`)
           return false
+        }else {
+
         }
       },
-      onChange(info) {
-        const status = info.file.status;
-        const element = document.getElementById('ConfirmInfoOut_1_bott')
-        that.funTransitionHeight(element, 500,  true)
-        if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
+      onChange(info, e ,d) {
+        if(fileList.length >= limit_file_num ) { //已经上传的文件达到限制
+          return false
         }
-        if (status === 'done') {
+        if(info.file.size == 0) {
+          return false
+        }else if(info.file.size > Number(limit_file_size) * 1024 * 1024) {
+          return false
+        }else {
+        }
+        console.log('info',info)
+        if (status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
-        } else if (status === 'error') {
+        } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
+          info.fileList.pop()
           message.error(`${info.file.name} 上传失败。`);
         }
+        that.setState({
+          fileList:  info.fileList.length < limit_file_num ? info.fileList : info.fileList.slice(0, limit_file_num)
+        })
+        const element = document.getElementById('ConfirmInfoOut_1_bott')
+        that.funTransitionHeight(element, 500,  true)
       },
+      onRemove(e) {
+        const message = e.response.message
+        return new Promise((resolve, reject) => {
+          getProcessList().then((value) => {
+            if(value.code !=='0') {
+              message.warn('删除失败，请重新删除。')
+              reject()
+            }else {
+              resolve()
+            }
+          }).catch(err => {
+            message.warn('删除失败，请重新删除。')
+            reject()
+          })
+        })
+
+      }
     }
 
     return (
