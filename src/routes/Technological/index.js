@@ -57,11 +57,14 @@ const Technological = (options) => {
     }, {
       path: '/technological/newsDynamic',
       component: () => import('./components/NewsDynamic'),
+    }, {
+      path: '/technological/workbench',
+      component: () => import('./components/Workbench'),
     }
   ]
   return (
     <LocaleProvider locale={zh_CN}>
-      <div className={globalClassNmae.page_style_3} style={{ minWidth:1200, position: 'relative'}}>
+      <div className={globalClassNmae.page_style_3} style={{ minWidth:1440, position: 'relative'}}>
         <HeaderNav {...HeaderNavProps}/>
         {
           routes.map(({ path, ...dynamics }, key) =>{

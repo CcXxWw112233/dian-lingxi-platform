@@ -34,6 +34,11 @@ export default class HeaderNav extends React.Component{
         route = 'newsDynamic'
         break
       case '2':
+        route = 'workbench'
+        this.props.updateDatas({
+          naviHeadTabIndex: key
+        })
+        this.props.routingJump(`/technological/${route}`)
         break
       case '3':
         route = 'project'
@@ -164,7 +169,7 @@ export default class HeaderNav extends React.Component{
           </Dropdown>
           <div className={indexStyle.out_left_right}>
             <span style={{color: '#e8e8e8'}} className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
-            <span  style={{color: '#e8e8e8'}} className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
+            <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
           </div>
         </div>

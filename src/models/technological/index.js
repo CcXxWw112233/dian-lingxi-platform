@@ -16,8 +16,10 @@ export default {
         if (location.pathname.indexOf('/technological') !== -1) {
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = '3'
-          }else{
-
+          }else if(location.pathname === '/technological/workbench'){
+            naviHeadTabIndex = '2'
+          }else if(location.pathname === '/technological/newsDynamic'){
+            naviHeadTabIndex = '1'
           }
           dispatch({
             type: 'upDateNaviHeadTabIndex',

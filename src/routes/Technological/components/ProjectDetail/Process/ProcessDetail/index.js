@@ -97,8 +97,8 @@ export default class ProcessDetail extends React.Component {
 
   render() {
     const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
-    const { name, description } = processInfo
-    console.log('processInfo', processInfo)
+    const { name, description, status } = processInfo  //status 1 正在进行 2,暂停 3完成
+    // console.log('processInfo', processInfo)
 
     const filterForm = (value, key) => {
       const { node_type } = value

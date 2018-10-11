@@ -68,6 +68,7 @@ const Routers = function ({ history, app }) {
         import('./models/technological/project'),
         import('./models/technological/projectDetail'),
         import('./models/technological/newsDynamic'),
+        import('./models/technological/workbench'),
         import('./models/modal')
       ],
       component: () => import('./routes/Technological/'),
