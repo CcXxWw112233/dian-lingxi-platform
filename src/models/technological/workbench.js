@@ -1,4 +1,4 @@
-import { getUSerInfo, logout } from '../../services/technological/workbench'
+import { getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -15,25 +15,99 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/technological/workbench') {
-          console.log(1)
+          dispatch({
+            type: 'getResponsibleTaskList',
+            payload: {
+
+            }
+          })
+          dispatch({
+            type: 'getUploadedFileList',
+            payload: {
+
+            }
+          })
+          dispatch({
+            type: 'getBackLogProcessList',
+            payload: {
+
+            }
+          })
+          dispatch({
+            type: 'getJoinedProcessList',
+            payload: {
+
+            }
+          })
+
         }
       })
     },
   },
   effects: {
-    * getAppsList({ payload }, { select, call, put }) {
-      let res = yield call(getUSerInfo, payload)
+    * getResponsibleTaskList({ payload }, { select, call, put }) {
+      let res = yield call(getResponsibleTaskList, payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            appsList: res.data
+            responsibleTaskList: res.data
           }
         })
       }else{
 
       }
     },
+    * getUploadedFileList({ payload }, { select, call, put }) {
+      let res = yield call(getUploadedFileList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            uploadedFileList: res.data,
+          }
+        })
+      }else{
+
+      }
+    },
+    * getBackLogProcessList({ payload }, { select, call, put }) {
+      let res = yield call(getBackLogProcessList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            backLogProcessList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getJoinedProcessList({ payload }, { select, call, put }) {
+      let res = yield call(getJoinedProcessList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            joinedProcessList: res.data,
+          }
+        })
+      }else{
+
+      }
+    },
+    * completeTask({ payload }, { select, call, put }) { //
+      let res = yield call(completeTask, payload)
+      // if(isApiResponseOk(res)) {
+      //   yield put({
+      //     type: 'getResponsibleTaskList',
+      //     payload:{
+      //     }
+      //   })
+      // }else{}
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

@@ -9,23 +9,6 @@ const getEffectOrReducerByName = name => `workbench/${name}`
 
 const Workbench = (props) => {
   const { dispatch, model, modal } = props
-  const prjectListProps = {
-    modal,
-    model,
-    showModal() {
-      dispatch({ type: 'modal/showModal' })
-    },
-    hideModal() {
-      dispatch({ type: 'modal/hideModal' })
-    },
-    addNewProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName('addNewProject'),
-        payload: data
-      })
-      dispatch({ type: 'modal/hideModal' })
-    },
-  }
   const routingJump = (path) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
@@ -40,32 +23,56 @@ const Workbench = (props) => {
       payload:payload
     })
   }
+  const cardContentListProps = {
+    modal,
+    model,
+    completeTask(data) {
+      dispatch({
+        type: getEffectOrReducerByName('completeTask'),
+        payload: data
+      })
+    },
+    getResponsibleTaskList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getResponsibleTaskList'),
+        payload: data
+      })
+    },
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    }
+  }
   return(
     <div>
       <Header />
        <div className={indexStyles.workbenchOut}>
       <div className={indexStyles.cardItem}>
         <div className={indexStyles.cardItem_left}>
-          <CardContent title={'我负责的任务'} />
+          <CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'1'}/>
         </div>
         <div className={indexStyles.cardItem_right}>
-          <CardContent title={'我关注的任务'} />
+          <CardContent title={'我关注的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'2'} />
         </div>
       </div>
       <div className={indexStyles.cardItem}>
         <div className={indexStyles.cardItem_left}>
-          <CardContent title={'待我处理的流程'} />
+          <CardContent title={'待我处理的流程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'3'} />
         </div>
         <div className={indexStyles.cardItem_right}>
-          <CardContent title={'我参与的流程'} />
+          <CardContent title={'我参与的流程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'4'} />
         </div>
       </div>
       <div className={indexStyles.cardItem}>
         <div className={indexStyles.cardItem_left}>
-          <CardContent title={'我收藏的文档'} />
+          <CardContent title={'我收藏的文档'} {...cardContentListProps} updateDatas={updateDatas}CardContentType={'5'} />
         </div>
         <div className={indexStyles.cardItem_right}>
-          <CardContent title={'我上传的文档'} />
+          <CardContent title={'我上传的文档'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'6'}/>
         </div>
       </div>
     </div>

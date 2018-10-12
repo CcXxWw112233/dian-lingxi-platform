@@ -13,8 +13,12 @@ export const timeToTimestamp = (dateString) => { // 示例 '2014-04-23 18:55:49'
 }
 //时间戳转日期(15000000000, '-', true)
 export const timestampToTimeNormal = (timestamp,split, flag) => {
+  if(!timestamp){
+    return false
+  }
+  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000: Number(timestamp)
   const splitNew = split || '-'
-  let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
