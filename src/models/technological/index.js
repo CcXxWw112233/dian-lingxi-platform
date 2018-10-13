@@ -29,8 +29,13 @@ export default {
             dispatch({
               type:'getUSerInfo',
             })
-          }else {
+          }
+          //websocket连接判定
+          if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
             initWs()
+          }
+          window.onbeforeunload = function () {
+            Cookies.set('wsLinking', false,{expires: 30, path: ''})
           }
         }
       })
@@ -55,7 +60,6 @@ export default {
           }
         })
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
-        initWs()
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

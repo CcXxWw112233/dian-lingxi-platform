@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie'
+
 let tio = {}
 tio.ws = {}
 
@@ -43,7 +45,9 @@ tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTim
   this.connect = function (isReconnect) {
     let _url = this.url;
     if (isReconnect) {
-      _url = this.reconnUrl;
+      const Authorization = Cookies.get('Authorization')
+      const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
+      _url = `uid=${id}&token=${Authorization}&tiows_reconnect=true`;
     }
     let ws = new WebSocket(_url)
     this.ws = ws
@@ -97,6 +101,7 @@ tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTim
   this.send = function(data){
     this.ws.send(data);
   };
+
 }
 
 export default tio

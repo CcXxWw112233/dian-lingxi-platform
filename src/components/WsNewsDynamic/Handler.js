@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie'
 let Handlers = function () {
   this.onopen = function (event, ws) {
+    Cookies.set('wsLinking', true,{expires: 30, path: ''})
     console.log('连上了哦')
   }
 
@@ -19,9 +21,12 @@ let Handlers = function () {
 
   this.onclose = function (e, ws) {
     // error(e, ws)
+    Cookies.set('wsLinking', false,{expires: 30, path: ''})
+    console.log('连接断开')
   }
 
   this.onerror = function (e, ws) {
+    console.log('连接错误')
     // error(e, ws)
   }
 
