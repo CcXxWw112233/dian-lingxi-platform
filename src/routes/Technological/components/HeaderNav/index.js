@@ -2,6 +2,8 @@ import React from 'react';
 import indexStyle from './index.less'
 import { Link } from 'dva/router'
 import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from 'antd'
+import Cookies from 'js-cookie'
+
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
 export default class HeaderNav extends React.Component{
@@ -82,7 +84,7 @@ export default class HeaderNav extends React.Component{
       updateTime,
       username,
       wechat,
-    } = userInfo
+    } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const menu = (
       //
       <Card  className={indexStyle.menuDiv} >

@@ -58,6 +58,7 @@ export default function request(options = {}, elseSet = {}) {
           switch (error.response.status) {
             case 401:
               const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
+              Cookies.remove('userInfo', { path: '' })
               if(!is401) {
                 Cookies.set('is401', true, {expires: 30, path: ''})
                 window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`

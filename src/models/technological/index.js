@@ -4,6 +4,7 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
+import { initWs}  from '../../components/WsNewsDynamic'
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default {
@@ -24,9 +25,13 @@ export default {
           dispatch({
             type: 'upDateNaviHeadTabIndex',
           })
-          dispatch({
-            type:'getUSerInfo',
-          })
+          if(!Cookies.get('userInfo')) {
+            dispatch({
+              type:'getUSerInfo',
+            })
+          }else {
+            initWs()
+          }
         }
       })
     },
@@ -50,6 +55,7 @@ export default {
           }
         })
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        initWs()
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -58,6 +64,7 @@ export default {
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
         // yield put(routerRedux.push('/login'));
+        Cookies.remove('userInfo', { path: '' })
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
