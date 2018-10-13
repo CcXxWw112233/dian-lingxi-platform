@@ -8,6 +8,7 @@ import Header from './Header'
 const getEffectOrReducerByName = name => `workbench/${name}`
 
 const Workbench = (props) => {
+  // console.log(props)
   const { dispatch, model, modal } = props
   const routingJump = (path) => {
     dispatch({

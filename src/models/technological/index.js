@@ -5,6 +5,7 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs}  from '../../components/WsNewsDynamic'
+import { selectNewMessageItem } from './select'
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default {
@@ -14,6 +15,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         message.destroy()
+        //头部table key
         if (location.pathname.indexOf('/technological') !== -1) {
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = '3'
@@ -25,6 +27,7 @@ export default {
           dispatch({
             type: 'upDateNaviHeadTabIndex',
           })
+          //如果cookie存在用户信息，则部请求，反之则请求
           if(!Cookies.get('userInfo')) {
             dispatch({
               type:'getUSerInfo',
@@ -36,7 +39,9 @@ export default {
           }
           window.onbeforeunload = function () {
             Cookies.set('wsLinking', false,{expires: 30, path: ''})
+            localStorage.removeItem(`newMessage`)
           }
+
         }
       })
     },
@@ -64,6 +69,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {

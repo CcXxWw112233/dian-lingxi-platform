@@ -10,3 +10,6 @@ export const selectDrawContent = state => state[(`projectDetail`)].datas.drawCon
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetail`)].datas.currentParrentDirectoryId  //当前文件夹id
 export const selectBreadcrumbList= state => state[(`projectDetail`)].datas.breadcrumbList  //面包屑路径
+
+//新消息
+export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem  //面包屑路径

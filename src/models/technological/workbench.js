@@ -5,9 +5,11 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
+import modelExtend from 'dva-model-extend'
+import technological from './index'
 
 let naviHeadTabIndex //导航栏naviTab选项
-export default {
+export default modelExtend(technological, {
   namespace: 'workbench',
   state: [],
   subscriptions: {
@@ -40,6 +42,23 @@ export default {
             }
           })
 
+          //监听新消息setMessageItemEvent
+          window.addEventListener("setMessageItemEvent", function (e) {
+            if(localStorage.getItem('newMessage') === e.newValue){
+              return false
+            }
+            // 当前的消息已经更新， 避免重复更新
+            if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  newMessageItem: e.newValue,
+                },
+              })
+              Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
+            }
+
+          });
         }
       })
     },
@@ -122,4 +141,4 @@ export default {
       }
     }
   },
-};
+});

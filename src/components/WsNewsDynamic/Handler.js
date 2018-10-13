@@ -16,18 +16,28 @@ let Handlers = function () {
     if(data=="pong"){
       return;
     }
-    console.log('onmessage',data)
+    Cookies.set('updateNewMessageItem', false,{expires: 30, path: ''})
+    //重写setItem，将最新消息存储
+    let orignalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key,newValue){
+      let setMessageItemEvent = new Event("setMessageItemEvent");
+      setMessageItemEvent.key=key;
+      setMessageItemEvent.newValue = newValue;
+      window.dispatchEvent(setMessageItemEvent);
+      orignalSetItem.apply(this,arguments);
+    }
+    setTimeout(function () {
+      localStorage.setItem('newMessage', JSON.stringify(data));
+    },500)
   }
 
   this.onclose = function (e, ws) {
-    // error(e, ws)
     Cookies.set('wsLinking', false,{expires: 30, path: ''})
     console.log('连接断开')
   }
 
   this.onerror = function (e, ws) {
     console.log('连接错误')
-    // error(e, ws)
   }
 
   /**
