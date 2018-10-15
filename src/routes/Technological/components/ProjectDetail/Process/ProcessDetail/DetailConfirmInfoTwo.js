@@ -12,6 +12,7 @@ import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalse
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
+const ConfirmInfoOut_1_bott_Id = `ConfirmInfoOut_1_bott_${Number(new Date().getTime()) * Math.random()}`  // 定义收缩内容的id
 
 //里程碑确认信息
 export default class DetailConfirmInfoTwo extends React.Component {
@@ -67,7 +68,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     },function () {
       this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
     })
-    const element = document.getElementById('ConfirmInfoOut_1_bott')
+    const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
     if (typeof window.getComputedStyle == "undefined") return;
@@ -389,7 +390,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         that.setState({
           fileList:  info.fileList.length < limit_file_num ? info.fileList : info.fileList.slice(0, limit_file_num)
         })
-        const element = document.getElementById('ConfirmInfoOut_1_bott')
+        const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
         that.funTransitionHeight(element, 500,  true)
       },
       onRemove(e) {
@@ -428,7 +429,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
-          <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={'ConfirmInfoOut_1_bott'} >
+          <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={ConfirmInfoOut_1_bott_Id} >
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
