@@ -13,6 +13,46 @@ export default class ConfirmInfoOne extends React.Component {
     due_time: '',
     isShowBottDetail: false, //是否显示底部详情
   }
+  //这里的逻辑用来设置固定人选时将名称替换成id
+  componentWillMount(nextProps) {
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey  } = this.props
+    const { assignees, assignee_type } = processEditDatas[itemKey]
+    //推进人来源
+    let usersArray = []
+    const users = projectDetailInfoData.data
+    for(let i = 0; i < users.length; i++) {
+      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
+    }
+    //推进人
+    const assigneesArray = assignees ? assignees.split(',') : []
+    if(assignee_type === '3') {
+      for(let i = 0; i < assigneesArray.length; i++) {
+        for (let j = 0; j <　usersArray.length; j++) {
+          if(assigneesArray[i] === usersArray[j]) {
+            assigneesArray[i] = users[j].user_id
+            continue
+          }
+        }
+      }
+      const { datas: { processEditDatas = [] } } = this.props.model
+      const str = assigneesArray.join(',')
+      processEditDatas[itemKey]['assignees'] = str
+      this.props.updateDatas({
+        processEditDatas
+      })
+    }
+  }
+  tooltipFilterName({ users=[], user_id}) {
+    let name = '佚名'
+    for (let val of users) {
+      if(user_id === val.user_id) {
+        name = val.full_name || val.mobile || val.email
+        break
+      }
+    }
+    return name
+  }
   datePickerChange(date, dateString) {
     this.setState({
       due_time:dateString
@@ -105,7 +145,7 @@ export default class ConfirmInfoOne extends React.Component {
                     {assigneesArray.map((value, key)=>{
                       if (key < 6)
                         return(
-                          <Tooltip  key={key} placement="top" title={value}>
+                          <Tooltip  key={key} placement="top" title={this.tooltipFilterName.bind(this, {users: users, user_id: value})}>
                             <div>{imgOrAvatar()}</div>
                           </Tooltip>
                         )
@@ -126,7 +166,7 @@ export default class ConfirmInfoOne extends React.Component {
               {assigneesArray.map((value, key)=>{
                 if (key < 6)
                   return(
-                    <Tooltip  key={key} placement="top" title={value}>
+                    <Tooltip  key={key} placement="top" title={this.tooltipFilterName.bind(this, {users: users, user_id: value})}>
                       <div>{imgOrAvatar()}</div>
                     </Tooltip>
                   )

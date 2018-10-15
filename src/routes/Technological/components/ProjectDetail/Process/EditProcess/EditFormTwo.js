@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import indexStyles from './index.less'
 import { UPLOAD_PROCESS_FILE_SIZE } from '../../../../../../globalset/js/constant'
+import MentionAssignees from './MentionAssignees'
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
@@ -149,7 +150,7 @@ export default class EditFormTwo extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     return (
@@ -238,13 +239,14 @@ export default class EditFormTwo extends React.Component {
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>
-                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
-                <Mention
-                  style={{ width: '100%', height: 70 }}
-                  onChange={this.mentionOnChange.bind(this)}
-                  defaultValue={toContentState(defaultAssignees)}
-                  suggestions={suggestions}
-                />
+                <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
+
+                {/*<Mention*/}
+                  {/*style={{ width: '100%', height: 70 }}*/}
+                  {/*onChange={this.mentionOnChange.bind(this)}*/}
+                  {/*defaultValue={toContentState(defaultAssignees)}*/}
+                  {/*suggestions={suggestions}*/}
+                {/*/>*/}
               </div>
             </div>
           </div>

@@ -155,25 +155,52 @@ export default class EditProcess extends React.Component {
         },
       ],
     }
-
     processEditDatasRecords.push(recordItemobjs)
     processEditDatas.push(nodeObj)
-    this.props.updateDatas({
-      processEditDatasRecords,
-      processEditDatas,
-      processCurrentEditStep: processEditDatasRecords.length - 1,
-      node_type: '1'
+
+    new Promise((resolve) => {
+      this.props.updateDatas({ //为了适应mention组件defaultValue在切换的时候不变
+        node_type: '6'
+      })
+      resolve()
+    }).then(res => {
+      //正常操作
+      this.props.updateDatas({
+        processEditDatasRecords,
+        processEditDatas,
+        processCurrentEditStep: processEditDatasRecords.length - 1,
+        node_type: '1'
+      })
     })
+    // this.props.updateDatas({
+    //   processEditDatasRecords,
+    //   processEditDatas,
+    //   processCurrentEditStep: processEditDatasRecords.length - 1,
+    //   node_type: '1'
+    // })
   }
 
   currentEditStepClick(data) {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0  } } = this.props.model
     const { value, key } = data
     const { node_type } = value
-    this.props.updateDatas({
-      processCurrentEditStep: key,
-      node_type
+
+    new Promise((resolve) => {
+      this.props.updateDatas({ //为了适应mention组件defaultValue在切换的时候不变
+        node_type: '6'
+      })
+      resolve()
+    }).then(res => {
+      //正常操作
+      this.props.updateDatas({
+        processCurrentEditStep: key,
+        node_type
+      })
     })
+    // this.props.updateDatas({
+    //   processCurrentEditStep: key,
+    //   node_type
+    // })
   }
 
   setSaveTemplateModalVisible() {
