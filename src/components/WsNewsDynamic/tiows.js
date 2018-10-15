@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import { WEBSOCKET_PATH, WEBSOCKET_PORT } from '../../globalset/js/constant'
 
 let tio = {}
 tio.ws = {}
@@ -47,7 +48,7 @@ tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTim
     if (isReconnect) {
       const Authorization = Cookies.get('Authorization')
       const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
-      _url = `uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+      _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
     }
     let ws = new WebSocket(_url)
     this.ws = ws

@@ -53,7 +53,7 @@ export default class NewsList extends React.Component {
           <img src="" />
         </div>
         <div  className={NewsListStyle.news_4_bottom}>
-          <Comment />
+          <Comment {...this.props} />
         </div>
       </div>
     )
@@ -124,6 +124,7 @@ export default class NewsList extends React.Component {
           </div>
           {taskNews({component: news_4})}
           {projectNews}
+          <div style={{height: 30,lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
         </div>
       </div>
     )

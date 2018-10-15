@@ -1,10 +1,12 @@
 import tio from './tiows'
 import { Handler } from './Handler'
 import Cookies from 'js-cookie'
+import { WEBSOCKET_PATH, WEBSOCKET_PORT } from '../../globalset/js/constant'
+
 
 let ws_protocol = 'ws'; // ws 或 wss
-let ip = '192.168.0.57'
-let port = 9326
+let ip = WEBSOCKET_PATH
+let port = WEBSOCKET_PORT
 let heartbeatTimeout = 5000; // 心跳超时时间，单位：毫秒
 let reconnInterval = 1000; // 重连间隔时间，单位：毫秒
 let binaryType = 'blob'; // 'blob' or 'arraybuffer';//arraybuffer是字节

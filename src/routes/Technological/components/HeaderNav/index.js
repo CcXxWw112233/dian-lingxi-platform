@@ -37,21 +37,17 @@ export default class HeaderNav extends React.Component{
         break
       case '2':
         route = 'workbench'
-        this.props.updateDatas({
-          naviHeadTabIndex: key
-        })
-        this.props.routingJump(`/technological/${route}`)
         break
       case '3':
         route = 'project'
-        this.props.updateDatas({
-          naviHeadTabIndex: key
-        })
-        this.props.routingJump(`/technological/${route}`)
         break
       default:
         break
     }
+    this.props.updateDatas({
+      naviHeadTabIndex: key
+    })
+    this.props.routingJump(`/technological/${route}`)
   }
   logout() {
     const that = this;
@@ -170,7 +166,7 @@ export default class HeaderNav extends React.Component{
             <div className={indexStyle.out_left_left}>迪</div>
           </Dropdown>
           <div className={indexStyle.out_left_right}>
-            <span style={{color: '#e8e8e8'}} className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
+            <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
             <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
           </div>

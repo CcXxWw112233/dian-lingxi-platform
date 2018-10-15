@@ -10,7 +10,7 @@ const getEffectOrReducerByName = name => `newsDynamic/${name}`
 const NewsDynamic = (props) => {
   const { dispatch, model, modal } = props
   const { datas: { isFirstEntry } = false } = model
-  const prjectListProps = {
+  const NewsListProps = {
     modal,
     model,
     showModal() {
@@ -18,6 +18,9 @@ const NewsDynamic = (props) => {
     },
     hideModal() {
       dispatch({ type: 'modal/hideModal' })
+    },
+    getNewsDynamicList(next_id) {
+      dispatch({ type: 'getNewsDynamicList', payload: {next_id} })
     }
   }
   const routingJump = (path) => {
@@ -28,6 +31,12 @@ const NewsDynamic = (props) => {
       },
     })
   }
+  const updateDatas = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas') ,
+      payload:payload
+    })
+  }
   return(
     <div>
         <Header/>
@@ -35,7 +44,7 @@ const NewsDynamic = (props) => {
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>
         ) : (
-          <NewsList key={'2'} />
+          <NewsList key={'2'} {...NewsListProps} updateDatas={updateDatas} />
         )}
       </QueueAnim>
     </div>

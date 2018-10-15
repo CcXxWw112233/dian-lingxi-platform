@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/login'
+import { getNewsDynamicList } from '../../services/technological/newsDynamic'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -16,8 +16,12 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload:{
-              isFirstEntry: false
+              isFirstEntry: false, //是否第一次进来
             }
+          })
+          dispatch({
+            type: 'getNewsDynamicList',
+            payload:{}
           })
         }else{
           // console.log(2)
@@ -26,8 +30,9 @@ export default {
     },
   },
   effects: {
-    * formSubmit({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(formSubmit, payload)
+    * getNewsDynamicList({ payload }, { select, call, put }) { //获取评论列表
+      const { next_id } = payload
+      let res = yield call(getNewsDynamicList, next_id)
       if(isApiResponseOk(res)) {
       }else{
       }

@@ -6,7 +6,7 @@ import 'braft-editor/dist/braft.css'
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
-import Comment from '../../NewsDynamic/Comment'
+import Comment from './Comment'
 import Cookies from 'js-cookie'
 
 import { deepClone } from '../../../../../utils/util'
