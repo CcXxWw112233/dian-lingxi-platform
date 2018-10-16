@@ -20,7 +20,10 @@ const NewsDynamic = (props) => {
       dispatch({ type: 'modal/hideModal' })
     },
     getNewsDynamicList(next_id) {
-      dispatch({ type: 'getNewsDynamicList', payload: {next_id} })
+      dispatch({
+        type: getEffectOrReducerByName('getNewsDynamicList'),
+        payload: {next_id}
+      })
     }
   }
   const routingJump = (path) => {
