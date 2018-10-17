@@ -12,7 +12,7 @@ import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileU
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
-import { fillFormComplete, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
+import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -43,24 +43,24 @@ export default {
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
             // 文档
-            // fileList: [], //文档列表
-            // filedata_1: [], //文档列表--文件夹
-            // filedata_2: [], //文档列表--文件
-            // selectedRowKeys: [],//选择的列表项
-            // isInAddDirectory: false, //是否正在创建文件家判断标志
-            // moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-            // openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
-            // currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-            // breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
-            // currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
-            // isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
-            // treeFolderData: {}, //文件夹树状结构
-            // filePreviewIsUsable: true, //文件是否可以预览标记
-            // filePreviewUrl: '',  //预览文件url
-            // filePreviewCurrentId: '', //当前预览的文件id
-            // filePreviewCurrentVersionId: '', //当前预览文件版本id
-            // filePreviewCurrentVersionList: [], //预览文件的版本列表
-            // filePreviewCurrentVersionKey: 0, //预览文件选中的key
+            fileList: [], //文档列表
+            filedata_1: [], //文档列表--文件夹
+            filedata_2: [], //文档列表--文件
+            selectedRowKeys: [],//选择的列表项
+            isInAddDirectory: false, //是否正在创建文件家判断标志
+            moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+            openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+            currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
+            breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+            currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+            isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+            treeFolderData: {}, //文件夹树状结构
+            filePreviewIsUsable: true, //文件是否可以预览标记
+            filePreviewUrl: '',  //预览文件url
+            filePreviewCurrentId: '', //当前预览的文件id
+            filePreviewCurrentVersionId: '', //当前预览文件版本id
+            filePreviewCurrentVersionList: [], //预览文件的版本列表
+            filePreviewCurrentVersionKey: 0, //预览文件选中的key
 
             //流程
             processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
@@ -72,6 +72,7 @@ export default {
             templateInfo: {},  //所选择的流程模板的信息数据
             processInfo: {},  //所选中的流程的信息
             processList: [],   //流程列表
+            processDynamics: [], //流程动态列表
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -329,6 +330,19 @@ export default {
             processPageFlagStep: '4'
           }
         })
+
+        //查询流程动态
+        const res2 = yield call(getProessDynamics,{flow_instance_id: payload})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDynamics: res2.data
+            }
+          })
+        }else{
+
+        }
       }else{
 
       }

@@ -80,7 +80,7 @@ export default class EditProcess extends React.Component {
           "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
           "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
           "require_data":{
-            "limit_file_num":"0",//限制文件上传数量 0=不限制
+            "limit_file_num":"10",//限制文件上传数量 0=不限制
             "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
             "limit_file_size":"20"//限制文件大小
           }
@@ -257,7 +257,7 @@ export default class EditProcess extends React.Component {
               "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
               "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
               "requires_data":{
-                "limit_file_num":"0",//限制文件上传数量 0=不限制
+                "limit_file_num":"10",//限制文件上传数量 0=不限制
                 "limit_file_type":"1,2,3,4",//限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
                 "limit_file_size":"20"//限制文件大小
               }

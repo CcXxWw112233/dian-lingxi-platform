@@ -8,6 +8,7 @@ import DetailConfirmInfoFour from './DetailConfirmInfoFour'
 import DetailConfirmInfoFive from './DetailConfirmInfoFive'
 
 import sssimg from '../../../../../../assets/yay.jpg'
+import {timestampToHM} from "../../../../../../utils/util";
 
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProcessDetail extends React.Component {
@@ -96,9 +97,83 @@ export default class ProcessDetail extends React.Component {
   }
 
   render() {
-    const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
+    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
     const { name, description, status } = processInfo  //status 1 正在进行 2,暂停 3完成
-    // console.log('processInfo', processInfo)
+    console.log('processDynamics', processDynamics)
+    //过滤消息内容
+    const   filterTitleContain = (messageValue) => {
+      const { activity_type } = messageValue
+      let contain = ''
+      let messageContain = (<div></div>)
+      switch (activity_type) {
+        case 'createWrokflowTpl':
+          contain = '创建流程模板'
+          break
+        case 'startWorkflow':
+          contain = '启动流程'
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 启动流程「{messageValue.flow_instance_name}」。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          break
+        case 'recallWorkflowTask':
+          contain = '撤回流程任务'
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 撤回流程「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          break
+        case 'reassignAssignee':
+          contain = '重新指派审批人'
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」中重新指定审批人 {messageValue.assignee}。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          break
+        case 'uploadWorkflowFile':
+          contain = '流程文件上传'
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          break
+        case 'completeWorkflowTask':
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                  <div className={indexStyles.newsItem_left_l}></div>
+                  <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」 中完成了任务「{messageValue.flow_node_name}」。</div>
+                </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          contain = '完成流程任务'
+          break
+        default:
+          break
+      }
+      return messageContain
+    }
 
     const filterForm = (value, key) => {
       const { node_type } = value
@@ -175,15 +250,13 @@ export default class ProcessDetail extends React.Component {
           <div className={indexStyles.bottContainer_right} >
             <div className={indexStyles.news}>
               <div className={indexStyles.newsTitle}>最新动态</div>
-              <div className={indexStyles.newsList} style={{display: 'none'}}>
-                {[1,2,2,3].map((value, key) => {
-                  return(<div className={indexStyles.newsItem} key={key}>
-                    <div className={indexStyles.newsItem_left}>
-                      <div className={indexStyles.newsItem_left_l}></div>
-                      <div className={indexStyles.newsItem_left_r}>呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵</div>
+              <div className={indexStyles.newsList} >
+                {processDynamics.map((value, key) => {
+                  return(
+                    <div key={key} value={value}>
+                      {filterTitleContain(value)}
                     </div>
-                    <div className={indexStyles.newsItem_right}>2018-8-8 24:00</div>
-                  </div>)
+                    )
                 })}
                 <div className={indexStyles.seeAllList}>
                   <div></div>

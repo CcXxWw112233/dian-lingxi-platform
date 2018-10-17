@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Icon, Input } from 'antd'
 import NewsListStyle from './NewsList.less'
 import QueueAnim from  'rc-queue-anim'
-import {newsDynamicHandleTime, timestampToTime, timestampToTimeNormal} from '../../../../utils/util'
+import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
 
 export default class NewsList extends React.Component {
@@ -113,7 +113,7 @@ export default class NewsList extends React.Component {
           messageContain = (
            <div className={NewsListStyle.news_3}>
             <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 创建了任务「{messageValue.card_name}」。</div>
-            <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+            <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
           </div>
           )
           contain = '创建任务'
@@ -122,7 +122,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 创建了子任务「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '创建子任务'
@@ -131,7 +131,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 更新了任务信息「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '更新任务信息'
@@ -140,7 +140,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 归档了任务「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '任务归档'
@@ -149,7 +149,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 完成了任务「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '完成任务'
@@ -158,7 +158,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 取消完成任务「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '取消完成任务'
@@ -167,7 +167,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 删除了任务「{messageValue.card_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '删除任务'
@@ -176,7 +176,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 把任务「{messageValue.card_name}」执行人指派给。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '添加任务执行人'
@@ -185,7 +185,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 添加了标签「{messageValue.label_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '添加任务标签'
@@ -194,7 +194,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 删除了标签「{messageValue.label_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '移除任务标签'
@@ -221,7 +221,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 启动流程「{messageValue.flow_instance_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -229,7 +229,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 撤回流程「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '撤回流程任务'
@@ -239,7 +239,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」中重新指定审批人 {messageValue.assignee}。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -248,7 +248,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -256,7 +256,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 在流程「{messageValue.flow_instance_name}」 中完成了任务「{messageValue.flow_node_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '完成流程任务'
@@ -266,7 +266,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 创建了文件夹「{messageValue.folder_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '创建文件夹'
@@ -279,7 +279,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 上传了文件「{messageValue.file_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -288,7 +288,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 更新了文件「{messageValue.file_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -297,7 +297,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 移动文件夹「{messageValue.folder_name}」到回收站。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -306,7 +306,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 移动文件「{messageValue.file_name}」到回收站。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -315,7 +315,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 移动文件「{messageValue.file_name}」到文件夹「{messageValue.folder_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           break
@@ -323,7 +323,7 @@ export default class NewsList extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 复制文件「{messageValue.file_name}」到文件夹「{messageValue.folder_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal(messageValue.map.create_time)}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
           contain = '复制文件到某个文件夹中'
@@ -393,6 +393,8 @@ export default class NewsList extends React.Component {
     }
     //评论动态
     const commentNews = (value) => {
+      const { map: { activity_type, full_name, avatar }, board_name, card_name='任务', user_name, cardComment: { text, create_time }} = value
+
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -402,8 +404,8 @@ export default class NewsList extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
-                <div>这是一条任务评论</div>
-                <div>项目B <Icon type="caret-right"  style={{fontSize: 8}}/> 分组A</div>
+                <div>{card_name}</div>
+                <div>项目：{board_name} <Icon type="caret-right"  style={{fontSize: 8}}/> 分组A</div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -411,7 +413,37 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            {news_4}
+            {/*{news_4}*/}
+            <div className={NewsListStyle.news_4}>
+              <div  className={NewsListStyle.news_4_top}>
+                <div className={NewsListStyle.news_4_left}>
+                  {/*<img src="" />*/}
+                  {avatar?(
+                    <img src={avatar} />
+                  ): (
+                    <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
+                      <Icon type={'user'} style={{fontSize: 18, marginTop: 12, color: '#8c8c8c'}}/>
+                    </div>
+                  )}
+                </div>
+                <div className={NewsListStyle.news_4_right}>
+                  <div className={NewsListStyle.r_t}>
+                    <div className={NewsListStyle.r_t_l}>{user_name}</div>
+                    <div className={NewsListStyle.r_t_r}>{timestampToHM(create_time)}</div>
+                  </div>
+                  <div className={NewsListStyle.r_b}>
+                    {text}
+                  </div>
+                </div>
+              </div>
+              <div  className={NewsListStyle.news_4_middle}>
+                {/*<img src="" />*/}
+                {/*<img src="" />*/}
+              </div>
+              <div  className={NewsListStyle.news_4_bottom}>
+                <Comment {...this.props} />
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -480,7 +512,7 @@ export default class NewsList extends React.Component {
           containner = ( taskNews(value) )
           break
         case  '3':
-          containner = ( commentNews(value) )
+          // containner = ( commentNews(value) )
           break
         case  '4':
           containner = ( processNews(value) )

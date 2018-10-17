@@ -193,7 +193,7 @@ export default class EditFormTwo extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <div style={{color: '#262626'}}>
-                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)}  onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} defaultValue={0} min={0} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}>（0为不限制）</span>
+                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)}  onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} min={1} max={100} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}></span>
               </div>
               <div style={{color: '#262626'}}>
                 限制文件格式为&nbsp;&nbsp;
