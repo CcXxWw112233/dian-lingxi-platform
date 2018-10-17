@@ -16,6 +16,7 @@ let Handlers = function () {
     if(data=="pong"){
       return;
     }
+    //设置updateNewMessageItem，在消息更新时使监听 setMessageItemEvent的页面能够不重复更新
     Cookies.set('updateNewMessageItem', false,{expires: 30, path: ''})
     //重写setItem，将最新消息存储
     let orignalSetItem = localStorage.setItem;

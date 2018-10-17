@@ -1,10 +1,12 @@
 import { getNewsDynamicList } from '../../services/technological/newsDynamic'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import { newsDynamicHandleTime, timestampToTime } from '../../utils/util'
 import { selectNewsDynamicList,selectNewsDynamicListOriginal} from './select'
+import Cookies from 'js-cookie'
+
 
 export default {
   namespace: 'newsDynamic',
@@ -15,6 +17,20 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
+        //监听新消息setMessageItemEvent 公用函数
+        const evenListentNewMessage = (e) => {
+          if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                newMessageItem: e.newValue,
+                isHasNewDynamic: true,
+              },
+            })
+            Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
+          }
+        }
+
         if (location.pathname === '/technological/newsDynamic') {
           // console.log(1)
           dispatch({
@@ -24,14 +40,38 @@ export default {
               newsDynamicList: [], //存放消息记录的数组
               newsDynamicListOriginal: [],
               isHasMore: true,//是否还可以查询更多
+              isHasNewDynamic: false, //是否有新消息
             }
           })
           dispatch({
             type: 'getNewsDynamicList',
             payload:{}
           })
+
+          //监听新消息setMessageItemEvent
+          window.addEventListener('setMessageItemEvent',evenListentNewMessage,false);
+          // window.addEventListener("setMessageItemEvent", function (e) {
+          //   // console.log(e.newValue)
+          //   // console.log(localStorage.getItem('newMessage'))
+          //   // console.log(localStorage.getItem('newMessage') === e.newValue)
+          //
+          //   // if(localStorage.getItem('newMessage') === e.newValue){
+          //   //   return false
+          //   // }
+          //   // 当前的消息已经更新， 避免重复更新
+          //   if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
+          //     dispatch({
+          //       type: 'updateDatas',
+          //       payload: {
+          //         newMessageItem: e.newValue,
+          //       },
+          //     })
+          //     console.log(e.newValue)
+          //     Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
+          //   }
+          // });
         }else{
-          // console.log(2)
+          window.removeEventListener('setMessageItemEvent',evenListentNewMessage,false);
         }
       })
     },
@@ -40,6 +80,14 @@ export default {
     * getNewsDynamicList({ payload }, { select, call, put }) { //获取评论列表
       const { next_id } = payload
       let res = yield call(getNewsDynamicList, next_id)
+      if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            newsDynamicListOriginal:[]
+          }
+        })
+      }
       let newsDynamicList = []//yield select(selectNewsDynamicList)
       let newsDynamicListOriginal = yield select(selectNewsDynamicListOriginal)
       if(isApiResponseOk(res)) {
@@ -64,7 +112,6 @@ export default {
           }
           newDataArray.push(obj)
         }
-
         newsDynamicList.push(...newDataArray)
         // console.log(1,newsDynamicList)
         // for(let i = 0; i < newsDynamicList.length; i++){

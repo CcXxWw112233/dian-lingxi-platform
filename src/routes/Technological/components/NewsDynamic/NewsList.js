@@ -13,8 +13,14 @@ export default class NewsList extends React.Component {
   getNewsDynamicListNext(next_id) {
     this.props.getNewsDynamicList(next_id)
   }
+  updateNewsDynamic() {
+    this.props.updateDatas({
+      isHasNewDynamic: false
+    })
+    this.props.getNewsDynamicList('0')
+  }
   render() {
-    const { datas: { newsDynamicList = [], next_id, isHasMore = true }} = this.props.model
+    const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
     // const { date, dataList = []} = newsDynamicList
     //项目动态
     const news_1 = (
@@ -512,7 +518,7 @@ export default class NewsList extends React.Component {
           containner = ( taskNews(value) )
           break
         case  '3':
-          // containner = ( commentNews(value) )
+          containner = ( commentNews(value) )
           break
         case  '4':
           containner = ( processNews(value) )
@@ -527,7 +533,10 @@ export default class NewsList extends React.Component {
     }
 
     return (
-      <div style={{paddingBottom:100}}>
+      <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
+        {isHasNewDynamic?(
+          <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
+        ): ('')}
         {newsDynamicList.map((value, key)=> {
           const { date, dataList = []} = value
           return (
@@ -545,11 +554,13 @@ export default class NewsList extends React.Component {
             </div>
           )
         })}
-        {isHasMore?(
-          <div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
-        ):(
-          <div  style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>
-        )}
+        <div style={{marginBottom: 100}}>
+          {isHasMore?(
+            <div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
+          ):(
+            <div  style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>
+          )}
+        </div>
       </div>
     )
   }

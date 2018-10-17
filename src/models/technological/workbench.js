@@ -43,22 +43,22 @@ export default modelExtend(technological, {
           })
 
           //监听新消息setMessageItemEvent
-          window.addEventListener("setMessageItemEvent", function (e) {
-            if(localStorage.getItem('newMessage') === e.newValue){
-              return false
-            }
-            // 当前的消息已经更新， 避免重复更新
-            if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
-              dispatch({
-                type: 'updateDatas',
-                payload: {
-                  newMessageItem: e.newValue,
-                },
-              })
-              Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
-            }
-
-          });
+          // window.addEventListener("setMessageItemEvent", function (e) {
+          //   if(localStorage.getItem('newMessage') === e.newValue){
+          //     return false
+          //   }
+          //   // 当前的消息已经更新， 避免重复更新
+          //   if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
+          //     dispatch({
+          //       type: 'updateDatas',
+          //       payload: {
+          //         newMessageItem: e.newValue,
+          //       },
+          //     })
+          //     Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
+          //   }
+          //
+          // });
         }
       })
     },
