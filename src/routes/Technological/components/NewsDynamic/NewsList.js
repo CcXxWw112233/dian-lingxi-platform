@@ -535,6 +535,9 @@ export default class NewsList extends React.Component {
         case  '5':
           containner = ( fileNews(value) )
           break
+        case  '6':
+          containner = ( processNews(value) )
+          break
         default:
           break
       }
