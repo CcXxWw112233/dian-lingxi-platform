@@ -382,7 +382,7 @@ export default class NewsList extends React.Component {
     }
     //任务动态
     const taskNews = (value) =>{
-      const { map: { activity_type, full_name, create_time }, board_name, card_name} = value
+      const { map: { activity_type, full_name, create_time }, board_name, card_name, list_name} = value
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -393,7 +393,7 @@ export default class NewsList extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>项目：{board_name}<Icon type="caret-right"  style={{fontSize: 8}}/> 分组 A</div>
+                <div>项目：{board_name}<Icon type="caret-right"  style={{fontSize: 8}}/> 分组 {list_name}</div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -408,7 +408,7 @@ export default class NewsList extends React.Component {
     }
     //评论动态
     const commentNews = (value) => {
-      const { map: { activity_type, full_name, avatar }, board_name, card_name='任务', user_name, cardComment: { text, create_time }} = value
+      const { map: { activity_type, full_name, avatar }, list_name, board_name, card_name='任务', user_name, cardComment: { text, create_time }} = value
 
       return (
         <div className={NewsListStyle.containr}>
@@ -420,7 +420,7 @@ export default class NewsList extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>项目：{board_name} <Icon type="caret-right"  style={{fontSize: 8}}/> 分组A</div>
+                <div>项目：{board_name} <Icon type="caret-right"  style={{fontSize: 8}}/> 分组 {list_name}</div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
