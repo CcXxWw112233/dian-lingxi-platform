@@ -169,6 +169,18 @@ export default class ProcessDetail extends React.Component {
           )
           contain = '完成流程任务'
           break
+        case 'waitingWorkflowTaskNotice':
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>您有一个流程任务待处理。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+            </div>
+          )
+          contain = '流程待处理任务通知'
+          break
         default:
           break
       }

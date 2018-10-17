@@ -267,6 +267,15 @@ export default class NewsList extends React.Component {
           )
           contain = '完成流程任务'
           break
+        case 'waitingWorkflowTaskNotice':
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>您有一个流程任务待处理。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
+            </div>
+          )
+          contain = '流程待处理任务通知'
+          break
         //文档
         case 'createFolder':
           messageContain = (
