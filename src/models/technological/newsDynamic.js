@@ -20,6 +20,7 @@ export default {
         //监听新消息setMessageItemEvent 公用函数
         const evenListentNewMessage = (e) => {
           if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
+            console.log(e.newValue)
             dispatch({
               type: 'updateDatas',
               payload: {
@@ -32,7 +33,7 @@ export default {
         }
 
         if (location.pathname === '/technological/newsDynamic') {
-          // console.log(1)
+          console.log(1)
           dispatch({
             type: 'updateDatas',
             payload:{
@@ -71,6 +72,7 @@ export default {
           //   }
           // });
         }else{
+          console.log(2)
           window.removeEventListener('setMessageItemEvent',evenListentNewMessage,false);
         }
       })
@@ -166,6 +168,8 @@ export default {
             const newDataList = newsDynamicListTransform[i]['newDataList'][k]
             if(newDataList && newDataList['type'] === '2' && !newDataList['TypeArrayList'].length) {
               newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
+            }else if(newDataList && newDataList['type'] === '3' && !newDataList['TypeArrayList'].length){
+              newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
             }
           }
           newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
@@ -185,9 +189,24 @@ export default {
       }
     },
     * addCardNewComment({ payload }, { select, call, put }) { //
-      let res = yield call(addCardNewComment, payload)
+      const { card_id, comment, parentKey, childrenKey } = payload
+      let res = yield call(addCardNewComment, { card_id, comment })
       if(isApiResponseOk(res)) {
-        console.log(res)
+        // 将评论的内容添加到前面
+        const newsDynamicList = yield select(selectNewsDynamicList)
+        let newItem = JSON.parse(JSON.stringify(newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'][0]))
+        const { user_name, full_name,mobile,email, avatar } = JSON.parse(Cookies.get('userInfo'))
+        newItem['user_name'] = full_name || mobile || email
+        newItem['avatar'] = avatar
+        newItem['cardComment']['text'] = comment
+        newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'].unshift(newItem)
+        // console.log(res)
+        yield put({
+          type: 'updateDatas',
+          payLoad: {
+            newsDynamicList
+          }
+        })
       }else{
       }
     },
