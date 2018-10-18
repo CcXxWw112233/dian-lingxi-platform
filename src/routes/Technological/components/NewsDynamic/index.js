@@ -3,6 +3,7 @@ import {connect} from "dva/index";
 import Header from  './Header'
 import FirstEntry from './FirstEntry'
 import NewsList from './NewsList'
+import NewsListNewDatas from './NewsListNewDatas'
 import QueueAnim from  'rc-queue-anim'
 
 const getEffectOrReducerByName = name => `newsDynamic/${name}`
@@ -47,7 +48,7 @@ const NewsDynamic = (props) => {
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>
         ) : (
-          <NewsList key={'2'} {...NewsListProps} updateDatas={updateDatas} />
+          <NewsListNewDatas key={'2'} {...NewsListProps} updateDatas={updateDatas} />
         )}
       </QueueAnim>
     </div>

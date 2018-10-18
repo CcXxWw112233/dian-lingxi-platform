@@ -113,23 +113,69 @@ export default {
           newDataArray.push(obj)
         }
         newsDynamicList.push(...newDataArray)
-        // console.log(1,newsDynamicList)
-        // for(let i = 0; i < newsDynamicList.length; i++){
-        //   const dataList = newsDynamicList[i]['dataList']
-        //   let t = 0
-        //   for (let j = 0; j < dataList.length; j++) {
-        //     if (dataList[j].map['type'] === '2') {
-        //       if(dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id']) {
-        //         // console.log(j)
-        //       }
-        //     }
-        //   }
-        // }
-        // console.log(2,newsDynamicList)
+        //-------------2018.10.18修改合并相邻相近任务
+        let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
+        //将相邻且activity_type_id相同而且type等于固定类型的归为一条
+        const  removeEmptyArrayEle = (arr) => {
+          for(var i = 0; i < arr.length; i++) {
+            if(arr[i] == undefined) {
+              arr.splice(i,1);
+              i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+              // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+            }
+          }
+          return arr;
+        };
+        for(let i = 0; i < newsDynamicListTransform.length; i++){
+          const dataList = newsDynamicListTransform[i]['dataList']
+          newsDynamicListTransform[i]['newDataList'] = []
+          let isNearKeyTypeTwo = [] //与key相近的值是否有 activity_type_id相同而且type等于固定类型的归为一条,任务
+          let isNearKeyTypeThree = []//与key相近的值是否有 activity_type_id相同而且type等于固定类型的归为一条,评论
+          dataList.map((value, key) => {
+            if(isNearKeyTypeTwo.indexOf(key) !== -1) {
+              return false
+            }
+            if(value.map['type'] === '2') { //处理任务
+              let TypeArrayList = []
+              for (let j = key; j < dataList.length - 1; j++) {
+                if(dataList[j].map['type'] === '2' && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '2' && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                  isNearKeyTypeTwo.push(j)
+                  TypeArrayList.push(dataList[j])
+                }else {
+                  break
+                }
+              }
+              newsDynamicListTransform[i]['newDataList'][key] = { type: '2',TypeArrayList }
+            }else if(value.map['type'] === '3'){ //处理评论
+              let TypeArrayList = []
+              for (let j = key; j < dataList.length - 1; j++) {
+                if(dataList[j].map['type'] === '3' && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '3' && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                  isNearKeyTypeTwo.push(j)
+                  TypeArrayList.push(dataList[j])
+                }else {
+                  break
+                }
+              }
+              newsDynamicListTransform[i]['newDataList'][key] = { type: '3',TypeArrayList }
+            }else {
+              newsDynamicListTransform[i]['newDataList'][key] = { type: value.map['type'] ,TypeArrayList: [dataList[key]] }
+            }
+          })
+          //已经合并的任务存在了，但是未合并的单条任务没有存进来，需要手动添加
+          for(let k = 0; k < newsDynamicListTransform[i]['newDataList'].length; k++) {
+            const newDataList = newsDynamicListTransform[i]['newDataList'][k]
+            if(newDataList && newDataList['type'] === '2' && !newDataList['TypeArrayList'].length) {
+              newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
+            }
+          }
+          newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
+        }
+        //-------------2018.10.18修改合并相邻相近任务结束
+        console.log(2,newsDynamicListTransform)
         yield put({
           type: 'updateDatas',
           payload: {
-            newsDynamicList,//: res.data,
+            newsDynamicList: newsDynamicListTransform,//: newsDynamicList,
             newsDynamicListOriginal,
             next_id: res.data.next_id,
             isHasMore: res.data.list.length ? true: false
