@@ -27,6 +27,20 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
+        //监听新消息setMessageItemEvent 公用函数
+        const evenListentNewMessage = (e) => {
+          if(!Cookies.get('updateNewMessageItem_2') || Cookies.get('updateNewMessageItem_2') === 'false' ) {
+            console.log('projectDetail',e.newValue)
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                newMessageItem: e.newValue,
+                isHasNewDynamic: true,
+              },
+            })
+            Cookies.set('updateNewMessageItem_2', true,{expires: 30, path: ''})
+          }
+        }
         board_id = Cookies.get('board_id')
         dispatch({
           type: 'updateDatas',
@@ -82,8 +96,10 @@ export default {
               id: board_id
             }
           })
+          //监听消息存储在localstorage变化
+          window.addEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
         }else{
-
+          window.removeEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
         }
       })
     },

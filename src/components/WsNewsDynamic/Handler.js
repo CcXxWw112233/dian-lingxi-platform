@@ -17,14 +17,20 @@ let Handlers = function () {
       return;
     }
     //设置updateNewMessageItem，在消息更新时使监听 setMessageItemEvent的页面能够不重复更新
-    Cookies.set('updateNewMessageItem', false,{expires: 30, path: ''})
-    //重写setItem，将最新消息存储
+    Cookies.set('updateNewMessageItem', false,{expires: 30, path: ''}) //动态监听
+    Cookies.set('updateNewMessageItem_2', false,{expires: 30, path: ''}) //项目详情监听
+    //重写setItem，将最新消息存储 动态和详情区分开
     let orignalSetItem = localStorage.setItem;
     localStorage.setItem = function(key,newValue){
       let setMessageItemEvent = new Event("setMessageItemEvent");
       setMessageItemEvent.key=key;
       setMessageItemEvent.newValue = newValue;
       window.dispatchEvent(setMessageItemEvent);
+
+      let setMessageItemEvent_2 = new Event("setMessageItemEvent_2");
+      setMessageItemEvent_2.key=key;
+      setMessageItemEvent_2.newValue = newValue;
+      window.dispatchEvent(setMessageItemEvent_2);
       orignalSetItem.apply(this,arguments);
     }
     setTimeout(function () {

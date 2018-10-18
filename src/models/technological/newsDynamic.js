@@ -20,7 +20,6 @@ export default {
         //监听新消息setMessageItemEvent 公用函数
         const evenListentNewMessage = (e) => {
           if(!Cookies.get('updateNewMessageItem') || Cookies.get('updateNewMessageItem') === 'false' ) {
-            console.log(e.newValue)
             dispatch({
               type: 'updateDatas',
               payload: {
@@ -33,7 +32,6 @@ export default {
         }
 
         if (location.pathname === '/technological/newsDynamic') {
-          console.log(1)
           dispatch({
             type: 'updateDatas',
             payload:{
@@ -49,7 +47,7 @@ export default {
             payload:{}
           })
 
-          //监听新消息setMessageItemEvent
+          //监听新消息setMessageItemEvent //监听消息存储在localstorage变化
           window.addEventListener('setMessageItemEvent',evenListentNewMessage,false);
           // window.addEventListener("setMessageItemEvent", function (e) {
           //   // console.log(e.newValue)
@@ -72,7 +70,6 @@ export default {
           //   }
           // });
         }else{
-          console.log(2)
           window.removeEventListener('setMessageItemEvent',evenListentNewMessage,false);
         }
       })
