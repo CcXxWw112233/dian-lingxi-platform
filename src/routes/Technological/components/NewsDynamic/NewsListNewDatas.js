@@ -413,10 +413,8 @@ export default class NewsListNewDatas extends React.Component {
       )
     }
     //评论动态
-    const commentNews = (value) => {
-      const {  list_name, board_name, card_name='任务',} = value[0]
-      // const {  board_name, card_name, list_name} = value[0]
-
+    const commentNews = (value,parentKey, childrenKey) => {
+      const {  list_name, board_name, card_name='任务', cardComment: { card_id }} = value[0]
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -438,9 +436,9 @@ export default class NewsListNewDatas extends React.Component {
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
               {value.map((val, key) => {
-                const { cardComment: { text, create_time, avatar }, user_name } = val
+                const { cardComment: { text, create_time }, user_name, avatar } = val
                 return (
-                  <div  className={NewsListStyle.news_4_top}>
+                  <div  className={NewsListStyle.news_4_top} key={key}>
                     <div className={NewsListStyle.news_4_left}>
                       {/*<img src="" />*/}
                       {avatar?(
@@ -468,7 +466,7 @@ export default class NewsListNewDatas extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div  className={NewsListStyle.news_4_bottom}>
-                <Comment {...this.props} />
+                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} card_id={card_id} />
               </div>
             </div>
           </div>
@@ -529,7 +527,7 @@ export default class NewsListNewDatas extends React.Component {
     }
 
     //具体详细信息
-    const filterNewsType = (type, value) => {
+    const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
       switch (type) {
         case  '1':
@@ -539,7 +537,7 @@ export default class NewsListNewDatas extends React.Component {
           containner =  ( taskNews(value) )
           break
         case  '3':
-          containner = ( commentNews(value))
+          containner = ( commentNews(value,parentKey, childrenKey))
           break
         case  '4':
           containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
@@ -561,18 +559,18 @@ export default class NewsListNewDatas extends React.Component {
         {isHasNewDynamic?(
           <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
         ): ('')}
-        {newsDynamicList.map((value, key)=> {
+        {newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
           return (
-            <div className={NewsListStyle.itemOut}  key={key}>
+            <div className={NewsListStyle.itemOut}  key={parentkey}>
               <div className={NewsListStyle.head}>
                 <div>{date}</div>
                 <div onClick={this.allSetReaded.bind(this)}>全部标为已读</div>
               </div>
-              {newDataList.map((value, key) => {
+              {newDataList.map((value, childrenKey) => {
                 const { type, TypeArrayList = [] } = value
                 return (
-                  <div key={key}>{filterNewsType(type, TypeArrayList)}</div>
+                  <div key={childrenKey}>{filterNewsType(type, TypeArrayList,parentkey, childrenKey)}</div>
                 )
               })}
             </div>

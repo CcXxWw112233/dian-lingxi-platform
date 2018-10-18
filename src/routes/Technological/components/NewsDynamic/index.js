@@ -25,6 +25,12 @@ const NewsDynamic = (props) => {
         type: getEffectOrReducerByName('getNewsDynamicList'),
         payload: {next_id}
       })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addCardNewComment'),
+        payload: data
+      })
     }
   }
   const routingJump = (path) => {

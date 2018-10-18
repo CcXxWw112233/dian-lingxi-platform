@@ -1,4 +1,4 @@
-import { getNewsDynamicList } from '../../services/technological/newsDynamic'
+import { getNewsDynamicList, addCardNewComment } from '../../services/technological/newsDynamic'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, notification } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -184,6 +184,14 @@ export default {
       }else{
       }
     },
+    * addCardNewComment({ payload }, { select, call, put }) { //
+      let res = yield call(addCardNewComment, payload)
+      if(isApiResponseOk(res)) {
+        console.log(res)
+      }else{
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
