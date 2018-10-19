@@ -4,7 +4,7 @@ export const REQUEST_DOMAIN_FILE = '/api/files' //接口域名
 export const REQUEST_DOMAIN_FLOWS = '/api/flows' //接口域名
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbench'
 
-export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址
+export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
 
