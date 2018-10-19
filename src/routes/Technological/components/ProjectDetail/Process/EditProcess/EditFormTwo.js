@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import indexStyles from './index.less'
 import { UPLOAD_PROCESS_FILE_SIZE } from '../../../../../../globalset/js/constant'
+import MentionAssignees from './MentionAssignees'
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
@@ -149,7 +150,7 @@ export default class EditFormTwo extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     return (
@@ -192,7 +193,7 @@ export default class EditFormTwo extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <div style={{color: '#262626'}}>
-                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)}  onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} defaultValue={0} min={0} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}>（0为不限制）</span>
+                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)}  onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} min={1} max={100} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}></span>
               </div>
               <div style={{color: '#262626'}}>
                 限制文件格式为&nbsp;&nbsp;
@@ -238,13 +239,14 @@ export default class EditFormTwo extends React.Component {
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>
-                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
-                <Mention
-                  style={{ width: '100%', height: 70 }}
-                  onChange={this.mentionOnChange.bind(this)}
-                  defaultValue={toContentState(defaultAssignees)}
-                  suggestions={suggestions}
-                />
+                <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
+
+                {/*<Mention*/}
+                  {/*style={{ width: '100%', height: 70 }}*/}
+                  {/*onChange={this.mentionOnChange.bind(this)}*/}
+                  {/*defaultValue={toContentState(defaultAssignees)}*/}
+                  {/*suggestions={suggestions}*/}
+                {/*/>*/}
               </div>
             </div>
           </div>

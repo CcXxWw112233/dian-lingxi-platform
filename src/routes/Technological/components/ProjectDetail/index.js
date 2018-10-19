@@ -364,7 +364,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
-
+    getProessDynamics(params) {
+      dispatch({
+        type: getEffectOrReducerByName('getProessDynamics'),
+        payload: params
+      })
+    }
   }
 
   const routingJump = (path) => {

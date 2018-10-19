@@ -28,13 +28,28 @@ export const timestampToTimeNormal = (timestamp,split, flag) => {
 }
 //时间戳转日期
 export const timestampToTime = (timestamp, flag) => {
-  let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  if(!timestamp){
+    return false
+  }
+  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000: Number(timestamp)
+  let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + '年';
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
   let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
   return flag ? Y + M + D + h + m  : Y + M + D;
+}
+//时间戳转换为时分
+export const timestampToHM = (timestamp) => {
+  if(!timestamp){
+    return false
+  }
+  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000: Number(timestamp)
+  let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
+  return  h + m
 }
 
 //动态消息列表时间处理

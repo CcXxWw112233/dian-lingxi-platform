@@ -67,6 +67,7 @@ export default class EditFormOne extends React.Component {
   }
   //提及
   mentionOnChange(contentState){
+    // console.log(111)
     const str = toString(contentState)
     const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
     this.updateEdit({value: newStr}, 'assignees')
@@ -111,7 +112,7 @@ export default class EditFormOne extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     return (

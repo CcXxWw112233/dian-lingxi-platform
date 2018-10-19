@@ -105,3 +105,12 @@ export async function processFileUpload(data) {
     data,
   });
 }
+
+//主动获取流程动态
+export async function getProessDynamics(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/dynamic`,
+    method: 'GET',
+    params,
+  });
+}

@@ -10,7 +10,7 @@ const documentWidth = document.querySelector('body').offsetWidth
 export default class CreateTask extends React.Component {
 
   state = {
-    drawerVisible: false,
+    // drawerVisible: false,
   }
   constructor(){
     super();
@@ -66,7 +66,10 @@ export default class CreateTask extends React.Component {
 
   // 右方抽屉弹窗---start
   setDrawerVisibleOpen(data) {
-    this.setState({
+    // this.setState({
+    //   drawerVisible: true,
+    // })
+    this.props.updateDatas({
       drawerVisible: true,
     })
     const { drawContent:{ card_id }} = data
@@ -74,7 +77,10 @@ export default class CreateTask extends React.Component {
     this.props.updateDatas(data)
   }
   setDrawerVisibleClose() {
-    this.setState({
+    // this.setState({
+    //   drawerVisible: false,
+    // })
+    this.props.updateDatas({
       drawerVisible: false,
     })
   }
@@ -84,7 +90,7 @@ export default class CreateTask extends React.Component {
     e.stopPropagation();
   }
   render() {
-    const { datas:{ taskGroupList = [] }, drawContent  } = this.props.model
+    const { datas:{ taskGroupList = [], drawerVisible = false }, drawContent  } = this.props.model
     return (
       <div className={CreateTaskStyle.outerMost}
            style={{
@@ -106,7 +112,7 @@ export default class CreateTask extends React.Component {
           placement="right"
           closable={false}
           onClose={this.setDrawerVisibleClose.bind(this)}
-          visible={this.state.drawerVisible}
+          visible={drawerVisible} //this.state.drawerVisible
           width={520}
           destroyOnClose
           zIndex={1004}

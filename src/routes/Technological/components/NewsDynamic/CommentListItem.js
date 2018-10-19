@@ -6,7 +6,7 @@ const Dragger = Upload.Dragger
 
 export default class CommentListItem extends React.Component {
   state = {
-    closeNormal: true,
+    closeNormal: true, //伸缩内容
   }
 
   boxOnMouseOver() {

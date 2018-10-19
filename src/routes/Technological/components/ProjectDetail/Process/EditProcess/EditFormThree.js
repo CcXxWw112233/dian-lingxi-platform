@@ -9,6 +9,7 @@ const { toString, toContentState } = Mention;
 import EditFormThree_One from './EditFormThree_One'
 import EditFormThree_Two from './EditFormThree_Two'
 import EditFormThree_Three from './EditFormThree_Three'
+import MentionAssignees from './MentionAssignees'
 
 export default class EditFormThree extends React.Component {
   //更新
@@ -155,7 +156,7 @@ export default class EditFormThree extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `${assignees.replace(/,/gim,'@ ')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     const filterForm = (value, key) => {
@@ -269,13 +270,13 @@ export default class EditFormThree extends React.Component {
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>
-                {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
-                <Mention
-                  style={{ width: '100%', height: 70 }}
-                  onChange={this.mentionOnChange.bind(this)}
-                  defaultValue={toContentState(defaultAssignees)}
-                  suggestions={suggestions}
-                />
+                <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
+                {/*<Mention*/}
+                  {/*style={{ width: '100%', height: 70 }}*/}
+                  {/*onChange={this.mentionOnChange.bind(this)}*/}
+                  {/*defaultValue={toContentState(defaultAssignees)}*/}
+                  {/*suggestions={suggestions}*/}
+                {/*/>*/}
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@ import {connect} from "dva/index";
 import Header from  './Header'
 import FirstEntry from './FirstEntry'
 import NewsList from './NewsList'
+import NewsListNewDatas from './NewsListNewDatas'
 import QueueAnim from  'rc-queue-anim'
 
 const getEffectOrReducerByName = name => `newsDynamic/${name}`
@@ -20,7 +21,16 @@ const NewsDynamic = (props) => {
       dispatch({ type: 'modal/hideModal' })
     },
     getNewsDynamicList(next_id) {
-      dispatch({ type: 'getNewsDynamicList', payload: {next_id} })
+      dispatch({
+        type: getEffectOrReducerByName('getNewsDynamicList'),
+        payload: {next_id}
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addCardNewComment'),
+        payload: data
+      })
     }
   }
   const routingJump = (path) => {
@@ -44,7 +54,7 @@ const NewsDynamic = (props) => {
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>
         ) : (
-          <NewsList key={'2'} {...NewsListProps} updateDatas={updateDatas} />
+          <NewsListNewDatas key={'2'} {...NewsListProps} updateDatas={updateDatas} />
         )}
       </QueueAnim>
     </div>

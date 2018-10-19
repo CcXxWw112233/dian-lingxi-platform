@@ -10,9 +10,9 @@ import {
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
-import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
-import { fillFormComplete, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
+import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -27,6 +27,30 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
+        //监听新消息setMessageItemEvent 公用函数
+        const evenListentNewMessage = (e) => {
+          if(!Cookies.get('updateNewMessageItem_2') || Cookies.get('updateNewMessageItem_2') === 'false' ) {
+            console.log('projectDetail',JSON.parse(JSON.parse(e.newValue)),JSON.parse(JSON.parse(e.newValue)).type)
+            const newValue = JSON.parse(JSON.parse(e.newValue))
+            const { type } = newValue
+            if(Number(type) === 3) { //监听评论
+              dispatch({
+                type: 'listenWsCardNewComment',
+                payload: {
+                  newsData: JSON.parse(JSON.parse(e.newValue)),
+                },
+              })
+            }else if(Number(type) === 4) { // 监听流程
+              dispatch({
+                type: 'listenWsProcessDynamics',
+                payload: {
+                  newsData: JSON.parse(JSON.parse(e.newValue)),
+                },
+              })
+            }
+            Cookies.set('updateNewMessageItem_2', true,{expires: 30, path: ''})
+          }
+        }
         board_id = Cookies.get('board_id')
         dispatch({
           type: 'updateDatas',
@@ -38,29 +62,30 @@ export default {
             projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
             isInitEntry: false, //是否初次进来项目详情
             drawContent: {}, //任务右方抽屉内容
+            drawerVisible: false, //查看任务的抽屉是否可见
             projectDetailInfoData: {}, //项目详情全部数据
             cardCommentList: [], //任务评论列表
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
             // 文档
-            // fileList: [], //文档列表
-            // filedata_1: [], //文档列表--文件夹
-            // filedata_2: [], //文档列表--文件
-            // selectedRowKeys: [],//选择的列表项
-            // isInAddDirectory: false, //是否正在创建文件家判断标志
-            // moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-            // openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
-            // currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-            // breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
-            // currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
-            // isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
-            // treeFolderData: {}, //文件夹树状结构
-            // filePreviewIsUsable: true, //文件是否可以预览标记
-            // filePreviewUrl: '',  //预览文件url
-            // filePreviewCurrentId: '', //当前预览的文件id
-            // filePreviewCurrentVersionId: '', //当前预览文件版本id
-            // filePreviewCurrentVersionList: [], //预览文件的版本列表
-            // filePreviewCurrentVersionKey: 0, //预览文件选中的key
+            fileList: [], //文档列表
+            filedata_1: [], //文档列表--文件夹
+            filedata_2: [], //文档列表--文件
+            selectedRowKeys: [],//选择的列表项
+            isInAddDirectory: false, //是否正在创建文件家判断标志
+            moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+            openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+            currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
+            breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+            currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+            isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+            treeFolderData: {}, //文件夹树状结构
+            filePreviewIsUsable: true, //文件是否可以预览标记
+            filePreviewUrl: '',  //预览文件url
+            filePreviewCurrentId: '', //当前预览的文件id
+            filePreviewCurrentVersionId: '', //当前预览文件版本id
+            filePreviewCurrentVersionList: [], //预览文件的版本列表
+            filePreviewCurrentVersionKey: 0, //预览文件选中的key
 
             //流程
             processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
@@ -72,6 +97,8 @@ export default {
             templateInfo: {},  //所选择的流程模板的信息数据
             processInfo: {},  //所选中的流程的信息
             processList: [],   //流程列表
+            processDynamics: [], //流程动态列表,
+            currentProcessInstanceId: '', //当前查看的流程实例id
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -81,8 +108,10 @@ export default {
               id: board_id
             }
           })
+          //监听消息存储在localstorage变化
+          window.addEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
         }else{
-
+          window.removeEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
         }
       })
     },
@@ -309,6 +338,12 @@ export default {
       }
     },
     * getProcessInfo({ payload }, { select, call, put }) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          currentProcessInstanceId: payload
+        }
+      })
       let res = yield call(getProcessInfo, payload)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
@@ -329,8 +364,45 @@ export default {
             processPageFlagStep: '4'
           }
         })
+
+        //查询流程动态
+        const res2 = yield call(getProessDynamics,{flow_instance_id: payload})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDynamics: res2.data
+            }
+          })
+        }else{
+
+        }
       }else{
 
+      }
+    },
+    * listenWsProcessDynamics({ payload }, { select, call, put }) {
+      //查询流程动态
+      const { newsData } = payload
+      const id = newsData.rela_id
+      const newsUserId = newsData.userId
+      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
+      console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
+
+      // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
+      if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
+        console.log('进入查询状态')
+        const res = yield call(getProessDynamics,{flow_instance_id: id})
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDynamics: res.data
+            }
+          })
+        }
+        console.log('进入查询状态之后')
       }
     },
     * completeProcessTask({ payload }, { select, call, put }) {
@@ -994,6 +1066,30 @@ export default {
       }else{
       }
     },
+
+    * listenWsCardNewComment({ payload }, { select, call, put }) { //
+      const { newsData } = payload
+      const id = newsData.activityTypeId
+      const newsUserId = newsData.userId
+      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const drawContent = yield select(selectDrawContent)
+      const drawerVisible = yield select(selectDrawerVisible)
+      const { card_id } = drawContent
+      // 当且仅当发送消息的用户不是当前用户， 当前查看的任务id和推送的任务id一样,抽屉可见
+      if(id === card_id && newsUserId !== currentUserId && drawerVisible) {
+        let res = yield call(getCardCommentList, id)
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload:{
+              cardCommentList: res.data
+            }
+          })
+        }else{
+        }
+      }
+    },
+
     //评论--end
 
 

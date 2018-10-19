@@ -5,7 +5,8 @@ import QueueAnim from  'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
 
-export default class NewsList extends React.Component {
+
+export default class NewsListNewDatas extends React.Component {
 
   allSetReaded() { //全部标记为已读
 
@@ -382,7 +383,7 @@ export default class NewsList extends React.Component {
     }
     //任务动态
     const taskNews = (value) =>{
-      const { map: { activity_type, full_name, create_time }, board_name, card_name, list_name} = value
+      const {  board_name, card_name, list_name} = value[0]
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -401,15 +402,19 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+            {value.map((val, key) => {
+              const { map: { activity_type }} = val
+              return(
+                <div className={NewsListStyle.news_1} key={key}>{filterTitleContain(activity_type,val).messageContain}</div>
+              )
+            })}
           </div>
         </div>
       )
     }
     //评论动态
-    const commentNews = (value) => {
-      const { map: { activity_type, full_name, avatar }, list_name, board_name, card_name='任务', user_name, cardComment: { text, create_time }} = value
-
+    const commentNews = (value,parentKey, childrenKey) => {
+      const {  list_name, board_name, card_name='任务', cardComment: { card_id }} = value[0]
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -430,33 +435,38 @@ export default class NewsList extends React.Component {
           <div className={NewsListStyle.bott}>
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
-              <div  className={NewsListStyle.news_4_top}>
-                <div className={NewsListStyle.news_4_left}>
-                  {/*<img src="" />*/}
-                  {avatar?(
-                    <img src={avatar} />
-                  ): (
-                    <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
-                      <Icon type={'user'} style={{fontSize: 18, marginTop: 12, color: '#8c8c8c'}}/>
+              {value.map((val, key) => {
+                const { cardComment: { text, create_time }, user_name, avatar } = val
+                return (
+                  <div  className={NewsListStyle.news_4_top} key={key}>
+                    <div className={NewsListStyle.news_4_left}>
+                      {/*<img src="" />*/}
+                      {avatar?(
+                        <img src={avatar} />
+                      ): (
+                        <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
+                          <Icon type={'user'} style={{fontSize: 18, marginTop: 12, color: '#8c8c8c'}}/>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className={NewsListStyle.news_4_right}>
-                  <div className={NewsListStyle.r_t}>
-                    <div className={NewsListStyle.r_t_l}>{user_name}</div>
-                    <div className={NewsListStyle.r_t_r}>{timestampToHM(create_time)}</div>
+                    <div className={NewsListStyle.news_4_right}>
+                      <div className={NewsListStyle.r_t}>
+                        <div className={NewsListStyle.r_t_l}>{user_name}</div>
+                        <div className={NewsListStyle.r_t_r}>{timestampToHM(create_time)}</div>
+                      </div>
+                      <div className={NewsListStyle.r_b}>
+                        {text}
+                      </div>
+                    </div>
                   </div>
-                  <div className={NewsListStyle.r_b}>
-                    {text}
-                  </div>
-                </div>
-              </div>
+                )
+              })}
               <div  className={NewsListStyle.news_4_middle}>
                 {/*<img src="" />*/}
                 {/*<img src="" />*/}
               </div>
               <div  className={NewsListStyle.news_4_bottom}>
-                <Comment {...this.props} />
+                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} card_id={card_id} />
               </div>
             </div>
           </div>
@@ -517,26 +527,26 @@ export default class NewsList extends React.Component {
     }
 
     //具体详细信息
-    const filterNewsType = (type, value) => {
+    const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
       switch (type) {
         case  '1':
-          containner = ( projectNews(value) )
+          containner = ( value.map((val, key) => (<div>{projectNews(val)}</div>)) )
           break
         case  '2':
-          containner = ( taskNews(value) )
+          containner =  ( taskNews(value) )
           break
         case  '3':
-          containner = ( commentNews(value) )
+          containner = ( commentNews(value,parentKey, childrenKey))
           break
         case  '4':
-          containner = ( processNews(value) )
+          containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
           break
         case  '5':
-          containner = ( fileNews(value) )
+          containner = ( value.map((val, key) => (<div>{fileNews(val)}</div>)) )
           break
         case  '6':
-          containner = ( processNews(value) )
+          containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
           break
         default:
           break
@@ -549,18 +559,18 @@ export default class NewsList extends React.Component {
         {isHasNewDynamic?(
           <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
         ): ('')}
-        {newsDynamicList.map((value, key)=> {
-          const { date, dataList = []} = value
+        {newsDynamicList.map((value, parentkey)=> {
+          const { date, dataList = [], newDataList = []} = value
           return (
-            <div className={NewsListStyle.itemOut}  key={key}>
+            <div className={NewsListStyle.itemOut}  key={parentkey}>
               <div className={NewsListStyle.head}>
                 <div>{date}</div>
                 <div onClick={this.allSetReaded.bind(this)}>全部标为已读</div>
               </div>
-              {dataList.map((value, key) => {
-                const { map: { type }} = value
+              {newDataList.map((value, childrenKey) => {
+                const { type, TypeArrayList = [] } = value
                 return (
-                  <div key={key}>{filterNewsType(type, value)}</div>
+                  <div key={childrenKey}>{filterNewsType(type, TypeArrayList,parentkey, childrenKey)}</div>
                 )
               })}
             </div>
