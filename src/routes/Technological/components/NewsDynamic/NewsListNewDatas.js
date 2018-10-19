@@ -182,7 +182,7 @@ export default class NewsListNewDatas extends React.Component {
         case 'addCardUser':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 把任务「{messageValue.card_name}」执行人指派给。</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 把任务「{messageValue.card_name}」执行人指派给 {messageValue.map.full_name}。</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.map.create_time)}</div>
             </div>
           )
@@ -565,7 +565,8 @@ export default class NewsListNewDatas extends React.Component {
             <div className={NewsListStyle.itemOut}  key={parentkey}>
               <div className={NewsListStyle.head}>
                 <div>{date}</div>
-                <div onClick={this.allSetReaded.bind(this)}>全部标为已读</div>
+                {/*全部标为已读*/}
+                <div onClick={this.allSetReaded.bind(this)}></div>
               </div>
               {newDataList.map((value, childrenKey) => {
                 const { type, TypeArrayList = [] } = value
