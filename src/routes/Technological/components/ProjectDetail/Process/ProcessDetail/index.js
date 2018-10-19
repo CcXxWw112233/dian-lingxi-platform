@@ -13,7 +13,7 @@ import {timestampToHM} from "../../../../../../utils/util";
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProcessDetail extends React.Component {
   state = {
-
+     isShowAll: false, //是否查看全部
   }
   constructor(props) {
     super(props)
@@ -26,6 +26,11 @@ export default class ProcessDetail extends React.Component {
     this.initCanvas()
   }
 
+  setIsShowAll() {
+    this.setState({
+      isShowAll: !this.state.isShowAll
+    })
+  }
 
   initCanvas() {
     const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
@@ -97,9 +102,11 @@ export default class ProcessDetail extends React.Component {
   }
 
   render() {
+    const { isShowAll } = this.state
     const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
     const { name, description, status } = processInfo  //status 1 正在进行 2,暂停 3完成
     // console.log('processDynamics', processDynamics)
+    // const
     //过滤消息内容
     const   filterTitleContain = (messageValue) => {
       const { activity_type } = messageValue
@@ -169,18 +176,18 @@ export default class ProcessDetail extends React.Component {
           )
           contain = '完成流程任务'
           break
-        case 'waitingWorkflowTaskNotice':
-          messageContain=(
-            <div className={indexStyles.newsItem}>
-              <div className={indexStyles.newsItem_left}>
-                <div className={indexStyles.newsItem_left_l}></div>
-                <div className={indexStyles.newsItem_left_r}>您有一个流程任务待处理。</div>
-              </div>
-              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
-            </div>
-          )
-          contain = '流程待处理任务通知'
-          break
+        // case 'waitingWorkflowTaskNotice':
+        //   messageContain=(
+        //     <div className={indexStyles.newsItem}>
+        //       <div className={indexStyles.newsItem_left}>
+        //         <div className={indexStyles.newsItem_left_l}></div>
+        //         <div className={indexStyles.newsItem_left_r}>您有一个流程任务待处理。</div>
+        //       </div>
+        //       <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+        //     </div>
+        //   )
+        //   contain = '流程待处理任务通知'
+        //   break
         default:
           break
       }
@@ -225,7 +232,8 @@ export default class ProcessDetail extends React.Component {
            <Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>
           </div>
         </div>
-
+          {/*参与人*/}
+          <div>
         {/*<div className={indexStyles.userJoin}>*/}
           {/*{data.map((value, key) => {*/}
             {/*const { avatar, email, full_name, mobile, user_id, user_name } = value*/}
@@ -247,6 +255,7 @@ export default class ProcessDetail extends React.Component {
             {/*</div>*/}
           {/*) : ('')}*/}
         {/*</div>*/}
+        </div>
           {/*描述*/}
         <div className={indexStyles.description}  dangerouslySetInnerHTML = {{ __html:description }}></div>
 
@@ -264,15 +273,27 @@ export default class ProcessDetail extends React.Component {
               <div className={indexStyles.newsTitle}>最新动态</div>
               <div className={indexStyles.newsList} >
                 {processDynamics.map((value, key) => {
-                  return(
-                    <div key={key} value={value}>
-                      {filterTitleContain(value)}
-                    </div>
+                  if(isShowAll) { //全部
+                    return(
+                      <div key={key} value={value}>
+                        {filterTitleContain(value)}
+                      </div>
                     )
+                  }else{ //
+                    if(key < 5) { //展示5条
+                      console.log(key, value)
+                      return(
+                        <div key={key} value={value}>
+                          {filterTitleContain(value)}
+                        </div>
+                      )
+                    }
+                  }
+
                 })}
                 <div className={indexStyles.seeAllList}>
                   <div></div>
-                  <div>查看全部</div>
+                  <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div>
                   <div></div>
                 </div>
               </div>

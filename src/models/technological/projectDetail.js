@@ -40,7 +40,7 @@ export default {
                   newsData: JSON.parse(JSON.parse(e.newValue)),
                 },
               })
-            }else if(Number(type) === 4 || Number(type) === 6) { // 监听流程
+            }else if(Number(type) === 4) { // 监听流程
               dispatch({
                 type: 'listenWsProcessDynamics',
                 payload: {
@@ -384,7 +384,7 @@ export default {
     * listenWsProcessDynamics({ payload }, { select, call, put }) {
       //查询流程动态
       const { newsData } = payload
-      const id = newsData.activityTypeId
+      const id = newsData.rela_id
       const newsUserId = newsData.userId
       const currentUserId = JSON.parse(Cookies.get('userInfo')).id
       const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)

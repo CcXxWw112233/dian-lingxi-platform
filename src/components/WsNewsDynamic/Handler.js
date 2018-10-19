@@ -33,9 +33,10 @@ let Handlers = function () {
       window.dispatchEvent(setMessageItemEvent_2);
       orignalSetItem.apply(this,arguments);
     }
-    setTimeout(function () {
-      localStorage.setItem('newMessage', JSON.stringify(data));
-    },500)
+    localStorage.setItem('newMessage', JSON.stringify(data));
+
+    // setTimeout(function () {
+    // },500)
   }
 
   this.onclose = function (e, ws) {
