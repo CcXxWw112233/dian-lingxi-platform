@@ -10,7 +10,7 @@ import {
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
-import { selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
@@ -30,14 +30,24 @@ export default {
         //监听新消息setMessageItemEvent 公用函数
         const evenListentNewMessage = (e) => {
           if(!Cookies.get('updateNewMessageItem_2') || Cookies.get('updateNewMessageItem_2') === 'false' ) {
-            console.log('projectDetail',e.newValue)
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                newMessageItem: e.newValue,
-                isHasNewDynamic: true,
-              },
-            })
+            console.log('projectDetail',JSON.parse(JSON.parse(e.newValue)),JSON.parse(JSON.parse(e.newValue)).type)
+            const newValue = JSON.parse(JSON.parse(e.newValue))
+            const { type } = newValue
+            if(Number(type) === 3) { //监听评论
+              dispatch({
+                type: 'listenWsCardNewComment',
+                payload: {
+                  newsData: JSON.parse(JSON.parse(e.newValue)),
+                },
+              })
+            }else if(Number(type) === 4 || Number(type) === 6) { // 监听流程
+              dispatch({
+                type: 'listenWsProcessDynamics',
+                payload: {
+                  newsData: JSON.parse(JSON.parse(e.newValue)),
+                },
+              })
+            }
             Cookies.set('updateNewMessageItem_2', true,{expires: 30, path: ''})
           }
         }
@@ -52,6 +62,7 @@ export default {
             projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
             isInitEntry: false, //是否初次进来项目详情
             drawContent: {}, //任务右方抽屉内容
+            drawerVisible: false, //查看任务的抽屉是否可见
             projectDetailInfoData: {}, //项目详情全部数据
             cardCommentList: [], //任务评论列表
             projectGoupList: [], //项目分组列表
@@ -86,7 +97,8 @@ export default {
             templateInfo: {},  //所选择的流程模板的信息数据
             processInfo: {},  //所选中的流程的信息
             processList: [],   //流程列表
-            processDynamics: [], //流程动态列表
+            processDynamics: [], //流程动态列表,
+            currentProcessInstanceId: '', //当前查看的流程实例id
           }
         })
         if (location.pathname === '/technological/projectDetail') {
@@ -326,6 +338,12 @@ export default {
       }
     },
     * getProcessInfo({ payload }, { select, call, put }) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          currentProcessInstanceId: payload
+        }
+      })
       let res = yield call(getProcessInfo, payload)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
@@ -361,6 +379,30 @@ export default {
         }
       }else{
 
+      }
+    },
+    * listenWsProcessDynamics({ payload }, { select, call, put }) {
+      //查询流程动态
+      const { newsData } = payload
+      const id = newsData.activityTypeId
+      const newsUserId = newsData.userId
+      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
+      console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
+
+      // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
+      if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
+        console.log('进入查询状态')
+        const res = yield call(getProessDynamics,{flow_instance_id: id})
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDynamics: res.data
+            }
+          })
+        }
+        console.log('进入查询状态之后')
       }
     },
     * completeProcessTask({ payload }, { select, call, put }) {
@@ -1024,6 +1066,30 @@ export default {
       }else{
       }
     },
+
+    * listenWsCardNewComment({ payload }, { select, call, put }) { //
+      const { newsData } = payload
+      const id = newsData.activityTypeId
+      const newsUserId = newsData.userId
+      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const drawContent = yield select(selectDrawContent)
+      const drawerVisible = yield select(selectDrawerVisible)
+      const { card_id } = drawContent
+      // 当且仅当发送消息的用户不是当前用户， 当前查看的任务id和推送的任务id一样,抽屉可见
+      if(id === card_id && newsUserId !== currentUserId && drawerVisible) {
+        let res = yield call(getCardCommentList, id)
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload:{
+              cardCommentList: res.data
+            }
+          })
+        }else{
+        }
+      }
+    },
+
     //评论--end
 
 

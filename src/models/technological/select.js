@@ -6,6 +6,10 @@ export const selectTaskGroupList = state => state[(`projectDetail`)].datas.taskG
 export const selectTaskGroupListIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex  //当前选中任务分组index
 export const selectTaskGroupListIndexIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex_index //当前选中任务分组里的任务index
 export const selectDrawContent = state => state[(`projectDetail`)].datas.drawContent  //任务右方抽屉
+export const selectDrawerVisible = state => state[(`projectDetail`)].datas.drawerVisible  //任务右方抽屉
+
+//流程
+export const selectCurrentProcessInstanceId = state => state[(`projectDetail`)].datas.currentProcessInstanceId  //当前查看的流程实例id
 
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetail`)].datas.currentParrentDirectoryId  //当前文件夹id

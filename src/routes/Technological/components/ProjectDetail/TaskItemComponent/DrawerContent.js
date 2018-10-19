@@ -497,7 +497,7 @@ export default class DrawContent extends React.Component {
         <div className={DrawerContentStyles.divContent_2} style={{marginTop: 20}}>
           <Comment {...this.props} leftSpaceDivWH={26}></Comment>
         </div>
-
+        <div style={{height: 100}}></div>
       </div>
     )
   }
