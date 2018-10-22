@@ -76,6 +76,10 @@ const Routers = function ({ history, app }) {
       path: '/emailRedirect',
       models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/'),
+    },{
+      path: '/organization',
+      models: () => [import('./models/organization')],
+      component: () => import('./routes/Organization/'),
     },
   ]
   //去掉exact

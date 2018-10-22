@@ -86,13 +86,21 @@ export default class HeaderNav extends React.Component{
       <Card  className={indexStyle.menuDiv} >
         <div className={indexStyle.triangle} ></div>
         <Menu onClick={this.handleMenuClick} selectable={false} >
-          <Menu.Item key="1" style={{padding:0,margin: 0, height: 48,paddingTop:4,boxSizing: 'border-box'}}>
-            <Tooltip placement="top" title={'即将上线'}>
-              <div style={{width: '100%',height:'100%',padding:'0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
-                {orgnization}
+          <SubMenu key="sub4" title={
+            <div style={{width: '100%',height:'100%',padding:'0 16 0 6px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
+             {orgnization}
+            </div>}>
+            <Menu.Item key="9" style={{padding:0,margin: 0,color: '#595959'}}>
+              <div className={indexStyle.itemDiv} style={{ padding: '0 16px'}}>
+                Option 9
               </div>
-            </Tooltip>
-          </Menu.Item>
+            </Menu.Item>
+          </SubMenu>
+          {/*<Menu.Item key="1" style={{padding:0,margin: 0, height: 48,paddingTop:4,boxSizing: 'border-box'}}>*/}
+             {/*<div style={{width: '100%',height:'100%',padding:'0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >*/}
+                {/*{orgnization}*/}
+              {/*</div>*/}
+          {/*</Menu.Item>*/}
           <Menu.Divider key="none_1"/>
           <Menu.Item  key="2" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
