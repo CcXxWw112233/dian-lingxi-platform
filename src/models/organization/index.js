@@ -16,9 +16,11 @@ export default  {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/technological/organization') {
-          console.log('yes')
+          dispatch({
+            type: 'updateDatas',
+            payload:{}
+          })
         } else {
-          console.log('no')
         }
       })
     },

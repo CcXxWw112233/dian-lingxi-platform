@@ -1,8 +1,12 @@
 import React from 'react';
 import {connect} from "dva/index";
-import { Icon } from 'antd'
+import { Icon, Tabs } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
+import AuthTabPaneContent from './AuthTabPaneContent'
+import RoleTabPaneContent from './RoleTabPaneContent'
+
+const  TabPane = Tabs.TabPane
 
 const getEffectOrReducerByName = name => `organization/${name}`
 
@@ -14,7 +18,6 @@ const Organization = (options) => {
       payload:payload
     })
   }
-
   return(
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
@@ -23,7 +26,21 @@ const Organization = (options) => {
         </div>
         <div className={indexStyles.topTitle}>
           <Icon type="home" theme="outlined"  style={{color: color_4,fontSize: 32}} />
-          <div>组织管理后台</div>
+          <div className={indexStyles.titleName}>组织管理后台</div>
+          {/*tabs 页*/}
+          <div className={indexStyles.tabsOut}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'2'}>
+              <TabPane tab="基本信息" key="1">
+                 <AuthTabPaneContent />
+              </TabPane>
+              <TabPane tab="角色管理" key="2">
+                <RoleTabPaneContent />
+              </TabPane>
+              <TabPane tab="权限管理" key="3">
+                <AuthTabPaneContent />
+              </TabPane>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>
