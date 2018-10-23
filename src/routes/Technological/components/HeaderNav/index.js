@@ -14,7 +14,7 @@ export default class HeaderNav extends React.Component{
   }
   state = {
     menuVisible: false,
-    createOrganizationVisable: true,
+    createOrganizationVisable: false,
   };
 
   //蓝色按钮下拉菜单

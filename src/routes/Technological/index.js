@@ -60,6 +60,9 @@ const Technological = (options) => {
     }, {
       path: '/technological/workbench',
       component: () => import('./components/Workbench'),
+    }, {
+      path: '/technological/organizationMember',
+      component: () => import('./components/OrganizationMember'),
     }
   ]
   return (
