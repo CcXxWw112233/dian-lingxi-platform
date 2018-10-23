@@ -5,6 +5,7 @@ import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
 import AuthTabPaneContent from './AuthTabPaneContent'
 import RoleTabPaneContent from './RoleTabPaneContent'
+import BaseInfo from './BaseInfo'
 
 const  TabPane = Tabs.TabPane
 
@@ -18,10 +19,13 @@ const Organization = (options) => {
       payload:payload
     })
   }
+  const historyGoBack = () => {
+    window.history.go(-1)
+  }
   return(
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
-        <div className={indexStyles.back}>
+        <div className={indexStyles.back} onClick={historyGoBack}>
           <Icon type="left" theme="outlined" />返回
         </div>
         <div className={indexStyles.topTitle}>
@@ -29,9 +33,9 @@ const Organization = (options) => {
           <div className={indexStyles.titleName}>组织管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'2'}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'1'}>
               <TabPane tab="基本信息" key="1">
-                 <AuthTabPaneContent />
+                 <BaseInfo />
               </TabPane>
               <TabPane tab="角色管理" key="2">
                 <RoleTabPaneContent />
