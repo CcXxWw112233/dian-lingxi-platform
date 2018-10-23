@@ -3,6 +3,8 @@ import indexStyle from './index.less'
 import { Link } from 'dva/router'
 import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from 'antd'
 import Cookies from 'js-cookie'
+import CreateOrganizationModal from './CreateOrganizationModal'
+import {color_4 } from '../../../../globalset/js/styles'
 
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
@@ -12,13 +14,26 @@ export default class HeaderNav extends React.Component{
   }
   state = {
     menuVisible: false,
+    createOrganizationVisable: true,
   };
 
   //蓝色按钮下拉菜单
   handleMenuClick = (e) => {
-    if (e.key === '6') {
-      this.props.routingJump('/technological/accoutSet')
-      this.setState({ menuVisible: false });
+    const { key } = e
+    this.setState({ menuVisible: false });
+    switch(key) {
+      case '6':
+        this.props.routingJump('/technological/accoutSet')
+        break;
+      case '10':
+        //创建组织的弹窗打开
+        this.setCreateOrgnizationOModalVisable()
+        break
+      case '3':
+        this.props.routingJump('/organization')
+        break
+      default:
+        break
     }
     this.props.updateDatas({
       naviHeadTabIndex: '4'
@@ -60,29 +75,18 @@ export default class HeaderNav extends React.Component{
     });
 
   }
+
+  //创建或加入组织
+  setCreateOrgnizationOModalVisable() {
+    this.setState({
+      createOrganizationVisable: !this.state.createOrganizationVisable
+    })
+  }
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {} } = datas
-    const {
-      orgnization = '组织',
-      aboutMe,
-      avatar,
-      createTime,
-      email,
-      fullName,
-      id,
-      lastLoginTime,
-      mobile,
-      nickname,
-      phone,
-      qq,
-      status,
-      updateTime,
-      username,
-      wechat,
-    } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
-    const menu = (
-      //
+    const {orgnization = '组织', aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const userInfoMenu = (
       <Card  className={indexStyle.menuDiv} >
         <div className={indexStyle.triangle} ></div>
         <Menu onClick={this.handleMenuClick} selectable={false} >
@@ -95,26 +99,25 @@ export default class HeaderNav extends React.Component{
                 Option 9
               </div>
             </Menu.Item>
+            <Menu.Divider key="none_1"/>
+            <Menu.Item key="10" style={{padding:0,margin: 0,color: '#595959'}}>
+              <div className={indexStyle.itemDiv} style={{ padding: '0 16px',color: color_4}}>
+                <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新组织
+              </div>
+            </Menu.Item>
           </SubMenu>
-          {/*<Menu.Item key="1" style={{padding:0,margin: 0, height: 48,paddingTop:4,boxSizing: 'border-box'}}>*/}
-             {/*<div style={{width: '100%',height:'100%',padding:'0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >*/}
-                {/*{orgnization}*/}
-              {/*</div>*/}
-          {/*</Menu.Item>*/}
           <Menu.Divider key="none_1"/>
           <Menu.Item  key="2" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
               <div className={indexStyle.itemDiv}>
-                <span ><Icon type="team" />团队/部门</span>
+                <span ><Icon type="team" />团队/成员</span>
               </div>
             </Tooltip>
           </Menu.Item>
           <Menu.Item key="3" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
-              <div className={indexStyle.itemDiv}>
-                <span ><Icon type="home" />机构管理后台</span>
-              </div>
-            </Tooltip>
+            <div className={indexStyle.itemDiv}>
+              <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>组织管理后台</span></span>
+            </div>
           </Menu.Item>
           <Menu.Item key="4" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
@@ -166,9 +169,10 @@ export default class HeaderNav extends React.Component{
     const { datas:{naviHeadTabIndex} } = this.props.model
 
     return(
-      <div className={indexStyle.out}>
+      <div>
+         <div className={indexStyle.out}>
         <div className={indexStyle.out_left}>
-          <Dropdown overlay={menu}
+          <Dropdown overlay={userInfoMenu}
                     onVisibleChange={this.handleVisibleChange}
                     visible={this.state.menuVisible}>
             <div className={indexStyle.out_left_left}>迪</div>
@@ -189,6 +193,8 @@ export default class HeaderNav extends React.Component{
             <Icon type="plus" style={{ color: 'rgba(0,0,0,.25)', fontSize: 20,color: '#ffffff', fontWeight: 'bold' }} />
           </div>
         </div>
+      </div>
+        <CreateOrganizationModal createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
       </div>
     )
   }
