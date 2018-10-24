@@ -3,7 +3,7 @@ import {connect} from "dva/index";
 import QueueAnim from  'rc-queue-anim'
 import indexStyles from './index.less'
 import Header from './Header'
-import CreateTask from './CreateTask'
+import CreateGroup from './CreateGroup'
 
 const getEffectOrReducerByName = name => `organizationMember/${name}`
 
@@ -125,7 +125,7 @@ const OrganizationMember = (props) => {
   return(
     <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header />
-      <CreateTask {...CreateTaskProps} updateDatas={updateDatas} />
+      <CreateGroup {...CreateTaskProps} updateDatas={updateDatas} />
     </div>
   )
 };

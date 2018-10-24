@@ -5,6 +5,7 @@ import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from '
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from './CreateOrganizationModal'
 import {color_4 } from '../../../../globalset/js/styles'
+import ShowAddMenberModal from '../OrganizationMember/ShowAddMenberModal'
 
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
@@ -15,6 +16,7 @@ export default class HeaderNav extends React.Component{
   state = {
     menuVisible: false,
     createOrganizationVisable: false,
+    ShowAddMenberModalVisibile: false,
   };
 
   //蓝色按钮下拉菜单
@@ -22,6 +24,12 @@ export default class HeaderNav extends React.Component{
     const { key } = e
     this.setState({ menuVisible: false });
     switch(key) {
+      case '2':
+        this.props.routingJump('/technological/organizationMember')
+        break;
+      case '4':
+        this.setShowAddMenberModalVisibile()
+        break;
       case '6':
         this.props.routingJump('/technological/accoutSet')
         break;
@@ -82,6 +90,12 @@ export default class HeaderNav extends React.Component{
       createOrganizationVisable: !this.state.createOrganizationVisable
     })
   }
+  //添加项目组成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {} } = datas
@@ -108,11 +122,9 @@ export default class HeaderNav extends React.Component{
           </SubMenu>
           <Menu.Divider key="none_1"/>
           <Menu.Item  key="2" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
               <div className={indexStyle.itemDiv}>
-                <span ><Icon type="team" />团队/成员</span>
+                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/成员</span></span>
               </div>
-            </Tooltip>
           </Menu.Item>
           <Menu.Item key="3" style={{padding:0,margin: 0}}>
             <div className={indexStyle.itemDiv}>
@@ -120,11 +132,10 @@ export default class HeaderNav extends React.Component{
             </div>
           </Menu.Item>
           <Menu.Item key="4" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
               <div className={indexStyle.itemDiv}>
-                <span><Icon type="user-add" />邀请成员加入</span>
+                <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请成员加入</span>
+                </span>
               </div>
-            </Tooltip>
           </Menu.Item>
           <Menu.Item key="5" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
@@ -195,6 +206,7 @@ export default class HeaderNav extends React.Component{
         </div>
       </div>
         <CreateOrganizationModal createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
   }

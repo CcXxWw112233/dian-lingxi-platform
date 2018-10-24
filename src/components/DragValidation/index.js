@@ -28,6 +28,7 @@ export default class DragValidation extends React.Component{
   }
   //定义鼠标下落事件
   mouseDown(e){
+    e.stopPropagation();
     if(this.state.completeValidation) { //如果验证完成了就没有以下操作了
       return false
     }
@@ -45,6 +46,7 @@ export default class DragValidation extends React.Component{
   }
   //鼠标移动事件
   mouseMove(e){
+    e.stopPropagation();
     /*事件兼容*/
     let event = e|| window.event ;
     /*事件源对象兼容*/
@@ -52,7 +54,8 @@ export default class DragValidation extends React.Component{
     this.handleNeedX(event, 'move')
   }
   //鼠标放开
-  mouseUp(){
+  mouseUp(e){
+    e.stopPropagation();
     document.onmousemove = null;
     document.onmuseup = null;
     this.handleNeedX('', 'up')

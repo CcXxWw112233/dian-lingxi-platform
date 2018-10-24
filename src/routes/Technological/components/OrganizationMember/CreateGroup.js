@@ -1,16 +1,14 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import TaskItem from './TaskItem'
+import CreateGroupItem from './CreateGroupItem'
 import CreateItem from './CreateItem'
 import { Drawer } from 'antd'
-import ShowAddMenberModal from './ShowAddMenberModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
 
-export default class CreateTask extends React.Component {
+export default class CreateGroup extends React.Component {
 
   state = {
-    ShowAddMenberModalVisibile: false,
   }
   constructor(){
     super();
@@ -45,15 +43,15 @@ export default class CreateTask extends React.Component {
     let target = event.target || event.srcElement;
 
     //可以改变position位置的判断
-    if(!this.props.model.datas.taskGroupList) {
-      return false
-    }
-    if(this.state.needX < 0 && (event.clientX - this.disX) < -(this.props.model.datas.taskGroupList.length * 314)){
-       return false
-    }
-    if(this.state.needX > documentWidth / 2 && (event.clientX - this.disX) > documentWidth / 2){
-      return false
-    }
+    // if(!this.props.model.datas.taskGroupList) {
+    //   return false
+    // }
+    // if(this.state.needX < 0 && (event.clientX - this.disX) < -(this.props.model.datas.taskGroupList.length * 314)){
+    //    return false
+    // }
+    // if(this.state.needX > documentWidth / 2 && (event.clientX - this.disX) > documentWidth / 2){
+    //   return false
+    // }
     this.setState({
       needX:event.clientX - this.disX,
       needY:event.clientY - this.disY
@@ -64,15 +62,8 @@ export default class CreateTask extends React.Component {
     document.onmuseup = null;
   }
 
-  //添加项目组成员操作
-  setShowAddMenberModalVisibile() {
-    this.setState({
-      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
-    })
-  }
-
   render() {
-    const { datas:{ taskGroupList = [1,2,3,4,5,6,7,8], drawerVisible = false }, drawContent  } = this.props.model
+    const { datas:{ taskGroupList = [1], drawerVisible = false }, drawContent  } = this.props.model
     return (
       <div className={CreateTaskStyle.outerMost}
            style={{
@@ -83,14 +74,11 @@ export default class CreateTask extends React.Component {
       >
         {taskGroupList.map((value, key) => {
             return (
-              <TaskItem key={key} taskItemValue={value}
-                        taskGroupListIndex={key}
-                        {...this.props}
-                        setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}></TaskItem>
+              <CreateGroupItem key={key} itemValue={value}
+                        {...this.props}></CreateGroupItem>
             )
           })}
           <CreateItem  {...this.props}  ></CreateItem>
-        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
       </div>
     )

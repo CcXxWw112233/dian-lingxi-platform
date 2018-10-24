@@ -6,6 +6,7 @@ import QueueAnim from  'rc-queue-anim'
 import ItemTwo from  './ItemTwo'
 import ItemOne from './ItemOne'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import ShowAddMenberModal from './ShowAddMenberModal'
 
 const Panel = Collapse.Panel
 
@@ -15,11 +16,10 @@ export default class TaskItem extends React.Component {
     isInEditAdd: false,
     inputValue: '',
     ShowAddMenberModalVisibile: false,
-
   }
   //添加成员
   gotoAddItem() {
-    this.props.setShowAddMenberModalVisibile()
+    this.setShowAddMenberModalVisibile()
   }
   addItem(data,e) {
     const name =  e.target.value
@@ -83,7 +83,12 @@ export default class TaskItem extends React.Component {
     })
   }
 
-
+//添加项目组成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
 
   render() {
     const { isInEditAdd, inputValue } = this.state
@@ -138,14 +143,14 @@ export default class TaskItem extends React.Component {
             let contain
             if(key%2 !== 0) {
               contain = (
-                <ItemTwo itemValue={value} {...this.props}
-                         taskGroupListIndex_index={key}
+                <ItemOne itemValue={value} {...this.props}
+                         itemKey={key}
                          key={key} {...this.props} />
                )
             }else {
               contain = (
                 <ItemOne itemValue={value} {...this.props}
-                         taskGroupListIndex_index={key}
+                         itemKey={key}
                          key={key} {...this.props} />
                )
             }
@@ -155,6 +160,7 @@ export default class TaskItem extends React.Component {
             <Icon type="plus-circle-o" />
           </div>
         </QueueAnim>
+        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
       </div>
     )
