@@ -1,4 +1,6 @@
 import { getUSerInfo, logout } from '../../services/technological'
+import { getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, uploadOrganizationLogo } from '../../services/technological/organizationMember'
+
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -78,6 +80,43 @@ export default {
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * getSearchOrganizationList({ payload }, { select, call, put }) {
+      let res = yield call(getSearchOrganizationList, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+    * createOrganization({ payload }, { select, call, put }) {
+      let res = yield call(createOrganization, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+    * updateOrganization({ payload }, { select, call, put }) {
+      let res = yield call(updateOrganization, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+    * applyJoinOrganization({ payload }, { select, call, put }) {
+      let res = yield call(applyJoinOrganization, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+    * inviteJoinOrganization({ payload }, { select, call, put }) {
+      let res = yield call(inviteJoinOrganization, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+    * uploadOrganizationLogo({ payload }, { select, call, put }) {
+      let res = yield call(uploadOrganizationLogo, payload)
+      if(isApiResponseOk(res)) {
+      }else{
       }
     },
 

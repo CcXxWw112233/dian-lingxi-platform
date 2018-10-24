@@ -1,6 +1,8 @@
 //重命名组件
 import React from 'react'
 import { Modal, Form, Button, Input, message, Select } from 'antd'
+import styles from './CreateOrganizationModal.less'
+import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
 const Option = Select.Option
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -10,19 +12,36 @@ class CreateOrganizationModal extends React.Component {
     stepContinueDisabled: true,
     operateType: '0', //0默认申请加入 ‘1’创建组织
     createButtonVisible:false, //输入框里面的按钮
+    seachAreaVisible: false, //查询所得到的结果是否显示
+    searchTimer: null,
   }
   descriptionChange(e) {
     const value = e.target.value
   }
   nameChange(e) {
     const value = e.target.value
+    this.setState({
+      name: value
+    })
     let flag = true
     if(value) {
       flag = false
     }
     this.setState({
       stepContinueDisabled: flag,
-      createButtonVisible: !flag
+      createButtonVisible: !flag,
+      seachAreaVisible: !flag
+    })
+
+    //延时调用查询
+    const { searchTimer } = this.state
+    if (searchTimer) {
+      clearTimeout(searchTimer)
+    }
+    this.setState({
+      searchTimer: setTimeout(function () {
+      //  此处调用请求
+      }, INPUT_CHANGE_SEARCH_TIME)
     })
   }
   setOperateType(type) {
@@ -47,7 +66,7 @@ class CreateOrganizationModal extends React.Component {
   render() {
     const { createOrganizationVisable } = this.props; //reName_Add_type操作类型1重命名 2添加
     const { getFieldDecorator } = this.props.form;
-    const { stepContinueDisabled, operateType, createButtonVisible } = this.state
+    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible } = this.state
     const formContain = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
         <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>创建或加入组织</div>
@@ -56,9 +75,14 @@ class CreateOrganizationModal extends React.Component {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
             <div style={{position: 'relative'}}>
-              <Input  placeholder={'请输入'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
+              <Input  placeholder={'请输入'} value={name} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
               {createButtonVisible? (
                 <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
+                <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
+                  <div className={styles.searChItem}>TCL 集团</div>
+                  <div className={styles.searChItem}>TCL 集团</div>
+                  <div className={styles.searChItem}>TCL 集团</div>
+                </div>
             </div>
           )}
         </FormItem>
@@ -124,7 +148,7 @@ class CreateOrganizationModal extends React.Component {
     return(
       <div>
         <Modal
-          visible={createOrganizationVisable} //renameModalVisable
+          visible={true} //createOrganizationVisable
           width={472}
           zIndex={1006}
           footer={null}
@@ -139,4 +163,18 @@ class CreateOrganizationModal extends React.Component {
     )
   }
 }
+const seachAreaStyles = {
+  position: 'absolute',
+  top: 46,
+  width: '100%',
+  zIndex: 2,
+  height: 'auto',
+  padding: '10px 0 10px 0',
+  borderRadius: 4,
+  background: '#FFFFFF',
+  border: '1px solid rgba(0,0,0,0.15)',
+  boxShadow: `0px 2px 15px 0px rgba(0,0,0,0.08)`,
+  overflow: 'hidden'
+}
+
 export default Form.create()(CreateOrganizationModal)

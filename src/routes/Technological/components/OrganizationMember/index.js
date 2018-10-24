@@ -9,103 +9,27 @@ const getEffectOrReducerByName = name => `organizationMember/${name}`
 
 const OrganizationMember = (props) => {
   const { dispatch, model, modal } = props
-  const CreateTaskProps = {
+  const CreateGroupProps = {
     modal,
     model,
-    addTaskGroup(data) {
+    CreateGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('addTaskGroup'),
+        type: getEffectOrReducerByName('CreateGroup'),
         payload: data,
       })
     },
-    getTaskGroupList(data){
+    removeMembersWithGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('getTaskGroupList'),
-        payload: data
+        type: getEffectOrReducerByName('removeMembersWithGroup'),
+        payload: data,
       })
     },
-    addTask(data){
+    setMemberWitchGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('addTask'),
-        payload: data
+        type: getEffectOrReducerByName('setMemberWitchGroup'),
+        payload: data,
       })
     },
-    updateTask(data){
-      dispatch({
-        type: getEffectOrReducerByName('updateTask'),
-        payload: data
-      })
-    },
-    deleteTask(id){
-      dispatch({
-        type: getEffectOrReducerByName('deleteTask'),
-        payload: {
-          id
-        }
-      })
-    },
-    archivedTask(data){
-      dispatch({
-        type: getEffectOrReducerByName('archivedTask'),
-        payload: data
-      })
-    },
-    changeTaskType(data){
-      dispatch({
-        type: getEffectOrReducerByName('changeTaskType'),
-        payload: data
-      })
-    },
-    addChirldTask(data){
-      dispatch({
-        type: getEffectOrReducerByName('addChirldTask'),
-        payload: data
-      })
-    },
-    addTaskExecutor(data){
-      dispatch({
-        type: getEffectOrReducerByName('addTaskExecutor'),
-        payload: data
-      })
-    },
-    completeTask(data){
-      dispatch({
-        type: getEffectOrReducerByName('completeTask'),
-        payload: data
-      })
-    },
-    addTaskTag(data){
-      dispatch({
-        type: getEffectOrReducerByName('addTaskTag'),
-        payload: data
-      })
-    },
-    removeTaskTag(data){
-      dispatch({
-        type: getEffectOrReducerByName('removeTaskTag'),
-        payload: data
-      })
-    },
-    removeProjectMenbers(data){
-      dispatch({
-        type: getEffectOrReducerByName('removeProjectMenbers'),
-        payload: data
-      })
-    },
-    getCardCommentList(id) {
-      dispatch({
-        type: getEffectOrReducerByName('getCardCommentList'),
-        payload: {
-          id
-        }
-      })
-    },
-    addCardNewComment(data) {
-      dispatch({
-        type: getEffectOrReducerByName('addCardNewComment'),
-        payload: data
-      })
-    }
   }
 
   const routingJump = (path) => {
@@ -125,7 +49,7 @@ const OrganizationMember = (props) => {
   return(
     <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
       <Header />
-      <CreateGroup {...CreateTaskProps} updateDatas={updateDatas} />
+      <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
     </div>
   )
 };

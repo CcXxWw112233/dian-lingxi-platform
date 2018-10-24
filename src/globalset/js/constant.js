@@ -8,7 +8,7 @@ export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfs
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
 
-
+export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
 export const MESSAGE_DURATION_TIME = 10 //message弹框时间
 export const UPLOAD_FILE_SIZE = 30 //上传文件MB限制
 
