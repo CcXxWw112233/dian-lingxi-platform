@@ -1,9 +1,10 @@
 //分组列表
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input, message } from 'antd'
+import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown } from 'antd'
 import QueueAnim from  'rc-queue-anim'
 import ItemTwo from  './ItemTwo'
+import ItemOne from './ItemOne'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 
 const Panel = Collapse.Panel
@@ -11,12 +12,14 @@ const Panel = Collapse.Panel
 export default class TaskItem extends React.Component {
 
   state = {
-    isAddEdit: false
+    isInEditAdd: false,
+    inputValue: '',
+    ShowAddMenberModalVisibile: false,
+
   }
+  //添加成员
   gotoAddItem() {
-    this.setState({
-      isAddEdit:true,
-    })
+    this.props.setShowAddMenberModalVisibile()
   }
   addItem(data,e) {
     const name =  e.target.value
@@ -28,45 +31,131 @@ export default class TaskItem extends React.Component {
       isAddEdit:false,
     })
   }
+
+  //点击分组操作
+  handleMenuClick(e ) {
+    e.domEvent.stopPropagation();
+    const { key } = e
+    switch (key) {
+      case '1':
+        this.setIsInEditAdd()
+        break
+      case '2':
+        this.deleteConfirm()
+        break
+      default:
+        break
+    }
+  }
+  deleteConfirm(parentKey ) {
+    const that = this
+    Modal.confirm({
+      title: '确认删除？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        that.deleteGroupItem(parentKey)
+      }
+    });
+  }
+  deleteGroupItem(parentKey) {
+  }
+
+  //  修改分组名称
+  setIsInEditAdd() {
+    this.setState({
+      isInEditAdd: true
+    })
+  }
+  inputEditOk(e) {
+    this.setState({
+      isInEditAdd: false,
+      inputValue: '',
+    })
+    if(!this.state.inputValue) {
+      return false
+    }
+  //  caozuo props
+  }
+  inputChange(e) {
+    this.setState({
+      inputValue: e.target.value
+    })
+  }
+
+
+
   render() {
-    const { isAddEdit } = this.state
+    const { isInEditAdd, inputValue } = this.state
     const { taskItemValue = {} } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id } = projectDetailInfoData
     const { list_name = '23', list_id, card_data = [1,2,3] } = taskItemValue
+
+    const operateMenu = () => {
+      return (
+        <Menu onClick={this.handleMenuClick.bind(this)}>
+          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={CreateTaskStyle.elseProjectMemu}>
+              重命名
+            </div>
+          </Menu.Item>
+          <Menu.Item key={'2'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={CreateTaskStyle.elseProjectDangerMenu}>
+              删除
+            </div>
+          </Menu.Item>
+        </Menu>
+      );
+    }
+
     return (
       <div className={CreateTaskStyle.taskItem}>
-        <div className={CreateTaskStyle.title}>
-          <div className={CreateTaskStyle.title_l}>
-            <div>这是分组名称</div>
-            <div style={{marginRight: 4, marginLeft: 4}}>·</div>
-            <div>21</div>
-            <div className={CreateTaskStyle.titleOperate}>
-              <Icon type="ellipsis" theme="outlined" />
+        {!isInEditAdd?(
+          <div className={CreateTaskStyle.title}>
+            <div className={CreateTaskStyle.title_l}>
+              <div>这是分组名称</div>
+              <div style={{marginRight: 4, marginLeft: 4}}>·</div>
+              <div>21</div>
+              <Dropdown overlay={operateMenu()}>
+                <div className={CreateTaskStyle.titleOperate}>
+                  <Icon type="ellipsis" theme="outlined" />
+                </div>
+              </Dropdown>
+            </div>
+            <div className={CreateTaskStyle.title_r}>
+              <div>子分组</div><div style={{marginRight: 4, marginLeft: 4}}>·</div>2 <Icon type="down" style={{marginLeft:6}} theme="outlined" />
             </div>
           </div>
-          <div className={CreateTaskStyle.title_r}>
-            <div>子分组</div><div style={{marginRight: 4, marginLeft: 4}}>·</div>2 <Icon type="down" style={{marginLeft:6}} theme="outlined" />
+        ) : (
+          <div>
+            <Input autoFocus defaultValue={list_name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
           </div>
-          </div>
+        )}
+
         <QueueAnim >
           {card_data.map((value,key) => {
-            return(
-              <ItemTwo itemValue={value} {...this.props}
-                       taskGroupListIndex_index={key}
-                       key={key} {...this.props} />
-            )
+            let contain
+            if(key%2 !== 0) {
+              contain = (
+                <ItemTwo itemValue={value} {...this.props}
+                         taskGroupListIndex_index={key}
+                         key={key} {...this.props} />
+               )
+            }else {
+              contain = (
+                <ItemOne itemValue={value} {...this.props}
+                         taskGroupListIndex_index={key}
+                         key={key} {...this.props} />
+               )
+            }
+            return contain
           })}
-          {!isAddEdit ? (
-            <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
-              <Icon type="plus-circle-o" />
-            </div>
-          ) : (
-            <div  key={'add'} className={CreateTaskStyle.addItem} >
-              <Input  onPressEnter={this.addItem.bind(this,{board_id, list_id})} onBlur={this.addItem.bind(this,{board_id, list_id})} autoFocus={true}/>
-            </div>
-          )}
+          <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
+            <Icon type="plus-circle-o" />
+          </div>
         </QueueAnim>
+
       </div>
     )
   }

@@ -3,13 +3,14 @@ import CreateTaskStyle from './CreateTask.less'
 import TaskItem from './TaskItem'
 import CreateItem from './CreateItem'
 import { Drawer } from 'antd'
+import ShowAddMenberModal from './ShowAddMenberModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
 
 export default class CreateTask extends React.Component {
 
   state = {
-    // drawerVisible: false,
+    ShowAddMenberModalVisibile: false,
   }
   constructor(){
     super();
@@ -63,31 +64,13 @@ export default class CreateTask extends React.Component {
     document.onmuseup = null;
   }
 
-  // 右方抽屉弹窗---start
-  setDrawerVisibleOpen(data) {
-    // this.setState({
-    //   drawerVisible: true,
-    // })
-    this.props.updateDatas({
-      drawerVisible: true,
-    })
-    const { drawContent:{ card_id }} = data
-    this.props.getCardCommentList(card_id)
-    this.props.updateDatas(data)
-  }
-  setDrawerVisibleClose() {
-    // this.setState({
-    //   drawerVisible: false,
-    // })
-    this.props.updateDatas({
-      drawerVisible: false,
+  //添加项目组成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
-  //右方抽屉弹窗---end
-  //
-  chirldrEnstopPropagation(e) {
-    e.stopPropagation();
-  }
+
   render() {
     const { datas:{ taskGroupList = [1,2,3,4,5,6,7,8], drawerVisible = false }, drawContent  } = this.props.model
     return (
@@ -103,10 +86,12 @@ export default class CreateTask extends React.Component {
               <TaskItem key={key} taskItemValue={value}
                         taskGroupListIndex={key}
                         {...this.props}
-                        setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
+                        setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}></TaskItem>
             )
           })}
           <CreateItem  {...this.props}  ></CreateItem>
+        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+
       </div>
     )
   }
