@@ -47,7 +47,7 @@ export async function updateGroup(data) {
 //删除分组
 export async function deleteGroup(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/group${data.id}`,
+    url: `${REQUEST_DOMAIN}/group/${data.id}`,
     method: 'DELETE',
     data
   });
