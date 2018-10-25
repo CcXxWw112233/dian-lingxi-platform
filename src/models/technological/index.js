@@ -91,18 +91,17 @@ export default {
     * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
       let res = yield call(getCurrentUserOrganizes, {})
       if(isApiResponseOk(res)) {
-        localStorage.setItem('currentUserOrganizes', JSON.stringify(res.data))
         yield put({
           type: 'updateDatas',
           payload: {
-            currentUserOrganizes: res.data, //
+            currentUserOrganizes: res.data, ////当前用户所属组织列表
             currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
           }
         })
-        if(res.data.length) { //当前选中的组织id OrgId要塞在cookie
-          Cookies.set('currentSelectOrganize', res.data[0],{expires: 30, path: ''})
+        if(res.data.length) { //当前选中的组织id OrgId要塞在sessionStorage
+          sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data[0]))
+          Cookies.set('org_id', res.data[0].id,{expires: 30, path: ''})
         }
-        console.log(localStorage.getItem('currentUserOrganizes'))
         const { calback } = payload
         if (typeof calback === 'function') {
           calback()
@@ -173,8 +172,9 @@ export default {
     * inviteJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已成功添加组织成员',MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     //创建或申请加入组织 -----------

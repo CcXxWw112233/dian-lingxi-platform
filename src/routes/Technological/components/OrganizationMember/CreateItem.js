@@ -3,7 +3,7 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, Input } from 'antd'
-
+import Cookies from 'js-cookie'
 const Panel = Collapse.Panel
 
 export default class CreateItem extends React.Component {
@@ -26,16 +26,12 @@ export default class CreateItem extends React.Component {
     if(!this.state.inputValue) {
       return false
     }
-    const { datas:{ projectDetailInfoData = {}, taskGroupList = [] } } = this.props.model
-    const { board_id } = projectDetailInfoData
+
     const obj = {
-      board_id,
       name: this.state.inputValue,
-      list_name: this.state.inputValue,
-      length: taskGroupList.length
+      org_id: Cookies.get('org_id'),
     }
-    taskGroupList.push(obj)
-    this.props.addTaskGroup(obj)
+    this.props.CreateGroup(obj)
   }
   inputChange(e) {
     this.setState({
@@ -45,8 +41,6 @@ export default class CreateItem extends React.Component {
 
   render() {
     const { isInEditAdd, inputValue } = this.state
-    const { datas:{ projectDetailInfoData = {}, taskGroupList=[] } } = this.props.model
-
     return (
       <div className={CreateTaskStyle.createTaskItem}>
         {!isInEditAdd?(

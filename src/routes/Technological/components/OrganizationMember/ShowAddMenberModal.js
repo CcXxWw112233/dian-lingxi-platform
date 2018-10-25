@@ -51,6 +51,7 @@ class ShowAddMenberModal extends React.Component {
             }
           }
           values['users'] = users
+          this.props.addMembers?this.props.addMembers(values): false
         }
         this.props.setShowAddMenberModalVisibile()
        //  此处为邀请加入组织
@@ -64,7 +65,7 @@ class ShowAddMenberModal extends React.Component {
 
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起进入组织</div>
+        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>

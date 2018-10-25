@@ -55,7 +55,8 @@ export default class HeaderNav extends React.Component{
         const { datas: {currentUserOrganizes = []}} = this.props.model
         for(let val of currentUserOrganizes) {
           if(key === val['id']){
-            Cookies.set('currentSelectOrganize', val,{expires: 30, path: ''})
+            Cookies.set('org_id',val.id,{expires: 30, path: ''})
+            sessionStorage.setItem('currentSelectOrganize', JSON.stringify(val))
             this.props.updateDatas({currentSelectOrganize: val})
             break
           }
@@ -109,10 +110,20 @@ export default class HeaderNav extends React.Component{
       createOrganizationVisable: !this.state.createOrganizationVisable
     })
   }
-  //添加项目组成员操作
+  //添加组织成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+  addMembers(data) {
+    const { users } = data
+    const { datas = {} } = this.props.model
+    const {  currentSelectOrganize = {} } = datas
+    const { id } = currentSelectOrganize
+    this.props.inviteJoinOrganization({
+      members: users,
+      org_id: id
     })
   }
   render() {
@@ -120,7 +131,7 @@ export default class HeaderNav extends React.Component{
     const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const { aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const orgnizationName = currentSelectOrganize.name || '组织'
-    const { logo_url } = currentSelectOrganize
+    const { logo } = currentSelectOrganize
     const userInfoMenu = (
       <Card  className={indexStyle.menuDiv} >
         <div className={indexStyle.triangle} ></div>
@@ -214,8 +225,8 @@ export default class HeaderNav extends React.Component{
           <Dropdown overlay={userInfoMenu}
                     onVisibleChange={this.handleVisibleChange}
                     visible={this.state.menuVisible}>
-            {logo_url?(
-              <img  src={logo_url}/>
+            {logo?(
+              <img  src={logo}/>
             ):(
               <div className={indexStyle.out_left_left}>{orgnizationName.substring(0,1)}</div>
             )}
@@ -238,7 +249,7 @@ export default class HeaderNav extends React.Component{
         </div>
       </div>
         <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
-        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
   }

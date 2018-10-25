@@ -28,7 +28,39 @@ export async function setMemberWitchGroup(data) {
     data
   });
 }
+//分组列表
+export async function getGroupList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group`,
+    method: 'GET',
+    params
+  });
+}
+//更新分组
+export async function updateGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group`,
+    method: 'PUT',
+    data
+  });
+}
+//删除分组
+export async function deleteGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
 
+//获取局部分组数据
+export async function getGroupPartialInfo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/partial`,
+    method: 'PUT',
+    data
+  });
+}
 
 
 

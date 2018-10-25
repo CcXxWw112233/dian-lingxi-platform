@@ -63,7 +63,7 @@ export default class CreateGroup extends React.Component {
   }
 
   render() {
-    const { datas:{ taskGroupList = [1], drawerVisible = false }, drawContent  } = this.props.model
+    const { datas:{ groupList = [] }} = this.props.model
     return (
       <div className={CreateTaskStyle.outerMost}
            style={{
@@ -72,7 +72,7 @@ export default class CreateGroup extends React.Component {
            onMouseDown={this.fnDown.bind(this)}
            ref={'outerMost'}
       >
-        {taskGroupList.map((value, key) => {
+        {groupList.map((value, key) => {
             return (
               <CreateGroupItem key={key} itemValue={value}
                         {...this.props}></CreateGroupItem>

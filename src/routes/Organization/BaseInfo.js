@@ -73,7 +73,7 @@ export default class BaseInfo extends React.Component {
       name,
       member_join_model,
       member_join_content: new_member_join_content,
-      logo_id,
+      logo:logo_id,
       org_id: id
     }
     this.props.updateOrganization(obj)

@@ -16,8 +16,7 @@ export default  {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/organization') {
-          const currentSelectOrganize = JSON.parse(Cookies.get('currentSelectOrganize'))
-          console.log(currentSelectOrganize)
+          const currentSelectOrganize = JSON.parse(sessionStorage.getItem('currentSelectOrganize'))//JSON.parse(sessionStorage.getItem('currentSelectOrganize'))
           const {name, member_join_model, member_join_content, logo, logo_id, id} = currentSelectOrganize
           dispatch({
             type: 'updateDatas',

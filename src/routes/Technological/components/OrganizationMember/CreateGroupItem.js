@@ -47,18 +47,23 @@ export default class TaskItem extends React.Component {
         break
     }
   }
-  deleteConfirm(parentKey ) {
+  deleteConfirm( ) {
     const that = this
     Modal.confirm({
       title: '确认删除？',
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        that.deleteGroupItem(parentKey)
+        that.deleteGroupItem()
       }
     });
   }
-  deleteGroupItem(parentKey) {
+  deleteGroupItem() {
+    const { itemValue = {} } = this.props
+    const { id } = itemValue
+    this.props.deleteGroup({
+      id
+    })
   }
 
   //  修改分组名称
@@ -76,6 +81,12 @@ export default class TaskItem extends React.Component {
       return false
     }
   //  caozuo props
+    const { itemValue = {} } = this.props
+    const { id } = itemValue
+    this.props.updateGroup({
+      group_id: id,
+      name: this.state.inputValue
+    })
   }
   inputChange(e) {
     this.setState({
@@ -83,19 +94,21 @@ export default class TaskItem extends React.Component {
     })
   }
 
-//添加项目组成员操作
+//添加分组成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
+  addMembers(data) {
+    const { itemValue = {} } = this.props
+    const { id } = itemValue
+  }
 
   render() {
     const { isInEditAdd, inputValue } = this.state
-    const { taskItemValue = {} } = this.props
-    const { projectDetailInfoData = {} } = this.props.model.datas
-    const { board_id } = projectDetailInfoData
-    const { list_name = '23', list_id, card_data = [1,2,3] } = taskItemValue
+    const { itemValue = {} } = this.props
+    const { name , is_default, members = [] } = itemValue //is_default ==='1' 默认分组不可操作
 
     const operateMenu = () => {
       return (
@@ -119,40 +132,46 @@ export default class TaskItem extends React.Component {
         {!isInEditAdd?(
           <div className={CreateTaskStyle.title}>
             <div className={CreateTaskStyle.title_l}>
-              <div>这是分组名称</div>
+              <div>{name}</div>
               <div style={{marginRight: 4, marginLeft: 4}}>·</div>
-              <div>21</div>
-              <Dropdown overlay={operateMenu()}>
-                <div className={CreateTaskStyle.titleOperate}>
-                  <Icon type="ellipsis" theme="outlined" />
-                </div>
-              </Dropdown>
+              <div>{members.length}</div>
+              {is_default === '0'?(
+                <Dropdown overlay={operateMenu()}>
+                  <div className={CreateTaskStyle.titleOperate}>
+                    <Icon type="ellipsis" theme="outlined" />
+                  </div>
+                </Dropdown>
+              ):('')}
             </div>
             <div className={CreateTaskStyle.title_r}>
-              <div>子分组</div><div style={{marginRight: 4, marginLeft: 4}}>·</div>2 <Icon type="down" style={{marginLeft:6}} theme="outlined" />
+              {/*暂时未开放*/}
+              {/*<div>子分组</div><div style={{marginRight: 4, marginLeft: 4}}>·</div>2 <Icon type="down" style={{marginLeft:6}} theme="outlined" />*/}
             </div>
           </div>
         ) : (
           <div>
-            <Input autoFocus defaultValue={list_name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
+            <Input autoFocus defaultValue={name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
           </div>
         )}
 
         <QueueAnim >
-          {card_data.map((value,key) => {
+          {members.map((value,key) => {
+            const { status } = value
             let contain
-            if(key%2 !== 0) {
+            if(status === '1') {
+              contain = (
+                <ItemOne itemValue={value} {...this.props}
+                         itemKey={key}
+                         key={key} {...this.props} />
+               )
+            }else if (status === '2'){
               contain = (
                 <ItemOne itemValue={value} {...this.props}
                          itemKey={key}
                          key={key} {...this.props} />
                )
             }else {
-              contain = (
-                <ItemOne itemValue={value} {...this.props}
-                         itemKey={key}
-                         key={key} {...this.props} />
-               )
+
             }
             return contain
           })}

@@ -30,6 +30,31 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
+    getGroupList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getGroupList'),
+        payload: data,
+      })
+    },
+    updateGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateGroup'),
+        payload: data,
+      })
+    },
+    deleteGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteGroup'),
+        payload: data,
+      })
+    },
+    getGroupPartialInfo(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getGroupPartialInfo'),
+        payload: data,
+      })
+    },
+
   }
 
   const routingJump = (path) => {
