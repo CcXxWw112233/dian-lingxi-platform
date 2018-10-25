@@ -1,5 +1,5 @@
 import { getUSerInfo, logout } from '../../services/technological'
-import { getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, uploadOrganizationLogo } from '../../services/technological/organizationMember'
+import { getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
 
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -33,8 +33,13 @@ export default {
           if(!Cookies.get('userInfo')) {
             dispatch({
               type:'getUSerInfo',
+              payload: {}
             })
           }
+          dispatch({
+            type:'getCurrentUserOrganizes',
+            payload: {}
+          })
           //websocket连接判定
           if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
             initWs()
@@ -67,10 +72,6 @@ export default {
           }
         })
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
-        const { calback } = payload
-        if (typeof calback === 'function') {
-          calback()
-        }
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -87,6 +88,28 @@ export default {
     },
 
     //创建或申请加入组织 -----------
+    * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
+      let res = yield call(getCurrentUserOrganizes, {})
+      if(isApiResponseOk(res)) {
+        localStorage.setItem('currentUserOrganizes', JSON.stringify(res.data))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentUserOrganizes: res.data, //
+            currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
+          }
+        })
+        if(res.data.length) { //当前选中的组织id OrgId要塞在cookie
+          Cookies.set('currentSelectOrganize', res.data[0],{expires: 30, path: ''})
+        }
+        console.log(localStorage.getItem('currentUserOrganizes'))
+        const { calback } = payload
+        if (typeof calback === 'function') {
+          calback()
+        }
+      }else{
+      }
+    },
     * getSearchOrganizationList({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
@@ -115,7 +138,7 @@ export default {
       let res = yield call(createOrganization, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getUSerInfo',
+          type: 'getCurrentUserOrganizes',
           payload: {
             calback : function () {
               message.success('创建组织成功',MESSAGE_DURATION_TIME)
@@ -136,7 +159,7 @@ export default {
       let res = yield call(applyJoinOrganization, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getUSerInfo',
+          type: 'getCurrentUserOrganizes',
           payload: {
             calback : function () {
               message.success('申请加入组织成功',MESSAGE_DURATION_TIME)
@@ -151,12 +174,6 @@ export default {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
 
-      }else{
-      }
-    },
-    * uploadOrganizationLogo({ payload }, { select, call, put }) {
-      let res = yield call(uploadOrganizationLogo, payload)
-      if(isApiResponseOk(res)) {
       }else{
       }
     },

@@ -12,7 +12,7 @@ const  TabPane = Tabs.TabPane
 const getEffectOrReducerByName = name => `organization/${name}`
 
 const Organization = (options) => {
-  const { dispatch } = options
+  const { dispatch, model } = options
   const updateDatas = (payload) => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas') ,
@@ -22,6 +22,23 @@ const Organization = (options) => {
   const historyGoBack = () => {
     window.history.go(-1)
   }
+
+  const asyncProprs = {
+    model,
+    updateOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateOrganization'),
+        payload: data
+      })
+    },
+    uploadOrganizationLogo(data) {
+      dispatch({
+        type: getEffectOrReducerByName('uploadOrganizationLogo'),
+        payload: data
+      })
+    },
+  }
+
   return(
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
@@ -35,13 +52,13 @@ const Organization = (options) => {
           <div className={indexStyles.tabsOut}>
             <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'1'}>
               <TabPane tab="基本信息" key="1">
-                 <BaseInfo />
+                 <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
               <TabPane tab="角色管理" key="2">
-                <RoleTabPaneContent />
+                <RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>
               </TabPane>
               <TabPane tab="权限管理" key="3">
-                <AuthTabPaneContent />
+                <AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>
               </TabPane>
             </Tabs>
           </div>

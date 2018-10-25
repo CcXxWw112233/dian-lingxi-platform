@@ -30,10 +30,21 @@ export async function setMemberWitchGroup(data) {
 }
 
 
+
+
+//查询当前用户所拥有或所属组织
+export async function getCurrentUserOrganizes(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization`,
+    method: 'GET',
+    params
+  }, { isNotLoading: true} );
+}
+
 //模糊查询组织列表
 export async function getSearchOrganizationList(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization`,
+    url: `${REQUEST_DOMAIN}/organization/search`,
     method: 'GET',
     params
   }, { isNotLoading: true} );

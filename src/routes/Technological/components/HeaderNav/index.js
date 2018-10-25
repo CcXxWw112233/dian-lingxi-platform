@@ -24,23 +24,42 @@ export default class HeaderNav extends React.Component{
     const { key } = e
     this.setState({ menuVisible: false });
     switch(key) {
+      case '1':
+        break
       case '2':
         this.props.routingJump('/technological/organizationMember')
         break;
+      case '3':
+        this.props.routingJump('/organization')
+        break
       case '4':
         this.setShowAddMenberModalVisibile()
         break;
+      case '5':
+        break
       case '6':
         this.props.routingJump('/technological/accoutSet')
         break;
+      case '7':
+        break
+      case '8':
+        break
+      case '9':
+        break
       case '10':
         //创建组织的弹窗打开
         this.setCreateOrgnizationOModalVisable()
         break
-      case '3':
-        this.props.routingJump('/organization')
-        break
+      //这里是选择组织
       default:
+        const { datas: {currentUserOrganizes = []}} = this.props.model
+        for(let val of currentUserOrganizes) {
+          if(key === val['id']){
+            Cookies.set('currentSelectOrganize', val,{expires: 30, path: ''})
+            this.props.updateDatas({currentSelectOrganize: val})
+            break
+          }
+        }
         break
     }
     this.props.updateDatas({
@@ -98,22 +117,28 @@ export default class HeaderNav extends React.Component{
   }
   render() {
     const { datas = {} } = this.props.model
-    const { userInfo = {} } = datas
-    const {orgnization = '组织', aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const orgnizationName = currentSelectOrganize.name || '组织'
+    const { logo_url } = currentSelectOrganize
     const userInfoMenu = (
       <Card  className={indexStyle.menuDiv} >
         <div className={indexStyle.triangle} ></div>
-        <Menu onClick={this.handleMenuClick} selectable={false} >
-          <SubMenu key="sub4" title={
+        <Menu onClick={this.handleMenuClick.bind(this)} selectable={false} >
+          <SubMenu key="sub" title={
             <div style={{width: '100%',height:'100%',padding:'0 16 0 6px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
-             {orgnization}
+             {orgnizationName}
             </div>}>
-            <Menu.Item key="9" style={{padding:0,margin: 0,color: '#595959'}}>
-              <div className={indexStyle.itemDiv} style={{ padding: '0 16px'}}>
-                Option 9
-              </div>
-            </Menu.Item>
-            <Menu.Divider key="none_1"/>
+            {currentUserOrganizes.map((value, key) => {
+              const { name, id } = value
+              return (
+                <Menu.Item key={id} style={{padding:0,margin: 0,color: '#595959'}}>
+                  <div className={indexStyle.itemDiv} style={{ padding: '0 16px'}}>
+                    {name}
+                  </div>
+                </Menu.Item>
+              )
+            })}
             <Menu.Item key="10" style={{padding:0,margin: 0,color: '#595959'}}>
               <div className={indexStyle.itemDiv} style={{ padding: '0 16px',color: color_4}}>
                 <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新组织
@@ -126,11 +151,14 @@ export default class HeaderNav extends React.Component{
                 <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/成员</span></span>
               </div>
           </Menu.Item>
-          <Menu.Item key="3" style={{padding:0,margin: 0}}>
-            <div className={indexStyle.itemDiv}>
-              <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>组织管理后台</span></span>
-            </div>
-          </Menu.Item>
+          {currentUserOrganizes.length?(
+            <Menu.Item key="3" style={{padding:0,margin: 0}}>
+              <div className={indexStyle.itemDiv}>
+                <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>组织管理后台</span></span>
+              </div>
+            </Menu.Item>
+          ):('')}
+
           <Menu.Item key="4" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
                 <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请成员加入</span>
@@ -186,7 +214,11 @@ export default class HeaderNav extends React.Component{
           <Dropdown overlay={userInfoMenu}
                     onVisibleChange={this.handleVisibleChange}
                     visible={this.state.menuVisible}>
-            <div className={indexStyle.out_left_left}>迪</div>
+            {logo_url?(
+              <img  src={logo_url}/>
+            ):(
+              <div className={indexStyle.out_left_left}>{orgnizationName.substring(0,1)}</div>
+            )}
           </Dropdown>
           <div className={indexStyle.out_left_right}>
             <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>

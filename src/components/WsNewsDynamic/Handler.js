@@ -41,11 +41,11 @@ let Handlers = function () {
 
   this.onclose = function (e, ws) {
     Cookies.set('wsLinking', false,{expires: 30, path: ''})
-    console.log('连接断开')
+    // console.log('连接断开')
   }
 
   this.onerror = function (e, ws) {
-    console.log('连接错误')
+    // console.log('连接错误')
   }
 
   /**

@@ -112,7 +112,6 @@ class CreateOrganizationModal extends React.Component {
     const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible } = this.state
     const { createOrganizationVisable } = this.props; //reName_Add_type操作类型1重命名 2添加
     const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
-    console.log(searchOrganizationList)
     const { getFieldDecorator } = this.props.form;
 
     const formContain = (
