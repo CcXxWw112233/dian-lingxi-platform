@@ -67,11 +67,14 @@ export default {
           }
         })
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        const { calback } = payload
+        if (typeof calback === 'function') {
+          calback()
+        }
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
@@ -83,16 +86,44 @@ export default {
       }
     },
 
+    //创建或申请加入组织 -----------
     * getSearchOrganizationList({ payload }, { select, call, put }) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          spinning: true
+        }
+      })
       let res = yield call(getSearchOrganizationList, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          spinning: false
+        }
+      })
       if(isApiResponseOk(res)) {
+        yield put({
+          type:'updateDatas',
+          payload: {
+            searchOrganizationList: res.data
+          }
+        })
       }else{
       }
     },
     * createOrganization({ payload }, { select, call, put }) {
       let res = yield call(createOrganization, payload)
       if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getUSerInfo',
+          payload: {
+            calback : function () {
+              message.success('创建组织成功',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
       }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     * updateOrganization({ payload }, { select, call, put }) {
@@ -104,12 +135,22 @@ export default {
     * applyJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(applyJoinOrganization, payload)
       if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getUSerInfo',
+          payload: {
+            calback : function () {
+              message.success('申请加入组织成功',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
       }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     * inviteJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
+
       }else{
       }
     },
@@ -119,6 +160,7 @@ export default {
       }else{
       }
     },
+    //创建或申请加入组织 -----------
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

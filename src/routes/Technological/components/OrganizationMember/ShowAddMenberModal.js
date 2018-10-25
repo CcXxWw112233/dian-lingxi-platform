@@ -53,7 +53,7 @@ class ShowAddMenberModal extends React.Component {
           values['users'] = users
         }
         this.props.setShowAddMenberModalVisibile()
-        this.props.addMenbersInProject ? this.props.addMenbersInProject(values) : false
+       //  此处为邀请加入组织
       }
     });
   }
@@ -64,7 +64,7 @@ class ShowAddMenberModal extends React.Component {
 
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起参加项目</div>
+        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起进入组织</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>
@@ -90,7 +90,7 @@ class ShowAddMenberModal extends React.Component {
     return(
       <div>
         <Modal
-          visible={modalVisible}
+          visible={modalVisible} //modalVisible
           width={472}
           zIndex={1006}
           footer={null}

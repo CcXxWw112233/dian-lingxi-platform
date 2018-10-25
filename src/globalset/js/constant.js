@@ -9,7 +9,7 @@ export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
-export const MESSAGE_DURATION_TIME = 10 //message弹框时间
+export const MESSAGE_DURATION_TIME = 3 //message弹框时间
 export const UPLOAD_FILE_SIZE = 30 //上传文件MB限制
 
 export const INT_REQUEST_OK = 0 //接口返回常量定义

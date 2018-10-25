@@ -41,34 +41,39 @@ const Technological = (options) => {
       })
     },
     //组织
-    getSearchOrganizationList() {
+    getSearchOrganizationList(data) {
       dispatch({
         type: getEffectOrReducerByName('getSearchOrganizationList'),
+        payload: data
       })
     },
-    createOrganization() {
+    createOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('createOrganization'),
+        payload: data
       })
     },
-    updateOrganization() {
+    updateOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('updateOrganization'),
       })
     },
-    applyJoinOrganization() {
+    applyJoinOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('applyJoinOrganization'),
+        payload: data
       })
     },
-    inviteJoinOrganization() {
+    inviteJoinOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('inviteJoinOrganization'),
+        payload: data
       })
     },
-    uploadOrganizationLogo() {
+    uploadOrganizationLogo(data) {
       dispatch({
         type: getEffectOrReducerByName('uploadOrganizationLogo'),
+        payload: data
       })
     },
   }

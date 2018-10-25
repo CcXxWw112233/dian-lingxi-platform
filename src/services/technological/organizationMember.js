@@ -30,22 +30,21 @@ export async function setMemberWitchGroup(data) {
 }
 
 
-
 //模糊查询组织列表
 export async function getSearchOrganizationList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'GET',
     params
-  });
+  }, { isNotLoading: true} );
 }
 
 //创建组织
-export async function createOrganization(params) {
+export async function createOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'POST',
-    params
+    data
   });
 }
 
@@ -59,11 +58,11 @@ export async function updateOrganization(data) {
 }
 
 //申请加入组织
-export async function applyJoinOrganization(params) {
+export async function applyJoinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/apply`,
-    method: 'GET',
-    params
+    method: 'POST',
+    data
   });
 }
 
