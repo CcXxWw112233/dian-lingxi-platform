@@ -1,5 +1,5 @@
 import { getUSerInfo, logout } from '../../services/technological'
-import { getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
+import { changeCurrentOrg,getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
 
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -8,8 +8,10 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs}  from '../../components/WsNewsDynamic'
 import { selectNewMessageItem } from './select'
+import QueryString from 'QueryString'
 
 let naviHeadTabIndex //导航栏naviTab选项
+let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
   state: [],
@@ -18,6 +20,7 @@ export default {
       history.listen((location) => {
         message.destroy()
         //头部table key
+        locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = '3'
@@ -30,12 +33,13 @@ export default {
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          if(!Cookies.get('userInfo')) {
+          // if(!Cookies.get('userInfo')) {
             dispatch({
               type:'getUSerInfo',
               payload: {}
             })
-          }
+          // }
+          //查询所在组织列表
           dispatch({
             type:'getCurrentUserOrganizes',
             payload: {}
@@ -49,6 +53,18 @@ export default {
             localStorage.removeItem(`newMessage`)
           }
 
+        }
+
+        //切换组织时需要重新加载
+        const param =  QueryString.parse(location.search.replace('?', '')) || {}
+        const { redirectHash } = param
+        if(location.pathname === '/technological'  && redirectHash) {
+          dispatch({
+            type: 'routingJump',
+            payload: {
+              route: redirectHash
+            }
+          })
         }
       })
     },
@@ -68,9 +84,12 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            userInfo: res.data,
+            userInfo: res.data, //当前用户信息
+            currentSelectOrganize: res.data.current_org || {}//当前选中的组织
           }
         })
+        //当前选中的组织
+        sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -79,7 +98,6 @@ export default {
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
-        // yield put(routerRedux.push('/login'));
         Cookies.remove('userInfo', { path: '' })
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
       }else{
@@ -87,7 +105,7 @@ export default {
       }
     },
 
-    //创建或申请加入组织 -----------
+    //组织 -----------
     * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
       let res = yield call(getCurrentUserOrganizes, {})
       if(isApiResponseOk(res)) {
@@ -95,11 +113,11 @@ export default {
           type: 'updateDatas',
           payload: {
             currentUserOrganizes: res.data, ////当前用户所属组织列表
-            currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
+            // currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
           }
         })
         if(res.data.length) { //当前选中的组织id OrgId要塞在sessionStorage
-          sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data[0]))
+          // sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data[0]))
           Cookies.set('org_id', res.data[0].id,{expires: 30, path: ''})
         }
         const { calback } = payload
@@ -107,6 +125,23 @@ export default {
           calback()
         }
       }else{
+      }
+    },
+    * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
+      let res = yield call(changeCurrentOrg, payload)
+      if(isApiResponseOk(res)) {
+        const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        //组织切换重新加载
+        const redirectHash =  locallocation.pathname
+        if(locallocation.pathname === '/technological/projectDetail') {
+          redirectHash === '/technological/project'
+        }
+        yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
+
+      }else{
+        message.warn('组织切换出了点问题', MESSAGE_DURATION_TIME)
       }
     },
     * getSearchOrganizationList({ payload }, { select, call, put }) {
@@ -177,7 +212,7 @@ export default {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
-    //创建或申请加入组织 -----------
+    //组织 -----------
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

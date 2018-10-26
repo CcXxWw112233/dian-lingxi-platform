@@ -21,6 +21,9 @@ export default class ItemOne extends React.Component {
     const { key } = e
     const { itemValue } = this.props
     const { member_id } = itemValue
+    this.props.updateDatas({
+      currentBeOperateMemberId: member_id,
+    })
     switch (key) {
       case 'discontinue':
         this.discontinueConfirm(member_id)
@@ -29,6 +32,9 @@ export default class ItemOne extends React.Component {
         this.removeConfirm()
         break
       case 'setGroup':
+        this.props.updateDatas({
+          TreeGroupModalVisiblie: true,
+        })
         break
       default:
         break

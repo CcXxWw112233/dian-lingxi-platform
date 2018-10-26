@@ -76,6 +76,12 @@ const Technological = (options) => {
         payload: data
       })
     },
+    changeCurrentOrg(data) {
+      dispatch({
+        type: getEffectOrReducerByName('changeCurrentOrg'),
+        payload: data
+      })
+    }
   }
 
   //-----------------

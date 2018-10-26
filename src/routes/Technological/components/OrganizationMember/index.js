@@ -85,7 +85,7 @@ const OrganizationMember = (props) => {
   }
   return(
     <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
-      <Header />
+      <Header {...this.props} model={model}/>
       <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
     </div>
   )

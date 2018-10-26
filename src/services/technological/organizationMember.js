@@ -101,6 +101,15 @@ export async function getCurrentUserOrganizes(params) {
   }, { isNotLoading: true} );
 }
 
+export async function changeCurrentOrg(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/changecurrentorg`,
+    method: 'PUT',
+    data
+  });
+}
+
+
 //模糊查询组织列表
 export async function getSearchOrganizationList(params) {
   return request({

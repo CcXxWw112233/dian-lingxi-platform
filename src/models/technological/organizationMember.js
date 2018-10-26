@@ -20,6 +20,9 @@ export default modelExtend(technological, {
             type: 'updateDatas',
             payload:{
               groupList: [], //全部分组
+              TreeGroupModalVisiblie: false, //树状分组是否可见
+              groupTreeList: [], //树状分组数据
+              currentBeOperateMemberId: '', //当前被操作的成员id
             }
           })
           //获取分组列表
@@ -144,7 +147,19 @@ export default modelExtend(technological, {
     },
     * setMemberWitchGroup({ payload }, { select, call, put }) {
       let res = yield call(setMemberWitchGroup, payload)
-      if(isApiResponseOk(res)) {}
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success('设置成员分组成功',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn('设置成员分组失败', MESSAGE_DURATION_TIME)
+      }
+
     },
     * getGroupPartialInfo({ payload }, { select, call, put }) {
       let res = yield call(getGroupPartialInfo, payload)
@@ -181,7 +196,6 @@ export default modelExtend(technological, {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
-
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

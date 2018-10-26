@@ -58,6 +58,7 @@ export default class HeaderNav extends React.Component{
             Cookies.set('org_id',val.id,{expires: 30, path: ''})
             sessionStorage.setItem('currentSelectOrganize', JSON.stringify(val))
             this.props.updateDatas({currentSelectOrganize: val})
+            this.props.changeCurrentOrg({org_id: val.id})
             break
           }
         }
@@ -137,7 +138,7 @@ export default class HeaderNav extends React.Component{
         <div className={indexStyle.triangle} ></div>
         <Menu onClick={this.handleMenuClick.bind(this)} selectable={false} >
           <SubMenu key="sub" title={
-            <div style={{width: '100%',height:'100%',padding:'0 16 0 6px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
+            <div style={{width: '100%',height:'100%',padding:'0 16 0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
              {orgnizationName}
             </div>}>
             {currentUserOrganizes.map((value, key) => {
@@ -157,11 +158,13 @@ export default class HeaderNav extends React.Component{
             </Menu.Item>
           </SubMenu>
           <Menu.Divider key="none_1"/>
-          <Menu.Item  key="2" style={{padding:0,margin: 0}}>
+          {currentUserOrganizes.length?(
+            <Menu.Item  key="2" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
                 <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/成员</span></span>
               </div>
-          </Menu.Item>
+            </Menu.Item>
+          ):('')}
           {currentUserOrganizes.length?(
             <Menu.Item key="3" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>

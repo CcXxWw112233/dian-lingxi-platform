@@ -7,6 +7,7 @@ import ItemTwo from  './ItemTwo'
 import ItemOne from './ItemOne'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 import ShowAddMenberModal from './ShowAddMenberModal'
+import TreeGroupModal from  './TreeGroupModal'
 
 const Panel = Collapse.Panel
 
@@ -185,7 +186,7 @@ export default class TaskItem extends React.Component {
 
         </QueueAnim>
         <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
-
+        <TreeGroupModal  {...this.props}/>
       </div>
     )
   }

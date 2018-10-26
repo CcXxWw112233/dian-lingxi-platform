@@ -4,6 +4,7 @@ import { Icon, Menu, Dropdown, Tooltip } from 'antd'
 
 export default class Header extends React.Component {
   render() {
+    const { datas: { member_count = 0}} = this.props.model
     const menu = () => (
       <Menu>
         <Menu.Item key={'1'}>
@@ -47,7 +48,7 @@ export default class Header extends React.Component {
       <div className={indexStyle.headerOut}>
 
         <div className={indexStyle.left}>
-          <div>全部成员 · 218</div>
+          <div>全部成员 · {member_count}</div>
           <Dropdown overlay={menu()}>
              <div><Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
           </Dropdown>

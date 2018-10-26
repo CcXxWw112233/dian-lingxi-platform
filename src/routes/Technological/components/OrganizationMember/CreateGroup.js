@@ -43,15 +43,15 @@ export default class CreateGroup extends React.Component {
     let target = event.target || event.srcElement;
 
     //可以改变position位置的判断
-    // if(!this.props.model.datas.taskGroupList) {
-    //   return false
-    // }
-    // if(this.state.needX < 0 && (event.clientX - this.disX) < -(this.props.model.datas.taskGroupList.length * 314)){
-    //    return false
-    // }
-    // if(this.state.needX > documentWidth / 2 && (event.clientX - this.disX) > documentWidth / 2){
-    //   return false
-    // }
+    if(!this.props.model.datas.groupList) {
+      return false
+    }
+    if(this.state.needX < 0 && (event.clientX - this.disX) < -(this.props.model.datas.groupList.length * 314)){
+       return false
+    }
+    if(this.state.needX > documentWidth / 2 && (event.clientX - this.disX) > documentWidth / 2){
+      return false
+    }
     this.setState({
       needX:event.clientX - this.disX,
       needY:event.clientY - this.disY

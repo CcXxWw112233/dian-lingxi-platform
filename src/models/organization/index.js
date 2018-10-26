@@ -42,7 +42,7 @@ export default  {
       if(isApiResponseOk(res)) {
          message.success('更新组织信息成功',MESSAGE_DURATION_TIME)
       }else{
-        message.success(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     * uploadOrganizationLogo({ payload }, { select, call, put }) {
