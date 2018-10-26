@@ -11,6 +11,15 @@ export async function CreateGroup(data) {
   });
 }
 
+//获取分组树状列表
+export async function getGroupTreeList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/tree`,
+    method: 'GET',
+    params
+  });
+}
+
 //移出分组成员
 export async function removeMembersWithGroup(data) {
   return request({
@@ -61,6 +70,25 @@ export async function getGroupPartialInfo(data) {
     data
   });
 }
+
+//审批 拒绝或通过
+export async function approvalMember(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/approval`,
+    method: 'PUT',
+    data
+  });
+}
+
+//停用
+export async function discontinueMember(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/discontinue`,
+    method: 'PUT',
+    data
+  });
+}
+
 
 
 

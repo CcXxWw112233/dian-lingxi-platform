@@ -10,17 +10,24 @@ export default class ItemTwo extends React.Component {
   state = {
     collapseClose: true, //折叠面板变化回调
   }
+  //拒绝
   handleMenuClick(e) {
     const { key } = e
     if(key === '1') {
-      console.log('jujue')
+      const { itemValue:{ member_id} } = this.props
+      this.props.approvalMember({
+        member_id,
+        status: '0'
+      })
     }
   }
-  passMember () {
-    console.log('tongguo')
+  //通过
+  passMember (data) {
+    this.props.approvalMember(data)
   }
   render() {
-    const avatar = 'http://qiniu.new-di.com/29e198f63f2b24f3617790f6c8d078bf.jpg?e=1540297862&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:kfkZWU2wLmNyL2FNRTAu5P6wNVo='
+    const { itemValue } = this.props
+    const { member_id, avatar, name, role_name } = itemValue
     const operateMenu = () => (
       <Menu onClick={this.handleMenuClick.bind(this)}>
         <Menu.Item key={'1'}>
@@ -36,13 +43,13 @@ export default class ItemTwo extends React.Component {
             <Avatar size={40} icon="user" src={avatar}/>
           </div>
           <div  className={CreateTaskStyle.detail}>
-             <div>张asdsdfdfsdfsdfsdfsd三</div>
-             <div>成员</div>
+             <div>{name}</div>
+             <div>{role_name}</div>
           </div>
         </div>
         <div className={CreateTaskStyle.item_2_right}>
           <Dropdown overlay={operateMenu()}>
-             <Button onClick={this.passMember.bind(this)} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
+             <Button onClick={this.passMember.bind(this,{member_id, status: '2'})} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
           </Dropdown>
         </div>
       </div>

@@ -3,12 +3,11 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
+import { getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
 
-const org_id = Cookies.get('org_id')
 export default modelExtend(technological, {
   namespace: 'organizationMember',
   state: [],
@@ -23,11 +22,16 @@ export default modelExtend(technological, {
               groupList: [], //全部分组
             }
           })
+          //获取分组列表
           dispatch({
             type: 'getGroupList',
             payload: {
-              org_id
             }
+          })
+          // 获取分组树状列表
+          dispatch({
+            type: 'getGroupTreeList',
+            payload: {}
           })
 
         }
@@ -36,18 +40,32 @@ export default modelExtend(technological, {
   },
   effects: {
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {org_id})
+      let res = yield call(getGroupList, {})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            groupList: res.data
+            groupList: res.data.data,
+            member_count: res.data.member_count
           }
         })
         const { calback } = payload
         if(typeof calback === 'function') {
           calback()
         }
+      }else {
+
+      }
+    },
+    * getGroupTreeList({ payload }, { select, call, put }) {
+      let res = yield call(getGroupTreeList,{})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            groupTreeList: res.data
+          }
+        })
       }else {
 
       }
@@ -62,6 +80,10 @@ export default modelExtend(technological, {
               message.success('创建分组成功',MESSAGE_DURATION_TIME)
             }
           }
+        })
+        yield put({
+          type: 'getGroupTreeList',
+          payload: {}
         })
       }else {
         message.warn(res.message,MESSAGE_DURATION_TIME)
@@ -78,6 +100,10 @@ export default modelExtend(technological, {
             }
           }
         })
+        yield put({
+          type: 'getGroupTreeList',
+          payload: {}
+        })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -93,13 +119,28 @@ export default modelExtend(technological, {
             }
           }
         })
+        yield put({
+          type: 'getGroupTreeList',
+          payload: {}
+        })
       }else {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     * removeMembersWithGroup({ payload }, { select, call, put }) {
       let res = yield call(removeMembersWithGroup, payload)
-      if(isApiResponseOk(res)) {}
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success('已将成员移出该分组',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
     },
     * setMemberWitchGroup({ payload }, { select, call, put }) {
       let res = yield call(setMemberWitchGroup, payload)
@@ -109,6 +150,38 @@ export default modelExtend(technological, {
       let res = yield call(getGroupPartialInfo, payload)
       if(isApiResponseOk(res)) {}
     },
+    * approvalMember({ payload }, { select, call, put }) {
+      const { status } = payload
+      let res = yield call(approvalMember, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success(status === '0'?'已拒绝成员加入':'已通过审批',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+    * discontinueMember({ payload }, { select, call, put }) {
+      let res = yield call(discontinueMember, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success('已停用该成员',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

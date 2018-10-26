@@ -158,28 +158,33 @@ export default class TaskItem extends React.Component {
           {members.map((value,key) => {
             const { status } = value
             let contain
-            if(status === '1') {
+            if(status === '2') {
               contain = (
-                <ItemOne itemValue={value} {...this.props}
+                <ItemOne {...this.props} itemValue={value}
+                         parentItemValue={itemValue}
                          itemKey={key}
-                         key={key} {...this.props} />
+                         key={key}  />
                )
-            }else if (status === '2'){
+            }else if (status === '1'){
               contain = (
-                <ItemOne itemValue={value} {...this.props}
+                <ItemTwo {...this.props} itemValue={value}
+                         parentItemValue={itemValue}
                          itemKey={key}
-                         key={key} {...this.props} />
+                         key={key}  />
                )
             }else {
 
             }
             return contain
           })}
-          <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
-            <Icon type="plus-circle-o" />
-          </div>
+          {is_default === '0'? (
+            <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
+              <Icon type="plus-circle-o" />
+            </div>
+          ) : ('')}
+
         </QueueAnim>
-        <ShowAddMenberModal {...this.props}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
       </div>
     )

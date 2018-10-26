@@ -3,7 +3,7 @@ import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown, Modal } from 'antd'
 import QueueAnim from  'rc-queue-anim'
-
+import Cookies from 'js-cookie'
 const Panel = Collapse.Panel
 
 export default class ItemOne extends React.Component {
@@ -19,21 +19,55 @@ export default class ItemOne extends React.Component {
   }
   handleMenuClick(e) {
     const { key } = e
-    console.log(key)
+    const { itemValue } = this.props
+    const { member_id } = itemValue
+    switch (key) {
+      case 'discontinue':
+        this.discontinueConfirm(member_id)
+        break
+      case 'remove':
+        this.removeConfirm()
+        break
+      case 'setGroup':
+        break
+      default:
+        break
+    }
   }
-  //删除
-  deleteConfirm(parentKey ) {
+
+  //移出
+  removeConfirm(member_id) {
     const that = this
     Modal.confirm({
-      title: '确认删除？',
+      title: '确认从该分组中移出该成员？',
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        that.deleteGroupItem(parentKey)
+        that.removeMember()
       }
     });
   }
-  deleteMember(parentKey) {
+  removeMember() {
+    const { itemValue, parentItemValue } = this.props
+    const { member_id } = itemValue
+    const group_id = parentItemValue.id
+    const org_id = Cookies.get('org_id')
+    this.props.removeMembersWithGroup({member_id,group_id,org_id})
+  }
+  //停用
+  discontinueConfirm(member_id) {
+    const that = this
+    Modal.confirm({
+      title: '确认停用该成员？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        that.discontinueMember(member_id)
+      }
+    });
+  }
+  discontinueMember(member_id) {
+    this.props.discontinueMember({member_id})
   }
 
   //设置转动出现详情
@@ -59,36 +93,35 @@ export default class ItemOne extends React.Component {
   };
 
   render() {
-    const { isShowBottDetail } = this.state
-    const { bott_id } = this.state
-    const avatar = 'http://qiniu.new-di.com/29e198f63f2b24f3617790f6c8d078bf.jpg?e=1540297862&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:kfkZWU2wLmNyL2FNRTAu5P6wNVo='
-
+    const { isShowBottDetail, bott_id } = this.state
+    const { itemValue, parentItemValue } = this.props
+    const { is_default } = parentItemValue
+    const { member_id, avatar, name, role_name } = itemValue
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.SubMenu title="设置角色">
+          {/*<Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>*/}
+            {/*<div className={CreateTaskStyle.elseProjectMemu}>*/}
+              {/**/}
+            {/*</div>*/}
+          {/*</Menu.Item>*/}
+          </Menu.SubMenu>
+          <Menu.Item key={'setGroup'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={CreateTaskStyle.elseProjectMemu}>
-              设为团队负责人
+              设置分组
             </div>
           </Menu.Item>
-          <Menu.Item key={'2'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectMemu}>
-              研发
-            </div>
-          </Menu.Item>
-          <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectMemu}>
-              人工智能
-            </div>
-          </Menu.Item>
-          <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectMemu}>
-              大数据
-            </div>
-          </Menu.Item>
-          <Menu.Item key={'5'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          {is_default !== '1' ? (
+            <Menu.Item key={'remove'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+              <div className={CreateTaskStyle.elseProjectMemu}>
+                移出分组
+              </div>
+            </Menu.Item>
+           ) : ('')}
+          <Menu.Item key={'discontinue'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={CreateTaskStyle.elseProjectDangerMenu}>
-              删除
+              停用
             </div>
           </Menu.Item>
         </Menu>
@@ -103,8 +136,8 @@ export default class ItemOne extends React.Component {
               <Avatar size={40} icon="user" src={avatar}/>
             </div>
             <div  className={CreateTaskStyle.detail}>
-              <div>张三</div>
-              <div>成员</div>
+              <div>{name}</div>
+              <div>{role_name}</div>
             </div>
           </div>
           <div className={CreateTaskStyle.item_1_top_right}>
@@ -114,7 +147,7 @@ export default class ItemOne extends React.Component {
             <div className={isShowBottDetail ? CreateTaskStyle.upDown_up: CreateTaskStyle.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
           </div>
         </div>
-        <div className={CreateTaskStyle.item_1_middle}>
+        <div className={CreateTaskStyle.item_1_middle} style={{display: 'none'}}>
           {[1,2,3,4,5].map((value, key) => {
             return(
               <div key={key}></div>
@@ -122,7 +155,7 @@ export default class ItemOne extends React.Component {
           })}
         </div>
         <div className={!isShowBottDetail? CreateTaskStyle.item_1_bott_normal:CreateTaskStyle.item_1_bott_show} id={bott_id}
-             style={{paddingTop: isShowBottDetail?'10px': 0,paddingBottom: isShowBottDetail?'10px': 0}}
+             style={{paddingTop: isShowBottDetail?'10px': 0,paddingBottom: isShowBottDetail?'10px': 0, display: 'none'}}
         >
           <div className={CreateTaskStyle.item_1_bott_con1}>
              <div className={CreateTaskStyle.item_1_bott_con1_item}>

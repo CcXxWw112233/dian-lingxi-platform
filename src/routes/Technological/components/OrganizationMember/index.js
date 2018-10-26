@@ -54,6 +54,18 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
+    approvalMember(data) {
+      dispatch({
+        type: getEffectOrReducerByName('approvalMember'),
+        payload: data,
+      })
+    },
+    discontinueMember(data) {
+      dispatch({
+        type: getEffectOrReducerByName('discontinueMember'),
+        payload: data,
+      })
+    },
 
   }
 
