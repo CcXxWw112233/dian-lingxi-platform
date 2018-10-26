@@ -19,7 +19,7 @@ export default class ItemOne extends React.Component {
   }
   handleMenuClick(e) {
     const { key } = e
-    const { itemValue } = this.props
+    const { itemValue, parentItemValue } = this.props
     const { member_id } = itemValue
     this.props.updateDatas({
       currentBeOperateMemberId: member_id,
@@ -37,6 +37,14 @@ export default class ItemOne extends React.Component {
         })
         break
       default:
+        //设置角色
+        const role_id = key.replace('role_', '')
+        const group_id = parentItemValue.id
+        this.props.setMemberRole({
+          role_id,
+          group_id,
+          member_id
+        })
         break
     }
   }
@@ -103,15 +111,20 @@ export default class ItemOne extends React.Component {
     const { itemValue, parentItemValue } = this.props
     const { is_default } = parentItemValue
     const { member_id, avatar, name, role_name } = itemValue
+    const {datas: { roleList = []}} = this.props.model
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          <Menu.SubMenu title="设置角色">
-          {/*<Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>*/}
-            {/*<div className={CreateTaskStyle.elseProjectMemu}>*/}
-              {/**/}
-            {/*</div>*/}
-          {/*</Menu.Item>*/}
+          <Menu.SubMenu title="设置角色" key={'role'}>
+            {roleList.map((value, key) => {
+              return(
+                <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                  <div className={CreateTaskStyle.elseProjectMemu}>
+                    {value.name}
+                  </div>
+                </Menu.Item>
+              )
+            })}
           </Menu.SubMenu>
           <Menu.Item key={'setGroup'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={CreateTaskStyle.elseProjectMemu}>

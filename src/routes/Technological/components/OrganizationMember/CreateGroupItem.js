@@ -104,6 +104,11 @@ export default class TaskItem extends React.Component {
   addMembers(data) {
     const { itemValue = {} } = this.props
     const { id } = itemValue
+    const { users } = data
+    this.props.inviteMemberToGroup({
+      members: users,
+      group_id: id
+    })
   }
 
   render() {
@@ -186,7 +191,7 @@ export default class TaskItem extends React.Component {
 
         </QueueAnim>
         <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
-        <TreeGroupModal  {...this.props}/>
+        {/*<TreeGroupModal  {...this.props}/>*/}
       </div>
     )
   }

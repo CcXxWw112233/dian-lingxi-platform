@@ -2,8 +2,7 @@ import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import CreateGroupItem from './CreateGroupItem'
 import CreateItem from './CreateItem'
-import { Drawer } from 'antd'
-
+import TreeGroupModal from './TreeGroupModal'
 const documentWidth = document.querySelector('body').offsetWidth
 
 export default class CreateGroup extends React.Component {
@@ -79,6 +78,7 @@ export default class CreateGroup extends React.Component {
             )
           })}
           <CreateItem  {...this.props}  ></CreateItem>
+        <TreeGroupModal  {...this.props}/>
 
       </div>
     )

@@ -89,8 +89,14 @@ export async function discontinueMember(data) {
   });
 }
 
-
-
+//邀请加入当前分组
+export async function inviteMemberToGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/invite`,
+    method: 'PUT',
+    data
+  });
+}
 
 //查询当前用户所拥有或所属组织
 export async function getCurrentUserOrganizes(params) {
@@ -101,9 +107,27 @@ export async function getCurrentUserOrganizes(params) {
   }, { isNotLoading: true} );
 }
 
+//
 export async function changeCurrentOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/changecurrentorg`,
+    method: 'PUT',
+    data
+  });
+}
+
+//查询当前组织角色
+export async function getCurrentOrgRole(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/role/query`,
+    method: 'GET',
+    params
+  });
+}
+//给成员设置角色
+export async function setMemberRole(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/role/set`,
     method: 'PUT',
     data
   });

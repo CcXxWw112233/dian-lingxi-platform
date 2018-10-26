@@ -66,6 +66,24 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
+    inviteMemberToGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('inviteMemberToGroup'),
+        payload: data,
+      })
+    },
+    getCurrentOrgRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getCurrentOrgRole'),
+        payload: data,
+      })
+    },
+    setMemberRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('setMemberRole'),
+        payload: data,
+      })
+    },
 
   }
 

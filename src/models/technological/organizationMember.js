@@ -3,7 +3,7 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
+import { setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
@@ -23,6 +23,7 @@ export default modelExtend(technological, {
               TreeGroupModalVisiblie: false, //树状分组是否可见
               groupTreeList: [], //树状分组数据
               currentBeOperateMemberId: '', //当前被操作的成员id
+              roleList: [], //当前组织角色列表
             }
           })
           //获取分组列表
@@ -36,7 +37,11 @@ export default modelExtend(technological, {
             type: 'getGroupTreeList',
             payload: {}
           })
-
+          //查询当前角色
+          dispatch({
+            type: 'getCurrentOrgRole',
+            payload: {}
+          })
         }
       })
     },
@@ -165,6 +170,21 @@ export default modelExtend(technological, {
       let res = yield call(getGroupPartialInfo, payload)
       if(isApiResponseOk(res)) {}
     },
+    * inviteMemberToGroup ({ payload }, { select, call, put }) {
+      let res = yield call(inviteMemberToGroup, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success('邀请成员加入分组成功',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
     * approvalMember({ payload }, { select, call, put }) {
       const { status } = payload
       let res = yield call(approvalMember, payload)
@@ -196,6 +216,39 @@ export default modelExtend(technological, {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
+    * getCurrentOrgRole({ payload }, { select, call, put }) {
+      let res = yield call(getCurrentOrgRole, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            roleList: res.data
+          }
+        })
+      } else {
+
+      }
+    },
+    * setMemberRole({ payload }, { select, call, put }) {
+      let res = yield call(setMemberRole, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload: {
+            calback: function () {
+              message.success('设置成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+        yield put({
+          type: 'getGroupTreeList',
+          payload: {}
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
