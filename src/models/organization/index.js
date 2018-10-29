@@ -1,4 +1,4 @@
-import { updateOrganization, uploadOrganizationLogo} from '../../services/organization'
+import { getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -16,19 +16,28 @@ export default  {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/organization') {
-          const currentSelectOrganize = JSON.parse(sessionStorage.getItem('currentSelectOrganize'))//JSON.parse(sessionStorage.getItem('currentSelectOrganize'))
+          const currentSelectOrganize = sessionStorage.getItem('currentSelectOrganize') ? JSON.parse(sessionStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(sessionStorage.getItem('currentSelectOrganize'))
           const {name, member_join_model, member_join_content, logo, logo_id, id} = currentSelectOrganize
           dispatch({
             type: 'updateDatas',
             payload:{
-              currentOrganizationInfo: {
+              currentOrganizationInfo: { //组织信息
                 name,
                 member_join_model,
                 member_join_content,
                 logo,
                 logo_id,
                 id
-              }
+              },
+              content_tree_data: [], //可访问内容
+              function_tree_data: [],
+              role_data: [], //角色数据
+            }
+          })
+          dispatch({
+            type: 'getRolePermissions',
+            payload:{
+
             }
           })
         } else {
@@ -45,14 +54,156 @@ export default  {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
-    * uploadOrganizationLogo({ payload }, { select, call, put }) {
-      let res = yield call(uploadOrganizationLogo, payload)
+    * getRolePermissions({ payload }, { select, call, put }) {
+      let res = yield call(getRolePermissions, {})
       if(isApiResponseOk(res)) {
+        const { content_tree_data = [], function_tree_data = [], role_data= [],  } = res.data
 
+        for (let i = 0; i < role_data.length; i++ ) {
+          const { already_has_content_permission = [], already_has_function_permission = [] } = role_data[i]
+          role_data[i]['content_tree_data'] = JSON.parse(JSON.stringify(content_tree_data))
+          role_data[i]['function_tree_data'] = JSON.parse(JSON.stringify(function_tree_data))
+
+          const authDataChild =  role_data[i]['function_tree_data']
+          for(let j = 0; j < authDataChild.length ; j ++) { //取出相同的
+            let selects = []
+            for(let k = 0; k < authDataChild[j].child_data.length; k++) {
+              for(let z = 0; z < already_has_function_permission.length; z++) {
+                if(already_has_function_permission[z] === authDataChild[j].child_data[k].id) {
+                  selects.push(already_has_function_permission[z])
+                }
+              }
+            }
+            role_data[i]['function_tree_data'][j]['selects'] = selects
+            if(selects.length ===   authDataChild[j].child_data.length) {
+              role_data[i]['function_tree_data'][j]['checkedAll'] = true
+              role_data[i]['function_tree_data'][j]['indeterminate'] = false
+            }else {
+              role_data[i]['function_tree_data'][j]['checkedAll'] = false
+              if (selects.length) {
+                role_data[i]['function_tree_data'][j]['indeterminate'] = true
+              }else{
+                role_data[i]['function_tree_data'][j]['indeterminate'] = false
+              }
+            }
+          }
+
+          let already_has_content_permission_trans = []
+          for(let i = 0; i < already_has_content_permission.length; i++) {
+            for(let j = 0; j < already_has_content_permission[i]['pitch_on_data'].length; j ++) {
+              already_has_content_permission_trans.push(`${already_has_content_permission[i]['board_id']}__${ already_has_content_permission[i]['pitch_on_data'][j]}`)
+            }
+          }
+          role_data[i]['already_has_content_permission_trans'] = already_has_content_permission_trans
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            content_tree_data,
+            function_tree_data,
+            role_data,
+          }
+        })
+        const { calback } = payload
+         if (typeof calback === 'function') {
+          calback()
+         }
       }else{
 
       }
     },
+    * saveRolePermission({ payload }, { select, call, put }) {
+      let res = yield call(saveRolePermission, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('保存成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('保存失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * createRole({ payload }, { select, call, put }) {
+      let res = yield call(createRole, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('添加角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('添加角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * updateRole({ payload }, { select, call, put }) {
+      let res = yield call(updateRole, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('更新角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('更新角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * deleteRole({ payload }, { select, call, put }) {
+      const { id } = payload
+      let res = yield call(deleteRole, id)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('删除角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('删除角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * copyRole({ payload }, { select, call, put }) {
+      let res = yield call(copyRole, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('复制角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('复制角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * setDefaultRole({ payload }, { select, call, put }) {
+      let res = yield call(setDefaultRole, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissions',
+          payload: {
+            calback: function () {
+              message.success('设置默认角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('设置默认角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

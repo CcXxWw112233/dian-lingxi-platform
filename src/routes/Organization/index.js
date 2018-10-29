@@ -37,6 +37,48 @@ const Organization = (options) => {
         payload: data
       })
     },
+    getRolePermissions(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getRolePermissions'),
+        payload: data
+      })
+    },
+    saveRolePermission(data) {
+      dispatch({
+        type: getEffectOrReducerByName('saveRolePermission'),
+        payload: data
+      })
+    },
+    createRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('createRole'),
+        payload: data
+      })
+    },
+    updateRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateRole'),
+        payload: data
+      })
+    },
+    deleteRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteRole'),
+        payload: data
+      })
+    },
+    copyRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('copyRole'),
+        payload: data
+      })
+    },
+    setDefaultRole(data) {
+      dispatch({
+        type: getEffectOrReducerByName('setDefaultRole'),
+        payload: data
+      })
+    },
   }
 
   return(
@@ -50,7 +92,7 @@ const Organization = (options) => {
           <div className={indexStyles.titleName}>组织管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'1'}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'2'}>
               <TabPane tab="基本信息" key="1">
                  <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>

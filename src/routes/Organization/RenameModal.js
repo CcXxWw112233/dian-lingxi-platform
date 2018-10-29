@@ -43,7 +43,7 @@ class RenameModal extends React.Component {
     const { renameModalVisable, reName_Add_type } = this.props; //reName_Add_type操作类型1重命名 2添加
     const { getFieldDecorator } = this.props.form;
     const { stepContinueDisabled } = this.state
-    console.log(this.props)
+    // console.log(this.props)
     const formContain = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
         <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>{reName_Add_type==='1'? '重命名': '添加'}</div>
