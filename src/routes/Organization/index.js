@@ -79,6 +79,20 @@ const Organization = (options) => {
         payload: data
       })
     },
+    savePermission(data) {
+      dispatch({
+        type: getEffectOrReducerByName('savePermission'),
+        payload: data
+      })
+    },
+    getPermissions(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getPermissions'),
+        payload: data
+      })
+    },
+
+
   }
 
   return(
@@ -92,7 +106,7 @@ const Organization = (options) => {
           <div className={indexStyles.titleName}>组织管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'2'}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'3'}>
               <TabPane tab="基本信息" key="1">
                  <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>

@@ -78,3 +78,20 @@ export async function setDefaultRole(data) {
     data
   });
 }
+
+//获取权限列表
+export async function getPermissions(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/permissions`,
+    method: 'GET',
+    data
+  });
+}
+//保存权限
+export async function savePermission(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/permissions`,
+    method: 'POST',
+    data
+  });
+}

@@ -1,4 +1,4 @@
-import { getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
+import { getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -32,6 +32,7 @@ export default  {
               content_tree_data: [], //可访问内容
               function_tree_data: [],
               role_data: [], //角色数据
+              permission_data: [], //权限数据
             }
           })
           dispatch({
@@ -39,6 +40,10 @@ export default  {
             payload:{
 
             }
+          })
+          dispatch({
+            type: 'getPermissions',
+            payload: {}
           })
         } else {
         }
@@ -58,7 +63,6 @@ export default  {
       let res = yield call(getRolePermissions, {})
       if(isApiResponseOk(res)) {
         const { content_tree_data = [], function_tree_data = [], role_data= [],  } = res.data
-
         for (let i = 0; i < role_data.length; i++ ) {
           const { already_has_content_permission = [], already_has_function_permission = [] } = role_data[i]
           role_data[i]['content_tree_data'] = JSON.parse(JSON.stringify(content_tree_data))
@@ -201,6 +205,60 @@ export default  {
         })
       }else{
         message.warn('设置默认角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+
+    //权限
+    * getPermissions({ payload }, { select, call, put }) {
+      let res = yield call(getPermissions, payload)
+      if(isApiResponseOk(res)) {
+        const { role_data, function_data } = res.data
+        const newData = JSON.parse(JSON.stringify(function_data))
+        for(let i = 0; i < newData.length; i++ ) {
+          for(let j = 0; j < newData[i].child_data.length; j++) {
+            newData[i].child_data[j]['role_data'] = role_data
+            if(newData[i].child_data[j]['role_data'].length <= newData[i].child_data[j]['already_has_role'].length ) {
+              newData[i].child_data[j]['indeterminate'] = false
+              newData[i].child_data[j]['checkedAll'] = true
+            }else {
+              newData[i].child_data[j]['checkedAll'] = false
+              if(newData[i].child_data[j]['already_has_role'].length) {
+                newData[i].child_data[j]['indeterminate'] = true
+              }else {
+                newData[i].child_data[j]['indeterminate'] = false
+              }
+            }
+
+          }
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            permission_data: newData
+          }
+        })
+
+        const{ calback } = payload
+        if(typeof calback === 'function') {
+          calback()
+        }
+      }else{
+
+      }
+    },
+    * savePermission({ payload }, { select, call, put }) {
+      let res = yield call(savePermission, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getPermissions',
+          payload: {
+            calback: function () {
+              message.success('保存成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn('保存失败', MESSAGE_DURATION_TIME)
       }
     },
 
