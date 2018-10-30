@@ -145,7 +145,7 @@ export default class HeaderNav extends React.Component{
             {currentUserOrganizes.map((value, key) => {
               const { name, id } = value
               return (
-                <Menu.Item key={id} style={{padding:0,margin: 0,color: '#595959'}}>
+                <Menu.Item key={id} style={{padding:0,margin: 0,color: '#595959'}} >
                   <div className={indexStyle.itemDiv} style={{ padding: '0 16px'}}>
                     {name}
                   </div>

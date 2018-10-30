@@ -153,7 +153,7 @@ export default class DragValidation extends React.Component{
              onTouchStart={this.touchDown.bind(this)}
              ref="dragSlideBlock"
         >
-          {!this.state.completeValidation ? (<Icon type="double-right" style={{fontSize: 16, color: '#8c8c8c'}} />): (
+          {!this.state.completeValidation ? (<Icon type="double-right" style={{fontSize: 16, color: '#8c8c8c', display: 'none'}} />): (
             <Icon type="check-circle" style={{fontSize: 16, color: '#52C41B'}}/>
           )}
         </div>

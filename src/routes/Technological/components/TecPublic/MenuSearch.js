@@ -4,6 +4,7 @@ import { Icon, Input, Button, DatePicker, Menu } from 'antd'
 
 const MenuSearch = (props) => {
   const {datas: { processList = []}} = props.model
+  const {datas: { currentProcessInstanceId }} = props.model
 
   const menuSelect = ({ item, key, selectedKeys }) => {
     props.getProcessInfo(key)
@@ -137,9 +138,10 @@ const MenuSearch = (props) => {
         },
       ] //每一步的每一个类型，记录，数组的全部数据step * type
     })
+    props.updateDatas({currentProcessInstanceId: ''})
   }
   return (
-    <Menu  style={{padding: 8}}  onSelect={menuSelect}>
+    <Menu  style={{padding: 8}}  onClick={menuSelect} selectedKeys={[currentProcessInstanceId]}>
       <Input/>
       {
         processList.map((val, key) => {
