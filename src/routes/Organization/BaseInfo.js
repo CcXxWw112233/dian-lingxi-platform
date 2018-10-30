@@ -61,6 +61,10 @@ export default class BaseInfo extends React.Component {
           newMemberArr.push(val)
         }
       }
+      if(!member_join_content) {
+        message.warn('请输入邮箱后缀名。',MESSAGE_DURATION_TIME)
+        return false
+      }
       for(let val of newMemberArr ) {
         if(!validateEmailSuffix(val)) {
           message.warn('请正确输入邮箱后缀名。',MESSAGE_DURATION_TIME)
