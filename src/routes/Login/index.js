@@ -48,7 +48,7 @@ const Login = (options) => {
             <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
               border: '1px solid rgba(217,217,217,1)',
               borderRadius: '4px'}}>
-              <TopContent text={'欢迎来到'} productName={'productname'}/>
+              <TopContent text={'欢迎来到'} productName={'灵犀'}/>
               <FormList {...formListProps}/>
               <BottomContent {...BottomContentProps} type={'login'}/>
             </div>

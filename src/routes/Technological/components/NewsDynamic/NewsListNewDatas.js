@@ -32,7 +32,7 @@ export default class NewsListNewDatas extends React.Component {
       欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。
       不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。
       此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。
-      如果使用中需要问题，可以随时联系我们进行交流或反馈：support@ProductName.com
+      如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
     </div>)
     //时间动态动态
     const news_3 = (
@@ -77,7 +77,7 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.news_5_time}>17:00</div>
         </div>
         <div className={NewsListStyle.news_5_desctiption}>
-          欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。 不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。 此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。 如果使用中需要问题，可以随时联系我们进行交流或反馈：support@ProductName.com
+          欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。 不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。 此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。 如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
         </div>
       </div>
     )
