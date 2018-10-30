@@ -8,6 +8,7 @@ import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
+import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
 
 import { deepClone } from '../../../../../utils/util'
 
@@ -164,10 +165,10 @@ export default class DrawContent extends React.Component {
   }
     //开始时间
   startDatePickerChange(e, timeString) {
-
+    console.log(e, timeString)
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
-    drawContent['start_time'] = timeString
+    drawContent['start_time'] = timeToTimestamp(timeString)
     const updateObj ={
       card_id,
       start_time: timeString,
@@ -180,7 +181,7 @@ export default class DrawContent extends React.Component {
 
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
-    drawContent['due_time'] = timeString
+    drawContent['due_time'] = timeToTimestamp(timeString)
     const updateObj ={
       card_id,
       due_time: timeString,
@@ -404,7 +405,7 @@ export default class DrawContent extends React.Component {
             </div>
             <div>
               {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-              <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? (start_time.substring(0, 10)) : '开始' }
+              <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time) : '开始' }
                 <DatePicker
                   onChange={this.startDatePickerChange.bind(this)}
                   placeholder={'开始时间'}
@@ -413,7 +414,7 @@ export default class DrawContent extends React.Component {
                &nbsp;
               {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
               &nbsp;
-              <span style={{position: 'relative'}}>{due_time ? due_time.substring(0, 10) : '截止时间'}
+              <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time) : '截止时间'}
                 <DatePicker
                   placeholder={'截止时间'}
                   onChange={this.endDatePickerChange.bind(this)}

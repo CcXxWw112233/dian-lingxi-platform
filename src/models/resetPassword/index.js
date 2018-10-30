@@ -69,6 +69,16 @@ export default {
       let res = yield call(formSubmit, payload)
       if(isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, 2000)
+        yield put ({
+          type: 'routingJump',
+          payload: {
+            route: '/login',
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

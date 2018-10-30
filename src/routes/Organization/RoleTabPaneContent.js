@@ -307,9 +307,11 @@ export default class RoleTabPaneContent extends React.Component {
                     })}
                   </Tree>
                 </div>
-                <div style={{margin: '0 auto',marginTop: 20, textAlign: 'center'}}>
-                  <Button type={'primary'}  onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
-                </div>
+                {role_type !== '1'? (
+                  <div style={{margin: '0 auto',marginTop: 20, textAlign: 'center'}}>
+                    <Button type={'primary'}  onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
+                  </div>
+                ) : ('')}
               </Panel>
             )
           })}
