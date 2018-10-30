@@ -3,11 +3,11 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
+import { getMemberInfo, setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
-
+import { selectGroupList } from './select'
 export default modelExtend(technological, {
   namespace: 'organizationMember',
   state: [],
@@ -50,10 +50,19 @@ export default modelExtend(technological, {
     * getGroupList({ payload }, { select, call, put }) {
       let res = yield call(getGroupList, {})
       if(isApiResponseOk(res)) {
+        const groupList = res.data.data
+        //将角色信息数据包裹
+        if(res.data.data && res.data.data.length) {
+          for(let i = 0; i < groupList.length; i++) {
+            for(let j = 0; j < groupList[i]['members'].length; j++) {
+              groupList[i]['members'][j]['role_detailInfo'] = {}
+            }
+          }
+        }
         yield put({
           type: 'updateDatas',
           payload: {
-            groupList: res.data.data,
+            groupList: groupList,
             member_count: res.data.member_count
           }
         })
@@ -244,6 +253,25 @@ export default modelExtend(technological, {
           type: 'getGroupTreeList',
           payload: {}
         })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getMemberInfo({ payload }, { select, call, put }) {
+      const {member_id, parentKey, itemKey, calback} = payload
+      let res = yield call(getMemberInfo, {member_id})
+      const groupList = yield select(selectGroupList)
+      if (isApiResponseOk(res)) {
+        groupList[parentKey]['members'][itemKey]['role_detailInfo'] = res.data
+        yield put({
+          type:'updateDatas',
+          payload:{
+            groupList,
+          }
+        })
+        if(typeof calback === 'function') {
+          calback()
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

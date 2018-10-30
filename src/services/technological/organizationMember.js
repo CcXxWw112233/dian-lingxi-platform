@@ -187,3 +187,12 @@ export async function uploadOrganizationLogo(data) {
     data
   });
 }
+
+//获取组织成员信息
+export async function getMemberInfo(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member`,
+    method: 'GET',
+    params
+  });
+}

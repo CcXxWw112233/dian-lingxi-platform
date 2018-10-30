@@ -21,3 +21,6 @@ export const selectNewMessageItem= state => state[(`technological`)].datas.newMe
 //动态列表
 export const selectNewsDynamicList = state => state[(`newsDynamic`)].datas.newsDynamicList  //面包屑路径
 export const selectNewsDynamicListOriginal = state => state[(`newsDynamic`)].datas.newsDynamicListOriginal  //面包屑路径
+
+//获取团队数据
+export const selectGroupList = state => state[(`organizationMember`)].datas.groupList  //面包屑路径

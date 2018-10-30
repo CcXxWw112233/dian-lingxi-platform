@@ -73,7 +73,7 @@ export default class CreateGroup extends React.Component {
       >
         {groupList.map((value, key) => {
             return (
-              <CreateGroupItem key={key} itemValue={value}
+              <CreateGroupItem key={key} itemValue={value} itemKey={key}
                         {...this.props}></CreateGroupItem>
             )
           })}

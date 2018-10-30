@@ -12,10 +12,24 @@ export default class ItemOne extends React.Component {
     bott_id: null
   }
   componentWillMount() {
-    const { itemKey } = this.props
+    const { itemKey, parentKey, itemValue } = this.props
+    const {  role_detailInfo = {} } = itemValue
     this.setState({
-      bott_id: `bott_${itemKey * 100 + 1}`
+      bott_id: `bott_${parentKey}_${itemKey * 100 + 1}`
     })
+  }
+  componentDidUpdate(props) {
+    //成员信息重新渲染后重新计算高度
+    const {  itemValue } = props
+    const {  role_detailInfo = {} } = itemValue
+    let role_detailInfo_is_has = false
+    for(let val in role_detailInfo) {
+      role_detailInfo_is_has = true
+    }
+    if(role_detailInfo_is_has) {
+      const element = document.getElementById(this.state.bott_id)
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+    }
   }
   handleMenuClick(e) {
     const { key } = e
@@ -86,11 +100,24 @@ export default class ItemOne extends React.Component {
 
   //设置转动出现详情
   setIsShowBottDetail() {
+    const that = this
+    const {itemValue: { member_id },  itemKey, parentKey} = this.props
     const { bott_id } = this.state
     const element = document.getElementById(bott_id)
+    const { datas: {groupList = []}} = this.props.model
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
     },function () {
+      if(this.state.isShowBottDetail){ //点击打开的时候，如果成员信息未存在就请求
+        const role_detailInfo =  groupList[parentKey]['members'][itemKey]['role_detailInfo'] || {}
+        let role_detailInfo_is_has = false
+        for(let val in role_detailInfo) {
+          role_detailInfo_is_has = true
+        }
+        if(!role_detailInfo_is_has) {
+          this.props.getMemberInfo({member_id, parentKey, itemKey})
+        }
+      }
       this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
     })
   }
@@ -110,8 +137,13 @@ export default class ItemOne extends React.Component {
     const { isShowBottDetail, bott_id } = this.state
     const { itemValue, parentItemValue } = this.props
     const { is_default } = parentItemValue
-    const { member_id, avatar, name, role_name } = itemValue
+    const { member_id, avatar, name, role_name, role_detailInfo ={} } = itemValue
+    const  {organization_name='...', role='...', email='...', phone='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
     const {datas: { roleList = []}} = this.props.model
+    let role_detailInfo_is_has = false
+    for(let val in role_detailInfo) {
+      role_detailInfo_is_has = true
+    }
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
@@ -173,38 +205,51 @@ export default class ItemOne extends React.Component {
             )
           })}
         </div>
-        <div className={!isShowBottDetail? CreateTaskStyle.item_1_bott_normal:CreateTaskStyle.item_1_bott_show} id={bott_id}
-             style={{paddingTop: isShowBottDetail?'10px': 0,paddingBottom: isShowBottDetail?'10px': 0, display: 'none'}}
+        <div className={isShowBottDetail && role_detailInfo_is_has? CreateTaskStyle.item_1_bott_show:CreateTaskStyle.item_1_bott_normal} id={bott_id}
+             style={{paddingTop: isShowBottDetail?'10px': 0,paddingBottom: isShowBottDetail?'10px': 0, }}
         >
           <div className={CreateTaskStyle.item_1_bott_con1}>
              <div className={CreateTaskStyle.item_1_bott_con1_item}>
                <div>职位：</div>
-               <div>啊实打实大啊实打实大啊实打实大啊实打实大啊实打实大啊实打实大</div>
+               <div>{role}</div>
              </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>组织：</div>
-              <div>啊实打实大</div>
+              <div>{organization_name}</div>
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>邮箱：</div>
-              <div>啊实打实大</div>
+              <div>{email}</div>
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>手机：</div>
-              <div>啊实打实大</div>
+              <div>{phone}</div>
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>微信：</div>
-              <div>啊实打实大</div>
+              <div>{wechat}</div>
             </div>
           </div>
           <div className={CreateTaskStyle.item_1_bott_con2}>
-            <div className={CreateTaskStyle.item_1_bott_con2_taskItem} style={{textDecoration: 'line-through' }}>
-              这是一天任务 <i>#项目A</i>
-            </div>
-            <div className={CreateTaskStyle.item_1_bott_con2_taskItem}>
-              这是一天任务 <i>#项目A</i>
-            </div>
+            {/*<div className={CreateTaskStyle.item_1_bott_con2_taskItem} style={{textDecoration: 'line-through' }}>*/}
+              {/*这是一天任务 <i>#项目A</i>*/}
+            {/*</div>*/}
+            {card_data.map((value, key) => {
+              const { is_realize, name, board_name } = value
+              return (
+                <div className={CreateTaskStyle.item_1_bott_con2_taskItem} style={{textDecoration:is_realize === '1'? 'line-through': 'none' }}>
+                  {name} <i>#{board_name}</i>
+                </div>
+              )
+            })}
+            {workflow_data.map((value, key) => {
+              const { flow_node_name, board_name } = value
+              return (
+                <div className={CreateTaskStyle.item_1_bott_con2_taskItem} >
+                  {flow_node_name} <i>#{board_name}</i>
+                </div>
+              )
+            })}
           </div>
           </div>
       </div>

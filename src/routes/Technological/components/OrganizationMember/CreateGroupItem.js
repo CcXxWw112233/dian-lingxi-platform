@@ -113,7 +113,7 @@ export default class TaskItem extends React.Component {
 
   render() {
     const { isInEditAdd, inputValue } = this.state
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, itemKey } = this.props
     const { name , is_default, members = [] } = itemValue //is_default ==='1' 默认分组不可操作
 
     const operateMenu = () => {
@@ -168,6 +168,7 @@ export default class TaskItem extends React.Component {
               contain = (
                 <ItemOne {...this.props} itemValue={value}
                          parentItemValue={itemValue}
+                         parentKey={itemKey}
                          itemKey={key}
                          key={key}  />
                )

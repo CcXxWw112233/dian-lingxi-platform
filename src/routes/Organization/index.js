@@ -116,7 +116,7 @@ const Organization = (options) => {
           <div className={indexStyles.titleName}>组织管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'3'}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'1'}>
               <TabPane tab="基本信息" key="1">
                  <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>

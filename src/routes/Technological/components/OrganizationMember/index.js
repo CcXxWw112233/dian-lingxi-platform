@@ -84,7 +84,12 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
-
+    getMemberInfo(params) {
+      dispatch({
+        type: getEffectOrReducerByName('getMemberInfo'),
+        payload: params,
+      })
+    }
   }
 
   const routingJump = (path) => {
