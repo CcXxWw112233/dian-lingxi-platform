@@ -23,6 +23,9 @@ export default class Header extends React.Component {
   }
 
   //项目操作----------------start
+  gobackToProject(){
+    this.props.routingJump('/technological/project')
+  }
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
     this.setState({
@@ -390,7 +393,7 @@ export default class Header extends React.Component {
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
-              <Icon type="left-square-o" className={indexStyle.projectNameIcon}/>
+              <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
                <span className={indexStyle.projectName}>{board_name}</span>
                <Icon className={indexStyle.star}
                      onClick={this.starClick.bind(this, board_id)}

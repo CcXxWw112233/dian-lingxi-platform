@@ -30,7 +30,8 @@ export default class HeaderNav extends React.Component{
         this.props.routingJump('/technological/organizationMember')
         break;
       case '3':
-        this.props.routingJump('/organization')
+        // console.log(window.location.hash)
+        this.props.routingJump(`/organization?nextpath=${window.location.hash.replace('#','')}`) //目标页面的返回按钮返回的路劲
         break
       case '4':
         this.setShowAddMenberModalVisibile()

@@ -6,6 +6,7 @@ import { color_4 } from '../../globalset/js/styles'
 import AuthTabPaneContent from './AuthTabPaneContent'
 import RoleTabPaneContent from './RoleTabPaneContent'
 import BaseInfo from './BaseInfo'
+import { getUrlQueryString } from '../../utils/util'
 
 const  TabPane = Tabs.TabPane
 
@@ -19,8 +20,19 @@ const Organization = (options) => {
       payload:payload
     })
   }
+  const routingJump = (path) => {
+    dispatch({
+      type: getEffectOrReducerByName('routingJump') ,
+      payload:{
+        route:path,
+      }
+    })
+  }
   const historyGoBack = () => {
-    window.history.go(-1)
+    // window.history.go(-1)
+    const nextPath = getUrlQueryString(window.location.href, 'nextpath')
+    console.log(nextPath)
+    routingJump(nextPath)
   }
 
   const asyncProprs = {
@@ -91,8 +103,6 @@ const Organization = (options) => {
         payload: data
       })
     },
-
-
   }
 
   return(
