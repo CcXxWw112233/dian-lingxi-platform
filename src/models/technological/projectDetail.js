@@ -252,14 +252,18 @@ export default {
 
     //流程
     * getProcessTemplateList({ payload }, { select, call, put }) {
-      let res = yield call(getProcessTemplateList, payload)
+      const { board_id, calback } = payload
+      let res = yield call(getProcessTemplateList, {board_id})
       if(isApiResponseOk(res)) {
-          yield put({
+        yield put({
             type: 'updateDatas',
             payload:{
               processTemplateList: res.data || []
             }
           })
+        if(typeof calback === 'function') {
+          calback()
+        }
       }else{
 
       }
@@ -271,12 +275,14 @@ export default {
         yield put({
           type: 'getProcessTemplateList',
           payload: {
-            board_id: board_id
+            board_id: board_id,
+            calback: function () {
+              message.success('保存模板成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
-        message.success('模板保存成功', MESSAGE_DURATION_TIME)
       }else{
-
+        message.warn(res.data, MESSAGE_DURATION_TIME)
       }
     },
     // 直接启动时保存模板但不保留，查询该模板，将数据保留用于启动流程
@@ -331,7 +337,9 @@ export default {
         })
         yield put({
           type: 'getProcessInfo',
-          payload:  res.data.id
+          payload:  {
+            id: res.data.id
+          }
         })
       }else{
         message.warn(res.message)
@@ -344,7 +352,8 @@ export default {
           currentProcessInstanceId: payload
         }
       })
-      let res = yield call(getProcessInfo, payload)
+      const { id, calback } = payload
+      let res = yield call(getProcessInfo, id)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -364,7 +373,6 @@ export default {
             processPageFlagStep: '4'
           }
         })
-
         //查询流程动态
         const res2 = yield call(getProessDynamics,{flow_instance_id: payload})
         if(isApiResponseOk(res2)) {
@@ -376,6 +384,9 @@ export default {
           })
         }else{
 
+        }
+        if(typeof calback === 'function') {
+          calback()
         }
       }else{
 
@@ -411,7 +422,12 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  instance_id
+          payload:  {
+            id: instance_id,
+            calback: function () {
+              message.success('已完成节点',MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
          message.warn(res.message)
@@ -423,7 +439,12 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  instance_id
+          payload:  {
+            id: instance_id,
+            calback: function () {
+              message.success('已完成节点',MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
         message.warn(res.message)
@@ -436,10 +457,15 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  instance_id
+          payload:  {
+            id: instance_id,
+            calback: function () {
+              message.success('撤回成功',MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * rejectProcessTask({ payload }, { select, call, put }) {
@@ -448,10 +474,15 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  instance_id
+          payload:  {
+            id: instance_id,
+            calback: function () {
+              message.success('已拒绝',MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * resetAsignees({ payload }, { select, call, put }) {
@@ -460,15 +491,23 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  instance_id
+          payload:  {
+            id: instance_id,
+            calback: function () {
+              message.success('推进人设置成功',MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
 
       }
     },
     //文档----------start
     * getFileList({ payload }, { select, call, put }) {
-      let res = yield call(getFileList, payload)
+      const { folder_id, calback } = payload
+      let res = yield call(getFileList, {folder_id})
+
       if(isApiResponseOk(res)) {
         const filedata_1 = res.data.folder_data;
         for(let val of filedata_1) {
@@ -484,6 +523,26 @@ export default {
             fileList: [...filedata_1, ...filedata_2]
           }
         })
+        if (typeof calback === 'funciton') {
+          calback()
+        }
+      }else{
+
+      }
+    },
+    * getFolderList({ payload }, { select, call, put }) {
+      const { board_id, calback } = payload
+      let res = yield call(getFolderList, {board_id})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            treeFolderData: res.data
+          }
+        })
+        if (typeof calback === 'function') {
+          calback()
+        }
       }else{
 
       }
@@ -530,11 +589,14 @@ export default {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id
+            board_id: board_id,
+            calback:function () {
+              message.success('复制成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * fileDownload({ payload }, { select, call, put }) {
@@ -547,7 +609,7 @@ export default {
            }
         }
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * fileRemove({ payload }, { select, call, put }) {
@@ -569,11 +631,14 @@ export default {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id
+            board_id: board_id,
+            calback:function () {
+              message.success('已成功移入回收站', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * fileMove({ payload }, { select, call, put }) {
@@ -595,11 +660,14 @@ export default {
          yield put({
            type: 'getFolderList',
            payload: {
-             board_id: board_id
+             board_id: board_id,
+             calback:function () {
+               message.success('移动成功', MESSAGE_DURATION_TIME)
+             }
            }
           })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * fileVersionist({ payload }, { select, call, put }) {
@@ -659,19 +727,6 @@ export default {
 
       }
     },
-    * getFolderList({ payload }, { select, call, put }) {
-      let res = yield call(getFolderList, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            treeFolderData: res.data
-          }
-        })
-      }else{
-
-      }
-    },
     * addNewFolder({ payload }, { select, call, put }) {
       let res = yield call(addNewFolder, payload)
       const { parent_id } = payload
@@ -685,11 +740,14 @@ export default {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id
+            board_id: board_id,
+            calback:function () {
+              message.success('已成功添加文件夹', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * updateFolder({ payload }, { select, call, put }) {

@@ -10,7 +10,7 @@ const MenuSearch = (props) => {
 
   const menuSelect = ({ item, key, selectedKeys }) => {
     if(key) {
-      props.getProcessInfo(key)
+      props.getProcessInfo({id: key})
     }
   }
   const addProcess = () => {

@@ -43,7 +43,8 @@ export default {
     },
 
     * getProjectList({ payload }, { select, call, put }) {
-      let res = yield call(getProjectList, payload)
+      const { type = '1', calback } = payload
+      let res = yield call(getProjectList, {type})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -51,6 +52,9 @@ export default {
             projectList: res.data
           }
         })
+        if(typeof calback === 'function') {
+          calback()
+        }
       }else{
 
       }
@@ -61,13 +65,17 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
-            type: '1'
+            type: '1',
+            calback: function () {
+              message.success('添加项目成功', MESSAGE_DURATION_TIME)
+            },
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
     * collectionProject({ payload }, { select, call, put }) {
       const { id } = payload
       let res = yield call(collectionProject, id)
@@ -75,13 +83,17 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('收藏成功', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
     * cancelCollection({ payload }, { select, call, put }) {
       const { id } = payload
       let res = yield call(cancelCollection, id)
@@ -89,11 +101,14 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('取消收藏成功', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -103,11 +118,14 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('已退出项目', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -117,11 +135,14 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('已归档项目', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -131,11 +152,14 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('成功添加项目成员', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -146,11 +170,14 @@ export default {
         yield put({
           type: 'getProjectList',
           payload: {
+            calback: function () {
+              message.success('已删除项目', MESSAGE_DURATION_TIME)
+            },
             type: '1'
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
