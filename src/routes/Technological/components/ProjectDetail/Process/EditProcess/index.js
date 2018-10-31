@@ -111,6 +111,23 @@ export default class EditProcess extends React.Component {
     // })
   }
 
+  //当设置为启动流程时指定，过滤掉设置的值,用于保存模板和直接启动接口调用
+  requestFilterProcessEditDatas() {
+    const { datas: { processEditDatas = [] } } = this.props.model
+    const  newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+    for(let i = 0; i < newProcessEditDatas.length; i ++ ) {
+      if(newProcessEditDatas[i]['deadline_type'] === '2'){
+        newProcessEditDatas[i]['deadline_value'] = ''
+      }
+      if(newProcessEditDatas[i]['assignee_type'] === '2'){
+        newProcessEditDatas[i]['assignees'] = ''
+      }
+      if(newProcessEditDatas[i]['node_type'] === '4' && newProcessEditDatas[i]['cc_type'] === '1'){ //抄送
+        newProcessEditDatas[i]['recipients'] = ''
+      }
+    }
+    return newProcessEditDatas
+  }
   setSaveTemplateModalVisible() {
     const { datas: { processEditDatas } } = this.props.model
     if(!this.verrificationForm(processEditDatas)) {
@@ -118,15 +135,6 @@ export default class EditProcess extends React.Component {
     }
     this.setState({
       saveTemplateModalVisible: !this.state.saveTemplateModalVisible
-    })
-  }
-  quitEdit() {
-    this.props.updateDatas({
-      processPageFlagStep: '1',
-      node_type: '1', //节点类型
-      processCurrentEditStep: 0, //编辑第几步，默认 0
-      processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-      processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) //每一步的每一个类型，记录，数组的全部数据step * type
     })
   }
   directStart(){
@@ -138,9 +146,18 @@ export default class EditProcess extends React.Component {
     this.props.directStartSaveTemplate({
       board_id,
       is_retain: '0',
-      node_data: processEditDatas,
+      node_data: this.requestFilterProcessEditDatas(),//processEditDatas,
       type: '1',
       template_no: '',
+    })
+  }
+  quitEdit() {
+    this.props.updateDatas({
+      processPageFlagStep: '1',
+      node_type: '1', //节点类型
+      processCurrentEditStep: 0, //编辑第几步，默认 0
+      processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+      processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) //每一步的每一个类型，记录，数组的全部数据step * type
     })
   }
 
@@ -222,7 +239,7 @@ export default class EditProcess extends React.Component {
           <Button style={{marginTop: 14}} onClick={this.directStart.bind(this)}>直接启动</Button>
           <Button  style={{marginTop: 14, color: 'red'}} onClick={this.quitEdit.bind(this)}>退出编辑</Button>
         </div>
-        <SaveTemplate {...this.props} setSaveTemplateModalVisible={this.setSaveTemplateModalVisible.bind(this)} saveTemplateModalVisible = {this.state.saveTemplateModalVisible}/>
+        <SaveTemplate requestFilterProcessEditDatas={this.requestFilterProcessEditDatas.bind(this)} {...this.props} setSaveTemplateModalVisible={this.setSaveTemplateModalVisible.bind(this)} saveTemplateModalVisible = {this.state.saveTemplateModalVisible}/>
 
       </div>
     )

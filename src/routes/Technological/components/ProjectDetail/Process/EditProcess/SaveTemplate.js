@@ -37,7 +37,7 @@ class SaveTemplate extends React.Component {
         const { board_id } = projectDetailInfoData
         values['board_id'] = board_id
         values['is_retain'] = '1'
-        values['node_data'] = processEditDatas
+        values['node_data'] = this.props.requestFilterProcessEditDatas()//processEditDatas
         values['template_no'] = ''
         values['type'] = '1'
         // console.log(values)

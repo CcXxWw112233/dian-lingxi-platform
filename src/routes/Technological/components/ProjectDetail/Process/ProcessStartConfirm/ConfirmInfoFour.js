@@ -64,6 +64,13 @@ export default class ConfirmInfoFour extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
   }
+
+  componentDidUpdate(props) {
+    //设置抄送人重新渲染后重新计算高度
+    const element = document.getElementById(this.state.ConfirmInfoOut_1_bott_Id)
+    this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+  }
+
   tooltipFilterName({ users=[], user_id}) {
     let name = '佚名'
     for (let val of users) {
