@@ -91,8 +91,8 @@ export default {
             processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
             node_type: '1', //节点类型， 默认1
             processCurrentEditStep: 0, //编辑第几步，默认 0
-            processEditDatas: processEditDatasConstant, //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-            processEditDatasRecords:processEditDatasRecordsConstant ,//每一步的每一个类型，记录，数组的全部数据step * type
+            processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+            processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) ,//每一步的每一个类型，记录，数组的全部数据step * type
             processTemplateList: [], //流程模板列表
             templateInfo: {},  //所选择的流程模板的信息数据
             processInfo: {},  //所选中的流程的信息

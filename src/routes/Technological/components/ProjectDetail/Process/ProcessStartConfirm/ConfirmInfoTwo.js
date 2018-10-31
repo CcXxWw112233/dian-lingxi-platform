@@ -7,7 +7,6 @@ import {timeToTimestamp} from "../../../../../../utils/util";
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
-const ConfirmInfoOut_1_bott_Id = `ConfirmInfoOut_1_bott_${Number(new Date().getTime()) * Math.random()}`  // 定义收缩内容的id
 
 //里程碑确认信息
 export default class ConfirmInfoTwo extends React.Component {
@@ -44,6 +43,10 @@ export default class ConfirmInfoTwo extends React.Component {
         processEditDatas
       })
     }
+
+    this.setState({
+      ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
+    })
   }
   tooltipFilterName({ users=[], user_id}) {
     let name = '佚名'
@@ -56,6 +59,9 @@ export default class ConfirmInfoTwo extends React.Component {
     return name
   }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return false
+    }
     this.setState({
       due_time:dateString
     })
@@ -94,6 +100,7 @@ export default class ConfirmInfoTwo extends React.Component {
     },function () {
       this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
     })
+    const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
@@ -154,7 +161,8 @@ export default class ConfirmInfoTwo extends React.Component {
   }
 
   render() {
-    const { due_time, isShowBottDetail } = this.state
+    const { due_time, isShowBottDetail, ConfirmInfoOut_1_bott_Id } = this.state
+
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey  } = this.props
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday } = processEditDatas[itemKey]
