@@ -414,8 +414,8 @@ const ProjectDetail = (props) => {
         visible={projectInfoDisplay}
         width={420}
         top={172}
+        zIndex={0}
         maskStyle={{top: 0, }}
-        style={{zIndex: 200,}}
       >
         <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       </Drawer>
