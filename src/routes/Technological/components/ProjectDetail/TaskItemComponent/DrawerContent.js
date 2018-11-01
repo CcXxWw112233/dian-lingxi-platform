@@ -131,6 +131,19 @@ export default class DrawContent extends React.Component {
     })
   }
   setChargeManIsSelf() {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id, executors=[] } = drawContent
+    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const { id, full_name,fullName, email, mobile, avatar } = userInfo
+    executors[0] = {
+      user_id: id,
+      user_name: full_name || fullName || mobile || email,
+      avatar: avatar
+    }
+    this.props.addTaskExecutor({
+      card_id,
+      users: id
+    })
   }
     //设置任务负责人组件---------------end
     //设置提醒
@@ -244,6 +257,9 @@ export default class DrawContent extends React.Component {
     this.setState({
       isInAddTag: false
     })
+    if(! e.target.value) {
+      return false
+    }
     const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
@@ -312,9 +328,10 @@ export default class DrawContent extends React.Component {
     const projectGroupMenu = (
       <Menu onClick={this.projectGroupMenuClick.bind(this)} mode="vertical">
         {projectGoupList.map((value, key) => {
+          const { list_data } = value
           return (
             <SubMenu key={key} title={<span>{value.board_name}</span>}>
-              {value.list_data.map((value2, key2) => {
+              {list_data.map((value2, key2) => {
                 return (<Menu.Item key={key2}>{ value2.list_name }</Menu.Item>)
               })}
             </SubMenu>
@@ -340,7 +357,6 @@ export default class DrawContent extends React.Component {
 
     return(
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
-
         {/*项目挪动*/}
         <div className={DrawerContentStyles.divContent_1}>
           <div className={DrawerContentStyles.contain_1}>

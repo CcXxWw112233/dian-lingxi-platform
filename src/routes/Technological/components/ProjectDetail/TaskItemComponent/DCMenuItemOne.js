@@ -19,10 +19,10 @@ const DCMenuItemOne = (props) => {
           <Input placeholder={'请输入负责人名称'}  style={{width: 160, marginTop: 6}}/>
         </div>
         {execusorList.map((value, key) => {
-          const { user_id, full_name, avatar } = value
+          const { user_id, full_name, fullName, mobile, email, avatar } = value
           return(
             <div style={{position: 'relative'}} key={key}  >
-              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || '佚名', avatar })}}>
+              <div  style={{padding:0,margin: 0, height: 32}} onClick={()=>{handleMenuReallyClick({ user_id, full_name: full_name || fullName || mobile || email, avatar })}}>
                 <div className={DrawerContentStyles.menuOneitemDiv} >
                   {value.avatar?(
                     <img src={value.avatar} className={DrawerContentStyles.avatar} />
@@ -31,7 +31,7 @@ const DCMenuItemOne = (props) => {
                       <Icon type={'user'} style={{fontSize:12,marginLeft: 4, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
                     </div>
                   )}
-                  <span >{value.full_name || '名称未设置'}</span>
+                  <span >{ full_name || fullName || mobile || email}</span>
                 </div>
               </div>
               <Icon type="close-circle" style={{fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={()=>{handleMenuIconDelete({key,user_id: value.user_id})}}/>

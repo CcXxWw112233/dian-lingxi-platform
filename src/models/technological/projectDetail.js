@@ -282,7 +282,7 @@ export default {
           }
         })
       }else{
-        message.warn(res.data, MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     // 直接启动时保存模板但不保留，查询该模板，将数据保留用于启动流程
@@ -763,9 +763,12 @@ export default {
 
     //项目增删改查--start
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
-      const { id } = payload
+      const { id, calback } = payload
       let res = yield call(projectDetailInfo, id)
       const appsSelectKey = yield select(selectAppsSelectKey)
+      if(typeof calback === 'function') {
+        calback()
+      }
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -784,10 +787,14 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: board_id
+            id: board_id,
+            calback: function () {
+              message.success('已从项目移除该成员', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -797,10 +804,14 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: board_id
+            id: board_id,
+            calback: function () {
+              message.success('更新成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -808,9 +819,9 @@ export default {
       const { id } = payload
       let res = yield call(collectionProject, id)
       if(isApiResponseOk(res)) {
-
+        message.success('收藏成功', MESSAGE_DURATION_TIME)
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -818,27 +829,27 @@ export default {
       const { id } = payload
       let res = yield call(cancelCollection, id)
       if(isApiResponseOk(res)) {
-
+        message.success('已取消收藏', MESSAGE_DURATION_TIME)
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * quitProject({ payload }, { select, call, put }) {
       let res = yield call(quitProject, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已退出项目', MESSAGE_DURATION_TIME)
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * archivedProject({ payload }, { select, call, put }) {
       let res = yield call(archivedProject, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已归档项目', MESSAGE_DURATION_TIME)
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -848,11 +859,14 @@ export default {
         yield put({
           type: 'projectDetailInfo',
           payload:{
-            id: board_id
+            id: board_id,
+            calback: function () {
+              message.success('项目添加成员成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -869,7 +883,7 @@ export default {
           })
         }
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     //项目增删改查--end
@@ -882,12 +896,18 @@ export default {
       const taskGroupList = yield select(selectTaskGroupList)
       if(isApiResponseOk(res)) {
         taskGroupList[length].list_id = res.data.id
+        message.success('添加任务分组成功', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
-      let res = yield call(getTaskGroupList, payload)
+      const  { type, board_id, arrange_type, calback } = payload
+      let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
+      if (typeof calback === 'function') {
+        calback()
+      }
       // message.destroy()
       if(isApiResponseOk(res)) {
         yield put({
@@ -908,10 +928,14 @@ export default {
            payload: {
              type: '2',
              board_id: board_id,
-             arrange_type: '1'
+             arrange_type: '1',
+             calback: function () {
+               message.success('添加成功', MESSAGE_DURATION_TIME)
+             }
            }
          })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -925,7 +949,9 @@ export default {
         //     drawContent
         //   }
         // })
+        message.success('更新成功',MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -943,15 +969,18 @@ export default {
             taskGroupList
           }
         })
+        message.success('删除成功',MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * archivedTask({ payload }, { select, call, put }) { //
       let res = yield call(archivedTask, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已归档该任务',MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -979,6 +1008,7 @@ export default {
           payload: indexObj
         })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -996,28 +1026,36 @@ export default {
         //     drawContent,
         //   }
         // })
+        message.success('已成功添加子任务', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * addTaskExecutor({ payload }, { select, call, put }) { //
       let res = yield call(addTaskExecutor, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('设置任务执行人成功', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     * completeTask({ payload }, { select, call, put }) { //
+      const { is_realize  } = payload
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
           yield put({
             type: 'projectDetailInfo',
             payload:{
-              id: board_id
+              id: board_id,
+              calback: function () {
+                message.success(is_realize === '1'? '已完成该任务': '已将该任务设置未完成', MESSAGE_DURATION_TIME)
+              }
             }
           })
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -1065,8 +1103,9 @@ export default {
     * removeProjectMenbers({ payload }, { select, call, put }) { //
       let res = yield call(removeProjectMenbers, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已从项目移出该成员', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
