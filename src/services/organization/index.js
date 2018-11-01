@@ -53,13 +53,11 @@ export async function updateRole(data) {
   });
 }
 //删除角色
-export async function deleteRole(id) {
+export async function deleteRole(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/role/${id}`,
+    url: `${REQUEST_DOMAIN}/role`,
     method: 'DELETE',
-    data: {
-      id
-    }
+    data
   });
 }
 //复制角色
@@ -80,11 +78,11 @@ export async function setDefaultRole(data) {
 }
 
 //获取权限列表
-export async function getPermissions(data) {
+export async function getPermissions(params) {
   return request({
     url: `${REQUEST_DOMAIN}/permissions`,
     method: 'GET',
-    data
+    params
   });
 }
 //保存权限

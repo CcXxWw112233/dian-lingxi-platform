@@ -5,6 +5,8 @@ import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
 import AuthTabPaneContent from './AuthTabPaneContent'
 import RoleTabPaneContent from './RoleTabPaneContent'
+import ProjectRole from './ProjectRole'
+import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
 import { getUrlQueryString } from '../../utils/util'
 
@@ -13,7 +15,8 @@ const  TabPane = Tabs.TabPane
 const getEffectOrReducerByName = name => `organization/${name}`
 
 const Organization = (options) => {
-  const { dispatch, model } = options
+  const { dispatch, model = {} } = options
+  const { datas: { tabSelectKey }} = model
   const updateDatas = (payload) => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas') ,
@@ -104,7 +107,11 @@ const Organization = (options) => {
       })
     },
   }
-
+  const onTabClick = (key)=>{
+    updateDatas({
+      tabSelectKey: key
+    })
+  }
   return(
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
@@ -116,15 +123,17 @@ const Organization = (options) => {
           <div className={indexStyles.titleName}>组织管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} defaultActiveKey={'1'}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} activeKey={tabSelectKey} onTabClick={onTabClick}>
               <TabPane tab="基本信息" key="1">
                  <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
-              <TabPane tab="角色管理" key="2">
-                <RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>
+              <TabPane tab="组织角色" key="2">
+                <OrgnizationRole {...asyncProprs} updateDatas={updateDatas} />
+                {/*<RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
-              <TabPane tab="权限管理" key="3">
-                <AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>
+              <TabPane tab="项目角色" key="3">
+                <ProjectRole {...asyncProprs} updateDatas={updateDatas}/>
+                {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
             </Tabs>
           </div>
