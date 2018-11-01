@@ -2,6 +2,7 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
+import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
 
 const TextArea = Input.TextArea
 
@@ -43,13 +44,16 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     })
   }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return false
+    }
     const { datas:{ drawContent = {} } } = this.props.model
     const { chirldTaskItemValue } = this.props
     const { card_id } = drawContent
-    chirldTaskItemValue['due_time'] = dateString
-    this.props.addTaskExecutor({
+    chirldTaskItemValue['due_time'] = timeToTimestamp(dateString)
+    this.props.addTask({
       card_id,
-      updateTask: dateString
+      due_time: dateString
     })
   }
 
@@ -85,7 +89,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           <div className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>
-          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? due_time.substring(0, 10)+ '截止' : ''}</span></div>
+          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? timestampToTimeNormal(due_time)+ '截止' : ''}</span></div>
           <div style={{position:'relative', height: 22,display: 'flex', justifyContent: 'align-items'}}>
             <Dropdown overlay={
               <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>

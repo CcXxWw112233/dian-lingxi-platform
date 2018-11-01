@@ -2,11 +2,15 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Button, Icon, Input, Dropdown, Menu } from 'antd'
 import MenuSearchStyles from  '../../TecPublic/MenuSearch.less'
+import MenuSearchTemplate from './MenuSearchTemplate'
 
 export default class WelcomProcess extends React.Component {
-  state = {}
+ state = {}
   handleMenuReallyClick = (e) => {
     const { key } = e
+    if(!key) {
+      return false
+    }
     const { datas: { processTemplateList = [] } } = this.props.model
     const { template_name, template_id, template_no } = processTemplateList[Number(key)]
     //此处为启动流程界面查询逻辑(查询模板信息)
@@ -19,11 +23,10 @@ export default class WelcomProcess extends React.Component {
   }
   render() {
     const { datas: { processTemplateList = [] } } = this.props.model
-
     const MenuSearch = (processTemplateList) => {
       return (
         <Menu style={{padding: 8}} onClick={this.handleMenuReallyClick.bind(this)}>
-          <Input placeholder={'搜索流程'} subMenuKey={'2'} style={{marginBottom: 10}}/>
+          <Input placeholder={'搜索流程模板'} />
           {
             processTemplateList.map((value, key) => {
               const { template_name, template_id, template_no } = value
@@ -54,7 +57,8 @@ export default class WelcomProcess extends React.Component {
               <div></div>
               <div>你之前创建过跟这件事情相关的流程模板；</div>
             </div>
-            <Dropdown overlay={MenuSearch(processTemplateList)}>
+            {/* </MenuSearchTemplate>MenuSearch(processTemplateList)*/}
+            <Dropdown overlay={<MenuSearchTemplate {...this.props}/>}>
               <Button style={{width: 110,marginTop: 20}}>选择模板<Icon type={'down'} style={{fontSize: 12}}/></Button>
             </Dropdown>
           </div>

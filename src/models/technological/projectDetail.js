@@ -374,7 +374,7 @@ export default {
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics,{flow_instance_id: payload})
+        const res2 = yield call(getProessDynamics,{flow_instance_id: id})
         if(isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
