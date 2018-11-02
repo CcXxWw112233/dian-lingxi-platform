@@ -3,7 +3,7 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { getMemberInfo, setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
+import { setGroupLeader,getMembersInOneGroup,getMemberInfo, setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
@@ -24,6 +24,7 @@ export default modelExtend(technological, {
               groupTreeList: [], //树状分组数据
               currentBeOperateMemberId: '', //当前被操作的成员id
               roleList: [], //当前组织角色列表
+              menuSearchSingleSpinning: false, //获取分组负责人转转转
             }
           })
           //获取分组列表
@@ -40,7 +41,9 @@ export default modelExtend(technological, {
           //查询当前角色
           dispatch({
             type: 'getCurrentOrgRole',
-            payload: {}
+            payload: {
+              type: '1'
+            }
           })
         }
       })
@@ -57,6 +60,7 @@ export default modelExtend(technological, {
             for(let j = 0; j < groupList[i]['members'].length; j++) {
               groupList[i]['members'][j]['role_detailInfo'] = {}
             }
+            groupList[i]['leader_members'] = []
           }
         }
         yield put({
@@ -272,6 +276,55 @@ export default modelExtend(technological, {
         if(typeof calback === 'function') {
           calback()
         }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getMembersInOneGroup({ payload }, { select, call, put }) {
+      const {group_id, parentKey} = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          menuSearchSingleSpinning:true,
+        }
+      })
+      let res = yield call(getMembersInOneGroup, {group_id})
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          menuSearchSingleSpinning: false,
+        }
+      })
+
+      const groupList = yield select(selectGroupList)
+      if (isApiResponseOk(res)) {
+        groupList[parentKey]['leader_members'] = res.data
+        yield put({
+          type:'updateDatas',
+          payload:{
+            groupList,
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * setGroupLeader({ payload }, { select, call, put }) {
+      const {group_id, member_id, parentKey, avatar, name} = payload
+      let res = yield call(setGroupLeader, {group_id, member_id})
+      const groupList = yield select(selectGroupList)
+      if (isApiResponseOk(res)) {
+        groupList[parentKey]['leader_id'] = member_id
+        groupList[parentKey]['leader_avatar'] = avatar
+        groupList[parentKey]['leader_name'] = name
+        yield put({
+          type:'updateDatas',
+          payload:{
+            groupList,
+          }
+        })
+        message.success('分组负责人设置成功', MESSAGE_DURATION_TIME)
+
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

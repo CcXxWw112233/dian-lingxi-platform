@@ -89,7 +89,19 @@ const OrganizationMember = (props) => {
         type: getEffectOrReducerByName('getMemberInfo'),
         payload: params,
       })
-    }
+    },
+    getMembersInOneGroup(params) { //
+      dispatch({
+        type: getEffectOrReducerByName('getMembersInOneGroup'),
+        payload: params,
+      })
+    },
+    setGroupLeader(data) { //setGroupLeader
+      dispatch({
+        type: getEffectOrReducerByName('setGroupLeader'),
+        payload: data,
+      })
+    },
   }
 
   const routingJump = (path) => {

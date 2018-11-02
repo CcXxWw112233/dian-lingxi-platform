@@ -196,3 +196,20 @@ export async function getMemberInfo(params) {
     params
   });
 }
+
+//获取某个分组的成员 => 用于设置分组负责人
+export async function getMembersInOneGroup(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/members`,
+    method: 'GET',
+    params
+  },{isNotLoading:true});
+}
+//获取某个分组的成员 => 用于设置分组负责人
+export async function setGroupLeader(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/leader/set`,
+    method: 'PUT',
+    data
+  });
+}

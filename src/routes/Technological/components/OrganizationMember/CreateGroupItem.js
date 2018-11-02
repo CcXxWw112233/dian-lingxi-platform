@@ -1,13 +1,14 @@
 //分组列表
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown } from 'antd'
+import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown, Avatar  } from 'antd'
 import QueueAnim from  'rc-queue-anim'
 import ItemTwo from  './ItemTwo'
 import ItemOne from './ItemOne'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 import ShowAddMenberModal from './ShowAddMenberModal'
 import TreeGroupModal from  './TreeGroupModal'
+import MenuSearchSingleNormal from  '../../../../components/MenuSearchSingleNormal'
 
 const Panel = Collapse.Panel
 
@@ -110,11 +111,23 @@ export default class TaskItem extends React.Component {
       group_id: id
     })
   }
-
+  getMembersInOneGroup() {
+    const { itemValue = {}, itemKey } = this.props
+    const { id } = itemValue
+    this.props.getMembersInOneGroup({group_id: id, parentKey: itemKey})
+  }
+  MenuSearchSingleClick(data) {
+    const { itemKey } = this.props
+    this.props.setGroupLeader({
+      ...data, parentKey:itemKey
+    })
+  }
   render() {
     const { isInEditAdd, inputValue } = this.state
     const { itemValue = {}, itemKey } = this.props
-    const { name , is_default, members = [] } = itemValue //is_default ==='1' 默认分组不可操作
+    const { name, is_default, members = [], leader_id='', leader_avatar='', leader_members = []} = itemValue //is_default ==='1' 默认分组不可操作
+
+    const { datas: { menuSearchSingleSpinning }} = this.props.model
 
     const operateMenu = () => {
       return (
@@ -138,7 +151,21 @@ export default class TaskItem extends React.Component {
         {!isInEditAdd?(
           <div className={CreateTaskStyle.title}>
             <div className={CreateTaskStyle.title_l}>
-              <div>{name}</div>
+              {is_default === '0'? (
+                <Dropdown trigger={['click']} overlay={<MenuSearchSingleNormal menuSearchSingleSpinning={menuSearchSingleSpinning} Inputlaceholder={'搜索成员'} searchName={'name'} listData={leader_members} MenuSearchSingleClick={this.MenuSearchSingleClick.bind(this)}/>}>
+                  {!leader_id?(
+                    <div className={CreateTaskStyle.leader} onClick={this.getMembersInOneGroup.bind(this)}>
+                      <Icon type="ellipsis" theme="outlined" />
+                    </div>
+                  ) : (
+                    <Avatar onClick={this.getMembersInOneGroup.bind(this)} src={leader_avatar} size={20} icon={"user"}  style={{marginRight: 6, color: '#8c8c8c',backgroundColor: '#d9d9d9'}}></Avatar>
+                  )}
+                </Dropdown>
+              ) : (
+                ''
+              )}
+
+              <div className={CreateTaskStyle.title_l_name}>{name}</div>
               <div style={{marginRight: 4, marginLeft: 4}}>·</div>
               <div>{members.length}</div>
               {is_default === '0'?(
