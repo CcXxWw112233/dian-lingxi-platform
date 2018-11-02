@@ -1,6 +1,6 @@
 import { getUSerInfo, logout } from '../../services/technological'
-import { changeCurrentOrg,getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
-
+import { getOrganizationMemberPermissions,changeCurrentOrg,getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
+import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -33,12 +33,24 @@ export default {
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          // if(!Cookies.get('userInfo')) {
+          if(!Cookies.get('userInfo')) {
             dispatch({
               type:'getUSerInfo',
               payload: {}
             })
-          // }
+          }else {
+            const { current_org } = JSON.parse(Cookies.get('userInfo'))
+            if(current_org) {
+              dispatch({
+                type:'setcurrentSelectOrganizeByCookiesUSerInfo',
+                payload: {}
+              })
+              dispatch({
+                type:'getOrganizationMemberPermissions',
+                payload: {}
+              })
+            }
+          }
           //查询所在组织列表
           dispatch({
             type:'getCurrentUserOrganizes',
@@ -66,6 +78,8 @@ export default {
             }
           })
         }
+
+
       })
     },
   },
@@ -89,12 +103,39 @@ export default {
           }
         })
         //当前选中的组织
-        sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
+        if(res.data.current_org ) {
+          localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
+           yield put({  //  获取当前成员在组织中的权限列表
+             type: 'getOrganizationMemberPermissions',
+             payload: {}
+           })
+        }
+        //组织切换重新加载
+        const { operateType } = payload
+        if(operateType === 'changeOrg') {
+          const redirectHash =  locallocation.pathname
+          if(locallocation.pathname === '/technological/projectDetail') {
+            redirectHash === '/technological/project'
+          }
+          yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
+        }
+        //存储
         Cookies.set('userInfo', res.data,{expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    * setcurrentSelectOrganizeByCookiesUSerInfo({ payload }, { select, call, put }) { //c从cookie中拿到当前组织
+      const { current_org } = JSON.parse(Cookies.get('userInfo'))
+      localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          currentSelectOrganize: current_org,
+        }
+      })
+    },
+
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
@@ -116,8 +157,19 @@ export default {
             // currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
           }
         })
+
+        //如果原来没有组织刚创建第一个则做切换组织操作
+        const { operateType } = payload
+        if(operateType === 'create') {
+           yield put({
+             type: 'changeCurrentOrg',
+             payload: {
+               org_id: res.data[0].id
+             }
+           })
+        }
+
         if(res.data.length) { //当前选中的组织id OrgId要塞在sessionStorage
-          // sessionStorage.setItem('currentSelectOrganize', JSON.stringify(res.data[0]))
           Cookies.set('org_id', res.data[0].id,{expires: 30, path: ''})
         }
         const { calback } = payload
@@ -133,13 +185,18 @@ export default {
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
-        //组织切换重新加载
-        const redirectHash =  locallocation.pathname
-        if(locallocation.pathname === '/technological/projectDetail') {
-          redirectHash === '/technological/project'
-        }
-        yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
-
+        yield put({
+          type: 'getUSerInfo',
+          payload: {
+            operateType: 'changeOrg',
+          }
+        })
+        // //组织切换重新加载
+        // const redirectHash =  locallocation.pathname
+        // if(locallocation.pathname === '/technological/projectDetail') {
+        //   redirectHash === '/technological/project'
+        // }
+        // yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
       }else{
         message.warn('组织切换出了点问题', MESSAGE_DURATION_TIME)
       }
@@ -171,9 +228,11 @@ export default {
     * createOrganization({ payload }, { select, call, put }) {
       let res = yield call(createOrganization, payload)
       if(isApiResponseOk(res)) {
+        //查询一遍
         yield put({
           type: 'getCurrentUserOrganizes',
           payload: {
+            operateType: 'create',
             calback : function () {
               message.success('创建组织成功',MESSAGE_DURATION_TIME)
             }
@@ -208,6 +267,20 @@ export default {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
         message.success('已成功添加组织成员',MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+    * getOrganizationMemberPermissions({ payload }, { select, call, put }) {
+      let res = yield call(getOrganizationMemberPermissions, payload)
+      if(isApiResponseOk(res)) {
+         yield put({
+           type: 'updateDatas',
+           payload: {
+             organizationMemberPermissions: res.data || [], //组织成员权限列表
+           }
+         })
+        localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data))
       }else{
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }

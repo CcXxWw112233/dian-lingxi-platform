@@ -57,7 +57,7 @@ export default class HeaderNav extends React.Component{
         for(let val of currentUserOrganizes) {
           if(key === val['id']){
             Cookies.set('org_id',val.id,{expires: 30, path: ''})
-            sessionStorage.setItem('currentSelectOrganize', JSON.stringify(val))
+            localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
             this.props.updateDatas({currentSelectOrganize: val})
             this.props.changeCurrentOrg({org_id: val.id})
             break
@@ -174,12 +174,15 @@ export default class HeaderNav extends React.Component{
             </Menu.Item>
           ):('')}
 
-          <Menu.Item key="4" style={{padding:0,margin: 0}}>
+          {currentUserOrganizes.length?(
+            <Menu.Item key="4" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
                 <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请成员加入</span>
                 </span>
               </div>
-          </Menu.Item>
+            </Menu.Item>
+          ):('')}
+
           <Menu.Item key="5" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
               <div className={indexStyle.itemDiv}>

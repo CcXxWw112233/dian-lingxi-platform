@@ -19,8 +19,13 @@ export const selectBreadcrumbList= state => state[(`projectDetail`)].datas.bread
 export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem  //
 
 //动态列表
-export const selectNewsDynamicList = state => state[(`newsDynamic`)].datas.newsDynamicList  //面包屑路径
-export const selectNewsDynamicListOriginal = state => state[(`newsDynamic`)].datas.newsDynamicListOriginal  //面包屑路径
+export const selectNewsDynamicList = state => state[(`newsDynamic`)].datas.newsDynamicList  //
+export const selectNewsDynamicListOriginal = state => state[(`newsDynamic`)].datas.newsDynamicListOriginal  //
 
 //获取团队数据
-export const selectGroupList = state => state[(`organizationMember`)].datas.groupList  //面包屑路径
+export const selectGroupList = state => state[(`organizationMember`)].datas.groupList  //
+
+
+//组织
+export const selectCurrentUserOrganizes = state => state[(`organizationMember`)].datas.currentUserOrganizes  //
+export const selectCurrentSelectOrganize = state => state[(`organizationMember`)].datas.currentSelectOrganize  //

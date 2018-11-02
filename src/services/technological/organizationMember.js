@@ -213,3 +213,12 @@ export async function setGroupLeader(data) {
     data
   });
 }
+
+//组织成员获取权限列表 =>获取自己在组织中的权限
+export async function getOrganizationMemberPermissions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/permissions/member`,
+    method: 'GET',
+    params
+  });
+}

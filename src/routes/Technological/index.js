@@ -15,6 +15,8 @@ import 'moment/locale/zh-cn';
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
+const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions'))
+console.log(organizationMemberPermissions)
 const Technological = (options) => {
   const { dispatch, model } = options
   const app = dva();
