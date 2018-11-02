@@ -6,18 +6,28 @@ import CollectionProject from './CollectionProject'
 import ElseProject from './ElseProject'
 import AddModalForm from "./AddModalForm";
 import ShowAddMenberModal from './ShowAddMenberModal'
+import { checkIsHasPermission } from '../../../../utils/businessFunction'
+import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, TEAM_BOARD_CREATE} from "../../../../globalset/js/constant";
+import { message } from 'antd'
 
 const Panel = Collapse.Panel
 
 export default class Projectlist extends React.Component {
 
+  addItem() {
+    if(!checkIsHasPermission(TEAM_BOARD_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.props.showModal()
+  }
   render() {
     const { datas = {} } = this.props.model
     const { projectList = {} }  = datas
     const { star = [], create = [], participate = [] } = projectList
 
     const addItem = (
-      <div className={indexStyle.addListItem} onClick={this.props.showModal}>
+      <div className={indexStyle.addListItem} onClick={this.addItem.bind(this)}>
         <Icon type="plus-circle-o" style={{fontSize: 18, color: '#8c8c8c',marginTop: 6}} />
       </div>
     )

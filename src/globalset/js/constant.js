@@ -15,3 +15,41 @@ export const UPLOAD_FILE_SIZE = 30 //上传文件MB限制
 export const INT_REQUEST_OK = 0 //接口返回常量定义
 
 export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
+
+export const NOT_HAS_PERMISION_COMFIRN = '您没有该操作权限'
+
+//权限列表
+export const TEAM_BOARD_CREATE = 'team:board:create' //创建项目 permission_type=1
+export const TEAM_BOARD_JOIN = 'team:board:join' //加入项目 permission_type=1
+export const UPMS_ORGANIZATION_MEMBER_ADD = 'upms:organization:member:add' //添加成员 permission_type=1
+export const UPMS_ORGANIZATION_MEMBER_EDIT = 'upms:organization:member:edit' //编辑成员 permission_type=1
+export const UPMS_ORGANIZATION_MEMBER_REMOVE = 'upms:organization:member:remove' //移除成员 permission_type=1
+export const UPMS_ORGANIZATION_GROUP = 'upms:organization:group' //管理分组 permission_type=1
+export const UPMS_ORGANIZATION_EDIT = 'upms:organization:edit' //编辑基本信息 permission_type=1
+export const UPMS_ORGANIZATION_DELETE = 'upms:organization:delete' //删除组织 permission_type=1
+export const UPMS_ORGANIZATION_ROLE_CREATE = 'upms:organization:role:create' //创建角色 permission_type=1
+export const UPMS_ORGANIZATION_ROLE_EDIT = 'upms:organization:role:edit' //编辑角色 permission_type=1
+export const UPMS_ORGANIZATION_ROLE_DELETE = 'upms:organization:role:delete' //删除角色 permission_type=1
+export const TEAM_BOARD_EDIT = 'team:board:edit' //编辑项目 permission_type=2
+export const TEAM_BOARD_ARCHIVE = 'team:board:archive' //归档项目 permission_type=2
+export const TEAM_BOARD_DELETE = 'team:board:delete' //删除项目 permission_type=2
+export const FLOWS_FLOW_TEMPLATE = 'flows:flow:template' //管理流程模板 permission_type=2
+export const FLOWS_FLOW_CREATE = 'flows:flow:create' //新增流程 permission_type=2
+export const FLOWS_FLOW_DELETE = 'flows:flow:delete' //删除流程 permission_type=2
+export const FLOWS_FLOW_ABORT = 'flows:flow:abort' //中止流程 permission_type=2
+export const TEAM_CARD_INTERVIEW = 'team:card:interview' //访问任务 permission_type=2
+export const TEAM_CARD_CREATE = 'team:card:create' //创建任务 permission_type=2
+export const TEAM_CARD_EDIT = 'team:card:edit' //编辑任务 permission_type=2
+export const TEAM_CARD_COMPLETE = 'team:card:complete' //完成/重做任务 permission_type=2
+export const TEAM_CARD_DELETE = 'team:card:delete' //删除任务 permission_type=2
+export const TEAM_CARD_GROUP = 'team:card:group' //管理任务分组 permission_type=2
+export const TEAM_CARD_COMMENT_PUBLISH = 'team:card:comment:publish' //发表评论 permission_type=2
+export const FILES_FILE_INTERVIEW = 'files:file:interview' //访问文件 permission_type=2
+export const FILES_FILE_UPLOAD = 'files:file:upload' //上传文件 permission_type=2
+export const FILES_FILE_DOWNLOAD = 'files:file:download' //下载文件 permission_type=2
+export const FILES_FILE_UPDATE = 'files:file:update' //更新文件 permission_type=2
+export const FILES_FILE_DELETE = 'files:file:delete' //删除文件 permission_type=2
+export const FILES_FILE_EDIT = 'files:file:edit' //编辑文件 permission_type=2
+export const FILES_FOLDER = 'files:folder' //管理文件夹 permission_type=2
+export const FILES_COMMENT_PUBLISH = 'files:comment:publish' //发表评论 permission_type=2
+export const FILES_COMMENT_VIEW = 'files:comment:view' //查看评论 permission_type=2
