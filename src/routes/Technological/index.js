@@ -102,7 +102,7 @@ const Technological = (options) => {
       path: '/technological/project',
       component: () => import('./components/Project'),
     }, {
-      path: '/technological/projectDetail',
+      path: '/technological/projectDetail/:id?',
       component: () => import('./components/ProjectDetail'),
     }, {
       path: '/technological/newsDynamic',

@@ -102,17 +102,17 @@ export default {
             currentProcessInstanceId: '', //当前查看的流程实例id
           }
         })
-        if (location.pathname === '/technological/projectDetail') {
-          dispatch({
-            type: 'initProjectDetail',
-            payload:{
-              id: board_id
-            }
-          })
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({ //查询项目角色列表
             type: 'getProjectRoles',
             payload:{
               type: '2',
+            }
+          })
+          dispatch({
+            type: 'initProjectDetail',
+            payload:{
+              id: board_id
             }
           })
 
