@@ -8,7 +8,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs}  from '../../components/WsNewsDynamic'
 import { selectNewMessageItem } from './select'
-import QueryString from 'QueryString'
+import QueryString from 'querystring'
 
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
