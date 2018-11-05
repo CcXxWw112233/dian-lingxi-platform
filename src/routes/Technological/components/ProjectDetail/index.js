@@ -72,7 +72,18 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
-
+    setMemberRoleInProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('setMemberRoleInProject'),
+        payload: data
+      })
+    },
+    getProjectRoles(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProjectRoles'),
+        payload: data
+      })
+    }
   }
   const DetailInfoProps = {
     modal,
@@ -101,6 +112,18 @@ const ProjectDetail = (props) => {
         payload: data
       })
       this.hideModal()
+    },
+    setMemberRoleInProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('setMemberRoleInProject'),
+        payload: data
+      })
+    },
+    getProjectRoles(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProjectRoles'),
+        payload: data
+      })
     }
   }
   const CreateTaskProps = {

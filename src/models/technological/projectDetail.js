@@ -1,4 +1,4 @@
-import { projectDetailInfo, updateProject, removeMenbers } from '../../services/technological/prjectDetail'
+import { getProjectRoles,setMemberRoleInProject,projectDetailInfo, updateProject, removeMenbers } from '../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -55,6 +55,7 @@ export default {
         dispatch({
           type: 'updateDatas',
           payload:{
+            projectRoles: [], //项目角色
             //全局任务key
             appsSelectKey: undefined, //应用key
             appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
@@ -108,6 +109,13 @@ export default {
               id: board_id
             }
           })
+          dispatch({ //查询项目角色列表
+            type: 'getProjectRoles',
+            payload:{
+              type: '2',
+            }
+          })
+
           //监听消息存储在localstorage变化
           window.addEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
         }else{
@@ -778,6 +786,36 @@ export default {
           }
         })
       }else{
+      }
+    },
+
+    * getProjectRoles({ payload }, { select, call, put }) {
+      const res = yield call(getProjectRoles, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectRoles: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * setMemberRoleInProject({ payload }, { select, call, put }) {
+      const res = yield call(setMemberRoleInProject, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'projectDetailInfo',
+          payload:{
+            id: board_id,
+            calback: function () {
+              message.success('设置角色成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

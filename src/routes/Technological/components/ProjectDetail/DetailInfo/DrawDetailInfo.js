@@ -17,6 +17,22 @@ export default class DrawDetailInfo extends React.Component {
     ShowAddMenberModalVisibile: false
   }
 
+  handleSetRoleMenuClick(props,{ key }) {
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData //data是参与人列表
+    const { user_id } = props
+    if(/^role_\w+/.test(key)) {
+      this.props.setMemberRoleInProject({board_id, user_id, role_id: key.replace('role_','')}) //设置角色
+      return false
+    }
+    switch (key) {
+      case 'removeMember':
+        this.confirm({board_id,user_id})
+        break
+      default:
+        break
+    }
+  }
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
     this.setState({
@@ -87,7 +103,7 @@ export default class DrawDetailInfo extends React.Component {
   render() {
 
     const { editDetaiDescription, detaiDescriptionValue } = this.state
-    const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
+    const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
     console.log('des',description)
@@ -95,7 +111,7 @@ export default class DrawDetailInfo extends React.Component {
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
-      const { full_name, email, avatar, mobile, user_name, user_id, we_chat='无'} = props
+      const {  role='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
@@ -109,7 +125,7 @@ export default class DrawDetailInfo extends React.Component {
               )}
             </div>
             <div className={DrawDetailInfoStyle.right}>
-              <div className={DrawDetailInfoStyle.name}>{full_name || '佚名'}</div>
+              <div className={DrawDetailInfoStyle.name}>{name || '佚名'}</div>
               <Tooltip title="该功能即将上线">
                 <div className={DrawDetailInfoStyle.percent}>
                   <div style={{width: '0'}}></div>
@@ -118,15 +134,18 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </Tooltip>
             </div>
+            <Dropdown overlay={manOperateMenu(props)}>
+              <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+            </Dropdown>
           </div>
           <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
             <div className={DrawDetailInfoStyle.detailItem}>
-              <div>姓名：</div>
-              <div>{full_name}</div>
+              <div>职位：</div>
+              <div>{role}</div>
             </div>
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>组织：</div>
-              <div>无</div>
+              <div>{organization}</div>
             </div>
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>邮箱：</div>
@@ -145,6 +164,28 @@ export default class DrawDetailInfo extends React.Component {
           {/*<img src="" />*/}
           {/*</div>*/}
         </div>
+      )
+    }
+    const manOperateMenu = (props) => {
+      return(
+        <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
+          <Menu.SubMenu title="设置角色" key={'setRole'}>
+            {projectRoles.map((value, key) => {
+              return(
+                <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                  <div className={DrawDetailInfoStyle.elseProjectMemu}>
+                    {value.name}
+                  </div>
+                </Menu.Item>
+              )
+            })}
+          </Menu.SubMenu>
+          <Menu.Item key={'removeMember'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
+              移出分组
+            </div>
+          </Menu.Item>
+        </Menu>
       )
     }
     const EditArea = (
@@ -182,9 +223,9 @@ export default class DrawDetailInfo extends React.Component {
                   const { avatar, user_id } = value
                   return(
                     <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
-                      <div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>
-                        <Icon type="close" />
-                      </div>
+                      {/*<div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>*/}
+                        {/*<Icon type="close" />*/}
+                      {/*</div>*/}
                       <Dropdown overlay={manImageDropdown(value)}>
                         {avatar?(<img src={avatar}  />): (
                           <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>

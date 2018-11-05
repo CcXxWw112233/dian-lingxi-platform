@@ -75,10 +75,16 @@ export default class ProjectRole extends React.Component {
       type: '2'
     })
   }
-  copyPanelItem({parentKey, value}) {
-    const { id, name } = value
+  copyPanelItem() {
+    this.setState({
+      reName_Add_type: '3'
+    })
+    this.setRenameModalVisable()
+  }
+  copy(values) {
+    const { name } = values
     this.props.copyRole({
-      role_id: id,
+      role_id: this.state.role_id,
       name,
     })
   }
@@ -156,13 +162,16 @@ export default class ProjectRole extends React.Component {
   render(){
     const { datas: { project_role_data }} = this.props.model
     const operateMenu = ({parentKey, value}) => {
+      const { is_default } = value
       return (
         <Menu onClick={this.handleMenuClick.bind(this, {parentKey, value})}>
-          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={indexStyles.elseProjectMemu}>
-              设为默认
-            </div>
-          </Menu.Item>
+          {is_default !== '1'?(
+            <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+              <div className={indexStyles.elseProjectMemu}>
+                设为默认
+              </div>
+            </Menu.Item>
+          ): ('') }
           <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyles.elseProjectMemu}>
               复制
@@ -173,11 +182,13 @@ export default class ProjectRole extends React.Component {
               重命名
             </div>
           </Menu.Item>
-          <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={indexStyles.elseProjectDangerMenu}>
-              删除
-            </div>
-          </Menu.Item>
+          {is_default !== '1'?(
+            <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+              <div className={indexStyles.elseProjectDangerMenu}>
+                删除
+              </div>
+            </Menu.Item>
+          ): ('') }
         </Menu>
       );
     }
@@ -297,7 +308,7 @@ export default class ProjectRole extends React.Component {
           <Icon type="plus-circle" theme="outlined" />
         </div>
         {/*重命名,添加*/}
-        <RenameModal reName_Add_type={this.state.reName_Add_type} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
+        <RenameModal reName_Add_type={this.state.reName_Add_type}  copy={this.copy.bind(this)} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
       </div>
     )
   }

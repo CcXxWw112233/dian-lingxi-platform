@@ -1,5 +1,5 @@
 //项目归档
-import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
 // 查看项目详情信息
@@ -31,10 +31,24 @@ export async function removeMenbers(data) {
   });
 }
 
+// 查询项目角色列表
+export async function getProjectRoles(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/role/query`,
+    method: 'GET',
+    params
+  });
+}
 
 
-
-
+// 给成员设置项目角色
+export async function setMemberRoleInProject(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user/set`,
+    method: 'PUT',
+    data
+  });
+}
 
 
 

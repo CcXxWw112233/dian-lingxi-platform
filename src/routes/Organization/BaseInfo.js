@@ -181,7 +181,7 @@ export default class BaseInfo extends React.Component {
         <RadioGroup onChange={this.ratioOnChange} value={member_join_model} style={{marginTop: 8}}>
           <Radio style={radioStyle} value={'1'}>仅能通过邀请加入</Radio>
           <Radio style={radioStyle} value={'2'}>申请加入者需通过许可</Radio>
-          <Radio style={radioStyle} value={'3'}>任意满足一下邮箱后缀名并完成邮件认证的用户可自动加入。</Radio>
+          <Radio style={radioStyle} value={'3'}>任意满足以下邮箱后缀名并完成邮件认证的用户可自动加入。</Radio>
         </RadioGroup>
         <Input placeholder={'@examlpe.com'} style={{marginTop: 8}} onChange={this.memberJoinContent.bind(this)} value={newMember_join_content}/>
         <div  className={indexStyles.baseInfo_des} style={{color: '#BFBFBF'}}>请使用空格符号分隔多个后缀名</div>

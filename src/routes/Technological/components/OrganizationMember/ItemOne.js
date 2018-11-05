@@ -137,8 +137,8 @@ export default class ItemOne extends React.Component {
     const { isShowBottDetail, bott_id } = this.state
     const { itemValue, parentItemValue } = this.props
     const { is_default } = parentItemValue
-    const { member_id, avatar, name, role_name, role_detailInfo ={} } = itemValue
-    const  {organization_name='...', role='...', email='...', phone='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
+    const { member_id, avatar, name, role_type, role_name, role_detailInfo ={} } = itemValue
+    const  {organization_name='...', role = '...', email='...', mobile='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
     const {datas: { roleList = []}} = this.props.model
     let role_detailInfo_is_has = false
     for(let val in role_detailInfo) {
@@ -192,9 +192,11 @@ export default class ItemOne extends React.Component {
             </div>
           </div>
           <div className={CreateTaskStyle.item_1_top_right}>
-            <Dropdown overlay={operateMenu()}>
-              <div><Icon type="ellipsis" theme="outlined" /></div>
-            </Dropdown>
+            {role_type !== '0'?(
+              <Dropdown overlay={operateMenu()}>
+                <div><Icon type="ellipsis" theme="outlined" /></div>
+              </Dropdown>
+            ) : ('')}
             <div className={isShowBottDetail ? CreateTaskStyle.upDown_up: CreateTaskStyle.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
           </div>
         </div>
@@ -223,7 +225,7 @@ export default class ItemOne extends React.Component {
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>手机：</div>
-              <div>{phone}</div>
+              <div>{mobile}</div>
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
               <div>微信：</div>

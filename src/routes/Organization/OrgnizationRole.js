@@ -75,10 +75,16 @@ export default class OrgnizationRole extends React.Component {
       type: '1'
     })
   }
-  copyPanelItem({parentKey, value}) {
-    const { id, name } = value
+  copyPanelItem() {
+    this.setState({
+      reName_Add_type: '3'
+    })
+    this.setRenameModalVisable()
+  }
+  copy(values) {
+    const { name } = values
     this.props.copyRole({
-      role_id: id,
+      role_id: this.state.role_id,
       name,
     })
   }
@@ -302,7 +308,7 @@ export default class OrgnizationRole extends React.Component {
           <Icon type="plus-circle" theme="outlined" />
         </div>
         {/*重命名,添加*/}
-        <RenameModal reName_Add_type={this.state.reName_Add_type} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
+        <RenameModal reName_Add_type={this.state.reName_Add_type} copy={this.copy.bind(this)} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
       </div>
     )
   }
