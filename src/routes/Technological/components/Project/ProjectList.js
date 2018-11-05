@@ -7,7 +7,7 @@ import ElseProject from './ElseProject'
 import AddModalForm from "./AddModalForm";
 import ShowAddMenberModal from './ShowAddMenberModal'
 import { checkIsHasPermission } from '../../../../utils/businessFunction'
-import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, TEAM_BOARD_CREATE} from "../../../../globalset/js/constant";
+import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE} from "../../../../globalset/js/constant";
 import { message } from 'antd'
 
 const Panel = Collapse.Panel
@@ -15,7 +15,7 @@ const Panel = Collapse.Panel
 export default class Projectlist extends React.Component {
 
   addItem() {
-    if(!checkIsHasPermission(TEAM_BOARD_CREATE)){
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

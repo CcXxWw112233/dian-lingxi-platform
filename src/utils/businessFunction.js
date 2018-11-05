@@ -16,3 +16,19 @@ export const checkIsHasPermission = (code) => {
   }
   return flag
 }
+
+//在当前项目中检查是否有权限操作
+export const checkIsHasPermissionInBoard = (code) => {
+  const currentBoardPermission = JSON.parse(localStorage.getItem('currentBoardPermission'))
+  if(!Array.isArray(currentBoardPermission)) {
+    return false
+  }
+  let flag = false
+  for(let i = 0; i < currentBoardPermission.length; i ++) {
+    if (code === currentBoardPermission[i]['code']) {
+      flag = true
+      break
+    }
+  }
+  return flag
+}

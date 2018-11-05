@@ -1,11 +1,15 @@
 import React from 'react'
 import indexStyle from './index.less'
-import { UPLOAD_FILE_SIZE } from '../../../../globalset/js/constant'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE, ORG_TEAM_BOARD_QUERY
+} from '../../../../globalset/js/constant'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import MenuSearch from '../TecPublic/MenuSearch'
+import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
 
 let is_starinit = null
 
@@ -34,6 +38,10 @@ export default class Header extends React.Component {
   }
   confirm(board_id) {
     const that = this
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_JOIN)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     Modal.confirm({
       title: '确认要退出该项目吗？',
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
@@ -67,12 +75,24 @@ export default class Header extends React.Component {
     const { key } = e
     switch (key) {
       case '1':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setShowAddMenberModalVisibile()
         break
       case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.archivedProject({board_id, is_archived: '1'})
         break
       case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.deleteProject(board_id)
         break
       case '4':
@@ -84,6 +104,10 @@ export default class Header extends React.Component {
   }
   //收藏
   starClick(id, e) {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     e.stopPropagation();
     this.setState({
       isInitEntry: false,

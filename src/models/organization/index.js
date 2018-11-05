@@ -1,13 +1,17 @@
 import { getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT
+} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import { selectTabSelectKey } from './select'
+import {checkIsHasPermission} from "../../utils/businessFunction";
 
 export default  {
   namespace: 'organization',
@@ -38,18 +42,22 @@ export default  {
               // permission_data: [], //权限数据
             }
           })
-          dispatch({
-            type: 'getRolePermissions',
-            payload:{
-              type: '1',
-            }
-          })
-          dispatch({
-            type: 'getRolePermissions',
-            payload: {
-              type: '2',
-            }
-          })
+
+          if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){ //如果有权限才去查
+            dispatch({
+              type: 'getRolePermissions',
+              payload:{
+                type: '1',
+              }
+            })
+            dispatch({
+              type: 'getRolePermissions',
+              payload: {
+                type: '2',
+              }
+            })
+          }
+
         } else {
         }
       })

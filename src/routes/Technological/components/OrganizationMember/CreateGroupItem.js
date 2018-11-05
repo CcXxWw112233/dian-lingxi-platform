@@ -5,10 +5,14 @@ import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown, Avatar
 import QueueAnim from  'rc-queue-anim'
 import ItemTwo from  './ItemTwo'
 import ItemOne from './ItemOne'
-import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_GROUP, ORG_UPMS_ORGANIZATION_MEMBER_EDIT
+} from "../../../../globalset/js/constant";
 import ShowAddMenberModal from './ShowAddMenberModal'
 import TreeGroupModal from  './TreeGroupModal'
 import MenuSearchSingleNormal from  '../../../../components/MenuSearchSingleNormal'
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
 const Panel = Collapse.Panel
 
@@ -21,22 +25,34 @@ export default class TaskItem extends React.Component {
   }
   //添加成员
   gotoAddItem() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setShowAddMenberModalVisibile()
   }
-  addItem(data,e) {
-    const name =  e.target.value
-    if(name){
-      const obj = Object.assign(data,{name})
-      this.props.addTask(obj)
-    }
+  setShowAddMenberModalVisibile() {
     this.setState({
-      isAddEdit:false,
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+  addMembers(data) {
+    const { itemValue = {} } = this.props
+    const { id } = itemValue
+    const { users } = data
+    this.props.inviteMemberToGroup({
+      members: users,
+      group_id: id
     })
   }
 
   //点击分组操作
   handleMenuClick(e ) {
     e.domEvent.stopPropagation();
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { key } = e
     switch (key) {
       case '1':
@@ -96,22 +112,12 @@ export default class TaskItem extends React.Component {
     })
   }
 
-//添加分组成员操作
-  setShowAddMenberModalVisibile() {
-    this.setState({
-      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
-    })
-  }
-  addMembers(data) {
-    const { itemValue = {} } = this.props
-    const { id } = itemValue
-    const { users } = data
-    this.props.inviteMemberToGroup({
-      members: users,
-      group_id: id
-    })
-  }
+  //设置分组负责人
   getMembersInOneGroup() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { itemValue = {}, itemKey } = this.props
     const { id } = itemValue
     this.props.getMembersInOneGroup({group_id: id, parentKey: itemKey})

@@ -1,11 +1,16 @@
 import React from 'react';
 import indexStyle from './index.less'
 import { Link } from 'dva/router'
-import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from 'antd'
+import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button, message} from 'antd'
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from './CreateOrganizationModal'
 import {color_4 } from '../../../../globalset/js/styles'
 import ShowAddMenberModal from '../OrganizationMember/ShowAddMenberModal'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_GROUP,
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_QUERY
+} from "../../../../globalset/js/constant";
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
@@ -27,6 +32,10 @@ export default class HeaderNav extends React.Component{
       case '1':
         break
       case '2':
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.routingJump('/technological/organizationMember')
         break;
       case '3':
@@ -34,6 +43,10 @@ export default class HeaderNav extends React.Component{
         this.props.routingJump(`/organization?nextpath=${window.location.hash.replace('#','')}`) //目标页面的返回按钮返回的路劲
         break
       case '4':
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setShowAddMenberModalVisibile()
         break;
       case '5':

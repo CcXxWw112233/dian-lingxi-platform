@@ -1,9 +1,13 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Input, Radio, Button, message, Upload, Icon } from 'antd'
-import {MESSAGE_DURATION_TIME, REQUEST_DOMAIN, UPLOAD_FILE_SIZE} from "../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, REQUEST_DOMAIN,ORG_UPMS_ORGANIZATION_EDIT,
+  UPLOAD_FILE_SIZE
+} from "../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import {validateEmail, validateEmailSuffix} from "../../utils/verify";
+import {checkIsHasPermission} from "../../utils/businessFunction";
 const RadioGroup = Radio.Group;
 //
 export default class BaseInfo extends React.Component {
@@ -48,6 +52,10 @@ export default class BaseInfo extends React.Component {
     })
   }
   finallySave() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { currentOrganizationInfo = {} }} = this.props.model
     const {  name, logo_id, member_join_model, member_join_content,id } = currentOrganizationInfo
 
@@ -98,6 +106,10 @@ export default class BaseInfo extends React.Component {
         refreshToken : Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false

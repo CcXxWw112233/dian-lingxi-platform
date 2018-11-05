@@ -2,8 +2,13 @@
 
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input } from 'antd'
+import { Icon, Checkbox, Collapse, Input, message } from 'antd'
 import Cookies from 'js-cookie'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_GROUP
+} from "../../../../globalset/js/constant";
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
 const Panel = Collapse.Panel
 
 export default class CreateItem extends React.Component {
@@ -13,6 +18,10 @@ export default class CreateItem extends React.Component {
   }
 
   setIsInEditAdd() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       isInEditAdd: true
     })

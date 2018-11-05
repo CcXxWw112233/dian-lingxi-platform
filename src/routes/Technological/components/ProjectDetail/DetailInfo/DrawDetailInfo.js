@@ -1,7 +1,12 @@
 import React from 'react'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button, message } from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT
+} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 const TextArea = Input.TextArea
 
 
@@ -18,6 +23,10 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   handleSetRoleMenuClick(props,{ key }) {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData //data是参与人列表
     const { user_id } = props
@@ -61,6 +70,10 @@ export default class DrawDetailInfo extends React.Component {
 
   //点击区域描述可编辑区域-----------start
   setEditDetaiDescriptionShow() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       editDetaiDescription: true
     })
@@ -94,6 +107,10 @@ export default class DrawDetailInfo extends React.Component {
 
   //点击添加成员操作
   setShowAddMenberModalVisibile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })

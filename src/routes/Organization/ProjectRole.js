@@ -1,7 +1,12 @@
 import React from 'react'
-import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal , Button, Tree } from 'antd';
+import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal , Button, Tree, message } from 'antd';
 import indexStyles from './index.less'
 import RenameModal from './RenameModal'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
+  ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_ROLE_EDIT
+} from "../../globalset/js/constant";
+import {checkIsHasPermission} from "../../utils/businessFunction";
 const TreeNode = Tree.TreeNode;
 
 const CheckboxGroup = Checkbox.Group;
@@ -70,12 +75,20 @@ export default class ProjectRole extends React.Component {
     }
   }
   setDefaut({parentKey, value}) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.setDefaultRole({
       role_id: value.id,
       type: '2'
     })
   }
   copyPanelItem() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       reName_Add_type: '3'
     })
@@ -89,6 +102,10 @@ export default class ProjectRole extends React.Component {
     })
   }
   refactorName({parentKey, value}) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       reName_Add_type: '1',
     })
@@ -107,6 +124,10 @@ export default class ProjectRole extends React.Component {
     })
   }
   deleteConfirm({parentKey, value} ) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const that = this
     Modal.confirm({
       title: '确认删除？',
@@ -132,6 +153,10 @@ export default class ProjectRole extends React.Component {
     })
   }
   addPanel() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       reName_Add_type: '2'
     })

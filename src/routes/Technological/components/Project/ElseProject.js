@@ -1,10 +1,16 @@
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form, message } from 'antd'
 import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
+import {checkIsHasPermission, checkIsHasPermissionReturn} from "../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_TEAM_BOARD_QUERY
+} from "../../../../globalset/js/constant";
+
 
 let is_starinit = null
 export default class ElseProject extends React.Component{
@@ -52,6 +58,10 @@ export default class ElseProject extends React.Component{
   //菜单按钮点击
   handleMenuClick(board_id, e ) {
     e.domEvent.stopPropagation();
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       ellipsisShow: false,
       dropdownVisibleChangeValue:false
@@ -136,6 +146,10 @@ export default class ElseProject extends React.Component{
     })
   }
   projectListItemClick(route,board_id,a) {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump(route)
   }
@@ -144,7 +158,6 @@ export default class ElseProject extends React.Component{
     const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
     const { itemDetailInfo = {}} = this.props
     const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
-    console.log(itemDetailInfo)
 
     is_starinit = is_star
     const menu = (board_id) => {

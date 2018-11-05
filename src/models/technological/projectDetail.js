@@ -142,6 +142,8 @@ export default {
             currentParrentDirectoryId: result.data.folder_id,
           }
         })
+        //缓存下来当前项目的权限
+        localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions))
         if(result.data.app_data[0] ) {
           if( result.data.app_data[0].key === '3') { //任务
             yield put({

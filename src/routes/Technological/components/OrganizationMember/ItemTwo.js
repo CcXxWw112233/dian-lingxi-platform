@@ -1,8 +1,13 @@
 //任务
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown } from 'antd'
+import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown, message } from 'antd'
 import QueueAnim from  'rc-queue-anim'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_MEMBER_EDIT, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE
+} from "../../../../globalset/js/constant";
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
 const Panel = Collapse.Panel
 
@@ -12,6 +17,10 @@ export default class ItemTwo extends React.Component {
   }
   //拒绝
   handleMenuClick(e) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { key } = e
     if(key === '1') {
       const { itemValue:{ member_id} } = this.props
@@ -23,6 +32,10 @@ export default class ItemTwo extends React.Component {
   }
   //通过
   passMember (data) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.approvalMember(data)
   }
   render() {
