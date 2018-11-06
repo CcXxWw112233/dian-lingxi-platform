@@ -143,7 +143,7 @@ export default {
           }
         })
         //缓存下来当前项目的权限
-        localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions))
+        localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
         if(result.data.app_data[0] ) {
           if( result.data.app_data[0].key === '3') { //任务
             yield put({
@@ -189,6 +189,8 @@ export default {
         }
 
       }else{
+        //权限缓存空数组
+        localStorage.setItem('currentBoardPermission', JSON.stringify([]))
       }
     },
     //点击app选项，将点击过的key push进数组，根据已经点击过的数组判断不在重新拉取数据

@@ -280,8 +280,9 @@ export default {
              organizationMemberPermissions: res.data || [], //组织成员权限列表
            }
          })
-        localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data))
+        localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data || []))
       }else{
+        localStorage.setItem('organizationMemberPermissions', JSON.stringify([]))
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },

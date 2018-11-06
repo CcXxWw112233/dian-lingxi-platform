@@ -15,24 +15,24 @@ import 'moment/locale/zh-cn';
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
-const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions')) || []
-for(let i = 0; i < organizationMemberPermissions.length; i++) {
-  const obj = {}
-  const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-  const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-  if(organizationMemberPermissions[i].permission_type === '1'){
-    // console.log(str2)
-  }
-}
-for(let i = 0; i < organizationMemberPermissions.length; i++) {
-  const obj = {}
-  const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-  const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-
-  if(organizationMemberPermissions[i].permission_type === '2'){
-    // console.log(str2)
-  }
-}
+// const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions')) || []
+// for(let i = 0; i < organizationMemberPermissions.length; i++) {
+//   const obj = {}
+//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   if(organizationMemberPermissions[i].permission_type === '1'){
+//     // console.log(str2)
+//   }
+// }
+// for(let i = 0; i < organizationMemberPermissions.length; i++) {
+//   const obj = {}
+//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//
+//   if(organizationMemberPermissions[i].permission_type === '2'){
+//     // console.log(str2)
+//   }
+// }
 const Technological = (options) => {
   const { dispatch, model } = options
   const app = dva();

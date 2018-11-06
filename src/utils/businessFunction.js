@@ -3,7 +3,7 @@ import { message } from 'antd'
 
 //检查是否有操作权限
 export const checkIsHasPermission = (code) => {
-  const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions'))
+  const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions')) || []
   if(!Array.isArray(organizationMemberPermissions)) {
     return false
   }
@@ -19,7 +19,7 @@ export const checkIsHasPermission = (code) => {
 
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code) => {
-  const currentBoardPermission = JSON.parse(localStorage.getItem('currentBoardPermission'))
+  const currentBoardPermission = JSON.parse(localStorage.getItem('currentBoardPermission')) || []
   if(!Array.isArray(currentBoardPermission)) {
     return false
   }
