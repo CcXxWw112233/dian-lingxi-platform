@@ -12,10 +12,10 @@ import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/uti
 
 import { deepClone } from '../../../../../utils/util'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FILES_FILE_EDIT
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
+  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT
 } from "../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../utils/businessFunction";
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -59,11 +59,19 @@ export default class DrawContent extends React.Component {
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     if(key === '1') {
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.props.archivedTask({
         card_id,
         is_archived: '1'
       })
     }else if(key === '2') {
+      if(!checkIsHasPermission(PROJECT_TEAM_BOARD_EDIT)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.confirm(card_id)
     }
   }
@@ -368,7 +376,7 @@ export default class DrawContent extends React.Component {
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
-          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)? ('') : (
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
             <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>
           )}
           {/*项目挪动*/}

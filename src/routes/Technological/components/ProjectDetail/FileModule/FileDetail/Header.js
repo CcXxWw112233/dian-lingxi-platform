@@ -93,17 +93,15 @@ export default class Header extends React.Component {
     const that = this
     const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, } = projectDetailInfoData
-    //文件上传
+    //文件版本更新
     const uploadProps = {
       name: 'file',
       withCredentials: true,
-      action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+      action: `${REQUEST_DOMAIN_FILE}/file/version_upload`,
       data: {
         board_id,
         folder_id: currentParrentDirectoryId,
-        type: '1',
         file_version_id: filePreviewCurrentVersionId,
-        upload_type: '2'
       },
       headers: {
         Authorization: Cookies.get('Authorization'),

@@ -32,7 +32,7 @@ export async function removeMembersWithGroup(data) {
 //给成员设置分组
 export async function setMemberWitchGroup(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/group/set`,
+    url: `${REQUEST_DOMAIN}/group/member/set`,
     method: 'PUT',
     data
   });

@@ -163,6 +163,10 @@ export default class ProjectRole extends React.Component {
     this.setRenameModalVisable()
   }
   addPanelItem(values) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { name } = values
     this.props.createRole({name,type: '2'})
   }

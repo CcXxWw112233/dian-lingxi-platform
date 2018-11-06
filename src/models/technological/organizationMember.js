@@ -75,6 +75,7 @@ export default modelExtend(technological, {
           calback()
         }
       }else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
 
       }
     },
@@ -88,6 +89,7 @@ export default modelExtend(technological, {
           }
         })
       }else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
 
       }
     },
@@ -239,7 +241,7 @@ export default modelExtend(technological, {
           }
         })
       } else {
-
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
     * setMemberRole({ payload }, { select, call, put }) {

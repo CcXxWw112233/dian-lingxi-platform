@@ -14,11 +14,11 @@ export default class ItemTwo extends React.Component {
     collapseClose: true, //折叠面板变化回调
   }
   itemOneClick(e) {
+    e.stopPropagation();
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    e.stopPropagation();
     const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
     const {  datas:{ taskGroupList } } = this.props.model
     const { card_id, is_realize = '0' } = itemValue

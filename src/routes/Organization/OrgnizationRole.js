@@ -153,7 +153,7 @@ export default class OrgnizationRole extends React.Component {
     })
   }
   addPanel() {
-    if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
