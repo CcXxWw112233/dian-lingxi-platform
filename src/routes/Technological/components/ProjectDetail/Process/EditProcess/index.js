@@ -8,7 +8,11 @@ import EditFormFour from './EditFormFour'
 import EditFormFive from './EditFormFive'
 import SaveTemplate from './SaveTemplate'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../constant'
-import {MESSAGE_DURATION_TIME} from "../../../../../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOWS_FLOW_CREATE,
+  PROJECT_FILES_FILE_EDIT
+} from "../../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
 
 
 export default class EditProcess extends React.Component {
@@ -129,6 +133,10 @@ export default class EditProcess extends React.Component {
     return newProcessEditDatas
   }
   setSaveTemplateModalVisible() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { processEditDatas } } = this.props.model
     if(!this.verrificationForm(processEditDatas)) {
       return false
@@ -138,6 +146,10 @@ export default class EditProcess extends React.Component {
     })
   }
   directStart(){
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { projectDetailInfoData = {}, processEditDatas } } = this.props.model
     if(!this.verrificationForm(processEditDatas)) {
       return false

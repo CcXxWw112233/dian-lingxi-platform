@@ -1,8 +1,11 @@
 import React from 'react'
 import indexStyle from './index.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN,
-  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE, ORG_TEAM_BOARD_QUERY
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
+  PROJECT_TEAM_CARD_INTERVIEW,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,
+  ORG_TEAM_BOARD_QUERY,
+  PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE,PROJECT_FILES_FILE_DELETE,PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
@@ -148,6 +151,22 @@ export default class Header extends React.Component {
   //右方部分点击-----------------start
   //右方app应用点击
   appClick(key) {
+    if(key === '2') {
+      //流程
+    }else if(key === '3') { // 任务
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
+    }else if(key === '4'){ //文档
+      if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
+    }else {
+
+    }
+
     this.props.updateDatas({
       appsSelectKey: key
     })
@@ -175,6 +194,10 @@ export default class Header extends React.Component {
     this.props.updateDatas({selectedRowKeys: newSelectedRowKeys})
   }
   createDirectory() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
     if(isInAddDirectory) { //正在创建的过程中不能添加多个
       return false
@@ -196,6 +219,10 @@ export default class Header extends React.Component {
 
   }
   downLoadFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList, selectedRowKeys } } = this.props.model
     let chooseArray = []
     for(let i=0; i < selectedRowKeys.length; i++ ){
@@ -227,6 +254,10 @@ export default class Header extends React.Component {
     // })
   }
   moveFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatas({
       copyOrMove: '0',//copy是1
       openMoveDirectoryType: '1',
@@ -234,6 +265,10 @@ export default class Header extends React.Component {
     })
   }
   copyFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatas({
       copyOrMove: '1',//copy是1
       openMoveDirectoryType: '1',
@@ -241,6 +276,10 @@ export default class Header extends React.Component {
     })
   }
   deleteFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList, selectedRowKeys, projectDetailInfoData= {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     let chooseArray = []
@@ -306,6 +345,10 @@ export default class Header extends React.Component {
         refreshToken : Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false

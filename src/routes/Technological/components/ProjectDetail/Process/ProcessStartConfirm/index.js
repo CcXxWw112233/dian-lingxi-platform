@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Input, Button } from 'antd'
+import { Card, Input, Button, message } from 'antd'
 import BraftEditor from 'braft-editor'
 import ConfirmInfoOne from './ConfirmInfoOne'
 import ConfirmInfoTwo from './ConfirmInfoTwo'
@@ -8,7 +8,11 @@ import ConfirmInfoFour from './ConfirmInfoFour'
 import ConfirmInfoFive from './ConfirmInfoFive'
 
 import indexStyles from './index.less'
-import {MESSAGE_DURATION_TIME} from "../../../../../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FLOWS_FLOW_CREATE
+} from "../../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
 
 export default class ProcessStartConfirm extends React.Component {
 
@@ -44,6 +48,10 @@ export default class ProcessStartConfirm extends React.Component {
     return true
   }
   startProcess() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { processEditDatas, templateInfo = {}  } } = this.props.model
     const { name, description, id } = templateInfo
     this.props.createProcess({

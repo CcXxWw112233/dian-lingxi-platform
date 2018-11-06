@@ -1,9 +1,11 @@
 //任务
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse } from 'antd'
+import { Icon, Checkbox, Collapse, message, } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from  'rc-queue-anim'
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN} from "../../../../../globalset/js/constant";
 
 const Panel = Collapse.Panel
 
@@ -12,6 +14,10 @@ export default class ItemTwo extends React.Component {
     collapseClose: true, //折叠面板变化回调
   }
   itemOneClick(e) {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     e.stopPropagation();
     const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
     const {  datas:{ taskGroupList } } = this.props.model

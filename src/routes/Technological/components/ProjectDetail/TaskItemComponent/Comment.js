@@ -1,10 +1,15 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
 import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
 import  Cookies  from 'js-cookie'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  PROJECT_FILES_FILE_EDIT
+} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
@@ -27,6 +32,10 @@ export default class Comment extends React.Component {
     })
   }
   submitComment() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({

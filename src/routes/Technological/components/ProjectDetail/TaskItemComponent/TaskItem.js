@@ -5,7 +5,8 @@ import { Icon, Checkbox, Collapse, Input, message } from 'antd'
 import QueueAnim from  'rc-queue-anim'
 import ItemOne from  './ItemOne'
 import ItemTwo from  './ItemTwo'
-import {MESSAGE_DURATION_TIME} from "../../../../../globalset/js/constant";
+import {MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 
 const Panel = Collapse.Panel
 
@@ -15,6 +16,10 @@ export default class TaskItem extends React.Component {
     isAddEdit: false
   }
   gotoAddItem() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       isAddEdit:true,
     })

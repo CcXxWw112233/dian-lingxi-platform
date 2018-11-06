@@ -6,8 +6,8 @@ import request from "../../utils/requestAxios";
 export async function projectDetailInfo(id) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/detail/${id}`,
-    method: 'POST',
-    data: {
+    method: 'GET',
+    params: {
       id
     }
   });

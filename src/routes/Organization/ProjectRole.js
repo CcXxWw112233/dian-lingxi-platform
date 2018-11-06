@@ -237,6 +237,8 @@ export default class ProjectRole extends React.Component {
         <Collapse accordion>
           {project_role_data.map((value, parentKey) => {
             const { name, is_default, system_role, function_tree_data =[], content_tree_data = [], already_has_function_permission, already_has_content_permission_trans } = value
+            const checkDisabled = !checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) || system_role ==='1'
+
             return (
               <Panel header={
                 <div className={indexStyles.parrentPanaelHeader}>
@@ -266,7 +268,7 @@ export default class ProjectRole extends React.Component {
                       <Panel header={<
                         div style={childrenPanelTitle}>
                         <Checkbox
-                          disabled={system_role === '1'}
+                          disabled={checkDisabled}
                           indeterminate={indeterminate}
                           onChange={this.onCheckAllChange.bind(this,{parentKey,childKey})}
                           checked={checkedAll}
@@ -275,9 +277,9 @@ export default class ProjectRole extends React.Component {
                              style={{...childrenPanelStyles}} key={childKey}>
                         <div className={indexStyles.childrenPanelContent}>
                           <div style={checkBoxAllStyles}>
-                            <Checkbox disabled={system_role === '1'} indeterminate={indeterminate} onChange={this.onCheckAllChange.bind(this,{parentKey,childKey})} checked={checkedAll} style={{marginRight: 12 }}></Checkbox>
+                            <Checkbox disabled={checkDisabled} indeterminate={indeterminate} onChange={this.onCheckAllChange.bind(this,{parentKey,childKey})} checked={checkedAll} style={{marginRight: 12 }}></Checkbox>
                           </div>
-                          <Checkbox.Group style={{ width: '100%' }} onChange={this.groupOnChange.bind(this, {parentKey,childKey})} value={ selects } disabled={system_role === '1'}>
+                          <Checkbox.Group style={{ width: '100%' }} onChange={this.groupOnChange.bind(this, {parentKey,childKey})} value={ selects } disabled={checkDisabled}>
                             <Row style={childrenPanelRowsStyles}>
                               {child_data.map((value, key) => {
                                 const { id, name } = value
@@ -303,7 +305,7 @@ export default class ProjectRole extends React.Component {
                     {/*searchPlaceholder={'请选择'}*/}
                     {/*style={{width: '100%',}}*/}
                   {/*/>*/}
-                  <Tree  checkable  multiple onCheck={this.onCheck.bind(this, parentKey)} disabled={system_role === '1'} checkedKeys={already_has_content_permission_trans}>
+                  <Tree  checkable  multiple onCheck={this.onCheck.bind(this, parentKey)} disabled={checkDisabled} checkedKeys={already_has_content_permission_trans}>
                     {/*{loop(content_tree_data)}*/}
                   {content_tree_data.map((value, key) => {
                     const { board_id, board_name, app_data } = value
@@ -322,7 +324,7 @@ export default class ProjectRole extends React.Component {
                 </div>
                 {system_role !== '1'? (
                   <div style={{margin: '0 auto',marginTop: 20, textAlign: 'center'}}>
-                    <Button type={'primary'}  onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
+                    <Button type={'primary'} disabled={checkDisabled}  onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
                   </div>
                 ) : ('')}
               </Panel>
