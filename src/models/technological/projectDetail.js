@@ -100,6 +100,9 @@ export default {
             processList: [],   //流程列表
             processDynamics: [], //流程动态列表,
             currentProcessInstanceId: '', //当前查看的流程实例id
+
+          //  团队展示发布
+            teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
           }
         })
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {

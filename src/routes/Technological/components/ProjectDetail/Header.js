@@ -293,6 +293,11 @@ export default class Header extends React.Component {
   }
   //文档操作 ---end
 
+  //团队展示发布编辑
+  editTeamShowPreview() {
+    const html = document.getElementById('editTeamShow').innerHTML
+    console.log(html)
+  }
   //右方部分点击-----------------end
 
   render() {
@@ -450,7 +455,14 @@ export default class Header extends React.Component {
               </div>
             )
           }
+          // break;
         default:
+          operatorConent = (
+            <div style={{display: 'flex',alignItems: 'center', }}>
+              <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
+              <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
+            </div>
+          )
           break
       }
       return operatorConent

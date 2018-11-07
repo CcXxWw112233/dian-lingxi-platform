@@ -5,6 +5,7 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
+import EditTeamShow  from './EditTeamShow'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -394,6 +395,10 @@ const ProjectDetail = (props) => {
       })
     }
   }
+  const EditTeamShowProps = {
+    modal,
+    model,
+  }
 
   const routingJump = (path) => {
     dispatch({
@@ -413,15 +418,16 @@ const ProjectDetail = (props) => {
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
-      case '2':
-        appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
-        break
-      case '3':
-        appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
-        break
-      case '4':
-        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+      // case '2':
+      //   appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
+      //   break
+      // case '3':
+      //   appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
+      //   break
+      // case '4':
+      //   appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
       default:
+        appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
         break
     }
     return appFace
