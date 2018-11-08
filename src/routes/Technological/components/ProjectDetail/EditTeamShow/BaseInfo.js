@@ -73,6 +73,9 @@ export default class BaseInfo extends React.Component {
     const detailInfoOut = {
       width: '100%',
       backgroundColor: '#ffffff',
+      paddingBottom: 60,
+      height: 'auto',
+      clear: 'both'
     }
     const detailInfo = {
       marginTop: 20,
@@ -99,16 +102,28 @@ export default class BaseInfo extends React.Component {
       fontSize: 14,
       textAlign: 'left',
     }
+    const dangerouslySetInnerHTML = {
+      backgroundColor: '#ffffff',
+      height: 'auto',
+      clear: 'both',
+    }
     return {
       editTop,editTop_left_div, editTop_right_div,editTop_right_div_input,editTop_right_div_textArea,
-      detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,
+      detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,dangerouslySetInnerHTML,
 
     }
   }
+  showEdit() {
+    this.props.updateDatas({
+      editTeamShowPreview:false,
+      editTeamShowSave: false
+    })
+  }
   render() {
     const that = this
+    const { templateHtml } = this.props
     const { name, description, logoUrl } = this.state
-    const { editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea,
+    const { editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea,dangerouslySetInnerHTML,
       detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,detailInfoOut } = this.styles()
     const uploadProps = {
       name: 'file',
@@ -158,6 +173,7 @@ export default class BaseInfo extends React.Component {
         }
       },
     };
+    const {datas: { editTeamShowPreview, editTeamShowSave }} = this.props.model
 
     return (
       <div>
@@ -174,16 +190,21 @@ export default class BaseInfo extends React.Component {
             <TextArea onChange={this.textAreaChange.bind(this)} style={{...editTop_right_div_textArea}} placeholder={'输入团队描述'} />
           </div>
         </div>
-        <div style={{...detailInfoOut}}>
+        <div style={{...detailInfoOut}} id={'editTeamShow'}>
           <div style={{...detailInfo}}>
             {logoUrl?(
-              <img src={logoUrl} style={{...detailInfo_top}}/>
+              <img src={logoUrl} style={{...detailInfo_top}} />
             ) : (
-              <div style={{...detailInfo_top}}></div>
+              ''
             )}
+            {/*<div style={{...detailInfo_top}}></div>*/}
             <div style={{...detaiInfo_middle}}>{name}</div>
             <div style={{...detailInfo_bott}} dangerouslySetInnerHTML={{__html: description}}></div>
           </div>
+
+          {(editTeamShowPreview || editTeamShowSave )? (
+            <div style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: templateHtml}} onClick={this.showEdit.bind(this)}></div>
+          ) : ('')}
         </div>
 
       </div>

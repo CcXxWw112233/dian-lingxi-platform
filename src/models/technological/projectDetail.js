@@ -103,6 +103,8 @@ export default {
 
           //  团队展示发布
             teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
+            editTeamShowPreview: false, //编辑预览状态
+            editTeamShowSave: false,  //编辑保存状态
           }
         })
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {

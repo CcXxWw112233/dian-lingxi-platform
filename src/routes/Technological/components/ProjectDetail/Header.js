@@ -295,8 +295,23 @@ export default class Header extends React.Component {
 
   //团队展示发布编辑
   editTeamShowPreview() {
-    const html = document.getElementById('editTeamShow').innerHTML
-    console.log(html)
+    const that = this
+    this.props.updateDatas({
+      editTeamShowPreview: true
+    })
+    setTimeout(function () { //延迟获取
+      const html = document.getElementById('editTeamShow').innerHTML
+      // console.log(html)
+    },200)
+  }
+  editTeamShowSave() {
+    this.props.updateDatas({
+      editTeamShowSave: true
+    })
+    setTimeout(function () { //延迟获取
+      const html = document.getElementById('editTeamShow').innerHTML
+      // console.log(html)
+    },200)
   }
   //右方部分点击-----------------end
 
@@ -460,7 +475,7 @@ export default class Header extends React.Component {
           // operatorConent = (
           //   <div style={{display: 'flex',alignItems: 'center', }}>
           //     <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
-          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
+          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.editTeamShowSave.bind(this)}>保存</Button>
           //   </div>
           // )
           break
