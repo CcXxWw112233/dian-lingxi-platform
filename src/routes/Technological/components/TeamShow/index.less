@@ -1,12 +1,40 @@
-.pic{
-  display: flex;
-  div{
-    width: 100px;
-    height: 100px;
-    background-color: red;
-    margin-left: 20px;
+.teamListOut {
+  margin: 0 auto;
+  margin-top: 40px;
+  padding-bottom: 40px;
+  width: 1200px;
+}
+.head{
+  cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 16px;
+  .head_left{
+    display: flex;
+    align-items: center;
+    div{
+      margin-right: 16px;
+    }
+  }
+  .head_right{
+    display: flex;
+    align-items: center;
   }
 }
-.pic2{
+.teamList_list_1{
   display: flex;
+  flex-wrap: wrap;
+  .teamList_list_1_item{
+    background: #FFFFFF;
+    border-radius: 4px;
+    height: 500px;
+    width: 386px;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  >div:nth-child(3n+0) {
+    margin-right: 0;
+  }
 }

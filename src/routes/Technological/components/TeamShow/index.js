@@ -2,6 +2,8 @@ import React from 'react';
 import {connect} from "dva/index";
 import QueueAnim from  'rc-queue-anim'
 import indexStyles from './index.less'
+import TeamInfo from './TeamInfo'
+import TeamList from './TeamList'
 
 
 const getEffectOrReducerByName = name => `teampublish/${name}`
@@ -47,13 +49,11 @@ const TeamShow = (props) => {
       })
     }
   }
-  let templateHtml = '<p></p><div class="media-wrap image-wrap float-left" style="float:left"><img id="xxx" title="xxx" alt="xxx" loop="" autoplay="" controls="" src="http://newdi-test.oss-cn-beijing.aliyuncs.com/2018-11-08/29e198f63f2b24f3617790f6c8d078bf.jpg?Expires=1541664091&amp;OSSAccessKeyId=LTAIiTOudd9oeHVo&amp;Signature=GrSDgTof3waXAo30GlJVzpci%2BU8%3D" width="200px" height="200px" style="width:200px;height:200px"/></div><p><em>handleEd萨达itorChange洒水多撒大声地阿萨</em></p>'
-  console.log(templateHtml.length)
+  let templateHtml = ''
+  const minHeight = document.body.clientHeight
   return(
     <div>
-      团队展示也
-      <div className={indexStyles.pic}></div>
-      <div  dangerouslySetInnerHTML={{__html: templateHtml}}></div>
+      <TeamList />
     </div>
   )
 };
