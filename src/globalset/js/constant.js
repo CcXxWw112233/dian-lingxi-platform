@@ -1,17 +1,67 @@
+
 export const REQUEST_DOMAIN = '/api/upms' //接口域名
 export const REQUEST_DOMAIN_BOARD = '/api/team' //接口域名
 export const REQUEST_DOMAIN_FILE = '/api/files' //接口域名
 export const REQUEST_DOMAIN_FLOWS = '/api/flows' //接口域名
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbench'
 
-export const WEBSOCKET_PATH = '192.168.0.30'  //WS链接地址
+export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
 
-
-export const MESSAGE_DURATION_TIME = 10 //message弹框时间
+export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
+export const MESSAGE_DURATION_TIME = 3 //message弹框时间
 export const UPLOAD_FILE_SIZE = 30 //上传文件MB限制
 
 export const INT_REQUEST_OK = 0 //接口返回常量定义
 
 export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
+
+export const NOT_HAS_PERMISION_COMFIRN = '您没有该操作权限'
+
+// if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)){
+//   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+//   return false
+// }
+//权限列表
+export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
+export const ORG_TEAM_BOARD_JOIN = 'org:team:board:join' //加入项目 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_ADD = 'org:upms:organization:member:add' //添加成员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_EDIT = 'org:upms:organization:member:edit' //编辑成员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_REMOVE = 'org:upms:organization:member:remove' //移除成员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_GROUP = 'org:upms:organization:group' //管理分组 permission_type=1
+export const ORG_UPMS_ORGANIZATION_EDIT = 'org:upms:organization:edit' //编辑基本信息 permission_type=1
+export const ORG_UPMS_ORGANIZATION_DELETE = 'org:upms:organization:delete' //删除组织 permission_type=1
+export const ORG_UPMS_ORGANIZATION_ROLE_CREATE = 'org:upms:organization:role:create' //创建角色 permission_type=1
+export const ORG_UPMS_ORGANIZATION_ROLE_EDIT = 'org:upms:organization:role:edit' //编辑角色 permission_type=1
+export const ORG_UPMS_ORGANIZATION_ROLE_DELETE = 'org:upms:organization:role:delete' //删除角色 permission_type=1
+export const ORG_TEAM_BOARD_QUERY = 'org:team:board:query' //查看项目 permission_type=1
+export const ORG_TEAM_BOARD_EDIT = 'org:team:board:edit' //编辑项目 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看成员 permission_type=1
+export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
+export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2
+export const PROJECT_TEAM_BOARD_DELETE = 'project:team:board:delete' //删除项目 permission_type=2
+export const PROJECT_FLOWS_FLOW_TEMPLATE = 'project:flows:flow:template' //管理流程模板 permission_type=2
+export const PROJECT_FLOWS_FLOW_CREATE = 'project:flows:flow:create' //新增流程 permission_type=2
+export const PROJECT_FLOWS_FLOW_DELETE = 'project:flows:flow:delete' //删除流程 permission_type=2
+export const PROJECT_FLOWS_FLOW_ABORT = 'project:flows:flow:abort' //中止流程 permission_type=2
+export const PROJECT_TEAM_CARD_INTERVIEW = 'project:team:card:interview' //访问任务 permission_type=2
+export const PROJECT_TEAM_CARD_CREATE = 'project:team:card:create' //创建任务 permission_type=2
+export const PROJECT_TEAM_CARD_EDIT = 'project:team:card:edit' //编辑任务 permission_type=2
+export const PROJECT_TEAM_CARD_COMPLETE = 'project:team:card:complete' //完成/重做任务 permission_type=2
+export const PROJECT_TEAM_CARD_DELETE = 'project:team:card:delete' //删除任务 permission_type=2
+export const PROJECT_TEAM_CARD_GROUP = 'project:team:card:group' //管理任务分组 permission_type=2
+export const PROJECT_TEAM_CARD_COMMENT_PUBLISH = 'project:team:card:comment:publish' //发表评论 permission_type=2
+export const PROJECT_FILES_FILE_INTERVIEW = 'project:files:file:interview' //访问文件 permission_type=2
+export const PROJECT_FILES_FILE_UPLOAD = 'project:files:file:upload' //上传文件 permission_type=2
+export const PROJECT_FILES_FILE_DOWNLOAD = 'project:files:file:download' //下载文件 permission_type=2
+export const PROJECT_FILES_FILE_UPDATE = 'project:files:file:update' //更新文件 permission_type=2
+export const PROJECT_FILES_FILE_DELETE = 'project:files:file:delete' //删除文件 permission_type=2
+export const PROJECT_FILES_FILE_EDIT = 'project:files:file:edit' //编辑文件 permission_type=2
+export const PROJECT_FILES_FOLDER = 'project:files:folder' //管理文件夹 permission_type=2
+export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //发表评论 permission_type=2
+export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
+
+
+
+

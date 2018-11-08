@@ -93,6 +93,7 @@ class ShowAddMenberModal extends React.Component {
           visible={modalVisible}
           width={472}
           zIndex={1006}
+          maskClosable={false}
           footer={null}
           destroyOnClose
           style={{textAlign:'center'}}

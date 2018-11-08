@@ -6,7 +6,6 @@ import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 const { RangePicker } = DatePicker;
-const ConfirmInfoOut_1_bott_Id = `ConfirmInfoOut_1_bott_${Number(new Date().getTime()) * Math.random()}`  // 定义收缩内容的id
 
 //里程碑确认信息
 export default class DetailConfirmInfoFive extends React.Component {
@@ -14,6 +13,13 @@ export default class DetailConfirmInfoFive extends React.Component {
     opinionModalVisible: false,
     due_time: '',
     isShowBottDetail: false, //是否显示底部详情
+  }
+  componentWillMount(nextProps) {
+    const { itemKey  } = this.props
+    //设置底部可伸缩部分id
+    this.setState({
+      ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
+    })
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -61,6 +67,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     },function () {
       this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
     })
+    const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
@@ -84,6 +91,7 @@ export default class DetailConfirmInfoFive extends React.Component {
 
   render() {
     const { due_time, isShowBottDetail } = this.state
+    const { ConfirmInfoOut_1_bott_Id } = this.state
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点

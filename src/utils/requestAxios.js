@@ -31,9 +31,11 @@ export default function request(options = {}, elseSet = {}) {
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
-
+  const board_id = Cookies.get('board_id')
   header['Authorization'] =  Authorization//refreshToken
   header['refreshToken'] =  refreshToken
+  header['board_id'] =  board_id
+
   return new Promise((resolve, reject) => {
     const { clooseLoading = false } = elseSet
     axios({

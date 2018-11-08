@@ -2,7 +2,12 @@
 
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input } from 'antd'
+import { Icon, Checkbox, Collapse, Input, message } from 'antd'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_GROUP,
+  PROJECT_FILES_FILE_EDIT
+} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 
 const Panel = Collapse.Panel
 
@@ -13,6 +18,10 @@ export default class CreateItem extends React.Component {
   }
 
   setIsInEditAdd() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       isInEditAdd: true
     })

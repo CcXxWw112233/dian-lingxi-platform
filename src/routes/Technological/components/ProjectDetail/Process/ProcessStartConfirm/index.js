@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Input, Button } from 'antd'
+import { Card, Input, Button, message } from 'antd'
 import BraftEditor from 'braft-editor'
 import ConfirmInfoOne from './ConfirmInfoOne'
 import ConfirmInfoTwo from './ConfirmInfoTwo'
@@ -8,6 +8,11 @@ import ConfirmInfoFour from './ConfirmInfoFour'
 import ConfirmInfoFive from './ConfirmInfoFive'
 
 import indexStyles from './index.less'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FLOWS_FLOW_CREATE
+} from "../../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
 
 export default class ProcessStartConfirm extends React.Component {
 
@@ -19,8 +24,34 @@ export default class ProcessStartConfirm extends React.Component {
       templateInfo
     })
   }
-
+  verrificationForm() {
+    //校验启动流程时指定
+    const { datas: { processEditDatas = [] } } = this.props.model
+    for(let i = 0; i < processEditDatas.length; i ++ ) {
+      const currentData = processEditDatas[i]
+      if(currentData['deadline_type'] === '2'){
+        if(currentData['deadline_value'].length < 10) {
+          return false
+        }
+      }
+      if(currentData['assignee_type'] === '2'){
+        if(!currentData['assignees']) {
+          return false
+        }
+      }
+      if(currentData['node_type'] === '4' && currentData['cc_type'] === '1'){ //抄送
+        if(!currentData['recipients']) {
+          return false
+        }
+      }
+    }
+    return true
+  }
   startProcess() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { processEditDatas, templateInfo = {}  } } = this.props.model
     const { name, description, id } = templateInfo
     this.props.createProcess({
@@ -34,7 +65,6 @@ export default class ProcessStartConfirm extends React.Component {
     const that = this
     const { datas: { processEditDatas = [], templateInfo = {} } } = this.props.model
     const { name, description } = templateInfo
-
     const editorProps = {
       height: 0,
       contentFormat: 'html',
@@ -96,8 +126,8 @@ export default class ProcessStartConfirm extends React.Component {
               return (<div key={key}>{filterItem(value, key)}</div>)
             })}
           </div>
-          <div style={{textAlign: 'center',marginTop: 40}} onClick={this.startProcess.bind(this)}>
-            <Button disabled={!!!name} style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'}>开始流程</Button>
+          <div style={{textAlign: 'center',marginTop: 40}} >
+            <Button disabled={!!!name || !this.verrificationForm()} style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'} onClick={this.startProcess.bind(this)}>开始流程</Button>
           </div>
         </Card>
       </div>

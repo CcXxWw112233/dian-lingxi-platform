@@ -4,6 +4,7 @@ import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, M
 import indexStyles from './index.less'
 import { UPLOAD_PROCESS_FILE_SIZE } from '../../../../../../globalset/js/constant'
 import MentionAssignees from './MentionAssignees'
+import { validatePositiveInt } from '../../../../../../utils/verify'
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
@@ -56,6 +57,9 @@ export default class EditFormTwo extends React.Component {
   }
   //完成时间
   deadlineDayChange(value) {
+    if(!validatePositiveInt(value)){
+      return false
+    }
     this.updateEdit({value: value.toString()}, 'deadline_value')
   }
   // 是否工作日
@@ -103,6 +107,9 @@ export default class EditFormTwo extends React.Component {
     })
   }
   limitFileNumChange(value) {
+    if(!validatePositiveInt(value)){
+      return false
+    }
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { require_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
@@ -115,6 +122,9 @@ export default class EditFormTwo extends React.Component {
 
   }
   limitFileSizeChange(value) {
+    if(!validatePositiveInt(value)){
+      return false
+    }
     const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { require_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data

@@ -5,7 +5,6 @@ import MenuSearchMultiple  from './MenuSearchMultiple'
 import {timeToTimestamp} from "../../../../../../utils/util";
 
 const { RangePicker } = DatePicker;
-const ConfirmInfoOut_1_bott_Id = `ConfirmInfoOut_1_bott_${Number(new Date().getTime()) * Math.random()}`  // 定义收缩内容的id
 
 //里程碑确认信息
 export default class ConfirmInfoFour extends React.Component {
@@ -60,7 +59,18 @@ export default class ConfirmInfoFour extends React.Component {
         processEditDatas
       })
     }
+
+    this.setState({
+      ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
+    })
   }
+
+  componentDidUpdate(props) {
+    //设置抄送人重新渲染后重新计算高度
+    const element = document.getElementById(this.state.ConfirmInfoOut_1_bott_Id)
+    this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+  }
+
   tooltipFilterName({ users=[], user_id}) {
     let name = '佚名'
     for (let val of users) {
@@ -72,6 +82,9 @@ export default class ConfirmInfoFour extends React.Component {
     return name
   }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return false
+    }
     this.setState({
       due_time:dateString
     })
@@ -130,6 +143,7 @@ export default class ConfirmInfoFour extends React.Component {
     },function () {
       this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
     })
+    const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
@@ -146,6 +160,8 @@ export default class ConfirmInfoFour extends React.Component {
 
   render() {
     const { due_time, isShowBottDetail } = this.state
+    const { ConfirmInfoOut_1_bott_Id } = this.state
+
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey  } = this.props
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, recipients, cc_type } = processEditDatas[itemKey]

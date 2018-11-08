@@ -69,6 +69,8 @@ const Routers = function ({ history, app }) {
         import('./models/technological/projectDetail'),
         import('./models/technological/newsDynamic'),
         import('./models/technological/workbench'),
+        import('./models/technological/organizationMember'),
+        import('./models/technological/teamshow'),
         import('./models/modal')
       ],
       component: () => import('./routes/Technological/'),
@@ -76,6 +78,10 @@ const Routers = function ({ history, app }) {
       path: '/emailRedirect',
       models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/'),
+    },{
+      path: '/organization',
+      models: () => [import('./models/organization')],
+      component: () => import('./routes/Organization/'),
     },
   ]
   //去掉exact

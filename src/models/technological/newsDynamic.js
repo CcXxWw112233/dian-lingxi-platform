@@ -137,7 +137,7 @@ export default {
             if(value.map['type'] === '2') { //处理任务
               let TypeArrayList = []
               for (let j = key; j < dataList.length - 1; j++) {
-                if(dataList[j].map['type'] === '2' && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '2' && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                if(dataList[j].map['type'] === '2' && value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '2' && j > 0 && value.map['activity_type_id'] === dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
                   isNearKeyTypeTwo.push(j)
                   TypeArrayList.push(dataList[j])
                 }else {
@@ -148,7 +148,7 @@ export default {
             }else if(value.map['type'] === '3'){ //处理评论
               let TypeArrayList = []
               for (let j = key; j < dataList.length - 1; j++) {
-                if(dataList[j].map['type'] === '3' && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '3' && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                if(dataList[j].map['type'] === '3'&& value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '3'&& value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
                   isNearKeyTypeTwo.push(j)
                   TypeArrayList.push(dataList[j])
                 }else {

@@ -5,6 +5,7 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
+import EditTeamShow  from './EditTeamShow'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -72,7 +73,18 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
-
+    setMemberRoleInProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('setMemberRoleInProject'),
+        payload: data
+      })
+    },
+    getProjectRoles(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProjectRoles'),
+        payload: data
+      })
+    }
   }
   const DetailInfoProps = {
     modal,
@@ -101,6 +113,18 @@ const ProjectDetail = (props) => {
         payload: data
       })
       this.hideModal()
+    },
+    setMemberRoleInProject(data){
+      dispatch({
+        type: getEffectOrReducerByName('setMemberRoleInProject'),
+        payload: data
+      })
+    },
+    getProjectRoles(data){
+      dispatch({
+        type: getEffectOrReducerByName('getProjectRoles'),
+        payload: data
+      })
     }
   }
   const CreateTaskProps = {
@@ -371,6 +395,10 @@ const ProjectDetail = (props) => {
       })
     }
   }
+  const EditTeamShowProps = {
+    modal,
+    model,
+  }
 
   const routingJump = (path) => {
     dispatch({
@@ -398,7 +426,9 @@ const ProjectDetail = (props) => {
         break
       case '4':
         appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+        break
       default:
+        // appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
         break
     }
     return appFace
@@ -414,8 +444,8 @@ const ProjectDetail = (props) => {
         visible={projectInfoDisplay}
         width={420}
         top={172}
+        zIndex={0}
         maskStyle={{top: 0, }}
-        style={{zIndex: 200,}}
       >
         <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       </Drawer>

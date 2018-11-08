@@ -3,8 +3,14 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, Upload, message } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
-import {REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FILE_EDIT,
+  REQUEST_DOMAIN_FILE,PROJECT_FILES_FILE_UPDATE,
+  UPLOAD_FILE_SIZE
+} from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
+import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
 
 
 export default class Header extends React.Component {
@@ -21,6 +27,10 @@ export default class Header extends React.Component {
     })
   }
   fileDownload(filePreviewCurrentId) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.fileDownload({ids: filePreviewCurrentId})
   }
   //item操作
@@ -33,9 +43,17 @@ export default class Header extends React.Component {
       case '1':
         break
       case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.fileDownload({ids: file_id})
         break
       case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.updateDatas({
           copyOrMove: '0',
           openMoveDirectoryType: '3',
@@ -43,6 +61,10 @@ export default class Header extends React.Component {
         })
         break
       case '4':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.updateDatas({
           copyOrMove: '1',
           openMoveDirectoryType: '3',
@@ -50,6 +72,10 @@ export default class Header extends React.Component {
         })
         break
       case '5':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.fileRemove({
           board_id,
           arrays: JSON.stringify([{type, id: file_id}])
@@ -67,23 +93,25 @@ export default class Header extends React.Component {
     const that = this
     const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, } = projectDetailInfoData
-    //文件上传
+    //文件版本更新
     const uploadProps = {
       name: 'file',
       withCredentials: true,
-      action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+      action: `${REQUEST_DOMAIN_FILE}/file/version_upload`,
       data: {
         board_id,
         folder_id: currentParrentDirectoryId,
-        type: '1',
         file_version_id: filePreviewCurrentVersionId,
-        upload_type: '2'
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken : Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false

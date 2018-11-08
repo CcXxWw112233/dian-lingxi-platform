@@ -6,6 +6,10 @@ export const validateTel = (value) => {
 export const validateEmail = (value) => {
   return (/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/.test(value))
 }
+// 验证符合邮箱后缀名
+export const validateEmailSuffix = (value) => {
+  return (/^@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/.test(value))
+}
 // 验证密码 正则匹配用户密码8-32位数字和字母的组合
 export const validatePassword = (value) => {
   return (/^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{6,32}/.test(value))

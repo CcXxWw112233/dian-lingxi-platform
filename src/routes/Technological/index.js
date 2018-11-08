@@ -15,6 +15,24 @@ import 'moment/locale/zh-cn';
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
+// const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions')) || []
+// for(let i = 0; i < organizationMemberPermissions.length; i++) {
+//   const obj = {}
+//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   if(organizationMemberPermissions[i].permission_type === '1'){
+//     // console.log(str2)
+//   }
+// }
+// for(let i = 0; i < organizationMemberPermissions.length; i++) {
+//   const obj = {}
+//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
+//
+//   if(organizationMemberPermissions[i].permission_type === '2'){
+//     // console.log(str2)
+//   }
+// }
 const Technological = (options) => {
   const { dispatch, model } = options
   const app = dva();
@@ -39,6 +57,48 @@ const Technological = (options) => {
         type: getEffectOrReducerByName('updateDatas') ,
         payload:payload
       })
+    },
+    //组织
+    getSearchOrganizationList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getSearchOrganizationList'),
+        payload: data
+      })
+    },
+    createOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('createOrganization'),
+        payload: data
+      })
+    },
+    updateOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateOrganization'),
+      })
+    },
+    applyJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('applyJoinOrganization'),
+        payload: data
+      })
+    },
+    inviteJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('inviteJoinOrganization'),
+        payload: data
+      })
+    },
+    uploadOrganizationLogo(data) {
+      dispatch({
+        type: getEffectOrReducerByName('uploadOrganizationLogo'),
+        payload: data
+      })
+    },
+    changeCurrentOrg(data) {
+      dispatch({
+        type: getEffectOrReducerByName('changeCurrentOrg'),
+        payload: data
+      })
     }
   }
 
@@ -52,7 +112,7 @@ const Technological = (options) => {
       path: '/technological/project',
       component: () => import('./components/Project'),
     }, {
-      path: '/technological/projectDetail',
+      path: '/technological/projectDetail/:id?',
       component: () => import('./components/ProjectDetail'),
     }, {
       path: '/technological/newsDynamic',
@@ -60,6 +120,12 @@ const Technological = (options) => {
     }, {
       path: '/technological/workbench',
       component: () => import('./components/Workbench'),
+    }, {
+      path: '/technological/organizationMember',
+      component: () => import('./components/OrganizationMember'),
+    }, {
+      path: '/technological/teamshow',
+      component: () => import('./components/TeamShow'),
     }
   ]
   return (
@@ -82,7 +148,6 @@ const Technological = (options) => {
     </LocaleProvider>
   );
 };
-
 // export default Products;
 // export default connect(({ technological }) => {
 //   return({

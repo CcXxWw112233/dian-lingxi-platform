@@ -1,11 +1,18 @@
 import React from 'react'
 import indexStyle from './index.less'
-import { UPLOAD_FILE_SIZE } from '../../../../globalset/js/constant'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
+  PROJECT_TEAM_CARD_INTERVIEW,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,
+  ORG_TEAM_BOARD_QUERY,
+  PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE,PROJECT_FILES_FILE_DELETE,PROJECT_FILES_FILE_EDIT,
+} from '../../../../globalset/js/constant'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import MenuSearch from '../TecPublic/MenuSearch'
+import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
 
 let is_starinit = null
 
@@ -23,6 +30,9 @@ export default class Header extends React.Component {
   }
 
   //项目操作----------------start
+  gobackToProject(){
+    this.props.routingJump('/technological/project')
+  }
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
     this.setState({
@@ -31,6 +41,10 @@ export default class Header extends React.Component {
   }
   confirm(board_id) {
     const that = this
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_JOIN)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     Modal.confirm({
       title: '确认要退出该项目吗？',
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
@@ -64,12 +78,24 @@ export default class Header extends React.Component {
     const { key } = e
     switch (key) {
       case '1':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setShowAddMenberModalVisibile()
         break
       case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.archivedProject({board_id, is_archived: '1'})
         break
       case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.deleteProject(board_id)
         break
       case '4':
@@ -81,6 +107,10 @@ export default class Header extends React.Component {
   }
   //收藏
   starClick(id, e) {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     e.stopPropagation();
     this.setState({
       isInitEntry: false,
@@ -121,6 +151,22 @@ export default class Header extends React.Component {
   //右方部分点击-----------------start
   //右方app应用点击
   appClick(key) {
+    if(key === '2') {
+      //流程
+    }else if(key === '3') { // 任务
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
+    }else if(key === '4'){ //文档
+      if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
+    }else {
+
+    }
+
     this.props.updateDatas({
       appsSelectKey: key
     })
@@ -148,6 +194,10 @@ export default class Header extends React.Component {
     this.props.updateDatas({selectedRowKeys: newSelectedRowKeys})
   }
   createDirectory() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
     if(isInAddDirectory) { //正在创建的过程中不能添加多个
       return false
@@ -169,6 +219,10 @@ export default class Header extends React.Component {
 
   }
   downLoadFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList, selectedRowKeys } } = this.props.model
     let chooseArray = []
     for(let i=0; i < selectedRowKeys.length; i++ ){
@@ -200,6 +254,10 @@ export default class Header extends React.Component {
     // })
   }
   moveFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatas({
       copyOrMove: '0',//copy是1
       openMoveDirectoryType: '1',
@@ -207,6 +265,10 @@ export default class Header extends React.Component {
     })
   }
   copyFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatas({
       copyOrMove: '1',//copy是1
       openMoveDirectoryType: '1',
@@ -214,6 +276,10 @@ export default class Header extends React.Component {
     })
   }
   deleteFile() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { fileList, selectedRowKeys, projectDetailInfoData= {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     let chooseArray = []
@@ -227,6 +293,11 @@ export default class Header extends React.Component {
   }
   //文档操作 ---end
 
+  //团队展示发布编辑
+  editTeamShowPreview() {
+    const html = document.getElementById('editTeamShow').innerHTML
+    console.log(html)
+  }
   //右方部分点击-----------------end
 
   render() {
@@ -279,6 +350,10 @@ export default class Header extends React.Component {
         refreshToken : Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if(e.size == 0) {
           message.error(`不能上传空文件`)
           return false
@@ -380,7 +455,14 @@ export default class Header extends React.Component {
               </div>
             )
           }
+          break;
         default:
+          // operatorConent = (
+          //   <div style={{display: 'flex',alignItems: 'center', }}>
+          //     <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
+          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
+          //   </div>
+          // )
           break
       }
       return operatorConent
@@ -390,7 +472,7 @@ export default class Header extends React.Component {
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
-              <Icon type="left-square-o" className={indexStyle.projectNameIcon}/>
+              <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
                <span className={indexStyle.projectName}>{board_name}</span>
                <Icon className={indexStyle.star}
                      onClick={this.starClick.bind(this, board_id)}

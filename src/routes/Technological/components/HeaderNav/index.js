@@ -1,8 +1,16 @@
 import React from 'react';
 import indexStyle from './index.less'
 import { Link } from 'dva/router'
-import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button} from 'antd'
+import { Input, Icon, Menu, Dropdown, Tooltip, Tabs, Card, Modal, Button, message} from 'antd'
 import Cookies from 'js-cookie'
+import CreateOrganizationModal from './CreateOrganizationModal'
+import {color_4 } from '../../../../globalset/js/styles'
+import ShowAddMenberModal from '../OrganizationMember/ShowAddMenberModal'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_GROUP,
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_QUERY
+} from "../../../../globalset/js/constant";
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
@@ -12,13 +20,63 @@ export default class HeaderNav extends React.Component{
   }
   state = {
     menuVisible: false,
+    createOrganizationVisable: false,
+    ShowAddMenberModalVisibile: false,
   };
 
   //蓝色按钮下拉菜单
   handleMenuClick = (e) => {
-    if (e.key === '6') {
-      this.props.routingJump('/technological/accoutSet')
-      this.setState({ menuVisible: false });
+    const { key } = e
+    this.setState({ menuVisible: false });
+    switch(key) {
+      case '1':
+        break
+      case '2':
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.routingJump('/technological/organizationMember')
+        break;
+      case '3':
+        // console.log(window.location.hash)
+        this.props.routingJump(`/organization?nextpath=${window.location.hash.replace('#','')}`) //目标页面的返回按钮返回的路劲
+        break
+      case '4':
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.setShowAddMenberModalVisibile()
+        break;
+      case '5':
+        break
+      case '6':
+        this.props.routingJump('/technological/accoutSet')
+        break;
+      case '7':
+        break
+      case '8':
+        break
+      case '9':
+        break
+      case '10':
+        //创建组织的弹窗打开
+        this.setCreateOrgnizationOModalVisable()
+        break
+      //这里是选择组织
+      default:
+        const { datas: {currentUserOrganizes = []}} = this.props.model
+        for(let val of currentUserOrganizes) {
+          if(key === val['id']){
+            Cookies.set('org_id',val.id,{expires: 30, path: ''})
+            localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
+            this.props.updateDatas({currentSelectOrganize: val})
+            this.props.changeCurrentOrg({org_id: val.id})
+            break
+          }
+        }
+        break
     }
     this.props.updateDatas({
       naviHeadTabIndex: '4'
@@ -60,61 +118,84 @@ export default class HeaderNav extends React.Component{
     });
 
   }
+
+  //创建或加入组织
+  setCreateOrgnizationOModalVisable() {
+    this.setState({
+      createOrganizationVisable: !this.state.createOrganizationVisable
+    })
+  }
+  //添加组织成员操作
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+  addMembers(data) {
+    const { users } = data
+    const { datas = {} } = this.props.model
+    const {  currentSelectOrganize = {} } = datas
+    const { id } = currentSelectOrganize
+    this.props.inviteJoinOrganization({
+      members: users,
+      org_id: id
+    })
+  }
   render() {
     const { datas = {} } = this.props.model
-    const { userInfo = {} } = datas
-    const {
-      orgnization = '组织',
-      aboutMe,
-      avatar,
-      createTime,
-      email,
-      fullName,
-      id,
-      lastLoginTime,
-      mobile,
-      nickname,
-      phone,
-      qq,
-      status,
-      updateTime,
-      username,
-      wechat,
-    } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
-    const menu = (
-      //
+    const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const orgnizationName = currentSelectOrganize.name || '组织'
+    const { logo } = currentSelectOrganize
+    const userInfoMenu = (
       <Card  className={indexStyle.menuDiv} >
         <div className={indexStyle.triangle} ></div>
-        <Menu onClick={this.handleMenuClick} selectable={false} >
-          <Menu.Item key="1" style={{padding:0,margin: 0, height: 48,paddingTop:4,boxSizing: 'border-box'}}>
-            <Tooltip placement="top" title={'即将上线'}>
-              <div style={{width: '100%',height:'100%',padding:'0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
-                {orgnization}
+        <Menu onClick={this.handleMenuClick.bind(this)} selectable={false} >
+          <SubMenu key="sub" title={
+            <div style={{width: '100%',height:'100%',padding:'0 16 0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
+             {orgnizationName}
+            </div>}>
+            {currentUserOrganizes.map((value, key) => {
+              const { name, id } = value
+              return (
+                <Menu.Item key={id} style={{padding:0,margin: 0,color: '#595959'}} >
+                  <div className={indexStyle.itemDiv} style={{ padding: '0 16px'}}>
+                    {name}
+                  </div>
+                </Menu.Item>
+              )
+            })}
+            <Menu.Item key="10" style={{padding:0,margin: 0,color: '#595959'}}>
+              <div className={indexStyle.itemDiv} style={{ padding: '0 16px',color: color_4}}>
+                <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新组织
               </div>
-            </Tooltip>
-          </Menu.Item>
+            </Menu.Item>
+          </SubMenu>
           <Menu.Divider key="none_1"/>
-          <Menu.Item  key="2" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
+          {currentUserOrganizes.length?(
+            <Menu.Item  key="2" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span ><Icon type="team" />团队/部门</span>
+                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/成员</span></span>
               </div>
-            </Tooltip>
-          </Menu.Item>
-          <Menu.Item key="3" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
+            </Menu.Item>
+          ):('')}
+          {currentUserOrganizes.length?(
+            <Menu.Item key="3" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span ><Icon type="home" />机构管理后台</span>
+                <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>组织管理后台</span></span>
               </div>
-            </Tooltip>
-          </Menu.Item>
-          <Menu.Item key="4" style={{padding:0,margin: 0}}>
-            <Tooltip placement="topLeft" title={'即将上线'}>
+            </Menu.Item>
+          ):('')}
+
+          {currentUserOrganizes.length?(
+            <Menu.Item key="4" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span><Icon type="user-add" />邀请成员加入</span>
+                <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请成员加入</span>
+                </span>
               </div>
-            </Tooltip>
-          </Menu.Item>
+            </Menu.Item>
+          ):('')}
+
           <Menu.Item key="5" style={{padding:0,margin: 0}}>
             <Tooltip placement="topLeft" title={'即将上线'}>
               <div className={indexStyle.itemDiv}>
@@ -158,12 +239,17 @@ export default class HeaderNav extends React.Component{
     const { datas:{naviHeadTabIndex} } = this.props.model
 
     return(
-      <div className={indexStyle.out}>
+      <div>
+         <div className={indexStyle.out}>
         <div className={indexStyle.out_left}>
-          <Dropdown overlay={menu}
+          <Dropdown overlay={userInfoMenu}
                     onVisibleChange={this.handleVisibleChange}
                     visible={this.state.menuVisible}>
-            <div className={indexStyle.out_left_left}>迪</div>
+            {logo?(
+              <img  src={logo}/>
+            ):(
+              <div className={indexStyle.out_left_left}>{orgnizationName.substring(0,1)}</div>
+            )}
           </Dropdown>
           <div className={indexStyle.out_left_right}>
             <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
@@ -181,6 +267,9 @@ export default class HeaderNav extends React.Component{
             <Icon type="plus" style={{ color: 'rgba(0,0,0,.25)', fontSize: 20,color: '#ffffff', fontWeight: 'bold' }} />
           </div>
         </div>
+      </div>
+        <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
   }

@@ -1,9 +1,15 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
 import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
+import  Cookies  from 'js-cookie'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  PROJECT_FILES_FILE_EDIT
+} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
@@ -11,16 +17,25 @@ const Dragger = Upload.Dragger
 
 export default class Comment extends React.Component {
   state = {
-    editText: ''
+    editText: '',
+    submitButtonDisabled: true
   }
   MentionSpacerClick() {
   }
   MentionEditorChange(e,value) {
     this.setState({
       editText: toString(e)
+    },function () {
+      this.setState({
+        submitButtonDisabled: !!!this.state.editText
+      })
     })
   }
   submitComment() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({
@@ -41,6 +56,8 @@ export default class Comment extends React.Component {
       }
     }
     const { img } = projectDetailInfoData
+    const userInfo = Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')) : {}
+    const { avatar } = userInfo
 
     const { leftSpaceDivWH = 40 } = this.props
     const props = {
@@ -68,8 +85,8 @@ export default class Comment extends React.Component {
         </div>
         <div className={CommentStyles.out}>
           <div>
-            {img?(
-              <img src={img} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
+            {avatar?(
+              <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
             ): (
               <div style={{width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
                 <Icon type={'user'} style={{fontSize: 16, marginTop: 4, color: '#8c8c8c'}}/>
@@ -105,7 +122,7 @@ export default class Comment extends React.Component {
                       {/*</Dragger>*/}
                     </div>
                   <div  className={CommentStyles.functionBar_right}>
-                    <Button type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
+                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,14 @@
 
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, message } from 'antd';
 import CreatDirector from './CreatDirector'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FILES_FILE_DOWNLOAD,
+  PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
+} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
@@ -35,9 +40,17 @@ export default class FileList extends React.Component {
       case '1':
         break
       case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.fileDownload({ids: file_id})
         break
       case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.updateDatas({
           copyOrMove: '0',
           openMoveDirectoryType: '2',
@@ -46,6 +59,10 @@ export default class FileList extends React.Component {
         })
         break
       case '4':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.updateDatas({
           copyOrMove: '1',
           openMoveDirectoryType: '2',
@@ -54,6 +71,10 @@ export default class FileList extends React.Component {
         })
         break
       case '5':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.props.fileRemove({
           board_id,
           arrays: JSON.stringify([{type, id: file_id}])

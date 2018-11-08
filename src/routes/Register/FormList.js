@@ -207,7 +207,7 @@ class FormList extends React.Component {
             checked={this.state.checkBoxChecked}
             onChange={this.checkBoxOnChange}
           />
-           <span style={{color: '#000', fontSize: 14}}>同意《<span style={{color: '#1890FF', cursor: 'pointer'}}>productname 服务协议</span>》</span>
+           <span style={{color: '#000', fontSize: 14}}>同意《<span style={{color: '#1890FF', cursor: 'pointer'}}>灵犀 服务协议</span>》</span>
         </div>
         {/* 确认 */}
         <FormItem style={{marginTop: 24}}>

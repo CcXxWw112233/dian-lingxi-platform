@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import indexStyles from './index.less'
 import MentionAssignees from './MentionAssignees'
+import { validatePositiveInt } from '../../../../../../utils/verify'
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
@@ -54,6 +55,9 @@ export default class EditFormFour extends React.Component {
   }
   //完成时间
   deadlineDayChange(value) {
+    if(!validatePositiveInt(value)){
+      return false
+    }
     this.updateEdit({value: value.toString()}, 'deadline_value')
   }
   // 是否工作日
