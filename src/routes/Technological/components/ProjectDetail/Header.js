@@ -455,14 +455,14 @@ export default class Header extends React.Component {
               </div>
             )
           }
-          // break;
+          break;
         default:
-          operatorConent = (
-            <div style={{display: 'flex',alignItems: 'center', }}>
-              <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
-              <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
-            </div>
-          )
+          // operatorConent = (
+          //   <div style={{display: 'flex',alignItems: 'center', }}>
+          //     <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
+          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
+          //   </div>
+          // )
           break
       }
       return operatorConent

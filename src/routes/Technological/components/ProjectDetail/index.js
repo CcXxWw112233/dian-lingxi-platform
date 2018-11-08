@@ -418,16 +418,17 @@ const ProjectDetail = (props) => {
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
-      // case '2':
-      //   appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
-      //   break
-      // case '3':
-      //   appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
-      //   break
-      // case '4':
-      //   appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+      case '2':
+        appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
+        break
+      case '3':
+        appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
+        break
+      case '4':
+        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+        break
       default:
-        appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
+        // appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
         break
     }
     return appFace
