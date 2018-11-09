@@ -6,7 +6,7 @@ import TeamInfo from './TeamInfo'
 import TeamList from './TeamList'
 
 
-const getEffectOrReducerByName = name => `teampublish/${name}`
+const getEffectOrReducerByName = name => `teamshow/${name}`
 
 const TeamShow = (props) => {
   // console.log(props)

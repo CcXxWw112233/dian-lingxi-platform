@@ -83,6 +83,16 @@ const Routers = function ({ history, app }) {
       path: '/organization',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Organization/'),
+    },{
+      path: '/teamShow',
+      models: () => [
+        import('./models/teamShow'),
+        import('./models/teamShow/editTeamShow'),
+        import('./models/teamShow/teamList'),
+        import('./models/teamShow/teamInfo'),
+        import('./models/modal')
+      ],
+      component: () => import('./routes/TeamShow/'),
     },
   ]
   //去掉exact
@@ -93,7 +103,7 @@ const Routers = function ({ history, app }) {
           routes.map(({ path, ...dynamics }, key) => {
             return (
               <Route key={key}
-                     exact={path.indexOf('/technological') === -1 ? true : false}
+                     exact={(path.indexOf('/technological') !== -1  || path.indexOf('/teamShow') !== -1 )? false : true}
                      path={path}
                      component={dynamic({
                        app,
