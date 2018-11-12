@@ -2,8 +2,7 @@ import React from 'react'
 import {message } from 'antd'
 import {REQUEST_DOMAIN} from "../../../../globalset/js/constant";
 import BraftEditor from 'braft-editor'
-import 'braft-editor/dist/braft.css'
-
+import 'braft-editor/dist/index.css'
 import Cookies from 'js-cookie'
 
 export default class Edit extends React.Component {
@@ -15,15 +14,7 @@ export default class Edit extends React.Component {
 
   }
 
-  submitContent = () => {
-    // 在编辑器获得焦点时按下ctrl+s会执行此方法
-    // 编辑器内容提交到服务端之前，可直接调用editorState.toHTML()来获取HTML格式的内容
-    // const htmlContent = this.state.content.toHTML()
-    // console.log(htmlContent)
-  }
-
   handleEditorChange = (content) => {
-    console.log(content)
     this.props.handleEditorChangeProps(content)
   }
   isJSON = (str) => {
@@ -94,19 +85,18 @@ export default class Edit extends React.Component {
   }
   render () {
 
-    const { datas: {content}  } = this.props.model
-    const {datas: { editTeamShowPreview, editTeamShowSave }} = this.props.model
-
+    const {datas: { editTeamShowPreview, editTeamShowSave, content }} = this.props.model
+// 将HTML字符串转换为编辑器所需要的EditorState实例
+    const editorState = BraftEditor.createEditorState(content)
     return (
       <div style={{backgroundColor: '#ffffff'}}>
         {(editTeamShowPreview || editTeamShowSave )? (
          ''
         ) : (
           <BraftEditor
-            value={content}
+            value={editorState}
             contentFormat = {'html'}
-            onChange = {this.handleEditorChange}
-            onSave={this.submitContent.bind(this)}
+            onChange = {this.handleEditorChange.bind(this)}
             media={{uploadFn: this.myUploadFn}}
             contentStyle={{minHeight: 500, height: 1000,overflow: 'auto'}}
           />

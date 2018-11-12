@@ -1,7 +1,7 @@
 import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow,getCurrentOrgTeamShowList } from '../../services/teamShow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
@@ -21,14 +21,23 @@ export default modelExtend(technological, {
             type: 'updateDatas',
             payload: {
               // teamShowList: [],
-              total: 0
+              currentPageNo: 1,
+              total: 0,
+              teamShowTypeList: [],
+              teamShowTypeId: '',
+            }
+          })
+          dispatch({
+            type: 'getTeamShowTypeList',
+            payload: {
+
             }
           })
           dispatch({
             type: 'getTeamShowList',
             payload: {
               current: '1',
-              size: '20',
+              size: PAGINATION_PAGE_SIZE,
             }
           })
         }
@@ -61,7 +70,12 @@ export default modelExtend(technological, {
     * getTeamShowTypeList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowTypeList, payload)
       if(isApiResponseOk(res)) {
-
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            teamShowTypeList: res.data,
+          }
+        })
       }else{
 
       }

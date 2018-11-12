@@ -34,8 +34,6 @@ export default class HeaderNav extends React.Component{
     this.props.updateDatas({
       teamShowTypeId: id
     })
-    // const url = id ? `/teamShow/teamList?teamShowTypeId=${id}` : `/teamShow/teamList`
-    // this.props.routingJump(url)
   }
   render() {
     const { datas: { teamShowTypeList = [], teamShowTypeId }} = this.props.model
@@ -47,13 +45,13 @@ export default class HeaderNav extends React.Component{
           <div className={indexStyle.out_left_right}>
             <div>团队展示</div>
             <div></div>
-            {teamShowTypeList.map((value, key) => {
-              const {name, id} = value
-              return(
-                <div onClick={this.queryTeamListWithType.bind(this,id)} key={id} style={{color: teamShowTypeId === id? '#1890FF': '#595959'}}>{name}</div>
-              )
-            })}
-            <div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>
+            {/*{teamShowTypeList.map((value, key) => {*/}
+              {/*const {name, id} = value*/}
+              {/*return(*/}
+                {/*<div onClick={this.queryTeamListWithType.bind(this,id)} key={id} style={{color: teamShowTypeId === id? '#1890FF': '#595959'}}>{name}</div>*/}
+              {/*)*/}
+            {/*})}*/}
+            {/*<div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>*/}
             <div style={{marginLeft: 30}}>
               <Icon type="appstore" style={{display:'inline-block',marginTop: 6 }} />
             </div>

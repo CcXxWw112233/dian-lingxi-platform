@@ -3,6 +3,8 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip,Button } from 'antd'
 import SaveModal from './SaveModal'
 import {color_4} from '../../../../globalset/js/styles'
+import BraftEditor from 'braft-editor'
+
 export default class Header extends React.Component {
   state={
     saveModalVisible: false,
@@ -13,10 +15,6 @@ export default class Header extends React.Component {
     this.props.updateDatas({
       editTeamShowPreview: true
     })
-    setTimeout(function () { //延迟获取
-      const html = document.getElementById('editTeamShow').innerHTML
-      console.log(html)
-    },200)
   }
   editTeamShowSave() {
     this.props.updateDatas({
@@ -25,10 +23,6 @@ export default class Header extends React.Component {
     this.setState({
       saveModalVisible: true,
     })
-    // setTimeout(function () { //延迟获取
-    //   const html = document.getElementById('editTeamShow').innerHTML
-    //   console.log(html)
-    // },200)
   }
   setSaveModalVisible(bool) {
     this.setState({
@@ -44,7 +38,12 @@ export default class Header extends React.Component {
     switch (key) {
       case 'add':
         this.props.updateDatas({
-          operateType: '1'
+          operateType: '1',
+          name: '',
+          cover_img: '',
+          summary: '',
+          content: '',
+          previewHtml: '',
         })
         break
       default:

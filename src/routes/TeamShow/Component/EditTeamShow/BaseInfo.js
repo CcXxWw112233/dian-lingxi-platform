@@ -8,6 +8,8 @@ import {
   REQUEST_DOMAIN, UPLOAD_FILE_SIZE
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
+import BraftEditor from 'braft-editor'
+
 const TextArea = Input.TextArea
 
 export default class BaseInfo extends React.Component {
@@ -155,6 +157,13 @@ export default class BaseInfo extends React.Component {
     };
     const {datas: { editTeamShowPreview, editTeamShowSave }} = this.props.model
 
+    let contentHTML = ''
+    if(typeof content === 'object') {
+      contentHTML = content.toHTML()
+
+    }else {
+      contentHTML = content
+    }
     return (
       <div>
         <div style={{...editTop, color: '#262626'}}>
@@ -183,8 +192,9 @@ export default class BaseInfo extends React.Component {
           </div>
 
           {(editTeamShowPreview || editTeamShowSave )? (
-            <div style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: content}} onClick={this.showEdit.bind(this)}></div>
+            <div  id={'editContent'} style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: contentHTML}} onClick={this.showEdit.bind(this)}></div>
           ) : ('')}
+
         </div>
 
       </div>

@@ -3,6 +3,7 @@ import indexStyles from './index.less'
 import { Icon, Button, Pagination  } from 'antd'
 import TeamListTypeOne from './TeamListTypeOne'
 import TeamListTypeTwo from './TeamListTypeTwo'
+import { PAGINATION_PAGE_SIZE } from '../../../../globalset/js/constant'
 
 export default class TeamList extends React.Component{
   state={
@@ -17,9 +18,21 @@ export default class TeamList extends React.Component{
   gotoEditTeamShow() {
     this.props.routingJump('/teamShow/editTeamShow')
   }
+  pageNoChange(pageNo) {
+    const { datas: {teamShowTypeId} } = this.props.model
+
+    this.props.updateDatas({
+      currentPageNo: pageNo
+    })
+    this.props.getTeamShowList({
+      show_type_id: teamShowTypeId || undefined,
+      current: pageNo,
+      size: PAGINATION_PAGE_SIZE,
+    })
+  }
   render(){
     const { showType } = this.state
-    const { datas: {teamShowList=[], total} } = this.props.model
+    const { datas: {teamShowList=[], total, currentPageNo} } = this.props.model
     return(
       <div className={indexStyles.teamListOut}>
         <div className={indexStyles.head}>
@@ -43,11 +56,13 @@ export default class TeamList extends React.Component{
             )
           ))}
         </div>
-        <div style={{marginTop: 40}}>
+        <div style={{marginTop: 40, display:teamShowList.length? 'none': 'block', fontSize: 16,color: '#8c8c8c' }} >没有记录哦~</div>
+        <div style={{marginTop: 40, display:teamShowList.length? 'block': 'none' }} >
           <Pagination
-            total={total}
-            pageSize={20}
-            defaultCurrent={1}
+            total={Number(total)}
+            pageSize={PAGINATION_PAGE_SIZE}
+            current={currentPageNo}
+            onChange = {this.pageNoChange.bind(this)}
           />
         </div>
       </div>

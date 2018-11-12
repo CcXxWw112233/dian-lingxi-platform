@@ -22,11 +22,10 @@ class SaveModal extends React.Component {
           editTeamShowPreview: false,
           editTeamShowSave: false
         })
-        const html = document.getElementById('editTeamShow').innerHTML
+        const html = document.getElementById('editContent').innerHTML
         const { datas: {name, summary, cover_img, content} } = this.props.model
-        console.log(values)
         this.props.addTeamShow({
-          content: content,
+          content: html,
           cover_img:cover_img,
           name: name,
           show_type_id: values['show_type_id'],

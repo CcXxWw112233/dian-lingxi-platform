@@ -2,7 +2,9 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Tag, Input, Dropdown, Menu,DatePicker, Checkbox , message } from 'antd'
 import BraftEditor from 'braft-editor'
-import 'braft-editor/dist/braft.css'
+// import 'braft-editor/dist/braft.css'
+import 'braft-editor/dist/index.css'
+
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";

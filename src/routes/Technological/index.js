@@ -123,12 +123,6 @@ const Technological = (options) => {
     }, {
       path: '/technological/organizationMember',
       component: () => import('./components/OrganizationMember'),
-    }, {
-      path: '/technological/teamshow',
-      component: () => import('./components/TeamShow'),
-    }, {
-      path: '/technological/editTeamShow',
-      component: () => import('./components/EditTeamShow'),
     }
   ]
   return (

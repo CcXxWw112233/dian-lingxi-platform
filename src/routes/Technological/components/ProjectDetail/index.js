@@ -5,7 +5,6 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
-import EditTeamShow  from './EditTeamShow'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'

@@ -25,12 +25,12 @@ export default {
               teamShowTypeId: ''
             }
           })
-          dispatch({
-            type: 'getTeamShowTypeList',
-            payload: {
-
-            }
-          })
+          // dispatch({
+          //   type: 'getTeamShowTypeList',
+          //   payload: {
+          //
+          //   }
+          // })
         }
 
       })

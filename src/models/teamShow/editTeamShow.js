@@ -63,7 +63,14 @@ export default modelExtend(technological, {
     * addTeamShow({ payload }, { select, call, put }) {
       let res = yield call(addTeamShow, payload)
       if(isApiResponseOk(res)) {
-        message.success('保存成功', MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'getCurrentOrgTeamShowList',
+          payload: {
+            calBack: function () {
+              message.success('保存成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -109,13 +116,37 @@ export default modelExtend(technological, {
     * deleteTeamShow({ payload }, { select, call, put }) {
       let res = yield call(deleteTeamShow, payload)
       if(isApiResponseOk(res)) {
-
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            operateType: '1', //1新增， 2 修改
+            //页面操作数据
+            name: '',
+            cover_img: '',
+            summary: '',
+            content: '',
+            previewHtml: '',
+            //当前查询得到
+            currentTeamShowName: '',
+            currentTeamShowId: '',
+            currentTeamShowShowId: '',
+          }
+        })
+        yield put({
+          type: 'getCurrentOrgTeamShowList',
+          payload: {
+            calBack: function () {
+              message.success('删除成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
-      let res = yield call(getCurrentOrgTeamShowList, payload)
+      const { calBack } = payload
+      let res = yield call(getCurrentOrgTeamShowList, {})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -123,6 +154,9 @@ export default modelExtend(technological, {
             currentOrgTeamShowList: res.data
           }
         })
+        if(typeof calBack === 'function') {
+          calBack()
+        }
       }else{
 
       }

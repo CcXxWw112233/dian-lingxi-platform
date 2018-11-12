@@ -4,6 +4,7 @@ import QueueAnim from  'rc-queue-anim'
 import indexStyles from './index.less'
 import TeamInfo from './TeamInfo'
 import TeamList from './TeamList'
+import Header from './Header'
 
 
 const getEffectOrReducerByName = name => `teamList/${name}`
@@ -68,6 +69,7 @@ const Team = (props) => {
 
   return(
     <div>
+      <Header {...EditTeamShowContentProps} routingJump={routingJump} updateDatas={updateDatas} />
       <TeamList {...EditTeamShowContentProps} routingJump={routingJump} updateDatas={updateDatas}/>
     </div>
   )
