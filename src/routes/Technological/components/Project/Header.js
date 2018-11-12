@@ -47,7 +47,9 @@ export default class Header extends React.Component {
           <Dropdown overlay={menu_2}>
             <div>按参与关系排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
           </Dropdown>
-          <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+          {/*<Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/>*/}
+          {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
+          {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
         </div>
       </div>
     )

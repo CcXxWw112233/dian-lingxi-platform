@@ -405,7 +405,8 @@ export default class Header extends React.Component {
               <Dropdown overlay={<MenuSearch {...this.props}/>}>
                  <span>{processName || '请选择流程 '}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
               </Dropdown>
-              <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
+              <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
             </div>
           )
           break
@@ -413,7 +414,9 @@ export default class Header extends React.Component {
           operatorConent = (
             <div>
               <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
-              <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+              <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/>
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
             </div>
           )
           break
@@ -449,7 +452,8 @@ export default class Header extends React.Component {
                   <Icon type="delete" />移动到回收站
                 </Button>
                 <div>
-                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/>
+                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
                 </div>
               </div>
             )
@@ -465,7 +469,8 @@ export default class Header extends React.Component {
                   <Icon type="plus" />创建文件夹
                 </Button>
                 <div>
-                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/>
+                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
                 </div>
               </div>
             )
