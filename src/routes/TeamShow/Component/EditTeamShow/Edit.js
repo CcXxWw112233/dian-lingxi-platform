@@ -1,6 +1,6 @@
 import React from 'react'
 import {message } from 'antd'
-import {REQUEST_DOMAIN} from "../../../../globalset/js/constant";
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_TEAM_SHOW} from "../../../../globalset/js/constant";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import Cookies from 'js-cookie'
@@ -34,7 +34,7 @@ export default class Edit extends React.Component {
     return false;
   }
   myUploadFn = (param) => {
-    const serverURL = `${REQUEST_DOMAIN}/organization/logo_upload`
+    const serverURL = `${REQUEST_DOMAIN_TEAM_SHOW}/upload`
     const xhr = new XMLHttpRequest
     const fd = new FormData()
 
@@ -42,20 +42,24 @@ export default class Edit extends React.Component {
       // 假设服务端直接返回文件上传后的地址
       // 上传成功后调用param.success并传入上传后的文件地址
       if(xhr.status === 200 && this.isJSON(xhr.responseText)) {
-        param.success({
-          url: JSON.parse(xhr.responseText).data.logo,
-          meta: {
-            id: 'xxx',
-            title: 'xxx',
-            alt: 'xxx',
-            loop: true, // 指定音视频是否循环播放
-            autoPlay: true, // 指定音视频是否自动播放
-            controls: true, // 指定音视频是否显示控制栏
-            // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
-          }
-        })
+        if(JSON.parse(xhr.responseText).code === '0') {
+          param.success({
+            url: JSON.parse(xhr.responseText).data ? JSON.parse(xhr.responseText).data.url : '',
+            meta: {
+              id: 'xxx',
+              title: 'xxx',
+              alt: 'xxx',
+              loop: true, // 指定音视频是否循环播放
+              autoPlay: true, // 指定音视频是否自动播放
+              controls: true, // 指定音视频是否显示控制栏
+              // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
+            }
+          })
+        }else {
+          errorFn()
+        }
       }else {
-        message.warn('图片上传出现问题了，请重新上传')
+        errorFn()
       }
 
     }
