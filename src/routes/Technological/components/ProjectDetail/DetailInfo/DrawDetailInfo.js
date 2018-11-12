@@ -123,12 +123,10 @@ export default class DrawDetailInfo extends React.Component {
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
-    console.log('des',description)
-
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
-      const {  role='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
+      const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
@@ -151,19 +149,22 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </Tooltip>
             </div>
-            <Dropdown overlay={manOperateMenu(props)}>
-              <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
-            </Dropdown>
+            {role_id === '3'? ('') : (
+              <Dropdown overlay={manOperateMenu(props)}>
+                <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+              </Dropdown>
+            )}
+
           </div>
           <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>职位：</div>
-              <div>{role}</div>
+              <div>{role_name}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
-              <div>组织：</div>
-              <div>{organization}</div>
-            </div>
+            {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
+              {/*<div>组织：</div>*/}
+              {/*<div>{organization}</div>*/}
+            {/*</div>*/}
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>邮箱：</div>
               <div>{email}</div>
