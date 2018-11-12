@@ -44,6 +44,10 @@ export default class Header extends React.Component {
           summary: '',
           content: '',
           previewHtml: '',
+          currentTeamShowShowId: '',
+          currentTeamShowName: '',
+          currentTeamShowId: '',
+          currentTeamShowTypeId:'',
         })
         break
       default:

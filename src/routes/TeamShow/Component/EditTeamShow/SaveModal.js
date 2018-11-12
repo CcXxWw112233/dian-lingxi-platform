@@ -23,14 +23,14 @@ class SaveModal extends React.Component {
           editTeamShowSave: false
         })
         const html = document.getElementById('editContent').innerHTML
-        const { datas: {name, summary, cover_img, content} } = this.props.model
+        const { datas: {name, summary, cover_img, content, currentTeamShowShowId} } = this.props.model
         this.props.addTeamShow({
           content: html,
           cover_img:cover_img,
           name: name,
           show_type_id: values['show_type_id'],
           summary: summary,
-          show_id:'',
+          show_id: currentTeamShowShowId,
           tabtile:'',
         })
       }
@@ -48,7 +48,7 @@ class SaveModal extends React.Component {
     const { saveModalVisible } = this.props
     const { getFieldDecorator } = this.props.form;
 
-    const { datas: {teamShowTypeList = []}} = this.props.model
+    const { datas: {teamShowTypeList = [], currentTeamShowTypeId}} = this.props.model
 
     const formContain = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
@@ -56,14 +56,14 @@ class SaveModal extends React.Component {
         {/*性质*/}
         <FormItem style={{width: 336}}>
               {getFieldDecorator('show_type_id', {
-                initialValue: teamShowTypeList.length ?teamShowTypeList[0].id: '',
+                initialValue: currentTeamShowTypeId || (teamShowTypeList.length ?teamShowTypeList[0].id: ''),
                 rules: [{ required: false, message: '', whitespace: true }],
               })(
                 <Select  style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
                   {teamShowTypeList.map((value, key) => {
                     const { name, id } = value
                     return (
-                      <Option value={id}>{name}</Option>
+                      <Option value={id} key={id}>{name}</Option>
                     )
                   })}
                 </Select>

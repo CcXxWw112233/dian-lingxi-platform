@@ -37,6 +37,7 @@ export default modelExtend(technological, {
               currentTeamShowName: '',
               currentTeamShowId: '',
               currentTeamShowShowId: '',
+              currentTeamShowTypeId: '',
             }
           })
           dispatch({
@@ -69,6 +70,12 @@ export default modelExtend(technological, {
             calBack: function () {
               message.success('保存成功', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentTeamShowTypeId: payload['show_type_id']
           }
         })
       }else{
@@ -107,6 +114,7 @@ export default modelExtend(technological, {
             currentTeamShowName: name,
             currentTeamShowId: res.data.id,
             currentTeamShowShowId: res.data['showid'],
+            currentTeamShowTypeId: res.data['show_type_id']
           }
         })
       }else{
@@ -130,6 +138,7 @@ export default modelExtend(technological, {
             currentTeamShowName: '',
             currentTeamShowId: '',
             currentTeamShowShowId: '',
+            currentTeamShowTypeId:''
           }
         })
         yield put({

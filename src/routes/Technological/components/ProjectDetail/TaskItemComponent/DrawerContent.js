@@ -232,7 +232,10 @@ export default class DrawContent extends React.Component {
   drawerContentOutClick(e) {
     if(this.state.isInEdit){
       const { datas:{ drawContent = {} } } = this.props.model
-      const { card_id, description, due_time, start_time, card_name } = drawContent
+      let { card_id, description,} = drawContent
+      if(typeof description === 'object') {
+        description = description.toHTML()
+      }
       const updateObj ={
         card_id,
         description,
@@ -315,12 +318,13 @@ export default class DrawContent extends React.Component {
     }
     label_data = label_data || []
     description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+    const editorState = BraftEditor.createEditorState(description)
 
     const editorProps = {
       height: 0,
       contentFormat: 'html',
-      initialContent: description,
-      onHTMLChange:(e) => {
+      value: editorState,
+      onChange:(e) => {
         const { datas:{ drawContent = {} } } = this.props.model
         drawContent['description'] = e
         this.props.updateDatas({drawContent})
@@ -482,7 +486,7 @@ export default class DrawContent extends React.Component {
           {!isInEdit ? (
             <div className={DrawerContentStyles.divContent_1} >
               <div className={DrawerContentStyles.contain_4} onClick={this.goEdit.bind(this)}>
-                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: description}}></div>
+                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
               </div>
             </div>
           ) : (

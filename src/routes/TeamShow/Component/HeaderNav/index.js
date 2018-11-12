@@ -35,8 +35,56 @@ export default class HeaderNav extends React.Component{
       teamShowTypeId: id
     })
   }
+  // 托盘
+  elseOperateMenuClick({key}) {
+    switch (key) {
+      case '1':
+        this.props.routingJump('/teamShow/teamList')
+        break
+      case '2':
+        this.props.routingJump('/technological/newsDynamic')
+        break
+      case '3':
+        this.props.routingJump('/technological/workbench')
+        break
+      case '4':
+        this.props.routingJump('/technological/project')
+        break
+      default:
+        break
+    }
+  }
   render() {
     const { datas: { teamShowTypeList = [], teamShowTypeId }} = this.props.model
+    const elseOperateMenu = (
+      <Card  className={indexStyle.menuDiv} style={{margin: 0}}>
+        <div className={indexStyle.triangle} style={{left: '50%',marginLeft: -8}} ></div>
+        <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
+          {window.location.hash.indexOf('/teamShow/teamList') !== -1? (''): (
+            <Menu.Item key="1" style={{padding:0,margin: 0}}>
+              <div className={indexStyle.itemDiv}>
+                <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>团队展示</span></span>
+              </div>
+            </Menu.Item>
+          )}
+          <Menu.Item key="2" style={{padding:0,margin: 0}}>
+            <div className={indexStyle.itemDiv}>
+              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>动态</span></span>
+            </div>
+          </Menu.Item>
+          <Menu.Item key="3" style={{padding:0,margin: 0}}>
+            <div className={indexStyle.itemDiv}>
+              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>工作台</span></span>
+            </div>
+          </Menu.Item>
+          <Menu.Item key="4" style={{padding:0,margin: 0}}>
+            <div className={indexStyle.itemDiv}>
+              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>项目</span></span>
+            </div>
+          </Menu.Item>
+        </Menu>
+      </Card>
+    )
     return(
       <div>
         <div className={indexStyle.out}>
@@ -52,9 +100,11 @@ export default class HeaderNav extends React.Component{
               {/*)*/}
             {/*})}*/}
             {/*<div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>*/}
-            <div style={{marginLeft: 30}}>
-              <Icon type="appstore" style={{display:'inline-block',marginTop: 6 }} />
-            </div>
+            <Dropdown overlay={elseOperateMenu}  placement={'bottomCenter'}>
+              <div style={{marginLeft: 30}}>
+                <Icon type="appstore" style={{display:'inline-block',marginTop: 6 }} />
+              </div>
+            </Dropdown>
           </div>
         </div>
         <div className={indexStyle.out_right}>
