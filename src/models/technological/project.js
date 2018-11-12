@@ -20,6 +20,9 @@ export default {
           })
           dispatch({
             type: 'getAppsList',
+            payload: {
+              type:'2'
+            }
           })
         }else{
           // console.log(2)
