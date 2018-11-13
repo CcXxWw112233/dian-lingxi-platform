@@ -10,9 +10,24 @@ export default class PreviewModal extends React.Component {
     })
   }
   render() {
-    const {datas: { editTeamShowPreview, previewHtml }} = this.props.model
+    const {datas: { editTeamShowPreview, content }} = this.props.model
+
+    //预览的内容等于详情和富文本编辑
+    let previewHtmlString = ''
+    let contentHTML = ''
+    let detailIfoString = ''
+    if(document.getElementById('editTeamShowDetailInfo')) {
+      detailIfoString = document.getElementById('editTeamShowDetailInfo').innerHTML
+    }
+    if(typeof content === 'object') {
+      contentHTML = '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +content.toHTML()+'</div>'
+
+    }else {
+      contentHTML = '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +content+'</div>'
+    }
+    previewHtmlString = detailIfoString + contentHTML
     const step = (
-       <div dangerouslySetInnerHTML={{__html: previewHtml}}></div>
+       <div dangerouslySetInnerHTML={{__html: previewHtmlString}}></div>
     )
 
     return(

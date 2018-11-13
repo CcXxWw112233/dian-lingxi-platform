@@ -278,9 +278,12 @@ export default class HeaderNav extends React.Component{
             <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
             <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
-            <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
-             <span ><Icon type="appstore" /></span>
-            </Dropdown>
+            {currentUserOrganizes.length ? (
+              <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
+                <span ><Icon type="appstore" /></span>
+              </Dropdown>
+            ) : ('')}
+
           </div>
         </div>
         <div className={indexStyle.out_right}>

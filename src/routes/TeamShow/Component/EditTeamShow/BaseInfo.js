@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Input, Upload, message } from 'antd'
+import { Button, Input, Upload, message, Icon } from 'antd'
 import indexStyles from './index.less'
 import Cookies from 'js-cookie'
 import {
@@ -19,11 +19,15 @@ export default class BaseInfo extends React.Component {
     this.props.updateDatas({
       name: e.target.value,
     })
+    this.setPreviewHtml()
   }
   textAreaChange(e) {
     this.props.updateDatas({
       summary: e.target.value.replace(/\n/gim,'<br/>'),
     })
+    this.setPreviewHtml()
+  }
+  setPreviewHtml() {
   }
   styles () {
     const editTop = {
@@ -71,17 +75,21 @@ export default class BaseInfo extends React.Component {
       padding: '60px 0'
     }
     const detailInfo_top = {
-      width: 110,
-      height: 70,
+      width: 200,
+      height: 'auto',
       border: '1px solid rgba(217,217,217,1)',
       margin: '0 auto',
       borderRadius: 4,
     }
     const detaiInfo_middle = {
+      width: 700,
+      margin: '0 auto',
       marginTop: 16,
       fontSize: 24
     }
     const detailInfo_bott = {
+      width: 700,
+      margin: '0 auto',
       marginTop: 20,
       fontSize: 14,
       textAlign: 'left',
@@ -124,6 +132,7 @@ export default class BaseInfo extends React.Component {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
+        let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
         console.log(file)
@@ -152,6 +161,7 @@ export default class BaseInfo extends React.Component {
           that.props.updateDatas({
             cover_img: file.response.data.url
           })
+          that.setPreviewHtml()
         }
       },
     };
@@ -169,9 +179,18 @@ export default class BaseInfo extends React.Component {
         <div style={{...editTop, color: '#262626'}}>
           <Upload {...uploadProps} showUploadList={false} accept={"image/jpg, image/jpeg,  image/png"}>
             {cover_img?(
-              <img src={cover_img} style={{...editTop_left_div}}/>
+              <div style={{...editTop_left_div}} className={indexStyles.uploadOut}>
+                <img src={cover_img} />
+                <div className={indexStyles.uploadInner}>
+                  <Icon type="upload" style={{fontSize: 30, color: '#ffffff'}} />
+                </div>
+              </div>
             ) : (
-              <div style={{...editTop_left_div}}></div>
+              <div style={{...editTop_left_div}} className={indexStyles.uploadOut}>
+                <div className={indexStyles.uploadInner2}>
+                  <Icon type="upload" style={{fontSize: 30, color: '#ffffff'}} />
+                </div>
+              </div>
             )}
           </Upload>
           <div  style={{...editTop_right_div}}>
@@ -180,9 +199,9 @@ export default class BaseInfo extends React.Component {
           </div>
         </div>
         <div style={{...detailInfoOut}} id={'editTeamShow'}>
-          <div style={{...detailInfo}}>
+          <div style={{...detailInfo}} id={'editTeamShowDetailInfo'}>
             {cover_img?(
-              <img src={cover_img} style={{...detailInfo_top}} />
+              <img src={cover_img} style={{...detailInfo_top, height: 'auto'}} ></img>
             ) : (
               ''
             )}
@@ -190,7 +209,7 @@ export default class BaseInfo extends React.Component {
             <div style={{...detaiInfo_middle}}>{name}</div>
             <div style={{...detailInfo_bott}} dangerouslySetInnerHTML={{__html: summary}}></div>
           </div>
-
+          {/*下个版本不需要富文本后完全放开*/}
           {(editTeamShowPreview || editTeamShowSave )? (
             <div  id={'editContent'} style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: contentHTML}} onClick={this.showEdit.bind(this)}></div>
           ) : ('')}

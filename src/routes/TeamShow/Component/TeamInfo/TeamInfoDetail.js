@@ -53,7 +53,7 @@ export default class TeamInfoDetail extends React.Component{
           <div style={{...detailInfo_bott}} dangerouslySetInnerHTML={{__html: summary}}></div>
         </div>
 
-        <div  dangerouslySetInnerHTML={{__html: content}}></div>
+        <div  dangerouslySetInnerHTML={{__html: content}} style={{width: 1200, margin: '0 auto',overflow: 'hidden'}}></div>
       </div>
     )
   }

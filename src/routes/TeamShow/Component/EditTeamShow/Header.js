@@ -11,7 +11,6 @@ export default class Header extends React.Component {
   }
   //团队展示发布编辑
   editTeamShowPreview() {
-    const that = this
     this.props.updateDatas({
       editTeamShowPreview: true
     })

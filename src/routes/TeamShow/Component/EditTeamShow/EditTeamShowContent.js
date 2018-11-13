@@ -14,17 +14,9 @@ export default class EditTeamShowContent extends React.Component {
     this.props.updateDatas({
       content:value
     })
-    const that = this
-    setTimeout(function () { //延迟获取
-      const html = document.getElementById('editTeamShow').innerHTML
-      that.props.updateDatas({
-        previewHtml:　html
-      })
-    },200)
   }
 
   render() {
-    const {datas: {content, previewHtml }} = this.props.model
     return (
       <div id={'editTeamShowOut'} className={indexStyles.editTeamShowOut}>
         <div className={indexStyles.editTeamShow}>
