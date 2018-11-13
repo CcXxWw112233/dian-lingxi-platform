@@ -18,7 +18,7 @@ export default class Header extends React.Component {
   closeFile() {
     const { datas: { breadcrumbList = [] } }= this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    this.props.updateDatas({isInOpenFile: false})
+    this.props.updateDatas({isInOpenFile: false, filePreviewUrl: ''})
   }
   zoomFrame() {
     const { datas: { isExpandFrame = false } }= this.props.model

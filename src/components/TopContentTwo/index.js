@@ -8,7 +8,7 @@ const TopContentTwo = (props) => {
     <div>
       <div className={indexStyles.circleDec}>
         <div className={indexStyles.circle}></div>
-        <div className={indexStyles.productName}>productName</div>
+        <div className={indexStyles.productName}>灵犀</div>
       </div>
       <div className={indexStyles.description}>投资建设领域的全链条服务商</div>
     </div>

@@ -19,7 +19,7 @@ export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
 
 export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 
-export const PAGINATION_PAGE_SIZE = 1 //分页每页条数
+export const PAGINATION_PAGE_SIZE = 12 //分页每页条数
 
 
 //权限列表
