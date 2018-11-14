@@ -1,7 +1,7 @@
 
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Upload, message } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Upload, message, Tooltip } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {
   MESSAGE_DURATION_TIME,
@@ -173,7 +173,9 @@ export default class Header extends React.Component {
               <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
             </Dropdown>
             <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
-            <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>
+            <Tooltip title={'关闭预览'} placement={'left'}>
+             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>
+            </Tooltip>
           </div>
         </div>
       </div>
