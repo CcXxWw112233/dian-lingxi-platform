@@ -33,7 +33,7 @@ export default class TaskItem extends React.Component {
         <div className={is_realize === '1' ? indexstyles.nomalCheckBoxActive: indexstyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
           <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
         </div>
-        <div>{name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div><span style={{textDecoration:is_realize === '1'? 'line-through': 'none'}}>{name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer',}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
       </div>
     )
   }

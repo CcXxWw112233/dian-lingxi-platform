@@ -103,6 +103,8 @@ export default {
 
           //  团队展示发布
             teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
+            editTeamShowPreview: false, //编辑预览状态
+            editTeamShowSave: false,  //编辑保存状态
           }
         })
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
@@ -1064,7 +1066,7 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-        drawContent.child_data[length -1] = res.data || payload
+        drawContent.child_data[0] = res.data || payload
         // yield put({
         //   type: 'updateDatas',
         //   payload:{

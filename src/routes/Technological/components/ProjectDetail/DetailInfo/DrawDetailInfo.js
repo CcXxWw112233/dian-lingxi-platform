@@ -10,7 +10,7 @@ import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction
 const TextArea = Input.TextArea
 
 
-const detaiDescription = '欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。d如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com'
+const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。d如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com'
 
 export default class DrawDetailInfo extends React.Component {
 
@@ -123,12 +123,10 @@ export default class DrawDetailInfo extends React.Component {
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
-    console.log('des',description)
-
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
-      const {  role='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
+      const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
@@ -151,19 +149,22 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </Tooltip>
             </div>
-            <Dropdown overlay={manOperateMenu(props)}>
-              <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
-            </Dropdown>
+            {role_id === '3'? ('') : (
+              <Dropdown overlay={manOperateMenu(props)}>
+                <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+              </Dropdown>
+            )}
+
           </div>
           <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>职位：</div>
-              <div>{role}</div>
+              <div>{role_name}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
-              <div>组织：</div>
-              <div>{organization}</div>
-            </div>
+            {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
+              {/*<div>组织：</div>*/}
+              {/*<div>{organization}</div>*/}
+            {/*</div>*/}
             <div className={DrawDetailInfoStyle.detailItem}>
               <div>邮箱：</div>
               <div>{email}</div>

@@ -30,7 +30,9 @@ const RetrievePassword = (options) => {
             borderRadius: '4px'}}>
             <TopContent text={'找回密码'} hidenDescription={true}/>
             <FormList {...formListProps}/>
-            <div style={{fontSize: 14, color: '#595959',width: 252,margin: '0 auto', marginBottom: 60}}>如无法通过手机或邮箱找回请发送邮件至support@ProductName.com 寻求帮助</div>
+            <div style={{fontSize: 14, color: '#595959',width: 252,margin: '0 auto', marginBottom: 60}}>
+              {/*如无法通过手机或邮箱找回请发送邮件至寻求帮助*/}
+            </div>
           </div>
           <Copyright />
         </div>

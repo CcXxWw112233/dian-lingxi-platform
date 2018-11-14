@@ -141,6 +141,17 @@ export default class HeaderNav extends React.Component{
       org_id: id
     })
   }
+
+  // 托盘
+  elseOperateMenuClick({key}) {
+    switch (key) {
+      case '1':
+        this.props.routingJump('/teamShow/teamList')
+        break
+      default:
+        break
+    }
+  }
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
@@ -235,6 +246,18 @@ export default class HeaderNav extends React.Component{
         </Menu>
       </Card>
     );
+    const elseOperateMenu = (
+      <Card  className={indexStyle.menuDiv} style={{margin: 0}}>
+        <div className={indexStyle.triangle} style={{left: '50%',marginLeft: -8}} ></div>
+        <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
+          <Menu.Item key="1" style={{padding:0,margin: 0}}>
+            <div className={indexStyle.itemDiv}>
+             <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>团队展示</span></span>
+            </div>
+          </Menu.Item>
+        </Menu>
+      </Card>
+    )
 
     const { datas:{naviHeadTabIndex} } = this.props.model
 
@@ -255,6 +278,12 @@ export default class HeaderNav extends React.Component{
             <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
             <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
+            {currentUserOrganizes.length ? (
+              <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
+                <span ><Icon type="appstore" /></span>
+              </Dropdown>
+            ) : ('')}
+
           </div>
         </div>
         <div className={indexStyle.out_right}>

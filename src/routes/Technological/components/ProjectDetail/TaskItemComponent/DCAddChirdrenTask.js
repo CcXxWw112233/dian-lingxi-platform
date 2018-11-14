@@ -141,7 +141,7 @@ export default class DCAddChirdrenTask extends React.Component{
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>
                 </Dropdown>
                 <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>
-                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 90,zIndex:2}} />
+                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
                 <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
               </div>
             </div>
