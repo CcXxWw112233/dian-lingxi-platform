@@ -135,6 +135,18 @@ const ProjectDetail = (props) => {
         payload: data,
       })
     },
+    deleteTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskGroup'),
+        payload: data,
+      })
+    },
+    updateTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateTaskGroup'),
+        payload: data,
+      })
+    },
     getTaskGroupList(data){
       dispatch({
         type: getEffectOrReducerByName('getTaskGroupList'),

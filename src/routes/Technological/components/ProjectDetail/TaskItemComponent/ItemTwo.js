@@ -55,14 +55,14 @@ export default class ItemTwo extends React.Component {
           <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>
-          <div>{card_name}</div>
+          <div style={{textDecoration:is_realize === '1'? 'line-through': 'none'}}>{card_name}</div>
           <div>
             {executor.user_id? (
               executor.avatar ? (
-                <img src={executor.avatar} />
+                <img src={executor.avatar}  style={{width: 24, height: 24}}/>
               ): (
-                <div style={{height:20,width: 20,borderRadius:16,paddingTop: 4,backgroundColor:'#e8e8e8',textAlign: 'center',margin:'0 12px',}}>
-                  <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c', display: 'block',marginLeft: 4}}/>
+                <div style={{height:24,width: 24,borderRadius:16,paddingTop: 4,backgroundColor:'#e8e8e8',textAlign: 'center',margin:'0 12px',}}>
+                  <Icon type={'user'} style={{fontSize:14,color: '#8c8c8c', display: 'block', marginTop: 2}}/>
                 </div>
               )
             ): ('')}

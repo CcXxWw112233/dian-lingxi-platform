@@ -9,7 +9,7 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
+import { deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
 import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
@@ -944,6 +944,42 @@ export default {
       if(isApiResponseOk(res)) {
         taskGroupList[length].list_id = res.data.id
         message.success('添加任务分组成功', MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * deleteTaskGroup({ payload }, { select, call, put }) { //
+      let res = yield call(deleteTaskGroup, payload)
+      const { itemKey = 0 } = payload
+      const taskGroupList = yield select(selectTaskGroupList)
+      if(isApiResponseOk(res)) {
+        taskGroupList.splice(itemKey, 1)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            taskGroupList
+          }
+        })
+        message.success('删除任务分组成功', MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * updateTaskGroup({ payload }, { select, call, put }) { //
+      let res = yield call(updateTaskGroup, payload)
+      const { itemKey = 0, name } = payload
+      const taskGroupList = yield select(selectTaskGroupList)
+      if(isApiResponseOk(res)) {
+        taskGroupList[itemKey]['list_name'] = name
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            taskGroupList
+          }
+        })
+        message.success('更新任务分组成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

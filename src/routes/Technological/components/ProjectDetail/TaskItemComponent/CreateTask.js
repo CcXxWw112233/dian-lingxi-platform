@@ -102,6 +102,7 @@ export default class CreateTask extends React.Component {
         {taskGroupList.map((value, key) => {
             return (
               <TaskItem key={key} taskItemValue={value}
+                        itemKey={key}
                         taskGroupListIndex={key}
                         {...this.props}
                         setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
