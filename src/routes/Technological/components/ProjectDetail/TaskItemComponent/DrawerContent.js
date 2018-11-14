@@ -15,7 +15,7 @@ import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/uti
 import { deepClone } from '../../../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
-  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT
+  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../utils/businessFunction";
 
@@ -247,6 +247,77 @@ export default class DrawContent extends React.Component {
       titleIsEdit: false,
     })
   }
+  isJSON = (str) => {
+    if (typeof str == 'string') {
+      try {
+        var obj=JSON.parse(str);
+        if(str.indexOf('{')>-1){
+          return true;
+        }else{
+          return false;
+        }
+
+      } catch(e) {
+        return false;
+      }
+    }
+    return false;
+  }
+  myUploadFn = (param) => {
+    const serverURL = `${REQUEST_DOMAIN_FILE}/upload`
+    const xhr = new XMLHttpRequest
+    const fd = new FormData()
+
+    const successFn = (response) => {
+      // 假设服务端直接返回文件上传后的地址
+      // 上传成功后调用param.success并传入上传后的文件地址
+      if(xhr.status === 200 && this.isJSON(xhr.responseText)) {
+        if(JSON.parse(xhr.responseText).code === '0') {
+          param.success({
+            url: JSON.parse(xhr.responseText).data ? JSON.parse(xhr.responseText).data.url : '',
+            meta: {
+              id: 'xxx',
+              title: 'xxx',
+              alt: 'xxx',
+              loop: true, // 指定音视频是否循环播放
+              autoPlay: true, // 指定音视频是否自动播放
+              controls: true, // 指定音视频是否显示控制栏
+              // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
+            }
+          })
+        }else {
+          errorFn()
+        }
+      }else {
+        errorFn()
+      }
+
+    }
+
+    const progressFn = (event) => {
+      // 上传进度发生变化时调用param.progress
+      param.progress(event.loaded / event.total * 100)
+    }
+
+    const errorFn = (response) => {
+      // 上传发生错误时调用param.error
+      param.error({
+        msg: '图片上传失败!'
+      })
+    }
+
+    xhr.upload.addEventListener("progress", progressFn, false)
+    xhr.addEventListener("load", successFn, false)
+    xhr.addEventListener("error", errorFn, false)
+    xhr.addEventListener("abort", errorFn, false)
+
+    fd.append('file', param.file)
+    xhr.open('POST', serverURL, true)
+    xhr.setRequestHeader('Authorization', Cookies.get('Authorization'))
+    xhr.setRequestHeader('refreshToken', Cookies.get('refreshToken'))
+    xhr.send(fd)
+  }
+
   //有关于富文本编辑---------------end
 
   //标签-------------start
@@ -324,6 +395,7 @@ export default class DrawContent extends React.Component {
       height: 0,
       contentFormat: 'html',
       value: editorState,
+      media:{uploadFn: this.myUploadFn},
       onChange:(e) => {
         const { datas:{ drawContent = {} } } = this.props.model
         drawContent['description'] = e
