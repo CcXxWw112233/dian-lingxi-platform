@@ -102,6 +102,12 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
+    inviteJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('inviteJoinOrganization'),
+        payload: data
+      })
+    },
   }
 
   const routingJump = (path) => {
@@ -120,7 +126,7 @@ const OrganizationMember = (props) => {
   }
   return(
     <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
-      <Header {...this.props} model={model}/>
+      <Header {...CreateGroupProps} model={model}/>
       <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
     </div>
   )

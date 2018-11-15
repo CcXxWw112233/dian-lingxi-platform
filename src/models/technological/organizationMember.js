@@ -3,7 +3,11 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { setGroupLeader,getMembersInOneGroup,getMemberInfo, setMemberRole, getCurrentOrgRole,inviteMemberToGroup,getGroupTreeList, discontinueMember, approvalMember,setMemberWitchGroup, removeMembersWithGroup, CreateGroup, getGroupList, updateGroup, deleteGroup, getGroupPartialInfo} from "../../services/technological/organizationMember";
+import {
+  setGroupLeader, getMembersInOneGroup, getMemberInfo, setMemberRole, getCurrentOrgRole, inviteMemberToGroup,
+  getGroupTreeList, discontinueMember, approvalMember, setMemberWitchGroup, removeMembersWithGroup, CreateGroup,
+  getGroupList, updateGroup, deleteGroup, getGroupPartialInfo, inviteJoinOrganization
+} from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
@@ -331,7 +335,21 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
+    * inviteJoinOrganization({ payload }, { select, call, put }) {
+      let res = yield call(inviteJoinOrganization, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload:{
+            calback: function () {
+              message.success('已成功添加组织成员',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

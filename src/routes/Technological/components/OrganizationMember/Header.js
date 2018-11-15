@@ -1,8 +1,26 @@
 import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
+import ShowAddMenberModal from './ShowAddMenberModal'
+import Cookies from 'js-cookie'
 
 export default class Header extends React.Component {
+  state = {
+    ShowAddMenberModalVisibile: false,
+  };
+  addMembers(data) {
+    const { users } = data
+    this.props.inviteJoinOrganization({
+      members: users,
+      org_id: Cookies.get('org_id')
+    })
+  }
+  setShowAddMenberModalVisibile() {
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+
   render() {
     const { datas: { member_count = 0}} = this.props.model
     const menu = () => (
@@ -45,8 +63,8 @@ export default class Header extends React.Component {
       </Menu>
     );
     return (
+      <div>
       <div className={indexStyle.headerOut}>
-
         <div className={indexStyle.left}>
           <div>全部成员 · {member_count}</div>
           <Dropdown overlay={menu()}>
@@ -55,10 +73,15 @@ export default class Header extends React.Component {
         </div>
 
         <div className={indexStyle.right}>
-          <div style={{marginRight: 12}}>添加成员</div>
-          <div>批量导入成员</div>
-          <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+          <div style={{marginRight: 12}} onClick={this.setShowAddMenberModalVisibile.bind(this)}>添加成员</div>
+          <Tooltip title={'该功能尚未上线，敬请期待！'}>
+            <div>批量导入成员</div>
+          </Tooltip>
+          <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16, color: '#e5e5e5'}}/>
         </div>
+      </div>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+
       </div>
     )
   }
