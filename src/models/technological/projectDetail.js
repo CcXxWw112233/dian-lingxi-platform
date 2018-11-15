@@ -617,12 +617,21 @@ export default {
       }
     },
     * fileDownload({ payload }, { select, call, put }) {
+      function openWin(url) {
+         var element1 = document.createElement("a");
+         element1.href= url;
+         element1.id = 'openWin'
+         document.querySelector('body').appendChild(element1)
+         document.getElementById("openWin").click();//点击事件
+         document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+      }
       let res = yield call(fileDownload, payload)
       if(isApiResponseOk(res)) {
          const data = res.data
         if(data && data.length) {
            for (let val of data ) {
-             window.open(val)
+             // window.open(val)
+             openWin(val)
            }
         }
       }else{
