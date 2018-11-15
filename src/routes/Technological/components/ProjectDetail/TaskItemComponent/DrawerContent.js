@@ -34,7 +34,6 @@ export default class DrawContent extends React.Component {
     isSetedAlarm: false,
     alarmTime: '',
   }
-
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
@@ -225,6 +224,9 @@ export default class DrawContent extends React.Component {
   }
   goEdit(e) {
     e.stopPropagation();
+    if(e.target.nodeName.toUpperCase() === 'IMG') {
+      const src = e.target.getAttribute('src')
+    }
     this.setState({
       isInEdit: true
     })
@@ -276,9 +278,9 @@ export default class DrawContent extends React.Component {
           param.success({
             url: JSON.parse(xhr.responseText).data ? JSON.parse(xhr.responseText).data.url : '',
             meta: {
-              id: 'xxx',
-              title: 'xxx',
-              alt: 'xxx',
+              // id: 'xxx',
+              // title: 'xxx',
+              // alt: 'xxx',
               loop: true, // 指定音视频是否循环播放
               autoPlay: true, // 指定音视频是否自动播放
               controls: true, // 指定音视频是否显示控制栏
@@ -558,7 +560,7 @@ export default class DrawContent extends React.Component {
           {!isInEdit ? (
             <div className={DrawerContentStyles.divContent_1} >
               <div className={DrawerContentStyles.contain_4} onClick={this.goEdit.bind(this)}>
-                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
+                <div style={{cursor: 'pointer'}}  dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
               </div>
             </div>
           ) : (
