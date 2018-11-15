@@ -115,7 +115,7 @@ class FormList extends React.Component {
   }
 
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!validateTel(values['account'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
@@ -130,7 +130,6 @@ class FormList extends React.Component {
         type: '2'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
-      // calback && typeof calback === 'function' ? calback() : ''
     })
   }
 

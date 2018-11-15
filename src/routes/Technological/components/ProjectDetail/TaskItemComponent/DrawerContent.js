@@ -70,7 +70,7 @@ export default class DrawContent extends React.Component {
         is_archived: '1'
       })
     }else if(key === '2') {
-      if(!checkIsHasPermission(PROJECT_TEAM_BOARD_EDIT)){
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }

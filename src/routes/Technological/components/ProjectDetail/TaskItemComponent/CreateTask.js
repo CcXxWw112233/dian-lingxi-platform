@@ -44,6 +44,13 @@ export default class CreateTask extends React.Component {
     /*事件源对象兼容*/
     let target = event.target || event.srcElement;
 
+    //在查看任务时不可挪动
+    const { datas:{ drawerVisible  } } = this.props.model
+    if(drawerVisible) {
+      return false
+    }
+
+
     //可以改变position位置的判断
     if(!this.props.model.datas.taskGroupList) {
       return false

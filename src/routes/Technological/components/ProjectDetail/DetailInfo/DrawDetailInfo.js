@@ -200,7 +200,7 @@ export default class DrawDetailInfo extends React.Component {
           </Menu.SubMenu>
           <Menu.Item key={'removeMember'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
-              移出分组
+              移除成员
             </div>
           </Menu.Item>
         </Menu>

@@ -263,8 +263,9 @@ export default class HeaderNav extends React.Component{
 
     return(
       <div>
-         <div className={indexStyle.out}>
-        <div className={indexStyle.out_left}>
+        <div className={indexStyle.outInner}></div>
+        <div className={indexStyle.out}>
+          <div className={indexStyle.out_left}>
           <Dropdown overlay={userInfoMenu}
                     onVisibleChange={this.handleVisibleChange}
                     visible={this.state.menuVisible}>
@@ -286,7 +287,7 @@ export default class HeaderNav extends React.Component{
 
           </div>
         </div>
-        <div className={indexStyle.out_right}>
+          <div className={indexStyle.out_right}>
           <Input
             placeholder="搜索 项目、任务、文档、联系人、标签"
             style={{height:40, width: 400,fontSize: 16,marginRight: 24}}
@@ -296,7 +297,7 @@ export default class HeaderNav extends React.Component{
             <Icon type="plus" style={{ color: 'rgba(0,0,0,.25)', fontSize: 20,color: '#ffffff', fontWeight: 'bold' }} />
           </div>
         </div>
-      </div>
+        </div>
         <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
         <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
