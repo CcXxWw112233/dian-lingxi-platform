@@ -93,6 +93,10 @@ export default class DrawContent extends React.Component {
 
   //标题-------start
   setIsCheck() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {

@@ -952,7 +952,21 @@ export default {
       const taskGroupList = yield select(selectTaskGroupList)
       if(isApiResponseOk(res)) {
         taskGroupList[length].list_id = res.data.id
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            taskGroupList
+          }
+        })
         message.success('添加任务分组成功', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, MESSAGE_DURATION_TIME*1000)
+        yield put({
+          type: 'getProjectGoupList',
+          payload: {}
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -971,6 +985,14 @@ export default {
           }
         })
         message.success('删除任务分组成功', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, MESSAGE_DURATION_TIME*1000)
+        yield put({
+          type: 'getProjectGoupList',
+          payload: {}
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -989,6 +1011,14 @@ export default {
           }
         })
         message.success('更新任务分组成功', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, MESSAGE_DURATION_TIME*1000)
+        yield put({
+          type: 'getProjectGoupList',
+          payload: {}
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
