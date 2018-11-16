@@ -11,8 +11,7 @@ import {Modal} from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
-
-import { deepClone } from '../../../../../utils/util'
+import { Button } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE
@@ -29,10 +28,27 @@ export default class DrawContent extends React.Component {
     title: '',
     titleIsEdit: false,
     isInEdit: false,
+    brafitEditHtml: '', //富文本编辑内容
     isInAddTag: false,
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
+  }
+  componentWillMount() {
+    //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
+    const { datas:{ drawContent = {}} } = this.props.model
+    let { description } = drawContent
+    this.setState({
+      brafitEditHtml: description
+    })
+
+  }
+  componentWillReceiveProps(nextProps) {
+    const { datas:{ drawContent = {}} } = nextProps.model
+    let { description } = drawContent
+    this.setState({
+      brafitEditHtml: description
+    })
   }
   //firstLine -------start
   //分组状态选择
@@ -116,6 +132,9 @@ export default class DrawContent extends React.Component {
       name: e.target.value,
       card_name: e.target.value,
     }
+    this.setState({
+      titleIsEdit: false
+    })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
     this.props.updateDatas({drawContent})
@@ -228,28 +247,55 @@ export default class DrawContent extends React.Component {
   }
   goEdit(e) {
     e.stopPropagation();
-    if(e.target.nodeName.toUpperCase() === 'IMG') {
-      const src = e.target.getAttribute('src')
-    }
+    // if(e.target.nodeName.toUpperCase() === 'IMG') {
+    //   const src = e.target.getAttribute('src')
+    // }
     this.setState({
       isInEdit: true
     })
   }
-  drawerContentOutClick(e) {
-    if(this.state.isInEdit){
-      const { datas:{ drawContent = {} } } = this.props.model
-      let { card_id, description,} = drawContent
-      if(typeof description === 'object') {
-        description = description.toHTML()
-      }
-      const updateObj ={
-        card_id,
-        description,
-      }
-      this.props.updateTask({updateObj})
+  quitBrafitEdit(e) {
+    e.stopPropagation();
+    const { datas:{ drawContent = {}} } = this.props.model
+    let { description } = drawContent
+    this.setState({
+      isInEdit: false,
+      brafitEditHtml: description,
+    })
+
+  }
+  saveBrafitEdit(e) {
+    e.stopPropagation();
+    const { datas:{ drawContent = {} } } = this.props.model
+    let { card_id} = drawContent
+    let { brafitEditHtml } = this.state
+    if(typeof brafitEditHtml === 'object') {
+      brafitEditHtml = brafitEditHtml.toHTML()
     }
     this.setState({
       isInEdit: false,
+    })
+    const updateObj ={
+      card_id,
+      description: brafitEditHtml,
+    }
+    this.props.updateTask({updateObj})
+  }
+  drawerContentOutClick(e) {
+    // if(this.state.isInEdit){
+    //   const { datas:{ drawContent = {} } } = this.props.model
+    //   let { card_id, description,} = drawContent
+    //   if(typeof description === 'object') {
+    //     description = description.toHTML()
+    //   }
+    //   const updateObj ={
+    //     card_id,
+    //     description,
+    //   }
+    //   this.props.updateTask({updateObj})
+    // }
+    this.setState({
+      // isInEdit: false,
       titleIsEdit: false,
     })
   }
@@ -285,8 +331,8 @@ export default class DrawContent extends React.Component {
               // id: 'xxx',
               // title: 'xxx',
               // alt: 'xxx',
-              loop: true, // 指定音视频是否循环播放
-              autoPlay: true, // 指定音视频是否自动播放
+              loop: false, // 指定音视频是否循环播放
+              autoPlay: false, // 指定音视频是否自动播放
               controls: true, // 指定音视频是否显示控制栏
               // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
             }
@@ -323,7 +369,14 @@ export default class DrawContent extends React.Component {
     xhr.setRequestHeader('refreshToken', Cookies.get('refreshToken'))
     xhr.send(fd)
   }
-
+  descriptionHTML(e) {
+    if(e.target.nodeName.toUpperCase() === 'IMG') {
+      const src = e.target.getAttribute('src')
+      console.log(src)
+    }else {
+      console.log(2)
+    }
+  }
   //有关于富文本编辑---------------end
 
   //标签-------------start
@@ -375,7 +428,7 @@ export default class DrawContent extends React.Component {
 
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
@@ -394,8 +447,8 @@ export default class DrawContent extends React.Component {
       executor = executors[0]
     }
     label_data = label_data || []
-    description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
-    const editorState = BraftEditor.createEditorState(description)
+    description = description //|| '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+    const editorState = BraftEditor.createEditorState(brafitEditHtml)
 
     const editorProps = {
       height: 0,
@@ -403,9 +456,12 @@ export default class DrawContent extends React.Component {
       value: editorState,
       media:{uploadFn: this.myUploadFn},
       onChange:(e) => {
-        const { datas:{ drawContent = {} } } = this.props.model
-        drawContent['description'] = e
-        this.props.updateDatas({drawContent})
+        // const { datas:{ drawContent = {} } } = this.props.model
+        // drawContent['description'] = e
+        // this.props.updateDatas({drawContent})
+        this.setState({
+          brafitEditHtml: e
+        })
       },
       fontSizes: [14],
       controls: [
@@ -457,6 +513,7 @@ export default class DrawContent extends React.Component {
     );
 
     return(
+      //
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
@@ -488,9 +545,11 @@ export default class DrawContent extends React.Component {
                {!titleIsEdit ? (
                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
                ) : (
-                 <TextArea defaultValue={card_name} autosize
+                 <TextArea defaultValue={card_name}
+                           autosize
                            onBlur={this.titleTextAreaChangeBlur.bind(this)}
                            onClick={this.setTitleIsEdit.bind(this, true)}
+                           autofocus={true}
                            style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
@@ -563,13 +622,23 @@ export default class DrawContent extends React.Component {
           {/*富文本*/}
           {!isInEdit ? (
             <div className={DrawerContentStyles.divContent_1} >
-              <div className={DrawerContentStyles.contain_4} onClick={this.goEdit.bind(this)}>
+              <div style={{marginTop: 20}}>
+                <Button size={'small'} style={{fontSize: 12}} onClick={this.goEdit.bind(this)}>编辑描述</Button>
+              </div>
+              {/*onClick={this.goEdit.bind(this)}*/}
+              <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
                 <div style={{cursor: 'pointer'}}  dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
               </div>
             </div>
           ) : (
-            <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
-              <BraftEditor {...editorProps} style={{fontSize:12}}/>
+            <div>
+              <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
+                <BraftEditor {...editorProps} style={{fontSize:12}}/>
+              </div>
+              <div style={{marginTop: 20, textAlign: 'right'}}>
+                <Button size={'small'} style={{fontSize: 12,marginRight:16}} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
+                <Button size={'small'} style={{fontSize: 12}} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
+              </div>
             </div>
           ) }
 

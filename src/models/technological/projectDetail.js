@@ -1063,14 +1063,22 @@ export default {
 
     * updateTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
+      const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
+      const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+      const taskGroupList = yield select(selectTaskGroupList) //
+      const drawContent = yield  select(selectDrawContent)
+      const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
-        // yield put({
-        //   type: 'updateDatas',
-        //   payload: {
-        //     drawContent
-        //   }
-        // })
+        drawContent['description'] = description
+        taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawContent,
+            taskGroupList
+          }
+        })
         message.success('更新成功',MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
