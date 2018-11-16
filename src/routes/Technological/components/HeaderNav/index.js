@@ -155,7 +155,7 @@ export default class HeaderNav extends React.Component{
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { aboutMe, avatar, createTime, email, fullName, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const orgnizationName = currentSelectOrganize.name || '组织'
     const { logo } = currentSelectOrganize
     const userInfoMenu = (
@@ -231,11 +231,11 @@ export default class HeaderNav extends React.Component{
                 )}
               </div>
               <div className={indexStyle.description}>
-                <Tooltip placement="topRight" title={fullName}>
-                   <p>{fullName}</p>
+                <Tooltip placement="topRight" title={full_name}>
+                   <p>{full_name || mobile || email }</p>
                 </Tooltip>
                 <Tooltip placement="topLeft" title={email}>
-                  <p>{email}</p>
+                  <p>{email || mobile}</p>
                 </Tooltip>
               </div>
               <div style={{marginLeft: 14}}>

@@ -6,6 +6,7 @@ import globalStyles from '../../globalset/css/globalClassName.less'
 import VerificationCodeTwo from  '../../components/VerificationCodeTwo'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -52,6 +53,7 @@ class FormList extends React.Component {
             return false
           }
         }
+        values['password'] = sha256(values['password'])
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
     });

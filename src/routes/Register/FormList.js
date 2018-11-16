@@ -6,6 +6,7 @@ import VerificationCode from  '../../components/VerificationCode'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -66,6 +67,7 @@ class FormList extends React.Component {
           message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
           return false
         }
+        values['password'] = sha256(values['password'])
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
     });

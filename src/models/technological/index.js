@@ -113,9 +113,9 @@ export default {
         //组织切换重新加载
         const { operateType } = payload
         if(operateType === 'changeOrg') {
-          const redirectHash =  locallocation.pathname
+          let redirectHash =  locallocation.pathname
           if(locallocation.pathname === '/technological/projectDetail') {
-            redirectHash === '/technological/project'
+            redirectHash = '/technological/project'
           }
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }
