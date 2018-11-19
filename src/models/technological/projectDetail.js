@@ -1070,8 +1070,10 @@ export default {
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
-        drawContent['description'] = description
-        taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+        if(description) {
+          drawContent['description'] = description
+          taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+        }
         yield put({
           type: 'updateDatas',
           payload: {

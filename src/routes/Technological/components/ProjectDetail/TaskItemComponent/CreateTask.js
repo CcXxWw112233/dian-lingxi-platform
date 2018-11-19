@@ -99,23 +99,25 @@ export default class CreateTask extends React.Component {
   render() {
     const { datas:{ taskGroupList = [], drawerVisible = false }, drawContent  } = this.props.model
     return (
-      <div className={CreateTaskStyle.outerMost}
-           style={{
-             left:this.state.needX,
-            }}
-           onMouseDown={this.fnDown.bind(this)}
-           ref={'outerMost'}
-      >
-        {taskGroupList.map((value, key) => {
-            return (
-              <TaskItem key={key} taskItemValue={value}
-                        itemKey={key}
-                        taskGroupListIndex={key}
-                        {...this.props}
-                        setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
-            )
-          })}
-          <CreateItem  {...this.props}  ></CreateItem>
+      <div>
+        <div className={CreateTaskStyle.outerMost}
+             style={{
+               left:this.state.needX,
+              }}
+             onMouseDown={this.fnDown.bind(this)}
+             ref={'outerMost'}
+        >
+          {taskGroupList.map((value, key) => {
+              return (
+                <TaskItem key={key} taskItemValue={value}
+                          itemKey={key}
+                          taskGroupListIndex={key}
+                          {...this.props}
+                          setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
+              )
+            })}
+            <CreateItem  {...this.props}  ></CreateItem>
+        </div>
         <Drawer
           placement="right"
           closable={false}
