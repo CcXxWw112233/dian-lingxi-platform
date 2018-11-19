@@ -6,10 +6,15 @@ class PreviewFileModal extends React.Component {
   state = {
   }
   onCancel = () => {
+    this.props.setPreivewProp({
+      isUsable: true,
+      previewFileType: '',
+      previewFileSrc: '',
+    })
     this.props.setPreviewFileModalVisibile()
   }
   render() {
-    const { modalVisible, previewFileSrc, previewFileType } = this.props;
+    const { modalVisible, previewFileSrc, previewFileType, isUsable } = this.props;
     const containner = () => {
       let contain
       switch (previewFileType) {
@@ -23,6 +28,19 @@ class PreviewFileModal extends React.Component {
             <video controls src={previewFileSrc} style={{width:'auto',maxHeight: '600px'}}></video>
           )
           break
+        case 'attachment':
+          if(isUsable) {
+            contain = (
+              <iframe style={{height: 600,width: 600}} src={previewFileSrc}></iframe>
+            )
+          }else {
+            contain = (
+              <div>
+                <iframe style={{height: 0,width: 0}} src={previewFileSrc}></iframe>
+                当前文件无法预览
+              </div>)
+          }
+
         default:
           break
       }

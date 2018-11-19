@@ -33,8 +33,17 @@ export default class FileDetailContent extends React.Component {
 
     return (
       <div className={indexStyles.fileDetailContentOut}>
-        <div className={indexStyles.fileDetailContentLeft}
-             dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+        {filePreviewIsUsable? (
+          <div className={indexStyles.fileDetailContentLeft}
+               dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+        ):(
+          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex',justifyContent:'center',alignItems: 'center', fontSize: 16,color: '#595959'}}>
+            <div>
+              当前文件不支持预览，您可点击下载再进行查看
+            </div>
+          </div>
+        )}
+
         <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
           <div className={indexStyles.fileDetailContentRight_top}>
              <div>版本信息</div>

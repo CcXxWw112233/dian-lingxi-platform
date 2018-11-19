@@ -32,7 +32,7 @@ export default class FileList extends React.Component {
 
   //item操作
   operationMenuClick(data, e) {
-    const { file_id, type } = data
+    const { file_id, type, file_resource_id } = data
     const { datas: { projectDetailInfoData= {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
@@ -44,7 +44,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_id})
+        this.props.fileDownload({ids: file_resource_id})
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
@@ -241,10 +241,10 @@ export default class FileList extends React.Component {
   }
   openFile(data) {
     this.open(data, '2')
-    const { file_id, version_id } = data
+    const { file_id, version_id, file_resource_id } = data
     //接下来打开文件
-    this.props.updateDatas({isInOpenFile: true, filePreviewCurrentId: file_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_id})
+    this.props.updateDatas({isInOpenFile: true,filePreviewCurrentFileId:file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
+    this.props.filePreview({id: file_resource_id})
     this.props.fileVersionist({version_id : version_id})
   }
 

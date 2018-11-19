@@ -390,7 +390,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         }else {
         }
         console.log('info',info)
-        if (status === 'done' &&  info.file.response.code === '0') {
+        if (info.file.status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
           info.fileList.pop()

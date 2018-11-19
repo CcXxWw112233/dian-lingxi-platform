@@ -35,7 +35,7 @@ export default class Header extends React.Component {
   }
   //item操作
   operationMenuClick(data, e) {
-    const { file_id, type } = data
+    const { file_id, type, file_resource_id } = data
     const { datas: { projectDetailInfoData= {},  breadcrumbList = [] } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
@@ -47,7 +47,7 @@ export default class Header extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_id})
+        this.props.fileDownload({ids: file_resource_id})
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
@@ -91,7 +91,7 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
+    const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, } = projectDetailInfoData
     //文件版本更新
     const uploadProps = {
@@ -169,7 +169,7 @@ export default class Header extends React.Component {
             {/*<Icon type="star" />收藏*/}
           {/*</Button>*/}
           <div style={{cursor: 'pointer'}}>
-            <Dropdown overlay={operationMenu({ file_id: filePreviewCurrentId, type: '2' } )}>
+            <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id:filePreviewCurrentFileId, type: '2' } )}>
               <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
             </Dropdown>
             <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />

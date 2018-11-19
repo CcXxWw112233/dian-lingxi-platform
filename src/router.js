@@ -143,6 +143,10 @@ const Routers = function ({ history, app }) {
         import('./models/modal')
       ],
       component: () => import('./routes/TeamShow/'),
+    },{
+      path: '/test',
+      models: () => [import('./models/organization')],
+      component: () => import('./routes/Test/'),
     },
   ]
   //去掉exact

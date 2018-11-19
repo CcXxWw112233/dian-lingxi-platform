@@ -11,12 +11,16 @@ import {Modal} from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
-import { Button } from 'antd'
+import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
-  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE
+  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../utils/businessFunction";
+import { deleteTaskFile } from '../../../../../services/technological/task'
+import { filePreview } from '../../../../../services/technological/file'
+import {getProcessList} from "../../../../../services/technological/process";
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -34,15 +38,26 @@ export default class DrawContent extends React.Component {
     isSetedAlarm: false,
     alarmTime: '',
     previewFileModalVisibile:false, //文件预览是否打开状态
+    attachment_fileList: [], //任务附件列表
+    isUsable: true, //任务附件是否可预览
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}} } = this.props.model
-    let { description } = drawContent
+    let { description, attachment_data = [] } = drawContent
     this.setState({
       brafitEditHtml: description
     })
 
+    //任务附件
+    let attachment_fileList = []
+    for(let i = 0; i < attachment_data.length; i++) {
+      attachment_fileList.push(attachment_data[i])
+      attachment_fileList[i]['uid'] = attachment_data[i].id || attachment_data[i].response.data.attachment_id
+    }
+    this.setState({
+      attachment_fileList
+    })
   }
   componentWillReceiveProps(nextProps) {
     const { datas:{ drawContent = {}} } = nextProps.model
@@ -441,10 +456,15 @@ export default class DrawContent extends React.Component {
   alarmNoEditPermission() {
     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
   }
-
+  //任务附件预览黄
+  setPreivewProp(data) {
+    this.setState({
+      ...data,
+    })
+  }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
@@ -452,8 +472,7 @@ export default class DrawContent extends React.Component {
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [] } = drawContent
-
+    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -527,6 +546,88 @@ export default class DrawContent extends React.Component {
         </Menu.Item>
       </Menu>
     );
+
+
+    const uploadProps = {
+      name: 'file',
+      fileList: attachment_fileList,
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_BOARD}/card/attachment/upload`,
+      data: {
+        card_id
+      },
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken : Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
+      },
+      onChange({ file, fileList, event }) {
+        if (file.status === 'done' &&  file.response.code === '0') {
+
+        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
+          fileList.pop()
+        }
+        that.setState({
+          attachment_fileList: fileList
+        })
+        drawContent['attachment_data'] = fileList
+        that.props.updateDatas({
+          drawContent
+        })
+      },
+      onPreview(e,a) {
+        const file_resource_id = e.file_id || e.response.data.file_resource_id
+        that.setState({
+          previewFileType : 'attachment',
+        })
+        filePreview({id: file_resource_id}).then((value) => {
+          let url = ''
+          let isUsable = true
+          if(value.code==='0') {
+            url = value.data.url
+            isUsable = value.data.isUsable
+          } else {
+            message.warn('文件预览失败')
+            return false
+          }
+          that.setState({
+            previewFileSrc: url,
+            isUsable: isUsable
+          })
+        }).catch(err => {
+          message.warn('文件预览失败')
+          return false
+        })
+        that.setPreviewFileModalVisibile()
+      },
+      onRemove(e) {
+        const attachment_id  = e.id || e.response.data.attachment_id
+        return new Promise((resolve, reject) => {
+          deleteTaskFile({attachment_id}).then((value) => {
+            if(value.code !=='0') {
+              message.warn('删除失败，请重新删除。')
+              reject()
+            }else {
+              resolve()
+            }
+          }).catch(err => {
+            message.warn('删除失败，请重新删除。')
+            reject()
+          })
+        })
+
+      }
+
+    };
+
 
     return(
       //
@@ -697,7 +798,16 @@ export default class DrawContent extends React.Component {
           {/*添加子任务*/}
           <DCAddChirdrenTask {...this.props}/>
 
-          <PreviewFileModal {...this.props} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+          {/*上传任务附件*/}
+          <div  className={DrawerContentStyles.divContent_1}>
+            <Upload {...uploadProps}>
+              <Button  size={'small'} style={{fontSize: 12, marginTop:16,}} >
+                <Icon type="upload" />上传任务附件
+              </Button>
+            </Upload>
+          </div>
+
+          <PreviewFileModal {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
           <div  className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>

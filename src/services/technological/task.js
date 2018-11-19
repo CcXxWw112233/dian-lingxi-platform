@@ -162,3 +162,12 @@ export async function getProjectGoupList() {
     method: 'GET',
   });
 }
+
+//删除任务文件
+export async function deleteTaskFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/attachment/${data.attachment_id}`,
+    method: 'DELETE',
+    data
+  });
+}

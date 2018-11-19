@@ -226,7 +226,7 @@ export default class Header extends React.Component {
     const { datas: { fileList, selectedRowKeys } } = this.props.model
     let chooseArray = []
     for(let i=0; i < selectedRowKeys.length; i++ ){
-      chooseArray.push(fileList[selectedRowKeys[i]].file_id)
+      chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
     }
     const ids = chooseArray.join(',')
     this.props.fileDownload({ids})

@@ -129,6 +129,12 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    deleteTaskFile(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskFile'),
+        payload: data,
+      })
+    },
     addTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('addTaskGroup'),
