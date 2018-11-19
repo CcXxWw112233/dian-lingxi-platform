@@ -4,7 +4,7 @@ import { Icon, Tag, Input, Dropdown, Menu,DatePicker, Checkbox , message } from 
 import BraftEditor from 'braft-editor'
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
-
+import PreviewFileModal from './PreviewFileModal'
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
@@ -33,6 +33,7 @@ export default class DrawContent extends React.Component {
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
+    previewFileModalVisibile:false, //文件预览是否打开状态
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
@@ -372,10 +373,25 @@ export default class DrawContent extends React.Component {
   descriptionHTML(e) {
     if(e.target.nodeName.toUpperCase() === 'IMG') {
       const src = e.target.getAttribute('src')
+      this.setState({
+        previewFileType : 'img',
+        previewFileSrc: src
+      })
+      this.setPreviewFileModalVisibile()
+    }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
+      const src = e.target.getAttribute('src')
       console.log(src)
-    }else {
-      console.log(2)
+      this.setState({
+        previewFileType : 'video',
+        previewFileSrc: src
+      })
+      this.setPreviewFileModalVisibile()
     }
+  }
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
   }
   //有关于富文本编辑---------------end
 
@@ -681,6 +697,7 @@ export default class DrawContent extends React.Component {
           {/*添加子任务*/}
           <DCAddChirdrenTask {...this.props}/>
 
+          <PreviewFileModal {...this.props} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
           <div  className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>
