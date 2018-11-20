@@ -3,12 +3,11 @@ import {connect} from "dva/index";
 import { Icon, Tabs } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
-import AuthTabPaneContent from './AuthTabPaneContent'
-import RoleTabPaneContent from './RoleTabPaneContent'
 import ProjectRole from './ProjectRole'
 import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
 import { getUrlQueryString } from '../../utils/util'
+import NounDefinition from "./NounDefinition";
 
 const  TabPane = Tabs.TabPane
 
@@ -106,6 +105,12 @@ const Organization = (options) => {
         payload: data
       })
     },
+    getNounList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getNounList'),
+        payload: data
+      })
+    }
   }
   const onTabClick = (key)=>{
     updateDatas({
@@ -135,6 +140,9 @@ const Organization = (options) => {
                 <ProjectRole {...asyncProprs} updateDatas={updateDatas}/>
                 {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
+              {/*<TabPane tab="名词定义" key="4">*/}
+                {/*<NounDefinition {...asyncProprs} updateDatas={updateDatas}/>*/}
+              {/*</TabPane>*/}
             </Tabs>
           </div>
         </div>

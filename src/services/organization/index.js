@@ -93,3 +93,12 @@ export async function savePermission(data) {
     data
   });
 }
+
+//获取名词列表
+export async function getNounList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/noun`,
+    method: 'GET',
+    params
+  });
+}

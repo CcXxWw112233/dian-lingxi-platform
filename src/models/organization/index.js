@@ -1,4 +1,4 @@
-import { getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
+import { getNounList,getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {
@@ -39,8 +39,12 @@ export default  {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '1'
+              tabSelectKey: '1',
               // permission_data: [], //权限数据
+              //名词定义
+              current_scheme: '',
+              current_scheme_id: '',
+              scheme_data: [],
             }
           })
 
@@ -56,6 +60,10 @@ export default  {
               payload: {
                 type: '2',
               }
+            })
+            dispatch({
+              type: 'getNounList',
+              payload: {}
             })
           }
 
@@ -97,7 +105,6 @@ export default  {
       }else{
       }
     },
-
 
     * getRolePermissions({ payload }, { select, call, put }) {
       const { type } = payload
@@ -272,6 +279,33 @@ export default  {
         })
       }else{
         message.warn('设置默认角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * getNounList({ payload }, { select, call, put }) {
+      const { type } = payload
+      let res = yield call(getNounList, {})
+      const data = res.data
+      const scheme_data = data['scheme_data']
+      for(let i=0; i < scheme_data.length; i++) {
+        if(!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
+          scheme_data[i]['field_value'] = []
+          for(let j=0; j < scheme_data[0]['field_value'].length; j ++) {
+            const obj = {
+              field_value: '',
+            }
+            scheme_data[i]['field_value'].push(obj)
+          }
+        }
+      }
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            ...res.data
+          }
+        })
+      }else{
+
       }
     },
 
