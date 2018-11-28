@@ -67,7 +67,9 @@ class FormList extends React.Component {
           message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
           return false
         }
-        values['password'] = sha256(values['password'])
+        if(values['password'] ) {
+          values['password'] = sha256(values['password'])
+        }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
     });

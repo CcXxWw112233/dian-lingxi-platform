@@ -53,7 +53,9 @@ class FormList extends React.Component {
             return false
           }
         }
-        values['password'] = sha256(values['password'])
+        if(values['password'] ) {
+          values['password'] = sha256(values['password'])
+        }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
     });
