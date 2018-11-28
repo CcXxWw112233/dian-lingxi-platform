@@ -13,7 +13,7 @@ const CardContent = (props) => {
   const filterItem = (CardContentType) => {
     let contanner = (<div></div>)
     switch (CardContentType) {
-      case '1':
+      case 'task':
         contanner = (
           responsibleTaskList.length? (
             responsibleTaskList.map((value, key)=> (
@@ -25,19 +25,7 @@ const CardContent = (props) => {
 
         )
         break
-      case '2':
-        contanner = (
-          [].length? (
-            [].map((value, key)=> (
-              <TaskItem key={key}  itemValue={value} {...props}/>
-            ))
-          ) : (
-            <div style={{marginTop: 12}}>暂无数据</div>
-          )
-
-        )
-        break
-      case '3':
+      case 'waitingDoFlows': //待处理的流程
         contanner = (
           backLogProcessList.length? (
             backLogProcessList.map((value, key)=> (
@@ -49,7 +37,7 @@ const CardContent = (props) => {
 
         )
         break
-      case '4':
+      case 'joinedFlows': //参与的流程
         contanner = (
           joinedProcessList.length?(
             joinedProcessList.map((value, key)=> (
@@ -60,18 +48,7 @@ const CardContent = (props) => {
           )
         )
         break
-      case '5':
-        contanner = (
-          [].length?(
-            [].map((value, key)=> (
-              <FileItem key={key}  itemValue={value} {...props} />
-            ))
-          ):(
-            <div style={{marginTop: 12}}>暂无数据</div>
-          )
-        )
-        break
-      case '6':
+      case 'file':
         contanner = (
           uploadedFileList.length? (
             uploadedFileList.map((value, key)=> (

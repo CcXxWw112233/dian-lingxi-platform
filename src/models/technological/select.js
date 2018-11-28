@@ -29,3 +29,7 @@ export const selectGroupList = state => state[(`organizationMember`)].datas.grou
 //组织
 export const selectCurrentUserOrganizes = state => state[(`organizationMember`)].datas.currentUserOrganizes  //
 export const selectCurrentSelectOrganize = state => state[(`organizationMember`)].datas.currentSelectOrganize  //
+
+//工作台
+export const selectKnowCityArticles = state => state[(`workbench`)].datas.knowCityArticles  //
+export const selectKnowPolicyArticles = state => state[(`workbench`)].datas.knowPolicyArticles  //

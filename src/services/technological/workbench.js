@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //我负责的任务
@@ -37,6 +37,42 @@ export async function getJoinedProcessList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/participation`,
     method: 'GET',
+  });
+}
+
+
+//获取文章列表
+export async function getArticleList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_ARTICLE}/articles`,
+    method: 'GET',
+    params,
+    headers: {
+      appid: WE_APP_ID(params['appType']),
+    }
+  }, {isNotLoading: false});
+}
+//获取文章内容
+export async function getArticleDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_ARTICLE}/article/${params.id}`,
+    method: 'GET',
+    params,
+    headers: {
+      appid: WE_APP_ID(params['appType']),
+    }
+  });
+}
+//更新阅读量
+export async function updateViewCounter(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_ARTICLE}/viewcounter`,
+    method: 'PUT',
+    data,
+    headers: {
+      appid: WE_APP_ID(data['appType']),
+    },
+    data,
   });
 }
 

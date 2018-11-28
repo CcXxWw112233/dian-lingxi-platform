@@ -1,11 +1,13 @@
 
 .workbenchOut {
+  margin: 0 auto;
   padding-top: 16px;
   margin-bottom: 100px;
+  max-width: 1200px;
   .cardItem{
-    margin-top: 24px;
-    display: flex;
-    justify-content:center;
+    column-count: 2;
+    column-gap: 30px;
+    margin-top: 30px;
     .cardItem_left{
       height: 250px;
       width: 600px;
@@ -18,9 +20,11 @@
       border-radius: 4px;
     }
     .cardDetail{
+      break-inside:avoid;
+      width: 585px;
+      margin-bottom: 30px;
+      max-height: 380px;
       color: #595959 ;
-      height: 100%;
-      width: 100%;
       background: #FFFFFF;
       border: 1px solid rgba(217,217,217,1);
       border-radius: 4px;
@@ -29,7 +33,7 @@
       flex-direction: column ;
       .contentTitle{
         height: 46px;
-        background-color: #f2f2f2;
+        //background-color: #f2f2f2;
         width: 100%;
         font-size: 16px;
         border-radius: 4px 4px 0 0;
@@ -41,6 +45,7 @@
         box-sizing: border-box;
         flex: 1;
         padding: 12px;
+        padding-top: 0;
         overflow-y: scroll;
         overflow-x: hidden;
         .taskItem{
