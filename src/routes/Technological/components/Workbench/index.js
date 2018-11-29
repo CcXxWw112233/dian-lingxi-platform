@@ -12,6 +12,7 @@ const getEffectOrReducerByName = name => `workbench/${name}`
 const Workbench = (props) => {
   // console.log(props)
   const { dispatch, model, modal } = props
+  const { datas: {boxList = []}} = model
   const routingJump = (path) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
@@ -35,12 +36,49 @@ const Workbench = (props) => {
         payload: data
       })
     },
+    getBoxList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getBoxList'),
+        payload: data
+      })
+    },
+    getItemBoxFilter(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getItemBoxFilter'),
+        payload: data
+      })
+    },
+    getMeetingList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getMeetingList'),
+        payload: data
+      })
+    },
     getResponsibleTaskList(data) {
       dispatch({
         type: getEffectOrReducerByName('getResponsibleTaskList'),
         payload: data
       })
     },
+    getUploadedFileList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getUploadedFileList'),
+        payload: data
+      })
+    },
+    getBackLogProcessList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getBackLogProcessList'),
+        payload: data
+      })
+    },
+    getJoinedProcessList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getJoinedProcessList'),
+        payload: data
+      })
+    },
+
     getArticleList(data) {
       dispatch({
         type: getEffectOrReducerByName('getArticleList'),
@@ -73,14 +111,30 @@ const Workbench = (props) => {
       <Header />
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
-          <CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>
-          <CardContent title={'会议安排'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'meeting'}/>
-          <CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'task'}/>
-          <CardContent title={'审核进程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'waitingDoFlows'}/>
-          <CardContent title={'我的文档'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'file'}/>
-          <CardContentArticle title={'优秀案例'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'case'} appType={WE_APP_TYPE_KNOW_CITY} />
-          <CardContent title={'隐翼地图'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'map'}/>
-          <CardContentArticle title={'政策法规'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'policy'} appType={WE_APP_TYPE_KNOW_POLICY}/>
+          {boxList.map((value, key) => {
+            const { code, name, id } = value
+            let container = ''
+            if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
+              container = (
+                <CardContentArticle title={name} {...cardContentListProps}
+                                    updateDatas={updateDatas} CardContentType={code}
+                                    appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
+              )
+            }else{
+              container = (
+                <CardContent title={name} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+              )
+            }
+            return <div key={key}>{container}</div>
+          })}
+          {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
+          {/*<CardContent title={'会议安排'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'meeting'}/>*/}
+          {/*<CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'task'}/>*/}
+          {/*<CardContent title={'审核进程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'waitingDoFlows'}/>*/}
+          {/*<CardContent title={'我的文档'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'file'}/>*/}
+          {/*<CardContentArticle title={'优秀案例'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'case'} appType={WE_APP_TYPE_KNOW_CITY} />*/}
+          {/*<CardContent title={'隐翼地图'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'yymap'}/>*/}
+          {/*<CardContentArticle title={'政策法规'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'policy'} appType={WE_APP_TYPE_KNOW_POLICY}/>*/}
         </div>
 
     </div>

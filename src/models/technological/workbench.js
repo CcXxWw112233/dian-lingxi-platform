@@ -1,4 +1,4 @@
-import {getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import {getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -23,37 +23,60 @@ export default modelExtend(technological, {
             payload: {
               knowCityArticles: [], //优秀案例文章列表
               knowPolicyArticles: [], //政策法规文章列表
+              previewAticle: {}, //预览的文章
+              spinning: false, //文章加载中状态
+              boxList: [], //工作台盒子列表
             }
           })
-          dispatch({
-            type: 'getResponsibleTaskList',
-            payload: {
 
-            }
-          })
           dispatch({
-            type: 'getUploadedFileList',
-            payload: {
-
-            }
+            type: 'getBoxList',
+            payload: {}
           })
-          dispatch({
-            type: 'getBackLogProcessList',
-            payload: {
 
-            }
-          })
-          dispatch({
-            type: 'getJoinedProcessList',
-            payload: {
-
-            }
-          })
         }
       })
     },
   },
   effects: {
+    * getBoxList({ payload }, { select, call, put }) {
+      let res = yield call(getBoxList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            boxList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getItemBoxFilter({ payload }, { select, call, put }) {
+      let res = yield call(getItemBoxFilter, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+          }
+        })
+      }else{
+
+      }
+    },
+    * getMeetingList({ payload }, { select, call, put }) {
+      let res = yield call(getMeetingList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            meetingLsit: res.data
+          }
+        })
+      }else{
+
+      }
+    },
     * getResponsibleTaskList({ payload }, { select, call, put }) {
       let res = yield call(getResponsibleTaskList, payload)
       if(isApiResponseOk(res)) {
@@ -135,27 +158,38 @@ export default modelExtend(technological, {
       }else{}
     },
     * getArticleDetail({ payload }, { select, call, put }) { //
-      let res = yield call(getArticleDetail, payload)
-      // if(isApiResponseOk(res)) {
-      //   yield put({
-      //     type: 'getResponsibleTaskList',
-      //     payload:{
-      //     }
-      //   })
-      // }else{}
+      yield put({
+        type: 'updateDatas',
+        payload:{
+          spinning: true
+        }
+      })
+      const res = yield call(getArticleDetail, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            previewAticle: res.data,
+            spinning: false
+          }
+        })
+        yield put({
+          type: 'updateViewCounter',
+          payload
+        })
+      }else{
+        message.warn(res.message || '系统繁忙，请稍后重试')
+      }
     },
     * updateViewCounter({ payload }, { select, call, put }) { //
-      let res = yield call(updateViewCounter, payload)
-      // if(isApiResponseOk(res)) {
-      //   yield put({
-      //     type: 'getResponsibleTaskList',
-      //     payload:{
-      //     }
-      //   })
-      // }else{}
+      const article_id = payload['id']
+      const res = yield call(updateViewCounter, {...payload, article_id})
+      if(isApiResponseOk(res)) {
+
+      }else{
+
+      }
     },
-
-
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

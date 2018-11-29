@@ -32,23 +32,32 @@
       display: flex;
       flex-direction: column ;
       .contentTitle{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         height: 46px;
-        //background-color: #f2f2f2;
+        box-sizing: border-box;
         width: 100%;
         font-size: 16px;
         border-radius: 4px 4px 0 0;
         padding: 0 12px;
-        line-height: 46px;
+        >div{
+          line-height: 46px;
+        }
+        >div:nth-child(2) {
+          cursor: pointer;
+        }
       }
       .contentBody::-webkit-scrollbar {display:none}
       .contentBody{
         box-sizing: border-box;
         flex: 1;
         padding: 12px;
+        max-height: 330px;
         padding-top: 0;
         overflow-y: scroll;
         overflow-x: hidden;
-        .taskItem{
+        .taskItem {
           font-size: 14px;
           display: flex;
           margin-top: 12px;
@@ -83,7 +92,8 @@
             }
           }
         }
-        .fileItem{
+        .fileItem, .meetingItem {
+          color: #262626;
           font-size: 14px;
           display: flex;
           margin-top: 12px;
@@ -102,10 +112,81 @@
             text-align: right;
           }
         }
+        .meetingItem {
+          div:nth-child(2) {
+            flex: 1;
+            margin: 0 8px;
+          }
+        }
+        .projectCountItem{
+          color: #262626;
+          font-size: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 40px;
+          margin-bottom: 12px;
+          >div{
+            height: 100%;
+            img{
+              height: 100%;
+              width: auto;
+            }
+          }
+          .left{
+            div:nth-child(2) {
+              font-size: 12px;
+              color: #8c8c8c;
+            }
+          }
+        }
+        .articleItem{
+          cursor: pointer;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          margin-top: 12px;
+           .articleItemleft{
+             flex: 1;
+             margin-right: 10px;
+             >div:nth-child(2) {
+               font-size: 12px;
+               color: #8c8c8c;
+               margin-top: 4px;
+             }
+
+           }
+          .articleItemright{
+
+            img{
+              width: 70px;
+              height: 50px;
+              border-radius: 4px;
+              margin-left: 6px;
+            }
+          }
+        }
       }
     }
   }
 }
+
+.previewOut{
+  padding: 20px;
+  .title{
+    font-size: 18px;
+    color: #262626;
+  }
+  .content {
+    margin-top: 20px;
+    min-height: 500px;
+    overflow-x: hidden;
+    img{
+      max-width: 100%;
+    }
+  }
+}
+
 
 .nomalCheckBox{
   cursor: pointer;
