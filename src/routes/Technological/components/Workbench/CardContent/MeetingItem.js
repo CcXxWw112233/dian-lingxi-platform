@@ -7,15 +7,14 @@ import Cookies from 'js-cookie'
 
 export default class MeetingItem extends React.Component {
   render() {
-    const { itemValue = {} } = this.props
-    const { board_id, board_name, file_name,create_time } = itemValue
-
+    const { itemValue = {}, itemKey } = this.props
+    const { name, start_time, due_time } = itemValue
     return (
       <div className={indexstyles.meetingItem}>
         <div>
           <Icon type="calendar" style={{fontSize: 16, color: '#8c8c8c'}}/>
         </div>
-        <div>开会咯<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}}>2018-88</span></div>
+        <div>{name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time,'',true)}~${timestampToTimeNormal(due_time,'',true)}`}</span></div>
       </div>
     )
   }

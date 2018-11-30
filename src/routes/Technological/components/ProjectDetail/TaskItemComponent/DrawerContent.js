@@ -21,6 +21,7 @@ import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../
 import { deleteTaskFile } from '../../../../../services/technological/task'
 import { filePreview } from '../../../../../services/technological/file'
 import {getProcessList} from "../../../../../services/technological/process";
+import globalStyle from '../../../../../globalset/css/globalClassName.less'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -472,7 +473,7 @@ export default class DrawContent extends React.Component {
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
+    let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -656,9 +657,16 @@ export default class DrawContent extends React.Component {
           {/*标题*/}
           <div className={DrawerContentStyles.divContent_2}>
              <div className={DrawerContentStyles.contain_2}>
-               <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
-                 <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
-               </div>
+               {type === '0' ?(
+                 <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
+                   <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
+                 </div>
+               ):(
+                 <div style={{width: 24, height: 24, color: '#595959'}}>
+                   <i className={globalStyle.authTheme} >&#xe709;</i>
+                 </div>
+               )}
+
                {!titleIsEdit ? (
                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
                ) : (
