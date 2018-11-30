@@ -122,7 +122,7 @@ const Workbench = (props) => {
               )
             }else{
               container = (
-                <CardContent title={name} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+                <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
               )
             }
             return <div key={key}>{container}</div>

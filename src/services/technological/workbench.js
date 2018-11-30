@@ -2,6 +2,13 @@ import request from '../../utils/requestAxios'
 import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+//获取项目列表
+export async function getProjectList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/list`,
+    method: 'GET',
+  });
+}
 
 //获取工作台盒子
 export async function getBoxList(params) {
@@ -11,10 +18,11 @@ export async function getBoxList(params) {
   });
 }
 //获取工作台单个盒子设置过滤条件
-export async function getItemBoxFilter(params) {
+export async function getItemBoxFilter(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
     method: 'POST',
+    data
   });
 }
 //我负责的任务
@@ -72,7 +80,7 @@ export async function getArticleList(params) {
     headers: {
       appid: WE_APP_ID(params['appType']),
     }
-  }, {isNotLoading: false});
+  }, {isNotLoading: true});
 }
 //获取文章内容
 export async function getArticleDetail(params) {

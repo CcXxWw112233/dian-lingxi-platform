@@ -1,4 +1,4 @@
-import {getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import {getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
-import {selectKnowPolicyArticles, selectKnowCityArticles} from "./select";
+import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList} from "./select";
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -26,11 +26,16 @@ export default modelExtend(technological, {
               previewAticle: {}, //预览的文章
               spinning: false, //文章加载中状态
               boxList: [], //工作台盒子列表
+              projectList: [], //项目列表
             }
           })
 
           dispatch({
             type: 'getBoxList',
+            payload: {}
+          })
+          dispatch({
+            type: 'getProjectList',
             payload: {}
           })
 
@@ -39,6 +44,22 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+
+
+    * getProjectList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+
     * getBoxList({ payload }, { select, call, put }) {
       let res = yield call(getBoxList, payload)
       if(isApiResponseOk(res)) {
@@ -53,15 +74,36 @@ export default modelExtend(technological, {
       }
     },
     * getItemBoxFilter({ payload }, { select, call, put }) {
-      let res = yield call(getItemBoxFilter, payload)
+      const { board_ids, id, itemKey }= payload
+      const res = yield call(getItemBoxFilter, {board_ids, id})
+      const boxList = yield select(selectBoxList)
+      const code = boxList[itemKey]['code']
       if(isApiResponseOk(res)) {
+        let eventName = ''
+        switch (code) {
+          case 'RESPONSIBLE_TASK':
+            eventName= 'getResponsibleTaskList'
+            break
+          case 'EXAMINE_PROGRESS': //待处理的流程
+            eventName= 'getBackLogProcessList'
+            break
+          case 'MY_DOCUMENT':
+            eventName= 'getUploadedFileList'
+            break
+          case 'MEETIMG_ARRANGEMENT':
+            eventName= 'getMeetingList'
+            break
+          default:
+            break
+        }
         yield put({
-          type: 'updateDatas',
+          type: eventName,
           payload: {
+            id
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * getMeetingList({ payload }, { select, call, put }) {

@@ -33,3 +33,4 @@ export const selectCurrentSelectOrganize = state => state[(`organizationMember`)
 //工作台
 export const selectKnowCityArticles = state => state[(`workbench`)].datas.knowCityArticles  //
 export const selectKnowPolicyArticles = state => state[(`workbench`)].datas.knowPolicyArticles  //
+export const selectBoxList = state => state[(`workbench`)].datas.boxList

@@ -43,7 +43,15 @@ export default class CardContent extends React.Component{
     this.setState({
       dropDonwVisible: false
     })
-    console.log(data)
+
+    const { boxId, itemKey } = this.props
+
+    this.props.getItemBoxFilter({
+      id: boxId,
+      board_ids: data.join(','),
+      selected_board_data:data,
+      itemKey
+    })
   }
   onVisibleChange(e,a){
     this.setState({
@@ -52,13 +60,9 @@ export default class CardContent extends React.Component{
   }
   render(){
     const { datas = {} } = this.props.model
-    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [] } = datas
-    const { title, CardContentType } = this.props
-
-    const leader_members = [
-      {name: 'a', id:123},
-      {name: 'b',id: 213}
-    ]
+    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[] } = datas
+    const { title, CardContentType, itemValue={}, itemKey } = this.props
+    const { selected_board_data = [] } = itemValue //已选board id
 
     const filterItem = (CardContentType) => {
       let contanner = (<div></div>)
@@ -143,7 +147,7 @@ export default class CardContent extends React.Component{
             <Dropdown trigger={['click']}
                       visible={this.state.dropDonwVisible}
                       onVisibleChange={this.onVisibleChange.bind(this)}
-                      overlay={<MenuSearchMultiple keyCode={'id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={['123']} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'name'} listData={leader_members} />}>
+                      overlay={<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />}>
                <div ><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
             </Dropdown>
           )}
