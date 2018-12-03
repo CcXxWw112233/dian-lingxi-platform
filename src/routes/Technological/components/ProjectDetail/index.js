@@ -5,7 +5,6 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
-import EditTeamShow  from './EditTeamShow'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -130,9 +129,27 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    deleteTaskFile(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskFile'),
+        payload: data,
+      })
+    },
     addTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('addTaskGroup'),
+        payload: data,
+      })
+    },
+    deleteTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskGroup'),
+        payload: data,
+      })
+    },
+    updateTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateTaskGroup'),
         payload: data,
       })
     },

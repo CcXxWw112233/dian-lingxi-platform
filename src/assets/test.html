@@ -15,10 +15,18 @@
   <canvas id="myCanvas" width="500" height="300" style="border:1px solid #d3d3d3;background:#ffffff;">
     Your browser does not support the HTML5 canvas tag.
   </canvas>
+  <div id="sss">
+    <div>asdasd</div>
+    <p>123123</p>
+  </div>
 </form>
 </body>
 <script type="text/javascript">
   window.onload = function () {
+
+    document.getElementById('sss').document.getElementsByTagName('div').click = function () {
+      alert(1)
+    }
 
     var c=document.getElementById("myCanvas");
     var ctx=c.getContext("2d");

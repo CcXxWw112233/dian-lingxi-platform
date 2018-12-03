@@ -34,7 +34,7 @@ export default class ItemTwoChirldren extends React.Component {
         <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this, card_id)}>
           <Icon type="check" style={{color:is_realize === '1' ? '#FFFFFF': '#F5F5F5',fontSize:12, fontWeight:'bold'}}/>
         </div>
-        <div>{card_name}</div>
+        <div style={{textDecoration:is_realize === '1'? 'line-through': 'none'}}>{card_name}</div>
       </div>
     )
   }

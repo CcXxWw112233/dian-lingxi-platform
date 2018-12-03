@@ -1,6 +1,6 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar } from 'antd'
+import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
 
@@ -51,10 +51,11 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     const { chirldTaskItemValue } = this.props
     const { card_id } = drawContent
     chirldTaskItemValue['due_time'] = timeToTimestamp(dateString)
-    this.props.addTask({
+    const updateObj = {
       card_id,
       due_time: dateString
-    })
+    }
+    this.props.updateTask({updateObj})
   }
 
   render() {
@@ -78,7 +79,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
         </div>
       ):(
         <div style={{height:16,width: 16,borderRadius:16,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 12px',marginTop: 2,}}>
-          <Icon type={'user'} style={{fontSize:10, marginTop: 4,marginLeft:2,color: '#8c8c8c', display: 'block',}}/>
+          <Icon type={'user'} style={{fontSize:10, marginTop: 4,color: '#8c8c8c', display: 'block',}}/>
         </div>
       )
     }
@@ -89,18 +90,21 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           <div className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
           </div>
-          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? timestampToTimeNormal(due_time)+ '截止' : ''}</span></div>
+          <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? (due_time.indexOf('-') !==-1? due_time : timestampToTimeNormal(due_time))+ '截止' : ''}</span></div>
           <div style={{position:'relative', height: 22,display: 'flex', justifyContent: 'align-items'}}>
             <Dropdown overlay={
               <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
             }>
               {executor.user_id? (
-                imgOrAvatar(executor.avatar)
+                <Tooltip title={executor.user_name || '佚名'}>
+                  {imgOrAvatar(executor.avatar)}
+                </Tooltip>
               ) : (
                 <div>
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>
                 </div>
               )}
+
             </Dropdown>
             <div>
               {!due_time?(

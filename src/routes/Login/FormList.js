@@ -6,6 +6,7 @@ import globalStyles from '../../globalset/css/globalClassName.less'
 import VerificationCodeTwo from  '../../components/VerificationCodeTwo'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -51,6 +52,9 @@ class FormList extends React.Component {
             message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
             return false
           }
+        }
+        if(values['password'] ) {
+          values['password'] = sha256(values['password'])
         }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
@@ -115,7 +119,7 @@ class FormList extends React.Component {
   }
 
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!validateTel(values['account'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
@@ -130,7 +134,6 @@ class FormList extends React.Component {
         type: '2'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
-      // calback && typeof calback === 'function' ? calback() : ''
     })
   }
 

@@ -21,9 +21,14 @@ export default class Projectlist extends React.Component {
     }
     this.props.showModal()
   }
+  collapseOnchange(e) {
+    this.props.updateDatas({
+      collapseActiveKeyArray:e
+    })
+  }
   render() {
     const { datas = {} } = this.props.model
-    const { projectList = {} }  = datas
+    const { projectList = {}, collapseActiveKeyArray = [] }  = datas
     const { star = [], create = [], participate = [] } = projectList
 
     const addItem = (
@@ -33,7 +38,7 @@ export default class Projectlist extends React.Component {
     )
     return (
       <div className={indexStyle.projectListOut}>
-        <Collapse accordion bordered={false} style={{backgroundColor:'#f5f5f5',marginTop: 30}} >
+        <Collapse onChange={this.collapseOnchange.bind(this)} bordered={false} style={{backgroundColor:'#f5f5f5',marginTop: 30}} activeKey	= {collapseActiveKeyArray} >
           <Panel header="我收藏的项目" key="1"  style={customPanelStyle}>
             {star.map((value, key) => (
               <ElseProject {...this.props} itemDetailInfo={value} key={key}/>

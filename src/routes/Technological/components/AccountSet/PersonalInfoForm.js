@@ -42,8 +42,8 @@ class PersonalInfoForm extends React.Component {
   render() {
     const that = this
     const { getFieldDecorator } = this.props.form;
-    const { accountSet = {} } = this.props
-    const { datas = {} } = accountSet
+    const { model = {} } = this.props
+    const { datas = {} } = model
     const { userInfo = {} } = datas
     const {
       orgnization,
@@ -95,7 +95,6 @@ class PersonalInfoForm extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
-        console.log(file)
         if (file.status === 'uploading') {
           that.setState({
             uploading: true
@@ -105,11 +104,6 @@ class PersonalInfoForm extends React.Component {
           that.setState({
             uploading: false
           })
-          if (file.response && file.response.data) {
-            that.setState({
-              avatarUrl: file.response.data
-            })
-          }
         }
         if (file.status === 'done') {
           message.success(`头像上传成功。`);
@@ -122,9 +116,9 @@ class PersonalInfoForm extends React.Component {
             uploading: false
           })
         }
-        if (file.response && file.response.code === 0) {
-          const { accountSet = {} } = that.props
-          const { datas = {} } = accountSet
+        if (file.response && file.response.code === '0') {
+          const { model = {} } = that.props
+          const { datas = {} } = model
           const { userInfo = {} } = datas
           userInfo['avatar'] = file.response.data.avatar
           that.props.updateDatas({

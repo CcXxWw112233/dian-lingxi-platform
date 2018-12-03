@@ -5,6 +5,7 @@ import moment from 'moment';
 import indexStyle from './index.less'
 import {validateEmail, validatePassword, validateTel} from '../../../../utils/verify'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -35,6 +36,15 @@ class ChangePasswordForm extends React.Component {
         if(values['new_password'] !== values['confirmPassword']) {
           message.warn('输入新密码不一致。', MESSAGE_DURATION_TIME)
           return false
+        }
+        if(values['old_password'] ) {
+          values['old_password'] = sha256(values['old_password'])
+        }
+        if(values['new_password'] ) {
+          values['new_password'] = sha256(values['new_password'])
+        }
+        if(values['confirmPassword'] ) {
+          values['confirmPassword'] = sha256(values['confirmPassword'])
         }
         this.props.changePassWord ? this.props.changePassWord(values) : false
       }

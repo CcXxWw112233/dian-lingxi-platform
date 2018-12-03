@@ -6,9 +6,9 @@ import indexStyle from './index.less'
 const getEffectOrReducerByName = name => `accountSet/${name}`
 
 const AccountSet = (options) => {
-  const { accountSet, dispatch } =options
+  const { model, dispatch } =options
   const menuFormProps = {
-    accountSet,
+    model,
     updateUserInfo(data) {
       dispatch({
         type: getEffectOrReducerByName('updateUserInfo'),
@@ -52,6 +52,12 @@ const AccountSet = (options) => {
         payload: { data }
       })
     },
+    getUserInfo(data) {
+      dispatch({
+        type:getEffectOrReducerByName('getUserInfo'),
+        payload: data
+      })
+    }
   }
   const updateDatas = (payload) => {
     dispatch({
@@ -69,8 +75,8 @@ const AccountSet = (options) => {
     )
 };
 
-export default connect(({ accountSet }) => {
-  return {
-    accountSet,
-  }
-})(AccountSet);
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ modal, accountSet, loading }) {
+  return { modal, model: accountSet, loading }
+}
+export default connect(mapStateToProps)(AccountSet)

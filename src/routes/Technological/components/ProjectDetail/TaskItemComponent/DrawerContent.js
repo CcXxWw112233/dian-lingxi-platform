@@ -2,20 +2,26 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Tag, Input, Dropdown, Menu,DatePicker, Checkbox , message } from 'antd'
 import BraftEditor from 'braft-editor'
-import 'braft-editor/dist/braft.css'
+// import 'braft-editor/dist/braft.css'
+import 'braft-editor/dist/index.css'
+import PreviewFileModal from './PreviewFileModal'
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
-
-import { deepClone } from '../../../../../utils/util'
+import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
-  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT
+  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../utils/businessFunction";
+import { deleteTaskFile } from '../../../../../services/technological/task'
+import { filePreview } from '../../../../../services/technological/file'
+import {getProcessList} from "../../../../../services/technological/process";
+import globalStyle from '../../../../../globalset/css/globalClassName.less'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -27,12 +33,40 @@ export default class DrawContent extends React.Component {
     title: '',
     titleIsEdit: false,
     isInEdit: false,
+    brafitEditHtml: '', //富文本编辑内容
     isInAddTag: false,
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
+    previewFileModalVisibile:false, //文件预览是否打开状态
+    attachment_fileList: [], //任务附件列表
+    isUsable: true, //任务附件是否可预览
   }
+  componentWillMount() {
+    //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
+    const { datas:{ drawContent = {}} } = this.props.model
+    let { description, attachment_data = [] } = drawContent
+    this.setState({
+      brafitEditHtml: description
+    })
 
+    //任务附件
+    let attachment_fileList = []
+    for(let i = 0; i < attachment_data.length; i++) {
+      attachment_fileList.push(attachment_data[i])
+      attachment_fileList[i]['uid'] = attachment_data[i].id || attachment_data[i].response.data.attachment_id
+    }
+    this.setState({
+      attachment_fileList
+    })
+  }
+  componentWillReceiveProps(nextProps) {
+    const { datas:{ drawContent = {}} } = nextProps.model
+    let { description } = drawContent
+    this.setState({
+      brafitEditHtml: description
+    })
+  }
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
@@ -68,7 +102,7 @@ export default class DrawContent extends React.Component {
         is_archived: '1'
       })
     }else if(key === '2') {
-      if(!checkIsHasPermission(PROJECT_TEAM_BOARD_EDIT)){
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -92,6 +126,10 @@ export default class DrawContent extends React.Component {
 
   //标题-------start
   setIsCheck() {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {
@@ -111,6 +149,9 @@ export default class DrawContent extends React.Component {
       name: e.target.value,
       card_name: e.target.value,
     }
+    this.setState({
+      titleIsEdit: false
+    })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
     this.props.updateDatas({drawContent})
@@ -223,23 +264,149 @@ export default class DrawContent extends React.Component {
   }
   goEdit(e) {
     e.stopPropagation();
+    // if(e.target.nodeName.toUpperCase() === 'IMG') {
+    //   const src = e.target.getAttribute('src')
+    // }
     this.setState({
       isInEdit: true
     })
   }
-  drawerContentOutClick(e) {
-    if(this.state.isInEdit){
-      const { datas:{ drawContent = {} } } = this.props.model
-      const { card_id, description, due_time, start_time, card_name } = drawContent
-      const updateObj ={
-        card_id,
-        description,
-      }
-      this.props.updateTask({updateObj})
+  quitBrafitEdit(e) {
+    e.stopPropagation();
+    const { datas:{ drawContent = {}} } = this.props.model
+    let { description } = drawContent
+    this.setState({
+      isInEdit: false,
+      brafitEditHtml: description,
+    })
+
+  }
+  saveBrafitEdit(e) {
+    e.stopPropagation();
+    const { datas:{ drawContent = {} } } = this.props.model
+    let { card_id} = drawContent
+    let { brafitEditHtml } = this.state
+    if(typeof brafitEditHtml === 'object') {
+      brafitEditHtml = brafitEditHtml.toHTML()
     }
     this.setState({
       isInEdit: false,
+    })
+    const updateObj ={
+      card_id,
+      description: brafitEditHtml,
+    }
+    this.props.updateTask({updateObj})
+  }
+  drawerContentOutClick(e) {
+    // if(this.state.isInEdit){
+    //   const { datas:{ drawContent = {} } } = this.props.model
+    //   let { card_id, description,} = drawContent
+    //   if(typeof description === 'object') {
+    //     description = description.toHTML()
+    //   }
+    //   const updateObj ={
+    //     card_id,
+    //     description,
+    //   }
+    //   this.props.updateTask({updateObj})
+    // }
+    this.setState({
+      // isInEdit: false,
       titleIsEdit: false,
+    })
+  }
+  isJSON = (str) => {
+    if (typeof str == 'string') {
+      try {
+        var obj=JSON.parse(str);
+        if(str.indexOf('{')>-1){
+          return true;
+        }else{
+          return false;
+        }
+
+      } catch(e) {
+        return false;
+      }
+    }
+    return false;
+  }
+  myUploadFn = (param) => {
+    const serverURL = `${REQUEST_DOMAIN_FILE}/upload`
+    const xhr = new XMLHttpRequest
+    const fd = new FormData()
+
+    const successFn = (response) => {
+      // 假设服务端直接返回文件上传后的地址
+      // 上传成功后调用param.success并传入上传后的文件地址
+      if(xhr.status === 200 && this.isJSON(xhr.responseText)) {
+        if(JSON.parse(xhr.responseText).code === '0') {
+          param.success({
+            url: JSON.parse(xhr.responseText).data ? JSON.parse(xhr.responseText).data.url : '',
+            meta: {
+              // id: 'xxx',
+              // title: 'xxx',
+              // alt: 'xxx',
+              loop: false, // 指定音视频是否循环播放
+              autoPlay: false, // 指定音视频是否自动播放
+              controls: true, // 指定音视频是否显示控制栏
+              // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
+            }
+          })
+        }else {
+          errorFn()
+        }
+      }else {
+        errorFn()
+      }
+
+    }
+
+    const progressFn = (event) => {
+      // 上传进度发生变化时调用param.progress
+      param.progress(event.loaded / event.total * 100)
+    }
+
+    const errorFn = (response) => {
+      // 上传发生错误时调用param.error
+      param.error({
+        msg: '图片上传失败!'
+      })
+    }
+
+    xhr.upload.addEventListener("progress", progressFn, false)
+    xhr.addEventListener("load", successFn, false)
+    xhr.addEventListener("error", errorFn, false)
+    xhr.addEventListener("abort", errorFn, false)
+
+    fd.append('file', param.file)
+    xhr.open('POST', serverURL, true)
+    xhr.setRequestHeader('Authorization', Cookies.get('Authorization'))
+    xhr.setRequestHeader('refreshToken', Cookies.get('refreshToken'))
+    xhr.send(fd)
+  }
+  descriptionHTML(e) {
+    if(e.target.nodeName.toUpperCase() === 'IMG') {
+      const src = e.target.getAttribute('src')
+      this.setState({
+        previewFileType : 'img',
+        previewFileSrc: src
+      })
+      this.setPreviewFileModalVisibile()
+    }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
+      const src = e.target.getAttribute('src')
+      console.log(src)
+      this.setState({
+        previewFileType : 'video',
+        previewFileSrc: src
+      })
+      this.setPreviewFileModalVisibile()
+    }
+  }
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
     })
   }
   //有关于富文本编辑---------------end
@@ -290,10 +457,15 @@ export default class DrawContent extends React.Component {
   alarmNoEditPermission() {
     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
   }
-
+  //任务附件预览黄
+  setPreivewProp(data) {
+    this.setState({
+      ...data,
+    })
+  }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
@@ -301,8 +473,7 @@ export default class DrawContent extends React.Component {
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [], is_realize = '0', executors = [] } = drawContent
-
+    let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -312,16 +483,21 @@ export default class DrawContent extends React.Component {
       executor = executors[0]
     }
     label_data = label_data || []
-    description = description || '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+    description = description //|| '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+    const editorState = BraftEditor.createEditorState(brafitEditHtml)
 
     const editorProps = {
       height: 0,
       contentFormat: 'html',
-      initialContent: description,
-      onHTMLChange:(e) => {
-        const { datas:{ drawContent = {} } } = this.props.model
-        drawContent['description'] = e
-        this.props.updateDatas({drawContent})
+      value: editorState,
+      media:{uploadFn: this.myUploadFn},
+      onChange:(e) => {
+        // const { datas:{ drawContent = {} } } = this.props.model
+        // drawContent['description'] = e
+        // this.props.updateDatas({drawContent})
+        this.setState({
+          brafitEditHtml: e
+        })
       },
       fontSizes: [14],
       controls: [
@@ -372,7 +548,90 @@ export default class DrawContent extends React.Component {
       </Menu>
     );
 
+
+    const uploadProps = {
+      name: 'file',
+      fileList: attachment_fileList,
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_BOARD}/card/attachment/upload`,
+      data: {
+        card_id
+      },
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken : Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
+      },
+      onChange({ file, fileList, event }) {
+        if (file.status === 'done' &&  file.response.code === '0') {
+
+        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
+          fileList.pop()
+        }
+        that.setState({
+          attachment_fileList: fileList
+        })
+        drawContent['attachment_data'] = fileList
+        that.props.updateDatas({
+          drawContent
+        })
+      },
+      onPreview(e,a) {
+        const file_resource_id = e.file_id || e.response.data.file_resource_id
+        that.setState({
+          previewFileType : 'attachment',
+        })
+        filePreview({id: file_resource_id}).then((value) => {
+          let url = ''
+          let isUsable = true
+          if(value.code==='0') {
+            url = value.data.url
+            isUsable = value.data.isUsable
+          } else {
+            message.warn('文件预览失败')
+            return false
+          }
+          that.setState({
+            previewFileSrc: url,
+            isUsable: isUsable
+          })
+        }).catch(err => {
+          message.warn('文件预览失败')
+          return false
+        })
+        that.setPreviewFileModalVisibile()
+      },
+      onRemove(e) {
+        const attachment_id  = e.id || e.response.data.attachment_id
+        return new Promise((resolve, reject) => {
+          deleteTaskFile({attachment_id}).then((value) => {
+            if(value.code !=='0') {
+              message.warn('删除失败，请重新删除。')
+              reject()
+            }else {
+              resolve()
+            }
+          }).catch(err => {
+            message.warn('删除失败，请重新删除。')
+            reject()
+          })
+        })
+
+      }
+
+    };
+
+
     return(
+      //
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
@@ -398,15 +657,24 @@ export default class DrawContent extends React.Component {
           {/*标题*/}
           <div className={DrawerContentStyles.divContent_2}>
              <div className={DrawerContentStyles.contain_2}>
-               <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
-                 <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
-               </div>
+               {type === '0' ?(
+                 <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
+                   <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
+                 </div>
+               ):(
+                 <div style={{width: 24, height: 24, color: '#595959'}}>
+                   <i className={globalStyle.authTheme} >&#xe709;</i>
+                 </div>
+               )}
+
                {!titleIsEdit ? (
                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
                ) : (
-                 <TextArea defaultValue={card_name} autosize
+                 <TextArea defaultValue={card_name}
+                           autosize
                            onBlur={this.titleTextAreaChangeBlur.bind(this)}
                            onClick={this.setTitleIsEdit.bind(this, true)}
+                           autofocus={true}
                            style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
@@ -479,13 +747,23 @@ export default class DrawContent extends React.Component {
           {/*富文本*/}
           {!isInEdit ? (
             <div className={DrawerContentStyles.divContent_1} >
-              <div className={DrawerContentStyles.contain_4} onClick={this.goEdit.bind(this)}>
-                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: description}}></div>
+              <div style={{marginTop: 20}}>
+                <Button size={'small'} style={{fontSize: 12}} onClick={this.goEdit.bind(this)}>编辑描述</Button>
+              </div>
+              {/*onClick={this.goEdit.bind(this)}*/}
+              <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
+                <div style={{cursor: 'pointer'}}  dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
               </div>
             </div>
           ) : (
-            <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
-              <BraftEditor {...editorProps} style={{fontSize:12}}/>
+            <div>
+              <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
+                <BraftEditor {...editorProps} style={{fontSize:12}}/>
+              </div>
+              <div style={{marginTop: 20, textAlign: 'right'}}>
+                <Button size={'small'} style={{fontSize: 12,marginRight:16}} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
+                <Button size={'small'} style={{fontSize: 12}} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
+              </div>
             </div>
           ) }
 
@@ -528,6 +806,16 @@ export default class DrawContent extends React.Component {
           {/*添加子任务*/}
           <DCAddChirdrenTask {...this.props}/>
 
+          {/*上传任务附件*/}
+          <div  className={DrawerContentStyles.divContent_1}>
+            <Upload {...uploadProps}>
+              <Button  size={'small'} style={{fontSize: 12, marginTop:16,}} >
+                <Icon type="upload" />上传任务附件
+              </Button>
+            </Upload>
+          </div>
+
+          <PreviewFileModal {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
           <div  className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>

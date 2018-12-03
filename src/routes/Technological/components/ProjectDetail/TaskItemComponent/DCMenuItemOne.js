@@ -61,7 +61,7 @@ export default class DCMenuItemOne extends React.Component{
      })
   }
   render() {
-    const { execusorList } = this.props
+    const { execusorList,canNotRemoveItem } = this.props
     const { resultArr, keyWord } = this.state
     return (
       <div className={DrawerContentStyles.menuOneout}>
@@ -73,19 +73,19 @@ export default class DCMenuItemOne extends React.Component{
             const { user_id, full_name, fullName, mobile, email, avatar, name } = value
             return(
               <div style={{position: 'relative'}} key={key}  >
-                <div  style={{padding:0,margin: 0, height: 32}} onClick={this.handleMenuReallyClick.bind(this,{ user_id, full_name: full_name || fullName || mobile || email, avatar })}>
+                <div  style={{padding:0,margin: 0, height: 32}} onClick={this.handleMenuReallyClick.bind(this,{ user_id, full_name: name || full_name || fullName || mobile || email, avatar })}>
                   <div className={DrawerContentStyles.menuOneitemDiv} >
                     {value.avatar?(
                       <img src={value.avatar} className={DrawerContentStyles.avatar} />
                     ):(
                       <div style={{height:20,width: 20,borderRadius:20,backgroundColor:'#f2f2f2',textAlign: 'center'}}>
-                        <Icon type={'user'} style={{fontSize:12,marginLeft: 4, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
+                        <Icon type={'user'} style={{fontSize:12, color: '#8c8c8c', marginTop: 4,display: 'block'}}/>
                       </div>
                     )}
                     <span >{name}</span>
                   </div>
                 </div>
-                <Icon type="close-circle" style={{fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={this.handleMenuIconDelete.bind(this,{key,user_id: value.user_id})}/>
+                <Icon type="close-circle" style={{display: canNotRemoveItem?'none': 'block',fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={this.handleMenuIconDelete.bind(this,{key,user_id: value.user_id})}/>
               </div>
             )
           })}

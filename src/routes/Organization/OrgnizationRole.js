@@ -249,7 +249,7 @@ export default class OrgnizationRole extends React.Component {
                       is_default === '1' ? (<div>默认角色</div>) : ('')
                     )}
                   </div>
-                  <div className={indexStyles.parrentPanaelHeader_r}>
+                  <div className={indexStyles.parrentPanaelHeader_r} style={{display: 'block'}}>
                     {system_role !== '1'?(
                       <Dropdown overlay={operateMenu({parentKey, value})}>
                         <Icon type="ellipsis" theme="outlined" />

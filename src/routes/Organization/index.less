@@ -143,3 +143,44 @@
     margin-right: 12px;
   }
 }
+
+//名词定义
+.nounDefinitout{
+  text-align: left;
+  display: flex;
+  .nounDefinit_col{
+    flex: 1;
+    box-sizing: border-box;
+    font-size: 0;
+    position: relative;
+    .nounDefinit_col_title{
+      background-color: #FAFAFA;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .nounDefinit_col_item, .nounDefinit_col_title{
+      height: 54px;
+      font-size: 14px;
+
+      border-top: 1px solid #e5e5e5;
+      border-right: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+.selectedDefinite{
+  border: 2px solid rgba(24,144,255,1);
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.noSelectedDefinite{
+  border: none;
+
+}

@@ -27,6 +27,23 @@ export default function request(options = {}, elseSet = {}) {
     params = {},
     data = {},
   } = options;
+
+  //去掉空字符串
+  if (params && typeof params === 'object') {
+    for(let i in params) {
+      if(!params[i]) {
+        delete params[i]
+      }
+    }
+  }
+  if (data && typeof data === 'object') {
+    for (let i in data) {
+      if (!data[i]) {
+        delete data[i]
+      }
+    }
+  }
+
   let loading = !isNotLoading ? messageLoading(url) : ''
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
@@ -63,7 +80,9 @@ export default function request(options = {}, elseSet = {}) {
               Cookies.remove('userInfo', { path: '' })
               if(!is401) {
                 Cookies.set('is401', true, {expires: 30, path: ''})
-                window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+                setTimeout(function () {
+                  window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+                },1000)
               }else{
               }
               break

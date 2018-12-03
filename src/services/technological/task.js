@@ -10,7 +10,22 @@ export async function addTaskGroup(data) {
     data,
   });
 }
-
+//更新任务分组
+export async function updateTaskGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists`,
+    method: 'PUT',
+    data,
+  });
+}
+//删除任务分组
+export async function deleteTaskGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/${data.id}`,
+    method: 'DELETE',
+    data,
+  });
+}
 // 任务列表
 export async function getTaskGroupList(params) {
   return request({
@@ -145,5 +160,14 @@ export async function getProjectGoupList() {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/card_lists`,
     method: 'GET',
+  });
+}
+
+//删除任务文件
+export async function deleteTaskFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/attachment/${data.attachment_id}`,
+    method: 'DELETE',
+    data
   });
 }

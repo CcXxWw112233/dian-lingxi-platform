@@ -13,6 +13,12 @@ export default {
         // message.destroy()
         if (location.pathname === '/technological/project') {
           dispatch({
+            type: 'updateDatas',
+            payload: {
+              collapseActiveKeyArray: ['1','2','3'], //折叠面板打开的key
+            }
+          })
+          dispatch({
             type: 'getProjectList',
             payload: {
               type: '1'
@@ -20,6 +26,9 @@ export default {
           })
           dispatch({
             type: 'getAppsList',
+            payload: {
+              type:'2'
+            }
           })
         }else{
           // console.log(2)

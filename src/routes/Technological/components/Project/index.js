@@ -76,11 +76,17 @@ const Project = (props) => {
       },
     })
   }
+  const updateDatas = (data) => {
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: data
+    })
+  }
   return(
     <div>
       <Header/>
       {/*<QueueAnim  type="top">*/}
-        <ProjectList {...prjectListProps} routingJump={routingJump} key={'1'}/>
+        <ProjectList {...prjectListProps} routingJump={routingJump} key={'1'} updateDatas={updateDatas}/>
       {/*</QueueAnim>*/}
     </div>
   )

@@ -46,9 +46,11 @@ export default class BaseInfo extends React.Component {
     this.storeChange('member_join_content', newvalue)
   }
   deleteUpload() {
-    this.setState({
-      logo: '',
-      logo_id: '',
+    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    currentOrganizationInfo['logo'] = ''
+    currentOrganizationInfo['logo_id'] = ''
+    this.props.updateDatas({
+      currentOrganizationInfo
     })
   }
   finallySave() {

@@ -4,10 +4,18 @@ export const REQUEST_DOMAIN_BOARD = '/api/team' //接口域名
 export const REQUEST_DOMAIN_FILE = '/api/files' //接口域名
 export const REQUEST_DOMAIN_FLOWS = '/api/flows' //接口域名
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbench'
+export const REQUEST_DOMAIN_TEAM_SHOW = '/api/teamshow'
+
+export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小程序后台文章列表
+export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
+export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
+export const WE_APP_ID = (appType) => {
+  return appType === '1'? '1029567653519429632' : '1029565930193162240'
+}
+
 
 export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
-
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
 export const MESSAGE_DURATION_TIME = 3 //message弹框时间
@@ -17,12 +25,11 @@ export const INT_REQUEST_OK = 0 //接口返回常量定义
 
 export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
 
-export const NOT_HAS_PERMISION_COMFIRN = '您没有该操作权限'
+export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 
-// if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)){
-//   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-//   return false
-// }
+export const PAGINATION_PAGE_SIZE = 12 //分页每页条数
+
+
 //权限列表
 export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
 export const ORG_TEAM_BOARD_JOIN = 'org:team:board:join' //加入项目 permission_type=1

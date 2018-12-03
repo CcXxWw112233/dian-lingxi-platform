@@ -226,7 +226,7 @@ export default class Header extends React.Component {
     const { datas: { fileList, selectedRowKeys } } = this.props.model
     let chooseArray = []
     for(let i=0; i < selectedRowKeys.length; i++ ){
-      chooseArray.push(fileList[selectedRowKeys[i]].file_id)
+      chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
     }
     const ids = chooseArray.join(',')
     this.props.fileDownload({ids})
@@ -295,8 +295,23 @@ export default class Header extends React.Component {
 
   //团队展示发布编辑
   editTeamShowPreview() {
-    const html = document.getElementById('editTeamShow').innerHTML
-    console.log(html)
+    const that = this
+    this.props.updateDatas({
+      editTeamShowPreview: true
+    })
+    setTimeout(function () { //延迟获取
+      const html = document.getElementById('editTeamShow').innerHTML
+      // console.log(html)
+    },200)
+  }
+  editTeamShowSave() {
+    this.props.updateDatas({
+      editTeamShowSave: true
+    })
+    setTimeout(function () { //延迟获取
+      const html = document.getElementById('editTeamShow').innerHTML
+      // console.log(html)
+    },200)
   }
   //右方部分点击-----------------end
 
@@ -390,7 +405,8 @@ export default class Header extends React.Component {
               <Dropdown overlay={<MenuSearch {...this.props}/>}>
                  <span>{processName || '请选择流程 '}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
               </Dropdown>
-              <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
+              <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
             </div>
           )
           break
@@ -398,7 +414,9 @@ export default class Header extends React.Component {
           operatorConent = (
             <div>
               <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
-              <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/><Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+              <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/>
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
+              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
             </div>
           )
           break
@@ -434,7 +452,8 @@ export default class Header extends React.Component {
                   <Icon type="delete" />移动到回收站
                 </Button>
                 <div>
-                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/>
+                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
                 </div>
               </div>
             )
@@ -450,7 +469,8 @@ export default class Header extends React.Component {
                   <Icon type="plus" />创建文件夹
                 </Button>
                 <div>
-                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/> <Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>
+                  <Icon type="appstore-o"  style={{fontSize:14,marginTop:20,marginLeft:14}}/>
+                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
                 </div>
               </div>
             )
@@ -460,7 +480,7 @@ export default class Header extends React.Component {
           // operatorConent = (
           //   <div style={{display: 'flex',alignItems: 'center', }}>
           //     <Button  style={{height: 24, marginTop:16,}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
-          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}}>保存</Button>
+          //     <Button type={'primary'}  style={{height: 24, marginTop:16,marginLeft:14}} onClick={this.editTeamShowSave.bind(this)}>保存</Button>
           //   </div>
           // )
           break
@@ -479,7 +499,7 @@ export default class Header extends React.Component {
                      type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}
                      style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
                <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)} >
-                 <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}}/>
+                 <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}}/>
                </Dropdown>
            </div>
            <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>

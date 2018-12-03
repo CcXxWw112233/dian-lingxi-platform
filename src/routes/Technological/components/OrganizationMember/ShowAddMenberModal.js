@@ -33,7 +33,6 @@ class ShowAddMenberModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        values['board_id'] = this.props.board_id
         if(this.state.users) {
           let users = this.state.users.replace(/\n/gim,',') //替代换行符
           let usersArr = users.split(',')   //转成数组

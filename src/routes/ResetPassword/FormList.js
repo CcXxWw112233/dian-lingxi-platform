@@ -6,6 +6,7 @@ import { validateTel, validateEmail, validatePassword } from '../../utils/verify
 import VerificationCode from  '../../components/VerificationCode'
 import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
+import sha256 from 'js-sha256'
 
 
 const FormItem = Form.Item;
@@ -54,6 +55,9 @@ class FormList extends React.Component {
       if(mobile && !values['code']){
         message.warn('请输入验证码。', MESSAGE_DURATION_TIME)
         return false
+      }
+      if(values['password'] ) {
+        values['password'] = sha256(values['password'])
       }
       if (!err) {
         const obj ={

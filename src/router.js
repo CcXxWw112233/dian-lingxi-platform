@@ -32,6 +32,58 @@ import dynamic from 'dva/dynamic'
 const { ConnectedRouter } = routerRedux
 
 const Routers = function ({ history, app }) {
+  history.listen((location)=>{
+    switch (location.pathname) {
+      case '/login':
+        document.title = '灵犀-登录'
+        break
+      case '/register':
+        document.title = '灵犀-注册'
+        break
+      case '/registerSuccess':
+        document.title = '灵犀-注册成功'
+        break
+      case '/resetPassword':
+        document.title = '灵犀-重置密码'
+        break
+      case '/retrievePassword':
+        document.title = '灵犀-找回密码'
+        break
+      case '/organization':
+        document.title = '灵犀-组织管理'
+        break
+      case '/technological/accoutSet':
+        document.title = '灵犀-账户设置'
+        break
+      case '/technological/project':
+        document.title = '灵犀-项目'
+        break
+      case '/technological/projectDetail':
+        document.title = '灵犀-项目详情'
+        break
+      case '/technological/newsDynamic':
+        document.title = '灵犀-动态'
+        break
+      case '/technological/workbench':
+        document.title = '灵犀-工作台'
+        break
+      case '/technological/organizationMember':
+        document.title = '灵犀-团队管理'
+        break
+      case '/teamShow/editTeamShow':
+        document.title = '灵犀-编辑团队秀'
+        break
+      case '/teamShow/teamList':
+        document.title = '灵犀-团队秀'
+        break
+      case '/teamShow/teamInfo':
+        document.title = '灵犀-团队秀'
+        break
+      default:
+        document.title = '灵犀'
+        break
+    }
+  })
   // const error = dynamic({
   //   app,
   //   component: () => import('./routes/error'),
@@ -70,7 +122,6 @@ const Routers = function ({ history, app }) {
         import('./models/technological/newsDynamic'),
         import('./models/technological/workbench'),
         import('./models/technological/organizationMember'),
-        import('./models/technological/teamshow'),
         import('./models/modal')
       ],
       component: () => import('./routes/Technological/'),
@@ -82,6 +133,20 @@ const Routers = function ({ history, app }) {
       path: '/organization',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Organization/'),
+    },{
+      path: '/teamShow',
+      models: () => [
+        import('./models/teamShow'),
+        import('./models/teamShow/editTeamShow'),
+        import('./models/teamShow/teamList'),
+        import('./models/teamShow/teamInfo'),
+        import('./models/modal')
+      ],
+      component: () => import('./routes/TeamShow/'),
+    },{
+      path: '/test',
+      models: () => [import('./models/organization')],
+      component: () => import('./routes/Test/'),
     },
   ]
   //去掉exact
@@ -92,7 +157,7 @@ const Routers = function ({ history, app }) {
           routes.map(({ path, ...dynamics }, key) => {
             return (
               <Route key={key}
-                     exact={path.indexOf('/technological') === -1 ? true : false}
+                     exact={(path.indexOf('/technological') !== -1  || path.indexOf('/teamShow') !== -1 )? false : true}
                      path={path}
                      component={dynamic({
                        app,
