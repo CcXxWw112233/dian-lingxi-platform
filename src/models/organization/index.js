@@ -1,4 +1,4 @@
-import { getNounList,getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
+import { saveNounList,getNounList,getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {
@@ -39,12 +39,14 @@ export default  {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '1',
+              tabSelectKey: '4',
               // permission_data: [], //权限数据
               //名词定义
-              current_scheme: '',
+              current_scheme_local: '', //已选方案名称
+              current_scheme: '',  //当前方案名称
               current_scheme_id: '',
               scheme_data: [],
+              field_data: []
             }
           })
 
@@ -282,30 +284,50 @@ export default  {
       }
     },
     * getNounList({ payload }, { select, call, put }) {
-      const { type } = payload
-      let res = yield call(getNounList, {})
-      const data = res.data
-      const scheme_data = data['scheme_data']
-      for(let i=0; i < scheme_data.length; i++) {
-        if(!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
-          scheme_data[i]['field_value'] = []
-          for(let j=0; j < scheme_data[0]['field_value'].length; j ++) {
-            const obj = {
-              field_value: '',
+      const res = yield call(getNounList, {})
+
+      if(isApiResponseOk(res)) {
+        const data = res.data || {}
+        const scheme_data = data['scheme_data']
+        const field_data = data['field_data']
+        scheme_data.unshift(field_data)
+        //自定义没有列表时设
+        for(let i=0; i < scheme_data.length; i++) {
+          if(!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
+            scheme_data[i]['field_value'] = []
+            for(let j=0; j < scheme_data[0]['field_value'].length; j ++) {
+              const obj = {
+                field_value: '',
+              }
+              scheme_data[i]['field_value'].push(obj)
             }
-            scheme_data[i]['field_value'].push(obj)
           }
         }
-      }
-      if(isApiResponseOk(res)) {
+
         yield put({
           type: 'updateDatas',
           payload: {
-            ...res.data
+            ...res.data,
+            current_scheme_local: res.data['current_scheme'],
           }
         })
       }else{
 
+      }
+    },
+    * saveNounList({ payload }, { select, call, put }) {
+      const { current_scheme_local } = payload
+      const res = yield call(saveNounList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            current_scheme: current_scheme_local
+          }
+        })
+        message.success('保存成功', MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

@@ -110,6 +110,12 @@ const Organization = (options) => {
         type: getEffectOrReducerByName('getNounList'),
         payload: data
       })
+    },
+    saveNounList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('saveNounList'),
+        payload: data
+      })
     }
   }
   const onTabClick = (key)=>{
@@ -140,9 +146,9 @@ const Organization = (options) => {
                 <ProjectRole {...asyncProprs} updateDatas={updateDatas}/>
                 {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
-              {/*<TabPane tab="名词定义" key="4">*/}
-                {/*<NounDefinition {...asyncProprs} updateDatas={updateDatas}/>*/}
-              {/*</TabPane>*/}
+              <TabPane tab="名词定义" key="4">
+                <NounDefinition {...asyncProprs} updateDatas={updateDatas}/>
+              </TabPane>
             </Tabs>
           </div>
         </div>

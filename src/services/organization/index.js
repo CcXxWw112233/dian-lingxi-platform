@@ -102,3 +102,11 @@ export async function getNounList(params) {
     params
   });
 }
+//保存名词列表
+export async function saveNounList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/noun`,
+    method: 'POST',
+    data
+  });
+}

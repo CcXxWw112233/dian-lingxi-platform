@@ -150,9 +150,9 @@
   display: flex;
   .nounDefinit_col{
     flex: 1;
-    box-sizing: border-box;
     font-size: 0;
-    position: relative;
+    //position: relative;
+    box-sizing: border-box;
     .nounDefinit_col_title{
       background-color: #FAFAFA;
       font-size: 14px;
@@ -162,14 +162,35 @@
     .nounDefinit_col_item, .nounDefinit_col_title{
       height: 54px;
       font-size: 14px;
-
       border-top: 1px solid #e5e5e5;
       border-right: 1px solid #e5e5e5;
       display: flex;
       justify-content: center;
       align-items: center;
     }
+    .nounDefinit_col_item{
+      input{
+        outline: none;
+        border: none;
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+        text-align: center;
+
+      }
+    }
   }
+}
+.contain1{
+  text-align: left;
+  color: #262626;
+  margin-top: 12px;
+  span{
+    color: #595959;
+  }
+}
+.contain2{
+  margin-top: 30px;
 }
 .selectedDefinite{
   border: 2px solid rgba(24,144,255,1);
@@ -180,6 +201,11 @@
   top: 0;
   left: 0;
 }
+.selectedDefinite2{
+  border: 2px solid rgba(24,144,255,1);
+
+}
+
 .noSelectedDefinite{
   border: none;
 
