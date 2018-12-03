@@ -46,7 +46,8 @@ export default  {
               current_scheme: '',  //当前方案名称
               current_scheme_id: '',
               scheme_data: [],
-              field_data: []
+              field_data: [],
+              editable: '0',//当前是否在自定义编辑状态 1是 0 否
             }
           })
 
@@ -291,8 +292,10 @@ export default  {
         const scheme_data = data['scheme_data']
         const field_data = data['field_data']
         scheme_data.unshift(field_data)
-        //自定义没有列表时设
+        let editable = '0'
+
         for(let i=0; i < scheme_data.length; i++) {
+          //自定义没有列表时设
           if(!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
             scheme_data[i]['field_value'] = []
             for(let j=0; j < scheme_data[0]['field_value'].length; j ++) {
@@ -302,6 +305,11 @@ export default  {
               scheme_data[i]['field_value'].push(obj)
             }
           }
+
+          //默认是否自定义编辑状态
+          if(data['current_scheme_id'] === scheme_data[i]['id']) {
+            editable = scheme_data[i]['editable']
+          }
         }
 
         yield put({
@@ -309,6 +317,7 @@ export default  {
           payload: {
             ...res.data,
             current_scheme_local: res.data['current_scheme'],
+            editable
           }
         })
       }else{
