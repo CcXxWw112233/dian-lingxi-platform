@@ -1,6 +1,6 @@
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import {
@@ -12,6 +12,7 @@ import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
 import { selectGroupList } from './select'
+import {currentNounPlanFilterName} from "../../utils/businessFunction";
 export default modelExtend(technological, {
   namespace: 'organizationMember',
   state: [],
@@ -161,7 +162,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success('已将成员移出该分组',MESSAGE_DURATION_TIME)
+              message.success(`已将${currentNounPlanFilterName(MEMBERS)}移出该分组`,MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -176,12 +177,12 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success('设置成员分组成功',MESSAGE_DURATION_TIME)
+              message.success(`设置${currentNounPlanFilterName(MEMBERS)}分组成功`,MESSAGE_DURATION_TIME)
             }
           }
         })
       }else {
-        message.warn('设置成员分组失败', MESSAGE_DURATION_TIME)
+        message.warn(`设置${currentNounPlanFilterName(MEMBERS)}分组失败`, MESSAGE_DURATION_TIME)
       }
 
     },
@@ -196,7 +197,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success('邀请成员加入分组成功',MESSAGE_DURATION_TIME)
+              message.success(`邀请${currentNounPlanFilterName(MEMBERS)}加入分组成功`,MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -212,7 +213,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success(status === '0'?'已拒绝成员加入':'已通过审批',MESSAGE_DURATION_TIME)
+              message.success(status === '0'?`已拒绝${currentNounPlanFilterName(MEMBERS)}加入`:'已通过审批',MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -227,7 +228,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success('已停用该成员',MESSAGE_DURATION_TIME)
+              message.success(`已停用该${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -342,7 +343,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload:{
             calback: function () {
-              message.success('已成功添加组织成员',MESSAGE_DURATION_TIME)
+              message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
             }
           }
         })

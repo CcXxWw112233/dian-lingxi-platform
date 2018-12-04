@@ -2,9 +2,10 @@
 import React from 'react'
 import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import indexStyles from './index.less'
-import { UPLOAD_PROCESS_FILE_SIZE } from '../../../../../../globalset/js/constant'
+import {FLOWS, UPLOAD_PROCESS_FILE_SIZE} from '../../../../../../globalset/js/constant'
 import MentionAssignees from './MentionAssignees'
 import { validatePositiveInt } from '../../../../../../utils/verify'
+import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
@@ -170,7 +171,7 @@ export default class EditFormTwo extends React.Component {
           <div className={indexStyles.editTop_right}>
             <div>上传</div>
             <div>
-              通过上传文件来触发的步骤称之为上传，适用于引导用户在流程中按要求提交需收集的文件。
+              通过上传文件来触发的步骤称之为上传，适用于引导用户在{currentNounPlanFilterName(FLOWS)}中按要求提交需收集的文件。
             </div>
           </div>
         </div>
@@ -223,12 +224,12 @@ export default class EditFormTwo extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>完成期限</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起{currentNounPlanFilterName(FLOWS)}开始<br/>计算</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.deadlineChange.bind(this)} value={deadline_type}>
                 <Radio className={indexStyles.ratio} value={'1'}>无限期</Radio>
-                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>
               </RadioGroup>
               <div>
@@ -240,12 +241,12 @@ export default class EditFormTwo extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>推进人</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进{currentNounPlanFilterName(FLOWS)}</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.assigneeTypeChange.bind(this)} value={assignee_type} >
                 <Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>
-                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>

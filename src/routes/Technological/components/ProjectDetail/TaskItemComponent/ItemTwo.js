@@ -4,8 +4,11 @@ import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, message, } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from  'rc-queue-anim'
-import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
-import {MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN} from "../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN,
+  TASKS
+} from "../../../../../globalset/js/constant";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal} from "../../../../../utils/util";
 
@@ -88,7 +91,7 @@ export default class ItemTwo extends React.Component {
         {child_data.length? (
           <div className={CreateTaskStyle.item_2_bott}>
             <Collapse accordion bordered={false} style={{backgroundColor:'#f5f5f5'}} onChange={this.collapseChange.bind(this)}>
-              <Panel header={<span style={{color: '#8c8c8c'}}>{`${this.state.collapseClose ? '显示' : '隐藏'}${child_data.length}个子任务`}</span>} key="1"  style={customPanelStyle}>
+              <Panel header={<span style={{color: '#8c8c8c'}}>{`${this.state.collapseClose ? '显示' : '隐藏'}${child_data.length}个子${currentNounPlanFilterName(TASKS)}`}</span>} key="1"  style={customPanelStyle}>
                 <QueueAnim >
                 {child_data.map((value, key) => {
                   return(

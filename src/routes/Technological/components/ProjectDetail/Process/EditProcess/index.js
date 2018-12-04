@@ -9,10 +9,10 @@ import EditFormFive from './EditFormFive'
 import SaveTemplate from './SaveTemplate'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../constant'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOWS_FLOW_CREATE,
-  PROJECT_FILES_FILE_EDIT
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE,
+  PROJECT_FILES_FILE_EDIT, FLOWS
 } from "../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 
 
 export default class EditProcess extends React.Component {
@@ -22,7 +22,7 @@ export default class EditProcess extends React.Component {
   nodeTypeClick(node_type) {
     const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
     if(processCurrentEditStep===0 && node_type === '5') {
-      message.warn('流程节点第一步不能为审批类型')
+      message.warn(`${currentNounPlanFilterName(FLOWS)}节点第一步不能为审批类型`)
       return false
     }
     const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
@@ -215,7 +215,7 @@ export default class EditProcess extends React.Component {
       <div className={indexStyles.editProcessOut}>
         <div className={indexStyles.editProcessLeft}>
           <div className={indexStyles.title}>
-            流程步骤：
+            {currentNounPlanFilterName(FLOWS)}步骤：
           </div>
           {/*itemSelect*/}
           {processEditDatas.map((value, key) => {

@@ -4,12 +4,13 @@ import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs}  from '../../components/WsNewsDynamic'
 import { selectNewMessageItem } from './select'
 import QueryString from 'querystring'
+import {currentNounPlanFilterName} from "../../utils/businessFunction";
 
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
@@ -209,7 +210,7 @@ export default {
         // }
         // yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
       }else{
-        message.warn('组织切换出了点问题', MESSAGE_DURATION_TIME)
+        message.warn(`${currentNounPlanFilterName(ORGANIZATION)}切换出了点问题`, MESSAGE_DURATION_TIME)
       }
     },
     * getSearchOrganizationList({ payload }, { select, call, put }) {
@@ -245,7 +246,7 @@ export default {
           payload: {
             operateType: 'create',
             calback : function () {
-              message.success('创建组织成功',MESSAGE_DURATION_TIME)
+              message.success(`创建${currentNounPlanFilterName(ORGANIZATION)}成功`,MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -266,7 +267,7 @@ export default {
           type: 'getCurrentUserOrganizes',
           payload: {
             calback : function () {
-              message.success('申请加入组织成功',MESSAGE_DURATION_TIME)
+              message.success(`申请加入${currentNounPlanFilterName(ORGANIZATION)}成功`,MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -277,7 +278,7 @@ export default {
     * inviteJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
-        message.success('已成功添加组织成员',MESSAGE_DURATION_TIME)
+        message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }

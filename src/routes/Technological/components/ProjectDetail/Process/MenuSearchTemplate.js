@@ -1,8 +1,9 @@
 import React from 'react'
 // import MenuSearchStyles from './MenuSearch.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
-import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 import {
+  FLOWS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FLOWS_FLOW_CREATE
 } from "../../../../../globalset/js/constant";
@@ -65,7 +66,7 @@ export default class MenuSearchTemplate extends React.Component{
     const resultArrPermission = checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)?resultArr : []
     return (
       <Menu style={{padding: 8}} onClick={this.handleMenuReallyClick.bind(this)}>
-        <Input placeholder={'搜索流程模板'}  value={keyWord}  onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
+        <Input placeholder={`搜索${currentNounPlanFilterName(FLOWS)}模板`}  value={keyWord}  onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
         {
           resultArrPermission.map((value, key) => {
             const { template_name, template_id, template_no } = value
