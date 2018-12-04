@@ -1,4 +1,7 @@
-import { saveNounList,getNounList,getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
+import {
+  saveNounList, getNounList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
+  updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan
+} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {
@@ -39,7 +42,7 @@ export default  {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '4',
+              tabSelectKey: '1',
               // permission_data: [], //权限数据
               //名词定义
               current_scheme_local: '', //已选方案名称
@@ -334,9 +337,21 @@ export default  {
             current_scheme: current_scheme_local
           }
         })
-        message.success('保存成功', MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'getCurrentNounPlan',
+          payload: {}
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getCurrentNounPlan({ payload }, { select, call, put }) {
+      let res = yield call(getCurrentNounPlan, payload)
+      if(isApiResponseOk(res)) {
+        message.success('已保存',MESSAGE_DURATION_TIME)
+        localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
+      }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
 

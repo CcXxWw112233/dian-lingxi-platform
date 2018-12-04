@@ -12,6 +12,9 @@ import {
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
 export default class HeaderNav extends React.Component{
@@ -156,7 +159,7 @@ export default class HeaderNav extends React.Component{
     const { datas = {} } = this.props.model
     const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
-    const orgnizationName = currentSelectOrganize.name || '组织'
+    const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
     const userInfoMenu = (
       <Card  className={indexStyle.menuDiv} >
@@ -178,7 +181,7 @@ export default class HeaderNav extends React.Component{
             })}
             <Menu.Item key="10" style={{padding:0,margin: 0,color: '#595959'}}>
               <div className={indexStyle.itemDiv} style={{ padding: '0 16px',color: color_4}}>
-                <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新组织
+                <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
               </div>
             </Menu.Item>
           </SubMenu>
@@ -186,14 +189,14 @@ export default class HeaderNav extends React.Component{
           {currentUserOrganizes.length?(
             <Menu.Item  key="2" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/成员</span></span>
+                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/{currentNounPlanFilterName(MEMBERS)}</span></span>
               </div>
             </Menu.Item>
           ):('')}
           {currentUserOrganizes.length?(
             <Menu.Item key="3" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>组织管理后台</span></span>
+                <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</span></span>
               </div>
             </Menu.Item>
           ):('')}
@@ -201,7 +204,7 @@ export default class HeaderNav extends React.Component{
           {currentUserOrganizes.length?(
             <Menu.Item key="4" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请成员加入</span>
+                <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请{currentNounPlanFilterName(MEMBERS)}加入</span>
                 </span>
               </div>
             </Menu.Item>
@@ -276,9 +279,9 @@ export default class HeaderNav extends React.Component{
             )}
           </Dropdown>
           <div className={indexStyle.out_left_right}>
-            <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>动态</span>
-            <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>工作台</span>
-            <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>项目</span>
+            <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>{currentNounPlanFilterName(CATCH_UP)}</span>
+            <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>{currentNounPlanFilterName(DASHBOARD)}</span>
+            <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>{currentNounPlanFilterName(PROJECTS)}</span>
             {currentUserOrganizes.length ? (
               <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
                 <span ><Icon type="appstore" /></span>
@@ -289,7 +292,7 @@ export default class HeaderNav extends React.Component{
         </div>
           <div className={indexStyle.out_right}>
           <Input
-            placeholder="搜索 项目、任务、文档、联系人、标签"
+            placeholder="搜索"
             style={{height:40, width: 400,fontSize: 16,marginRight: 24}}
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)', fontSize: 16 }} />}
           />

@@ -6,9 +6,9 @@ import QueueAnim from  'rc-queue-anim'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE, ORG_UPMS_ORGANIZATION_MEMBER_EDIT
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE, ORG_UPMS_ORGANIZATION_MEMBER_EDIT, MEMBERS
 } from "../../../../globalset/js/constant";
-import {checkIsHasPermission} from "../../../../utils/businessFunction";
+import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
 const Panel = Collapse.Panel
 
 export default class ItemOne extends React.Component {
@@ -84,7 +84,7 @@ export default class ItemOne extends React.Component {
     }
     const that = this
     Modal.confirm({
-      title: '确认从该分组中移出该成员？',
+      title: `确认从该分组中移出该${currentNounPlanFilterName(MEMBERS)}？`,
       okText: '确认',
       cancelText: '取消',
       onOk() {
@@ -107,7 +107,7 @@ export default class ItemOne extends React.Component {
     }
     const that = this
     Modal.confirm({
-      title: '确认停用该成员？',
+      title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
       okText: '确认',
       cancelText: '取消',
       onOk() {

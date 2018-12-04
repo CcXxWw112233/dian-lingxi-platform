@@ -3,7 +3,8 @@ import { Modal, Form, Button, Input, message } from 'antd'
 import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
 import {validateEmail, validateTel} from "../../../../utils/verify";
-import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 class ShowAddMenberModal extends React.Component {
@@ -64,7 +65,7 @@ class ShowAddMenberModal extends React.Component {
 
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起参加项目</div>
+        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>
