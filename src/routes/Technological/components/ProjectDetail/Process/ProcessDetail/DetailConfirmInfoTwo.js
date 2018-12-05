@@ -246,7 +246,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           break
         case '2':
           container = (
-            <div style={{position: 'relative' }}  style={{color: '#595959'}}>
+            <div style={{color: '#595959'}}>
               {timestampToTimeNormal(deadline_value, '-',true)}
             </div>
           )

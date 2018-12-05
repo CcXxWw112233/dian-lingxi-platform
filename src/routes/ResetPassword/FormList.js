@@ -102,7 +102,7 @@ class FormList extends React.Component {
           )}
         </FormItem>
         {/*验证码*/}
-        <FormItem style={{marginTop: 0}} style={{display:!!mobile ? 'block': 'none'}}>
+        <FormItem style={{marginTop: 0, display:!!mobile ? 'block': 'none'}}>
           <Row gutter={8}>
             <Col span={14}>
               {getFieldDecorator('code', {
