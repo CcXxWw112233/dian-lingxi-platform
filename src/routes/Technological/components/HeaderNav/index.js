@@ -297,7 +297,7 @@ export default class HeaderNav extends React.Component{
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)', fontSize: 16 }} />}
           />
           <div className={indexStyle.add}>
-            <Icon type="plus" style={{ color: 'rgba(0,0,0,.25)', fontSize: 20,color: '#ffffff', fontWeight: 'bold' }} />
+            <Icon type="plus" style={{ fontSize: 20,color: '#ffffff', fontWeight: 'bold' }} />
           </div>
         </div>
         </div>

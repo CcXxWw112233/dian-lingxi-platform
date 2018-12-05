@@ -108,7 +108,6 @@ export async function updateViewCounter(data) {
     headers: {
       appid: WE_APP_ID(data['appType']),
     },
-    data,
   }, {isNotLoading: true});
 }
 
