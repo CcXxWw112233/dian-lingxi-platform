@@ -1,8 +1,10 @@
 import '@babel/polyfill'
-import 'react-dom'
+// import 'react-dom'
 import dva from 'dva';
 import './index.css';
 
+//兼容ie10及以下
+Object.setPrototypeOf = require('setprototypeof');
 
 // 1. Initialize
 const app = dva({
