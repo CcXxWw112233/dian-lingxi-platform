@@ -1,17 +1,19 @@
 import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import { PROJECTS } from '../../../../globalset/js/constant'
 
 export default class Header extends React.Component {
   render() {
     const menu = (
       <Menu>
         <Menu.Item key={'1'}>
-          全部项目
+          全部{currentNounPlanFilterName(PROJECTS)}
         </Menu.Item>
         <Menu.Item key={'2'} disabled>
           <Tooltip placement="top" title={'即将上线'}>
-            已归档项目
+            已归档{currentNounPlanFilterName(PROJECTS)}
           </Tooltip>
         </Menu.Item>
       </Menu>
@@ -41,7 +43,7 @@ export default class Header extends React.Component {
     return (
       <div className={indexStyle.out}>
         <Dropdown overlay={menu}>
-           <div className={indexStyle.left}>全部项目 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+           <div className={indexStyle.left}>全部{currentNounPlanFilterName(PROJECTS)} <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
         </Dropdown>
         <div className={indexStyle.right}>
           <Dropdown overlay={menu_2}>

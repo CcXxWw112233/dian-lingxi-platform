@@ -13,6 +13,8 @@ import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import MenuSearch from '../TecPublic/MenuSearch'
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 
 let is_starinit = null
 
@@ -46,9 +48,9 @@ export default class Header extends React.Component {
       return false
     }
     Modal.confirm({
-      title: '确认要退出该项目吗？',
+      title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
-        <span >退出后将无法获取该项目的相关动态</span>
+        <span >退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
         {/*<div style={{marginTop:20,}}>*/}
         {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
         {/*</div>*/}
@@ -331,18 +333,18 @@ export default class Header extends React.Component {
         </Menu.Item>
         <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
-            项目归档
+            {currentNounPlanFilterName(PROJECTS)}归档
           </div>
         </Menu.Item>
         <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
-            删除项目
+            删除{currentNounPlanFilterName(PROJECTS)}
           </div>
         </Menu.Item>
         {is_create !== '1'? (
           <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectDangerMenu}>
-              退出项目
+              退出{currentNounPlanFilterName(PROJECTS)}
             </div>
           </Menu.Item>
         ) : ('')}
@@ -403,7 +405,7 @@ export default class Header extends React.Component {
           operatorConent = (
             <div  style={{color:'#595959'}}>
               <Dropdown overlay={<MenuSearch {...this.props}/>}>
-                 <span>{processName || '请选择流程 '}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
+                 <span>{processName || `请选择${currentNounPlanFilterName(FLOWS)}`}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
               </Dropdown>
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
               <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
@@ -504,9 +506,9 @@ export default class Header extends React.Component {
            </div>
            <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>
              {projectInfoDisplay ? (
-               <span><Icon type="left" style={{marginRight:2}}/>收起项目信息</span>
+               <span><Icon type="left" style={{marginRight:2}}/>收起{currentNounPlanFilterName(PROJECTS)}信息</span>
              ):(
-               <span>查看项目信息<Icon type="right" style={{marginLeft:2}}/></span>
+               <span>查看{currentNounPlanFilterName(PROJECTS)}信息<Icon type="right" style={{marginLeft:2}}/></span>
              )}
 
            </div>
@@ -514,9 +516,9 @@ export default class Header extends React.Component {
         <div className={indexStyle.right}>
           <div className={indexStyle.right_top} >
             {app_data.map((value, itemkey) => {
-              const { app_name, key } = value
+              const { app_name, key, app_code } = value
               return (
-                <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_name}</div>
+                <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_code && currentNounPlanFilterName(app_code) ?currentNounPlanFilterName(app_code) : app_name}</div>
               )
             })}
           </div>

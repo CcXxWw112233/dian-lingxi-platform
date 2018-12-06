@@ -1,17 +1,19 @@
 import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
+import {PROJECTS} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 
 export default class Header extends React.Component {
   render() {
     const menu = (
       <Menu>
         <Menu.Item key={'1'}>
-          全部项目
+          全部{currentNounPlanFilterName(PROJECTS)}
         </Menu.Item>
         <Menu.Item key={'2'} disabled>
           <Tooltip placement="top" title={'即将上线'}>
-            已归档项目
+            已归档{currentNounPlanFilterName(PROJECTS)}
           </Tooltip>
         </Menu.Item>
       </Menu>
@@ -19,7 +21,7 @@ export default class Header extends React.Component {
     const menu_2 = (
       <Menu>
         <Menu.Item key={'1'}>
-          按项目排序
+          按{currentNounPlanFilterName(PROJECTS)}排序
         </Menu.Item>
         <Menu.Item key={'2'} disabled>
           <Tooltip placement="top" title={'即将上线'}>
@@ -48,8 +50,8 @@ export default class Header extends React.Component {
         </div>
 
         <div className={indexStyle.right}>
-          <div style={{marginRight: 12}}>按项目排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
-          <div>全部项目 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+          <div style={{marginRight: 12}}>按{currentNounPlanFilterName(PROJECTS)}排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+          <div>全部{currentNounPlanFilterName(PROJECTS)} <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
           <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
         </div>
       </div>

@@ -5,10 +5,14 @@ import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form, me
 import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
-import {checkIsHasPermission, checkIsHasPermissionReturn} from "../../../../utils/businessFunction";
 import {
+  checkIsHasPermission, checkIsHasPermissionReturn,
+  currentNounPlanFilterName
+} from "../../../../utils/businessFunction";
+import {
+  MEMBERS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_TEAM_BOARD_QUERY
+  ORG_TEAM_BOARD_QUERY, PROJECTS
 } from "../../../../globalset/js/constant";
 
 
@@ -33,9 +37,9 @@ export default class ElseProject extends React.Component{
   confirm(board_id ) {
     const that = this
     Modal.confirm({
-      title: '确认要退出该项目吗？',
+      title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
-                  <span >退出后将无法获取该项目的相关动态</span>
+                  <span >退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
                   {/*<div style={{marginTop:20,}}>*/}
                     {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
                   {/*</div>*/}
@@ -165,23 +169,23 @@ export default class ElseProject extends React.Component{
         <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
           <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
-              邀请成员加入
+              邀请{currentNounPlanFilterName(MEMBERS)}加入
             </div>
           </Menu.Item>
           <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
-              项目归档
+              {currentNounPlanFilterName(PROJECTS)}归档
             </div>
           </Menu.Item>
           <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
-              删除项目
+              删除{currentNounPlanFilterName(PROJECTS)}
             </div>
           </Menu.Item>
           {is_create !== '1'? (
             <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
               <div className={indexStyle.elseProjectDangerMenu}>
-                退出项目
+                退出{currentNounPlanFilterName(PROJECTS)}
               </div>
             </Menu.Item>
           ) : ('')}

@@ -1,7 +1,7 @@
 import { getProjectRoles,setMemberRoleInProject,projectDetailInfo, updateProject, removeMenbers } from '../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import { getUrlQueryString } from '../../utils/util'
 import {
@@ -14,6 +14,7 @@ import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
+import {currentNounPlanFilterName} from "../../utils/businessFunction";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -845,7 +846,7 @@ export default {
           payload:{
             id: board_id,
             calback: function () {
-              message.success('已从项目移除该成员', MESSAGE_DURATION_TIME)
+              message.success(`已从${currentNounPlanFilterName(PROJECTS)}移除该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -894,7 +895,7 @@ export default {
     * quitProject({ payload }, { select, call, put }) {
       let res = yield call(quitProject, payload)
       if(isApiResponseOk(res)) {
-        message.success('已退出项目', MESSAGE_DURATION_TIME)
+        message.success(`已退出${currentNounPlanFilterName(PROJECTS)}`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -903,7 +904,7 @@ export default {
     * archivedProject({ payload }, { select, call, put }) {
       let res = yield call(archivedProject, payload)
       if(isApiResponseOk(res)) {
-        message.success('已归档项目', MESSAGE_DURATION_TIME)
+        message.success(`已归档${currentNounPlanFilterName(PROJECTS)}`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -917,7 +918,7 @@ export default {
           payload:{
             id: board_id,
             calback: function () {
-              message.success('项目添加成员成功', MESSAGE_DURATION_TIME)
+              message.success(`${currentNounPlanFilterName(PROJECTS)}添加${currentNounPlanFilterName(MEMBERS)}成功`, MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -958,7 +959,7 @@ export default {
             taskGroupList
           }
         })
-        message.success('添加任务分组成功', MESSAGE_DURATION_TIME)
+        message.success(`添加${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -984,7 +985,7 @@ export default {
             taskGroupList
           }
         })
-        message.success('删除任务分组成功', MESSAGE_DURATION_TIME)
+        message.success(`删除${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -1010,7 +1011,7 @@ export default {
             taskGroupList
           }
         })
-        message.success('更新任务分组成功', MESSAGE_DURATION_TIME)
+        message.success(`更新${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -1110,7 +1111,7 @@ export default {
     * archivedTask({ payload }, { select, call, put }) { //
       let res = yield call(archivedTask, payload)
       if(isApiResponseOk(res)) {
-        message.success('已归档该任务',MESSAGE_DURATION_TIME)
+        message.success(`已归档`,MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1158,7 +1159,7 @@ export default {
         //     drawContent,
         //   }
         // })
-        message.success('已成功添加子任务', MESSAGE_DURATION_TIME)
+        message.success(`添加成功`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1167,7 +1168,7 @@ export default {
     * addTaskExecutor({ payload }, { select, call, put }) { //
       let res = yield call(addTaskExecutor, payload)
       if(isApiResponseOk(res)) {
-        message.success('设置任务执行人成功', MESSAGE_DURATION_TIME)
+        message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1182,7 +1183,7 @@ export default {
             payload:{
               id: board_id,
               calback: function () {
-                message.success(is_realize === '1'? '已完成该任务': '已将该任务设置未完成', MESSAGE_DURATION_TIME)
+                message.success(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}`: `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
               }
             }
           })
@@ -1235,7 +1236,7 @@ export default {
     * removeProjectMenbers({ payload }, { select, call, put }) { //
       let res = yield call(removeProjectMenbers, payload)
       if(isApiResponseOk(res)) {
-        message.success('已从项目移出该成员', MESSAGE_DURATION_TIME)
+        message.success(`已从${currentNounPlanFilterName(PROJECTS)}移出该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

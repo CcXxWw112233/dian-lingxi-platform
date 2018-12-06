@@ -13,7 +13,8 @@ import ShowAddMenberModal from './ShowAddMenberModal'
 import TreeGroupModal from  './TreeGroupModal'
 import MenuSearchSingleNormal from  '../../../../components/MenuSearchSingleNormal'
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
-
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 const Panel = Collapse.Panel
 
 export default class TaskItem extends React.Component {
@@ -158,7 +159,7 @@ export default class TaskItem extends React.Component {
           <div className={CreateTaskStyle.title}>
             <div className={CreateTaskStyle.title_l}>
               {is_default === '0'? (
-                <Dropdown trigger={['click']} overlay={<MenuSearchSingleNormal menuSearchSingleSpinning={menuSearchSingleSpinning} Inputlaceholder={'搜索成员'} searchName={'name'} listData={leader_members} MenuSearchSingleClick={this.MenuSearchSingleClick.bind(this)}/>}>
+                <Dropdown trigger={['click']} overlay={<MenuSearchSingleNormal menuSearchSingleSpinning={menuSearchSingleSpinning} Inputlaceholder={`搜索${currentNounPlanFilterName(MEMBERS)}`} searchName={'name'} listData={leader_members} MenuSearchSingleClick={this.MenuSearchSingleClick.bind(this)}/>}>
                   {!leader_id?(
                     <div className={CreateTaskStyle.leader} onClick={this.getMembersInOneGroup.bind(this)}>
                       <Icon type="ellipsis" theme="outlined" />

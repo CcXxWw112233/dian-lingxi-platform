@@ -122,7 +122,7 @@ class CreateOrganizationModal extends React.Component {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
             <div style={{position: 'relative'}}>
-              <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
+              <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
               {createButtonVisible? (
                 <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
                  {searchOrganizationList.length? (

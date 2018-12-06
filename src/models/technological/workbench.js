@@ -109,7 +109,6 @@ export default modelExtend(technological, {
     * getMeetingList({ payload }, { select, call, put }) {
       let res = yield call(getMeetingList, payload)
       if(isApiResponseOk(res)) {
-        console.log(res)
         yield put({
           type: 'updateDatas',
           payload: {

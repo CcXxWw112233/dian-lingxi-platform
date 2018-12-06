@@ -4,6 +4,8 @@ import { Icon, Input, Button, DatePicker, Dropdown, Menu } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
 import { deepClone } from '../../../../../utils/util'
+import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
+import {FLOWS, TASKS} from "../../../../../globalset/js/constant";
 const TextArea = Input.TextArea
 
 export default class DCAddChirdrenTask extends React.Component{
@@ -128,7 +130,7 @@ export default class DCAddChirdrenTask extends React.Component{
               <div>
                 <Icon type="plus" style={{marginRight: 4}}/>
                 <input onFocus={this.addInputFocus.bind(this)}
-                       placeholder={'子任务'}
+                       placeholder={`子${currentNounPlanFilterName(TASKS)}`}
                        onChange={this.setchirldTaskNameChange.bind(this)}
                        onBlur={this.setchirldTaskNameBlur.bind(this)}
                        value={this.state.name}

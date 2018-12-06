@@ -1,5 +1,6 @@
 //业务逻辑公共工具类
 import { message } from 'antd'
+import { NORMAL_NOUN_PLAN } from '../globalset/js/constant'
 
 //检查是否有操作权限
 export const checkIsHasPermission = (code) => {
@@ -31,4 +32,22 @@ export const checkIsHasPermissionInBoard = (code) => {
     }
   }
   return flag
+}
+
+//返回当前名词定义对应名称
+export const currentNounPlanFilterName = (code) => {
+  let currentNounPlan = localStorage.getItem('currentNounPlan')    ///|| NORMAL_NOUN_PLAN
+  if(currentNounPlan) {
+    currentNounPlan = JSON.parse(currentNounPlan)
+  } else {
+    currentNounPlan = NORMAL_NOUN_PLAN
+  }
+  let name = ''
+  for(let i in currentNounPlan) {
+    if(code === i) {
+      name = currentNounPlan[i]
+      break
+    }
+  }
+  return name
 }

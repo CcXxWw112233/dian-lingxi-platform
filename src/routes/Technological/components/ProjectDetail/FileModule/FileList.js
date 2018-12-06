@@ -9,7 +9,8 @@ import {
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
-
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -272,7 +273,7 @@ export default class FileList extends React.Component {
 
     const columns = [
       {
-        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >文件名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         key: 'file_name',
         render: (data) => {
           const {type, file_name, isInAdd} = data

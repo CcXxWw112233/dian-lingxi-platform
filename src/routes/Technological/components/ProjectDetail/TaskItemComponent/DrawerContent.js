@@ -15,9 +15,12 @@ import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
-  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS
 } from "../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../../utils/businessFunction";
+import {
+  checkIsHasPermissionInBoard, checkIsHasPermission,
+  currentNounPlanFilterName
+} from "../../../../../utils/businessFunction";
 import { deleteTaskFile } from '../../../../../services/technological/task'
 import { filePreview } from '../../../../../services/technological/file'
 import {getProcessList} from "../../../../../services/technological/process";
@@ -112,7 +115,7 @@ export default class DrawContent extends React.Component {
   confirm(card_id) {
     const that = this
     Modal.confirm({
-      title: '确认删除该任务吗？',
+      title: `确认删除该${currentNounPlanFilterName(TASKS)}吗？`,
       okText: '确认',
       cancelText: '取消',
       zIndex: 2000,
@@ -217,10 +220,10 @@ export default class DrawContent extends React.Component {
         alarmTime = '1天后'
         break
       case '5':
-        alarmTime = '任务开始时'
+        alarmTime = `${currentNounPlanFilterName(TASKS)}开始时`
         break
       case '6':
-        alarmTime = '任务结束时'
+        alarmTime = `${currentNounPlanFilterName(TASKS)}结束时`
         break
       default:
         break
@@ -512,8 +515,8 @@ export default class DrawContent extends React.Component {
         <Menu.Item key="2">30分钟后</Menu.Item>
         <Menu.Item key="3">1小时后</Menu.Item>
         <Menu.Item key="4">1天后</Menu.Item>
-        <Menu.Item key="5" disabled>任务开始时</Menu.Item>
-        <Menu.Item key="6" disabled>任务结束时</Menu.Item>
+        <Menu.Item key="5" disabled>${currentNounPlanFilterName(TASKS)}开始时</Menu.Item>
+        <Menu.Item key="6" disabled>${currentNounPlanFilterName(TASKS)}结束时</Menu.Item>
 
       </Menu>
     )
@@ -537,12 +540,12 @@ export default class DrawContent extends React.Component {
       <Menu onClick={this.topRightMenuClick.bind(this)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={DrawerContentStyles.elseProjectMemu}>
-            归档任务
+            归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
         <Menu.Item key={'2'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={DrawerContentStyles.elseProjectDangerMenu}>
-            删除任务
+            删除{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
       </Menu>
@@ -810,7 +813,7 @@ export default class DrawContent extends React.Component {
           <div  className={DrawerContentStyles.divContent_1}>
             <Upload {...uploadProps}>
               <Button  size={'small'} style={{fontSize: 12, marginTop:16,}} >
-                <Icon type="upload" />上传任务附件
+                <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
               </Button>
             </Upload>
           </div>

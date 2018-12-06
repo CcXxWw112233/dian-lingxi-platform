@@ -71,7 +71,7 @@ export default class CardContent extends React.Component{
           contanner = (
             responsibleTaskList.length? (
               responsibleTaskList.map((value, key)=> (
-                <TaskItem key={key} itemValue={value}itemKey={key} {...this.props}/>
+                <TaskItem {...this.props} key={key} itemValue={value}itemKey={key} />
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -83,7 +83,7 @@ export default class CardContent extends React.Component{
           contanner = (
             backLogProcessList.length? (
               backLogProcessList.map((value, key)=> (
-                <ProcessItem key={key}  itemValue={value} {...this.props} />
+                <ProcessItem  {...this.props} key={key}  itemValue={value} />
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -95,7 +95,7 @@ export default class CardContent extends React.Component{
           contanner = (
             joinedProcessList.length?(
               joinedProcessList.map((value, key)=> (
-                <ProcessItem key={key}  itemValue={value} {...this.props} />
+                <ProcessItem {...this.props} key={key}  itemValue={value}  />
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -106,7 +106,7 @@ export default class CardContent extends React.Component{
           contanner = (
             uploadedFileList.length? (
               uploadedFileList.map((value, key)=> (
-                <FileItem key={key}  itemValue={value} {...this.props} />
+                <FileItem  {...this.props}  key={key}  itemValue={value}/>
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>

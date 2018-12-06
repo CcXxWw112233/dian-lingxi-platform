@@ -270,7 +270,7 @@ export default class ProjectRole extends React.Component {
                     const { name } = value
                     return(
                       <Panel header={<
-                        div style={childrenPanelTitle}>
+                        div style={childrenPanelTitle} key={childKey}>
                         <Checkbox
                           disabled={checkDisabled}
                           indeterminate={indeterminate}
@@ -288,7 +288,7 @@ export default class ProjectRole extends React.Component {
                               {child_data.map((value, key) => {
                                 const { id, name } = value
                                 return(
-                                  <Col span={8}><Checkbox value={id}>{name}</Checkbox></Col>
+                                  <Col span={8} key={key}><Checkbox value={id}>{name}</Checkbox></Col>
                                 )
                               })}
                             </Row>

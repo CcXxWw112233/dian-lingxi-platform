@@ -11,6 +11,8 @@ import EditFormThree_One from './EditFormThree_One'
 import EditFormThree_Two from './EditFormThree_Two'
 import EditFormThree_Three from './EditFormThree_Three'
 import MentionAssignees from './MentionAssignees'
+import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
+import {FLOWS} from "../../../../../../globalset/js/constant";
 
 export default class EditFormThree extends React.Component {
   //更新
@@ -202,7 +204,7 @@ export default class EditFormThree extends React.Component {
           <div className={indexStyles.editTop_right}>
             <div>填写</div>
             <div>
-              通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在流程中的任意步骤。
+              通过手动标记或关联其他对象导致可自动触发来完成的节点步骤被称之为里程碑，可泛用在{currentNounPlanFilterName(FLOWS)}中的任意步骤。
             </div>
           </div>
         </div>
@@ -248,12 +250,12 @@ export default class EditFormThree extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>完成期限</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起{currentNounPlanFilterName(FLOWS)}开始<br/>计算</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.deadlineChange.bind(this)} value={deadline_type}>
                 <Radio className={indexStyles.ratio} value={'1'}>无限期</Radio>
-                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>
               </RadioGroup>
               <div>
@@ -265,12 +267,12 @@ export default class EditFormThree extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>推进人</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进流程</span>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>由谁来推进{currentNounPlanFilterName(FLOWS)}</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.assigneeTypeChange.bind(this)} value={assignee_type} >
                 <Radio className={indexStyles.ratio} value={'1'}>任何人</Radio>
-                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
+                <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
               <div>

@@ -111,22 +111,42 @@ const Workbench = (props) => {
       <Header />
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
-          {boxList.map((value, key) => {
-            const { code, name, id } = value
-            let container = ''
-            if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
-              container = (
-                <CardContentArticle title={name} {...cardContentListProps}
-                                    updateDatas={updateDatas} CardContentType={code}
-                                    appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
-              )
-            }else{
-              container = (
-                <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
-              )
-            }
-            return <div key={key}>{container}</div>
-          })}
+          <div  className={indexStyles.cardItem_left}>
+            {boxList.slice(0,5).map((value, key) => {
+              const { code, name, id } = value
+              let container = ''
+              if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
+                container = (
+                  <CardContentArticle title={name} {...cardContentListProps}
+                                      updateDatas={updateDatas} CardContentType={code}
+                                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
+                )
+              }else{
+                container = (
+                  <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+                )
+              }
+              return <div key={key}>{container}</div>
+            })}
+          </div>
+          <div  className={indexStyles.cardItem_right}>
+            {boxList.slice(5).map((value, key) => {
+              const { code, name, id } = value
+              let container = ''
+              if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
+                container = (
+                  <CardContentArticle title={name} {...cardContentListProps}
+                                      updateDatas={updateDatas} CardContentType={code}
+                                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
+                )
+              }else{
+                container = (
+                  <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+                )
+              }
+              return <div key={key}>{container}</div>
+            })}
+          </div>
           {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
           {/*<CardContent title={'会议安排'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'meeting'}/>*/}
           {/*<CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'task'}/>*/}
