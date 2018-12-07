@@ -170,13 +170,13 @@ export default {
           }
         })
 
-        //如果原来没有组织刚创建第一个则做切换组织操作
+        //创建后做切换组织操作
         const { operateType } = payload
         if(operateType === 'create') {
            yield put({
              type: 'changeCurrentOrg',
              payload: {
-               org_id: res.data[0].id
+               org_id: res.data[res.data.length - 1].id
              }
            })
         }
@@ -201,6 +201,11 @@ export default {
           type: 'getUSerInfo',
           payload: {
             operateType: 'changeOrg',
+          }
+        })
+        yield put({ //重新获取名词方案
+          type: 'getCurrentNounPlan',
+          payload: {
           }
         })
         // //组织切换重新加载

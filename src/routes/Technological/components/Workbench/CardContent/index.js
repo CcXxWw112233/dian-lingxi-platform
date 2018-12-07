@@ -8,6 +8,12 @@ import ProjectCountItem from './ProjectCountItem'
 import MapItem from './MapItem'
 import React from 'react'
 import MenuSearchMultiple from  '../../../../../components/MenuSearchMultiple'
+import SchedulingItem from './School/SchedulingItem'
+import Journey from './School/Journey'
+import Todo from './School/Todo'
+import SchoolWork from './School/SchoolWork'
+import TeachingEffect from './School/TeachingEffect'
+
 
 export default class CardContent extends React.Component{
   state={
@@ -67,6 +73,7 @@ export default class CardContent extends React.Component{
     const filterItem = (CardContentType) => {
       let contanner = (<div></div>)
       switch (CardContentType) {
+        //设计师
         case 'RESPONSIBLE_TASK':
           contanner = (
             responsibleTaskList.length? (
@@ -133,6 +140,38 @@ export default class CardContent extends React.Component{
         case 'YINYI_MAP':
           contanner = (
             <MapItem />
+          )
+          break
+        //老师
+        case 'MY_SCHEDULING':
+          contanner = (
+            [1,2,3].map((value, key)=> (
+              <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
+              ))
+            )
+          break
+        case 'JOURNEY':
+          contanner = (
+            [1,2,3].map((value, key)=> (
+              <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
+            ))
+          )
+          break
+        case 'TO_DO':
+          contanner = (
+            [1,2,3].map((value, key)=> (
+              <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
+            ))
+          )
+          break
+        case 'SCHOOLWORK_CORRECTION':
+          contanner = (
+            <SchoolWork />
+          )
+          break
+        case 'TEACHING_EFFECT':
+          contanner = (
+            <TeachingEffect />
           )
           break
         default:

@@ -12,7 +12,7 @@ import {
 import {
   MEMBERS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_TEAM_BOARD_QUERY, PROJECTS
+  ORG_TEAM_BOARD_QUERY, PROJECTS, TASKS
 } from "../../../../globalset/js/constant";
 
 
@@ -291,7 +291,7 @@ export default class ElseProject extends React.Component{
             <div className={indexStyle.right}>
               <div className={indexStyle.rightItem}>
                 <div>{residue_quantity || '0'}</div>
-                <div>剩余任务</div>
+                <div>剩余{currentNounPlanFilterName(TASKS)}</div>
               </div>
               <div className={indexStyle.rightItem}>
                 <div style={{color: '#8c8c8c'}}>{realize_quantity || '0'}</div>

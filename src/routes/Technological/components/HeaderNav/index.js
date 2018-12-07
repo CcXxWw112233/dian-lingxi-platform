@@ -284,7 +284,7 @@ export default class HeaderNav extends React.Component{
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>{currentNounPlanFilterName(PROJECTS)}</span>
             {currentUserOrganizes.length ? (
               <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
-                <span ><Icon type="appstore" /></span>
+                <span ><Icon type="appstore" style={{fontSize: 16,color: '#262626'}}/></span>
               </Dropdown>
             ) : ('')}
 

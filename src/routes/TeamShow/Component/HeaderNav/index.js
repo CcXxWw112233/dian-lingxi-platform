@@ -102,7 +102,7 @@ export default class HeaderNav extends React.Component{
             {/*<div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>*/}
             <Dropdown overlay={elseOperateMenu}  placement={'bottomCenter'}>
               <div style={{marginLeft: 30}}>
-                <Icon type="appstore" style={{display:'inline-block',marginTop: 6 }} />
+                <Icon type="appstore" style={{display:'inline-block',marginTop: 6, fontSize: 16, color: '#262626' }} />
               </div>
             </Dropdown>
           </div>

@@ -94,6 +94,7 @@ export default modelExtend(technological, {
             eventName= 'getMeetingList'
             break
           default:
+            eventName= 'MLGB'
             break
         }
         yield put({
