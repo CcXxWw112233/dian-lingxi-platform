@@ -40,10 +40,16 @@ export default class HeaderNav extends React.Component{
           return false
         }
         this.props.routingJump('/technological/organizationMember')
+        this.props.updateDatas({
+          naviHeadTabIndex: '4'
+        })
         break;
       case '3':
         // console.log(window.location.hash)
         this.props.routingJump(`/organization?nextpath=${window.location.hash.replace('#','')}`) //目标页面的返回按钮返回的路劲
+        this.props.updateDatas({
+          naviHeadTabIndex: '4'
+        })
         break
       case '4':
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
@@ -56,6 +62,9 @@ export default class HeaderNav extends React.Component{
         break
       case '6':
         this.props.routingJump('/technological/accoutSet')
+        this.props.updateDatas({
+          naviHeadTabIndex: '4'
+        })
         break;
       case '7':
         break
@@ -81,9 +90,6 @@ export default class HeaderNav extends React.Component{
         }
         break
     }
-    this.props.updateDatas({
-      naviHeadTabIndex: '4'
-    })
   }
   //下拉菜单显示状态改变
   handleVisibleChange = (flag) => {
@@ -262,7 +268,7 @@ export default class HeaderNav extends React.Component{
       </Card>
     )
 
-    const { datas:{naviHeadTabIndex} } = this.props.model
+    const { datas:{ naviHeadTabIndex } } = this.props.model
 
     return(
       <div>

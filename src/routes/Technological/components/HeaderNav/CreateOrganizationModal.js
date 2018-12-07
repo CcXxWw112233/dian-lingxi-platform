@@ -3,6 +3,9 @@ import React from 'react'
 import { Modal, Form, Button, Input, message, Select, Spin } from 'antd'
 import styles from './CreateOrganizationModal.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
+import { getSearchOrganizationList } from '../../../../services/technological/organizationMember'
+
+
 const Option = Select.Option
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -15,6 +18,8 @@ class CreateOrganizationModal extends React.Component {
     createButtonVisible:false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
+    searchOrganizationList: [], //搜索列表
+    spinning: false,
   }
   descriptionChange(e) {
     const value = e.target.value
@@ -44,7 +49,20 @@ class CreateOrganizationModal extends React.Component {
       this.setState({
         searchTimer: setTimeout(function () {
           //  此处调用请求
-          that.props.getSearchOrganizationList({name: value})
+          // that.props.getSearchOrganizationList({name: value})
+          that.setState({
+            spinning: true
+          })
+          getSearchOrganizationList({name: value}).then((res) => {
+            that.setState({
+              searchOrganizationList: res.data,
+              spinning: false
+            })
+          }).catch(err => {
+            that.setState({
+              spinning: false
+            })
+          })
         }, INPUT_CHANGE_SEARCH_TIME)
       })
     }
@@ -109,9 +127,9 @@ class CreateOrganizationModal extends React.Component {
     });
   }
   render() {
-    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible } = this.state
+    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible, spinning, searchOrganizationList=[] } = this.state
     const { createOrganizationVisable } = this.props; //reName_Add_type操作类型1重命名 2添加
-    const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
+    // const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
     const { getFieldDecorator } = this.props.form;
 
     const formContain = (

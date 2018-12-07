@@ -194,8 +194,6 @@ export default class TaskItem extends React.Component {
       }
     }
 
-    console.log(111,isCheckDisabled)
-
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
