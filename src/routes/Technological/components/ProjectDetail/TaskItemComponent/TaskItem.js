@@ -291,7 +291,8 @@ export default class TaskItem extends React.Component {
                   {/*选择会议日期*/}
                   <div className={CreateTaskStyle.addNewTask_bott_left_selectMeeting}>
                     <Icon type={'calendar'} style={{color: start_time && due_time ?'#262626': '#8c8c8c'}} />
-                    <RangePicker onChange={this.rangePickerChange.bind(this)} showTime
+                    <RangePicker onChange={this.rangePickerChange.bind(this)}
+                                 showTime={{format: 'HH:mm'}}
                                  format="YYYY-MM-DD HH:mm"
                                  className={CreateTaskStyle.addNewTask_bott_left_rangePicker}
                                  style={{width: 20}} />

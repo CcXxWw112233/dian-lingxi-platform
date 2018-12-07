@@ -714,20 +714,24 @@ export default class DrawContent extends React.Component {
               </div>
               <div>
                 {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time) : '开始' }
+                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time,'-', true) : '开始' }
                   <DatePicker
                     onChange={this.startDatePickerChange.bind(this)}
                     placeholder={'开始时间'}
-                    style={{opacity: 0, width: !start_time? 16 : 70, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
+                    format="YYYY-MM-DD HH:mm"
+                    showTime={{format: 'HH:mm'}}
+                    style={{opacity: 0, width: !start_time? 16 : 100, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
                 </span>
                  &nbsp;
                 {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
                 &nbsp;
-                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time) : '截止时间'}
+                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time,'-', true) : '截止时间'}
                   <DatePicker
                     placeholder={'截止时间'}
+                    format="YYYY-MM-DD HH:mm"
+                    showTime={{format: 'HH:mm'}}
                     onChange={this.endDatePickerChange.bind(this)}
-                    style={{opacity: 0, width: !due_time? 50 : 70, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
+                    style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
                 </span>
               </div>
               <div>
