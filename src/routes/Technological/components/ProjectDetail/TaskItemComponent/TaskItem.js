@@ -7,6 +7,8 @@ import QueueAnim from  'rc-queue-anim'
 import ItemOne from  './ItemOne'
 import ItemTwo from  './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
+import { timeToTimestamp} from '../../../../../utils/util'
+
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
@@ -67,8 +69,8 @@ export default class TaskItem extends React.Component {
   //设置日期
   rangePickerChange(data, dateString) {
     this.setState({
-      start_time: dateString[0],
-      due_time: dateString[1],
+      start_time: timeToTimestamp(dateString[0]),
+      due_time: timeToTimestamp(dateString[1]),
     })
   }
   //设置任务类型
@@ -293,7 +295,7 @@ export default class TaskItem extends React.Component {
                     <Icon type={'calendar'} style={{color: start_time && due_time ?'#262626': '#8c8c8c'}} />
                     <RangePicker onChange={this.rangePickerChange.bind(this)}
                                  showTime={{format: 'HH:mm'}}
-                                 format="YYYY-MM-DD HH:mm"
+                                 format="YYYY/MM/DD HH:mm"
                                  className={CreateTaskStyle.addNewTask_bott_left_rangePicker}
                                  style={{width: 20}} />
                   </div>

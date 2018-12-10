@@ -64,7 +64,7 @@ export default class FileItem extends React.Component {
         </div>
         <div>{file_name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
         <div>
-          {timestampToTimeNormal(create_time, '-', true) }
+          {timestampToTimeNormal(create_time, '/', true) }
         </div>
       </div>
     )
