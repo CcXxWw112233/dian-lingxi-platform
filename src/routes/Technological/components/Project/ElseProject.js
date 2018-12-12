@@ -12,7 +12,7 @@ import {
 import {
   MEMBERS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_TEAM_BOARD_QUERY, PROJECTS
+  ORG_TEAM_BOARD_QUERY, PROJECTS, TASKS
 } from "../../../../globalset/js/constant";
 
 
@@ -127,6 +127,9 @@ export default class ElseProject extends React.Component{
         }
       })
     })
+  }
+  starClickNew(id, type, e) {
+
   }
   //星星样式变化end--------------
 
@@ -244,6 +247,20 @@ export default class ElseProject extends React.Component{
       )
     }
 
+    const cancelStarProjet = (
+      <i className={globalStyles.authTheme}
+         onMouseOver={this.starMouseOver.bind(this)}
+         onMouseLeave={this.starMouseLeave.bind(this)}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 ',fontSize: 16}}>&#xe70e;</i>
+    )
+    const starProject = (
+      <i className={globalStyles.authTheme}
+         onMouseOver={this.starMouseOver.bind(this)}
+         onMouseLeave={this.starMouseLeave.bind(this)}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 ',fontSize: 16}}>&#xe6f8;</i>
+    )
     return (
       <div>
         <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
@@ -253,11 +270,12 @@ export default class ElseProject extends React.Component{
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
                 <span>{board_name}</span>
                 <span className={indexStyle.nameHoverMenu} >
-                  <Icon className={indexStyle.star}
-                        onMouseOver={this.starMouseOver.bind(this)}
-                        onMouseLeave={this.starMouseLeave.bind(this)}
-                        onClick={this.starClick.bind(this, board_id)}
-                        type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />
+                  {isInitEntry ? (is_star === '1'? (starProject):(cancelStarProjet)):(isCollection? (starProject):(cancelStarProjet))}
+                  {/*<Icon className={indexStyle.star}*/}
+                        {/*onMouseOver={this.starMouseOver.bind(this)}*/}
+                        {/*onMouseLeave={this.starMouseLeave.bind(this)}*/}
+                        {/*onClick={this.starClick.bind(this, board_id)}*/}
+                        {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />*/}
                     <Dropdown overlay={menu(board_id)} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
                       <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
                     </Dropdown>
@@ -291,7 +309,7 @@ export default class ElseProject extends React.Component{
             <div className={indexStyle.right}>
               <div className={indexStyle.rightItem}>
                 <div>{residue_quantity || '0'}</div>
-                <div>剩余任务</div>
+                <div>剩余{currentNounPlanFilterName(TASKS)}</div>
               </div>
               <div className={indexStyle.rightItem}>
                 <div style={{color: '#8c8c8c'}}>{realize_quantity || '0'}</div>

@@ -235,29 +235,63 @@ export default class DrawContent extends React.Component {
   }
     //开始时间
   startDatePickerChange(e, timeString) {
-    console.log(e, timeString)
     const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    drawContent['start_time'] = timeToTimestamp(timeString)
+    const start_timeStamp = timeToTimestamp(timeString)
+    const { card_id, due_time } = drawContent
+    if(!this.compareStartDueTime(start_timeStamp, due_time)) {
+      message.warn('开始时间不能大于结束时间')
+      return false
+    }
+    drawContent['start_time'] = start_timeStamp
     const updateObj ={
       card_id,
-      start_time: timeString,
+      start_time: start_timeStamp,
     }
     this.props.updateTask({updateObj})
     this.props.updateDatas({drawContent})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
-
     const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    drawContent['due_time'] = timeToTimestamp(timeString)
+    const { card_id, start_time} = drawContent
+    const due_timeStamp = timeToTimestamp(timeString)
+    if(!this.compareStartDueTime(start_time, due_timeStamp)) {
+      message.warn('开始时间不能大于结束时间')
+      return false
+    }
+    drawContent['due_time'] = due_timeStamp
     const updateObj ={
       card_id,
-      due_time: timeString,
+      due_time: due_timeStamp,
     }
     this.props.updateTask({updateObj})
     this.props.updateDatas({drawContent})
+  }
+  compareStartDueTime = (start_time, due_time) => {
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+    if(newStartTime >= newDueTime) {
+      return false
+    }
+    return true
+  }
+  disabledDueTime = (due_time) => {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { start_time } = drawContent
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newStartTime = start_time.toString().length > 10 ?  Number(start_time).valueOf() / 1000 :  Number(start_time).valueOf()
+    return Number(due_time.valueOf()) / 1000 < newStartTime;
+  }
+  disabledStartTime = (start_time) => {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { due_time } = drawContent
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newDueTime = due_time.toString().length > 10 ?  Number(due_time).valueOf() / 1000 :  Number(due_time).valueOf()
+    return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
   }
   //第二行状态栏编辑------------------end
 
@@ -551,7 +585,6 @@ export default class DrawContent extends React.Component {
       </Menu>
     );
 
-
     const uploadProps = {
       name: 'file',
       fileList: attachment_fileList,
@@ -632,7 +665,6 @@ export default class DrawContent extends React.Component {
 
     };
 
-
     return(
       //
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
@@ -677,7 +709,7 @@ export default class DrawContent extends React.Component {
                            autosize
                            onBlur={this.titleTextAreaChangeBlur.bind(this)}
                            onClick={this.setTitleIsEdit.bind(this, true)}
-                           autofocus={true}
+                           autoFocus={true}
                            style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
@@ -714,20 +746,26 @@ export default class DrawContent extends React.Component {
               </div>
               <div>
                 {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time) : '开始' }
+                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time,'/', true) : '开始' }
                   <DatePicker
+                    disabledDate={this.disabledStartTime.bind(this)}
                     onChange={this.startDatePickerChange.bind(this)}
                     placeholder={'开始时间'}
-                    style={{opacity: 0, width: !start_time? 16 : 70, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
+                    format="YYYY/MM/DD HH:mm"
+                    showTime={{format: 'HH:mm'}}
+                    style={{opacity: 0, width: !start_time? 16 : 100, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
                 </span>
                  &nbsp;
                 {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
                 &nbsp;
-                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time) : '截止时间'}
+                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time,'/', true) : '截止时间'}
                   <DatePicker
+                    disabledDate={this.disabledDueTime.bind(this)}
                     placeholder={'截止时间'}
+                    format="YYYY/MM/DD HH:mm"
+                    showTime={{format: 'HH:mm'}}
                     onChange={this.endDatePickerChange.bind(this)}
-                    style={{opacity: 0, width: !due_time? 50 : 70, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
+                    style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
                 </span>
               </div>
               <div>
@@ -773,7 +811,7 @@ export default class DrawContent extends React.Component {
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.contain_6}>
-              <div className={DrawerContentStyles.contain_6_add} onClick={this.addTag.bind(this)}>
+              <div className={DrawerContentStyles.contain_6_add}>
                 <Icon type="plus" style={{marginRight: 4}}/>关联内容
               </div>
             </div>
@@ -793,7 +831,7 @@ export default class DrawContent extends React.Component {
                     <Icon type="plus" style={{marginRight: 4}}/>标签
                   </div>
                 ) : (
-                  <Input placeholder={'标签'} style={{height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}} onPressEnter={this.tagAddComplete.bind(this)} onBlur={this.tagAddComplete.bind(this)}/>
+                  <Input autoFocus={true} placeholder={'标签'} style={{height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}} onPressEnter={this.tagAddComplete.bind(this)} onBlur={this.tagAddComplete.bind(this)}/>
                 ) }
               </div>
 

@@ -178,7 +178,7 @@ export default class DetailConfirmInfoFive extends React.Component {
         case '2':
           container = (
             <div  style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '-',true)}
+              {timestampToTimeNormal(deadline_value, '/',true)}
             </div>
           )
           break

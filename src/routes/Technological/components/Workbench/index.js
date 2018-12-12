@@ -112,7 +112,7 @@ const Workbench = (props) => {
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
           <div  className={indexStyles.cardItem_left}>
-            {boxList.slice(0,5).map((value, key) => {
+            {boxList.slice(0,Math.ceil(boxList.length / 2)).map((value, key) => {
               const { code, name, id } = value
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
@@ -130,7 +130,7 @@ const Workbench = (props) => {
             })}
           </div>
           <div  className={indexStyles.cardItem_right}>
-            {boxList.slice(5).map((value, key) => {
+            {boxList.slice(Math.ceil(boxList.length / 2)).map((value, key) => {
               const { code, name, id } = value
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志

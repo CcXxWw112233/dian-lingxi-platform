@@ -50,10 +50,10 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     const { datas:{ drawContent = {} } } = this.props.model
     const { chirldTaskItemValue } = this.props
     const { card_id } = drawContent
-    chirldTaskItemValue['due_time'] = timeToTimestamp(dateString)
+    chirldTaskItemValue['due_time'] = timeToTimestamp(dateString).toString()
     const updateObj = {
       card_id,
-      due_time: dateString
+      due_time: timeToTimestamp(dateString).toString()
     }
     this.props.updateTask({updateObj})
   }
@@ -113,7 +113,12 @@ export default class DCAddChirdrenTaskItem extends React.Component{
                 <Icon type="disconnect" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={DrawerContentStyles.calendarIconNormal}/>
               )}
             </div>
-            <DatePicker  onChange={this.datePickerChange.bind(this)}  placeholder={'选择截止日期'} style={{opacity: 0,height: 16, width: 16,background: '#000000',position: 'absolute',right: 0,zIndex:2}} />
+            <DatePicker
+              onChange={this.datePickerChange.bind(this)}
+              placeholder={'选择截止日期'}
+              format="YYYY/MM/DD HH:mm"
+              showTime={{format: 'HH:mm'}}
+              style={{opacity: 0,height: 16, width: 16,background: '#000000',position: 'absolute',right: 0,zIndex:2}} />
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Dropdown, Menu } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
-import { deepClone } from '../../../../../utils/util'
+import {deepClone, timeToTimestamp} from '../../../../../utils/util'
 import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 import {FLOWS, TASKS} from "../../../../../globalset/js/constant";
 const TextArea = Input.TextArea
@@ -22,7 +22,7 @@ export default class DCAddChirdrenTask extends React.Component{
   }
   datePickerChange(date, dateString) {
     this.setState({
-      due_time: dateString,
+      due_time: timeToTimestamp(dateString).toString(),
       isSelectCalendarIcon: true
     })
   }
@@ -143,7 +143,11 @@ export default class DCAddChirdrenTask extends React.Component{
                   <Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>
                 </Dropdown>
                 <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>
-                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
+                <DatePicker onChange={this.datePickerChange.bind(this)}
+                            placeholder={'选择截止日期'}
+                            format="YYYY/MM/DD HH:mm"
+                            showTime={{format: 'HH:mm'}}
+                            style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
                 <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
               </div>
             </div>
