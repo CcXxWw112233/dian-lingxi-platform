@@ -1,5 +1,7 @@
 import React from 'react'
 import indexStyle from './index.less'
+import globalStyles from '../../../../globalset/css/globalClassName.less'
+
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
   PROJECT_TEAM_CARD_INTERVIEW,
@@ -489,6 +491,18 @@ export default class Header extends React.Component {
       }
       return operatorConent
     }
+
+    const cancelStarProjet = (
+      <i className={globalStyles.authTheme}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',color: '#FAAD14 ',fontSize: 20}}>&#xe70e;</i>
+    )
+    const starProject = (
+      <i className={globalStyles.authTheme}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',color: '#FAAD14 ',fontSize: 20}}>&#xe6f8;</i>
+    )
+
     return (
       <div>
       <div className={indexStyle.headout}>
@@ -496,10 +510,12 @@ export default class Header extends React.Component {
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
                <span className={indexStyle.projectName}>{board_name}</span>
-               <Icon className={indexStyle.star}
-                     onClick={this.starClick.bind(this, board_id)}
-                     type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}
-                     style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
+             {isInitEntry ? (is_star === '1'? (starProject):(cancelStarProjet)):(isCollection? (starProject):(cancelStarProjet))}
+
+             {/*<Icon className={indexStyle.star}*/}
+                     {/*onClick={this.starClick.bind(this, board_id)}*/}
+                     {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}*/}
+                     {/*style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />*/}
                <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)} >
                  <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}}/>
                </Dropdown>
