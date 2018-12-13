@@ -110,7 +110,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     const userInfo = JSON.parse(Cookies.get('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
     for(let i = 0; i <assignees.length; i++) {
-      if(assignees[i].user_id === currentUserId) {
+      if(assignees[i]['user_id'] === currentUserId && assignees[i]['processed'] === '1') {
         currentUserCanOperate = true
         break
       }
@@ -283,7 +283,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     }
 
     const imgOrAvatar2 = (value, key) => {
-      const { avatar, name, mobile, email, processed } = value
+      const { avatar, name, mobile, email, processed } = value  // processed 0未完成 1正在进行中 2通过 其他 异常
       return  avatar ? (
         <div style={{display: 'flex',alignItems: 'center'}}>
           <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
