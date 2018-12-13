@@ -25,6 +25,7 @@ import { deleteTaskFile } from '../../../../../services/technological/task'
 import { filePreview } from '../../../../../services/technological/file'
 import {getProcessList} from "../../../../../services/technological/process";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
+import TagDropDown from './components/TagDropDown'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -38,6 +39,7 @@ export default class DrawContent extends React.Component {
     isInEdit: false,
     brafitEditHtml: '', //富文本编辑内容
     isInAddTag: false,
+    tagDropdownVisible: false, //标签下拉内容是否可见
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
@@ -467,12 +469,14 @@ export default class DrawContent extends React.Component {
   }
   addTag() {
     this.setState({
-      isInAddTag: true
+      isInAddTag: true,
+      tagDropdownVisible: true
     })
   }
   tagAddComplete(e) {
     this.setState({
-      isInAddTag: false
+      isInAddTag: false,
+      tagDropdownVisible: false
     })
     if(! e.target.value) {
       return false
@@ -710,6 +714,7 @@ export default class DrawContent extends React.Component {
                            onBlur={this.titleTextAreaChangeBlur.bind(this)}
                            onClick={this.setTitleIsEdit.bind(this, true)}
                            autoFocus={true}
+                           maxLength={100}
                            style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
@@ -831,7 +836,10 @@ export default class DrawContent extends React.Component {
                     <Icon type="plus" style={{marginRight: 4}}/>标签
                   </div>
                 ) : (
-                  <Input autoFocus={true} placeholder={'标签'} style={{height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}} onPressEnter={this.tagAddComplete.bind(this)} onBlur={this.tagAddComplete.bind(this)}/>
+                  <Dropdown visible={this.state.tagDropdownVisible} overlay={<TagDropDown/>} >
+                    <Input autoFocus={true} placeholder={'标签'} style={{height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}} onPressEnter={this.tagAddComplete.bind(this)} />
+                    {/*onBlur={this.tagAddComplete.bind(this)}*/}
+                  </Dropdown>
                 ) }
               </div>
 
