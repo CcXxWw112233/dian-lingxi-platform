@@ -576,7 +576,7 @@ export default {
           }
         })
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -585,7 +585,7 @@ export default {
       if(isApiResponseOk(res)) {
 
       }else{
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * fileCopy({ payload }, { select, call, put }) {
@@ -716,7 +716,7 @@ export default {
           yield put({
             type: 'filePreview',
             payload: {
-              id: res.data[0].file_id
+              id: res.data[0].file_resource_id
             }
           })
           yield put({

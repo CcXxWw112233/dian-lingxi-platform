@@ -34,6 +34,11 @@ export default {
     * confirmEmail({ payload }, { select, call, put }) { //获取验证码
       let res = yield call(confirmEmail, payload)
       if(isApiResponseOk(res)) {
+        message.success('验证成功,即将跳转到用户界面...', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, 3000)
         yield put(routerRedux.push('/technological/accoutSet?selectedKeys=2'))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
