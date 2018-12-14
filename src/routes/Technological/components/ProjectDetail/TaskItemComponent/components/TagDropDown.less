@@ -1,11 +1,26 @@
 .dropOut {
   background: #FFFFFF;
-  box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
   width: 260px;
   height: auto;
+  max-height: 400px;
   padding: 4px;
   cursor: pointer;
+  //重要 //隐藏滚动条
+  position: absolute;
+  left: 0;
+  overflow-y: scroll;
 }
+.outercontainer {
+  box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
+  width: 244px;
+  // 重要 隐藏滚动条
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+  background: #FFFFFF;
+
+}
+
 .dropItem{
   height: 28px;
   background: #FBFBFB;

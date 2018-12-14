@@ -9,7 +9,7 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
+import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag } from "../../services/technological/task";
 import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
@@ -69,6 +69,8 @@ export default {
             cardCommentList: [], //任务评论列表
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
+            boardTagList: [], //项目标签列表
+
             // 文档
             fileList: [], //文档列表
             filedata_1: [], //文档列表--文件夹
@@ -163,6 +165,12 @@ export default {
                 arrange_type: '1'
               }
             })
+            yield put({
+              type: 'getBoardTagList',
+              payload: {
+                board_id
+              }
+            })
           }else if(result.data.app_data[0].key === '4'){ //文档
             yield put({
               type: 'getFileList',
@@ -190,7 +198,6 @@ export default {
                 type: '1'
               }
             })
-
           }
         }
 
@@ -234,6 +241,13 @@ export default {
             arrange_type: '1'
           }
         })
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id
+          }
+        })
+
       }else if(appsSelectKey === '2'){ //流程
         yield put({
           type: 'getProcessTemplateList',
@@ -1260,6 +1274,62 @@ export default {
       let res = yield call(deleteTaskFile, payload)
       if(isApiResponseOk(res)) {
 
+      }else {
+
+      }
+    },
+
+    * getBoardTagList({ payload }, { select, call, put }) { //
+      let res = yield call(getBoardTagList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            boardTagList: res.data
+          }
+        })
+      }else {
+
+      }
+    },
+
+    * updateBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(updateBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+          }
+        })
+      }else {
+
+      }
+    },
+
+    * toTopBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(toTopBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+          }
+        })
+      }else {
+
+      }
+    },
+
+    * deleteBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(deleteBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+          }
+        })
       }else {
 
       }

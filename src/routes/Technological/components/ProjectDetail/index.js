@@ -240,6 +240,30 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('addCardNewComment'),
         payload: data
       })
+    },
+    getBoardTagList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getBoardTagList'),
+        payload: data
+      })
+    },
+    updateBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateBoardTag'),
+        payload: data
+      })
+    },
+    toTopBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('toTopBoardTag'),
+        payload: data
+      })
+    },
+    deleteBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteBoardTag'),
+        payload: data
+      })
     }
   }
   const FileModuleProps = {
