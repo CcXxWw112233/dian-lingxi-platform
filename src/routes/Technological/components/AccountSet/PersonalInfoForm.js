@@ -46,6 +46,7 @@ class PersonalInfoForm extends React.Component {
     const { datas = {} } = model
     const { userInfo = {} } = datas
     const {
+      current_org = {},
       orgnization,
       about_me,
       avatar,
@@ -64,6 +65,7 @@ class PersonalInfoForm extends React.Component {
       username,
       wechat,
     } = userInfo
+    const current_org_name = current_org['name']
     // 表单样式设置
     const formItemLayout = {
       labelCol: {
@@ -146,21 +148,21 @@ class PersonalInfoForm extends React.Component {
           )}
         </FormItem>
         {/* 职位 */}
-        <FormItem
-          {...formItemLayout}
-          label={(
-            <span style={{fontSize: 16}}>
-              职位
-            </span>
-          )}
-        >
-          {getFieldDecorator('job', {
-            initialValue: job || undefined,
-            rules: [{ required: false, message: '请输入职位', whitespace: true }],
-          })(
-            <Input placeholder="" className={indexStyle.personInfoInput}/>
-          )}
-        </FormItem>
+        {/*<FormItem*/}
+          {/*{...formItemLayout}*/}
+          {/*label={(*/}
+            {/*<span style={{fontSize: 16}}>*/}
+              {/*职位*/}
+            {/*</span>*/}
+          {/*)}*/}
+        {/*>*/}
+          {/*{getFieldDecorator('job', {*/}
+            {/*initialValue: job || undefined,*/}
+            {/*rules: [{ required: false, message: '请输入职位', whitespace: true }],*/}
+          {/*})(*/}
+            {/*<Input placeholder="" className={indexStyle.personInfoInput}/>*/}
+          {/*)}*/}
+        {/*</FormItem>*/}
         {/* 组织 */}
         <FormItem
           {...formItemLayout}
@@ -174,7 +176,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: orgnization || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <Input placeholder="" className={indexStyle.personInfoInput}/>
+            <div className={indexStyle.personInfoInput} style={{color:'rgb(38, 38, 38)'}}>{current_org_name}</div>
           )}
         </FormItem>
         {/* 头像 */}

@@ -6,10 +6,9 @@ import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 export default class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
-    const { file_id } = value
-    this.props.updateDatas({filePreviewCurrentVersionKey: key})
-    this.props.filePreview({id: file_id})
-
+    const { file_resource_id } = value
+    this.props.updateDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id})
+    this.props.filePreview({id: file_resource_id})
   }
   render() {
     const { datas: { isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0 } }= this.props.model
@@ -22,7 +21,7 @@ export default class FileDetailContent extends React.Component {
     const getVersionItem = (value, key ) => {
       const { file_name, creator, update_time, file_size } = value
       return (
-        <div className={indexStyles.versionInfoListItem} key ={key} onClick={this.versionItemClick.bind(this,{value, key})}>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this,{value, key})}>
           <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{update_time}</div>
@@ -49,7 +48,7 @@ export default class FileDetailContent extends React.Component {
              <div>版本信息</div>
              <div className={indexStyles.versionInfoList}>
                {filePreviewCurrentVersionList.map((value, key ) => {
-                 return getVersionItem(value, key )
+                 return (<div key={key}>{getVersionItem(value, key )}</div>)
                })}
              </div>
           </div>

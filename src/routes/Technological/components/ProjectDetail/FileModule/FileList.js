@@ -302,7 +302,7 @@ export default class FileList extends React.Component {
       },
       {
         title: '操作',
-        key: 'file_name',
+        key: 'operator',
         render: (data) =>{
           const {isInAdd} = data
           if(!isInAdd) {
