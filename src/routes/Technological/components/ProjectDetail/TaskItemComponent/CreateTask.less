@@ -35,17 +35,19 @@
 }
 
 .outerMost{
-  min-height: 700px;
+  //min-height: 700px;
   min-width: 10000px;
   width: auto;
   height: auto;
   display: flex;
   padding-left: 104px;
   position: relative;
-  padding-top: 20px;
+  padding-top: 40px;
   cursor: pointer;
-  margin-top: 40px;
-  padding-bottom: 100px;
+  //margin-top: 40px;
+  //padding-bottom: 100px;
+  padding-bottom: 24px;
+  box-sizing: border-box;
 }
 //.outerMost { -ms-overflow-style: none; }
 //.outerMost::-webkit-scrollbar { width: 0 !important }
@@ -53,6 +55,31 @@
 
 .taskItem{
   margin-right: 40px;
+  .cardListOut{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: auto;
+  }
+  /*滚动条样式*/
+  .cardListOut::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+    border-radius: 4px;
+  }
+  .cardListOut::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #bfbfbf;
+  }
+  .cardListOut::-webkit-scrollbar-thumb:active {/*滚动条里面小方块*/
+    background: #bfbfbf;
+  }
+  .cardListOut::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px  #E8E8E8;
+    border-radius: 8px;
+    background: #E8E8E8;
+  }
+
   .title{
     font-size: 16px;
     color: #595959;
@@ -63,6 +90,7 @@
     height: 32px;
     padding: 0 6px;
     border-radius: 4px;
+    margin-bottom: 16px;
     .title_l {
       font-weight: bold;
       display: flex;
@@ -178,7 +206,7 @@
       background: #FFFFFF;
       border-radius: 4px 4px 0 0;
       box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      margin-top: 10px;
+      //margin-top: 10px;
       display: flex;
       cursor: pointer;
       .card_name {
@@ -244,6 +272,9 @@
         }
       }
     }
+  }
+  .item_2:nth-child(1) {
+    margin-top: 0px;
   }
   .addItem{
     width: 274px;
