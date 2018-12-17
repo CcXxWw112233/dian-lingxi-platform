@@ -562,7 +562,8 @@ export default class Header extends React.Component {
     )
 
     return (
-      <div>
+      // style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}
+      <div style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}>
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
