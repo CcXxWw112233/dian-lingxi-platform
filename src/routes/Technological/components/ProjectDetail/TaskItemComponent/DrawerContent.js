@@ -457,7 +457,7 @@ export default class DrawContent extends React.Component {
     return colorArr[n]
   }
   tagClose({ label_id, label_name, key}) {
-    const { datas:{ drawContent = {}} } = this.props.model
+    const { datas:{ drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
     const { card_id } = drawContent
     // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id? 'label_id':'label_name'
@@ -465,7 +465,8 @@ export default class DrawContent extends React.Component {
       card_id,
       [keyCode]: label_id || label_name,
     })
-    // this.props.updateDatas({drawContent})
+    taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
+    this.props.updateDatas({taskGroupList})
   }
   addTag() {
     this.setState({
@@ -510,7 +511,7 @@ export default class DrawContent extends React.Component {
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
     const { name, color } = data
-    label_data.push({label_name: name})
+    label_data.push({label_name: name,label_color:color})
     this.props.addTaskTag({
       card_id,
       board_id,
@@ -868,6 +869,7 @@ export default class DrawContent extends React.Component {
                   const { label_color = '90,90,90' } = value
                   return(
                     flag && <Tag closable
+                                 visible={true}
                                  style={{marginTop: 8,color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
                                  onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})}
                                  key={key} >{value.label_name}</Tag>

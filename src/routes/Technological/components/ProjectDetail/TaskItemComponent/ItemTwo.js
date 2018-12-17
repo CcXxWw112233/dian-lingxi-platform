@@ -67,16 +67,19 @@ export default class ItemTwo extends React.Component {
             </div>
           )}
           <div className={CreateTaskStyle.card_name} style={{textDecoration:is_realize === '1'? 'line-through': 'none', lineHeight: '24px'}}>
-            <div>
+            <div style={{margin:0,height: 'auto',marginTop: `${type==='1'? '4px':0}`}}>
             {card_name}
             </div>
-            <div style={{marginLeft: 6, fontSize: 12,color: '#8c8c8c'}}>
-              {type === '1'? `${timestampToTimeNormal(start_time,'/',true)}~${timestampToTimeNormal(due_time,'/',true)}` :('')}
-            </div>
+            {type === '1'?(
+              <div style={{margin: 0,height: 'auto', fontSize: 12,color: '#8c8c8c', wordBreak:'break-all'}}>
+                {`${timestampToTimeNormal(start_time,'/',true)}~${timestampToTimeNormal(due_time,'/',true)}`}
+              </div>
+            ) : ('')}
+
             {label_data.map((value, key) => {
               const { label_name, label_id, label_color = '90,90,90' } = value
               return(
-                <div style={{color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}>{label_name}</div>
+                <div key={key} style={{color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}>{label_name|| key}</div>
               )
             })}
             </div>
