@@ -70,6 +70,7 @@ export default {
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
             boardTagList: [], //项目标签列表
+            getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
 
             // 文档
             fileList: [], //文档列表
@@ -1206,27 +1207,12 @@ export default {
       }
     },
 
-    * addTaskTag({ payload }, { select, call, put }) { //
-      const { length } = payload
-      let res = yield call(addTaskTag, payload)
-      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
-      if(isApiResponseOk(res)) {
-        drawContent.label_data[length-1].label_id = res.data.label_id
-        yield put({
-          type: 'updateDatas',
-          payload:{
-            drawContent
-          }
-        })
-      }else{
-      }
-    },
-
     * removeTaskTag({ payload }, { select, call, put }) { //
       let res = yield call(removeTaskTag, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已删除标签', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -1279,8 +1265,35 @@ export default {
       }
     },
 
+    * addTaskTag({ payload }, { select, call, put }) { //
+      const { length } = payload
+      let res = yield call(addTaskTag, payload)
+      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
+      if(isApiResponseOk(res)) {
+        drawContent.label_data[length-1].label_id = res.data.label_id
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            drawContent
+          }
+        })
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * getBoardTagList({ payload }, { select, call, put }) { //
-      let res = yield call(getBoardTagList, payload)
+      const { board_id, calback } = payload
+      let res = yield call(getBoardTagList, {board_id})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -1288,6 +1301,9 @@ export default {
             boardTagList: res.data
           }
         })
+        if(calback && typeof calback === 'function') {
+          calback()
+        }
       }else {
 
       }
@@ -1300,10 +1316,13 @@ export default {
           type: 'getBoardTagList',
           payload: {
             board_id,
+            calback: function () {
+              message.success('更新标签成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else {
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -1314,10 +1333,13 @@ export default {
           type: 'getBoardTagList',
           payload: {
             board_id,
+            calback: function () {
+              message.success('已成功置顶该项目标签', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else {
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -1328,10 +1350,13 @@ export default {
           type: 'getBoardTagList',
           payload: {
             board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
           }
         })
       }else {
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

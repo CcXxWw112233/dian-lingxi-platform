@@ -17,6 +17,12 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName('getTaskGroupList'),
+        payload: data
+      })
+    },
     collectionProject(id) {
       dispatch({
         type: getEffectOrReducerByName('collectionProject'),

@@ -97,7 +97,7 @@ export default class CreateTask extends React.Component {
     e.stopPropagation();
   }
   render() {
-    const { datas:{ taskGroupList = [], drawerVisible = false }, drawContent  } = this.props.model
+    const { datas:{ taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
     return (
       <div>
         <div className={CreateTaskStyle.outerMost}
@@ -116,7 +116,9 @@ export default class CreateTask extends React.Component {
                           setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
               )
             })}
+          {getTaskGroupListArrangeType==='1'?(
             <CreateItem  {...this.props}  ></CreateItem>
+          ):('')}
         </div>
         <Drawer
           placement="right"

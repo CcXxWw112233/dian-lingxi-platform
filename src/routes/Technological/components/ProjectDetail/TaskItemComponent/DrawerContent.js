@@ -459,18 +459,24 @@ export default class DrawContent extends React.Component {
   tagClose({ label_id, label_name, key}) {
     const { datas:{ drawContent = {}} } = this.props.model
     const { card_id } = drawContent
-    drawContent['label_data'].splice(key, 1)
+    // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id? 'label_id':'label_name'
     this.props.removeTaskTag({
       card_id,
       [keyCode]: label_id || label_name,
     })
-    this.props.updateDatas({drawContent})
+    // this.props.updateDatas({drawContent})
   }
   addTag() {
     this.setState({
       isInAddTag: true,
       tagDropdownVisible: true
+    })
+  }
+  quitAddTag() {
+    this.setState({
+      isInAddTag: false,
+      tagDropdownVisible: false
     })
   }
   tagAddComplete(e) {
@@ -535,7 +541,7 @@ export default class DrawContent extends React.Component {
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
@@ -852,25 +858,39 @@ export default class DrawContent extends React.Component {
           <div className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.contain_5}>
                 {label_data.map((value, key) => {
-                  const { color } = value
+                  let flag = false //如果项目列表
+                  for(let i = 0; i <  boardTagList.length; i++) {
+                    if(value['label_id'] == boardTagList[i]['id']) {
+                      flag = true
+                      break;
+                    }
+                  }
+                  const { label_color = '90,90,90' } = value
                   return(
-                    <Tag closable style={{marginTop: 8, border: '1px solid red'}} onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})} key={key} >{value.label_name}</Tag>
+                    flag && <Tag closable
+                                 style={{marginTop: 8,color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
+                                 onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})}
+                                 key={key} >{value.label_name}</Tag>
                   )
                 })}
 
               <div>
                 {!isInAddTag ? (
-                  <div className={DrawerContentStyles.contain_5_add} style={{marginTop: 8,}} onClick={this.addTag.bind(this)}>
+                  <div className={DrawerContentStyles.contain_5_add} style={{marginTop: 8, width: 100}} onClick={this.addTag.bind(this)}>
                     <Icon type="plus" style={{marginRight: 4}}/>标签
                   </div>
                 ) : (
                   <Dropdown visible={this.state.tagDropdownVisible}
                             overlay={<TagDropDown {...this.props} tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
+                    <div style={{marginTop: 8,position: 'relative', width: 'auto', height: 'auto'}}>
                     <Input autoFocus={true} placeholder={'标签'}
-                           style={{marginTop: 8,height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}}
+                           style={{height: 24,paddingRight: 20, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}}
                            onChange={this.setTagInputValue.bind(this)}
+                           // onBlur={this.tagAddComplete.bind(this)}
+                           maxLength={8}
                            onPressEnter={this.tagAddComplete.bind(this)} />
-                    {/*onBlur={this.tagAddComplete.bind(this)}*/}
+                      <Icon type={'close'} style={{position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4}} onClick={this.quitAddTag.bind(this)}></Icon>
+                    </div>
                   </Dropdown>
                 ) }
               </div>

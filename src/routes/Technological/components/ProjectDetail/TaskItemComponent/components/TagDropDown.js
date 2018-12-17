@@ -42,7 +42,8 @@ export default class TagDropDown extends React.Component {
   }
 
   toAdd() {
-
+    const { tagInputValue, } = this.props
+    this.props.tagDropItemClick({name: tagInputValue})
   }
   render() {
     const { tagInputValue, } = this.props
@@ -55,7 +56,7 @@ export default class TagDropDown extends React.Component {
               {tagInputValue}
             </div>
             <div className={TagDropDownStyles.dropItem_right}>
-              <div className={globalStyles.authTheme} onClick={this.toAdd.bind(this)}>&#xe6f8;</div>
+              <div className={globalStyles.authTheme} onClick={this.toAdd.bind(this)}>&#xe70b;</div>
             </div>
           </div>
 
