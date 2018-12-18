@@ -60,6 +60,13 @@
     overflow-x: hidden;
     height: auto;
   }
+  .cardListOut:hover::-webkit-scrollbar-thumb {
+    //.cardListOut::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+      border-radius: 5px;
+      -webkit-box-shadow: inset 0 0 5px #8c8c8c;
+      background: #8c8c8c;
+    //}
+  }
   /*滚动条样式*/
   .cardListOut::-webkit-scrollbar {/*滚动条整体样式*/
     width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -68,12 +75,10 @@
   }
   .cardListOut::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
     border-radius: 5px;
-    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    -webkit-box-shadow: inset 0 0 5px  #bfbfbf;
     background: #bfbfbf;
   }
-  .cardListOut::-webkit-scrollbar-thumb:active {/*滚动条里面小方块*/
-    background: #bfbfbf;
-  }
+
   .cardListOut::-webkit-scrollbar-track {/*滚动条里面轨道*/
     -webkit-box-shadow: inset 0 0 5px  #E8E8E8;
     border-radius: 8px;
