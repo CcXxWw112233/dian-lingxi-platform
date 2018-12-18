@@ -7,7 +7,7 @@ import QueueAnim from  'rc-queue-anim'
 import ItemOne from  './ItemOne'
 import ItemTwo from  './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timeToTimestamp} from '../../../../../utils/util'
+import { timeToTimestamp, stopPropagation} from '../../../../../utils/util'
 
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
@@ -19,7 +19,7 @@ const TextArea = Input.TextArea
 const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;
 
-const elseElementHeight = 324
+const elseElementHeight = 342
 function changeClientHeight() {
   const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
   const taskListHeight = clientHeight - elseElementHeight
@@ -203,6 +203,22 @@ export default class TaskItem extends React.Component {
     })
   }
 
+  //阻止父组件冒泡滚轮
+
+  taskGroupListMouseOver() {
+    this.setState({
+      taskGroupListMouseOver: true
+    })
+  }
+  taskGroupListMouseLeave() {
+    this.setState({
+      taskGroupListMouseOver: false
+    })
+  }
+  fnWhee1_2(e) {
+    stopPropagation(e)
+  }
+
   render() {
     const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName, taskListHeight } = this.state
     const { taskItemValue = {} } = this.props
@@ -239,13 +255,10 @@ export default class TaskItem extends React.Component {
       );
     }
 
-    console.log(taskListHeight)
-
     return (
-      <div className={CreateTaskStyle.taskItem}>
-        {/*<div className={CreateTaskStyle.title}>*/}
-          {/*/!*{list_name}<Icon type="right" className={[CreateTaskStyle.nextIcon]}/>*!/*/}
-        {/*</div>*/}
+      <div className={CreateTaskStyle.taskItem}
+           // onWheel={this.fnWhee1_2.bind(this)}
+      >
           {!isInEditName?(
             <div className={CreateTaskStyle.title}>
               <div className={CreateTaskStyle.title_l}>
@@ -268,10 +281,11 @@ export default class TaskItem extends React.Component {
         <div className={CreateTaskStyle.cardListOut} style={{maxHeight: taskListHeight}}>
         <QueueAnim >
           {card_data.map((value,key) => {
+            const { card_id } = value
             return(
               <ItemTwo itemValue={value} {...this.props}
                        taskGroupListIndex_index={key}
-                       key={key} {...this.props} />
+                       key={card_id} {...this.props} />
             )
           })}
         </QueueAnim>

@@ -14,6 +14,12 @@ import {timestampToTimeNormal} from "../../../../../utils/util";
 
 const Panel = Collapse.Panel
 
+let thumbMArgin = 22
+const ua = navigator.userAgent.toLocaleLowerCase()
+if(ua.indexOf('chrome') != - 1 || ua.indexOf('safari') != - 1 ) {
+  thumbMArgin = 6
+}
+
 export default class ItemTwo extends React.Component {
   state = {
     collapseClose: true, //折叠面板变化回调
@@ -55,7 +61,7 @@ export default class ItemTwo extends React.Component {
       executor = executors[0]
     }
     return (
-      <div  key={'2'} className={CreateTaskStyle.item_2} >
+      <div  key={'2'} className={CreateTaskStyle.item_2} style={{marginRight: thumbMArgin}} >
         <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this,{drawContent:itemValue, taskGroupListIndex: this.props.taskGroupListIndex, taskGroupListIndex_index: this.props.taskGroupListIndex_index})}>
           {type === '0'? (
             <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
