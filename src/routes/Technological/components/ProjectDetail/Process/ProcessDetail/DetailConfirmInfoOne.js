@@ -21,6 +21,26 @@ export default class DetailConfirmInfoOne extends React.Component {
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
+    this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.propsChangeSetIsShowBottDetail(nextProps)
+  }
+  //isShowBottDetail是否在当前步骤
+  propsChangeSetIsShowBottDetail(props) {
+    const { datas: { processEditDatas, processInfo = {} } } = props.model
+    const { itemKey } = props //所属列表位置
+    const { curr_node_sort} = processInfo //当前节点
+    const { sort } = processEditDatas[itemKey]
+    if(curr_node_sort == sort) {
+      this.setState({
+        isShowBottDetail: true
+      })
+    } else {
+      this.setState({
+        isShowBottDetail: false
+      })
+    }
   }
 
   datePickerChange(date, dateString) {
@@ -99,7 +119,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
     const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
-    console.log( processEditDatas[itemKey])
+    // console.log( processEditDatas[itemKey])
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data

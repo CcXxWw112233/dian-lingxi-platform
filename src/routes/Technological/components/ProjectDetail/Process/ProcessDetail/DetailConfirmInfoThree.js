@@ -24,6 +24,26 @@ export default class DetailConfirmInfoThree extends React.Component {
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
+    this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.propsChangeSetIsShowBottDetail(nextProps)
+  }
+  //isShowBottDetail是否在当前步骤
+  propsChangeSetIsShowBottDetail(props) {
+    const { datas: { processEditDatas, processInfo = {} } } = props.model
+    const { itemKey } = props //所属列表位置
+    const { curr_node_sort} = processInfo //当前节点
+    const { sort } = processEditDatas[itemKey]
+    if(curr_node_sort == sort) {
+      this.setState({
+        isShowBottDetail: true
+      })
+    } else {
+      this.setState({
+        isShowBottDetail: false
+      })
+    }
   }
   datePickerChange(date, dateString) {
     this.setState({
