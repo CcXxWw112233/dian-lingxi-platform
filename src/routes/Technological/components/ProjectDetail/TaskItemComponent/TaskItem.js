@@ -19,12 +19,6 @@ const TextArea = Input.TextArea
 const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;
 
-
-function changeClientHeight() {
-  const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
-  return  clientHeight
-}
-
 export default class TaskItem extends React.Component {
   state = {
     isAddEdit: false, //添加任务编辑状态
@@ -34,24 +28,10 @@ export default class TaskItem extends React.Component {
     start_time: '',
     due_time: '',
     addTaskType: '0', //0默认 1日程
-    clientHeight: changeClientHeight(), //分组列表高度
     elseElementHeight: 342, //除了list高度之外其他元素高度总和
   }
   constructor(props) {
     super(props)
-    this.resizeTTY.bind(this)
-  }
-  componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
-  }
-  resizeTTY(type) {
-    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
-    this.setState({
-      clientHeight
-    })
   }
   gotoAddItem() {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)){
@@ -222,8 +202,8 @@ export default class TaskItem extends React.Component {
   }
 
   render() {
-    const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName, clientHeight, elseElementHeight } = this.state
-    const { taskItemValue = {} } = this.props
+    const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName, elseElementHeight } = this.state
+    const { taskItemValue = {}, clientHeight } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
     const { list_name, list_id, card_data = [] } = taskItemValue
@@ -257,10 +237,12 @@ export default class TaskItem extends React.Component {
       );
     }
 
+    let cardListOut = clientHeight - elseElementHeight
+    cardListOut = cardListOut < 0? 0 : cardListOut
+
     return (
       <div className={CreateTaskStyle.taskItem}
-           // onWheel={this.fnWhee1_2.bind(this)}
-           style={{height: clientHeight - 256}}
+           onWheel={this.fnWhee1_2.bind(this)}
       >
           {!isInEditName?(
             <div className={CreateTaskStyle.title}>
@@ -281,7 +263,7 @@ export default class TaskItem extends React.Component {
               <Input autoFocus defaultValue={list_name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
             </div>
           )}
-        <div className={CreateTaskStyle.cardListOut} style={{maxHeight: clientHeight - elseElementHeight}}>
+        <div className={CreateTaskStyle.cardListOut} style={{maxHeight: cardListOut }}>
         <QueueAnim >
           {card_data.map((value,key) => {
             const { card_id } = value

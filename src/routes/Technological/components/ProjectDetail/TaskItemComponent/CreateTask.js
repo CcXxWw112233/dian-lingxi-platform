@@ -7,12 +7,17 @@ import { Drawer } from 'antd'
 import {stopPropagation} from "../../../../../utils/util";
 
 const documentWidth = document.querySelector('body').offsetWidth
-
+function changeClientHeight() {
+  const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+  return  clientHeight
+}
 export default class CreateTask extends React.Component {
 
   state = {
     // drawerVisible: false,
-    taskGroupListMouseOver: true
+    taskGroupListMouseOver: true,
+    clientHeight: changeClientHeight(), //分组列表高度
+
   }
   constructor(){
     super();
@@ -27,6 +32,19 @@ export default class CreateTask extends React.Component {
 
     //横向滚动条位置
     this.scrollLeft = 0
+    this.resizeTTY.bind(this)
+  }
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+  }
+  componentWillUnmount() {
+    // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
+  }
+  resizeTTY(type) {
+    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    this.setState({
+      clientHeight
+    })
   }
 
   /*定义鼠标下落事件*/
@@ -85,7 +103,7 @@ export default class CreateTask extends React.Component {
     /*事件源对象兼容*/
     const target = this.refs.outerMost
     const target_2 = this.refs.outerMostListContainer
-    const step = 20
+    const step = 40
     const leftBoundray = target_2.clientWidth - target.clientWidth + 104
     if(target_2.clientWidth + 104 < target.clientWidth) {
       return false
@@ -94,7 +112,11 @@ export default class CreateTask extends React.Component {
     if(event.deltaY < 0){
       //向上滚动鼠标滚轮，屏幕滚动条左移
       if( this.scrollLeft > 0) {
-        this.scrollLeft -= step
+        if(this.scrollLeft > step) {
+          this.scrollLeft -= step
+        } else {
+          this.scrollLeft = 0
+        }
       } else {
         this.scrollLeft = 0
       }
@@ -140,14 +162,16 @@ export default class CreateTask extends React.Component {
   //右方抽屉弹窗---end
 
   render() {
+    const { clientHeight=changeClientHeight() } = this.state
     const { datas:{ taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
     return (
       <div>
         <div className={CreateTaskStyle.outerMost}
              // style={{left:this.state.needX,}}
              // onMouseDown={this.fnDown.bind(this)}
-             // onWheel={this.fnWheel.bind(this)}
-             // onScroll={this.fnScroll.bind(this)}
+             onWheel={this.fnWheel.bind(this)}
+             onScroll={this.fnScroll.bind(this)}
+             style={{height: clientHeight - 172}}
              ref={'outerMost'}
         >
           <div  className={CreateTaskStyle.outerMostListContainer} ref={'outerMostListContainer'}>
@@ -156,6 +180,7 @@ export default class CreateTask extends React.Component {
                   <div style={{ width: 'auto',marginRight: 40}}
                     key={key}>
                     <TaskItem taskItemValue={value}
+                              clientHeight={clientHeight}
                               itemKey={key}
                               taskGroupListIndex={key}
                               {...this.props}
