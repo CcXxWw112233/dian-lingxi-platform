@@ -183,7 +183,7 @@ export default class CardContent extends React.Component{
       <div className={indexstyles.cardDetail}>
         <div className={indexstyles.contentTitle}>
           <div>{title}</div>
-          {'YINYI_MAP' === CardContentType? (''): (
+          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
             <Dropdown trigger={['click']}
                       visible={this.state.dropDonwVisible}
                       onVisibleChange={this.onVisibleChange.bind(this)}

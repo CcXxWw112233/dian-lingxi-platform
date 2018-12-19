@@ -217,6 +217,7 @@ export default class EditFormFour extends React.Component {
               <div>
                 {/*<MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>*/}
                 <Mention
+                  placeholder={'输入“@”选择'}
                   style={{ width: '100%', height: 70 }}
                   onChange={this.mentionOnChange2.bind(this)}
                   defaultValue={toContentState(defaultRecipients)}
