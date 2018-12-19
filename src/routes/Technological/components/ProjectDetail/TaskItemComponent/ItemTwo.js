@@ -14,6 +14,12 @@ import {timestampToTimeNormal} from "../../../../../utils/util";
 
 const Panel = Collapse.Panel
 
+let thumbMArgin = 22
+const ua = navigator.userAgent.toLocaleLowerCase()
+if(ua.indexOf('chrome') != - 1 || ua.indexOf('safari') != - 1 ) {
+  thumbMArgin = 6
+}
+
 export default class ItemTwo extends React.Component {
   state = {
     collapseClose: true, //折叠面板变化回调
@@ -45,7 +51,7 @@ export default class ItemTwo extends React.Component {
   }
   render() {
     const { itemValue = {} } = this.props
-    const { card_id, card_name, child_data=[], is_realize = '0', executors = [], type='0',start_time, due_time } = itemValue
+    const { card_id, card_name, child_data=[], is_realize = '0', executors = [], type='0',start_time, due_time, label_data = [] } = itemValue
     let executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -55,7 +61,7 @@ export default class ItemTwo extends React.Component {
       executor = executors[0]
     }
     return (
-      <div  key={'2'} className={CreateTaskStyle.item_2} >
+      <div  key={'2'} className={CreateTaskStyle.item_2} style={{marginRight: thumbMArgin}} >
         <div className={CreateTaskStyle.item_2_top}  onClick={this.seeDetailInfo.bind(this,{drawContent:itemValue, taskGroupListIndex: this.props.taskGroupListIndex, taskGroupListIndex_index: this.props.taskGroupListIndex_index})}>
           {type === '0'? (
             <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
@@ -66,13 +72,27 @@ export default class ItemTwo extends React.Component {
               <i className={globalStyle.authTheme}>&#xe709;</i>
             </div>
           )}
-          <div style={{textDecoration:is_realize === '1'? 'line-through': 'none', lineHeight: '24px'}}>
+          <div className={CreateTaskStyle.card_name} style={{textDecoration:is_realize === '1'? 'line-through': 'none', lineHeight: '24px'}}>
+            <div style={{margin:0,height: 'auto',marginTop:'2px'}}>
+              {/*`${type==='1'? '4px':'4px'}`*/}
             {card_name}
-            <span style={{marginLeft: 6, fontSize: 12,color: '#8c8c8c'}}>
-              {type === '1'? `${timestampToTimeNormal(start_time,'/',true)}~${timestampToTimeNormal(due_time,'/',true)}` :('')}
-            </span>
             </div>
-          <div>
+            {type === '1'?(
+              <div style={{margin: 0,height: 'auto', fontSize: 12,color: '#8c8c8c', wordBreak:'break-all'}}>
+                {`${timestampToTimeNormal(start_time,'/',true)}~${timestampToTimeNormal(due_time,'/',true)}`}
+              </div>
+            ) : ('')}
+
+            {label_data.map((value, key) => {
+              const { label_name, label_id, label_color = '90,90,90' } = value
+              return(
+                <div key={key} style={{color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}>{label_name|| key}</div>
+              )
+            })}
+            </div>
+
+
+          <div className={CreateTaskStyle.executor}>
             {executor.user_id? (
               executor.avatar ? (
                 <img src={executor.avatar}  style={{width: 24, height: 24}}/>
@@ -84,7 +104,7 @@ export default class ItemTwo extends React.Component {
             ): ('')}
 
           </div>
-          <div>
+          <div className={CreateTaskStyle.ellipsis}>
             <Icon type="ellipsis"  style={{fontSize:16}}/>
           </div>
         </div>

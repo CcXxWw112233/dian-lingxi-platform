@@ -130,7 +130,8 @@ export default class Technological extends React.Component{
     ]
     return (
       <LocaleProvider locale={zh_CN}>
-        <div className={globalClassNmae.page_style_3} style={{ minWidth:1440, position: 'relative'}}>
+        {/*minWidth:1440, */}
+        <div className={globalClassNmae.page_style_3} style={{ position: 'relative'}}>
           <HeaderNav {...HeaderNavProps}/>
           {
             routes.map(({ path, ...dynamics }, key) =>{

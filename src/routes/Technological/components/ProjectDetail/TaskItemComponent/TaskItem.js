@@ -7,7 +7,7 @@ import QueueAnim from  'rc-queue-anim'
 import ItemOne from  './ItemOne'
 import ItemTwo from  './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timeToTimestamp} from '../../../../../utils/util'
+import { timeToTimestamp, stopPropagation} from '../../../../../utils/util'
 
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
@@ -20,7 +20,6 @@ const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;
 
 export default class TaskItem extends React.Component {
-
   state = {
     isAddEdit: false, //添加任务编辑状态
     isInEditName: false, //任务分组名称编辑状态
@@ -29,6 +28,10 @@ export default class TaskItem extends React.Component {
     start_time: '',
     due_time: '',
     addTaskType: '0', //0默认 1日程
+    elseElementHeight: 342, //除了list高度之外其他元素高度总和
+  }
+  constructor(props) {
+    super(props)
   }
   gotoAddItem() {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)){
@@ -37,6 +40,7 @@ export default class TaskItem extends React.Component {
     }
     this.setState({
       isAddEdit:true,
+      elseElementHeight: 395
     })
   }
   addItem(data,e) {
@@ -47,6 +51,7 @@ export default class TaskItem extends React.Component {
     }
     this.setState({
       isAddEdit:false,
+      elseElementHeight: 342
     })
   }
   //任务名
@@ -83,6 +88,7 @@ export default class TaskItem extends React.Component {
   reductionAddTaskOperate(){
     this.setState({
       isAddEdit:false,
+      elseElementHeight: 342,
       executor:{}, //任务负责人
       addNewTaskName: '',//新增任务名字
       start_time: '',
@@ -179,9 +185,25 @@ export default class TaskItem extends React.Component {
     })
   }
 
+  //阻止父组件冒泡滚轮
+
+  taskGroupListMouseOver() {
+    this.setState({
+      taskGroupListMouseOver: true
+    })
+  }
+  taskGroupListMouseLeave() {
+    this.setState({
+      taskGroupListMouseOver: false
+    })
+  }
+  fnWhee1_2(e) {
+    stopPropagation(e)
+  }
+
   render() {
-    const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName } = this.state
-    const { taskItemValue = {} } = this.props
+    const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName, elseElementHeight } = this.state
+    const { taskItemValue = {}, clientHeight } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
     const { list_name, list_id, card_data = [] } = taskItemValue
@@ -215,11 +237,13 @@ export default class TaskItem extends React.Component {
       );
     }
 
+    let cardListOut = clientHeight - elseElementHeight
+    cardListOut = cardListOut < 0? 0 : cardListOut
+
     return (
-      <div className={CreateTaskStyle.taskItem}>
-        {/*<div className={CreateTaskStyle.title}>*/}
-          {/*/!*{list_name}<Icon type="right" className={[CreateTaskStyle.nextIcon]}/>*!/*/}
-        {/*</div>*/}
+      <div className={CreateTaskStyle.taskItem}
+           onWheel={this.fnWhee1_2.bind(this)}
+      >
           {!isInEditName?(
             <div className={CreateTaskStyle.title}>
               <div className={CreateTaskStyle.title_l}>
@@ -239,17 +263,19 @@ export default class TaskItem extends React.Component {
               <Input autoFocus defaultValue={list_name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
             </div>
           )}
-
+        <div className={CreateTaskStyle.cardListOut} style={{maxHeight: cardListOut }}>
         <QueueAnim >
           {card_data.map((value,key) => {
+            const { card_id } = value
             return(
               <ItemTwo itemValue={value} {...this.props}
                        taskGroupListIndex_index={key}
-                       key={key} {...this.props} />
+                       key={card_id} {...this.props} />
             )
           })}
         </QueueAnim>
-        <QueueAnim type={'top'}>
+        </div>
+        <QueueAnim type={'right'}>
           {!isAddEdit ? (
             <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />

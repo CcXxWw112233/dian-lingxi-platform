@@ -17,6 +17,12 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName('getTaskGroupList'),
+        payload: data
+      })
+    },
     collectionProject(id) {
       dispatch({
         type: getEffectOrReducerByName('collectionProject'),
@@ -240,6 +246,30 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('addCardNewComment'),
         payload: data
       })
+    },
+    getBoardTagList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getBoardTagList'),
+        payload: data
+      })
+    },
+    updateBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateBoardTag'),
+        payload: data
+      })
+    },
+    toTopBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('toTopBoardTag'),
+        payload: data
+      })
+    },
+    deleteBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteBoardTag'),
+        payload: data
+      })
     }
   }
   const FileModuleProps = {
@@ -451,7 +481,9 @@ const ProjectDetail = (props) => {
     return appFace
   }
   return(
-    <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+    // minHeight: '100%',
+    <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+      <div style={{height: 108,}}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}
@@ -459,7 +491,7 @@ const ProjectDetail = (props) => {
         placement="left"
         closable={false}
         visible={projectInfoDisplay}
-        width={420}
+        width={376}
         top={172}
         zIndex={0}
         maskStyle={{top: 0, }}

@@ -25,6 +25,7 @@ import { deleteTaskFile } from '../../../../../services/technological/task'
 import { filePreview } from '../../../../../services/technological/file'
 import {getProcessList} from "../../../../../services/technological/process";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
+import TagDropDown from './components/TagDropDown'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -38,6 +39,7 @@ export default class DrawContent extends React.Component {
     isInEdit: false,
     brafitEditHtml: '', //富文本编辑内容
     isInAddTag: false,
+    tagDropdownVisible: false, //标签下拉内容是否可见
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
@@ -455,24 +457,34 @@ export default class DrawContent extends React.Component {
     return colorArr[n]
   }
   tagClose({ label_id, label_name, key}) {
-    const { datas:{ drawContent = {}} } = this.props.model
+    const { datas:{ drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
     const { card_id } = drawContent
-    drawContent['label_data'].splice(key, 1)
+    // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id? 'label_id':'label_name'
     this.props.removeTaskTag({
       card_id,
       [keyCode]: label_id || label_name,
     })
-    this.props.updateDatas({drawContent})
+    taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
+    this.props.updateDatas({taskGroupList})
   }
   addTag() {
     this.setState({
-      isInAddTag: true
+      isInAddTag: true,
+      tagDropdownVisible: true
+    })
+  }
+  quitAddTag() {
+    this.setState({
+      isInAddTag: false,
+      tagDropdownVisible: false
     })
   }
   tagAddComplete(e) {
     this.setState({
-      isInAddTag: false
+      isInAddTag: false,
+      tagDropdownVisible: false,
+      tagInputValue: ''
     })
     if(! e.target.value) {
       return false
@@ -487,6 +499,31 @@ export default class DrawContent extends React.Component {
       name: e.target.value,
       label_name: e.target.value,
       length: label_data.length
+    })
+  }
+  tagDropItemClick(data) {
+    this.setState({
+      isInAddTag: false,
+      tagDropdownVisible: false,
+      tagInputValue: ''
+    })
+    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { card_id, label_data = [] } = drawContent
+    const { board_id } = projectDetailInfoData
+    const { name, color } = data
+    label_data.push({label_name: name,label_color:color})
+    this.props.addTaskTag({
+      card_id,
+      board_id,
+      name: name,
+      color,
+      label_name: name,
+      length: label_data.length
+    })
+  }
+  setTagInputValue(e) {
+    this.setState({
+      tagInputValue: e.target.value, //用于标签检索
     })
   }
   //标签-------------end
@@ -505,7 +542,7 @@ export default class DrawContent extends React.Component {
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0 } } = this.props.model
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
@@ -710,6 +747,7 @@ export default class DrawContent extends React.Component {
                            onBlur={this.titleTextAreaChangeBlur.bind(this)}
                            onClick={this.setTitleIsEdit.bind(this, true)}
                            autoFocus={true}
+                           maxLength={100}
                            style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
@@ -820,18 +858,42 @@ export default class DrawContent extends React.Component {
           {/*标签*/}
           <div className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.contain_5}>
-              {label_data.map((value, key) => {
-                return(
-                  <Tag closable onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})} key={key} color={this.randomColorArray()}>{value.label_name}</Tag>
-                )
-              })}
+                {label_data.map((value, key) => {
+                  let flag = false //如果项目列表
+                  for(let i = 0; i <  boardTagList.length; i++) {
+                    if(value['label_id'] == boardTagList[i]['id']) {
+                      flag = true
+                      break;
+                    }
+                  }
+                  const { label_color = '90,90,90' } = value
+                  return(
+                    flag && <Tag closable
+                                 visible={true}
+                                 style={{marginTop: 8,color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
+                                 onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})}
+                                 key={key} >{value.label_name}</Tag>
+                  )
+                })}
+
               <div>
                 {!isInAddTag ? (
-                  <div className={DrawerContentStyles.contain_5_add} onClick={this.addTag.bind(this)}>
+                  <div className={DrawerContentStyles.contain_5_add} style={{marginTop: 8, width: 100}} onClick={this.addTag.bind(this)}>
                     <Icon type="plus" style={{marginRight: 4}}/>标签
                   </div>
                 ) : (
-                  <Input autoFocus={true} placeholder={'标签'} style={{height: 22, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}} onPressEnter={this.tagAddComplete.bind(this)} onBlur={this.tagAddComplete.bind(this)}/>
+                  <Dropdown visible={this.state.tagDropdownVisible}
+                            overlay={<TagDropDown {...this.props} tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
+                    <div style={{marginTop: 8,position: 'relative', width: 'auto', height: 'auto'}}>
+                    <Input autoFocus={true} placeholder={'标签'}
+                           style={{height: 24,paddingRight: 20, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}}
+                           onChange={this.setTagInputValue.bind(this)}
+                           // onBlur={this.tagAddComplete.bind(this)}
+                           maxLength={8}
+                           onPressEnter={this.tagAddComplete.bind(this)} />
+                      <Icon type={'close'} style={{position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4}} onClick={this.quitAddTag.bind(this)}></Icon>
+                    </div>
+                  </Dropdown>
                 ) }
               </div>
 

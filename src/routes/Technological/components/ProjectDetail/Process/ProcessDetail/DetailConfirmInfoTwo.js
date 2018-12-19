@@ -27,6 +27,26 @@ export default class DetailConfirmInfoTwo extends React.Component {
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
+    this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.propsChangeSetIsShowBottDetail(nextProps)
+  }
+  //isShowBottDetail是否在当前步骤
+  propsChangeSetIsShowBottDetail(props) {
+    const { datas: { processEditDatas, processInfo = {} } } = props.model
+    const { itemKey } = props //所属列表位置
+    const { curr_node_sort} = processInfo //当前节点
+    const { sort } = processEditDatas[itemKey]
+    if(curr_node_sort == sort) {
+      this.setState({
+        isShowBottDetail: true
+      })
+    } else {
+      this.setState({
+        isShowBottDetail: false
+      })
+    }
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -364,7 +384,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       },
       fileList: this.state.fileList,
       beforeUpload(e) {
-        console.log('beforeUpload', e)
+        // console.log('beforeUpload', e)
         if(fileList.length >= limit_file_num ) { //已经上传的文件达到限制
           message.warn(`上传文件数量最大为${limit_file_num}个`)
           return false
@@ -389,7 +409,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           return false
         }else {
         }
-        console.log('info',info)
+        // console.log('info',info)
         if (info.file.status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {

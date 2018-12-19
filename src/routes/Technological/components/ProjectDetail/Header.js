@@ -297,6 +297,22 @@ export default class Header extends React.Component {
   }
   //文档操作 ---end
 
+  //任务操作---start
+  //查询列表，改变方式
+  handleaskAppMenuClick(board_id, e) {
+    e.domEvent.stopPropagation();
+    const { key } = e
+    this.props.updateDatas({
+      getTaskGroupListArrangeType: key
+    })
+    this.props.getTaskGroupList({
+      type: '2',
+      board_id: board_id,
+      arrange_type: key
+    })
+  }
+  //任务操作---end
+
   //团队展示发布编辑
   editTeamShowPreview() {
     const that = this
@@ -321,11 +337,12 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}}} = this.props.model
-    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}, getTaskGroupListArrangeType = '1'}} = this.props.model
+    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, } = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
     const processName = processInfo.name
     is_starinit = is_star
+    //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
@@ -400,6 +417,45 @@ export default class Header extends React.Component {
       },
     };
 
+    //任务列表查询方式
+    const taskAppMenu = (
+      <Menu onClick={this.handleaskAppMenuClick.bind(this, board_id)}>
+        <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按分组名称排序
+          </div>
+        </Menu.Item>
+        <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按执行人排序
+          </div>
+        </Menu.Item>
+        <Menu.Item key={'3'} style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按标签排序
+          </div>
+        </Menu.Item>
+      </Menu>
+    )
+    const filterGetTaskGroupListType = (getTaskGroupListArrangeType) => {
+      let name = ''
+      switch (getTaskGroupListArrangeType) {
+        case '1':
+          name = '按分组名称排序'
+          break
+        case '2':
+          name = '按执行人排序'
+          break
+        case '3':
+          name = '按标签排序'
+          break
+        default:
+          name = '按分组名称排序'
+          break
+      }
+      return name
+    }
+
     const appsOperator = (appsSelectKey) => {  //右方操作图标
       let operatorConent = ''
       switch (appsSelectKey) {
@@ -417,7 +473,9 @@ export default class Header extends React.Component {
         case '3':
           operatorConent = (
             <div>
-              <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
+              <Dropdown overlay={taskAppMenu}>
+              <span style={{fontSize:14,color:'#595959'}}>{filterGetTaskGroupListType(getTaskGroupListArrangeType)} <Icon type="down"  /></span>
+              </Dropdown>
               <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/>
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
@@ -504,7 +562,8 @@ export default class Header extends React.Component {
     )
 
     return (
-      <div>
+      // style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}
+      <div className={globalStyles.page_min_width} style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}>
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>

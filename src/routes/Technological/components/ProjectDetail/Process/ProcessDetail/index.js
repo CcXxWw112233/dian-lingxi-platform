@@ -283,7 +283,7 @@ export default class ProcessDetail extends React.Component {
                     )
                   }else{ //
                     if(key < 5) { //展示5条
-                      console.log(key, value)
+                      // console.log(key, value)
                       return(
                         <div key={key} value={value}>
                           {filterTitleContain(value)}

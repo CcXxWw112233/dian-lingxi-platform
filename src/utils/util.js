@@ -158,3 +158,13 @@ export const deepClone = (obj) => {
   }
   return newObj
 }
+
+//冒泡兼容
+export const stopPropagation = (e) => {
+  e = e||window.event;
+  if (e.stopPropagation) {//这是取消冒泡
+    e.stopPropagation();
+  } else{
+    e.cancelBubble = true;
+  };
+}

@@ -35,175 +35,71 @@
 }
 
 .outerMost{
-  min-height: 700px;
-  min-width: 10000px;
+  //min-height: 700px;
+  //min-width: 10000px;
+  height: 100%;
   width: auto;
+  overflow-y: hidden;
   height: auto;
   display: flex;
   padding-left: 104px;
   position: relative;
-  padding-top: 20px;
+  padding-top: 40px;
   cursor: pointer;
-  margin-top: 40px;
-  padding-bottom: 100px;
+  padding-bottom: 24px;
+  box-sizing: border-box;
 }
-//.outerMost { -ms-overflow-style: none; }
-//.outerMost::-webkit-scrollbar { width: 0 !important }
-//.outerMost { overflow: -moz-scrollbars-none; }
+/*滚动条样式*/
+.outerMost::-webkit-scrollbar {/*滚动条整体样式*/
+  width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
+  height: 8px;
+  border-radius: 4px;
+}
+.outerMost::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 5px  #bfbfbf;
+  background: #bfbfbf;
+}
+.outerMost::-webkit-scrollbar-track {/*滚动条里面轨道*/
+  -webkit-box-shadow: inset 0 0 5px  #E8E8E8;
+  border-radius: 8px;
+  background: #E8E8E8;
+}
 
-.taskItem{
-  margin-right: 40px;
-  .title{
-    font-size: 16px;
-    color: #595959;
-    margin-bottom: 14px;
-    cursor: pointer;
-     .nextIcon {
-       font-size: 12px;
-       color: #BFBFBF;
-       vertical-align: middle;
-       margin-left: 6px;
-     }
-    .nextIconShow{
-      transform:rotate(90deg);
-      animation:showState 500ms ease;
-    }
-    .nextIconHide{
-      transform:rotate(0deg);
-      animation:hideState 500ms ease;
-    }
-    .checkBox{
-      width: 100%;
-      border: 1px solid #595959;
-    }
-  }
-  .item_1{
-    padding: 10px;
-    width: 274px;
-    background: #FFFFFF;
-    border-radius: 4px;
-    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);
-    margin-top: 10px;
-    display: flex;
-    cursor: pointer;
-    .item_1_img{
-
-    }
-    .item_1_eclipsis{
-
-    }
-    div:nth-child(2) {
-      width: 200px;
-    }
-    div:nth-child(3) {
-      width: 20px;
-      width: 20px;
-      border-radius: 20px;
-      img{
-        width: 20px;
-        height: 20px;
-        border-radius: 20px;
-        margin-left: 12px;
-      }
-    }
-    div:nth-child(4) {
-      display: none;
-      margin-left: 12px;
-      width: 20px;
-      height: 20px;
-      border-radius: 20px;
-      background-color: #E8E8E8;
-      text-align: center;
-    }
-
-  }
-  .item_1:hover{
-    //div:nth-child(3) {
-    //  display: none;
-    //}
-    //div:nth-child(4) {
-    //  display: block;
-    //}
-  }
-  .item_2 {
-    width: 274px;
-    margin-top: 10px;
-    .item_2_top{
-      padding: 10px;
-      width: 274px;
-      background: #FFFFFF;
-      border-radius: 4px 4px 0 0;
-      box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      margin-top: 10px;
-      display: flex;
-      cursor: pointer;
-      div:nth-child(2) {
-        width: 200px;
-      }
-      div:nth-child(3) {
-        width: 20px;
-        width: 20px;
-        border-radius: 20px;
-        img{
-          width: 24px;
-          height: 24px;
-          border-radius: 20px;
-          margin-left: 12px;
-        }
-      }
-      div:nth-child(4) {
-        display: none;
-        margin-left: 12px;
-        width: 20px;
-        height: 20px;
-        border-radius: 20px;
-        background-color: #E8E8E8;
-        text-align: center;
-      }
-    }
-    .item_2_top:hover{
-      //div:nth-child(3) {
-      //  display: none;
-      //}
-      //div:nth-child(4) {
-      //  display: block;
-      //}
-    }
-    .item_2_bott{
-      background: #F5F5F5;
-      box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      padding: 10px;
-      padding-top: 0;
-      border-radius: 0 0 4px 4px;
-      .item_2_chirld{
-        margin-top: 10px;
-        display: flex;
-        cursor: pointer;
-        align-items: center;
-        div:nth-child(2) {
-          width: 200px;
-          color: #595959;
-        }
-      }
-    }
-  }
-  .addItem{
-    width: 274px;
-    height: 30px;
-    font-size: 18px;
-    text-align: center;
-    color: #8c8c8c;
-    line-height: 30px;
-    background: #FFFFFF;
-    border-radius: 4px;
-    margin-top: 10px;
-    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);
-    cursor: pointer;
-  }
+.outerMostListContainer{
+  width: auto;
+  display: flex;
 }
 
 .taskItem{
-  margin-right: 40px;
+  //margin-right: 40px;
+  .cardListOut{
+    overflow-x: hidden;
+    height: auto;
+  }
+  .cardListOut:hover::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px #8c8c8c;
+    background: #8c8c8c;
+  }
+  /*滚动条样式*/
+  .cardListOut::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+    border-radius: 4px;
+    position: absolute;
+  }
+  .cardListOut::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px  #bfbfbf;
+    background: #bfbfbf;
+  }
+  .cardListOut::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px  #E8E8E8;
+    border-radius: 8px;
+    background: #E8E8E8;
+  }
+
   .title{
     font-size: 16px;
     color: #595959;
@@ -214,6 +110,8 @@
     height: 32px;
     padding: 0 6px;
     border-radius: 4px;
+    margin-bottom: 16px;
+    width: 274px;
     .title_l {
       font-weight: bold;
       display: flex;
@@ -323,19 +221,34 @@
   .item_2 {
     width: 274px;
     margin-top: 10px;
+    //margin-right: 10px;
     .item_2_top{
       padding: 10px;
       width: 274px;
       background: #FFFFFF;
       border-radius: 4px 4px 0 0;
       box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      margin-top: 10px;
+      //margin-top: 10px;
       display: flex;
       cursor: pointer;
-      div:nth-child(2) {
+      .card_name {
         width: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        line-height: 40px;
+        div{
+          width: auto;
+          height: 20px;
+          line-height: 18px;
+          font-size: 12px;
+          border-radius: 4px;
+          margin-left: 4px;
+          margin-top: 4px;
+          padding: 0 6px;
+        }
       }
-      div:nth-child(3) {
+      .executor {
         width: 20px;
         width: 20px;
         border-radius: 20px;
@@ -346,7 +259,7 @@
           margin-left: 12px;
         }
       }
-      div:nth-child(4) {
+      .ellipsis {
         display: none;
         margin-left: 12px;
         width: 20px;
@@ -381,6 +294,10 @@
         }
       }
     }
+  }
+
+  .item_2:nth-child(1) {
+    margin-top: 0px;
   }
   .addItem{
     width: 274px;

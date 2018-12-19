@@ -171,3 +171,41 @@ export async function deleteTaskFile(data) {
     data
   });
 }
+
+
+//标签----------------------------
+//获取项目标签列表
+export async function getBoardTagList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'GET',
+    params
+  });
+}
+//更新项目标签
+export async function updateBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'PUT',
+    data
+  });
+}
+
+//置顶项目标签
+export async function toTopBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label/top`,
+    method: 'PUT',
+    data
+  });
+}
+
+//删除项目标签
+export async function deleteBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
+

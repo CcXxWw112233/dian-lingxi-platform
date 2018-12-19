@@ -9,7 +9,7 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers } from "../../services/technological/task";
+import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag } from "../../services/technological/task";
 import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
@@ -69,6 +69,9 @@ export default {
             cardCommentList: [], //任务评论列表
             projectGoupList: [], //项目分组列表
             taskGroupList: [],  //任务列表
+            boardTagList: [], //项目标签列表
+            getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+
             // 文档
             fileList: [], //文档列表
             filedata_1: [], //文档列表--文件夹
@@ -163,6 +166,12 @@ export default {
                 arrange_type: '1'
               }
             })
+            yield put({
+              type: 'getBoardTagList',
+              payload: {
+                board_id
+              }
+            })
           }else if(result.data.app_data[0].key === '4'){ //文档
             yield put({
               type: 'getFileList',
@@ -190,7 +199,6 @@ export default {
                 type: '1'
               }
             })
-
           }
         }
 
@@ -234,6 +242,13 @@ export default {
             arrange_type: '1'
           }
         })
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id
+          }
+        })
+
       }else if(appsSelectKey === '2'){ //流程
         yield put({
           type: 'getProcessTemplateList',
@@ -1192,27 +1207,12 @@ export default {
       }
     },
 
-    * addTaskTag({ payload }, { select, call, put }) { //
-      const { length } = payload
-      let res = yield call(addTaskTag, payload)
-      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
-      if(isApiResponseOk(res)) {
-        drawContent.label_data[length-1].label_id = res.data.label_id
-        yield put({
-          type: 'updateDatas',
-          payload:{
-            drawContent
-          }
-        })
-      }else{
-      }
-    },
-
     * removeTaskTag({ payload }, { select, call, put }) { //
       let res = yield call(removeTaskTag, payload)
       if(isApiResponseOk(res)) {
-
+        message.success('已删除标签', MESSAGE_DURATION_TIME)
       }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -1262,6 +1262,101 @@ export default {
 
       }else {
 
+      }
+    },
+
+    * addTaskTag({ payload }, { select, call, put }) { //
+      const { length } = payload
+      let res = yield call(addTaskTag, payload)
+      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
+      if(isApiResponseOk(res)) {
+        drawContent.label_data[length-1].label_id = res.data.label_id
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            drawContent
+          }
+        })
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * getBoardTagList({ payload }, { select, call, put }) { //
+      const { board_id, calback } = payload
+      let res = yield call(getBoardTagList, {board_id})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            boardTagList: res.data
+          }
+        })
+        if(calback && typeof calback === 'function') {
+          calback()
+        }
+      }else {
+
+      }
+    },
+
+    * updateBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(updateBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('更新标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * toTopBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(toTopBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功置顶该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * deleteBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(deleteBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
