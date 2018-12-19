@@ -62,6 +62,7 @@ export default function request(options = {}, elseSet = {}) {
         method,
         params,
         data,
+        timeout: 60000,
       }
     })
       .then(res => {
@@ -88,6 +89,8 @@ export default function request(options = {}, elseSet = {}) {
             default:
               break
           }
+        } else {
+          message.error('系统繁忙，请稍后重试！')
         }
       })
   })
