@@ -13,11 +13,13 @@ import Journey from './School/Journey'
 import Todo from './School/Todo'
 import SchoolWork from './School/SchoolWork'
 import TeachingEffect from './School/TeachingEffect'
-
+import PreviewFileModal from '../PreviewFileModal.js'
 
 export default class CardContent extends React.Component{
   state={
     dropDonwVisible: false, //下拉菜单是否可见
+    previewFileModalVisibile: false,
+
   }
   componentWillMount() {
     const { CardContentType, boxId } = this.props
@@ -64,6 +66,13 @@ export default class CardContent extends React.Component{
       dropDonwVisible: e
     })
   }
+
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
+  }
+
   render(){
     const { datas = {} } = this.props.model
     const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[] } = datas
@@ -113,7 +122,7 @@ export default class CardContent extends React.Component{
           contanner = (
             uploadedFileList.length? (
               uploadedFileList.map((value, key)=> (
-                <FileItem  {...this.props}  key={key}  itemValue={value}/>
+                <FileItem  {...this.props}  key={key}  itemValue={value} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}/>
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -195,6 +204,9 @@ export default class CardContent extends React.Component{
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}
         </div>
+        {'MY_DOCUMENT' === CardContentType ? (
+          <PreviewFileModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
+        ) : ('')}
       </div>
     )
   }

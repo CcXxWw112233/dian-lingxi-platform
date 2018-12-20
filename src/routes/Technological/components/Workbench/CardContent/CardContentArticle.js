@@ -4,15 +4,14 @@ import indexstyles from '../index.less'
 import { getArticleList } from '../../../../../services/technological/workbench'
 import {WE_APP_TYPE_KNOW_CITY} from "../../../../../globalset/js/constant";
 import ArticleItem from "./ArticleItem";
-import PreviewFileModal from '../PreviewFileModal'
+import PreviewArticleModal from '../PreviewArticleModal'
 
 export default class CardContentArticle extends React.Component{
   state={
     page_no: 1,
     page_size: 20,
     query_type: '1',
-    previewFileModalVisibile: false,
-
+    previewArticleModalVisibile: false,
     listData: [], //所需加载的数据
     loadMoreText: '加载中...',
     loadMoreDisplay: 'none',
@@ -61,15 +60,15 @@ export default class CardContentArticle extends React.Component{
   }
 
   getArticleDetail(id,e) {
-    this.setPreviewFileModalVisibile()
+    this.setPreviewArticleModalVisibile()
     this.props.getArticleDetail({
       id,
       appType: this.props.appType
     })
   }
-  setPreviewFileModalVisibile() {
+  setPreviewArticleModalVisibile() {
     this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
+      previewArticleModalVisibile: !this.state.previewArticleModalVisibile
     })
   }
   render() {
@@ -99,7 +98,7 @@ export default class CardContentArticle extends React.Component{
 
         </div>
 
-        <PreviewFileModal {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+        <PreviewArticleModal {...this.props}  modalVisible={this.state.previewArticleModalVisibile} setPreviewArticleModalVisibile={this.setPreviewArticleModalVisibile.bind(this)} />
       </div>
     )
   }
