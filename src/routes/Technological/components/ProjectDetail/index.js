@@ -191,6 +191,19 @@ const ProjectDetail = (props) => {
         }
       })
     },
+    updateChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('updateChirldTask'),
+        payload: data
+      })
+    },
+    deleteChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('deleteChirldTask'),
+        payload: data
+      })
+    },
+
     archivedTask(data){
       dispatch({
         type: getEffectOrReducerByName('archivedTask'),
@@ -250,6 +263,12 @@ const ProjectDetail = (props) => {
     addCardNewComment(data) {
       dispatch({
         type: getEffectOrReducerByName('addCardNewComment'),
+        payload: data
+      })
+    },
+    deleteCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteCardNewComment'),
         payload: data
       })
     },

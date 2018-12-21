@@ -153,7 +153,14 @@ export async function addCardNewComment(data) {
     data
   });
 }
-
+// s删除评论
+export async function deleteCardNewComment(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/comment/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
 
 //获取项目分组列表
 export async function getProjectGoupList() {

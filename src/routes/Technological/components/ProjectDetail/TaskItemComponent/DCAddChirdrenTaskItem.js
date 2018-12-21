@@ -1,9 +1,9 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip } from 'antd'
+import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popconfirm } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
-
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 const TextArea = Input.TextArea
 
 export default class DCAddChirdrenTaskItem extends React.Component{
@@ -11,6 +11,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   state = {
     isCheck: false
   }
+
   itemOneClick() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
     const {  datas:{ drawContent = {}, } } = this.props.model
@@ -57,7 +58,9 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     }
     this.props.updateTask({updateObj})
   }
-
+  deleteConfirm( {card_id, chirldDataIndex}) {
+    this.props.deleteChirldTask({card_id, chirldDataIndex})
+  }
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
     const { card_id, card_name, due_time, is_realize = '0' ,executors = []} = chirldTaskItemValue
@@ -92,6 +95,9 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           </div>
           <div>{`${card_name}`}<span style={{color: '#d5d5d5',marginLeft:6}}>{due_time? (due_time.indexOf('-') !==-1? due_time : timestampToTimeNormal(due_time))+ '截止' : ''}</span></div>
           <div style={{position:'relative', height: 22,display: 'flex', justifyContent: 'align-items'}}>
+            <Popconfirm onConfirm={this.deleteConfirm.bind(this, {card_id, chirldDataIndex})} title={'删除该子任务？'}>
+              <div className={globalStyles.authTheme} style={{fontSize: 16}}>&#xe70f;</div>
+            </Popconfirm>
             <Dropdown overlay={
               <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
             }>
