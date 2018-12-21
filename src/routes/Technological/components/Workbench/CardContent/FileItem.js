@@ -2,7 +2,7 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from '../../../../../utils/util'
+import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 
 export default class FileItem extends React.Component {
@@ -49,20 +49,25 @@ export default class FileItem extends React.Component {
     }
     return themeCode
   }
-  gotoBoardDetail(board_id) {
+  gotoBoardDetail(board_id,e) {
+    stopPropagation(e)
     Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
+  previewFile(file_resource_id,e) {
+    this.props.setPreviewFileModalVisibile()
+    this.props.filePreview({id: file_resource_id,})
+  }
   render() {
     const { itemValue = {} } = this.props
-    const { board_id, board_name, file_name,create_time } = itemValue
+    const { board_id, board_name, file_name,create_time,file_resource_id } = itemValue
 
     return (
-      <div className={indexstyles.fileItem}>
+      <div className={indexstyles.fileItem} onClick={this.previewFile.bind(this, file_resource_id)}>
         <div>
           <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
         </div>
-        <div>{file_name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
         <div>
           {timestampToTimeNormal(create_time, '/', true) }
         </div>

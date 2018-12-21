@@ -9,7 +9,7 @@ import {
   ORG_TEAM_BOARD_QUERY,
   PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE,PROJECT_FILES_FILE_DELETE,PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message, Input } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
@@ -28,12 +28,51 @@ export default class Header extends React.Component {
     ShowAddMenberModalVisibile: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
+    //修改项目名称所需state
+    localBoardName: '',
+    isInEditBoardName: false,
   }
+  componentWillMount () {
+    //设置默认项目名称
+    this.initSet(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.initSet(nextProps)
+  }
+  //初始化根据props设置state
+  initSet(props) {
+    const { datas: { projectDetailInfoData = {} } } = props.model
+    const { board_name } = projectDetailInfoData
+    this.setState({
+      localBoardName: board_name
+    })
+  }
+  //项目操作----------------start
+  //设置项目名称---start
+  setIsInEditBoardName() {
+    this.setState({
+      isInEditBoardName: !this.state.isInEditBoardName,
+    })
+  }
+  localBoardNameChange(e) {
+    this.setState({
+      localBoardName: e.target.value
+    })
+  }
+  editBoardNameComplete(e) {
+    this.setIsInEditBoardName()
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    this.props.updateProject({
+      board_id: board_id,
+      name: this.state.localBoardName
+    })
+  }
+  //设置项目名称---end
+
   setProjectInfoDisplay() {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry:  true })
   }
-
-  //项目操作----------------start
   gobackToProject(){
     this.props.routingJump('/technological/project')
   }
@@ -338,7 +377,7 @@ export default class Header extends React.Component {
   render() {
     const that = this
     const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}, getTaskGroupListArrangeType = '1'}} = this.props.model
-    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, } = this.state
+    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection,localBoardName, isInEditBoardName } = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
     const processName = processInfo.name
     is_starinit = is_star
@@ -568,7 +607,17 @@ export default class Header extends React.Component {
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
-               <span className={indexStyle.projectName}>{board_name}</span>
+             {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
+             {!isInEditBoardName?(
+               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+             ) : (
+               <Input value={localBoardName}
+                      className={indexStyle.projectName}
+                      autoFocus
+                      onChange={this.localBoardNameChange.bind(this)}
+                      onPressEnter={this.editBoardNameComplete.bind(this)}
+                      onBlur={this.editBoardNameComplete.bind(this)} />
+             )}
              {isInitEntry ? (is_star === '1'? (starProject):(cancelStarProjet)):(isCollection? (starProject):(cancelStarProjet))}
 
              {/*<Icon className={indexStyle.star}*/}

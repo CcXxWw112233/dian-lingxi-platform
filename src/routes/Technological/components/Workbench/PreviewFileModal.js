@@ -1,26 +1,49 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message, Spin } from 'antd'
 import indexStyles from './index.less'
+import { color_4 } from '../../../../globalset/js/styles'
 
 class PreviewFileModal extends React.Component {
 
   state = {
+    clientHeight: document.documentElement.clientHeight
+  }
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+  }
+  componentWillUnmount() {
+    // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
+  }
+  resizeTTY(type) {
+    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    this.setState({
+      clientHeight
+    })
   }
   onCancel = () => {
-    this.props.updateDatas({
-      previewAticle: {}
-    })
     this.props.setPreviewFileModalVisibile()
+    this.props.updateDatas({
+      filePreviewIsUsable: true,
+      filePreviewUrl: '',
+    })
+  }
+  downLoad(current_file_resource_id) {
+    this.props.fileDownload({ids: current_file_resource_id})
   }
   render() {
     const { modalVisible,} = this.props;
-    const {datas: { previewAticle ={}, spinning } } = this.props.model
-    const { content='文章加载中', title } = previewAticle
+    const { clientHeight } = this.state
+    const {datas: { spinning, filePreviewIsUsable, filePreviewUrl, current_file_resource_id } } = this.props.model
+    const  getIframe = (src) => {
+      const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
+      return iframe
+    }
+
     return(
       <div>
         <Modal
           visible={modalVisible} //modalVisible
-          width={800}
+          width={'90%'}
           zIndex={1006}
           footer={null}
           destroyOnClose
@@ -28,14 +51,14 @@ class PreviewFileModal extends React.Component {
           style={{textAlign:'center',}}
           onCancel={this.onCancel}
         >
-          <Spin tip="正在获取文章..." spinning={spinning}>
-          <div className={indexStyles.previewOut}>
-            <div className={indexStyles.title}>
-              {title}
-            </div>
-            <div className={indexStyles.content} dangerouslySetInnerHTML={{__html: content}}/>
-          </div>
-          </Spin>
+          {!filePreviewIsUsable?(
+            <div>当前文件无法预览，<span className={indexStyles.hoverUnderline} onClick={this.downLoad.bind(this, current_file_resource_id)} style={{color: color_4}}>点击此处下载后查看</span></div>
+          ) : (
+            !!filePreviewUrl ? (
+              <div className={indexStyles.previewOut} style={{height: `${clientHeight * 0.9 - 120}px`}} dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}} />
+            ) : ('')
+          )}
+
         </Modal>
 
       </div>

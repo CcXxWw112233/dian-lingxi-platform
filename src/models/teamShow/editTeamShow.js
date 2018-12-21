@@ -64,18 +64,29 @@ export default modelExtend(technological, {
     * addTeamShow({ payload }, { select, call, put }) {
       let res = yield call(addTeamShow, payload)
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'getCurrentOrgTeamShowList',
-          payload: {
-            calBack: function () {
-              message.success('保存成功', MESSAGE_DURATION_TIME)
-            }
-          }
+        // yield put({
+        //   type: 'getCurrentOrgTeamShowList',
+        //   payload: {
+        //     calBack: function () {
+        //       message.success('保存成功', MESSAGE_DURATION_TIME)
+        //     }
+        //   }
+        // })
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     currentTeamShowTypeId: payload['show_type_id']
+        //   }
+        // })
+        message.success('保存成功', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
         })
+        yield call(delay, 1000)
         yield put({
-          type: 'updateDatas',
+          type: 'routingJump',
           payload: {
-            currentTeamShowTypeId: payload['show_type_id']
+            route: '/teamShow/teamList'
           }
         })
       }else{

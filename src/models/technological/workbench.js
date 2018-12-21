@@ -8,6 +8,7 @@ import {getAppsList} from "../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList} from "./select";
+import {filePreview, fileDownload} from "../../services/technological/file";
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -27,6 +28,10 @@ export default modelExtend(technological, {
               spinning: false, //文章加载中状态
               boxList: [], //工作台盒子列表
               projectList: [], //项目列表
+
+              filePreviewIsUsable: true,//文档是否可见
+              filePreviewUrl: '',//预览文档src
+              current_file_resource_id: '',//当前操作文档id
             }
           })
 
@@ -44,7 +49,6 @@ export default modelExtend(technological, {
     },
   },
   effects: {
-
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
@@ -233,6 +237,50 @@ export default modelExtend(technological, {
 
       }
     },
+
+    * filePreview({ payload }, { select, call, put }) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          current_file_resource_id: payload['id']
+        }
+      })
+      let res = yield call(filePreview, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewIsUsable: res.data.isUsable,
+            filePreviewUrl: res.data.url,
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * fileDownload({ payload }, { select, call, put }) {
+      function openWin(url) {
+        var element1 = document.createElement("a");
+        element1.href= url;
+        element1.id = 'openWin'
+        document.querySelector('body').appendChild(element1)
+        document.getElementById("openWin").click();//点击事件
+        document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+      }
+      let res = yield call(fileDownload, payload)
+      if(isApiResponseOk(res)) {
+        const data = res.data
+        if(data && data.length) {
+          for (let val of data ) {
+            // window.open(val)
+            openWin(val)
+          }
+        }
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

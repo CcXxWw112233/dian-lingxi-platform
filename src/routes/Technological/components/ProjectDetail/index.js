@@ -89,7 +89,13 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('getProjectRoles'),
         payload: data
       })
-    }
+    },
+    updateProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateProject'),
+        payload: data
+      })
+    },
   }
   const DetailInfoProps = {
     modal,

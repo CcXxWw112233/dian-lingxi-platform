@@ -104,6 +104,18 @@ const Workbench = (props) => {
           route:path,
         },
       })
+    },
+    filePreview(data) {
+      dispatch({
+        type: getEffectOrReducerByName('filePreview'),
+        payload: data
+      })
+    },
+    fileDownload(data) {
+      dispatch({
+        type: getEffectOrReducerByName('fileDownload'),
+        payload: data
+      })
     }
   }
   return(

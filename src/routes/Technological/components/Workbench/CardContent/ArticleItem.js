@@ -12,7 +12,7 @@ export default class ArticleItem extends React.Component {
     return (
       <div className={indexstyles.articleItem} >
         <div className={indexstyles.articleItemleft}>
-          <div>{title}</div>
+          <div className={indexstyles.hoverUnderline}>{title}</div>
           <div>
             <Icon type="calendar" style={{fontSize: 14, color: '#d9d9d9',marginRight: 6}}/>
              {timestampToTimeNormal(create_time)}

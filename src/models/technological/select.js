@@ -1,4 +1,6 @@
 
+export const selectProjectDetailInfoData = state => state[(`projectDetail`)].datas.projectDetailInfoData //项目详情
+
 export const selectAppsSelectKey = state => state[(`projectDetail`)].datas.appsSelectKey //应用key
 export const selectAppsSelectKeyIsAreadyClickArray = state => state[(`projectDetail`)].datas.appsSelectKeyIsAreadyClickArray ////点击过的appsSelectKey push进数组，用来记录无需重新查询数据
 
@@ -7,6 +9,7 @@ export const selectTaskGroupListIndex = state => state[(`projectDetail`)].datas.
 export const selectTaskGroupListIndexIndex = state => state[(`projectDetail`)].datas.taskGroupListIndex_index //当前选中任务分组里的任务index
 export const selectDrawContent = state => state[(`projectDetail`)].datas.drawContent  //任务右方抽屉
 export const selectDrawerVisible = state => state[(`projectDetail`)].datas.drawerVisible  //任务右方抽屉
+export const selectGetTaskGroupListArrangeType = state => state[(`projectDetail`)].datas.getTaskGroupListArrangeType
 
 //流程
 export const selectCurrentProcessInstanceId = state => state[(`projectDetail`)].datas.currentProcessInstanceId  //当前查看的流程实例id

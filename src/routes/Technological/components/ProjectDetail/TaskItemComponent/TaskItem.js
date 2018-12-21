@@ -243,6 +243,7 @@ export default class TaskItem extends React.Component {
     return (
       <div className={CreateTaskStyle.taskItem}
            onWheel={this.fnWhee1_2.bind(this)}
+           onScroll={this.fnWhee1_2.bind(this)}
       >
           {!isInEditName?(
             <div className={CreateTaskStyle.title}>

@@ -10,7 +10,7 @@ import {
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag } from "../../services/technological/task";
-import { selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
@@ -883,6 +883,14 @@ export default {
           }
         })
       }else{
+        //失败之后重新拉回原来数据
+        const projectDetailInfoData = yield select(selectProjectDetailInfoData)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectDetailInfoData
+          }
+        })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -1060,13 +1068,14 @@ export default {
 
     * addTask({ payload }, { select, call, put }) { //
       let res = yield call(addTask, payload)
+      let getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
       if(isApiResponseOk(res)) {
          yield put({
            type: 'getTaskGroupList',
            payload: {
              type: '2',
              board_id: board_id,
-             arrange_type: '1',
+             arrange_type: getTaskGroupListArrangeType,
              calback: function () {
                message.success('添加成功', MESSAGE_DURATION_TIME)
              }
