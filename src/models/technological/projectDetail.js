@@ -1222,7 +1222,8 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-        drawContent.child_data[0] = res.data || payload
+        drawContent.child_data[0] =  payload
+        drawContent.child_data[0]['card_id'] = res.data.id
         // yield put({
         //   type: 'updateDatas',
         //   payload:{
