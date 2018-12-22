@@ -538,7 +538,7 @@ export default class NewsListNewDatas extends React.Component {
           containner =  ( taskNews(value) )
           break
         case  '3':
-          containner = ( commentNews(value,parentKey, childrenKey))
+          // containner = ( commentNews(value,parentKey, childrenKey))
           break
         case  '4':
           containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
