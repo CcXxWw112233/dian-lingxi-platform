@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip, Avatar } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
@@ -259,6 +259,25 @@ export default class DetailConfirmInfoOne extends React.Component {
       }
       return container
     }
+    const AnnotationListItem = (value) => {
+      const { name, avatar, comment, time, id } = value
+      return (
+        <div className={indexStyles.commentListItem}>
+          <div className={indexStyles.left}>
+            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+          </div>
+          <div className={indexStyles.right}>
+            <div className={indexStyles.top}>
+              <div className={indexStyles.full_name}>{name}</div>
+              <div className={indexStyles.create_time}>
+                {time?timestampToTimeNormal(time,'',true): ''}
+              </div>
+            </div>
+            <div className={indexStyles.text}>{comment}</div>
+          </div>
+        </div>
+      )
+    }
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
@@ -281,10 +300,17 @@ export default class DetailConfirmInfoOne extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
+
+              {assignees.map((value, key)=>{
+                const { comment } = value
+                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+              })}
+
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}
               </div>
             </div>
+
           </div>
         </Card>
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>

@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip,Avatar } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
@@ -289,6 +289,26 @@ export default class DetailConfirmInfoFour extends React.Component {
         </div>
       )
     }
+    const AnnotationListItem = (value) => {
+      const { name, avatar, comment, time, id } = value
+      return (
+        <div className={indexStyles.commentListItem}>
+          <div className={indexStyles.left}>
+            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+          </div>
+          <div className={indexStyles.right}>
+            <div className={indexStyles.top}>
+              <div className={indexStyles.full_name}>{name}</div>
+              <div className={indexStyles.create_time}>
+                {time?timestampToTimeNormal(time,'',true): ''}
+              </div>
+            </div>
+            <div className={indexStyles.text}>{comment}</div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
@@ -319,6 +339,11 @@ export default class DetailConfirmInfoFour extends React.Component {
                    {fitlerCC(recipients)}
                  </div>
               </div>
+
+              {assignees.map((value, key)=>{
+                const { comment } = value
+                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+              })}
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}
