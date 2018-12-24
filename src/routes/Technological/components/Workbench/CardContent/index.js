@@ -12,8 +12,11 @@ import SchedulingItem from './School/SchedulingItem'
 import Journey from './School/Journey'
 import Todo from './School/Todo'
 import SchoolWork from './School/SchoolWork'
+import MyShowItem from './MyShowItem'
 import TeachingEffect from './School/TeachingEffect'
 import PreviewFileModal from '../PreviewFileModal.js'
+import CollectionProjectItem from './CollectionProjectItem'
+import MyCircleItem from './MyCircleItem'
 
 export default class CardContent extends React.Component{
   state={
@@ -203,6 +206,9 @@ export default class CardContent extends React.Component{
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}
+          {/*<MyShowItem />*/}
+           {/*<CollectionProjectItem />*/}
+           {/*<MyCircleItem />*/}
         </div>
         {'MY_DOCUMENT' === CardContentType ? (
           <PreviewFileModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />

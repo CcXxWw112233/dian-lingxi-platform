@@ -3,7 +3,7 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
 import {PROJECTS} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
-
+import EditCardDrop from './HeaderComponent/EditCardDrop'
 export default class Header extends React.Component {
   render() {
     const menu = (
@@ -44,9 +44,9 @@ export default class Header extends React.Component {
       <div className={indexStyle.headerOut}>
 
         <div className={indexStyle.left}>
-          <div>专家</div>
-          <div>投资人</div>
-          <div>设计师</div>
+          <Dropdown overlay={<EditCardDrop {...this.props}/>}>
+          <div>编辑卡片</div>
+          </Dropdown>
         </div>
 
         <div className={indexStyle.right}>
