@@ -1,4 +1,4 @@
-import {getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import {getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -28,6 +28,7 @@ export default modelExtend(technological, {
               spinning: false, //文章加载中状态
               boxList: [], //工作台盒子列表
               projectList: [], //项目列表
+              boxUsableList: [],//用户当前可用盒子列表
 
               filePreviewIsUsable: true,//文档是否可见
               filePreviewUrl: '',//预览文档src
@@ -43,7 +44,10 @@ export default modelExtend(technological, {
             type: 'getProjectList',
             payload: {}
           })
-
+          dispatch({
+            type: 'getBoxUsableList',
+            payload: {}
+          })
         }
       })
     },
@@ -185,6 +189,18 @@ export default modelExtend(technological, {
       //     }
       //   })
       // }else{}
+    },
+    * getBoxUsableList({ payload }, { select, call, put }) { //
+      let res = yield call(getBoxUsableList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            boxUsableList: res.data
+          }
+        })
+      }else{
+      }
     },
 
     * getArticleList({ payload }, { select, call, put }) { //

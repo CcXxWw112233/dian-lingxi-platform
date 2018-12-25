@@ -69,6 +69,19 @@ export async function getMeetingList(params) {
     method: 'GET',
   });
 }
+//获取当前用户可用盒子列表
+export async function getBoxUsableList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/usable/list`,
+    method: 'GET',
+  });
+}
+
+
+
+
+
+
 
 
 //获取文章列表

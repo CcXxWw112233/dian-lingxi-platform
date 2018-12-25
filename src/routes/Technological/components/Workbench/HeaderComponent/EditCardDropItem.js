@@ -9,22 +9,23 @@ export default class EditCardDropItem extends React.Component {
   }
   setBottVisible(state) {
     const { bottVisible } = this.state
-
     this.setState({
       bottVisible: bottVisible === '1'? '2':( bottVisible==='2'?'3':'2')
     })
-
   }
   render() {
     const { bottVisible } = this.state
+
+    const { itemValue } = this.props
+    const { name, isSelect, code } =itemValue
 
     return (
       <div  className={`${EditCardDropStyle.card_set_item} ${bottVisible !== '1' ? (bottVisible === '2' ? EditCardDropStyle.showBott2 : EditCardDropStyle.hideBott2): EditCardDropStyle.hideinit}`}>
         <div className={EditCardDropStyle.card_set_item_top}>
           <div className={EditCardDropStyle.check}>
-            <Checkbox />
+            <Checkbox  checked={isSelect} />
           </div>
-          <div className={EditCardDropStyle.name}>卡片名词</div>
+          <div className={EditCardDropStyle.name}>{name}</div>
           <div  className={`${EditCardDropStyle.turn} ${bottVisible!=='1'?(bottVisible === '2'?EditCardDropStyle.upDown_up: EditCardDropStyle.upDown_down): ''}`}>
             <Icon type="down"  onClick={this.setBottVisible.bind(this)} />
           </div>

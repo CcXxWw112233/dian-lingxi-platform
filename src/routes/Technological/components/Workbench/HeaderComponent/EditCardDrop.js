@@ -6,19 +6,21 @@ import EditCardDropItem from './EditCardDropItem'
 
 export default class EditCardDrop extends React.Component {
   render() {
+    const { datas: { boxUsableList = [] }} = this.props.model
+
     return (
       <div className={EditCardDropStyle.edit_cardd_dropdown}>
         <div className={EditCardDropStyle.edit_cardd_dropdown_left}>
-          {[1,2,3].map((value, key) => {
+          {boxUsableList.slice(0,Math.ceil(boxUsableList.length / 2)).map((value, key) => {
             return (
-              <EditCardDropItem {...this.props} key={key}/>
+              <EditCardDropItem {...this.props} itemValue={value} itemKey={key}  key={key}/>
             )
           })}
         </div>
         <div className={EditCardDropStyle.edit_cardd_dropdown_right}>
-          {[1,2,3].map((value, key) => {
+          {boxUsableList.slice(Math.ceil(boxUsableList.length / 2)).map((value, key) => {
             return (
-              <EditCardDropItem {...this.props} key={key}/>
+              <EditCardDropItem {...this.props} itemValue={value} itemKey={key}  key={key}/>
             )
           })}
         </div>
