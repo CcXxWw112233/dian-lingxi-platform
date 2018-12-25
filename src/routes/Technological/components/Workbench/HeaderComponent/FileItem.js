@@ -60,18 +60,34 @@ export default class FileItem extends React.Component {
   }
   render() {
     const { itemValue = {} } = this.props
-    const { board_id, board_name, file_name,create_time,file_resource_id } = itemValue
+
+    const fileNameData = [
+      {
+        name:'这是一张图片.png'
+      },{
+        name:'这是一张图片.jpg'
+      },{
+        name:'这是一份文档.doc'
+      }
+    ]
 
     return (
-      <div className={indexstyles.fileItem} onClick={this.previewFile.bind(this, file_resource_id)}>
-        <div>
-          <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
-        </div>
-        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
-        <div>
-          {timestampToTimeNormal(create_time, '/', true) }
-        </div>
+      <div>
+        {fileNameData.map((value, key) => {
+           return(
+             <div className={indexstyles.fileItem}>
+               <div>
+                 <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(value.name)}}></i>
+               </div>
+               <div><span className={indexstyles.hoverUnderline}>{value.name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} >#项目A</span></div>
+               <div>
+                 {`2018/08/08 12:00` }
+               </div>
+             </div>
+           )
+         })}
       </div>
+
     )
   }
 }

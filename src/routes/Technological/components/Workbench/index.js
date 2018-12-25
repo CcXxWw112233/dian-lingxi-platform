@@ -122,7 +122,7 @@ const Workbench = (props) => {
   return(
     <div>
       <Header {...cardContentListProps} />
-      <EditCardDrop {...cardContentListProps}/>
+      {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
           <div  className={indexStyles.cardItem_left}>

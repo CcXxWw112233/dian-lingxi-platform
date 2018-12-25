@@ -5,10 +5,16 @@
   height: auto;
   padding: 25px;
   border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  //column-count:2;
   .card_set_item{
+    //break-inside: avoid;
+    position: relative;
     flex-wrap: wrap;
     margin-bottom: 10px;
-    width: 325px;
+    width: 300px;
     border: 1px solid rgba(217,217,217,1);
     border-radius: 4px;
     padding: 10px;
@@ -29,15 +35,16 @@
       background: #FFFFFF;
       //border: 0.6px solid rgba(217,217,217,1);
       //box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      margin-top: 4px;
+      //width: 303px;
+      max-height: 140px;
+      overflow: hidden;
+      margin-top: 6px;
       img{
 
       }
     }
   }
 }
-
-
 
 .cardItem{
   height: auto;
@@ -59,14 +66,16 @@
 }
 .cardDetail{
   break-inside:avoid;
-  width: 300px;
-  margin-bottom: 30px;
-  max-height: 380px;
+  width: 396px;
+  //margin-bottom: 10px;
+  //max-height: 380px;
   color: #595959 ;
   background: #FFFFFF;
   border: 1px solid rgba(217,217,217,1);
   border-radius: 4px;
   box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);
+  transform: scale(0.7);
+  transform-origin:0 0;
   //display: flex;
   //flex-direction: column ;
   .contentTitle{
@@ -91,7 +100,7 @@
     box-sizing: border-box;
     //flex: 1;
     padding: 12px;
-    max-height: 330px;
+    max-height: 140px;
     padding-top: 0;
     overflow-y: scroll;
     .taskItem {
@@ -208,12 +217,12 @@
         display: flex;
         justify-content: space-between;
         .contain1_item{
-          width: 170px;
-          height: 80px;
+          width: 120px;
+          height: 66px;
           padding: 0 20px;
           background: #F5F5F5;
           div:nth-child(1){
-            margin-top: 14px;
+            margin-top: 4px;
             font-size: 12px;
             color: #8c8c8c;
           }
@@ -228,7 +237,7 @@
         flex-wrap: wrap;
         justify-content: space-between;
         .contain2_item{
-          width: 264px;
+          width: 100px;
           height: 40px;
           margin-top: 25px;
           font-size: 16px;
@@ -334,7 +343,7 @@
       ///隐藏滚动条
       .hideScrolloutercontainer_1, .hideScrolloutercontainer_2 {
         // 重要 隐藏滚动条
-        height: 318px;
+        height: 120px;
         position: relative;
         overflow: hidden;
       }
@@ -342,12 +351,12 @@
         width: 182px;
       }
       .hideScrolloutercontainer_2 {
-        width: 374px;
+        width: 300px;
       }
       .hideScrollinnercontainer_1,  .hideScrollinnercontainer_2  {
         //重要 //隐藏滚动条---start
         cursor: pointer;
-        max-height: 318px;
+        max-height: 140px;
         position: absolute;
         left: 0;
         overflow-y: scroll;
@@ -386,4 +395,91 @@
   border-radius: 2px;
   margin-top: 2px;
   margin-right: 6px;
+}
+
+//箭头
+@keyframes spinup {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+@keyframes spindown {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes hideBott {
+  from {
+    height: 140px;
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes showBott {
+  from {
+    height: 0;
+  }
+  to {
+    height: 140px;
+  }
+}
+
+@keyframes hideBott2 {
+  from {
+    height: 190px;
+  }
+  to {
+    height: 40px;
+  }
+}
+@keyframes showBott2 {
+  from {
+    height: 40px;
+  }
+  to {
+    height: 190px;
+  }
+}
+
+.upDown_up {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+  animation: spinup 500ms ease;
+}
+.upDown_down {
+  -webkit-transform: rotate(0deg);
+  transform: rotate(0deg);
+  animation: spindown 500ms ease;
+}
+.showBott{
+  height: 140px;
+  animation: showBott 500ms ease;
+}
+.hideBott{
+  height: 0px;
+  overflow: hidden;
+  animation: hideBott 500ms ease;
+}
+.showBott2{
+  height: 190px;
+  animation: showBott2 500ms ease;
+}
+.hideBott2{
+  height: 40px;
+  overflow: hidden;
+  animation: hideBott2 500ms ease;
+}
+.hideinit{
+  height: 40px;
+}
+.noDoc{
+  display: none;
 }

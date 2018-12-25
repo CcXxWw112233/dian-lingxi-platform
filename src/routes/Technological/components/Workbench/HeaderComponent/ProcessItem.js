@@ -9,8 +9,6 @@ export default class ProcessItem extends React.Component {
     this.props.routingJump('/technological/projectDetail')
   }
   render() {
-    const { itemValue = {} } = this.props
-    const { flow_node_name, name, board_name, board_id, status='1' } = itemValue //status 1running 2stop 3 complete
     const filterColor = (status)=> {
       let color = '#f2f2f2'
       if('1' ===status){
@@ -25,12 +23,17 @@ export default class ProcessItem extends React.Component {
       return color
     }
     return (
-      <div className={indexstyles.processItem}>
-        <div>{flow_node_name || name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
-        <div>
-          <div style={{backgroundColor: filterColor(status)}}></div>
-        </div>
+      <div>
+        {[1,2,3, 4].map((value, key) => {
+          return(
+            <div className={indexstyles.processItem}>
+              <div>这是一条流程<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} >#{`项目A`}</span></div><div>
+              <div style={{backgroundColor: filterColor(`${key}`)}}></div></div>
+            </div>
+          )})
+        }
       </div>
+
     )
   }
 }

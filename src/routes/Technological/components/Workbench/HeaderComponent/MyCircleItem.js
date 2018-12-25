@@ -12,36 +12,6 @@ export default class MyCircleItem extends React.Component {
       <div className={indexstyles.myCircleItem}>
         <div className={indexstyles.hideScrolloutercontainer_1} >
          <div className={`${indexstyles.left} ${indexstyles.hideScrollinnercontainer_1}`}>
-          <div className={indexstyles.left_item}>
-            <div>院办院办院办院办院办院办院办院办院办院办院办院办院办院办</div>
-            <div>
-              <Icon type="folder-open" />
-            </div>
-          </div>
-          <div className={indexstyles.left_item}>
-            <div>院办</div>
-            <div>
-              <Icon type="folder-open" />
-            </div>
-          </div>
-          <div className={indexstyles.left_item}>
-            <div>院办</div>
-            <div>
-              <Icon type="folder-open" />
-            </div>
-          </div>
-          <div className={indexstyles.left_item}>
-            <div>院办</div>
-            <div>
-              <Icon type="folder-open" />
-            </div>
-          </div>
-          <div className={indexstyles.left_item}>
-            <div>院办院办院办院办院办院办院办院办院办院办院办院办院办院办</div>
-            <div>
-              <Icon type="folder-open" />
-            </div>
-          </div>
            <div className={indexstyles.left_item}>
              <div>院办</div>
              <div>
@@ -49,53 +19,24 @@ export default class MyCircleItem extends React.Component {
              </div>
            </div>
            <div className={indexstyles.left_item}>
-             <div>院办</div>
+             <div>党办</div>
              <div>
                <Icon type="folder-open" />
              </div>
            </div>
            <div className={indexstyles.left_item}>
-             <div>院办院办院办院办院办院办院办院办院办院办院办院办院办院办</div>
+             <div>人力资源部</div>
              <div>
                <Icon type="folder-open" />
              </div>
            </div>
            <div className={indexstyles.left_item}>
-             <div>院办</div>
+             <div>财务部</div>
              <div>
                <Icon type="folder-open" />
              </div>
            </div>
-           <div className={indexstyles.left_item}>
-             <div>院办</div>
-             <div>
-               <Icon type="folder-open" />
-             </div>
-           </div>
-           <div className={indexstyles.left_item}>
-             <div>院办院办院办院办院办院办院办院办院办院办院办院办院办院办</div>
-             <div>
-               <Icon type="folder-open" />
-             </div>
-           </div>
-           <div className={indexstyles.left_item}>
-             <div>院办</div>
-             <div>
-               <Icon type="folder-open" />
-             </div>
-           </div>
-           <div className={indexstyles.left_item}>
-             <div>院办</div>
-             <div>
-               <Icon type="folder-open" />
-             </div>
-           </div>
-           <div className={indexstyles.left_item}>
-             <div>院办院办院办院办院办院办院办院办院办院办院办院办院办院办</div>
-             <div>
-               <Icon type="folder-open" />
-             </div>
-           </div>
+
         </div>
         </div>
         <div className={indexstyles.middle}></div>
@@ -106,51 +47,7 @@ export default class MyCircleItem extends React.Component {
                 <Avatar icon="user" />
               </div>
               <div className={indexstyles.name}>
-                流血是
-              </div>
-              <div className={indexstyles.commit}>
-                <Icon type="folder-open" />
-              </div>
-            </div>
-            <div className={indexstyles.right_item}>
-              <div className={indexstyles.avatar}>
-                <Avatar icon="user" />
-              </div>
-              <div className={indexstyles.name}>
-                流血是
-              </div>
-              <div className={indexstyles.commit}>
-                <Icon type="folder-open" />
-              </div>
-            </div>
-            <div className={indexstyles.right_item}>
-              <div className={indexstyles.avatar}>
-                <Avatar icon="user" />
-              </div>
-              <div className={indexstyles.name}>
-                流血是
-              </div>
-              <div className={indexstyles.commit}>
-                <Icon type="folder-open" />
-              </div>
-            </div>
-            <div className={indexstyles.right_item}>
-              <div className={indexstyles.avatar}>
-                <Avatar icon="user" />
-              </div>
-              <div className={indexstyles.name}>
-                流血是
-              </div>
-              <div className={indexstyles.commit}>
-                <Icon type="folder-open" />
-              </div>
-            </div>
-            <div className={indexstyles.right_item}>
-              <div className={indexstyles.avatar}>
-                <Avatar icon="user" />
-              </div>
-              <div className={indexstyles.name}>
-                流血是
+                陈先生
               </div>
               <div className={indexstyles.commit}>
                 <Icon type="folder-open" />
