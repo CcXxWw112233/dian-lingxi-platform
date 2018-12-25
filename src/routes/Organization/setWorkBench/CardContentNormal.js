@@ -1,16 +1,16 @@
 import { Card, Icon, Dropdown } from 'antd'
 import indexstyles from './index.less'
-import TaskItem from './TaskItem'
-import ProcessItem from './ProcessItem'
-import FileItem from './FileItem'
-import MeetingItem from "./MeetingItem";
-import ProjectCountItem from './ProjectCountItem'
-import MapItem from './MapItem'
+import TaskItem from './../../Technological/components/Workbench/HeaderComponent/TaskItem'
+import ProcessItem from './../../Technological/components/Workbench/HeaderComponent/ProcessItem'
+import FileItem from './../../Technological/components/Workbench/HeaderComponent/FileItem'
+import MeetingItem from "./../../Technological/components/Workbench/HeaderComponent/MeetingItem";
+import ProjectCountItem from './../../Technological/components/Workbench/HeaderComponent/ProjectCountItem'
+import MapItem from './../../Technological/components/Workbench/HeaderComponent/MapItem'
 import React from 'react'
-import CollectionProjectItem from './CollectionProjectItem'
-import MyCircleItem from './MyCircleItem'
-import MyShowItem from './MyShowItem'
-import ArticleItem from './ArticleItem'
+import CollectionProjectItem from './../../Technological/components/Workbench/HeaderComponent/CollectionProjectItem'
+import MyCircleItem from './../../Technological/components/Workbench/HeaderComponent/MyCircleItem'
+import MyShowItem from './../../Technological/components/Workbench/HeaderComponent/MyShowItem'
+import ArticleItem from './../../Technological/components/Workbench/HeaderComponent/ArticleItem'
 
 export default class CardContentNormal extends React.Component{
 

@@ -7,6 +7,8 @@ import {
   ORG_UPMS_ORGANIZATION_ROLE_CREATE, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_ROLE_EDIT,
 } from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
+import EditCardDrop from './setWorkBench/EditCardDrop'
+
 const TreeNode = Tree.TreeNode;
 
 const CheckboxGroup = Checkbox.Group;
@@ -293,8 +295,9 @@ export default class OrgnizationRole extends React.Component {
                     )
                   })}
                 </Collapse>
-                <div style={{color: '#8c8c8c', marginTop: 16}}>可访问内容：</div>
+                <div style={{color: '#8c8c8c', marginTop: 16}}>工作台初始模板：</div>
                 <div style={{marginTop: 10}}>
+                  <EditCardDrop {...this.props} />
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
                     {/*treeValue={treeDataSelects}*/}
