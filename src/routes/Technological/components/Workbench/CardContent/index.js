@@ -1,4 +1,4 @@
-import { Card, Icon, Dropdown } from 'antd'
+import { Card, Icon, Dropdown, Input, Menu } from 'antd'
 import indexstyles from '../index.less'
 import TaskItem from './TaskItem'
 import ProcessItem from './ProcessItem'
@@ -17,12 +17,18 @@ import TeachingEffect from './School/TeachingEffect'
 import PreviewFileModal from '../PreviewFileModal.js'
 import CollectionProjectItem from './CollectionProjectItem'
 import MyCircleItem from './MyCircleItem'
+const TextArea = Input.TextArea
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 
 export default class CardContent extends React.Component{
   state={
     dropDonwVisible: false, //下拉菜单是否可见
     previewFileModalVisibile: false,
 
+    //修改项目名称所需state
+    localTitle: '',
+    isInEditTitle: false,
   }
   componentWillMount() {
     const { CardContentType, boxId } = this.props
@@ -49,7 +55,40 @@ export default class CardContent extends React.Component{
       default:
         break
     }
+    this.initSet(this.props)
   }
+
+  componentWillReceiveProps (nextProps) {
+    this.initSet(nextProps)
+  }
+  //初始化根据props设置state
+  initSet(props) {
+    const { title } = props
+    this.setState({
+      localTitle: title
+    })
+  }
+  //项目操作----------------start
+  //设置项目名称---start
+  setIsInEditTitle() {
+    this.setState({
+      isInEditTitle: !this.state.isInEditTitle,
+    })
+  }
+  localTitleChange(e) {
+    this.setState({
+      localTitle: e.target.value
+    })
+  }
+  editTitleComplete(e) {
+    this.setIsInEditTitle()
+    const { boxId } = this.props
+    this.props.updateBox({
+      box_id: boxId,
+      name: this.state.localTitle,
+    })
+  }
+
   selectMultiple(data) {
     this.setState({
       dropDonwVisible: false
@@ -69,6 +108,21 @@ export default class CardContent extends React.Component{
       dropDonwVisible: e
     })
   }
+  handleMenuClick(e) {
+    const key = e.key
+    switch (key) {
+      case 'rename':
+        this.setIsInEditTitle()
+        break
+      case 'remove':
+        const { itemValue } = this.props
+        const { box_type_id } = itemValue
+        this.props.deleteBox({box_type_id: box_type_id})
+        break
+      default:
+        break
+    }
+  }
 
   setPreviewFileModalVisibile() {
     this.setState({
@@ -79,8 +133,10 @@ export default class CardContent extends React.Component{
   render(){
     const { datas = {} } = this.props.model
     const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[] } = datas
-    const { title, CardContentType, itemValue={}, itemKey } = this.props
+    const { title, CardContentType, itemValue={} } = this.props
     const { selected_board_data = [] } = itemValue //已选board id
+
+    const { localTitle, isInEditTitle } = this.state
 
     const filterItem = (CardContentType) => {
       let contanner = (<div></div>)
@@ -191,18 +247,58 @@ export default class CardContent extends React.Component{
       }
       return contanner
     }
+
+    const menu = ()=> {
+      return (
+        <Menu
+          onClick={this.handleMenuClick.bind(this)}
+          // selectedKeys={[this.state.current]}
+          mode="horizontal"
+        >
+          <Menu.Item key="rename">
+             重命名
+          </Menu.Item>
+          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
+            <SubMenu title={'选择项目'}>
+              <MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />
+            </SubMenu>
+          )}
+
+          <Menu.Item key="remove">
+            移除
+          </Menu.Item>
+
+        </Menu>
+      )
+    }
+
     return (
       <div className={indexstyles.cardDetail}>
         <div className={indexstyles.contentTitle}>
-          <div>{title}</div>
-          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
-            <Dropdown trigger={['click']}
-                      visible={this.state.dropDonwVisible}
-                      onVisibleChange={this.onVisibleChange.bind(this)}
-                      overlay={<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />}>
-               <div ><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
-            </Dropdown>
+          {/*<div>{title}</div>*/}
+
+          {!isInEditTitle?(
+            <div className={indexstyles.titleDetail} onClick={this.setIsInEditTitle.bind(this)} >{localTitle}</div>
+          ) : (
+            <Input value={localTitle}
+                   // className={indexStyle.projectName}
+                     style={{resize: 'none',color: '#595959', fontSize: 16}}
+                      maxLength={30}
+                     autoFocus
+                     onChange={this.localTitleChange.bind(this)}
+                     onPressEnter={this.editTitleComplete.bind(this)}
+                     onBlur={this.editTitleComplete.bind(this)} />
           )}
+          {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
+          <Dropdown
+            // trigger={['click']}
+            // visible={this.state.dropDonwVisible}
+            // onVisibleChange={this.onVisibleChange.bind(this)}
+            overlay={menu()}>
+
+            <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
+          </Dropdown>
+
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}

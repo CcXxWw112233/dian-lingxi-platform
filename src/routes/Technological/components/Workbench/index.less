@@ -35,18 +35,19 @@
       //flex-direction: column ;
       .contentTitle{
         display: flex;
-        align-items: center;
+        //align-items: center;
         justify-content: space-between;
-        height: 46px;
+        //height: 46px;
         box-sizing: border-box;
         width: 100%;
         font-size: 16px;
         border-radius: 4px 4px 0 0;
-        padding: 0 12px;
-        >div{
-          line-height: 46px;
+        padding: 12px 12px;
+        .titleDetail{
+          flex: 1;
         }
-        >div:nth-child(2) {
+        .operate {
+          margin-left: 16px;
           cursor: pointer;
         }
       }

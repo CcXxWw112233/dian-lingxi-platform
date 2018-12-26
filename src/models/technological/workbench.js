@@ -36,7 +36,6 @@ export default modelExtend(technological, {
               current_file_resource_id: '',//当前操作文档id
             }
           })
-
           dispatch({
             type: 'getBoxList',
             payload: {}
@@ -240,13 +239,29 @@ export default modelExtend(technological, {
         })
 
       }else{
+        message.warn(res.message)
       }
     },
     * updateBox({ payload }, { select, call, put }) { //
+      const { box_id , name} = payload
+      const boxList = yield select(selectBoxList)
       let res = yield call(updateBox, payload)
       if(isApiResponseOk(res)) {
+        for(let i = 0; i < boxList.length; i++ ){
+          if(box_id == boxList[i]['id']) {
+            boxList[i]['name'] = name
+            break
+          }
+        }
       }else{
+        message.warn(res.message)
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          boxList
+        }
+      })
     },
 
     * getArticleList({ payload }, { select, call, put }) { //

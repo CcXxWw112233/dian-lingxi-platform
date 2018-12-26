@@ -135,6 +135,12 @@ const Workbench = (props) => {
         type: getEffectOrReducerByName('deleteBox'),
         payload: data
       })
+    },
+    updateBox(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateBox'),
+        payload: data
+      })
     }
   }
   return(
@@ -153,6 +159,8 @@ const Workbench = (props) => {
                                     {...this.props}
                                      title={name} {...cardContentListProps}
                                       updateDatas={updateDatas} CardContentType={code}
+                                      boxId={id}
+                                    itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
@@ -170,9 +178,12 @@ const Workbench = (props) => {
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
                 container = (
                   <CardContentArticle
-                                   {...this.props}
+                                    {...this.props}
                                      title={name} {...cardContentListProps}
-                                      updateDatas={updateDatas} CardContentType={code}
+                                      updateDatas={updateDatas}
+                                      CardContentType={code}
+                                      boxId={id}
+                                    itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
