@@ -46,9 +46,8 @@ export default {
         Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         yield put({
-          type: 'routingJump',
+          type: 'getUSerInfo',
           payload: {
-            route: '/technological/project'
           }
         })
       }else{
