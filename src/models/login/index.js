@@ -33,20 +33,35 @@ export default {
         Cookies.set('is401', false, {expires: 30, path: ''})
 
         //当存在路径直接跳转， 不存在重定向路径则作新手判定
-        if(!!redirectLocation) {
-          yield put(routerRedux.push(redirectLocation))
-        }else {
-          const res2 = yield call(getUSerInfo, payload)
-          //如果有重定向路径或者存在组织
-          if(isApiResponseOk(res2)) {
-            if(!!res2.data['current_org']){
-              yield put(routerRedux.push(redirectLocation))
-            } else {
-              yield put(routerRedux.push('/noviceGuide'))
-            }
+        // if(!!redirectLocation) {
+        //   yield put(routerRedux.push(redirectLocation))
+        //   console.log(1)
+        // }else {
+        //   const res2 = yield call(getUSerInfo, payload)
+        //   //如果有重定向路径或者存在组织
+        //   if(isApiResponseOk(res2)) {
+        //     console.log(2)
+        //     if(!!res2.data['current_org']){
+        //       console.log(3)
+        //       yield put(routerRedux.push(redirectLocation))
+        //     } else {
+        //       console.log(4)
+        //       yield put(routerRedux.push('/noviceGuide'))
+        //     }
+        //   } else {
+        //     message.warn(res2.message, MESSAGE_DURATION_TIME)
+        //   }
+        // }
+        const res2 = yield call(getUSerInfo, payload)
+        //如果有重定向路径或者存在组织
+        if(isApiResponseOk(res2)) {
+          if(!!res2.data['current_org']){
+            yield put(routerRedux.push(redirectLocation))
           } else {
-            message.warn(res2.message, MESSAGE_DURATION_TIME)
+            yield put(routerRedux.push('/noviceGuide'))
           }
+        } else {
+          message.warn(res2.message, MESSAGE_DURATION_TIME)
         }
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)

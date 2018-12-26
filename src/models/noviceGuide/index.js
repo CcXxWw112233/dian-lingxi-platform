@@ -4,7 +4,12 @@ import {MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from 'js-cookie'
 import QueryString from 'querystring'
-import {applyJoinOrganization, createOrganization} from "../../services/technological/organizationMember";
+import {
+  applyJoinOrganization, changeCurrentOrg,
+  createOrganization
+} from "../../services/technological/organizationMember";
+import {getUSerInfo} from "../../services/technological";
+import {currentNounPlanFilterName} from "../../utils/businessFunction";
 
 export default {
   namespace: 'noviceGuide',
@@ -19,6 +24,38 @@ export default {
     },
   },
   effects: {
+    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(getUSerInfo, payload)
+      if(isApiResponseOk(res)) {
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: '/technological/project'
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
+      let res = yield call(changeCurrentOrg, payload)
+      if(isApiResponseOk(res)) {
+        const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: '/technological/project'
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * applyJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(applyJoinOrganization, payload)
       if(isApiResponseOk(res)) {
@@ -52,9 +89,9 @@ export default {
         })
         yield call(delay, 2000)
         yield put({
-          type: 'routingJump',
+          type: 'changeCurrentOrg',
           payload: {
-            route: '/technological/project'
+            org_id: res.data.id
           }
         })
       }else{
