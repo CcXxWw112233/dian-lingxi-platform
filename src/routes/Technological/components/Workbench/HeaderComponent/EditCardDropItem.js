@@ -11,18 +11,28 @@ export default class EditCardDropItem extends React.Component {
   }
 
   componentWillMount(){ // 进来之后设置选中
-    const { itemValue } = this.props
+    const { itemValue, visibleEdit } = this.props
     const { isSelect } =itemValue
     this.setState({
-      checked: isSelect
+      checked: isSelect,
     })
+    if(visibleEdit) {
+      this.setState({
+        bottVisible: '1'
+      })
+    }
   }
   componentWillReceiveProps(nextProps) {
-    const { itemValue } = nextProps
+    const { itemValue, visibleEdit } = nextProps
     const { isSelect } =itemValue
     this.setState({
       checked: isSelect
     })
+    if(visibleEdit) {
+      this.setState({
+        bottVisible: '1'
+      })
+    }
   }
 
   setBottVisible(state) {
