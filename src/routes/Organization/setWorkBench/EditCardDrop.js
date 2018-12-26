@@ -6,19 +6,21 @@ import EditCardDropItem from './EditCardDropItem'
 
 export default class EditCardDrop extends React.Component {
   render() {
+    const { itemValue, itemKey } = this.props
+    const { box_data, already_has_boxs } = itemValue
     return (
       <div className={EditCardDropStyle.edit_cardd_dropdown}>
         <div className={EditCardDropStyle.edit_cardd_dropdown_left}>
-          {[1,2,3].map((value, key) => {
+          {box_data.slice(0,Math.ceil(box_data.length / 2)).map((value, key) => {
             return (
-              <EditCardDropItem {...this.props} key={key}/>
+              <EditCardDropItem {...this.props} already_has_boxs={already_has_boxs} itemValue={value} key={key} parentKey={itemKey}  />
             )
           })}
         </div>
         <div className={EditCardDropStyle.edit_cardd_dropdown_right}>
-          {[1,2,3].map((value, key) => {
+          {box_data.slice(Math.ceil(box_data.length / 2)).map((value, key) => {
             return (
-              <EditCardDropItem {...this.props} key={key}/>
+              <EditCardDropItem {...this.props} already_has_boxs={already_has_boxs}  itemValue={value} key={key} parentKey={itemKey}/>
             )
           })}
         </div>

@@ -1,4 +1,4 @@
-import {getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import {updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
-import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList} from "./select";
+import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList,selectBoxUsableList} from "./select";
 import {filePreview, fileDownload} from "../../services/technological/file";
 
 let naviHeadTabIndex //导航栏naviTab选项
@@ -29,6 +29,7 @@ export default modelExtend(technological, {
               boxList: [], //工作台盒子列表
               projectList: [], //项目列表
               boxUsableList: [],//用户当前可用盒子列表
+              boxCheckDisabled: false,
 
               filePreviewIsUsable: true,//文档是否可见
               filePreviewUrl: '',//预览文档src
@@ -67,9 +68,12 @@ export default modelExtend(technological, {
 
       }
     },
-
     * getBoxList({ payload }, { select, call, put }) {
-      let res = yield call(getBoxList, payload)
+      const { calback } = payload
+      let res = yield call(getBoxList, {})
+      if(calback && typeof calback ==='function') {
+        calback()
+      }
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -199,6 +203,48 @@ export default modelExtend(technological, {
             boxUsableList: res.data
           }
         })
+      }else{
+      }
+    },
+    * addBox({ payload }, { select, call, put }) { //
+      const { box_type_ids, calback } = payload
+      let res = yield call(addBox, { box_type_ids })
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoxList',
+          payload: {
+            calback: calback
+          }
+        })
+        yield put({
+          type: 'getBoxUsableList',
+          payload: {}
+        })
+      }else{
+      }
+    },
+    * deleteBox({ payload }, { select, call, put }) { //
+      const { box_type_id, calback } = payload
+      let res = yield call(deleteBox, { box_type_id })
+
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoxList',
+          payload: {
+            calback: calback
+          }
+        })
+        yield put({
+          type: 'getBoxUsableList',
+          payload: {}
+        })
+
+      }else{
+      }
+    },
+    * updateBox({ payload }, { select, call, put }) { //
+      let res = yield call(updateBox, payload)
+      if(isApiResponseOk(res)) {
       }else{
       }
     },

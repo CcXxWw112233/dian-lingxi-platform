@@ -15,11 +15,10 @@ import ArticleItem from './../../Technological/components/Workbench/HeaderCompon
 export default class CardContentNormal extends React.Component{
 
   render(){
-    const { datas = {} } = this.props.model
-    const {  CardContentType, itemValue={} } = this.props
-    const filterItem = (CardContentType) => {
+    const { code } = this.props
+    const filterItem = (code) => {
       let contanner = (<div></div>)
-      switch (CardContentType) {
+      switch (code) {
         //设计师
         case 'RESPONSIBLE_TASK':
           contanner = (
@@ -63,14 +62,14 @@ export default class CardContentNormal extends React.Component{
       <div className={indexstyles.cardDetail}>
         <div className={indexstyles.contentTitle}>
           <div>{'我的项目'}</div>
-          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
+          {'YINYI_MAP' === code || 'TEAM_SHOW' === code? (''): (
             <div>
               <Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} />
             </div>
           )}
         </div>
         <div className={indexstyles.contentBody}>
-          {filterItem(CardContentType)}
+          {filterItem(code)}
         </div>
 
       </div>

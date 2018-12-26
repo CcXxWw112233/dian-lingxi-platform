@@ -37,3 +37,4 @@ export const selectCurrentSelectOrganize = state => state[(`organizationMember`)
 export const selectKnowCityArticles = state => state[(`workbench`)].datas.knowCityArticles  //
 export const selectKnowPolicyArticles = state => state[(`workbench`)].datas.knowPolicyArticles  //
 export const selectBoxList = state => state[(`workbench`)].datas.boxList
+export const selectBoxUsableList = state => state[(`workbench`)].datas.boxUsableList

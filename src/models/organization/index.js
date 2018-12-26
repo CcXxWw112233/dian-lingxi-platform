@@ -116,7 +116,7 @@ export default  {
       const { type } = payload
       let res = yield call(getPermissions, { type })
       if(isApiResponseOk(res)) {
-        const { content_tree_data = [], function_tree_data = [], role_data= [],  } = res.data
+        const { content_tree_data = [], function_tree_data = [], role_data= [], box_data = [] } = res.data
         for (let i = 0; i < role_data.length; i++ ) {
           const { already_has_content_permission = [], already_has_function_permission = [] } = role_data[i]
           //权限树
@@ -144,6 +144,9 @@ export default  {
               }
             }
           }
+
+          //盒子
+          role_data[i]['box_data'] = box_data
 
           //内容树
           // role_data[i]['content_tree_data'] = JSON.parse(JSON.stringify(content_tree_data))

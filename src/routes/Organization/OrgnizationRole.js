@@ -170,8 +170,7 @@ export default class OrgnizationRole extends React.Component {
   }
 
   finallySave({value, parentKey}) {
-    console.log(parentKey, value)
-    const { id, function_tree_data = [], content_tree_data = [], already_has_content_permission_trans = [] } = value
+    const { id, function_tree_data = [], content_tree_data = [], already_has_content_permission_trans = [], already_has_boxs = [] } = value
 
     let function_data = []
     let content_data = []
@@ -183,6 +182,7 @@ export default class OrgnizationRole extends React.Component {
     const obj = {
       role_id: id,
       function_data: function_data,
+      box_type_ids: Array.from(new Set(already_has_boxs)).join(',')
     }
     this.props.saveRolePermission(obj)
   }
@@ -297,7 +297,7 @@ export default class OrgnizationRole extends React.Component {
                 </Collapse>
                 <div style={{color: '#8c8c8c', marginTop: 16}}>工作台初始模板：</div>
                 <div style={{marginTop: 10}}>
-                  <EditCardDrop {...this.props} />
+                  <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} />
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
                     {/*treeValue={treeDataSelects}*/}

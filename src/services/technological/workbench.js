@@ -25,6 +25,14 @@ export async function getItemBoxFilter(data) {
     data
   });
 }
+//获取工作台单个盒子设置过滤条件
+export async function updateBox(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
+    method: 'PUT',
+    data
+  });
+}
 //我负责的任务
 export async function getResponsibleTaskList(params) {
   return request({
@@ -76,12 +84,22 @@ export async function getBoxUsableList(params) {
     method: 'GET',
   });
 }
-
-
-
-
-
-
+//获取当前用户可用盒子列表
+export async function addBox(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/add`,
+    method: 'POST',
+    data
+  });
+}
+//获取当前用户可用盒子列表
+export async function deleteBox(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/${params.box_type_id}`,
+    method: 'DELETE',
+    params
+  });
+}
 
 
 //获取文章列表
