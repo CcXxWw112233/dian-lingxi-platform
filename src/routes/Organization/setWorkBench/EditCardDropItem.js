@@ -9,7 +9,7 @@ export default class EditCardDropItem extends React.Component {
     checked: false,
   }
   componentWillMount(){ // 进来之后设置选中
-    const { already_has_boxs=[], itemValue, parentKey } = this.props
+    const { already_has_boxs=[], itemValue, parentKey ,collapseStatus} = this.props
     const { id } = itemValue
     let flag= false
     for(let val of already_has_boxs) {
@@ -21,9 +21,16 @@ export default class EditCardDropItem extends React.Component {
     this.setState({
       checked: flag
     })
+
+    const { bottVisible } = this.state
+    if(collapseStatus && bottVisible === '3') {
+      this.setState({
+        bottVisible: '1'
+      })
+    }
   }
   componentWillReceiveProps(nextProps) {
-    const { already_has_boxs=[], itemValue, parentKey } = nextProps
+    const { already_has_boxs=[], itemValue, parentKey, collapseStatus } = nextProps
     const { id } = itemValue
     let flag= false
     for(let val of already_has_boxs) {
@@ -35,6 +42,12 @@ export default class EditCardDropItem extends React.Component {
     this.setState({
       checked: flag
     })
+    const { bottVisible } = this.state
+    if(collapseStatus && bottVisible === '3') {
+      this.setState({
+        bottVisible: '1'
+      })
+    }
   }
   setBottVisible(state) {
     const { bottVisible } = this.state

@@ -14,7 +14,7 @@ export default class SchedulingItem extends React.Component {
         <div>
           <Icon type="calendar" style={{fontSize: 16, color: '#8c8c8c'}}/>
         </div>
-        <div>{'城市规划设计-设计课'}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}}>@每周四 {'08:00'}~{'10:00'}</span></div>
+        <div>{name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time,'',true)}~${timestampToTimeNormal(due_time,'',true)}`}</span></div>
       </div>
     )
   }

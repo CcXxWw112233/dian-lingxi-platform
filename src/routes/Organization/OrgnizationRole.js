@@ -169,7 +169,9 @@ export default class OrgnizationRole extends React.Component {
     this.props.createRole({name, type:'1'})
   }
   collapseOnchange(e) {
-    console.log(e)
+    this.setState({
+      collapseStatus: e
+    })
   }
 
   finallySave({value, parentKey}) {
@@ -191,6 +193,7 @@ export default class OrgnizationRole extends React.Component {
   }
   render(){
     const { datas: { orgnization_role_data }} = this.props.model
+    const { collapseStatus } = this.state
     const operateMenu = ({parentKey, value}) => {
       const { is_default } = value
       return (
@@ -300,7 +303,10 @@ export default class OrgnizationRole extends React.Component {
                 </Collapse>
                 <div style={{color: '#8c8c8c', marginTop: 16}}>工作台初始模板：</div>
                 <div style={{marginTop: 10}}>
-                  <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} />
+                  {/*{collapseStatus?(*/}
+                    {/*<EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>*/}
+                  {/*):('')}*/}
+                  <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
                     {/*treeValue={treeDataSelects}*/}

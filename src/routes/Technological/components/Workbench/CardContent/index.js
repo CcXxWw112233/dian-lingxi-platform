@@ -52,6 +52,20 @@ export default class CardContent extends React.Component{
         break
       case 'YINYI_MAP':
         break
+      //老师
+      case 'MY_SCHEDULING': //我的排课 --会议
+        this.props.getSchedulingList({id: boxId})
+        break
+      case 'JOURNEY': //行程安排 --会议
+        this.props.getJourneyList({id: boxId})
+        break
+      case 'TO_DO':  //代办事项 --任务
+        this.props.getTodoList({id: boxId})
+        break
+      case 'SCHOOLWORK_CORRECTION': //作业批改
+        break
+      case 'TEACHING_EFFECT': //教学计划
+        break
       default:
         break
     }
@@ -132,7 +146,7 @@ export default class CardContent extends React.Component{
 
   render(){
     const { datas = {} } = this.props.model
-    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[] } = datas
+    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
     const { title, CardContentType, itemValue={} } = this.props
     const { selected_board_data = [] } = itemValue //已选board id
 
@@ -210,26 +224,56 @@ export default class CardContent extends React.Component{
             <MapItem />
           )
           break
+        case 'PROJECT_TRCKING':
+          contanner = (
+            <CollectionProjectItem   {...this.props} />
+          )
+          break
+        case 'MY_SHOW':
+          contanner = (
+            <MyShowItem   {...this.props} />
+          )
+          break
+        case 'MY_CIRCLE':
+          contanner = (
+            <MyCircleItem   {...this.props} />
+          )
+          break
         //老师
         case 'MY_SCHEDULING':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
-              ))
+            schedulingList.length? (
+              schedulingList.map((value, key)=> {
+                return(
+                  <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
             )
+          )
           break
         case 'JOURNEY':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
-            ))
+            journeyList.length? (
+              journeyList.map((value, key)=> {
+                return(
+                  <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
           )
           break
         case 'TO_DO':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
-            ))
+            todoList.length? (
+              todoList.map((value, key)=> {
+                return(
+                  <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
           )
           break
         case 'SCHOOLWORK_CORRECTION':
@@ -242,6 +286,7 @@ export default class CardContent extends React.Component{
             <TeachingEffect />
           )
           break
+
         default:
           break
       }
@@ -278,7 +323,7 @@ export default class CardContent extends React.Component{
           {/*<div>{title}</div>*/}
 
           {!isInEditTitle?(
-            <div className={indexstyles.titleDetail} onClick={this.setIsInEditTitle.bind(this)} >{localTitle}</div>
+            <div className={indexstyles.titleDetail} >{localTitle} {CardContentType}</div>
           ) : (
             <Input value={localTitle}
                    // className={indexStyle.projectName}

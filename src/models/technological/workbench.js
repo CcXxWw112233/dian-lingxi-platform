@@ -88,7 +88,14 @@ export default modelExtend(technological, {
       const { board_ids, id, itemKey }= payload
       const res = yield call(getItemBoxFilter, {board_ids, id})
       const boxList = yield select(selectBoxList)
-      const code = boxList[itemKey]['code']
+      let code = ''
+      for(let i =0; i <boxList.length; i++) {
+        if(id === boxList[i]['id']) {
+          code = boxList[i]['code']
+          break
+        }
+      }
+      // const code = boxList[itemKey]['code']
       if(isApiResponseOk(res)) {
         let eventName = ''
         switch (code) {
@@ -104,6 +111,16 @@ export default modelExtend(technological, {
           case 'MEETIMG_ARRANGEMENT':
             eventName= 'getMeetingList'
             break
+          //教师
+          case 'MY_SCHEDULING': //我的排课 --会议
+            eventName= 'getSchedulingList'
+            break
+          case 'JOURNEY': //行程安排 --会议
+            eventName= 'getJourneyList'
+            break
+          case 'TO_DO':  //代办事项 --任务
+            eventName= 'getTodoList'
+             break
           default:
             eventName= 'MLGB'
             break
@@ -183,6 +200,49 @@ export default modelExtend(technological, {
 
       }
     },
+    //教师盒子数据 -start
+    * getSchedulingList({ payload }, { select, call, put }) {
+      let res = yield call(getMeetingList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            schedulingList: res.data,
+          }
+        })
+      }else{
+
+      }
+    },
+    * getJourneyList({ payload }, { select, call, put }) {
+      let res = yield call(getMeetingList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            journeyList: res.data,
+          }
+        })
+      }else{
+
+      }
+    },
+    * getTodoList({ payload }, { select, call, put }) {
+      let res = yield call(getResponsibleTaskList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            todoList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+
+    //教师盒子数据 --end
+
     * completeTask({ payload }, { select, call, put }) { //
       let res = yield call(completeTask, payload)
       // if(isApiResponseOk(res)) {

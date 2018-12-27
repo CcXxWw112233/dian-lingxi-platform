@@ -16,7 +16,8 @@ export default class EditCardDropItem extends React.Component {
     this.setState({
       checked: isSelect,
     })
-    if(visibleEdit) {
+    const { bottVisible } = this.state
+    if(visibleEdit && bottVisible === '3') {
       this.setState({
         bottVisible: '1'
       })
@@ -28,7 +29,8 @@ export default class EditCardDropItem extends React.Component {
     this.setState({
       checked: isSelect
     })
-    if(visibleEdit) {
+    const { bottVisible } = this.state
+    if(visibleEdit && bottVisible === '3') {
       this.setState({
         bottVisible: '1'
       })

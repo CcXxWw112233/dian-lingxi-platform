@@ -61,6 +61,25 @@ const Workbench = (props) => {
         payload: data
       })
     },
+    getSchedulingList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getSchedulingList'),
+        payload: data
+      })
+    },
+    getJourneyList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getJourneyList'),
+        payload: data
+      })
+    },
+    getTodoList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getTodoList'),
+        payload: data
+      })
+    },
+
     getResponsibleTaskList(data) {
       dispatch({
         type: getEffectOrReducerByName('getResponsibleTaskList'),
