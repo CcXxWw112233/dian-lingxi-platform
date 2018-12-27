@@ -337,7 +337,7 @@ export default class CardContent extends React.Component{
           {/*<div>{title}</div>*/}
 
           {!isInEditTitle?(
-            <div className={indexstyles.titleDetail} >{localTitle} {CardContentType}</div>
+            <div className={indexstyles.titleDetail} >{localTitle}</div>
           ) : (
             <Input value={localTitle}
                    // className={indexStyle.projectName}

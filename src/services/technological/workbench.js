@@ -16,6 +16,14 @@ export async function getProjectUserList(params) {
     method: 'GET',
   });
 }
+export async function getUserImToken(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/im/token`,
+    method: 'GET',
+  });
+}
+
+
 //获取项目列表(只返回用户)
 export async function getProjectStarList(params) {
   return request({

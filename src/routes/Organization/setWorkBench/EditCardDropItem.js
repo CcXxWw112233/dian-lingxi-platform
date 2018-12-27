@@ -87,7 +87,7 @@ export default class EditCardDropItem extends React.Component {
           <div className={EditCardDropStyle.check}>
             <Checkbox checked={checked} onChange={this.CheckChange.bind(this,{id, parentKey})} />
           </div>
-          <div className={EditCardDropStyle.name}>{name}{id}</div>
+          <div className={EditCardDropStyle.name}>{name}</div>
           <div  className={`${EditCardDropStyle.turn} ${bottVisible!=='1'?(bottVisible === '2'?EditCardDropStyle.upDown_up: EditCardDropStyle.upDown_down): ''}`}>
             <Icon type="down"  onClick={this.setBottVisible.bind(this)} />
           </div>

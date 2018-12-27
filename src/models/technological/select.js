@@ -38,3 +38,6 @@ export const selectKnowCityArticles = state => state[(`workbench`)].datas.knowCi
 export const selectKnowPolicyArticles = state => state[(`workbench`)].datas.knowPolicyArticles  //
 export const selectBoxList = state => state[(`workbench`)].datas.boxList
 export const selectBoxUsableList = state => state[(`workbench`)].datas.boxUsableList
+
+//im
+export const selectImData = state => state[(`technological`)].datas.imData

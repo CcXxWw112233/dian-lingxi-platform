@@ -1,4 +1,4 @@
-import { getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import { getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -33,10 +33,17 @@ export default modelExtend(technological, {
               orgMembers: [], //组织用户列表
               boxUsableList: [],//用户当前可用盒子列表
               boxCheckDisabled: false,
+              imData: {}, //用户信息
 
               filePreviewIsUsable: true,//文档是否可见
               filePreviewUrl: '',//预览文档src
               current_file_resource_id: '',//当前操作文档id
+            }
+          })
+          dispatch({
+            type: 'getUserImToken',
+            payload: {
+
             }
           })
           dispatch({
@@ -56,6 +63,19 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    * getUserImToken({ payload }, { select, call, put }) {
+      let res = yield call(getUserImToken, payload)
+      if(isApiResponseOk(res)) {
+       yield put({
+         type: 'updateDatas',
+         payload: {
+           imData: res.data
+         }
+       })
+      }else{
+
+      }
+    },
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
