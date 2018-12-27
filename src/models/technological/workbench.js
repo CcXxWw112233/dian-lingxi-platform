@@ -1,4 +1,4 @@
-import {updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import { getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -28,6 +28,9 @@ export default modelExtend(technological, {
               spinning: false, //文章加载中状态
               boxList: [], //工作台盒子列表
               projectList: [], //项目列表
+              projectStarList: [],
+              projectUserList: [], //项目列表（只返回用户信息）
+              orgMembers: [], //组织用户列表
               boxUsableList: [],//用户当前可用盒子列表
               boxCheckDisabled: false,
 
@@ -67,6 +70,46 @@ export default modelExtend(technological, {
 
       }
     },
+    * getProjectStarList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectStarList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectStarList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getProjectUserList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectUserList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectUserList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getOrgMembers({ payload }, { select, call, put }) {
+      let res = yield call(getOrgMembers, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            orgMembers: res.data.data
+          }
+        })
+      }else{
+
+      }
+    },
+
     * getBoxList({ payload }, { select, call, put }) {
       const { calback } = payload
       let res = yield call(getBoxList, {})
@@ -215,6 +258,7 @@ export default modelExtend(technological, {
       }
     },
     * getJourneyList({ payload }, { select, call, put }) {
+      console.log(payload)
       let res = yield call(getMeetingList, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -228,7 +272,7 @@ export default modelExtend(technological, {
       }
     },
     * getTodoList({ payload }, { select, call, put }) {
-      let res = yield call(getResponsibleTaskList, payload)
+      let res = yield call(getTodoList , payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -240,7 +284,6 @@ export default modelExtend(technological, {
 
       }
     },
-
     //教师盒子数据 --end
 
     * completeTask({ payload }, { select, call, put }) { //

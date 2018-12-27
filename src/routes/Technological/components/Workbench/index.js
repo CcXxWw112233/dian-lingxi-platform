@@ -79,7 +79,18 @@ const Workbench = (props) => {
         payload: data
       })
     },
-
+    getProjectUserList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getProjectUserList'),
+        payload: data
+      })
+    },
+    getOrgMembers(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getOrgMembers'),
+        payload: data
+      })
+    },
     getResponsibleTaskList(data) {
       dispatch({
         type: getEffectOrReducerByName('getResponsibleTaskList'),
@@ -104,7 +115,12 @@ const Workbench = (props) => {
         payload: data
       })
     },
-
+    getProjectStarList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getProjectStarList'),
+        payload: data
+      })
+    },
     getArticleList(data) {
       dispatch({
         type: getEffectOrReducerByName('getArticleList'),

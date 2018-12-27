@@ -52,6 +52,13 @@ export default class CardContent extends React.Component{
         break
       case 'YINYI_MAP':
         break
+      case 'MY_CIRCLE':
+        this.props.getProjectUserList()
+        this.props.getOrgMembers()
+        break
+      case 'PROJECT_TRCKING':
+        this.props.getProjectStarList()
+        break
       //老师
       case 'MY_SCHEDULING': //我的排课 --会议
         this.props.getSchedulingList({id: boxId})
@@ -146,7 +153,7 @@ export default class CardContent extends React.Component{
 
   render(){
     const { datas = {} } = this.props.model
-    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
+    const { projectStarList = [], responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
     const { title, CardContentType, itemValue={} } = this.props
     const { selected_board_data = [] } = itemValue //已选board id
 
@@ -226,7 +233,14 @@ export default class CardContent extends React.Component{
           break
         case 'PROJECT_TRCKING':
           contanner = (
-            <CollectionProjectItem   {...this.props} />
+            projectStarList.length? (
+              projectStarList.map((value2, key2)=> {
+                return(
+                  <CollectionProjectItem {...this.props} key={key2} itemKey={key2}  itemValue={value2}  />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
           )
           break
         case 'MY_SHOW':

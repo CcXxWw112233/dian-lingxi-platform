@@ -1,11 +1,33 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN,REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //获取项目列表
 export async function getProjectList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/list`,
+    method: 'GET',
+  });
+}
+//获取项目列表(只返回用户)
+export async function getProjectUserList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user_lists`,
+    method: 'GET',
+  });
+}
+//获取项目列表(只返回用户)
+export async function getProjectStarList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/star/list`,
+    method: 'GET',
+  });
+}
+
+//获取组织成员列表
+export async function getOrgMembers(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group`,
     method: 'GET',
   });
 }
@@ -40,6 +62,13 @@ export async function getResponsibleTaskList(params) {
     method: 'GET',
   });
 }
+export async function getTodoList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible/${params['id']}`,
+    method: 'GET',
+  });
+}
+
 // 完成任务
 export async function completeTask(data) {
   return request({
