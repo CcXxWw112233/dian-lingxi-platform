@@ -1,6 +1,7 @@
 import React from 'react'
 import { Icon } from 'antd';
 import indexStyles from './index.less'
+import globalStyles from '../../globalset/css/globalClassName.less'
 
 export default class ImChat extends React.Component {
   state={
@@ -20,8 +21,9 @@ export default class ImChat extends React.Component {
       <div>
         {/*聊天*/}
 
-        <div className={indexStyles.imMessage} onClick={this.setImIframOutVisible.bind(this)}>
-          <Icon type="message" />
+        <div className={`${globalStyles.authTheme} ${indexStyles.imMessage}`} onClick={this.setImIframOutVisible.bind(this)}>
+          {/*<Icon type="message" />*/}
+          &#xe639;
         </div>
 
         <div className={indexStyles.imIframOut} style={{display: !imIframOutVisible?'none':'block'}}>

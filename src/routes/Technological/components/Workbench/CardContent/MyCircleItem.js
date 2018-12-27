@@ -90,8 +90,9 @@ export default class MyCircleItem extends React.Component {
                  return (
                    <div className={indexstyles.left_item} onClick={this.setUsers.bind(this,{ datalist:users})}>
                      <div>{board_name}</div>
-                     <div onClick={this.toChat.bind(this, {type: 'group', id: board_id})}>
-                       <Icon type="folder-open" />
+                     <div className={globalStyles.authTheme} onClick={this.toChat.bind(this, {type: 'group', id: board_id})}>
+                       {/*<Icon type="folder-open" />*/}
+                       &#xe639;
                      </div>
                    </div>
                  )
@@ -115,8 +116,9 @@ export default class MyCircleItem extends React.Component {
                  return (
                    <div className={indexstyles.left_item} key={key} onClick={this.setUsers.bind(this,{ datalist:members})}>
                      <div>{name}</div>
-                     <div onClick={this.toChat.bind(this, {type: 'group', id: org_id})}>
-                       <Icon type="folder-open" />
+                     <div className={globalStyles.authTheme} onClick={this.toChat.bind(this, {type: 'group', id: org_id})}>
+                       {/*<Icon type="folder-open" />*/}
+                       &#xe639;
                      </div>
                    </div>
                  )
@@ -139,7 +141,7 @@ export default class MyCircleItem extends React.Component {
                     {name || full_name || mobile || email}
                   </div>
                   <div className={indexstyles.commit} onClick={this.toChat.bind(this, {type: 'contact', id: id})}>
-                    <Icon type="folder-open" />
+                    <Icon type="message" />
                   </div>
                 </div>
               )
