@@ -115,7 +115,8 @@ export default class HeaderNav extends React.Component{
         return false
         break
       case '5':
-        route = 'teamList'
+        this.props.routingJump('/teamShow/teamList')
+        return false
         break
       default:
         break
