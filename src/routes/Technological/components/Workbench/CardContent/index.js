@@ -1,4 +1,4 @@
-import { Card, Icon, Dropdown } from 'antd'
+import { Card, Icon, Dropdown, Input, Menu } from 'antd'
 import indexstyles from '../index.less'
 import TaskItem from './TaskItem'
 import ProcessItem from './ProcessItem'
@@ -12,14 +12,23 @@ import SchedulingItem from './School/SchedulingItem'
 import Journey from './School/Journey'
 import Todo from './School/Todo'
 import SchoolWork from './School/SchoolWork'
+import MyShowItem from './MyShowItem'
 import TeachingEffect from './School/TeachingEffect'
 import PreviewFileModal from '../PreviewFileModal.js'
+import CollectionProjectItem from './CollectionProjectItem'
+import MyCircleItem from './MyCircleItem'
+const TextArea = Input.TextArea
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 
 export default class CardContent extends React.Component{
   state={
     dropDonwVisible: false, //下拉菜单是否可见
     previewFileModalVisibile: false,
 
+    //修改项目名称所需state
+    localTitle: '',
+    isInEditTitle: false,
   }
   componentWillMount() {
     const { CardContentType, boxId } = this.props
@@ -43,10 +52,64 @@ export default class CardContent extends React.Component{
         break
       case 'YINYI_MAP':
         break
+      case 'MY_CIRCLE':
+        this.props.getProjectUserList()
+        this.props.getOrgMembers()
+        break
+      case 'PROJECT_TRCKING':
+        this.props.getProjectStarList()
+        break
+      //老师
+      case 'MY_SCHEDULING': //我的排课 --会议
+        this.props.getSchedulingList({id: boxId})
+        break
+      case 'JOURNEY': //行程安排 --会议
+        this.props.getJourneyList({id: boxId})
+        break
+      case 'TO_DO':  //代办事项 --任务
+        this.props.getTodoList({id: boxId})
+        break
+      case 'SCHOOLWORK_CORRECTION': //作业批改
+        break
+      case 'TEACHING_EFFECT': //教学计划
+        break
       default:
         break
     }
+    this.initSet(this.props)
   }
+
+  componentWillReceiveProps (nextProps) {
+    this.initSet(nextProps)
+  }
+  //初始化根据props设置state
+  initSet(props) {
+    const { title } = props
+    this.setState({
+      localTitle: title
+    })
+  }
+  //项目操作----------------start
+  //设置项目名称---start
+  setIsInEditTitle() {
+    this.setState({
+      isInEditTitle: !this.state.isInEditTitle,
+    })
+  }
+  localTitleChange(e) {
+    this.setState({
+      localTitle: e.target.value
+    })
+  }
+  editTitleComplete(e) {
+    this.setIsInEditTitle()
+    const { boxId } = this.props
+    this.props.updateBox({
+      box_id: boxId,
+      name: this.state.localTitle,
+    })
+  }
+
   selectMultiple(data) {
     this.setState({
       dropDonwVisible: false
@@ -66,6 +129,21 @@ export default class CardContent extends React.Component{
       dropDonwVisible: e
     })
   }
+  handleMenuClick(e) {
+    const key = e.key
+    switch (key) {
+      case 'rename':
+        this.setIsInEditTitle()
+        break
+      case 'remove':
+        const { itemValue } = this.props
+        const { box_type_id } = itemValue
+        this.props.deleteBox({box_type_id: box_type_id})
+        break
+      default:
+        break
+    }
+  }
 
   setPreviewFileModalVisibile() {
     this.setState({
@@ -75,9 +153,11 @@ export default class CardContent extends React.Component{
 
   render(){
     const { datas = {} } = this.props.model
-    const { responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[] } = datas
-    const { title, CardContentType, itemValue={}, itemKey } = this.props
+    const { projectStarList = [], responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
+    const { title, CardContentType, itemValue={} } = this.props
     const { selected_board_data = [] } = itemValue //已选board id
+
+    const { localTitle, isInEditTitle } = this.state
 
     const filterItem = (CardContentType) => {
       let contanner = (<div></div>)
@@ -151,26 +231,63 @@ export default class CardContent extends React.Component{
             <MapItem />
           )
           break
+        case 'PROJECT_TRCKING':
+          contanner = (
+            projectStarList.length? (
+              projectStarList.map((value2, key2)=> {
+                return(
+                  <CollectionProjectItem {...this.props} key={key2} itemKey={key2}  itemValue={value2}  />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
+          )
+          break
+        case 'MY_SHOW':
+          contanner = (
+            <MyShowItem   {...this.props} />
+          )
+          break
+        case 'MY_CIRCLE':
+          contanner = (
+            <MyCircleItem   {...this.props} />
+          )
+          break
         //老师
         case 'MY_SCHEDULING':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
-              ))
+            schedulingList.length? (
+              schedulingList.map((value, key)=> {
+                return(
+                  <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
             )
+          )
           break
         case 'JOURNEY':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
-            ))
+            journeyList.length? (
+              journeyList.map((value, key)=> {
+                return(
+                  <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
           )
           break
         case 'TO_DO':
           contanner = (
-            [1,2,3].map((value, key)=> (
-              <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
-            ))
+            todoList.length? (
+              todoList.map((value, key)=> {
+                return(
+                  <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
+                )})
+            ):(
+              <div style={{marginTop: 12}}>暂无数据</div>
+            )
           )
           break
         case 'SCHOOLWORK_CORRECTION':
@@ -183,26 +300,70 @@ export default class CardContent extends React.Component{
             <TeachingEffect />
           )
           break
+
         default:
           break
       }
       return contanner
     }
+
+    const menu = ()=> {
+      return (
+        <Menu
+          onClick={this.handleMenuClick.bind(this)}
+          // selectedKeys={[this.state.current]}
+          mode="horizontal"
+        >
+          <Menu.Item key="rename">
+             重命名
+          </Menu.Item>
+          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
+            <SubMenu title={'选择项目'}>
+              <MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />
+            </SubMenu>
+          )}
+
+          <Menu.Item key="remove">
+            移除
+          </Menu.Item>
+
+        </Menu>
+      )
+    }
+
     return (
       <div className={indexstyles.cardDetail}>
         <div className={indexstyles.contentTitle}>
-          <div>{title}</div>
-          {'YINYI_MAP' === CardContentType || 'TEAM_SHOW' === CardContentType? (''): (
-            <Dropdown trigger={['click']}
-                      visible={this.state.dropDonwVisible}
-                      onVisibleChange={this.onVisibleChange.bind(this)}
-                      overlay={<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />}>
-               <div ><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
-            </Dropdown>
+          {/*<div>{title}</div>*/}
+
+          {!isInEditTitle?(
+            <div className={indexstyles.titleDetail} >{localTitle}</div>
+          ) : (
+            <Input value={localTitle}
+                   // className={indexStyle.projectName}
+                     style={{resize: 'none',color: '#595959', fontSize: 16}}
+                      maxLength={30}
+                     autoFocus
+                     onChange={this.localTitleChange.bind(this)}
+                     onPressEnter={this.editTitleComplete.bind(this)}
+                     onBlur={this.editTitleComplete.bind(this)} />
           )}
+          {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
+          <Dropdown
+            // trigger={['click']}
+            // visible={this.state.dropDonwVisible}
+            // onVisibleChange={this.onVisibleChange.bind(this)}
+            overlay={menu()}>
+
+            <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
+          </Dropdown>
+
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}
+          {/*<MyShowItem />*/}
+           {/*<CollectionProjectItem />*/}
+           {/*<MyCircleItem />*/}
         </div>
         {'MY_DOCUMENT' === CardContentType ? (
           <PreviewFileModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />

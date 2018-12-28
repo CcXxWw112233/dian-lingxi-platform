@@ -415,7 +415,11 @@ export default class NewsListNewDatas extends React.Component {
     }
     //评论动态
     const commentNews = (value,parentKey, childrenKey) => {
-      const {  list_name, board_name, card_name='任务', cardComment: { card_id }} = value[0]
+      const {  list_name, board_name, card_name='任务', cardComment} = value[0]
+      if(!cardComment) {
+        return false
+      }
+      const  { card_id } = cardComment
       return (
         <div className={NewsListStyle.containr}>
           <div className={NewsListStyle.top}>
@@ -437,6 +441,10 @@ export default class NewsListNewDatas extends React.Component {
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
               {value.map((val, key) => {
+                const { cardComment } = val
+                if(!cardComment) {
+                  return false
+                }
                 const { cardComment: { text, create_time }, user_name, avatar } = val
                 return (
                   <div  className={NewsListStyle.news_4_top} key={key}>
@@ -538,7 +546,7 @@ export default class NewsListNewDatas extends React.Component {
           containner =  ( taskNews(value) )
           break
         case  '3':
-          // containner = ( commentNews(value,parentKey, childrenKey))
+          containner = ( commentNews(value,parentKey, childrenKey))
           break
         case  '4':
           containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )

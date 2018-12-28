@@ -41,14 +41,14 @@ export default class HeaderNav extends React.Component{
         }
         this.props.routingJump('/technological/organizationMember')
         this.props.updateDatas({
-          naviHeadTabIndex: '4'
+          naviHeadTabIndex: '10'
         })
         break;
       case '3':
         // console.log(window.location.hash)
         this.props.routingJump(`/organization?nextpath=${window.location.hash.replace('#','')}`) //目标页面的返回按钮返回的路劲
         this.props.updateDatas({
-          naviHeadTabIndex: '4'
+          naviHeadTabIndex: '10'
         })
         break
       case '4':
@@ -63,7 +63,7 @@ export default class HeaderNav extends React.Component{
       case '6':
         this.props.routingJump('/technological/accoutSet')
         this.props.updateDatas({
-          naviHeadTabIndex: '4'
+          naviHeadTabIndex: '10'
         })
         break;
       case '7':
@@ -107,6 +107,16 @@ export default class HeaderNav extends React.Component{
         break
       case '3':
         route = 'project'
+        break
+      case '4':
+        this.props.updateDatas({
+          naviHeadTabIndex: '4'
+        })
+        return false
+        break
+      case '5':
+        this.props.routingJump('/teamShow/teamList')
+        return false
         break
       default:
         break
@@ -155,7 +165,12 @@ export default class HeaderNav extends React.Component{
   elseOperateMenuClick({key}) {
     switch (key) {
       case '1':
-        this.props.routingJump('/teamShow/teamList')
+        window.open('https://www.di-an.com/zhichengshe')
+        // this.props.routingJump('/teamShow/teamList')
+        break
+      case '2':
+        window.open('https://www.di-an.com/xiaocezhi')
+        // this.props.routingJump('/teamShow/teamList')
         break
       default:
         break
@@ -255,18 +270,33 @@ export default class HeaderNav extends React.Component{
         </Menu>
       </Card>
     );
-    const elseOperateMenu = (
-      <Card  className={indexStyle.menuDiv} style={{margin: 0}}>
-        <div className={indexStyle.triangle} style={{left: '50%',marginLeft: -8}} ></div>
-        <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
-          <Menu.Item key="1" style={{padding:0,margin: 0}}>
-            <div className={indexStyle.itemDiv}>
-             <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>团队展示</span></span>
-            </div>
-          </Menu.Item>
-        </Menu>
-      </Card>
-    )
+    // const elseOperateMenu = (
+    //   <Card  className={indexStyle.menuDiv} style={{margin: 0}}>
+    //     <div className={indexStyle.triangle} style={{left: '50%',marginLeft: -8}} ></div>
+    //     <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
+    //       <Menu.Item key="1" style={{padding:0,margin: 0}}>
+    //         <div className={indexStyle.itemDiv}>
+    //          <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>知城社</span></span>
+    //         </div>
+    //       </Menu.Item>
+    //       <Menu.Item key="2" style={{padding:0,margin: 0}}>
+    //         <div className={indexStyle.itemDiv}>
+    //           <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>晓策志</span></span>
+    //         </div>
+    //       </Menu.Item>
+    //     </Menu>
+    //   </Card>
+    // )
+   const elseOperateMenu = (
+     <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
+       <Menu.Item key="1">
+         知城社
+       </Menu.Item>
+       <Menu.Item key="2" >
+         晓策志
+       </Menu.Item>
+     </Menu>
+   )
 
     const { datas:{ naviHeadTabIndex } } = this.props.model
 
@@ -288,11 +318,16 @@ export default class HeaderNav extends React.Component{
             <span className={naviHeadTabIndex==='1'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '1')}>{currentNounPlanFilterName(CATCH_UP)}</span>
             <span  className={naviHeadTabIndex==='2'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '2')}>{currentNounPlanFilterName(DASHBOARD)}</span>
             <span className={naviHeadTabIndex==='3'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '3')}>{currentNounPlanFilterName(PROJECTS)}</span>
-            {currentUserOrganizes.length ? (
-              <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
-                <span ><Icon type="appstore" style={{fontSize: 16,color: '#262626'}}/></span>
-              </Dropdown>
-            ) : ('')}
+            <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
+             <span className={naviHeadTabIndex==='4'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '4')}>资讯</span>
+            </Dropdown>
+            <span className={naviHeadTabIndex==='5'?indexStyle.tableChoose:''} onClick={this.tabItemClick.bind(this, '5')}>我的展示</span>
+
+            {/*{currentUserOrganizes.length ? (*/}
+              {/*<Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>*/}
+                {/*<span ><Icon type="appstore" style={{fontSize: 16,color: '#262626'}}/></span>*/}
+              {/*</Dropdown>*/}
+            {/*) : ('')}*/}
 
           </div>
         </div>

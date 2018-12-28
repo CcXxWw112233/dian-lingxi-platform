@@ -1,3 +1,19 @@
+@keyframes spinup {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+@keyframes spindown {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
 
 .workbenchOut {
   margin: 0 auto;
@@ -35,18 +51,19 @@
       //flex-direction: column ;
       .contentTitle{
         display: flex;
-        align-items: center;
+        //align-items: center;
         justify-content: space-between;
-        height: 46px;
+        //height: 46px;
         box-sizing: border-box;
         width: 100%;
         font-size: 16px;
         border-radius: 4px 4px 0 0;
-        padding: 0 12px;
-        >div{
-          line-height: 46px;
+        padding: 12px 12px;
+        .titleDetail{
+          flex: 1;
         }
-        >div:nth-child(2) {
+        .operate {
+          margin-left: 16px;
           cursor: pointer;
         }
       }
@@ -167,6 +184,200 @@
             }
           }
         }
+        .myshowItem{
+           .contain1{
+             display: flex;
+             justify-content: space-between;
+             .contain1_item{
+               width: 170px;
+               height: 80px;
+               padding: 0 20px;
+               background: #F5F5F5;
+               div:nth-child(1){
+                 margin-top: 14px;
+                 font-size: 12px;
+                 color: #8c8c8c;
+               }
+               div:nth-child(2){
+                 font-size: 28px;
+                 color: #595959;
+               }
+             }
+           }
+          .contain2{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .contain2_item{
+              width: 264px;
+              height: 40px;
+              margin-top: 25px;
+              font-size: 16px;
+              cursor: pointer;
+              color: #262626;
+              text-align: center;
+              line-height: 40px;
+              background-color: #F5F5F5;
+            }
+          }
+        }
+        .collectionProjectItem{
+          cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          background-color: #F5F5F5;
+          padding: 16px 16px;
+          margin-bottom:10px;
+          .left{
+            flex: 1;
+            padding-right: 30px;
+            .top{
+              display: flex;
+              font-size: 16px;
+              color: #262626;
+              margin-top: 8px;
+              .star{
+                margin-left: 8px;
+              }
+            }
+            .bott {
+              display: flex;
+              font-size: 14px;
+              color: #8c8c8c;
+              margin-top: 4px;
+              div{
+                margin-right: 20px;
+              }
+            }
+          }
+          .right{
+            display: flex;
+            align-items: center;
+          }
+        }
+        .myCircleItem{
+          display: flex;
+          .left {
+            width: 200px;
+            .circleGroup {
+              overflow: hidden;
+              .circleGroup_top{
+                display: flex;
+                justify-content: space-between;
+                height: 32px;
+                align-items: center;
+                font-size: 12px;
+                color: #8C8C8C;
+                border-bottom:1px solid #BFBFBF;
+                .circleGroup_top_caret {
+                  width: 30px;
+                  height: 30px;
+                  text-align: center;
+                  line-height: 30px;
+                }
+              }
+              .circleGroup_bott{
+                overflow: hidden;
+                //height: 0;
+              }
+
+              .upDown_up {
+                transform: rotate(0deg);
+                animation: spinup 500ms ease;
+              }
+              .upDown_down {
+                transform: rotate(90deg);
+                animation: spindown 500ms ease;
+              }
+              .ConfirmInfoOut_1_bottNormal{height: 0;}
+              .ConfirmInfoOut_1_bottShow{}
+            }
+            .left_item{
+              display: flex;
+              padding: 6px 12px;
+              cursor: pointer;
+              border-radius: 4px;
+              margin-top: 6px;
+              div:nth-child(1){
+                flex: 1;
+                padding-right: 12px;
+              }
+              div:nth-child(2){
+                color: #8C8C8C;
+              }
+              div:nth-child(2):hover{
+                color: #595959;
+              }
+            }
+            .left_item:hover{
+              background-color: #F5F5F5;
+              color: #262626;
+            }
+          }
+          .middle{
+            width: 2px;
+            height: auto;
+            overflow: auto;
+            background-color: #e8e8e8;
+            margin: 0 12px;
+          }
+          .right{
+            flex: 1;
+            display: flex;
+            height: auto;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-content:flex-start;
+            .right_item{
+              display: flex;
+              width: 48%;
+              padding: 0 10px;
+              align-items: center;
+              height: 50px;
+              cursor: pointer;
+              .name{
+                margin: 0 8px;
+                flex: 1;
+              }
+              .commit{
+                color: #8C8C8C;
+              }
+              .commit:hover{
+                color: #595959;
+              }
+            }
+          }
+
+          ///隐藏滚动条
+          .hideScrolloutercontainer_1, .hideScrolloutercontainer_2 {
+            // 重要 隐藏滚动条
+            height: 318px;
+            position: relative;
+            overflow: hidden;
+          }
+          .hideScrolloutercontainer_1 {
+            width: 182px;
+          }
+          .hideScrolloutercontainer_2 {
+            width: 374px;
+          }
+          .hideScrollinnercontainer_1,  .hideScrollinnercontainer_2  {
+            //重要 //隐藏滚动条---start
+            cursor: pointer;
+            max-height: 318px;
+            position: absolute;
+            left: 0;
+            overflow-y: scroll;
+            //重要 //隐藏滚动条---end
+          }
+          .hideScrollinnercontainer_1{
+            width: 200px;
+          }
+          .hideScrollinnercontainer_2 {
+            width: 390px;
+          }
+
+        }
       }
     }
   }
@@ -235,7 +446,7 @@
     align-items: center;
     div{
       margin-right: 24px;
-      color: #BFBFBF;
+      //color: #BFBFBF;
     }
   }
   .right{
@@ -248,9 +459,13 @@
     color: #595959;
   }
 }
+
 .hoverUnderline:hover{
   text-decoration:underline ;
   cursor: pointer;
 }
 .Loading{font-size: 12px;color:#8c8c8c;text-align: center;line-height: 20px}
 .nodata{margin-top: 12px}
+
+
+
