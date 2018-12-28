@@ -3,6 +3,9 @@ import React from 'react'
 import { Modal, Form, Button, Input, message, Select, Spin } from 'antd'
 import styles from './CreateOrganizationModal.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
+import { getSearchOrganizationList } from '../../../../services/technological/organizationMember'
+
+
 const Option = Select.Option
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -15,6 +18,8 @@ class CreateOrganizationModal extends React.Component {
     createButtonVisible:false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
+    searchOrganizationList: [], //搜索列表
+    spinning: false,
   }
   descriptionChange(e) {
     const value = e.target.value
@@ -44,7 +49,20 @@ class CreateOrganizationModal extends React.Component {
       this.setState({
         searchTimer: setTimeout(function () {
           //  此处调用请求
-          that.props.getSearchOrganizationList({name: value})
+          // that.props.getSearchOrganizationList({name: value})
+          that.setState({
+            spinning: true
+          })
+          getSearchOrganizationList({name: value}).then((res) => {
+            that.setState({
+              searchOrganizationList: res.data,
+              spinning: false
+            })
+          }).catch(err => {
+            that.setState({
+              spinning: false
+            })
+          })
         }, INPUT_CHANGE_SEARCH_TIME)
       })
     }
@@ -109,9 +127,9 @@ class CreateOrganizationModal extends React.Component {
     });
   }
   render() {
-    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible } = this.state
+    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible, spinning, searchOrganizationList=[] } = this.state
     const { createOrganizationVisable } = this.props; //reName_Add_type操作类型1重命名 2添加
-    const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
+    // const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
     const { getFieldDecorator } = this.props.form;
 
     const formContain = (
@@ -122,7 +140,7 @@ class CreateOrganizationModal extends React.Component {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
             <div style={{position: 'relative'}}>
-              <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
+              <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
               {createButtonVisible? (
                 <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
                  {searchOrganizationList.length? (

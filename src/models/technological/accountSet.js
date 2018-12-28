@@ -76,10 +76,9 @@ export default {
       }
     },
     * getVerificationcode({ payload }, { select, call, put }) { //获取验证码
-      console.log(payload)
       const { data, calback } = payload
-      calback && typeof calback === 'function' ? calback() : ''
       let res = yield call(requestVerifyCode, data)
+      calback && typeof calback === 'function' ? calback() : ''
       if(isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
       }else{

@@ -3,12 +3,13 @@ import {connect} from "dva/index";
 import { Icon, Tabs } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
-import AuthTabPaneContent from './AuthTabPaneContent'
-import RoleTabPaneContent from './RoleTabPaneContent'
 import ProjectRole from './ProjectRole'
 import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
 import { getUrlQueryString } from '../../utils/util'
+import NounDefinition from "./NounDefinition";
+import {ORGANIZATION, PROJECTS} from "../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../utils/businessFunction";
 
 const  TabPane = Tabs.TabPane
 
@@ -106,6 +107,18 @@ const Organization = (options) => {
         payload: data
       })
     },
+    getNounList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getNounList'),
+        payload: data
+      })
+    },
+    saveNounList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('saveNounList'),
+        payload: data
+      })
+    }
   }
   const onTabClick = (key)=>{
     updateDatas({
@@ -120,20 +133,23 @@ const Organization = (options) => {
         </div>
         <div className={indexStyles.topTitle}>
           <Icon type="home" theme="outlined"  style={{color: color_4,fontSize: 32}} />
-          <div className={indexStyles.titleName}>组织管理后台</div>
+          <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
             <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} activeKey={tabSelectKey} onTabClick={onTabClick}>
               <TabPane tab="基本信息" key="1">
                  <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
-              <TabPane tab="组织角色" key="2">
+              <TabPane tab={`${currentNounPlanFilterName(ORGANIZATION)}角色`} key="2">
                 <OrgnizationRole {...asyncProprs} updateDatas={updateDatas} />
                 {/*<RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
-              <TabPane tab="项目角色" key="3">
+              <TabPane tab={`${currentNounPlanFilterName(PROJECTS)}角色`} key="3">
                 <ProjectRole {...asyncProprs} updateDatas={updateDatas}/>
                 {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
+              </TabPane>
+              <TabPane tab="名词定义" key="4">
+                <NounDefinition {...asyncProprs} updateDatas={updateDatas}/>
               </TabPane>
             </Tabs>
           </div>

@@ -1,6 +1,6 @@
 // 验证手机号
 export const validateTel = (value) => {
-  return (/^[1][3-8]\d{9}$/.test(value))
+  return (/^[1][3-9]\d{9}$/.test(value))
 }
 // 验证邮箱
 export const validateEmail = (value) => {

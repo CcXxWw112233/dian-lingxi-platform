@@ -44,7 +44,7 @@ export default class MoveToDirectory extends React.Component {
       return false
     }
     this.props.updateDatas({moveToDirectoryVisiblie: false})
-    const { datas: { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentId, breadcrumbList, treeFolderData } } = this.props.model
+    const { datas: { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } } = this.props.model
 
     let file_ids
     //分别从多文件选择， fileList单条信息 ， 文件预览进来
@@ -57,7 +57,7 @@ export default class MoveToDirectory extends React.Component {
     }else if (openMoveDirectoryType === '2'){
       file_ids = currentFileListMenuOperatorId
     }else if(openMoveDirectoryType === '3') {
-      file_ids = filePreviewCurrentId
+      file_ids = filePreviewCurrentFileId
       //存在文件移动的情况同时是从文件预览进来的,移动过后改变面包屑路径
       if(copyOrMove === '0') {
         breadcrumbList.splice(0, breadcrumbList.length - 1)

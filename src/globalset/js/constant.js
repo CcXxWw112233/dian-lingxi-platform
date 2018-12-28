@@ -6,6 +6,14 @@ export const REQUEST_DOMAIN_FLOWS = '/api/flows' //接口域名
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbench'
 export const REQUEST_DOMAIN_TEAM_SHOW = '/api/teamshow'
 
+export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小程序后台文章列表
+export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
+export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
+export const WE_APP_ID = (appType) => { //返回小程序后台appid
+  return appType === '1'? '1029567653519429632' : '1029565930193162240'
+}
+
+
 export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
@@ -62,5 +70,13 @@ export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //�
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
 
 
-
-
+//名词定义
+export const NORMAL_NOUN_PLAN = {"Organization":"组织","Tasks":"卡片","Flows":"流程","Dashboard":"与我相关","Projects":"看板","Files":"文件","Members":"成员","Catch_Up":"动态"}
+export const ORGANIZATION = 'Organization'
+export const TASKS = 'Tasks'
+export const FLOWS = 'Flows'
+export const DASHBOARD = 'Dashboard'
+export const PROJECTS = 'Projects'
+export const FILES = 'Files'
+export const MEMBERS = 'Members'
+export const CATCH_UP = 'Catch_Up'

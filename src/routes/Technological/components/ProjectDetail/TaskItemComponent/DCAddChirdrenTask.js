@@ -1,9 +1,13 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Dropdown, Menu } from 'antd'
+import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
-import { deepClone } from '../../../../../utils/util'
+import {deepClone, timeToTimestamp} from '../../../../../utils/util'
+import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
+import {FLOWS, TASKS} from "../../../../../globalset/js/constant";
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
+
 const TextArea = Input.TextArea
 
 export default class DCAddChirdrenTask extends React.Component{
@@ -20,7 +24,7 @@ export default class DCAddChirdrenTask extends React.Component{
   }
   datePickerChange(date, dateString) {
     this.setState({
-      due_time: dateString,
+      due_time: timeToTimestamp(dateString).toString(),
       isSelectCalendarIcon: true
     })
   }
@@ -110,16 +114,25 @@ export default class DCAddChirdrenTask extends React.Component{
   }
 
   render() {
-    const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar } = this.state
+    const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar, executors = [] } = this.state
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
     const { data = [] } = projectDetailInfoData //任务执行人列表
+
+    let executor = {//任务执行人信息
+      user_id: '',
+      full_name: '',
+      avatar: '',
+    }
+    if(executors.length) {
+      executor = executors[0]
+    }
 
     return(
       <div className={DrawerContentStyles.divContent_1}>
         {child_data.map((value, key) => {
           return (
-            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={key} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={value.card_id} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
@@ -128,20 +141,36 @@ export default class DCAddChirdrenTask extends React.Component{
               <div>
                 <Icon type="plus" style={{marginRight: 4}}/>
                 <input onFocus={this.addInputFocus.bind(this)}
-                       placeholder={'子任务'}
+                       placeholder={`子${currentNounPlanFilterName(TASKS)}`}
                        onChange={this.setchirldTaskNameChange.bind(this)}
                        onBlur={this.setchirldTaskNameBlur.bind(this)}
                        value={this.state.name}
                 />
               </div>
-              <div style={{display: isShowUserCalendar ? 'block':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
+              <div style={{display: isShowUserCalendar ? 'flex':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
                   <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
                 }>
-                  <Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>
+                  {executor.user_id? (
+                    <Tooltip title={executor.full_name || '佚名'}>
+                      {/*{imgOrAvatar(executor.avatar)}*/}
+                      <Avatar size={16} src={executor.avatar} style={{fontSize: 14 , margin:'4px 12px 0 12px',}}>{executor.full_name.substring(0,1) || '佚'}</Avatar>
+                    </Tooltip>
+                  ) : (
+                    <div>
+                      {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
+                      <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}}>&#xe70c;</div>
+                    </div>
+                  )}
+                  {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>*/}
                 </Dropdown>
-                <Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>
-                <DatePicker onChange={this.datePickerChange.bind(this)} placeholder={'选择截止日期'} style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
+                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}`} style={{fontSize: 16,marginRight:'12px',cursor: 'pointer'}}>&#xe709;</div>
+                {/*<Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>*/}
+                <DatePicker onChange={this.datePickerChange.bind(this)}
+                            placeholder={'选择截止日期'}
+                            format="YYYY/MM/DD HH:mm"
+                            showTime={{format: 'HH:mm'}}
+                            style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
                 <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
               </div>
             </div>

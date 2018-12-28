@@ -41,7 +41,7 @@ class BindAccountForm extends React.Component {
     });
   }
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!validateTel(values['mobile'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
@@ -52,7 +52,6 @@ class BindAccountForm extends React.Component {
         type: '3'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
-      // calback && typeof calback === 'function' ? calback() : ''
     })
   }
   mobileChange(e) {

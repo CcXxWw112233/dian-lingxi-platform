@@ -42,10 +42,11 @@ class PersonalInfoForm extends React.Component {
   render() {
     const that = this
     const { getFieldDecorator } = this.props.form;
-    const { accountSet = {} } = this.props
-    const { datas = {} } = accountSet
+    const { model = {} } = this.props
+    const { datas = {} } = model
     const { userInfo = {} } = datas
     const {
+      current_org = {},
       orgnization,
       about_me,
       avatar,
@@ -64,6 +65,7 @@ class PersonalInfoForm extends React.Component {
       username,
       wechat,
     } = userInfo
+    const current_org_name = current_org['name']
     // 表单样式设置
     const formItemLayout = {
       labelCol: {
@@ -95,7 +97,6 @@ class PersonalInfoForm extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
-        console.log(file)
         if (file.status === 'uploading') {
           that.setState({
             uploading: true
@@ -105,11 +106,6 @@ class PersonalInfoForm extends React.Component {
           that.setState({
             uploading: false
           })
-          if (file.response && file.response.data) {
-            that.setState({
-              avatarUrl: file.response.data
-            })
-          }
         }
         if (file.status === 'done') {
           message.success(`头像上传成功。`);
@@ -122,9 +118,9 @@ class PersonalInfoForm extends React.Component {
             uploading: false
           })
         }
-        if (file.response && file.response.code === 0) {
-          const { accountSet = {} } = that.props
-          const { datas = {} } = accountSet
+        if (file.response && file.response.code === '0') {
+          const { model = {} } = that.props
+          const { datas = {} } = model
           const { userInfo = {} } = datas
           userInfo['avatar'] = file.response.data.avatar
           that.props.updateDatas({
@@ -152,21 +148,21 @@ class PersonalInfoForm extends React.Component {
           )}
         </FormItem>
         {/* 职位 */}
-        <FormItem
-          {...formItemLayout}
-          label={(
-            <span style={{fontSize: 16}}>
-              职位
-            </span>
-          )}
-        >
-          {getFieldDecorator('job', {
-            initialValue: job || undefined,
-            rules: [{ required: false, message: '请输入职位', whitespace: true }],
-          })(
-            <Input placeholder="" className={indexStyle.personInfoInput}/>
-          )}
-        </FormItem>
+        {/*<FormItem*/}
+          {/*{...formItemLayout}*/}
+          {/*label={(*/}
+            {/*<span style={{fontSize: 16}}>*/}
+              {/*职位*/}
+            {/*</span>*/}
+          {/*)}*/}
+        {/*>*/}
+          {/*{getFieldDecorator('job', {*/}
+            {/*initialValue: job || undefined,*/}
+            {/*rules: [{ required: false, message: '请输入职位', whitespace: true }],*/}
+          {/*})(*/}
+            {/*<Input placeholder="" className={indexStyle.personInfoInput}/>*/}
+          {/*)}*/}
+        {/*</FormItem>*/}
         {/* 组织 */}
         <FormItem
           {...formItemLayout}
@@ -180,7 +176,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: orgnization || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <Input placeholder="" className={indexStyle.personInfoInput}/>
+            <div className={indexStyle.personInfoInput} style={{color:'rgb(38, 38, 38)'}}>{current_org_name}</div>
           )}
         </FormItem>
         {/* 头像 */}

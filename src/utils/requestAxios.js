@@ -62,7 +62,7 @@ export default function request(options = {}, elseSet = {}) {
         method,
         params,
         data,
-        url,
+        timeout: 60000,
       }
     })
       .then(res => {
@@ -80,13 +80,17 @@ export default function request(options = {}, elseSet = {}) {
               Cookies.remove('userInfo', { path: '' })
               if(!is401) {
                 Cookies.set('is401', true, {expires: 30, path: ''})
-                window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+                setTimeout(function () {
+                  window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+                },1000)
               }else{
               }
               break
             default:
               break
           }
+        } else {
+          message.error('系统繁忙，请稍后重试！')
         }
       })
   })

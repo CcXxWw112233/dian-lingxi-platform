@@ -1,5 +1,7 @@
 import React from 'react'
 import indexStyle from './index.less'
+import globalStyles from '../../../../globalset/css/globalClassName.less'
+
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
   PROJECT_TEAM_CARD_INTERVIEW,
@@ -7,12 +9,14 @@ import {
   ORG_TEAM_BOARD_QUERY,
   PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE,PROJECT_FILES_FILE_DELETE,PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message, Input } from 'antd'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {REQUEST_DOMAIN_FILE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import MenuSearch from '../TecPublic/MenuSearch'
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 
 let is_starinit = null
 
@@ -24,12 +28,51 @@ export default class Header extends React.Component {
     ShowAddMenberModalVisibile: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
+    //修改项目名称所需state
+    localBoardName: '',
+    isInEditBoardName: false,
   }
+  componentWillMount () {
+    //设置默认项目名称
+    this.initSet(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.initSet(nextProps)
+  }
+  //初始化根据props设置state
+  initSet(props) {
+    const { datas: { projectDetailInfoData = {} } } = props.model
+    const { board_name } = projectDetailInfoData
+    this.setState({
+      localBoardName: board_name
+    })
+  }
+  //项目操作----------------start
+  //设置项目名称---start
+  setIsInEditBoardName() {
+    this.setState({
+      isInEditBoardName: !this.state.isInEditBoardName,
+    })
+  }
+  localBoardNameChange(e) {
+    this.setState({
+      localBoardName: e.target.value
+    })
+  }
+  editBoardNameComplete(e) {
+    this.setIsInEditBoardName()
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    this.props.updateProject({
+      board_id: board_id,
+      name: this.state.localBoardName
+    })
+  }
+  //设置项目名称---end
+
   setProjectInfoDisplay() {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry:  true })
   }
-
-  //项目操作----------------start
   gobackToProject(){
     this.props.routingJump('/technological/project')
   }
@@ -46,9 +89,9 @@ export default class Header extends React.Component {
       return false
     }
     Modal.confirm({
-      title: '确认要退出该项目吗？',
+      title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
-        <span >退出后将无法获取该项目的相关动态</span>
+        <span >退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
         {/*<div style={{marginTop:20,}}>*/}
         {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
         {/*</div>*/}
@@ -226,7 +269,7 @@ export default class Header extends React.Component {
     const { datas: { fileList, selectedRowKeys } } = this.props.model
     let chooseArray = []
     for(let i=0; i < selectedRowKeys.length; i++ ){
-      chooseArray.push(fileList[selectedRowKeys[i]].file_id)
+      chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
     }
     const ids = chooseArray.join(',')
     this.props.fileDownload({ids})
@@ -293,6 +336,22 @@ export default class Header extends React.Component {
   }
   //文档操作 ---end
 
+  //任务操作---start
+  //查询列表，改变方式
+  handleaskAppMenuClick(board_id, e) {
+    e.domEvent.stopPropagation();
+    const { key } = e
+    this.props.updateDatas({
+      getTaskGroupListArrangeType: key
+    })
+    this.props.getTaskGroupList({
+      type: '2',
+      board_id: board_id,
+      arrange_type: key
+    })
+  }
+  //任务操作---end
+
   //团队展示发布编辑
   editTeamShowPreview() {
     const that = this
@@ -317,11 +376,12 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}}} = this.props.model
-    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection} = this.state
+    const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId , processInfo = {}, getTaskGroupListArrangeType = '1'}} = this.props.model
+    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection,localBoardName, isInEditBoardName } = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
     const processName = processInfo.name
     is_starinit = is_star
+    //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
@@ -331,18 +391,18 @@ export default class Header extends React.Component {
         </Menu.Item>
         <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
-            项目归档
+            {currentNounPlanFilterName(PROJECTS)}归档
           </div>
         </Menu.Item>
         <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
-            删除项目
+            删除{currentNounPlanFilterName(PROJECTS)}
           </div>
         </Menu.Item>
         {is_create !== '1'? (
           <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectDangerMenu}>
-              退出项目
+              退出{currentNounPlanFilterName(PROJECTS)}
             </div>
           </Menu.Item>
         ) : ('')}
@@ -396,6 +456,45 @@ export default class Header extends React.Component {
       },
     };
 
+    //任务列表查询方式
+    const taskAppMenu = (
+      <Menu onClick={this.handleaskAppMenuClick.bind(this, board_id)}>
+        <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按分组名称排序
+          </div>
+        </Menu.Item>
+        <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按执行人排序
+          </div>
+        </Menu.Item>
+        <Menu.Item key={'3'} style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            按标签排序
+          </div>
+        </Menu.Item>
+      </Menu>
+    )
+    const filterGetTaskGroupListType = (getTaskGroupListArrangeType) => {
+      let name = ''
+      switch (getTaskGroupListArrangeType) {
+        case '1':
+          name = '按分组名称排序'
+          break
+        case '2':
+          name = '按执行人排序'
+          break
+        case '3':
+          name = '按标签排序'
+          break
+        default:
+          name = '按分组名称排序'
+          break
+      }
+      return name
+    }
+
     const appsOperator = (appsSelectKey) => {  //右方操作图标
       let operatorConent = ''
       switch (appsSelectKey) {
@@ -403,7 +502,7 @@ export default class Header extends React.Component {
           operatorConent = (
             <div  style={{color:'#595959'}}>
               <Dropdown overlay={<MenuSearch {...this.props}/>}>
-                 <span>{processName || '请选择流程 '}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
+                 <span>{processName || `请选择${currentNounPlanFilterName(FLOWS)}`}<Icon type="down"  style={{fontSize:14,color:'#595959'}}/></span>
               </Dropdown>
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
               <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
@@ -413,7 +512,9 @@ export default class Header extends React.Component {
         case '3':
           operatorConent = (
             <div>
-              <span>按分组名称排列 <Icon type="down"  style={{fontSize:14,color:'#bfbfbf'}}/></span>
+              <Dropdown overlay={taskAppMenu}>
+              <span style={{fontSize:14,color:'#595959'}}>{filterGetTaskGroupListType(getTaskGroupListArrangeType)} <Icon type="down"  /></span>
+              </Dropdown>
               <Icon type="appstore-o"  style={{fontSize:14,marginTop:18,marginLeft:14}}/>
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
               {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
@@ -487,26 +588,51 @@ export default class Header extends React.Component {
       }
       return operatorConent
     }
+
+    const cancelStarProjet = (
+      <i className={globalStyles.authTheme}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',color: '#FAAD14 ',fontSize: 20}}>&#xe70e;</i>
+    )
+    const starProject = (
+      <i className={globalStyles.authTheme}
+         onClick={this.starClick.bind(this, board_id)}
+         style={{margin: '0 0 0 8px',color: '#FAAD14 ',fontSize: 20}}>&#xe6f8;</i>
+    )
+
     return (
-      <div>
+      // style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}
+      <div className={globalStyles.page_min_width} style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}>
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
-               <span className={indexStyle.projectName}>{board_name}</span>
-               <Icon className={indexStyle.star}
-                     onClick={this.starClick.bind(this, board_id)}
-                     type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}
-                     style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />
+             {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
+             {!isInEditBoardName?(
+               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+             ) : (
+               <Input value={localBoardName}
+                      className={indexStyle.projectName}
+                      autoFocus
+                      onChange={this.localBoardNameChange.bind(this)}
+                      onPressEnter={this.editBoardNameComplete.bind(this)}
+                      onBlur={this.editBoardNameComplete.bind(this)} />
+             )}
+             {isInitEntry ? (is_star === '1'? (starProject):(cancelStarProjet)):(isCollection? (starProject):(cancelStarProjet))}
+
+             {/*<Icon className={indexStyle.star}*/}
+                     {/*onClick={this.starClick.bind(this, board_id)}*/}
+                     {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}*/}
+                     {/*style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />*/}
                <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)} >
-                 <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}}/>
+                 <Icon type="ellipsis"  style={{fontSize:24,margin: '4px 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}}/>
                </Dropdown>
            </div>
            <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>
              {projectInfoDisplay ? (
-               <span><Icon type="left" style={{marginRight:2}}/>收起项目信息</span>
+               <span><Icon type="left" style={{marginRight:2}}/>收起{currentNounPlanFilterName(PROJECTS)}信息</span>
              ):(
-               <span>查看项目信息<Icon type="right" style={{marginLeft:2}}/></span>
+               <span>查看{currentNounPlanFilterName(PROJECTS)}信息<Icon type="right" style={{marginLeft:2}}/></span>
              )}
 
            </div>
@@ -514,9 +640,9 @@ export default class Header extends React.Component {
         <div className={indexStyle.right}>
           <div className={indexStyle.right_top} >
             {app_data.map((value, itemkey) => {
-              const { app_name, key } = value
+              const { app_name, key, app_code } = value
               return (
-                <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_name}</div>
+                <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_code && currentNounPlanFilterName(app_code) ?currentNounPlanFilterName(app_code) : app_name}</div>
               )
             })}
           </div>

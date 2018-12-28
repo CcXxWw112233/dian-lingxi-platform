@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Tooltip } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Tooltip,Avatar } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
@@ -27,6 +27,26 @@ export default class DetailConfirmInfoTwo extends React.Component {
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
+    this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.propsChangeSetIsShowBottDetail(nextProps)
+  }
+  //isShowBottDetail是否在当前步骤
+  propsChangeSetIsShowBottDetail(props) {
+    const { datas: { processEditDatas, processInfo = {} } } = props.model
+    const { itemKey } = props //所属列表位置
+    const { curr_node_sort} = processInfo //当前节点
+    const { sort } = processEditDatas[itemKey]
+    if(curr_node_sort == sort) {
+      this.setState({
+        isShowBottDetail: true
+      })
+    } else {
+      this.setState({
+        isShowBottDetail: false
+      })
+    }
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -246,8 +266,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
           break
         case '2':
           container = (
-            <div style={{position: 'relative' }}  style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '-',true)}
+            <div style={{color: '#595959'}}>
+              {timestampToTimeNormal(deadline_value, '/',true)}
             </div>
           )
           break
@@ -347,6 +367,25 @@ export default class DetailConfirmInfoTwo extends React.Component {
       }
       return contianner
     }
+    const AnnotationListItem = (value) => {
+      const { name, avatar, comment, time, id } = value
+      return (
+        <div className={indexStyles.commentListItem}>
+          <div className={indexStyles.left}>
+            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+          </div>
+          <div className={indexStyles.right}>
+            <div className={indexStyles.top}>
+              <div className={indexStyles.full_name}>{name}</div>
+              <div className={indexStyles.create_time}>
+                {time?timestampToTimeNormal(time,'',true): ''}
+              </div>
+            </div>
+            <div className={indexStyles.text}>{comment}</div>
+          </div>
+        </div>
+      )
+    }
 
 
     const dragProps = {
@@ -364,7 +403,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       },
       fileList: this.state.fileList,
       beforeUpload(e) {
-        console.log('beforeUpload', e)
+        // console.log('beforeUpload', e)
         if(fileList.length >= limit_file_num ) { //已经上传的文件达到限制
           message.warn(`上传文件数量最大为${limit_file_num}个`)
           return false
@@ -389,8 +428,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
           return false
         }else {
         }
-        console.log('info',info)
-        if (status === 'done' &&  info.file.response.code === '0') {
+        // console.log('info',info)
+        if (info.file.status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
           info.fileList.pop()
@@ -443,6 +482,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
               {filterUploadContain()}
+
+              {assignees.map((value, key)=>{
+                const { comment } = value
+                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+              })}
+
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}
               </div>

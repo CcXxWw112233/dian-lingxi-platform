@@ -93,3 +93,29 @@ export async function savePermission(data) {
     data
   });
 }
+
+//获取名词列表
+export async function getNounList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/noun`,
+    method: 'GET',
+    params
+  });
+}
+//保存名词列表
+export async function saveNounList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/noun`,
+    method: 'POST',
+    data
+  });
+}
+
+//获取当前名词定义方案
+export async function getCurrentNounPlan(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/current_noun`,
+    method: 'GET',
+    params
+  });
+}

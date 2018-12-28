@@ -16,6 +16,7 @@ export default class MentionAssignees extends React.Component {
     return(
       <div>
         <Mention
+          placeholder={'输入“@”选择'}
         style={{ width: '100%', height: 70 }}
         onChange={this.mentionOnChange.bind(this)}
         defaultValue={toContentState(defaultAssignees)}

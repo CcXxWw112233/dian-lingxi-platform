@@ -10,7 +10,22 @@ export async function addTaskGroup(data) {
     data,
   });
 }
-
+//更新任务分组
+export async function updateTaskGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists`,
+    method: 'PUT',
+    data,
+  });
+}
+//删除任务分组
+export async function deleteTaskGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/${data.id}`,
+    method: 'DELETE',
+    data,
+  });
+}
 // 任务列表
 export async function getTaskGroupList(params) {
   return request({
@@ -138,7 +153,14 @@ export async function addCardNewComment(data) {
     data
   });
 }
-
+// s删除评论
+export async function deleteCardNewComment(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/comment/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
 
 //获取项目分组列表
 export async function getProjectGoupList() {
@@ -147,3 +169,50 @@ export async function getProjectGoupList() {
     method: 'GET',
   });
 }
+
+//删除任务文件
+export async function deleteTaskFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/attachment/${data.attachment_id}`,
+    method: 'DELETE',
+    data
+  });
+}
+
+
+//标签----------------------------
+//获取项目标签列表
+export async function getBoardTagList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'GET',
+    params
+  });
+}
+//更新项目标签
+export async function updateBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'PUT',
+    data
+  });
+}
+
+//置顶项目标签
+export async function toTopBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label/top`,
+    method: 'PUT',
+    data
+  });
+}
+
+//删除项目标签
+export async function deleteBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
+

@@ -6,8 +6,8 @@ import CollectionProject from './CollectionProject'
 import ElseProject from './ElseProject'
 import AddModalForm from "./AddModalForm";
 import ShowAddMenberModal from './ShowAddMenberModal'
-import { checkIsHasPermission } from '../../../../utils/businessFunction'
-import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE} from "../../../../globalset/js/constant";
+import { checkIsHasPermission,currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE, PROJECTS} from "../../../../globalset/js/constant";
 import { message } from 'antd'
 
 const Panel = Collapse.Panel
@@ -21,9 +21,14 @@ export default class Projectlist extends React.Component {
     }
     this.props.showModal()
   }
+  collapseOnchange(e) {
+    this.props.updateDatas({
+      collapseActiveKeyArray:e
+    })
+  }
   render() {
     const { datas = {} } = this.props.model
-    const { projectList = {} }  = datas
+    const { projectList = {}, collapseActiveKeyArray = [] }  = datas
     const { star = [], create = [], participate = [] } = projectList
 
     const addItem = (
@@ -33,20 +38,20 @@ export default class Projectlist extends React.Component {
     )
     return (
       <div className={indexStyle.projectListOut}>
-        <Collapse accordion bordered={false} style={{backgroundColor:'#f5f5f5',marginTop: 30}} >
-          <Panel header="我收藏的项目" key="1"  style={customPanelStyle}>
+        <Collapse onChange={this.collapseOnchange.bind(this)} bordered={false} style={{backgroundColor:'#f5f5f5',marginTop: 30}} activeKey	= {collapseActiveKeyArray} >
+          <Panel header={`我收藏的${currentNounPlanFilterName(PROJECTS)}`} key="1"  style={customPanelStyle}>
             {star.map((value, key) => (
               <ElseProject {...this.props} itemDetailInfo={value} key={key}/>
             ))}
             {/*{addItem}*/}
           </Panel>
-          <Panel header="我管理的项目" key="2"  style={customPanelStyle}>
+          <Panel header={`我管理的${currentNounPlanFilterName(PROJECTS)}`} key="2"  style={customPanelStyle}>
             {create.map((value, key) => (
               <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
             ))}
             {addItem}
           </Panel>
-          <Panel header="我参与的项目" key="3"  style={customPanelStyle}>
+          <Panel header={`我参与的${currentNounPlanFilterName(PROJECTS)}`} key="3"  style={customPanelStyle}>
             {participate.map((value, key) => (
               <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
             ))}

@@ -72,10 +72,20 @@
     }
   }
   .contain_4{
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 14px;
     overflow: hidden;
     color: #595959;
+    img{
+      width: 160px;
+      height: auto;
+      margin: 0 auto;
+    }
+    video{
+      width: 160px;
+      height: auto;
+      margin: 0 auto;
+    }
   }
   .editorWraper{
     background: #FFFFFF;
@@ -86,10 +96,11 @@
     border: 1px solid rgba(217,217,217,1);
     border-radius: 4px;  }
   .contain_5{
-    margin-top: 20px;
+    margin-top: 12px;
     font-size: 14px;
     color: #d9d9d9;
     display: flex;
+    flex-wrap: wrap;
     .contain_5_add{
       height: 22px;
       width: 64px;
@@ -169,11 +180,20 @@
         .userIconNormal, .calendarIconNormal {
           color: #8c8c8c;
         }
-        .userIconNormal:hover, .calendarIconNormal:hover, .userIconSelected, .calendarIconSelected{
+        .userIconNormal:hover, .calendarIconNormal:hover, .userIconSelected{
           color: #595959;
         }
       }
     }
+  }
+  .userIconNormal, .calendarIconNormal {
+    color: #8c8c8c;
+  }
+  .userIconNormal:hover, .calendarIconNormal:hover, .userIconSelected{
+    color: #595959;
+  }
+  .calendarIconSelected {
+    color: #1890ff;
   }
 }
 

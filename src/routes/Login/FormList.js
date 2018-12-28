@@ -6,6 +6,7 @@ import globalStyles from '../../globalset/css/globalClassName.less'
 import VerificationCodeTwo from  '../../components/VerificationCodeTwo'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -17,11 +18,7 @@ const RangePicker = DatePicker.RangePicker
 class FormList extends React.Component {
 
   state={
-    accountType: 'phone',    //账户类型，默认手机号，可选email
-    loginType: 'password', //登录方式,验证码登录
     isMobile: false, //验证输入过程是手机号的时候,是否正确手机号，用来判断是否获取验证码按钮 样式
-    verifyCodeButtonClicked: false, //验证码按钮是否点击过，用来作为密码框输入时判断，如果没有点击过直接输入则是password类型，隐藏按钮
-    isShowCodeButton: true, //是否显示验证码按钮
   }
 
   //  重置表单
@@ -37,11 +34,12 @@ class FormList extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        const { loginType } = this.props
         if(!validateTel(values['account']) && !validateEmail(values['account'])) { //输入既不满足手机号又不满足邮箱
           message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
           return false
         }
-        if(this.state.loginType === 'password') {
+        if(loginType === 'password') {
           if(!validatePassword(values['password'])) {
             message.warn('密码至少为包含字母与数字的6位数字符串。', MESSAGE_DURATION_TIME)
             return false
@@ -51,6 +49,9 @@ class FormList extends React.Component {
             message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
             return false
           }
+        }
+        if(values['password'] ) {
+          values['password'] = sha256(values['password'])
         }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
@@ -83,40 +84,19 @@ class FormList extends React.Component {
     const value = e.target.value
     let loginType =this.state.loginType
     if(name === 'account') { //输入框是账户
-      let accountType = ''
       let isMobile = !!validateTel(value)
-      if(!isNaN(value)) { //如果用户输入的是手机号,纯数字 && validateTel(value)
-        accountType = 'phone'
-      } else {
-        accountType = 'email'
-        loginType = 'password'
-      }
-
       this.setState({
-        accountType,
         isMobile,
-        loginType
-      })
-    }
-  }
-  //密码输入过程验证
-  loginTypeByChange = (e) => {
-    const value = e.target.value
-    if(!this.state.verifyCodeButtonClicked || this.state.loginType === 'password') {
-      this.setState({
-        isShowCodeButton: false
-      })
-    }
-    if(!value) {
-      this.setState({
-        isShowCodeButton: true
       })
     }
   }
 
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
+      if(!values['account']) {
+        return false
+      }
       if(!validateTel(values['account'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
         return false
@@ -130,14 +110,15 @@ class FormList extends React.Component {
         type: '2'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
-      // calback && typeof calback === 'function' ? calback() : ''
     })
   }
-
+  routingJump(path) {
+    this.props.routingJump(path)
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { loginType, accountType, isShowCodeButton} = this.state
-
+    const { isMobile} = this.state
+    const { loginType } = this.props
     return (
       <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
         {/* 输入账户 */}
@@ -165,18 +146,21 @@ class FormList extends React.Component {
                 style={{height: '40px',fontSize: 16, color: '#8C8C8C'}}
                 prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
                 maxLength={32} placeholder={loginType === 'password'? '密码' : '验证码'}
-                type={accountType === 'email' ? 'password' : (loginType === 'password'? 'password' : 'text')}
-                onChange= {(e) => this.loginTypeByChange(e)}
+                type={loginType === 'password'? 'password' : 'text'}
               />
             )}
           </FormItem>
-          {accountType === 'phone' && isShowCodeButton ? (
-            <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
-              <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
-              {/*<div>获取验证码</div>*/}
-              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={this.state.isMobile ? globalStyles.link_mouse : ''} style={{height: '38px',marginTop:1,backgroundColor:'#ffffff',fontSize: 16,width: 120,textAlign: 'center'}} text={'获取验证码'}/>
-            </div>
-          ) : ('')}
+          <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
+            <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
+            {loginType==='password'? (
+              <div className={globalStyles.link_mouse}
+                   onClick={this.routingJump.bind(this,'/retrievePassword')}
+                   style={{height: '36px',marginTop:2,backgroundColor:'#ffffff',fontSize: 16,width: 100, lineHeight: '36px',textAlign: 'center'}}>忘记密码</div>
+            ): (
+              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile?globalStyles.link_mouse : ''} style={{height: '36px',marginTop:2,backgroundColor:'#ffffff',fontSize: 16,width: 100,lineHeight: '36px',textAlign: 'center'}} text={'获取验证码'}/>
+            )}
+          </div>
+
         </div>
 
         {/* 确认 */}

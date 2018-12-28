@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip } from 'antd'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip,Avatar } from 'antd'
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
@@ -20,6 +20,26 @@ export default class DetailConfirmInfoFive extends React.Component {
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
+    this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentWillReceiveProps (nextProps) {
+    this.propsChangeSetIsShowBottDetail(nextProps)
+  }
+  //isShowBottDetail是否在当前步骤
+  propsChangeSetIsShowBottDetail(props) {
+    const { datas: { processEditDatas, processInfo = {} } } = props.model
+    const { itemKey } = props //所属列表位置
+    const { curr_node_sort} = processInfo //当前节点
+    const { sort } = processEditDatas[itemKey]
+    if(curr_node_sort == sort) {
+      this.setState({
+        isShowBottDetail: true
+      })
+    } else {
+      this.setState({
+        isShowBottDetail: false
+      })
+    }
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -96,7 +116,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
     const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, approve_type, approve_value } = processEditDatas[itemKey]
-    console.log( processEditDatas[itemKey])
+    // console.log( processEditDatas[itemKey])
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -110,7 +130,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     const userInfo = JSON.parse(Cookies.get('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
     for(let i = 0; i <assignees.length; i++) {
-      if(assignees[i].user_id === currentUserId) {
+      if(assignees[i]['user_id'] === currentUserId && assignees[i]['processed'] === '1') {
         currentUserCanOperate = true
         break
       }
@@ -177,8 +197,8 @@ export default class DetailConfirmInfoFive extends React.Component {
           break
         case '2':
           container = (
-            <div style={{position: 'relative' }}  style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '-',true)}
+            <div  style={{color: '#595959'}}>
+              {timestampToTimeNormal(deadline_value, '/',true)}
             </div>
           )
           break
@@ -283,7 +303,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     }
 
     const imgOrAvatar2 = (value, key) => {
-      const { avatar, name, mobile, email, processed } = value
+      const { avatar, name, mobile, email, processed } = value  // processed 0未完成 1正在进行中 2通过 其他 异常
       return  avatar ? (
         <div style={{display: 'flex',alignItems: 'center'}}>
           <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
@@ -336,6 +356,25 @@ export default class DetailConfirmInfoFive extends React.Component {
         </div>
       )
     }
+    const AnnotationListItem = (value) => {
+      const { name, avatar, comment, time, id } = value
+      return (
+        <div className={indexStyles.commentListItem}>
+          <div className={indexStyles.left}>
+            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+          </div>
+          <div className={indexStyles.right}>
+            <div className={indexStyles.top}>
+              <div className={indexStyles.full_name}>{name}</div>
+              <div className={indexStyles.create_time}>
+                {time?timestampToTimeNormal(time,'',true): ''}
+              </div>
+            </div>
+            <div className={indexStyles.text}>{comment}</div>
+          </div>
+        </div>
+      )
+    }
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
@@ -375,6 +414,11 @@ export default class DetailConfirmInfoFive extends React.Component {
                   {filterSeeAssignee(assignee_type)}
                 </div>
               </div>
+
+              {assignees.map((value, key)=>{
+                const { comment } = value
+                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+              })}
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {/*<div>转办该审批</div>*/}

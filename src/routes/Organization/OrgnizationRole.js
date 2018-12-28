@@ -249,7 +249,7 @@ export default class OrgnizationRole extends React.Component {
                       is_default === '1' ? (<div>默认角色</div>) : ('')
                     )}
                   </div>
-                  <div className={indexStyles.parrentPanaelHeader_r}>
+                  <div className={indexStyles.parrentPanaelHeader_r} style={{display: 'block'}}>
                     {system_role !== '1'?(
                       <Dropdown overlay={operateMenu({parentKey, value})}>
                         <Icon type="ellipsis" theme="outlined" />
@@ -265,7 +265,7 @@ export default class OrgnizationRole extends React.Component {
                     const { name } = value
                     return(
                       <Panel header={<
-                        div style={childrenPanelTitle}>
+                        div style={childrenPanelTitle} key={childKey}>
                         <Checkbox
                           disabled={checkDisabled}
                           indeterminate={indeterminate}
@@ -283,7 +283,7 @@ export default class OrgnizationRole extends React.Component {
                               {child_data.map((value, key) => {
                                 const { id, name } = value
                                 return(
-                                  <Col span={8}><Checkbox value={id}>{name}</Checkbox></Col>
+                                  <Col span={8} key={key}><Checkbox value={id}>{name}</Checkbox></Col>
                                 )
                               })}
                             </Row>

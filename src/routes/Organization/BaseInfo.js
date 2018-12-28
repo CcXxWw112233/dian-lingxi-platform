@@ -2,12 +2,13 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Input, Radio, Button, message, Upload, Icon } from 'antd'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, REQUEST_DOMAIN,ORG_UPMS_ORGANIZATION_EDIT,
-  UPLOAD_FILE_SIZE
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, REQUEST_DOMAIN,
+  ORG_UPMS_ORGANIZATION_EDIT,
+  UPLOAD_FILE_SIZE, PROJECTS, ORGANIZATION, MEMBERS
 } from "../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import {validateEmail, validateEmailSuffix} from "../../utils/verify";
-import {checkIsHasPermission} from "../../utils/businessFunction";
+import {checkIsHasPermission, currentNounPlanFilterName} from "../../utils/businessFunction";
 const RadioGroup = Radio.Group;
 //
 export default class BaseInfo extends React.Component {
@@ -46,9 +47,11 @@ export default class BaseInfo extends React.Component {
     this.storeChange('member_join_content', newvalue)
   }
   deleteUpload() {
-    this.setState({
-      logo: '',
-      logo_id: '',
+    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    currentOrganizationInfo['logo'] = ''
+    currentOrganizationInfo['logo_id'] = ''
+    this.props.updateDatas({
+      currentOrganizationInfo
     })
   }
   finallySave() {
@@ -160,11 +163,11 @@ export default class BaseInfo extends React.Component {
     return (
       <div className={indexStyles.baseInfoOut}>
         <div className={indexStyles.baseInfo_title}>
-          组织名称
+          {currentNounPlanFilterName(ORGANIZATION)}名称
         </div>
-        <Input placeholder={'输入组织名称'} value={name} style={{marginTop: 8}} onChange={this.nameChange.bind(this)}/>
+        <Input placeholder={`输入${currentNounPlanFilterName(ORGANIZATION)}名称`} value={name} style={{marginTop: 8}} onChange={this.nameChange.bind(this)}/>
         <div className={indexStyles.baseInfo_title_2}>
-          组织LOGO
+          {currentNounPlanFilterName(ORGANIZATION)}LOGO
         </div>
         <div  className={indexStyles.baseInfo_des}>你的企业标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
         <div className={indexStyles.UploadOut}>
@@ -187,9 +190,9 @@ export default class BaseInfo extends React.Component {
         </div>
 
         <div className={indexStyles.baseInfo_title_2}>
-          成员加入模式
+          {currentNounPlanFilterName(MEMBERS)}加入模式
         </div>
-        <div  className={indexStyles.baseInfo_des}>设置新成员以何种方式加入或找到组织。</div>
+        <div  className={indexStyles.baseInfo_des}>设置新{currentNounPlanFilterName(MEMBERS)}以何种方式加入或找到{currentNounPlanFilterName(ORGANIZATION)}。</div>
         <RadioGroup onChange={this.ratioOnChange} value={member_join_model} style={{marginTop: 8}}>
           <Radio style={radioStyle} value={'1'}>仅能通过邀请加入</Radio>
           <Radio style={radioStyle} value={'2'}>申请加入者需通过许可</Radio>

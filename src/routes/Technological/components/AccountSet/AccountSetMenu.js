@@ -13,17 +13,17 @@ export default class AccountSetMenu extends React.Component {
     SelectedKeys : '1', //菜单所选项
   }
   //选择菜单
-  handleMenuClick = (e) => {
-    // this.setState({
-    //   SelectedKeys: e.key
-    // })
+  handleMenuClick = ({key}) => {
     this.props.updateDatas({
-      SelectedKeys: e.key
+      SelectedKeys: key
     })
+    if(key === '1') {
+      this.props.getUserInfo()
+    }
   }
   //返回所选菜单对应内容
   filterFormComponet() {
-    const {datas = { }} = this.props.accountSet
+    const {datas = { }} = this.props.model
     const { SelectedKeys } = datas
 
     let Dom
@@ -43,7 +43,7 @@ export default class AccountSetMenu extends React.Component {
     return Dom
   }
   render() {
-    const {datas = { }} = this.props.accountSet
+    const {datas = { }} = this.props.model
     const { SelectedKeys } = datas
     return (
       <div className={indexStyle.menuOut}>

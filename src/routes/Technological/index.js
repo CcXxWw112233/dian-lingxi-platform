@@ -33,129 +33,127 @@ const getEffectOrReducerByName = name => `technological/${name}`
 //     // console.log(str2)
 //   }
 // }
-const Technological = (options) => {
-  const { dispatch, model } = options
-  const app = dva();
-  //导航栏props-------------
-  const HeaderNavProps = {
-    model,
-    logout() {
-      dispatch({
-        type: getEffectOrReducerByName('logout'),
-      })
-    },
-    routingJump(path) {
-      dispatch({
-        type: getEffectOrReducerByName('routingJump'),
-        payload: {
-          route:path,
-        },
-      })
-    },
-    updateDatas (payload) {
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas') ,
-        payload:payload
-      })
-    },
-    //组织
-    getSearchOrganizationList(data) {
-      dispatch({
-        type: getEffectOrReducerByName('getSearchOrganizationList'),
-        payload: data
-      })
-    },
-    createOrganization(data) {
-      dispatch({
-        type: getEffectOrReducerByName('createOrganization'),
-        payload: data
-      })
-    },
-    updateOrganization(data) {
-      dispatch({
-        type: getEffectOrReducerByName('updateOrganization'),
-      })
-    },
-    applyJoinOrganization(data) {
-      dispatch({
-        type: getEffectOrReducerByName('applyJoinOrganization'),
-        payload: data
-      })
-    },
-    inviteJoinOrganization(data) {
-      dispatch({
-        type: getEffectOrReducerByName('inviteJoinOrganization'),
-        payload: data
-      })
-    },
-    uploadOrganizationLogo(data) {
-      dispatch({
-        type: getEffectOrReducerByName('uploadOrganizationLogo'),
-        payload: data
-      })
-    },
-    changeCurrentOrg(data) {
-      dispatch({
-        type: getEffectOrReducerByName('changeCurrentOrg'),
-        payload: data
-      })
+@connect(mapStateToProps)
+export default class Technological extends React.Component{
+
+  render() {
+    const { dispatch, model } = this.props
+    const app = dva();
+    //导航栏props-------------
+    const HeaderNavProps = {
+      model,
+      logout() {
+        dispatch({
+          type: getEffectOrReducerByName('logout'),
+        })
+      },
+      routingJump(path) {
+        dispatch({
+          type: getEffectOrReducerByName('routingJump'),
+          payload: {
+            route:path,
+          },
+        })
+      },
+      updateDatas (payload) {
+        dispatch({
+          type: getEffectOrReducerByName('updateDatas') ,
+          payload:payload
+        })
+      },
+      //组织
+      getSearchOrganizationList(data) {
+        dispatch({
+          type: getEffectOrReducerByName('getSearchOrganizationList'),
+          payload: data
+        })
+      },
+      createOrganization(data) {
+        dispatch({
+          type: getEffectOrReducerByName('createOrganization'),
+          payload: data
+        })
+      },
+      updateOrganization(data) {
+        dispatch({
+          type: getEffectOrReducerByName('updateOrganization'),
+        })
+      },
+      applyJoinOrganization(data) {
+        dispatch({
+          type: getEffectOrReducerByName('applyJoinOrganization'),
+          payload: data
+        })
+      },
+      inviteJoinOrganization(data) {
+        dispatch({
+          type: getEffectOrReducerByName('inviteJoinOrganization'),
+          payload: data
+        })
+      },
+      uploadOrganizationLogo(data) {
+        dispatch({
+          type: getEffectOrReducerByName('uploadOrganizationLogo'),
+          payload: data
+        })
+      },
+      changeCurrentOrg(data) {
+        dispatch({
+          type: getEffectOrReducerByName('changeCurrentOrg'),
+          payload: data
+        })
+      }
     }
+
+    //-----------------
+
+    const routes = [
+      {
+        path: '/technological/accoutSet',
+        component: () => import('./components/AccountSet'),
+      }, {
+        path: '/technological/project',
+        component: () => import('./components/Project'),
+      }, {
+        path: '/technological/projectDetail/:id?',
+        component: () => import('./components/ProjectDetail'),
+      }, {
+        path: '/technological/newsDynamic',
+        component: () => import('./components/NewsDynamic'),
+      }, {
+        path: '/technological/workbench',
+        component: () => import('./components/Workbench'),
+      }, {
+        path: '/technological/organizationMember',
+        component: () => import('./components/OrganizationMember'),
+      }
+    ]
+    return (
+      <LocaleProvider locale={zh_CN}>
+        {/*minWidth:1440, */}
+        <div className={globalClassNmae.page_style_3} style={{ position: 'relative'}}>
+          <HeaderNav {...HeaderNavProps}/>
+          {
+            routes.map(({ path, ...dynamics }, key) =>{
+              return (<Route key={key}
+                             exact
+                             path={path}
+                             component={dynamic({
+                               app,
+                               ...dynamics,
+                             })}
+                />
+              )})
+          }
+        </div>
+      </LocaleProvider>
+    );
   }
 
-  //-----------------
-
-  const routes = [
-    {
-      path: '/technological/accoutSet',
-      component: () => import('./components/AccountSet'),
-    }, {
-      path: '/technological/project',
-      component: () => import('./components/Project'),
-    }, {
-      path: '/technological/projectDetail/:id?',
-      component: () => import('./components/ProjectDetail'),
-    }, {
-      path: '/technological/newsDynamic',
-      component: () => import('./components/NewsDynamic'),
-    }, {
-      path: '/technological/workbench',
-      component: () => import('./components/Workbench'),
-    }, {
-      path: '/technological/organizationMember',
-      component: () => import('./components/OrganizationMember'),
-    }
-  ]
-  return (
-    <LocaleProvider locale={zh_CN}>
-      <div className={globalClassNmae.page_style_3} style={{ minWidth:1440, position: 'relative'}}>
-        <HeaderNav {...HeaderNavProps}/>
-        {
-          routes.map(({ path, ...dynamics }, key) =>{
-            return (<Route key={key}
-                   exact
-                   path={path}
-                   component={dynamic({
-                     app,
-                     ...dynamics,
-                   })}
-            />
-          )})
-        }
-      </div>
-    </LocaleProvider>
-  );
 };
-// export default Products;
-// export default connect(({ technological }) => {
-//   return({
-//     technological,
-//   })
-//
-// })(Technological);
-
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, technological, loading }) {
   return { modal, model: technological, loading }
 }
-export default connect(mapStateToProps)(Technological)
+// export default connect(mapStateToProps)(Technological)

@@ -6,6 +6,7 @@ import VerificationCode from  '../../components/VerificationCode'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
+import sha256 from 'js-sha256'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -22,6 +23,18 @@ class FormList extends React.Component {
     phoneBlurCheck: true,
     emailBlurCheck: true,
     passwordBlurCheck: true,
+    submitButtonDisabled: true,
+    name: '',
+    email: '',
+    mobile: '',
+    verifycode: '',
+    password: '',
+  }
+
+  setFormFieldsState(type,e){
+    this.setState({
+      [type]: e.target.value
+    })
   }
 
   //  重置表单
@@ -44,8 +57,16 @@ class FormList extends React.Component {
           message.warn('请输入姓名。', MESSAGE_DURATION_TIME)
           return false
         }
-        if(!values['mobile'] && !values['email']) {
-          message.warn('手机号和邮箱必须选择输入其中一项。', MESSAGE_DURATION_TIME)
+        if(!values['email'] ) {
+          message.warn('请输入邮箱地址', MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(values['email'] && !validateEmail(values['email'])) {
+          message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(!values['mobile'] ) {
+          message.warn('请输入手机号', MESSAGE_DURATION_TIME)
           return false
         }
         if(values['mobile']){
@@ -53,18 +74,21 @@ class FormList extends React.Component {
             message.warn('请输入正确格式的手机号，目前仅支持中国大陆区域的手机号码。', MESSAGE_DURATION_TIME)
             return false
           }
-          if(!values['verifycode']) {
-            message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
-            return false
-          }
+        }
+        if(!values['verifycode']) {
+          message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(!values['password']) {
+          message.warn('请输入密码', MESSAGE_DURATION_TIME)
+          return false
         }
         if(!validatePassword(values['password'])) {
           message.warn('密码至少为包含字母与数字的6位数字符串。', MESSAGE_DURATION_TIME)
           return false
         }
-        if(values['email'] && !validateEmail(values['email'])) {
-          message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
-          return false
+        if(values['password'] ) {
+          values['password'] = sha256(values['password'])
         }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
@@ -135,6 +159,11 @@ class FormList extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { name, email, mobile, verifycode, password, checkBoxChecked, submitButtonDisabled } = this.state
+    let submitButtonDisabledLocal = submitButtonDisabled
+    if(name && validateEmail(email) && validateTel(mobile) && verifycode && validatePassword(password) && checkBoxChecked) {
+      submitButtonDisabledLocal = false
+    }
 
     return (
       <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
@@ -144,8 +173,22 @@ class FormList extends React.Component {
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
             <Input
+              onChange={this.setFormFieldsState.bind(this,'name')}
               style={{height: '40px',fontSize: 16}}
               maxLength={40} placeholder="姓名" />
+          )}
+        </FormItem>
+        {/* 邮箱 */}
+        <FormItem  style={{marginTop: 0}}>
+          {getFieldDecorator('email', {
+            rules: [{ required: false, message: '请输入邮箱', whitespace: true }],
+          })(
+            <Input
+              onChange={this.setFormFieldsState.bind(this,'email')}
+              style={{height: '40px',fontSize: 16}}
+              maxLength={40} placeholder="邮箱"
+              onBlur = {this.verifyByBlur.bind(null, 'email')}
+            />
           )}
         </FormItem>
         {/* 电话 */}
@@ -154,6 +197,7 @@ class FormList extends React.Component {
             rules: [{ required: false, message: '请输入手机号', whitespace: true }],
           })(
             <Input
+              onChange={this.setFormFieldsState.bind(this,'mobile')}
               style={{height: '40px',fontSize: 16}}
               maxLength={40} placeholder="手机号"
               onBlur = {this.verifyByBlur.bind(null, 'mobile')}
@@ -167,7 +211,7 @@ class FormList extends React.Component {
               {getFieldDecorator('verifycode', {
                 rules: [{ required: false, message: '请输入验证码' }],
               })(
-                <Input placeholder="验证码" style={{height: '40px',fontSize: 16,}}/>
+                <Input placeholder="验证码" style={{height: '40px',fontSize: 16,}} onChange={this.setFormFieldsState.bind(this,'verifycode')}/>
               )}
             </Col>
             <Col span={10}>
@@ -182,22 +226,11 @@ class FormList extends React.Component {
             rules: [{ required: false, message: '请输入密码', whitespace: true }],
           })(
             <Input
+              onChange={this.setFormFieldsState.bind(this,'password')}
               style={{height: '40px',fontSize: 16}}
-              maxLength={40} placeholder="密码"
+              maxLength={40} placeholder="密码(数字与字母组合，至少6位)"
               type={'password'}
               onBlur = {this.verifyByBlur.bind(null, 'password')}
-            />
-          )}
-        </FormItem>
-        {/* 邮箱 */}
-        <FormItem  style={{marginTop: 0}}>
-          {getFieldDecorator('email', {
-            rules: [{ required: false, message: '请输入邮箱', whitespace: true }],
-          })(
-            <Input
-              style={{height: '40px',fontSize: 16}}
-              maxLength={40} placeholder="邮箱"
-              onBlur = {this.verifyByBlur.bind(null, 'email')}
             />
           )}
         </FormItem>
@@ -211,7 +244,7 @@ class FormList extends React.Component {
         </div>
         {/* 确认 */}
         <FormItem style={{marginTop: 24}}>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40, fontSize: 16}}>注册</Button>
+          <Button type="primary"   disabled={submitButtonDisabledLocal} htmlType="submit" style={{width: '100%',height: 40, fontSize: 16}}>注册</Button>
         </FormItem>
       </Form>
     );

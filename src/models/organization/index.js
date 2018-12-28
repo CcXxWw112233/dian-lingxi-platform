@@ -1,4 +1,7 @@
-import { getPermissions, savePermission, getRolePermissions, saveRolePermission,createRole,updateRole,deleteRole,copyRole,updateOrganization, setDefaultRole} from '../../services/organization'
+import {
+  saveNounList, getNounList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
+  updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan
+} from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {
@@ -12,6 +15,7 @@ import modelExtend from 'dva-model-extend'
 import technological from './index'
 import { selectTabSelectKey } from './select'
 import {checkIsHasPermission} from "../../utils/businessFunction";
+import {getUSerInfo} from "../../services/technological";
 
 export default  {
   namespace: 'organization',
@@ -38,8 +42,15 @@ export default  {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '1'
+              tabSelectKey: '1',
               // permission_data: [], //权限数据
+              //名词定义
+              current_scheme_local: '', //已选方案名称
+              current_scheme: '',  //当前方案名称
+              current_scheme_id: '',
+              scheme_data: [],
+              field_data: [],
+              editable: '0',//当前是否在自定义编辑状态 1是 0 否
             }
           })
 
@@ -56,6 +67,10 @@ export default  {
                 type: '2',
               }
             })
+            dispatch({
+              type: 'getNounList',
+              payload: {}
+            })
           }
 
         } else {
@@ -67,9 +82,33 @@ export default  {
     * updateOrganization({ payload }, { select, call, put }) {
       let res = yield call(updateOrganization, payload)
       if(isApiResponseOk(res)) {
-         message.success('更新组织信息成功',MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'getUSerInfo',
+          payload: {
+            calBack: function () {
+              message.success('更新组织信息成功',MESSAGE_DURATION_TIME)
+            }
+          }
+        })
       }else{
         message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(getUSerInfo, {})
+      const { calBack } = payload
+      if (typeof calBack === 'function') {
+        calBack()
+      }
+      if(isApiResponseOk(res)) {
+        //当前选中的组织
+        if(res.data.current_org ) {
+          localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
+        }
+        //存储
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+      }else{
       }
     },
 
@@ -246,6 +285,73 @@ export default  {
         })
       }else{
         message.warn('设置默认角色失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    * getNounList({ payload }, { select, call, put }) {
+      const res = yield call(getNounList, {})
+
+      if(isApiResponseOk(res)) {
+        const data = res.data || {}
+        const scheme_data = data['scheme_data']
+        const field_data = data['field_data']
+        scheme_data.unshift(field_data)
+        let editable = '0'
+
+        for(let i=0; i < scheme_data.length; i++) {
+          //自定义没有列表时设
+          if(!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
+            scheme_data[i]['field_value'] = []
+            for(let j=0; j < scheme_data[0]['field_value'].length; j ++) {
+              const obj = {
+                field_value: '',
+              }
+              scheme_data[i]['field_value'].push(obj)
+            }
+          }
+
+          //默认是否自定义编辑状态
+          if(data['current_scheme_id'] === scheme_data[i]['id']) {
+            editable = scheme_data[i]['editable']
+          }
+        }
+
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            ...res.data,
+            current_scheme_local: res.data['current_scheme'],
+            editable
+          }
+        })
+      }else{
+
+      }
+    },
+    * saveNounList({ payload }, { select, call, put }) {
+      const { current_scheme_local } = payload
+      const res = yield call(saveNounList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            current_scheme: current_scheme_local
+          }
+        })
+        yield put({
+          type: 'getCurrentNounPlan',
+          payload: {}
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getCurrentNounPlan({ payload }, { select, call, put }) {
+      let res = yield call(getCurrentNounPlan, payload)
+      if(isApiResponseOk(res)) {
+        message.success('已保存',MESSAGE_DURATION_TIME)
+        localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
+      }else{
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
 

@@ -17,6 +17,12 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName('getTaskGroupList'),
+        payload: data
+      })
+    },
     collectionProject(id) {
       dispatch({
         type: getEffectOrReducerByName('collectionProject'),
@@ -83,7 +89,13 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('getProjectRoles'),
         payload: data
       })
-    }
+    },
+    updateProject(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateProject'),
+        payload: data
+      })
+    },
   }
   const DetailInfoProps = {
     modal,
@@ -129,9 +141,27 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    deleteTaskFile(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskFile'),
+        payload: data,
+      })
+    },
     addTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('addTaskGroup'),
+        payload: data,
+      })
+    },
+    deleteTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteTaskGroup'),
+        payload: data,
+      })
+    },
+    updateTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateTaskGroup'),
         payload: data,
       })
     },
@@ -161,6 +191,19 @@ const ProjectDetail = (props) => {
         }
       })
     },
+    updateChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('updateChirldTask'),
+        payload: data
+      })
+    },
+    deleteChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName('deleteChirldTask'),
+        payload: data
+      })
+    },
+
     archivedTask(data){
       dispatch({
         type: getEffectOrReducerByName('archivedTask'),
@@ -220,6 +263,36 @@ const ProjectDetail = (props) => {
     addCardNewComment(data) {
       dispatch({
         type: getEffectOrReducerByName('addCardNewComment'),
+        payload: data
+      })
+    },
+    deleteCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteCardNewComment'),
+        payload: data
+      })
+    },
+    getBoardTagList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getBoardTagList'),
+        payload: data
+      })
+    },
+    updateBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateBoardTag'),
+        payload: data
+      })
+    },
+    toTopBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('toTopBoardTag'),
+        payload: data
+      })
+    },
+    deleteBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteBoardTag'),
         payload: data
       })
     }
@@ -433,7 +506,9 @@ const ProjectDetail = (props) => {
     return appFace
   }
   return(
-    <div style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+    // minHeight: '100%',
+    <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+      <div style={{height: 108,}}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}
@@ -441,7 +516,7 @@ const ProjectDetail = (props) => {
         placement="left"
         closable={false}
         visible={projectInfoDisplay}
-        width={420}
+        width={376}
         top={172}
         zIndex={0}
         maskStyle={{top: 0, }}

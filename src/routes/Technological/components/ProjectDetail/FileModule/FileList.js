@@ -9,7 +9,8 @@ import {
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
-
+import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -32,7 +33,7 @@ export default class FileList extends React.Component {
 
   //item操作
   operationMenuClick(data, e) {
-    const { file_id, type } = data
+    const { file_id, type, file_resource_id } = data
     const { datas: { projectDetailInfoData= {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
@@ -44,7 +45,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_id})
+        this.props.fileDownload({ids: file_resource_id})
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
@@ -228,7 +229,8 @@ export default class FileList extends React.Component {
     }else {
       breadcrumbList[breadcrumbList.length - 1] = data
     }
-    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: type === '1' ?file_id : currentParrentDirectoryId})
+    //顺便将isInAddDirectory设置为不在添加文件夹状态
+    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: type === '1' ?file_id : currentParrentDirectoryId, isInAddDirectory: false})
   }
   openDirectory(data) {
     this.open(data, '1')
@@ -240,10 +242,10 @@ export default class FileList extends React.Component {
   }
   openFile(data) {
     this.open(data, '2')
-    const { file_id, version_id } = data
+    const { file_id, version_id, file_resource_id } = data
     //接下来打开文件
-    this.props.updateDatas({isInOpenFile: true, filePreviewCurrentId: file_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_id})
+    this.props.updateDatas({isInOpenFile: true,filePreviewCurrentFileId:file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
+    this.props.filePreview({id: file_resource_id})
     this.props.fileVersionist({version_id : version_id})
   }
 
@@ -253,12 +255,17 @@ export default class FileList extends React.Component {
     const {  nameSort, sizeSort, creatorSort, } = this.state;
 
     const operationMenu = (data) => {
+      const { type } = data
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
           <Menu.Item key="2">下载</Menu.Item>
-          <Menu.Item key="3">移动</Menu.Item>
-          <Menu.Item key="4">复制</Menu.Item>
+          {type !== '1'? (
+            <Menu.Item key="3">移动</Menu.Item>
+          ):('')}
+          {type !== '1'? (
+            <Menu.Item key="4">复制</Menu.Item>
+          ):('')}
           <Menu.Item key="5" >移到回收站</Menu.Item>
         </Menu>
       )
@@ -266,7 +273,7 @@ export default class FileList extends React.Component {
 
     const columns = [
       {
-        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >文件名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         key: 'file_name',
         render: (data) => {
           const {type, file_name, isInAdd} = data
@@ -295,13 +302,25 @@ export default class FileList extends React.Component {
       },
       {
         title: '操作',
-        key: 'operation',
-        render: (data) =>
-          <div style={{cursor: 'pointer'}}>
-            <Dropdown overlay={operationMenu(data)} trigger={['click']}>
-              <Icon type="ellipsis" theme="outlined" style={{fontSize: 22, color: '#000000'}}/>
-            </Dropdown>
-          </div>,
+        key: 'operator',
+        render: (data) =>{
+          const {isInAdd} = data
+          if(!isInAdd) {
+            return (
+              <div style={{cursor: 'pointer'}}>
+                <Dropdown overlay={operationMenu(data)} trigger={['click']}>
+                  <Icon type="ellipsis" theme="outlined" style={{fontSize: 22, color: '#000000'}}/>
+                </Dropdown>
+              </div>
+            )
+          }else {
+             return (
+               <div>--</div>
+             )
+          }
+        }
+
+
       },
     ];
 
