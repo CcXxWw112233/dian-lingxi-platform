@@ -91,6 +91,12 @@ const Workbench = (props) => {
         payload: data
       })
     },
+    getImRelaId(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getImRelaId'),
+        payload: data
+      })
+    },
     getResponsibleTaskList(data) {
       dispatch({
         type: getEffectOrReducerByName('getResponsibleTaskList'),

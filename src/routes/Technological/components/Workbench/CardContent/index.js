@@ -312,7 +312,7 @@ export default class CardContent extends React.Component{
         <Menu
           onClick={this.handleMenuClick.bind(this)}
           // selectedKeys={[this.state.current]}
-          mode="horizontal"
+          // mode="horizontal"
         >
           <Menu.Item key="rename">
              重命名

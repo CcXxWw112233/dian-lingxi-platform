@@ -5,17 +5,7 @@ import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {model} from "../../../../../models/page";
-
-function tomyfirend(e,id) {
-  e.preventDefault();
-  document.getElementById('imIFram').contentWindow.postMessage({type:'contact', to: id}, 'http://www.new-di.com/')
-  console.log("to my firend.");
-}
-function tomygroup(e, id) {
-  e.preventDefault();
-  document.getElementById('imIFram').contentWindow.postMessage({type:'group', to: id}, 'http://www.new-di.com/im/')
-  console.log("to my group");
-}
+import { operateIm } from '../../../operateDom'
 
 export default class MyCircleItem extends React.Component {
    state = {
@@ -59,9 +49,21 @@ export default class MyCircleItem extends React.Component {
    }
 
    toChat({id, to_name, type}, e) {
-     e.preventDefault();
-     console.log(id, type, to_name)
-     document.getElementById('imIFram').contentWindow.postMessage({type: type, to_name, to: id}, 'http://www.new-di.com/im/')
+     e.stopPropagation();
+     const Dom = document.getElementById('imIFram') //聊天iframe
+     if(!Dom) {
+       return
+     }
+     operateIm('1') //操作圈子显示
+     //im API
+     const calback = (newid) => {
+       document.getElementById('imIFram').contentWindow.postMessage({type: type, to_name, to: newid}, 'http://www.new-di.com/im/')
+     }
+     if('group' === type) {
+       this.props.getImRelaId({relaId: id, calback })
+     } else {
+       calback(id)
+     }
    }
 
   render() {

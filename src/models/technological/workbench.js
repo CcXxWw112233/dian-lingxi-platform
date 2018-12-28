@@ -1,5 +1,5 @@
-import { getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
-import { isApiResponseOk } from '../../utils/handleResponseData'
+import { getImRelaId, getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import { isApiResponseOk,  } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
@@ -76,6 +76,19 @@ export default modelExtend(technological, {
 
       }
     },
+    * getImRelaId({ payload }, { select, call, put }) {
+      const { relaId } = payload
+      let res = yield call(getImRelaId, { relaId })
+      if(isApiResponseOk(res)) {
+        const { calback } = payload
+        if(calback && typeof calback ==='function'){
+          calback(res.data)
+        }
+      }else{
+        message.warn(res.message)
+      }
+    },
+
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)

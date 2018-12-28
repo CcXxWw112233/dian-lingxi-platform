@@ -2,15 +2,18 @@ import React from 'react'
 import { Icon } from 'antd';
 import indexStyles from './index.less'
 import globalStyles from '../../globalset/css/globalClassName.less'
+import { operateIm } from './operateDom'
 
 export default class ImChat extends React.Component {
   state={
-    imIframOutVisible:false
+    imIframOutVisible: '1'
   }
   setImIframOutVisible() {
-    this.setState({
-      imIframOutVisible: !this.state.imIframOutVisible
-    })
+    operateIm('0')
+    // const { imIframOutVisible } = this.state
+    // this.setState({
+    //   imIframOutVisible: imIframOutVisible === '2' ? '3': '2',//!this.state.imIframOutVisible
+    // })
   }
   render(){
     const { datas: {imData = {}} } = this.props.model
@@ -20,18 +23,19 @@ export default class ImChat extends React.Component {
     return (
       <div>
         {/*聊天*/}
-
-        <div className={`${globalStyles.authTheme} ${indexStyles.imMessage}`} onClick={this.setImIframOutVisible.bind(this)}>
+        {/*${imIframOutVisible === '1'?'': (imIframOutVisible ==='2'? indexStyles.imMessageHide: indexStyles.imMessageShow)}*/}
+        <div id={'imMessage'}  className={`${globalStyles.authTheme} ${indexStyles.imMessage} `} onClick={this.setImIframOutVisible.bind(this)}>
           {/*<Icon type="message" />*/}
           &#xe639;
         </div>
 
-        <div className={indexStyles.imIframOut} style={{display: !imIframOutVisible?'none':'block'}}>
+        {/*${imIframOutVisible === '1'?'': (imIframOutVisible ==='2'? indexStyles.showIframe: indexStyles.hideIframe)}*/}
+        <div id={'imIframOut'} className={`${indexStyles.imIframOut} `}>
           <div className={indexStyles.ifram}>
             {access_token?(
               <iframe
                 src={`http://www.new-di.com/im/#/login?username=${username}&access_token=${access_token}`}
-                frameborder="0"
+                frameBorder="0"
                 width="500"
                 height="500"
                 id="imIFram"

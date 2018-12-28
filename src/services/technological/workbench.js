@@ -22,7 +22,13 @@ export async function getUserImToken(data) {
     method: 'GET',
   });
 }
-
+export async function getImRelaId(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/im/data/${params['relaId']}`,
+    method: 'GET',
+    params
+  });
+}
 
 //获取项目列表(只返回用户)
 export async function getProjectStarList(params) {
