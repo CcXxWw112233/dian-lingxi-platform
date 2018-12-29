@@ -1,11 +1,47 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN,REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //获取项目列表
 export async function getProjectList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/list`,
+    method: 'GET',
+  });
+}
+//获取项目列表(只返回用户)
+export async function getProjectUserList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user_lists`,
+    method: 'GET',
+  });
+}
+export async function getUserImToken(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/im/token`,
+    method: 'GET',
+  });
+}
+export async function getImRelaId(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/im/data/${params['relaId']}`,
+    method: 'GET',
+    params
+  });
+}
+
+//获取项目列表(只返回用户)
+export async function getProjectStarList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/star/list`,
+    method: 'GET',
+  });
+}
+
+//获取组织成员列表
+export async function getOrgMembers(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group`,
     method: 'GET',
   });
 }
@@ -25,6 +61,14 @@ export async function getItemBoxFilter(data) {
     data
   });
 }
+//获取工作台单个盒子设置过滤条件
+export async function updateBox(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
+    method: 'PUT',
+    data
+  });
+}
 //我负责的任务
 export async function getResponsibleTaskList(params) {
   return request({
@@ -32,6 +76,13 @@ export async function getResponsibleTaskList(params) {
     method: 'GET',
   });
 }
+export async function getTodoList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible/${params['id']}`,
+    method: 'GET',
+  });
+}
+
 // 完成任务
 export async function completeTask(data) {
   return request({
@@ -67,6 +118,29 @@ export async function getMeetingList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement/${params['id']}`,
     method: 'GET',
+  });
+}
+//获取当前用户可用盒子列表
+export async function getBoxUsableList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/usable/list`,
+    method: 'GET',
+  });
+}
+//获取当前用户可用盒子列表
+export async function addBox(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/add`,
+    method: 'POST',
+    data
+  });
+}
+//获取当前用户可用盒子列表
+export async function deleteBox(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/${params.box_type_id}`,
+    method: 'DELETE',
+    params
   });
 }
 

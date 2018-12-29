@@ -1,17 +1,18 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect,  } from 'dva';
 import QueueAnim from  'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
 import HeaderNav from './components/HeaderNav'
 import { Route, Router, Switch, Link } from 'dva/router'
 import dynamic from "dva/dynamic";
 import dva from "dva/index";
-
+import indexStyles from './index.less'
 import modelExtend from 'dva-model-extend'
 import ClassBasicModel from '../../models/technological'
-import { LocaleProvider } from 'antd';
+import { LocaleProvider, Icon } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
+import  ImChat from './ImChat.js'
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
@@ -35,7 +36,6 @@ const getEffectOrReducerByName = name => `technological/${name}`
 // }
 @connect(mapStateToProps)
 export default class Technological extends React.Component{
-
   render() {
     const { dispatch, model } = this.props
     const app = dva();
@@ -104,7 +104,6 @@ export default class Technological extends React.Component{
         })
       }
     }
-
     //-----------------
 
     const routes = [
@@ -145,7 +144,9 @@ export default class Technological extends React.Component{
                 />
               )})
           }
-        </div>
+          <ImChat {...this.props} />
+
+          </div>
       </LocaleProvider>
     );
   }

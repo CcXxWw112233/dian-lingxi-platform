@@ -101,7 +101,7 @@ export default class TaskItem extends React.Component {
   }
   checkAddNewTask() {
     const {addTaskType,due_time, start_time ,addNewTaskName, executor } = this.state
-    const { projectDetailInfoData : { board_id} } = this.props.model.datas
+    const { projectDetailInfoData : { board_id}, getTaskGroupListArrangeType } = this.props.model.datas
     const { taskItemValue:{list_id}} = this.props
     const obj = {
       board_id,
@@ -110,7 +110,8 @@ export default class TaskItem extends React.Component {
       users: executor['user_id'],
       start_time,
       due_time,
-      type: addTaskType
+      type: addTaskType,
+      add_type: !!list_id? getTaskGroupListArrangeType: '0', //如果是 分组‘其他’，则固定0
     }
     this.props.addTask(obj)
     this.reductionAddTaskOperate()
@@ -206,7 +207,7 @@ export default class TaskItem extends React.Component {
     const { taskItemValue = {}, clientHeight } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
-    const { list_name, list_id, card_data = [] } = taskItemValue
+    const { list_name, list_id, card_data = [], editable } = taskItemValue
 
     let isCheckDisabled = false
     if(!addNewTaskName) {
@@ -243,18 +244,19 @@ export default class TaskItem extends React.Component {
     return (
       <div className={CreateTaskStyle.taskItem}
            onWheel={this.fnWhee1_2.bind(this)}
-           onScroll={this.fnWhee1_2.bind(this)}
-      >
+           onScroll={this.fnWhee1_2.bind(this)}>
           {!isInEditName?(
             <div className={CreateTaskStyle.title}>
               <div className={CreateTaskStyle.title_l}>
                 <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
                 <div><Icon type="right" className={[CreateTaskStyle.nextIcon]}/></div>
-                <Dropdown overlay={operateMenu()}>
-                  <div className={CreateTaskStyle.titleOperate}>
-                    <Icon type="ellipsis" theme="outlined" />
-                  </div>
-                </Dropdown>
+                {editable==='1'? (
+                  <Dropdown overlay={operateMenu()}>
+                    <div className={CreateTaskStyle.titleOperate}>
+                      <Icon type="ellipsis" theme="outlined" />
+                    </div>
+                  </Dropdown>
+                ):('')}
               </div>
               <div className={CreateTaskStyle.title_r}>
               </div>

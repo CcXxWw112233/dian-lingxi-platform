@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment.less'
+import {timestampToTimeNormal} from "../../../../../utils/util";
 
 const Dragger = Upload.Dragger
 
@@ -20,18 +21,41 @@ export default class CommentListItem extends React.Component {
     })
   }
 
+  deleteComment(id) {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    this.props.deleteCardNewComment({id, card_id})
+  }
 
   render() {
 
-    const { datas:{ projectDetailInfoData = {}, cardCommentList = [] } } = this.props.model
+    const { datas:{ cardCommentList = [] } } = this.props.model
 
     const { closeNormal } = this.state
-    const listItem = (value) => (
-      <div className={CommentStyles.commentListItem}>
-        <div><span>{value.text}</span></div>
-        <div>{value.createTime?value.createTime.substring(0, 16): ''}</div>
-      </div>
-    )
+    const listItem = (value) => {
+      const { full_name, avatar, text, create_time, id } = value
+      return (
+        <div className={CommentStyles.commentListItem}>
+          <div className={CommentStyles.left}>
+            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+          </div>
+          <div className={CommentStyles.right}>
+            <div>
+              <div className={CommentStyles.full_name}>{full_name}</div>
+              <div className={CommentStyles.text}>{text}</div>
+            </div>
+            <div className={CommentStyles.bott} >
+              <div className={CommentStyles.create_time}>
+                {create_time?timestampToTimeNormal(create_time).substring(0, 16): ''}
+              </div>
+              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
+                 删除
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
     return (
       <div className={CommentStyles.commentListItemBox}>
         {cardCommentList.length > 20 ?(

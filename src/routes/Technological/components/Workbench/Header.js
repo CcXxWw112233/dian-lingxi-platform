@@ -3,9 +3,18 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
 import {PROJECTS} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
-
+import EditCardDrop from './HeaderComponent/EditCardDrop'
 export default class Header extends React.Component {
+  state = {
+    visibleEdit: false,
+  }
+  onVisibleChangeEdit(bool) {
+    this.setState({
+      visibleEdit: bool
+    })
+  }
   render() {
+    const { visibleEdit } = this.state
     const menu = (
       <Menu>
         <Menu.Item key={'1'}>
@@ -44,14 +53,18 @@ export default class Header extends React.Component {
       <div className={indexStyle.headerOut}>
 
         <div className={indexStyle.left}>
-          <div>专家</div>
-          <div>投资人</div>
-          <div>设计师</div>
+          <Dropdown visible={visibleEdit}
+                    trigger={['click']}
+                    onVisibleChange={this.onVisibleChangeEdit.bind(this)}
+                    overlay={<EditCardDrop {...this.props} visibleEdit={visibleEdit}/>}>
+          <div>编辑卡片</div>
+          </Dropdown>
         </div>
 
         <div className={indexStyle.right}>
-          <div style={{marginRight: 12}}>按{currentNounPlanFilterName(PROJECTS)}排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
-          <div>全部{currentNounPlanFilterName(PROJECTS)} <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+          {/*<div style={{marginRight: 12}}>按{currentNounPlanFilterName(PROJECTS)}排序 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>*/}
+          {/*<div>全部{currentNounPlanFilterName(PROJECTS)} <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>*/}
+          <div>全部项目  <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
           <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
         </div>
       </div>

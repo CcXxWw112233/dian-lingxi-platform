@@ -9,7 +9,7 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag } from "../../services/technological/task";
+import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
 import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
@@ -1132,6 +1132,52 @@ export default {
       }
     },
 
+    * updateChirldTask({ payload }, { select, call, put }) { //
+      const { updateObj } = payload
+      const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
+      const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+      const taskGroupList = yield select(selectTaskGroupList) //
+      const drawContent = yield  select(selectDrawContent)
+      const { description } = updateObj
+      let res = yield call(updateTask, updateObj)
+      if(isApiResponseOk(res)) {
+        if(description) {
+          drawContent['description'] = description
+          taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawContent,
+            taskGroupList
+          }
+        })
+        message.success('更新成功',MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * deleteChirldTask({ payload }, { select, call, put }) { //
+      const {card_id, chirldDataIndex} = payload
+      let res = yield call(deleteTask, card_id)
+      if(isApiResponseOk(res)) {
+        const taskGroupList = yield select(selectTaskGroupList)
+        const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
+        const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+        taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['child_data'].splice(chirldDataIndex, 1)
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            taskGroupList
+          }
+        })
+        message.success('删除成功',MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * archivedTask({ payload }, { select, call, put }) { //
       let res = yield call(archivedTask, payload)
       if(isApiResponseOk(res)) {
@@ -1176,7 +1222,8 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-        drawContent.child_data[0] = res.data || payload
+        drawContent.child_data[0] =  payload
+        drawContent.child_data[0]['card_id'] = res.data.id
         // yield put({
         //   type: 'updateDatas',
         //   payload:{
@@ -1407,6 +1454,25 @@ export default {
         }else{
         }
       }else{
+      }
+    },
+
+    * deleteCardNewComment({ payload }, { select, call, put }) { //
+      const res = yield call(deleteCardNewComment, payload)
+      if(isApiResponseOk(res)) {
+        const { card_id } = payload
+        const res = yield call(getCardCommentList, card_id)
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload:{
+              cardCommentList: res.data
+            }
+          })
+        }else{
+        }
+      }else{
+        message.warn(res.message)
       }
     },
 

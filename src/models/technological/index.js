@@ -8,9 +8,10 @@ import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/c
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs}  from '../../components/WsNewsDynamic'
-import { selectNewMessageItem } from './select'
+import { selectNewMessageItem, selectImData } from './select'
 import QueryString from 'querystring'
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import {getUserImToken} from "../../services/technological/workbench";
 
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
@@ -24,12 +25,21 @@ export default {
         //头部table key
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
+          dispatch({
+            type: 'updateDatas',
+            payload: {
+
+            }
+          })
+
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = '3'
           }else if(location.pathname === '/technological/workbench'){
             naviHeadTabIndex = '2'
           }else if(location.pathname === '/technological/newsDynamic'){
             naviHeadTabIndex = '1'
+          } else if(location.pathname === '/technological/teamList') {
+            naviHeadTabIndex = '5'
           }
           dispatch({
             type: 'upDateNaviHeadTabIndex',
@@ -70,13 +80,18 @@ export default {
 
           //当前名词定义的方案
           const currentNounPlan = localStorage.getItem('currentNounPlan')
-          console.log('currentNounPlan',currentNounPlan)
+          // console.log('currentNounPlan',currentNounPlan)
           if (!currentNounPlan) {
             dispatch({
               type: 'getCurrentNounPlan',
               payload: {}
             })
           }
+
+          dispatch({
+            type: 'getUserImToken',
+            payload: {}
+          })
         }
 
         //切换组织时需要重新加载
@@ -316,6 +331,23 @@ export default {
     },
 
     //名词定义------end
+    * getUserImToken({ payload }, { select, call, put }) {
+      const imData = yield select(selectImData)
+      if(imData) {
+        return
+      }
+      const res = yield call(getUserImToken, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            imData: res.data
+          }
+        })
+      }else{
+
+      }
+    },
 
 
     * routingJump({ payload }, { call, put }) {

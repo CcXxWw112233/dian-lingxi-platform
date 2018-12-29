@@ -7,6 +7,8 @@ import {
   ORG_UPMS_ORGANIZATION_ROLE_CREATE, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_ROLE_EDIT,
 } from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
+import EditCardDrop from './setWorkBench/EditCardDrop'
+
 const TreeNode = Tree.TreeNode;
 
 const CheckboxGroup = Checkbox.Group;
@@ -166,10 +168,14 @@ export default class OrgnizationRole extends React.Component {
     const { name } = values
     this.props.createRole({name, type:'1'})
   }
+  collapseOnchange(e) {
+    this.setState({
+      collapseStatus: e
+    })
+  }
 
   finallySave({value, parentKey}) {
-    console.log(parentKey, value)
-    const { id, function_tree_data = [], content_tree_data = [], already_has_content_permission_trans = [] } = value
+    const { id, function_tree_data = [], content_tree_data = [], already_has_content_permission_trans = [], already_has_boxs = [] } = value
 
     let function_data = []
     let content_data = []
@@ -181,11 +187,13 @@ export default class OrgnizationRole extends React.Component {
     const obj = {
       role_id: id,
       function_data: function_data,
+      box_type_ids: Array.from(new Set(already_has_boxs)).join(',')
     }
     this.props.saveRolePermission(obj)
   }
   render(){
     const { datas: { orgnization_role_data }} = this.props.model
+    const { collapseStatus } = this.state
     const operateMenu = ({parentKey, value}) => {
       const { is_default } = value
       return (
@@ -234,7 +242,7 @@ export default class OrgnizationRole extends React.Component {
     }
     return (
       <div className={indexStyles.TabPaneContent}>
-        <Collapse accordion>
+        <Collapse accordion onChange={this.collapseOnchange.bind(this)}>
           {orgnization_role_data.map((value, parentKey) => {
             const { name, is_default, system_role, function_tree_data =[], content_tree_data = [], already_has_function_permission, already_has_content_permission_trans } = value
             const checkDisabled = !checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) || system_role ==='1'
@@ -293,8 +301,12 @@ export default class OrgnizationRole extends React.Component {
                     )
                   })}
                 </Collapse>
-                <div style={{color: '#8c8c8c', marginTop: 16}}>可访问内容：</div>
+                <div style={{color: '#8c8c8c', marginTop: 16}}>工作台初始模板：</div>
                 <div style={{marginTop: 10}}>
+                  {/*{collapseStatus?(*/}
+                    {/*<EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>*/}
+                  {/*):('')}*/}
+                  <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
                     {/*treeValue={treeDataSelects}*/}

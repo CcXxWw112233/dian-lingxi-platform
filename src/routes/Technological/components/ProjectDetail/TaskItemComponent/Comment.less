@@ -1,3 +1,4 @@
+@import "../../../../../globalset/css/constant";
 .out{
   display: flex
 };
@@ -114,21 +115,38 @@
   .commentListItem{
     font-size: 13px;
     display: flex;
-    margin-top: 4px;
-    div:nth-child(1){
-      flex: 1;
-      color: #8c8c8c;
-      span{
-        color: #262626;
-        margin: 0 6px;
-      }
-      span:nth-child(1) {
-        margin-left: 0;
-      }
+    margin-top: 10px;
+    .left{
+      width: 32px;
+      margin-top: 4px;
     }
-    div:nth-child(2){
-      color: #BFBFBF;
-      margin-left: 12px;
+    .right{
+      flex: 1;
+      margin-left: 10px;
+      .full_name{
+        font-size: 14px;
+        color: #8c8c8c;
+      }
+      .text{
+        font-size: 16px;
+        margin-top: 2px;
+        color: #262626
+      }
+      .bott{
+        display: flex;
+        margin-top: 4px;
+        .create_time{
+          color: #BFBFBF;
+        }
+        .delete{
+          margin-left: 10px;
+          color: @color-link-normal;
+          cursor: pointer;
+        }
+        .delete:hover{
+          text-decoration: underline;
+        }
+      }
     }
   }
 }

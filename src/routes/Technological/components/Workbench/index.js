@@ -6,6 +6,7 @@ import CardContent from './CardContent'
 import Header from './Header'
 import CardContentArticle from './CardContent/CardContentArticle'
 import {WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY} from "../../../../globalset/js/constant";
+import EditCardDrop from './HeaderComponent/EditCardDrop'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 
@@ -30,6 +31,12 @@ const Workbench = (props) => {
   const cardContentListProps = {
     modal,
     model,
+    updateDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas') ,
+        payload:payload
+      })
+    },
     completeTask(data) {
       dispatch({
         type: getEffectOrReducerByName('completeTask'),
@@ -51,6 +58,42 @@ const Workbench = (props) => {
     getMeetingList(data) {
       dispatch({
         type: getEffectOrReducerByName('getMeetingList'),
+        payload: data
+      })
+    },
+    getSchedulingList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getSchedulingList'),
+        payload: data
+      })
+    },
+    getJourneyList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getJourneyList'),
+        payload: data
+      })
+    },
+    getTodoList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getTodoList'),
+        payload: data
+      })
+    },
+    getProjectUserList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getProjectUserList'),
+        payload: data
+      })
+    },
+    getOrgMembers(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getOrgMembers'),
+        payload: data
+      })
+    },
+    getImRelaId(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getImRelaId'),
         payload: data
       })
     },
@@ -78,7 +121,12 @@ const Workbench = (props) => {
         payload: data
       })
     },
-
+    getProjectStarList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getProjectStarList'),
+        payload: data
+      })
+    },
     getArticleList(data) {
       dispatch({
         type: getEffectOrReducerByName('getArticleList'),
@@ -116,47 +164,88 @@ const Workbench = (props) => {
         type: getEffectOrReducerByName('fileDownload'),
         payload: data
       })
+    },
+    addBox(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addBox'),
+        payload: data
+      })
+    },
+    deleteBox(data) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteBox'),
+        payload: data
+      })
+    },
+    updateBox(data) {
+      dispatch({
+        type: getEffectOrReducerByName('updateBox'),
+        payload: data
+      })
     }
   }
   return(
     <div>
-      <Header />
+      <Header {...cardContentListProps} />
+      {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
           <div  className={indexStyles.cardItem_left}>
-            {boxList.slice(0,Math.ceil(boxList.length / 2)).map((value, key) => {
+            {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
+            {boxList.map((value, key) => {
               const { code, name, id } = value
+              let flag = false
+              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
+              if(arr.indexOf(code) !== -1){
+                flag = true
+              }
+
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
                 container = (
-                  <CardContentArticle title={name} {...cardContentListProps}
+                  <CardContentArticle
+                                    {...this.props}
+                                     title={name} {...cardContentListProps}
                                       updateDatas={updateDatas} CardContentType={code}
+                                      boxId={id}
+                                    itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
                 container = (
-                  <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
-              return <div key={key}>{container}</div>
+              return flag && <div key={id}>{container}</div>
             })}
           </div>
           <div  className={indexStyles.cardItem_right}>
-            {boxList.slice(Math.ceil(boxList.length / 2)).map((value, key) => {
+            {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
+            {boxList.map((value, key) => {
               const { code, name, id } = value
+              let flag = false
+              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
+              if(arr.indexOf(code) == -1){
+                flag = true
+              }
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
                 container = (
-                  <CardContentArticle title={name} {...cardContentListProps}
-                                      updateDatas={updateDatas} CardContentType={code}
+                  <CardContentArticle
+                                     {...this.props}
+                                      title={name} {...cardContentListProps}
+                                      updateDatas={updateDatas}
+                                      CardContentType={code}
+                                      boxId={id}
+                                      itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
                 container = (
-                  <CardContent title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id} updateDatas={updateDatas} CardContentType={code}  />
+                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
-              return <div key={key}>{container}</div>
+              return  flag && <div key={id}>{container}</div>
             })}
           </div>
           {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
