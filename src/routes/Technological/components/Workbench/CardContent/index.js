@@ -7,7 +7,7 @@ import MeetingItem from "./MeetingItem";
 import ProjectCountItem from './ProjectCountItem'
 import MapItem from './MapItem'
 import React from 'react'
-import MenuSearchMultiple from  '../../../../../components/MenuSearchMultiple'
+import MenuSearchMultiple from  '../CardContent/MenuSearchMultiple'
 import SchedulingItem from './School/SchedulingItem'
 import Journey from './School/Journey'
 import Todo from './School/Todo'

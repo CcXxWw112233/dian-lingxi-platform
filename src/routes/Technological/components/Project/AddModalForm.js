@@ -51,6 +51,13 @@ class AddModalForm extends React.Component {
       step: this.state.step < 3 ? ++this.state.step : 3
     })
   }
+  //上一步
+  lastStep = (step) => {
+    this.setState({
+      step
+    })
+  }
+
   //监听是否完成验证
   listenCompleteValidation = (e) => {
     // console.log(e)
@@ -131,6 +138,7 @@ class AddModalForm extends React.Component {
   }
   render() {
     const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled } = this.state
+
     const { modal: { modalVisible }, model, handleCancel } = this.props;
     const { datas = { }} = model
     const { appsList = [] } = datas
@@ -142,7 +150,7 @@ class AddModalForm extends React.Component {
         {/* 项目名称 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('board_name', {
-            // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+            // initialValue:
           })(
             <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
                    onChange={this.boardNameChange.bind(this)}
@@ -176,7 +184,10 @@ class AddModalForm extends React.Component {
             )
           })}
         </div>
-        <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 208,marginTop: 20,marginBottom: 40, height: 40}}>下一步</Button>
+        <div style={{marginTop: 20,marginBottom: 40,}}>
+          <Button onClick={this.lastStep.bind(this,1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
+          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
+        </div>
       </div>
     )
     const step_3 = (
@@ -192,13 +203,19 @@ class AddModalForm extends React.Component {
                        onChange={this.usersChange.bind(this)}/>
           )}
         </FormItem>
-        <div style={{marginTop :-10}}>
-          <DragValidation  listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
-        </div>
+        {step===3?(
+          <div style={{marginTop :-10}}>
+            <DragValidation  listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
+          </div>
+        ):('')}
+
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>完成创建</Button>
+          <div style={{marginTop: 20,marginBottom: 40,}}>
+            <Button onClick={this.lastStep.bind(this,2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
+            <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
+          </div>
         </FormItem>
       </Form>
     )
@@ -215,11 +232,20 @@ class AddModalForm extends React.Component {
           onCancel={this.onCancel}
         >
           <div style={{height: step=== 2 ? 'auto':440}}>
-            {step === 1 ? (
-              step_1
-            ) : (
-              step === 2 ? (step_2) : (step_3)
-            )}
+            <div style={{display: step === 1?'block': 'none'}}>
+              {step_1}
+            </div>
+            <div style={{display: step === 2?'block': 'none'}}>
+              {step_2}
+            </div>
+            <div style={{display: step === 3?'block': 'none'}}>
+              {step_3}
+            </div>
+            {/*{step === 1 ? (*/}
+              {/*step_1*/}
+            {/*) : (*/}
+              {/*step === 2 ? (step_2) : (step_3)*/}
+            {/*)}*/}
             <div className={AddModalFormStyles.circleOut}>
               <div className={step===1 ? AddModalFormStyles.chooseCircle : ''}></div>
               <div className={step===2 ? AddModalFormStyles.chooseCircle : ''}></div>

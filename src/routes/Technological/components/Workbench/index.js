@@ -191,8 +191,15 @@ const Workbench = (props) => {
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
           <div  className={indexStyles.cardItem_left}>
-            {boxList.slice(0,Math.ceil(boxList.length / 2)).map((value, key) => {
+            {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
+            {boxList.map((value, key) => {
               const { code, name, id } = value
+              let flag = false
+              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
+              if(arr.indexOf(code) !== -1){
+                flag = true
+              }
+
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
                 container = (
@@ -209,22 +216,28 @@ const Workbench = (props) => {
                   <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
-              return <div key={id}>{container}</div>
+              return flag && <div key={id}>{container}</div>
             })}
           </div>
           <div  className={indexStyles.cardItem_right}>
-            {boxList.slice(Math.ceil(boxList.length / 2)).map((value, key) => {
+            {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
+            {boxList.map((value, key) => {
               const { code, name, id } = value
+              let flag = false
+              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
+              if(arr.indexOf(code) == -1){
+                flag = true
+              }
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
                 container = (
                   <CardContentArticle
-                                    {...this.props}
-                                     title={name} {...cardContentListProps}
+                                     {...this.props}
+                                      title={name} {...cardContentListProps}
                                       updateDatas={updateDatas}
                                       CardContentType={code}
                                       boxId={id}
-                                    itemValue={value}
+                                      itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
@@ -232,7 +245,7 @@ const Workbench = (props) => {
                   <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
-              return <div key={id}>{container}</div>
+              return  flag && <div key={id}>{container}</div>
             })}
           </div>
           {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
