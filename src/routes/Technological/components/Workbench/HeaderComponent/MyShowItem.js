@@ -29,10 +29,10 @@ export default class MyShowItem extends React.Component {
             关于我们
           </div>
           <div className={indexstyles.contain2_item}>
-            关于我们
+            业务领域
           </div>
           <div className={indexstyles.contain2_item}>
-            关于我们
+            联系我们
           </div>
         </div>
       </div>

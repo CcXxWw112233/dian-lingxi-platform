@@ -38,6 +38,24 @@ export default class CollectionProjectItem extends React.Component {
             <Icon type="right" style={{fontSize:16}}/>
           </div>
         </div>
+        <div className={indexstyles.collectionProjectItem}>
+          <div className={indexstyles.left}>
+            <div className={indexstyles.top}>
+              <div>项目A</div>
+              <div className={indexstyles.star}>
+                {starProject}
+              </div>
+            </div>
+            <div className={indexstyles.bott}>
+              <div>剩余任务 33</div>
+              <div>已完成 33</div>
+              <div>下一节点 15 天</div>
+            </div>
+          </div>
+          <div className={indexstyles.right}>
+            <Icon type="right" style={{fontSize:16}}/>
+          </div>
+        </div>
       </div>
     )
   }

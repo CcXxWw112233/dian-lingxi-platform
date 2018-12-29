@@ -11,6 +11,8 @@ import CollectionProjectItem from './../../Technological/components/Workbench/He
 import MyCircleItem from './../../Technological/components/Workbench/HeaderComponent/MyCircleItem'
 import MyShowItem from './../../Technological/components/Workbench/HeaderComponent/MyShowItem'
 import ArticleItem from './../../Technological/components/Workbench/HeaderComponent/ArticleItem'
+import SchoolWork from './../../Technological/components/Workbench/HeaderComponent/SchoolWork'
+import TeachingEffect from './../../Technological/components/Workbench/HeaderComponent/TeachingEffect'
 
 export default class CardContentNormal extends React.Component{
 
@@ -50,10 +52,59 @@ export default class CardContentNormal extends React.Component{
             <MapItem />
           )
           break
-        default:
+        //=====
+        case 'EXCELLENT_CASE':
           contanner = (
-           <TaskItem />
+            <ArticleItem />
           )
+          break
+        case 'POLICIES_REGULATIONS':
+          contanner = (
+            <ArticleItem />
+          )
+          break
+        case 'MY_SHOW':
+          contanner = (
+            <MyShowItem />
+          )
+          break
+        case 'MY_CIRCLE':
+          contanner = (
+            <MyCircleItem />
+          )
+          break
+        case 'PROJECT_TRCKING':
+          contanner = (
+            <CollectionProjectItem />
+          )
+          break
+        //老师
+        case 'MY_SCHEDULING': //我的排课 --会议
+          contanner = (
+            <MeetingItem />
+          )
+          break
+        case 'JOURNEY': //行程安排 --会议
+          contanner = (
+            <MeetingItem />
+          )
+          break
+        case 'TO_DO':  //代办事项 --任务
+          contanner = (
+            <TaskItem />
+          )
+          break
+        case 'SCHOOLWORK_CORRECTION': //作业批改
+          contanner = (
+            <SchoolWork />
+          )
+          break
+        case 'TEACHING_EFFECT': //教学计划
+          contanner = (
+            <TeachingEffect />
+          )
+          break
+        default:
           break
       }
       return contanner
