@@ -5,8 +5,10 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import { getUserInfo, updateUserInfo, changePassWord, checkEmailIsRegisted, changeEmail,changeMobile,checkMobileIsRegisted } from "../../services/technological/accountSet";
 import queryString from 'query-string';
+import modelExtend from 'dva-model-extend'
+import technological from './index'
 
-export default {
+export default modelExtend(technological, {
   namespace: 'accountSet',
   state: [],
   subscriptions: {
@@ -15,7 +17,8 @@ export default {
         // message.destroy()
         if (location.pathname === '/technological/accoutSet') {
           dispatch({
-            type: 'getUserInfo'
+            type: 'getUserInfo',
+            payload: {}
           })
           const SelectedKeys = queryString.parse(location.search).selectedKeys
           dispatch({
@@ -32,7 +35,11 @@ export default {
   },
   effects: {
     * getUserInfo({ payload }, { select, call, put }) {
-      let res = yield call(getUserInfo, payload)
+      let res = yield call(getUserInfo, {})
+      const { calback } = payload
+      if(calback && typeof calback === 'function') {
+        calback()
+      }
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -49,9 +56,16 @@ export default {
       const { data } = payload
       let res = yield call(updateUserInfo, data)
       if(isApiResponseOk(res)) {
-        message.success('修改成功', MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'onlyGetUserInfo',
+        })
         yield put({
           type: 'getUserInfo',
+          payload: {
+            calback: function () {
+              message.success('更新成功', MESSAGE_DURATION_TIME)
+            }
+          }
         })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -136,4 +150,4 @@ export default {
       }
     }
   },
-};
+})

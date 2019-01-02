@@ -1187,29 +1187,49 @@ export default {
       }
     },
 
-    * changeTaskType({ payload }, { select, call, put }) { //
+    * changeTaskType({ payload }, { select, call, put }) { // 此方法注释掉的地方是先前做了任务跳转sss
       const { requestObj, indexObj } = payload
-      const { board_id } = requestObj
-      const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
+      // const { board_id } = requestObj
+      // const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
       let res = yield call(changeTaskType, requestObj)
+      const getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
 
       if(isApiResponseOk(res)) {
-        Cookies.set('board_id', board_id,{expires: 30, path: ''})
-        yield  put({
-          type: 'projectDetailInfo',
-          payload:{
-            id: Cookies.get('board_id')
+        //跳转操作
+        // Cookies.set('board_id', board_id,{expires: 30, path: ''})
+        // yield  put({
+        //   type: 'projectDetailInfo',
+        //   payload:{
+        //     id: Cookies.get('board_id')
+        //   }
+        // })
+        // yield  put({
+        //   type: 'getProjectGoupList',
+        //   payload:{
+        //   }
+        // })
+        // yield  put({
+        //   type: 'putTask',
+        //   payload: indexObj
+        // })
+        yield put({
+          type: 'getTaskGroupList',
+          payload: {
+            type: '2',
+            board_id: board_id,
+            arrange_type: getTaskGroupListArrangeType,
+            calback: function () {
+              message.success('移动成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
-        yield  put({
-          type: 'getProjectGoupList',
-          payload:{
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawerVisible: false
           }
         })
-        yield  put({
-          type: 'putTask',
-          payload: indexObj
-        })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
