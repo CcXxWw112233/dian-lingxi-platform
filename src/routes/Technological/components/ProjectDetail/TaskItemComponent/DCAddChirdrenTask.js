@@ -176,7 +176,7 @@ export default class DCAddChirdrenTask extends React.Component{
               </div>
               <div style={{display: isShowUserCalendar ? 'flex':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+                  <DCMenuItemOne currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
                 }>
                   {executor.user_id? (
                     <Tooltip title={executor.full_name || '佚名'}>

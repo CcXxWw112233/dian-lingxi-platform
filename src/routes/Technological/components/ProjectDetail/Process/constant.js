@@ -8,7 +8,7 @@ export const processEditDatasConstant = [
     "is_workday":"0",
     "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
     "assignees":"",//审批人(id) 多个逗号隔开
-    "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+    "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
     "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
     "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
   },
@@ -27,7 +27,7 @@ export const processEditDatasRecordsConstant = [
         "is_workday":"0",
         "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
         "assignees":"",//审批人(id) 多个逗号隔开
-        "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+        "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
         "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
         "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
       },
@@ -40,7 +40,7 @@ export const processEditDatasRecordsConstant = [
         "is_workday":"0",
         "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
         "assignees":"",//审批人(id) 多个逗号隔开
-        "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+        "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
         "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
         "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
         "require_data":{
@@ -58,7 +58,7 @@ export const processEditDatasRecordsConstant = [
         "is_workday":"0",
         "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
         "assignees":"",//审批人(id) 多个逗号隔开
-        "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+        "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
         "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
         "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
         "form_data":[
@@ -98,7 +98,7 @@ export const processEditDatasRecordsConstant = [
         "assignees":"",//抄送人 多个逗号隔开（传的是邮箱）
         "cc_type":"1",//抄送人类型 1=启动流程时指定 2=固定人选
         "recipients":"",//抄送人 多个逗号隔开（传的是邮箱）
-        "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+        "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
         "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
         "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
       },
@@ -113,7 +113,7 @@ export const processEditDatasRecordsConstant = [
         "is_workday":"0",
         "assignee_type":"2",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
         "assignees":"",//审批人(id) 多个逗号隔开
-        "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+        "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
         "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
         "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
       },
@@ -130,7 +130,7 @@ export const processEditDatasItemOneConstant = {
   "is_workday":"0",
   "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
   "assignees":"",//审批人(id) 多个逗号隔开
-  "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+  "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
   "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
   "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
 }
@@ -147,7 +147,7 @@ export const processEditDatasRecordsItemOneConstant  =  {
       "is_workday":"0",
       "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
       "assignees":"",//审批人(id) 多个逗号隔开
-      "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+      "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
     },
@@ -160,7 +160,7 @@ export const processEditDatasRecordsItemOneConstant  =  {
       "is_workday":"0",
       "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
       "assignees":"",//审批人(id) 多个逗号隔开
-      "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+      "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
       "require_data":{
@@ -178,7 +178,7 @@ export const processEditDatasRecordsItemOneConstant  =  {
       "is_workday":"0",
       "assignee_type":"1",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
       "assignees":"",//审批人(id) 多个逗号隔开
-      "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+      "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1",//是否填写意见  1=填写 0=不填写
       "form_data":[
@@ -218,7 +218,7 @@ export const processEditDatasRecordsItemOneConstant  =  {
       "assignees":"",//抄送人 多个逗号隔开（传的是邮箱）
       "cc_type":"1",//抄送人类型 1=启动流程时指定 2=固定人选
       "recipients":"",//抄送人 多个逗号隔开（传的是邮箱）
-      "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+      "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
     },
@@ -233,7 +233,7 @@ export const processEditDatasRecordsItemOneConstant  =  {
       "is_workday":"0",
       "assignee_type":"2",//审批人类型 1=任何人 2=启动流程时指定 3=固定人选
       "assignees":"",//审批人(id) 多个逗号隔开
-      "transfer_mode":"1",//流转方式 1=自由选择 2= 下一步
+      "transfer_mode":"2",//流转方式 1=自由选择 2= 下一步
       "enable_revocation":"1",//是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion":"1"//是否填写意见  1=填写 0=不填写
     },

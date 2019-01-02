@@ -763,12 +763,12 @@ export default class DrawContent extends React.Component {
                 {!executor.user_id ? (
                    <div>
                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
-                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
                        <span>指派负责人</span>
                      </Dropdown>
                    </div>
                   ) : (
-                  <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+                  <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                       {executor.avatar? (
                         <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={executor.avatar} />
