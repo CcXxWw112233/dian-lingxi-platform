@@ -280,17 +280,27 @@
     .item_2_bott{
       background: #F5F5F5;
       box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15);
-      padding: 10px;
-      padding-top: 0;
+      padding: 0 10px;
       border-radius: 0 0 4px 4px;
+      //折叠面板覆盖
+      >div>div>div:nth-child(1){
+        padding: 8px 0 8px 40px !important;
+      }
+      >div>div>div:nth-child(2) {
+        padding-top: 0 !important;
+      }
+      >div>div>div:nth-child(2)>div{
+        padding: 0 0 8px 20px !important;
+      }
       .item_2_chirld{
-        margin-top: 10px;
+        margin-bottom: 8px;
         display: flex;
         cursor: pointer;
-        align-items: center;
+        //align-items: center;
         div:nth-child(2) {
           width: 200px;
           color: #595959;
+          padding-top: 2px;
         }
       }
     }

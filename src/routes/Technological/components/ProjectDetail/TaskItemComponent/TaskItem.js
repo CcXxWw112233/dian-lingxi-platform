@@ -202,6 +202,26 @@ export default class TaskItem extends React.Component {
     stopPropagation(e)
   }
 
+  //新增任务回车键处理
+  handlerMultiEnter(e) {
+    let code = e.keyCode;
+    let ctrl = e.ctrlKey;
+    let shift = e.shiftKey;
+    let alt = e.altKey;
+    if(code == '10' && ctrl && !shift && !alt) {
+      //ctrl + enter
+      // return;
+    }
+    if(code == '13' && !ctrl && shift && !alt) {
+      //shift + enter
+      // return;
+    }
+    if(code == '13' && !ctrl && !shift && !alt) {
+      //只按了enter
+      this.checkAddNewTask()
+    }
+  }
+
   render() {
     const { isAddEdit, isInEditName, executor={}, start_time,due_time, addTaskType, addNewTaskName, elseElementHeight } = this.state
     const { taskItemValue = {}, clientHeight } = this.props
@@ -286,7 +306,7 @@ export default class TaskItem extends React.Component {
           ) : (
             <div key={'adds'} className={CreateTaskStyle.addNewTask} >
               <div className={CreateTaskStyle.addNewTask_top}>
-               <TextArea autoFocus={true} autosize style={{ resize:'none'}} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
+               <TextArea autoFocus={true} autosize style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
               </div>
               <div className={CreateTaskStyle.addNewTask_bott}>
                 <div className={CreateTaskStyle.addNewTask_bott_left}>
