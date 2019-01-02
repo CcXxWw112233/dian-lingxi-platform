@@ -306,7 +306,7 @@ export default class TaskItem extends React.Component {
           ) : (
             <div key={'adds'} className={CreateTaskStyle.addNewTask} >
               <div className={CreateTaskStyle.addNewTask_top}>
-               <TextArea autoFocus={true} autosize style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
+               <TextArea autoFocus={true} autosize={{ minRows: 1, maxRows: 2 }} style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
               </div>
               <div className={CreateTaskStyle.addNewTask_bott}>
                 <div className={CreateTaskStyle.addNewTask_bott_left}>
