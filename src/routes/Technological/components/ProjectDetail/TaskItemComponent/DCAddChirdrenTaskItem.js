@@ -160,7 +160,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16}}>&#xe70f;</div>
             </Popconfirm>
             <Dropdown overlay={
-              <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+              <DCMenuItemOne currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
             }>
               {executor.user_id? (
                 <Tooltip title={executor.user_name || executor.full_name || '佚名'}>

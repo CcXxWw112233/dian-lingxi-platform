@@ -113,6 +113,30 @@ export default class DCAddChirdrenTask extends React.Component{
     })
   }
 
+  //新增任务回车键处理
+  handlerMultiEnter(e) {
+    if(!e.target.value) {
+      return
+    }
+    let code = e.keyCode;
+    let ctrl = e.ctrlKey;
+    let shift = e.shiftKey;
+    let alt = e.altKey;
+    if(code == '10' && ctrl && !shift && !alt) {
+      //ctrl + enter
+      // return;
+    }
+    if(code == '13' && !ctrl && shift && !alt) {
+      //shift + enter
+      // return;
+    }
+    if(code == '13' && !ctrl && !shift && !alt) {
+      //只按了enter
+      this.addChirldTask()
+      this.refs.childTaskInput.blur()
+    }
+  }
+
   render() {
     const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar, executors = [] } = this.state
     const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
@@ -140,16 +164,19 @@ export default class DCAddChirdrenTask extends React.Component{
             <div className={DrawerContentStyles.contain_7_add}>
               <div>
                 <Icon type="plus" style={{marginRight: 4}}/>
-                <input onFocus={this.addInputFocus.bind(this)}
+                <input
+                       ref={'childTaskInput'}
+                       onFocus={this.addInputFocus.bind(this)}
                        placeholder={`子${currentNounPlanFilterName(TASKS)}`}
                        onChange={this.setchirldTaskNameChange.bind(this)}
                        onBlur={this.setchirldTaskNameBlur.bind(this)}
+                       onKeyDown={this.handlerMultiEnter.bind(this)}
                        value={this.state.name}
                 />
               </div>
               <div style={{display: isShowUserCalendar ? 'flex':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+                  <DCMenuItemOne currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
                 }>
                   {executor.user_id? (
                     <Tooltip title={executor.full_name || '佚名'}>

@@ -22,20 +22,21 @@ export default class DCMenuItemOne extends React.Component{
      })
    }
    handleMenuIconDelete = ({key, user_id}) =>{
-     const { execusorList } = this.props
-     const { resultArr } = this.state
-     for(let i = 0; i <execusorList.length; i++ ){
-       if (user_id === execusorList[i]['user_id']) {
-         execusorList.splice(i,1)
-         break
-       }
-     }
-     const { keyWord } = this.state
-     this.setState({
-       resultArr: this.fuzzyQuery(execusorList, keyWord)
-     })
+     // const { execusorList } = this.props
+     // const { resultArr } = this.state
+     // for(let i = 0; i <execusorList.length; i++ ){
+     //   if (user_id === execusorList[i]['user_id']) {
+     //     execusorList.splice(i,1)
+     //     break
+     //   }
+     // }
+     // const { keyWord } = this.state
+     // this.setState({
+     //   resultArr: this.fuzzyQuery(execusorList, keyWord)
+     // })
      // execusorList.splice(key,1)
-     this.props.setList(user_id)
+     // this.props.setList(user_id)
+     this.props.chirldrenTaskChargeChange({user_id:'', user_name: '',avatar: ''})
    }
    handleMenuReallyClick = (data) => {
     this.props.chirldrenTaskChargeChange(data)
@@ -61,8 +62,10 @@ export default class DCMenuItemOne extends React.Component{
      })
   }
   render() {
-    const { execusorList,canNotRemoveItem } = this.props
+    const { execusorList,canNotRemoveItem, currentExecutor={} } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
+    const executorUserId = currentExecutor.user_id
+
     return (
       <div className={DrawerContentStyles.menuOneout}>
         <div className={DrawerContentStyles.menuOne}>
@@ -85,7 +88,9 @@ export default class DCMenuItemOne extends React.Component{
                     <span >{name}</span>
                   </div>
                 </div>
-                <Icon type="close-circle" style={{display: canNotRemoveItem?'none': 'block',fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={this.handleMenuIconDelete.bind(this,{key,user_id: value.user_id})}/>
+                {executorUserId === user_id? (
+                  <Icon type="close-circle" style={{display: canNotRemoveItem?'none': 'block',fontSize: 14,marginLeft: 8,position: 'absolute', right: 10, top: 9}} onClick={this.handleMenuIconDelete.bind(this,{key,user_id: value.user_id})}/>
+                ):('')}
               </div>
             )
           })}

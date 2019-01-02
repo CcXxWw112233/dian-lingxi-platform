@@ -83,12 +83,14 @@ export default class ItemTwo extends React.Component {
               </div>
             ) : ('')}
 
-            {label_data.map((value, key) => {
-              const { label_name, label_id, label_color = '90,90,90' } = value
-              return(
-                <div key={key} style={{color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}>{label_name|| key}</div>
-              )
-            })}
+            <div style={{margin:0,height: 'auto',marginTop:'2px',display: 'flex',flexWrap: 'wrap'}}>
+              {label_data.map((value, key) => {
+                const { label_name, label_id, label_color = '90,90,90' } = value
+                return(
+                  <div key={key} style={{marginLeft: 0, marginRight: 4, color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}>{label_name|| key}</div>
+                )
+              })}
+            </div>
             </div>
 
 
