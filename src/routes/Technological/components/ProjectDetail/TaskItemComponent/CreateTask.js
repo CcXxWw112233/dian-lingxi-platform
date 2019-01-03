@@ -164,6 +164,10 @@ export default class CreateTask extends React.Component {
   render() {
     const { clientHeight=changeClientHeight() } = this.state
     const { datas:{ taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
+    let corretDegree = 0 //  修正度，媒体查询变化两条header高度
+    if(clientHeight < 900) {
+      corretDegree = 44
+    }
     return (
       <div>
         <div className={CreateTaskStyle.outerMost}
@@ -171,7 +175,7 @@ export default class CreateTask extends React.Component {
              // onMouseDown={this.fnDown.bind(this)}
              onWheel={this.fnWheel.bind(this)}
              onScroll={this.fnScroll.bind(this)}
-             style={{height: clientHeight - 172}}
+             style={{height: clientHeight - 172 + corretDegree}}
              ref={'outerMost'}
         >
           <div  className={CreateTaskStyle.outerMostListContainer} ref={'outerMostListContainer'}>

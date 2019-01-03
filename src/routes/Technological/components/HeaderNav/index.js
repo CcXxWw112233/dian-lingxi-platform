@@ -334,7 +334,8 @@ export default class HeaderNav extends React.Component{
           <div className={indexStyle.out_right}>
           <Input
             placeholder="搜索"
-            style={{height:40, width: 400,fontSize: 16,marginRight: 24}}
+            className={indexStyle.searchInput}
+            // style={{height:40, width: 400,fontSize: 16,marginRight: 24}}
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)', fontSize: 16 }} />}
           />
           <div className={indexStyle.add}>

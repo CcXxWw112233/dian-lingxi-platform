@@ -258,7 +258,11 @@ export default class TaskItem extends React.Component {
       );
     }
 
-    let cardListOut = clientHeight - elseElementHeight
+    let corretDegree = 0 //  修正度，媒体查询变化两条header高度
+    if(clientHeight < 900) {
+      corretDegree = 44
+    }
+    let cardListOut = clientHeight - elseElementHeight + corretDegree
     cardListOut = cardListOut < 0? 0 : cardListOut
 
     return (

@@ -243,10 +243,10 @@ export default class EditFormFive extends React.Component {
             </div>
           </div>
           {/*删除*/}
-          <div style={{textAlign: 'center'}}>
-            <Button style={{color: 'red',margin: '0 auto'}} onClick={this.deleteProcessStep.bind(this)}>删除步骤</Button>
-          </div>
-
+          {/*<div style={{textAlign: 'center'}}>*/}
+            {/*<Button style={{color: 'red',margin: '0 auto'}} onClick={this.deleteProcessStep.bind(this)}>删除步骤</Button>*/}
+          {/*</div>*/}
+           <div style={{height: 20}}></div>
         </div>
       </div>
     )
