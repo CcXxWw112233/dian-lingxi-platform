@@ -92,7 +92,7 @@ export default class MyCircleItem extends React.Component {
                  return (
                    <div className={indexstyles.left_item} onClick={this.setUsers.bind(this,{ datalist:users})}>
                      <div>{board_name}</div>
-                     <div className={globalStyles.authTheme} onClick={this.toChat.bind(this, {type: 'group',to_name: board_name, id: board_id})}>
+                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group',to_name: board_name, id: board_id})}>
                        {/*<Icon type="folder-open" />*/}
                        &#xe639;
                      </div>
@@ -118,7 +118,7 @@ export default class MyCircleItem extends React.Component {
                  return (
                    <div className={indexstyles.left_item} key={key} onClick={this.setUsers.bind(this,{ datalist:members})}>
                      <div>{name}</div>
-                     <div className={globalStyles.authTheme} onClick={this.toChat.bind(this, {type: 'group', to_name:name, id: org_id})}>
+                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group', to_name:name, id: org_id})}>
                        {/*<Icon type="folder-open" />*/}
                        &#xe639;
                      </div>
@@ -142,7 +142,7 @@ export default class MyCircleItem extends React.Component {
                   <div className={indexstyles.name}>
                     {name || full_name || mobile || email}
                   </div>
-                  <div className={indexstyles.commit} onClick={this.toChat.bind(this, {type: 'contact', to_name: name || full_name || mobile || email, id: id || member_id})}>
+                  <div className={`${indexstyles.commit} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'contact', to_name: name || full_name || mobile || email, id: id || member_id})}>
                     <Icon type="message" />
                   </div>
                 </div>

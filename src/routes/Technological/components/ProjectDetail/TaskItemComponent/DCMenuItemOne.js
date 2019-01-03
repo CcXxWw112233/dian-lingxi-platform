@@ -36,7 +36,7 @@ export default class DCMenuItemOne extends React.Component{
      // })
      // execusorList.splice(key,1)
      // this.props.setList(user_id)
-     this.props.chirldrenTaskChargeChange({user_id:'', user_name: '',avatar: ''})
+     // this.props.chirldrenTaskChargeChange({user_id:'', user_name: '',avatar: ''})
    }
    handleMenuReallyClick = (data) => {
     this.props.chirldrenTaskChargeChange(data)
