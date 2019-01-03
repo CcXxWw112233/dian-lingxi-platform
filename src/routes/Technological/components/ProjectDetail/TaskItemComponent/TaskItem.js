@@ -40,7 +40,7 @@ export default class TaskItem extends React.Component {
     }
     this.setState({
       isAddEdit:true,
-      elseElementHeight: 395
+      elseElementHeight: 395+21
     })
   }
   addItem(data,e) {
@@ -302,7 +302,7 @@ export default class TaskItem extends React.Component {
           })}
         {/*</QueueAnim>*/}
         </div>
-        <QueueAnim type={'right'}>
+        <QueueAnim type={'bottom'} duration={200}>
           {!isAddEdit ? (
             <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
@@ -310,7 +310,7 @@ export default class TaskItem extends React.Component {
           ) : (
             <div key={'adds'} className={CreateTaskStyle.addNewTask} >
               <div className={CreateTaskStyle.addNewTask_top}>
-               <TextArea autoFocus={true} autosize={{ minRows: 1, maxRows: 2 }} style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
+               <TextArea autoFocus={true} autosize={{ minRows: 2, maxRows: 2 }} style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
               </div>
               <div className={CreateTaskStyle.addNewTask_bott}>
                 <div className={CreateTaskStyle.addNewTask_bott_left}>
