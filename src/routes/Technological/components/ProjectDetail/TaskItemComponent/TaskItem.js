@@ -287,7 +287,7 @@ export default class TaskItem extends React.Component {
             </div>
           )}
         <div className={CreateTaskStyle.cardListOut} style={{maxHeight: cardListOut }}>
-        <QueueAnim >
+        {/*<QueueAnim  interval={20}>*/}
           {card_data.map((value,key) => {
             const { card_id } = value
             return(
@@ -296,7 +296,7 @@ export default class TaskItem extends React.Component {
                        key={card_id} {...this.props} />
             )
           })}
-        </QueueAnim>
+        {/*</QueueAnim>*/}
         </div>
         <QueueAnim type={'right'}>
           {!isAddEdit ? (

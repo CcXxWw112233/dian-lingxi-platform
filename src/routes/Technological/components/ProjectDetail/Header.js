@@ -347,7 +347,8 @@ export default class Header extends React.Component {
     this.props.getTaskGroupList({
       type: '2',
       board_id: board_id,
-      arrange_type: key
+      arrange_type: key,
+      operateType: '1'
     })
   }
   //任务操作---end
