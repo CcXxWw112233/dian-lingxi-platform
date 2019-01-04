@@ -58,8 +58,11 @@ export default class DrawContent extends React.Component {
     //任务附件
     let attachment_fileList = []
     for(let i = 0; i < attachment_data.length; i++) {
-      attachment_fileList.push(attachment_data[i])
-      attachment_fileList[i]['uid'] = attachment_data[i].id || attachment_data[i].response.data.attachment_id
+      if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
+        attachment_fileList.push(attachment_data[i])
+        // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+        attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+      }
     }
     this.setState({
       attachment_fileList
@@ -630,6 +633,7 @@ export default class DrawContent extends React.Component {
       fileList: attachment_fileList,
       withCredentials: true,
       action: `${REQUEST_DOMAIN_BOARD}/card/attachment/upload`,
+      multiple: true,
       data: {
         card_id
       },
@@ -647,10 +651,16 @@ export default class DrawContent extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
+        // console.log(1, file, fileList)
         if (file.status === 'done' &&  file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
-          fileList.pop()
+          for(let i=0; i < fileList.length; i++) {
+            if(file.uid == fileList[i].uid) {
+              fileList.splice(i, 1)
+            }
+          }
+          // fileList.pop()
         }
         that.setState({
           attachment_fileList: fileList
@@ -686,7 +696,10 @@ export default class DrawContent extends React.Component {
         that.setPreviewFileModalVisibile()
       },
       onRemove(e) {
-        const attachment_id  = e.id || e.response.data.attachment_id
+        const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)
+        if(!attachment_id){
+          return
+        }
         return new Promise((resolve, reject) => {
           deleteTaskFile({attachment_id}).then((value) => {
             if(value.code !=='0') {
