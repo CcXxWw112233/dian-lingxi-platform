@@ -414,6 +414,7 @@ export default class Header extends React.Component {
     const uploadProps = {
       name: 'file',
       withCredentials: true,
+      multiple:true,
       action: `${REQUEST_DOMAIN_FILE}/file/upload`,
       data: {
         board_id,

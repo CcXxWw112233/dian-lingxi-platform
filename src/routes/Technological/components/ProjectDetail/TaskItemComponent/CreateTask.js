@@ -205,8 +205,8 @@ export default class CreateTask extends React.Component {
           width={520}
           destroyOnClose
           zIndex={1}
-          maskStyle={{top: 64}}
-          style={{marginTop: 64,}}
+          maskStyle={{top: clientHeight<900?48:64}}
+          style={{marginTop: clientHeight<900?48:64,}}
         >
           <DrawerContent
             {...this.props}
