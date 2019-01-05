@@ -40,7 +40,7 @@ export default class TaskItem extends React.Component {
     }
     this.setState({
       isAddEdit:true,
-      elseElementHeight: 395
+      elseElementHeight: 395+21
     })
   }
   addItem(data,e) {
@@ -258,7 +258,11 @@ export default class TaskItem extends React.Component {
       );
     }
 
-    let cardListOut = clientHeight - elseElementHeight
+    let corretDegree = 0 //  修正度，媒体查询变化两条header高度
+    if(clientHeight < 900) {
+      corretDegree = 44
+    }
+    let cardListOut = clientHeight - elseElementHeight + corretDegree
     cardListOut = cardListOut < 0? 0 : cardListOut
 
     return (
@@ -287,7 +291,7 @@ export default class TaskItem extends React.Component {
             </div>
           )}
         <div className={CreateTaskStyle.cardListOut} style={{maxHeight: cardListOut }}>
-        <QueueAnim >
+        {/*<QueueAnim  interval={20}>*/}
           {card_data.map((value,key) => {
             const { card_id } = value
             return(
@@ -296,9 +300,9 @@ export default class TaskItem extends React.Component {
                        key={card_id} {...this.props} />
             )
           })}
-        </QueueAnim>
+        {/*</QueueAnim>*/}
         </div>
-        <QueueAnim type={'right'}>
+        <QueueAnim type={'bottom'} duration={200}>
           {!isAddEdit ? (
             <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
@@ -306,7 +310,7 @@ export default class TaskItem extends React.Component {
           ) : (
             <div key={'adds'} className={CreateTaskStyle.addNewTask} >
               <div className={CreateTaskStyle.addNewTask_top}>
-               <TextArea autoFocus={true} autosize={{ minRows: 1, maxRows: 2 }} style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
+               <TextArea autoFocus={true} autosize={{ minRows: 2, maxRows: 2 }} style={{ resize:'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
               </div>
               <div className={CreateTaskStyle.addNewTask_bott}>
                 <div className={CreateTaskStyle.addNewTask_bott_left}>

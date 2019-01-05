@@ -5,6 +5,7 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
+import indexStyles from './index.less'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -225,6 +226,12 @@ const ProjectDetail = (props) => {
     addTaskExecutor(data){
       dispatch({
         type: getEffectOrReducerByName('addTaskExecutor'),
+        payload: data
+      })
+    },
+    removeTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName('removeTaskExecutor'),
         payload: data
       })
     },
@@ -508,7 +515,7 @@ const ProjectDetail = (props) => {
   return(
     // minHeight: '100%',
     <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
-      <div style={{height: 108,}}></div>
+      <div className={indexStyles.headerMaskDown}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}

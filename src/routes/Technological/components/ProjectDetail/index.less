@@ -3,6 +3,12 @@ body { height: 100%; padding: 0; margin: 0; }
 @import "../../../../globalset/css/constant";
 
 //头部
+.headerMaskDown{
+  height: 108px;
+}
+.headoutMaskDown{
+  top: 64px;
+}
 .headout {
   position: relative;
   z-index: 1;
@@ -105,5 +111,51 @@ body { height: 100%; padding: 0; margin: 0; }
   }
   span:nth-child(2):active, span:nth-child(3):active{
     color: @color-link-active;
+  }
+}
+
+@media screen and (max-height: 900px) {
+  .headoutMaskDown{
+    top: 48px;
+  }
+  .headerMaskDown{
+    height: 80px;
+  }
+  .headout {
+    height: 80px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    .left{
+      margin-left: 20px;
+      .displayProjectinfo{
+        margin: 10px 0 0 60px;
+      }
+      .projectNameIcon{
+        font-size: 20px;
+        margin-top: 4px;
+      }
+      .projectName{
+        font-size: 20px;
+        margin-left: 40px;
+        max-width: 500px;
+      }
+    }
+    .right{
+      margin-right: 4px;
+      .right_top{
+        font-size: 16px;
+        div{
+          height: 28px;
+          line-height: 28px;
+          padding: 0 12px;
+          margin-left: 20px;
+          border-radius: 4px;
+        }
+      }
+      .right_bott{
+        font-size: 14px;
+      }
+    }
   }
 }

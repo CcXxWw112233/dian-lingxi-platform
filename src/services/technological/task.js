@@ -99,6 +99,15 @@ export async function addTaskExecutor(data) {
     data,
   });
 }
+// 移出任务执行人
+export async function removeTaskExecutor(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/executor`,
+    method: 'DELETE',
+    data,
+  });
+}
+
 
 // 完成任务
 export async function completeTask(data) {

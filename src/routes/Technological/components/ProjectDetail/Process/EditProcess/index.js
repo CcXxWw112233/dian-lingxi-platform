@@ -12,6 +12,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_FILES_FILE_EDIT, FLOWS
 } from "../../../../../../globalset/js/constant";
+import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 
 
@@ -173,6 +174,35 @@ export default class EditProcess extends React.Component {
     })
   }
 
+  //删除
+  deleteProcessStep(e){
+    e.stopPropagation()
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
+      return false
+    }
+    let newProcessEditDatasRecords = null
+    let newProcessEditDatas = null
+    if(processEditDatasRecords.length) {
+      // processEditDatasRecords.splice(processCurrentEditStep, 1)
+      newProcessEditDatasRecords = JSON.parse(JSON.stringify(processEditDatasRecords))
+      newProcessEditDatasRecords.splice(processCurrentEditStep, 1)
+    }
+    if(processEditDatas.length) {
+      // processEditDatas.splice(processCurrentEditStep, 1)
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas.splice(processCurrentEditStep, 1)
+    }
+    this.props.updateDatas({
+      processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
+    })
+    this.props.updateDatas({
+      processEditDatasRecords:newProcessEditDatasRecords,
+      processEditDatas:newProcessEditDatas,
+      node_type: processEditDatas[processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0]['node_type'],
+    })
+  }
+
   render() {
     const { datas: { node_type = '1', processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
 
@@ -223,6 +253,9 @@ export default class EditProcess extends React.Component {
               <div key={key} className={processCurrentEditStep === key? indexStyles.itemSelect :indexStyles.item} onClick={this.currentEditStepClick.bind(this, {value, key})}>
                 <div className={indexStyles.itemLeft}>{key+1}</div>
                 <div className={indexStyles.itemRight}>{value.name}</div>
+                {processCurrentEditStep === key && key != 0 ? (
+                  <div className={`${globalStyles.authTheme} ${indexStyles.itemDelete}`} onClick={this.deleteProcessStep.bind(this)}>&#xe70f;</div>
+                ) : ('')}
               </div>
             )
           })}

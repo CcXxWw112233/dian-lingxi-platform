@@ -26,6 +26,8 @@ import { filePreview } from '../../../../../services/technological/file'
 import {getProcessList} from "../../../../../services/technological/process";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
+import MeusearMutiple from './components/MeusearMutiple'
+import ExcutorList from './components/ExcutorList'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -58,8 +60,11 @@ export default class DrawContent extends React.Component {
     //任务附件
     let attachment_fileList = []
     for(let i = 0; i < attachment_data.length; i++) {
-      attachment_fileList.push(attachment_data[i])
-      attachment_fileList[i]['uid'] = attachment_data[i].id || attachment_data[i].response.data.attachment_id
+      if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
+        attachment_fileList.push(attachment_data[i])
+        // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+        attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+      }
     }
     this.setState({
       attachment_fileList
@@ -176,18 +181,48 @@ export default class DrawContent extends React.Component {
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
-  chirldrenTaskChargeChange({ user_id, full_name, avatar }) {
-    const { datas:{ drawContent = {} } } = this.props.model
+  chirldrenTaskChargeChange(data) {
+    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { card_id, executors=[] } = drawContent
-    executors[0] = {
-      user_id,
-      user_name: full_name,
-      avatar: avatar
+    //单个任务执行人
+    const { user_id, full_name, avatar } = data
+    // executors[0] = {
+    //   user_id,
+    //   user_name: full_name,
+    //   avatar: avatar
+    // }
+    // this.props.addTaskExecutor({
+    //   card_id,
+    //   users: user_id
+    // })
+
+   //  多个任务执行人
+    const excutorData = projectDetailInfoData['data'] //所有的人
+    let newExecutors = []
+    const { selectedKeys = [] } = data
+    for(let i = 0; i < selectedKeys.length; i++) {
+      for(let j = 0; j < excutorData.length; j++) {
+        if(selectedKeys[i] === excutorData[j]['user_id']) {
+          newExecutors.push(excutorData[j])
+        }
+      }
     }
+    drawContent['executors'] = newExecutors
+    //用于判判断任务执行人菜单是否显示
+    const that = this
+    setTimeout(function () {
+      const { excutorsOut_left = {}} = that.refs
+      const excutorsOut_left_width = excutorsOut_left.clientWidth
+      that.setState({
+        excutorsOut_left_width
+      })
+    },300)
+
     this.props.addTaskExecutor({
       card_id,
-      users: user_id
+      users: selectedKeys.join(',')
     })
+
   }
   setChargeManIsSelf() {
     const { datas:{ drawContent = {} } } = this.props.model
@@ -542,7 +577,7 @@ export default class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
@@ -551,7 +586,7 @@ export default class DrawContent extends React.Component {
     const { list_name } = taskGroupList[taskGroupListIndex]
 
     let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
-    let executor = {//任务执行人信息
+    let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
       avatar: '',
@@ -630,6 +665,7 @@ export default class DrawContent extends React.Component {
       fileList: attachment_fileList,
       withCredentials: true,
       action: `${REQUEST_DOMAIN_BOARD}/card/attachment/upload`,
+      multiple: true,
       data: {
         card_id
       },
@@ -647,10 +683,16 @@ export default class DrawContent extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
+        // console.log(1, file, fileList)
         if (file.status === 'done' &&  file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
-          fileList.pop()
+          for(let i=0; i < fileList.length; i++) {
+            if(file.uid == fileList[i].uid) {
+              fileList.splice(i, 1)
+            }
+          }
+          // fileList.pop()
         }
         that.setState({
           attachment_fileList: fileList
@@ -686,7 +728,10 @@ export default class DrawContent extends React.Component {
         that.setPreviewFileModalVisibile()
       },
       onRemove(e) {
-        const attachment_id  = e.id || e.response.data.attachment_id
+        const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)
+        if(!attachment_id){
+          return
+        }
         return new Promise((resolve, reject) => {
           deleteTaskFile({attachment_id}).then((value) => {
             if(value.code !=='0') {
@@ -704,6 +749,10 @@ export default class DrawContent extends React.Component {
       }
 
     };
+
+    //任务负责人显示 点点点
+    const { excutorsOut_left = {}} = this.refs
+    const excutorsOut_left_width_new = excutorsOut_left.clientWidth
 
     return(
       //
@@ -755,11 +804,56 @@ export default class DrawContent extends React.Component {
                )}
              </div>
           </div>
+          {/*<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>*/}
+          {/*任务负责人*/}
+          <div className={DrawerContentStyles.divContent_1}>
+            <div className={DrawerContentStyles.contain_3}>
+              <div>
+            {!executors.length ? (
+              <div>
+                <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
+                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+                  <span>指派负责人</span>
+                </Dropdown>
+              </div>
+            ) : (
+                <div className={DrawerContentStyles.excutorsOut}>
+                  <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
+                  <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
+                    {executors.map((value, key) => {
+                      const { avatar,name, user_name, user_id } = value
+                      return (
+                        <div style={{display: 'flex', alignItems: 'center'}} key={user_id}>
+                          {avatar? (
+                            <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4}} src={avatar} />
+                          ) : (
+                            <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center',justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                              <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
+                            </div>
+                          )}
+                          <div  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8}}>{name || user_name || '佚名'}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  </Dropdown>
+
+                  <Dropdown overlay={<ExcutorList listData={executors}/>}>
+                    <div  className={DrawerContentStyles.excutorsOut_right} style={{backgroundColor: (typeof excutorsOut_left_width =='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new =='number'&& excutorsOut_left_width_new > 340) ?'#f5f5f5': ''}}>
+                      <Icon type="ellipsis" style={{marginTop:2,display: (typeof excutorsOut_left_width =='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new =='number'&& excutorsOut_left_width_new > 340)?'block': 'none'}} />
+                    </div>
+                  </Dropdown>
+                </div>
+            )}
+          </div>
+            </div>
+          </div>
 
           {/*第三行设置*/}
           <div className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.contain_3}>
-              <div>
+              {/*负责人*/}
+              <div style={{display: 'none'}}>
                 {!executor.user_id ? (
                    <div>
                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
@@ -782,7 +876,8 @@ export default class DrawContent extends React.Component {
                   </Dropdown>
                   )}
               </div>
-              <div>
+              {/*时间*/}
+              <div style={{display: 'none'}}>
                 <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
               </div>
               <div>
@@ -809,10 +904,10 @@ export default class DrawContent extends React.Component {
                     style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
                 </span>
               </div>
-              <div>
+              <div style={{display: 'none'}}>
                 <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
               </div>
-              <div>
+              <div style={{display: 'none'}}>
                 {!isSetedAlarm ? (
                   <Dropdown overlay={alarmMenu}>
                     <span>设置提醒</span>
