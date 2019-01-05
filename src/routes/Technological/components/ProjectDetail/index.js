@@ -229,6 +229,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    removeTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName('removeTaskExecutor'),
+        payload: data
+      })
+    },
     completeTask(data){
       dispatch({
         type: getEffectOrReducerByName('completeTask'),

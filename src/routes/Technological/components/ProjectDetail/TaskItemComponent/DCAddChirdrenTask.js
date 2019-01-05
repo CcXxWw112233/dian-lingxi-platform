@@ -42,6 +42,20 @@ export default class DCAddChirdrenTask extends React.Component{
       executors
     })
   }
+
+  deleteExcutor(data){
+    let executors = []
+     const obj =  {
+      user_id:'',
+      user_name: '',
+      avatar: ''
+    }
+    executors.push(obj)
+    this.setState({
+      isSelectUserIcon: true,
+      executors
+    })
+  }
   //设置子任务负责人组件---------------end
 
   //添加子任务
@@ -176,7 +190,7 @@ export default class DCAddChirdrenTask extends React.Component{
               </div>
               <div style={{display: isShowUserCalendar ? 'flex':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+                  <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
                 }>
                   {executor.user_id? (
                     <Tooltip title={executor.full_name || '佚名'}>

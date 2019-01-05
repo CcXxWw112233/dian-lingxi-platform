@@ -9,7 +9,7 @@ import {
   quitProject
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
+import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
 import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
@@ -1276,7 +1276,14 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
+    * removeTaskExecutor({ payload }, { select, call, put }) { //
+      let res = yield call(removeTaskExecutor, payload)
+      if(isApiResponseOk(res)) {
+        message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
     * completeTask({ payload }, { select, call, put }) { //
       const { is_realize  } = payload
       let res = yield call(completeTask, payload)
