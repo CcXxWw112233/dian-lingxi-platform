@@ -42,7 +42,7 @@ export default class TeamInfoDetail extends React.Component{
   }
   render(){
     const {detailInfo_top,detaiInfo_middle,detailInfo_bott,detailInfo } = this.styles()
-    const minHeight = document.body.clientHeight
+    const minHeight = document.body.clientHeight - 64
     const {datas: {detaiInfo = {}}} = this.props.model
     const {content, cover_img, name, summary} = detaiInfo
     return(

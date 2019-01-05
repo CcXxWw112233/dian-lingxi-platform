@@ -122,7 +122,11 @@ const Routers = function ({ history, app }) {
         import('./models/technological/newsDynamic'),
         import('./models/technological/workbench'),
         import('./models/technological/organizationMember'),
-        import('./models/modal')
+        import('./models/modal'),
+        import('./models/teamShow'),
+        import('./models/teamShow/editTeamShow'),
+        import('./models/teamShow/teamList'),
+        import('./models/teamShow/teamInfo'),
       ],
       component: () => import('./routes/Technological/'),
     },{

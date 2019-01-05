@@ -125,7 +125,10 @@ export default class Technological extends React.Component{
       }, {
         path: '/technological/organizationMember',
         component: () => import('./components/OrganizationMember'),
-      }
+      }, {
+        path: '/technological/teamShow',
+        component: () => import('../TeamShow/index'),
+      },
     ]
     return (
       <LocaleProvider locale={zh_CN}>
@@ -135,7 +138,7 @@ export default class Technological extends React.Component{
           {
             routes.map(({ path, ...dynamics }, key) =>{
               return (<Route key={key}
-                             exact
+                             // exact
                              path={path}
                              component={dynamic({
                                app,

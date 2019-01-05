@@ -16,7 +16,7 @@ export default class TeamList extends React.Component{
     })
   }
   gotoEditTeamShow() {
-    this.props.routingJump('/teamShow/editTeamShow')
+    this.props.routingJump('/technological/teamShow/editTeamShow')
   }
   pageNoChange(pageNo) {
     const { datas: {teamShowTypeId} } = this.props.model

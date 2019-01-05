@@ -38,7 +38,7 @@ export default {
             naviHeadTabIndex = '2'
           }else if(location.pathname === '/technological/newsDynamic'){
             naviHeadTabIndex = '1'
-          } else if(location.pathname === '/technological/teamList') {
+          } else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
             naviHeadTabIndex = '5'
           }
           dispatch({

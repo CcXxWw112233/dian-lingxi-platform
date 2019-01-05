@@ -5,7 +5,7 @@ import { Icon } from 'antd'
 export default class TeamListTypeOne extends React.Component{
 
   gotoLook (id) {
-    this.props.routingJump(`/teamShow/teamInfo?id=${id}`)
+    this.props.routingJump(`/technological/teamShow/teamInfo?id=${id}`)
   }
 
   render(){
