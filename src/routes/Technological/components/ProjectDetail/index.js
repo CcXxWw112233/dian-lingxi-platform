@@ -498,7 +498,7 @@ const ProjectDetail = (props) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
+        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
         break
       case '3':
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
