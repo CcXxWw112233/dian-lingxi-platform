@@ -34,6 +34,7 @@ export default {
     * confirmEmail({ payload }, { select, call, put }) { //获取验证码
       let res = yield call(confirmEmail, payload)
       if(isApiResponseOk(res)) {
+        Cookies.remove('userInfo',{expires: 30, path: ''})
         message.success('验证成功,即将跳转到用户界面...', MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
