@@ -42,7 +42,7 @@ export default  {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '2',
+              tabSelectKey: '1',
               // permission_data: [], //权限数据
               //名词定义
               current_scheme_local: '', //已选方案名称

@@ -51,6 +51,34 @@ export default class ElseProject extends React.Component{
       }
     });
   }
+  confirm_2(board_id,type) {
+    const that = this
+    let defineNoun = '操作'
+    switch (type){
+      case '0':
+        defineNoun='删除'
+        break
+      case '1':
+        defineNoun='归档'
+        break
+      default:
+        break
+    }
+    Modal.confirm({
+      title: `确认要${defineNoun}该${currentNounPlanFilterName(PROJECTS)}吗？`,
+      zIndex: 2000,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        if(type ==='1'){
+          that.props.archivedProject({board_id, is_archived: '1'})
+        }else if(type === '0') {
+          that.props.deleteProject(board_id)
+        }
+      }
+    });
+  }
+
   //出现confirm-------------end
   //添加项目组成员操作
   setShowAddMenberModalVisibile() {
@@ -79,7 +107,8 @@ export default class ElseProject extends React.Component{
         this.props.archivedProject({board_id, is_archived: '1'})
         break
       case '3':
-        this.props.deleteProject(board_id)
+        this.confirm_2(board_id, '0')
+        // this.props.deleteProject(board_id)
         break
       case '4':
         this.confirm(board_id )
@@ -175,11 +204,11 @@ export default class ElseProject extends React.Component{
               邀请{currentNounPlanFilterName(MEMBERS)}加入
             </div>
           </Menu.Item>
-          <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={indexStyle.elseProjectMemu}>
-              {currentNounPlanFilterName(PROJECTS)}归档
-            </div>
-          </Menu.Item>
+          {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
+            {/*<div className={indexStyle.elseProjectMemu}>*/}
+              {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
+            {/*</div>*/}
+          {/*</Menu.Item>*/}
           <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
               删除{currentNounPlanFilterName(PROJECTS)}

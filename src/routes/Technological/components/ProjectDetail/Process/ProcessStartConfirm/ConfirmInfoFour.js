@@ -10,7 +10,7 @@ const { RangePicker } = DatePicker;
 export default class ConfirmInfoFour extends React.Component {
   state = {
     due_time: '',
-    isShowBottDetail: false, //是否显示底部详情
+    isShowBottDetail: true, //是否显示底部详情
   }
   //这里的逻辑用来设置固定人选时将名称替换成id
   componentWillMount(nextProps) {

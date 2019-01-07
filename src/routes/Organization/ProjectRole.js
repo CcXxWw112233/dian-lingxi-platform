@@ -262,7 +262,7 @@ export default class ProjectRole extends React.Component {
                     ):('')}
                   </div>
                 </div>} key={parentKey}>
-                <div style={{color: '#8c8c8c'}}>可行驶权限：</div>
+                <div style={{color: '#8c8c8c'}}>可行使权限：</div>
                 <Collapse bordered={false} >
                   {/*二级折叠*/}
                   {function_tree_data.map((value, childKey) => {
