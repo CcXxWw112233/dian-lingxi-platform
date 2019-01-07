@@ -114,3 +114,11 @@ export async function getProessDynamics(params) {
     params,
   });
 }
+//删除流程步骤上传的文件
+export async function deleteProcessFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/flowtask/file/${data.id}`,
+    method: 'DELETE',
+    data,
+  });
+}

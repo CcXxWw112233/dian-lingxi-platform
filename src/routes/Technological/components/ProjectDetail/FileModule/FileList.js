@@ -110,6 +110,9 @@ export default class FileList extends React.Component {
   fiterSizeUnit(file_size) {
     let transSize
     const sizeTransNumber = parseFloat(file_size)
+    if(!file_size) {
+      return
+    }
     if(file_size.indexOf('G') !== -1){
       transSize = 1024*1024*1024* sizeTransNumber
     }else if(file_size.indexOf('MB') !== -1){
@@ -259,7 +262,9 @@ export default class FileList extends React.Component {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
+          {type !== '1'? (
           <Menu.Item key="2">下载</Menu.Item>
+            ):('')}
           {type !== '1'? (
             <Menu.Item key="3">移动</Menu.Item>
           ):('')}
@@ -331,10 +336,10 @@ export default class FileList extends React.Component {
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,
-            // getCheckboxProps: data => ({
-            //   disabled: data.isInAdd === true || data.type === '1', // Column configuration not to be checked
-            //   name: data.file_id,
-            // }),
+            getCheckboxProps: data => ({
+              disabled: data.type === '1',//data.isInAdd === true || data.type === '1', // Column configuration not to be checked
+              name:  data.file_id,//data.file_id,
+            }),
           }}
           columns={columns}
           dataSource={fileList}

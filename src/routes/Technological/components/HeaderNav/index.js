@@ -126,7 +126,8 @@ export default class HeaderNav extends React.Component{
     })
     this.props.routingJump(`/technological/${route}`)
   }
-  logout() {
+  logout(e) {
+    e.stopPropagation()
     const that = this;
     Modal.confirm({
       title: '确定退出登录？',

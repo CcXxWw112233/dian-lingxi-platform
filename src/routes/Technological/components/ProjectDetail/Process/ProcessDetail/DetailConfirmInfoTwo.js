@@ -4,7 +4,7 @@ import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Toolt
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
-import { createProcess, getProcessList } from '../../../../../../services/technological/process'
+import { deleteProcessFile, getProcessList } from '../../../../../../services/technological/process'
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
@@ -432,7 +432,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
         if (info.file.status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
-          info.fileList.pop()
+          // info.fileList.pop()
+          for(let i=0; i < info.fileList.length; i++) {
+            if(info.file.uid == info.fileList[i].uid) {
+              info.fileList.splice(i, 1)
+            }
+          }
           message.error(`${info.file.name} 上传失败。`);
         }
         that.setState({
@@ -442,13 +447,17 @@ export default class DetailConfirmInfoTwo extends React.Component {
         that.funTransitionHeight(element, 500,  true)
       },
       onRemove(e) {
-        const message = e.response.message
+        // const message = e.response.message
+        const id = e.response.data? e.response.data.id: ''
+        console.log(e)
         return new Promise((resolve, reject) => {
-          getProcessList().then((value) => {
+          deleteProcessFile({id}).then((value) => {
             if(value.code !=='0') {
               message.warn('删除失败，请重新删除。')
               reject()
             }else {
+              const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
+              that.funTransitionHeight(element, 500,  true)
               resolve()
             }
           }).catch(err => {

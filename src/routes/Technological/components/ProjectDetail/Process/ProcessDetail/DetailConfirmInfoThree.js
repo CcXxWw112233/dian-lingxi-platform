@@ -8,6 +8,7 @@ import ConfirmInfoThreeThree from './DetailConfirmInfoThree_Three'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
+import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt,validateNegative,validateTwoDecimal, } from '../../../../../../utils/verify'
 
 const { RangePicker } = DatePicker;
 
@@ -246,7 +247,7 @@ export default class DetailConfirmInfoThree extends React.Component {
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>
-              <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>
+              <Button disabled={!setCompleteButtonDisabled()} type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>
             </div>
           )
         } else if (Number(sort) > Number(curr_node_sort)) {
@@ -311,6 +312,63 @@ export default class DetailConfirmInfoThree extends React.Component {
         </div>
       )
     }
+
+    //设置完成按钮在表单验证无误才可点击
+    const setCompleteButtonDisabled = () => {
+      let valiResult
+      for(let i = 0;i < form_data.length; i++) {
+        if(form_data[i]['is_required'] == '1') { //必填的情况下
+          const verification_rule = form_data[i]['verification_rule']
+          const value = form_data[i]['default_value']
+          console.log(i,verification_rule, validateTel('') )
+          switch (verification_rule) {
+            case 'mobile':
+              valiResult = validateTel(value)
+              break;
+            case 'tel':
+              valiResult =validateFixedTel(value)
+              break;
+            case 'ID_card':
+              valiResult = validateIdCard(value)
+              break;
+            case 'chinese_name':
+              valiResult = validateChineseName(value)
+              break;
+            case 'url':
+              valiResult = validateWebsite(value)
+              break;
+            case 'qq':
+              valiResult =validateQQ(value)
+              break;
+            case 'postal_code':
+              valiResult = validatePostalCode(value)
+              break;
+            case 'positive_integer':
+              valiResult = validatePositiveInt(value)
+              break;
+            case 'negative':
+              valiResult = validateNegative(value)
+              break;
+            case 'two_decimal_places':
+              valiResult = validateTwoDecimal(value)
+              break;
+            default:
+              if(!!value) {
+                valiResult = true
+              } else {
+                valiResult = false
+              }
+              break
+          }
+          if(!valiResult) {
+            break
+          }
+        }
+      }
+      return valiResult
+    }
+
+    console.log(setCompleteButtonDisabled())
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
