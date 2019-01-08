@@ -17,6 +17,8 @@ import MenuSearch from '../TecPublic/MenuSearch'
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
 import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import AddModalForm from './components/AddModalForm'
+
 
 let is_starinit = null
 
@@ -26,6 +28,7 @@ export default class Header extends React.Component {
     isInitEntry: true, // isinitEntry isCollection用于处理收藏
     isCollection: false,
     ShowAddMenberModalVisibile: false,
+    AddModalFormVisibile: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
     //修改项目名称所需state
@@ -139,6 +142,11 @@ export default class Header extends React.Component {
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
+  setAddModalFormVisibile() {
+    this.setState({
+      AddModalFormVisibile: !this.state.AddModalFormVisibile
+    })
+  }
   //菜单按钮点击
   handleMenuClick(board_id, e ) {
     e.domEvent.stopPropagation();
@@ -172,6 +180,9 @@ export default class Header extends React.Component {
         break
       case '4':
         this.confirm(board_id )
+        break
+      case '5':
+        this.setAddModalFormVisibile()
         break
       default:
         return
@@ -414,6 +425,11 @@ export default class Header extends React.Component {
     //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
+        <Menu.Item key={'5'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            添加应用
+          </div>
+        </Menu.Item>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
             邀请成员加入
@@ -682,7 +698,8 @@ export default class Header extends React.Component {
           </div>
         </div>
       </div>
-      <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <AddModalForm {...this.props} board_id = {board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)}/>
       </div>
   )
   }

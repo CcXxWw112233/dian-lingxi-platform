@@ -5,8 +5,8 @@ import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../globalset/j
 import { routerRedux } from "dva/router";
 import { getUrlQueryString } from '../../utils/util'
 import {
-  addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
-  quitProject
+  addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
+  quitProject, getAppsList, addProjectApp
 } from "../../services/technological/project";
 import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
@@ -61,6 +61,7 @@ export default {
               //全局任务key
               appsSelectKey: undefined, //应用key
               appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
+              appsList: [], //全部app列表
               //项目详情和任务
               projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
               isInitEntry: false, //是否初次进来项目详情
@@ -126,6 +127,12 @@ export default {
             type: 'initProjectDetail',
             payload:{
               id: board_id
+            }
+          })
+          dispatch({
+            type: 'getAppsList',
+            payload: {
+              type:'2'
             }
           })
 
@@ -285,6 +292,20 @@ export default {
 
 
 
+    },
+
+    * getAppsList({ payload }, { select, call, put }) {
+      let res = yield call(getAppsList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            appsList: res.data
+          }
+        })
+      }else{
+
+      }
     },
 
     //流程
@@ -970,6 +991,21 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
+    * addProjectApp({ payload }, { select, call, put }) {
+      let res = yield call(addProjectApp, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'initProjectDetail',
+          payload: {
+            id: board_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     //项目增删改查--end
 
     //任务---start
