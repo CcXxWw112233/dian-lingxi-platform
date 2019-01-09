@@ -1,35 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>caasDrag</title>
+  <meta charset="UTF-8">
+  <title>caasDrag</title>
 </head>
 <body>
-<div style="height: 100px"></div>
-<div style="display: flex; background-color: yellow;padding: 0;padding-top: 60px;">
-  <div style="width: 30px;background-color: #000000;height: 300px"></div>
-  <canvas id="canvas" width="400" height="300" style="border: 1px solid red">
-  </canvas>
+<!--<canvas id="canvas" width="400" height="300" style="border: 1px solid red">-->
+<!--</canvas>-->
+<div id="canvas">
+
 </div>
 
 </body>
 <script type="text/javascript">
   window.onload = function() {
-    var SelectedRect = {};
+    var SelectedRect = {}; //当前拖拽鼠标所在位置
     var x1;
     var y1;
     var right=false;
     var isDragging = false;
-
-    // canvas 矩形框集合
-    var rects=[];
-    function rectar(x,y,width,height){
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
-      this.isSelected = false;
-    }
+    var rects=[]; //矩形列表
 
     function drawRect() {
       // 清除画布，准备绘制
@@ -67,7 +57,6 @@
 
     function canvasClick(e) {
       // 取得画布上被单击的点
-      console.log( e.pageX, e.pageY, canvas.offsetLeft, canvas.offsetTop)
       x1 = e.pageX - canvas.offsetLeft;
       y1 = e.pageY - canvas.offsetTop;
       isDragging = true
@@ -111,12 +100,11 @@
     }
 
     canvas = document.getElementById("canvas");
-    context = canvas.getContext("2d");
     canvas.onmousedown = canvasClick;
     canvas.onmouseup = onmouseup;
     canvas.onmouseout = onmouseout;
-    canvas.onmousemove =dragRect
-; };
+    canvas.onmousemove =dragRect;
+  }
 
 </script>
 </html>

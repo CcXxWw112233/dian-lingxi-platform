@@ -41,22 +41,22 @@ export default class ImChat extends React.Component {
         </div>
 
         {/*${imIframOutVisible === '1'?'': (imIframOutVisible ==='2'? indexStyles.showIframe: indexStyles.hideIframe)}*/}
-        <div id={'imIframOut'} className={`${indexStyles.imIframOut} ${'imclick'}`}>
-          <div className={`${indexStyles.ifram} ${'imclick'}`}>
-            {access_token?(
-              <iframe
-                src={`http://www.new-di.com/im/#/login?username=${username}&access_token=${access_token}`}
-                frameBorder="0"
-                width="500"
-                height="500"
-                id="imIFram"
-              ></iframe>
-            ):('')}
-            <div className={`${indexStyles.closeimMessage} ${'imclick'}`} onClick={this.setImIframOutVisible.bind(this)}>
-              <Icon type="close"  className={`${'imclick'}`} />
-            </div>
-          </div>
-        </div>
+        {/*<div id={'imIframOut'} className={`${indexStyles.imIframOut} ${'imclick'}`}>*/}
+          {/*<div className={`${indexStyles.ifram} ${'imclick'}`}>*/}
+            {/*{access_token?(*/}
+              {/*<iframe*/}
+                {/*src={`http://www.new-di.com/im/#/login?username=${username}&access_token=${access_token}`}*/}
+                {/*frameBorder="0"*/}
+                {/*width="500"*/}
+                {/*height="500"*/}
+                {/*id="imIFram"*/}
+              {/*></iframe>*/}
+            {/*):('')}*/}
+            {/*<div className={`${indexStyles.closeimMessage} ${'imclick'}`} onClick={this.setImIframOutVisible.bind(this)}>*/}
+              {/*<Icon type="close"  className={`${'imclick'}`} />*/}
+            {/*</div>*/}
+          {/*</div>*/}
+        {/*</div>*/}
       </div>
     )
   }
