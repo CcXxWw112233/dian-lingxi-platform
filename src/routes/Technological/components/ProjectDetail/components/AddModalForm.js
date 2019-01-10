@@ -90,7 +90,7 @@ class AddModalForm extends React.Component {
 
     const step_2 = (
       <div style={{margin: '0 auto',width: 392, height: 'auto'}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
+        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>项目功能</div>
         <div  style={{margin: '0 auto',width: 392}}>
           {appsList.map((value, key) => {
             const { id } = value
@@ -107,7 +107,7 @@ class AddModalForm extends React.Component {
           })}
         </div>
         <div style={{marginTop: 20,marginBottom: 40,}}>
-          <Button type="primary" onClick={this.handleSubmit.bind(this)} disabled={stepTwoContinueDisabled}  style={{width: 100, height: 40}}>下一步</Button>
+          <Button type="primary" onClick={this.handleSubmit.bind(this)} disabled={stepTwoContinueDisabled}  style={{width: 100, height: 40}}>确认</Button>
         </div>
       </div>
     )

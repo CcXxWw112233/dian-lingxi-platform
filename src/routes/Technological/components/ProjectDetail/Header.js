@@ -427,7 +427,7 @@ export default class Header extends React.Component {
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
         <Menu.Item key={'5'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
-            添加应用
+            编辑应用
           </div>
         </Menu.Item>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>

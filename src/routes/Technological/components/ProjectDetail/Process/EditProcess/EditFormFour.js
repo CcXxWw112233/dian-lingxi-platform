@@ -78,9 +78,32 @@ export default class EditFormFour extends React.Component {
     this.updateEdit({value: newStr}, 'assignees')
   }
   mentionOnChange2(contentState){
+    // const str = toString(contentState)
+    // const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    // this.updateEdit({value: newStr}, 'recipients')
+
+    //将选择的名称转化成id
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
-    this.updateEdit({value: newStr}, 'recipients')
+    const { datas: { projectDetailInfoData = {} }} = this.props.model
+    const users = projectDetailInfoData.data
+    //将选择的名称转化成id
+    let strNew = str.replace(/\s@/gim,',').replace(/\s*/gim,'').replace(/@/,',')
+    let strNewArray = strNew.split(',')
+    for(let i = 0; i < strNewArray.length; i++) {
+      for(let j = 0; j < users.length; j++) {
+        if(strNewArray[i] === users[j]['name']) {
+          strNewArray[i] = users[j]['user_id']
+          break
+        }
+      }
+    }
+    strNew = strNewArray.length ? `${strNewArray.join(',').replace(/,/gim,' @')}` : ''
+
+    const e = toContentState(strNew)
+    const a = toString(e)
+    const b = a.length > 2 ? a.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : a
+    this.updateEdit({value: b}, 'recipients')
+
   }
   //流转类型
   transferModeChange(e) {
@@ -129,6 +152,21 @@ export default class EditFormFour extends React.Component {
       suggestions2.push(users[i].full_name || users[i].email || users[i].mobile)
     }
     let defaultRecipients = recipients ? `${recipients.replace(/,/gim,'@ ')}` : ''
+
+    //--------------------
+    //抄送人@123 @234’格式的数据， @后面跟的是id。 转化数组，遍历得到id的名字，填入mention
+    let defaultRecipientsNew = recipients.replace(/\s@/gim,',').replace(/\s*/gim,'')
+    let defaultRecipientsNewArray = defaultRecipientsNew.split(',')
+    for(let i = 0; i < defaultRecipientsNewArray.length; i++) {
+      for(let j = 0; j < users.length; j++) {
+        if(defaultRecipientsNewArray[i] === users[j]['user_id']) {
+          defaultRecipientsNewArray[i] = users[j]['name']
+          break
+        }
+      }
+    }
+    defaultRecipientsNew = defaultRecipientsNewArray.length ? `${defaultRecipientsNewArray.join(',').replace(/,/gim,' @')}` : ''
+    //----------------
 
     return (
       <div className={indexStyles.editFormOut}>
@@ -226,7 +264,8 @@ export default class EditFormFour extends React.Component {
                     placeholder={'输入“@”选择'}
                     style={{ width: '100%', height: 70 }}
                     onChange={this.mentionOnChange2.bind(this)}
-                    defaultValue={toContentState(defaultRecipients)}
+                    // defaultValue={toContentState(defaultRecipients)}
+                    defaultValue={toContentState(defaultRecipientsNew)}
                     suggestions={suggestions2}
                   />
                 </div>

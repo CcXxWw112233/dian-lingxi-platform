@@ -1,4 +1,4 @@
-import { confirmEmail } from '../../services/emailRedirect'
+import { confirmEmail, confirmJoinORG } from '../../services/emailRedirect'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -24,6 +24,17 @@ export default {
                 token
               }
             })
+          } else if(operateType === 'joinOrganization') {
+            const { org_id } = param
+            dispatch({
+              type: 'confirmJoinORG',
+              payload: {
+                token,
+                org_id
+              }
+            })
+          } else {
+
           }
         }else {
         }
@@ -41,6 +52,20 @@ export default {
         })
         yield call(delay, 3000)
         yield put(routerRedux.push('/technological/accoutSet?selectedKeys=2'))
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * confirmJoinORG({ payload }, { select, call, put }) { //获取验证码
+      let res = yield call(confirmJoinORG, payload)
+      if(isApiResponseOk(res)) {
+        Cookies.remove('userInfo',{expires: 30, path: ''})
+        message.success('验证成功,即将跳转...', MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise(resolve => {
+          setTimeout(resolve, ms)
+        })
+        yield call(delay, 3000)
+        yield put(routerRedux.push('/technological/workbench'))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

@@ -85,6 +85,12 @@ export default class FileDetailContent extends React.Component {
       })
     }
   }
+  operateAreaBlur(e) {
+    this.setState({
+      isInAdding: false,
+      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+    })
+  }
   stopDragging() {
     this.right = false;
     const target = this.refs.operateArea
@@ -201,33 +207,41 @@ export default class FileDetailContent extends React.Component {
         </div>
       )
     }
-    // {/*<div className={indexStyles.fileDetailContentLeft}*/}
-    // {/*dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>*/}
+
+
+    const punctuateDom = (
+      <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
+        <div  style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }}  ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
+          <div tabIndex="0" hideFocus="true" onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+            {rects.map((value, key) => {
+              const { x, y, width, height } = value
+              return (
+                <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}></div>
+              )
+            })}
+            <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)}
+                 style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+
+            {isInAdding? (
+              <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+                <Comment {...this.props} ></Comment>
+              </div>
+            ) : ('')}
+
+          </div>
+        </div>
+      </div>
+    )
+    const iframeDom = (
+      <div className={indexStyles.fileDetailContentLeft}
+      dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+    )
+
     return (
       <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'}>
         {filePreviewIsUsable? (
-          <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-            <div  style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }}  ref={'operateArea'}>
-              <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
-              <div onClick={this.operateAreaClick.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3}}>
-                {rects.map((value, key) => {
-                  const { x, y, width, height } = value
-                  return (
-                    <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}></div>
-                  )
-                })}
-                <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)}
-                     style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
-
-                {isInAdding? (
-                  <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                    <Comment {...this.props} ></Comment>
-                  </div>
-                ) : ('')}
-
-              </div>
-            </div>
-          </div>
+          iframeDom
         ):(
           <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex',justifyContent:'center',alignItems: 'center', fontSize: 16,color: '#595959'}}>
             <div>
