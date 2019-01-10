@@ -47,6 +47,20 @@ export default class Comment extends React.Component {
   stopUp(e) {
     e.stopPropagation()
   }
+  mentionFocus(e) {
+    this.props.setMentionFocus(true)
+  }
+  mentionBlur(e) {
+    console.log(333)
+    this.props.setMentionFocus(false)
+
+  }
+  outFocus(){
+    this.props.setMentionFocus(true)
+  }
+  outBlur() {
+    this.props.setMentionFocus(false)
+  }
   render() {
 
     const { editText } = this.state
@@ -78,7 +92,10 @@ export default class Comment extends React.Component {
       },
     };
     return (
-      <div className={CommentStyles.out} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.commentOut}>
+        <CommentListItem {...this.props}/>
+
+      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" style={{outline: 0,}} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
@@ -93,6 +110,8 @@ export default class Comment extends React.Component {
           <div className={CommentStyles.comment}>
             {/*<textarea minrows = {1}  maxrows = {6}  className={CommentStyles.textArea}></textarea>*/}
             <Mention
+              onFocus={this.mentionFocus.bind(this)}
+              onBlur={this.mentionBlur.bind(this)}
               multiLines={true}
               onChange ={this.MentionEditorChange.bind(this)}
               className={CommentStyles.mention}
@@ -118,6 +137,7 @@ export default class Comment extends React.Component {
           </div>
         </div>
         {/*</Dragger>*/}
+      </div>
       </div>
     )
   }

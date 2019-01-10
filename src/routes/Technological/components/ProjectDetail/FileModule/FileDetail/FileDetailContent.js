@@ -21,6 +21,7 @@ export default class FileDetailContent extends React.Component {
     maxImageWidth: 900,//设置imagload的最大值
     currentRect: { x: 0 ,y: 0, width: 0, height: 0 }, //当前操作的矩形属性
     isInAdding: false, //用来判断是否显示评论下拉
+    mentionFocus: false,
   }
   constructor() {
     super();
@@ -86,9 +87,21 @@ export default class FileDetailContent extends React.Component {
     }
   }
   operateAreaBlur(e) {
+    const that = this
+    setTimeout(function () {
+      if(that.state.mentionFocus) {
+        return false
+      }
+      that.setState({
+        isInAdding: false,
+        currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+      })
+    }, 100)
+
+  }
+  setMentionFocus(bool) {
     this.setState({
-      isInAdding: false,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+      mentionFocus: bool
     })
   }
   stopDragging() {
@@ -213,7 +226,7 @@ export default class FileDetailContent extends React.Component {
       <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
         <div  style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }}  ref={'operateArea'}>
           <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
-          <div tabIndex="0" hideFocus="true" onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+          <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
             {rects.map((value, key) => {
               const { x, y, width, height } = value
               return (
@@ -225,12 +238,14 @@ export default class FileDetailContent extends React.Component {
 
             {isInAdding? (
               <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                <Comment {...this.props} ></Comment>
+                <Comment {...this.props} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
               </div>
             ) : ('')}
 
           </div>
         </div>
+        {/*<Comment {...this.props} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>*/}
+
       </div>
     )
     const iframeDom = (
@@ -263,7 +278,6 @@ export default class FileDetailContent extends React.Component {
           </div>
         </div>
 
-        {/*<Comment {...this.props} leftSpaceDivWH={26}></Comment>*/}
 
       </div>
     )

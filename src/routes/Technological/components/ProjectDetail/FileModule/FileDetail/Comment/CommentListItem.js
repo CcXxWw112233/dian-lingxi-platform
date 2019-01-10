@@ -29,7 +29,9 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { datas:{ cardCommentList = [] } } = this.props.model
+    // const { datas:{ cardCommentList = [] } } = this.props.model
+
+    const cardCommentList = [{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' }]
 
     const { closeNormal } = this.state
     const listItem = (value) => {
