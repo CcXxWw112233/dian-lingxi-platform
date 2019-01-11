@@ -124,3 +124,39 @@ export async function updateFolder(data) {
     data,
   });
 }
+
+//获取评论列表
+export async function getPreviewFileCommits(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment/list`,
+    method: 'GET',
+    params,
+  });
+}
+
+//新增文件评论
+export async function addFileCommit(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment`,
+    method: 'POST',
+    data,
+  });
+}
+
+//删除评论
+export async function deleteCommit(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment/${params.id}`,
+    method: 'DELETE',
+    params,
+  });
+}
+
+//获取图评点的列表
+export async function getFileCommitPoints(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment/point/${params.id}`,
+    method: 'GET',
+    params,
+  });
+}

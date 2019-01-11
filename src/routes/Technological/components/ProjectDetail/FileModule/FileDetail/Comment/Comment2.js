@@ -18,6 +18,7 @@ const Dragger = Upload.Dragger
 export default class Comment extends React.Component {
   state = {
     editText: toContentState(''),
+    text: '',
     submitButtonDisabled: true
   }
   MentionSpacerClick() {
@@ -47,6 +48,11 @@ export default class Comment extends React.Component {
   stopUp(e) {
     e.stopPropagation()
   }
+  texAreaChange(e) {
+    this.setState({
+      text: e.target.value
+    })
+  }
   handlerMultiEnter(e) {
     let code = e.keyCode;
     let ctrl = e.ctrlKey;
@@ -61,8 +67,23 @@ export default class Comment extends React.Component {
       // return;
     }
     if(code == '13' && !ctrl && !shift && !alt) {
+      const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId  } } = this.props.model
+      const { board_id } = projectDetailInfoData
+      const { text } = this.state
+      if(!text) {
+        return
+      }
       //只按了enter
-      // this.checkAddNewTask()
+      this.props.addFileCommit({
+        board_id,
+        comment: text,
+        file_id: filePreviewCurrentFileId,
+        type: '0',
+        coordinates: JSON.stringify(this.props.currentRect)
+      })
+      this.setState({
+        text: ''
+      })
     }
   }
 
@@ -110,7 +131,7 @@ export default class Comment extends React.Component {
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1}  className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1}  className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}

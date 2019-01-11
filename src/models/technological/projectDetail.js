@@ -8,7 +8,7 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
   quitProject, getAppsList, addProjectApp
 } from "../../services/technological/project";
-import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
+import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
 import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
@@ -89,10 +89,15 @@ export default {
               treeFolderData: {}, //文件夹树状结构
               filePreviewIsUsable: true, //文件是否可以预览标记
               filePreviewUrl: '',  //预览文件url
-              filePreviewCurrentId: '', //当前预览的文件id
+              filePreviewCurrentId: '', //当前预览的文件resource_id
+              filePreviewCurrentFileId: '', //当前预览的文件id
               filePreviewCurrentVersionId: '', //当前预览文件版本id
               filePreviewCurrentVersionList: [], //预览文件的版本列表
               filePreviewCurrentVersionKey: 0, //预览文件选中的key
+              filePreviewCommits: [],//文件评论列表
+              filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
+              filePreviewCommitPoints: [], //文件图评点列表
+              filePreviewCommitType: '0', //新增评论 1 回复圈点评论
 
               //流程
               processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
@@ -615,6 +620,20 @@ export default {
             filePreviewUrl: res.data.url,
           }
         })
+        const { file_id } = payload
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -825,6 +844,100 @@ export default {
 
       }
     },
+    * getPreviewFileCommits({ payload }, { select, call, put }) {
+      let res = yield call(getPreviewFileCommits, payload)
+      const { type, point_number  } = payload
+      let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
+      if(isApiResponseOk(res)) {
+         yield put({
+           type: 'updateDatas',
+           payload: {
+             [name]: res.data ,
+             point_number
+           }
+         })
+      }else{
+
+      }
+    },
+    * getFileCommitPoints({ payload }, { select, call, put }) {
+      let res = yield call(getFileCommitPoints, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCommitPoints: res.data ,
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * addFileCommit({ payload }, { select, call, put }) {
+      let res = yield call(addFileCommit, payload)
+      const { file_id,type, filePreviewCommitType = '0' } = payload
+      //filePreviewCommitType 0 新增 1 回复
+      if(isApiResponseOk(res)) {
+        const flag = res.data.flag
+        if(type == '1') {
+          yield put({
+            type: 'getPreviewFileCommits',
+            payload: {
+              id: file_id,
+              type: 'point',
+              point_number: flag
+            }
+          })
+        }
+
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id,
+          }
+        })
+
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+
+      }
+    },
+
+    * deleteCommit({ payload }, { select, call, put }) {
+      let res = yield call(deleteCommit, payload)
+      const { file_id, type, point_number } = payload
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id,
+          }
+        })
+
+        if(type === '1') {
+          yield put({
+            type: 'getPreviewFileCommits',
+            payload: {
+              id: file_id,
+              type: 'point',
+              point_number
+            }
+          })
+        }
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+
+      }
+    },
+
     //文档----------end
 
 

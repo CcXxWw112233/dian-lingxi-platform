@@ -21,17 +21,22 @@ export default class CommentListItem extends React.Component {
     })
   }
 
-  deleteComment(id) {
-    const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    this.props.deleteCardNewComment({id, card_id})
+  deleteComment(id, e) {
+    e.stopPropagation()
+    const { datas:{ filePreviewCurrentFileId }} = this.props.model
+    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId, type: '1', point_number: this.props.point_number})
+  }
+
+  outFocus(){
+    this.props.setMentionFocus(true)
+  }
+  outBlur() {
+    this.props.setMentionFocus(false)
   }
 
   render() {
 
-    // const { datas:{ cardCommentList = [] } } = this.props.model
-
-    const cardCommentList = [{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' }]
+    const { datas:{ filePreviewPointNumCommits = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -48,7 +53,7 @@ export default class CommentListItem extends React.Component {
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {create_time?timestampToTimeNormal(create_time).substring(0, 16): ''}
+                {create_time?timestampToTimeNormal(create_time,'', true):''}
               </div>
               <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
                  删除
@@ -59,8 +64,8 @@ export default class CommentListItem extends React.Component {
       )
     }
     return (
-      <div className={CommentStyles.commentListItemBox}>
-        {cardCommentList.length > 20 ?(
+      <div className={CommentStyles.commentListItemBox}  tabIndex="0" hideFocus="true" style={{outline: 0,}}  onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+        {filePreviewPointNumCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(
               <div>
@@ -74,7 +79,7 @@ export default class CommentListItem extends React.Component {
           </div>
         ) : ('')}
         <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
-          {cardCommentList.map((value, key) => {
+          {filePreviewPointNumCommits.map((value, key) => {
             if(closeNormal && key > 19) {
               return false
             }

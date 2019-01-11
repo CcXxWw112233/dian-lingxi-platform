@@ -22,20 +22,17 @@ export default class CommentListItem extends React.Component {
   }
 
   deleteComment(id) {
-    const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    this.props.deleteCardNewComment({id, card_id})
+    const { datas:{ filePreviewCurrentFileId }} = this.props.model
+    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
   }
 
   render() {
 
-    // const { datas:{ cardCommentList = [] } } = this.props.model
-
-    const cardCommentList = [{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },{full_name:'陈',avatar: '',text: 'sasda', create_time: '1589999666656', id:'1212122' },]
+    const { datas:{ filePreviewCommits = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
-      const { full_name, avatar, text, create_time, id } = value
+      const { full_name, avatar, text, create_time, id, flag, type } = value
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
@@ -43,12 +40,21 @@ export default class CommentListItem extends React.Component {
           </div>
           <div className={CommentStyles.right}>
             <div>
-              <div className={CommentStyles.full_name}>{full_name}</div>
+              <div className={CommentStyles.full_name}>
+                {full_name}
+                {type == '1'?(
+                  <span style={{marginLeft: 6}}>评论了</span>
+                ):('')}
+                {type == '1'?(
+                  <span className={CommentStyles.full_name_quan}>圈点{flag}</span>
+                ):('')}
+
+                </div>
               <div className={CommentStyles.text}>{text}</div>
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {create_time?timestampToTimeNormal(create_time).substring(0, 16): ''}
+                {timestampToTimeNormal(create_time,'',true)}
               </div>
               <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
                  删除
@@ -60,7 +66,7 @@ export default class CommentListItem extends React.Component {
     }
     return (
       <div className={CommentStyles.commentListItemBox}>
-        {cardCommentList.length > 20 ?(
+        {filePreviewCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(
               <div>
@@ -74,7 +80,7 @@ export default class CommentListItem extends React.Component {
           </div>
         ) : ('')}
         <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
-          {cardCommentList.map((value, key) => {
+          {filePreviewCommits.map((value, key) => {
             if(closeNormal && key > 19) {
               return false
             }

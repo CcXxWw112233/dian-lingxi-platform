@@ -18,7 +18,7 @@ const Dragger = Upload.Dragger
 export default class Comment extends React.Component {
   state = {
     editText: toContentState(''),
-    submitButtonDisabled: true
+    submitButtonDisabled: true,
   }
   MentionSpacerClick() {
   }
@@ -32,17 +32,22 @@ export default class Comment extends React.Component {
     })
   }
   submitComment() {
-
-    const { datas:{ drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    this.props.addCardNewComment({
-      card_id,
-      comment: toString(this.state.editText)
+    const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId  } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    const { point_number } = this.props
+    this.props.addFileCommit({
+      board_id,
+      point_number: point_number,
+      comment: toString(this.state.editText),
+      file_id: filePreviewCurrentFileId,
+      type: '1',
+      coordinates: JSON.stringify(this.props.currentRect)
     })
     this.setState({
       editText: toContentState(''),
-      submitButtonDisabled: true
+      submitButtonDisabled: true,
     })
+
   }
   stopUp(e) {
     e.stopPropagation()
@@ -51,7 +56,6 @@ export default class Comment extends React.Component {
     this.props.setMentionFocus(true)
   }
   mentionBlur(e) {
-    console.log(333)
     this.props.setMentionFocus(false)
 
   }
@@ -64,7 +68,7 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -77,25 +81,13 @@ export default class Comment extends React.Component {
     const { avatar } = userInfo
 
     const { leftSpaceDivWH = 40 } = this.props
-    const props = {
-      name: 'file',
-      multiple: true,
-      action: '//jsonplaceholder.typicode.com/posts/',
-      onChange(info) {
-        const status = info.file.status;
-        if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (status === 'done') {
-        } else if (status === 'error') {
-        }
-      },
-    };
     return (
-      <div className={CommentStyles.commentOut}>
-        <CommentListItem {...this.props}/>
+      <div className={CommentStyles.commentOut} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} >
+        <div tabIndex="0" hideFocus="true" onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+        <CommentListItem {...this.props} point_number={this.props.point_number}/>
+        </div>
 
-      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" style={{outline: 0,}} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />

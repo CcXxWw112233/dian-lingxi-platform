@@ -396,7 +396,25 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('filePreview'),
         payload: params
       })
-    }
+    },
+    getPreviewFileCommits(params) {
+      dispatch({
+        type: getEffectOrReducerByName('getPreviewFileCommits'),
+        payload: params
+      })
+    },
+    addFileCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName('addFileCommit'),
+        payload: params
+      })
+    },
+    deleteCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteCommit'),
+        payload: params
+      })
+    },
   }
   const ProcessProps = {
     modal,

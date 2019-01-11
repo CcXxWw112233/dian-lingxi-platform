@@ -10,20 +10,23 @@ import CommentListItem2 from './Comment/CommentListItem2'
 export default class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
-    const { file_resource_id } = value
-    this.props.updateDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id})
-    this.props.filePreview({id: file_resource_id})
+    const { file_resource_id, file_id } = value
+    this.props.updateDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+    this.props.filePreview({id: file_resource_id, file_id})
   }
 
   state = {
-    rects: [{"x":288,"y":176,"width":59,"height":58,"isAready":false},{"x":556,"y":109,"width":48,"height":48,"isAready":false},{"x":477,"y":308,"width":118,"height":123,"isAready":false}],//[],
+    // rects: [{"x":288,"y":176,"width":59,"height":58,"isAready":false},{"x":556,"y":109,"width":48,"height":48,"isAready":false},{"x":477,"y":308,"width":118,"height":123,"isAready":false}],//[],
+    rects: [],
     imgHeight: 0,
     imgWidth: 0, //获取到的图片宽高
     punctuateArea: 48, //点击圈点的
     maxImageWidth: 900,//设置imagload的最大值
     currentRect: { x: 0 ,y: 0, width: 0, height: 0 }, //当前操作的矩形属性
     isInAdding: false, //用来判断是否显示评论下拉
+    isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
+    point_number: '',
   }
   constructor() {
     super();
@@ -31,6 +34,21 @@ export default class FileDetailContent extends React.Component {
     this.y1 = 0
     this.isDragging = false
     this.SelectedRect = {x: 0, y: 0 }
+  }
+
+  componentWillMount() {
+    const { datas: { filePreviewCommitPoints=[]} }= this.props.model
+    this.setState({
+      rects: filePreviewCommitPoints
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const rects = []
+    const { datas: { filePreviewCommitPoints=[]} }= nextProps.model
+    this.setState({
+      rects: filePreviewCommitPoints
+    })
   }
 
   //评图功能
@@ -41,7 +59,26 @@ export default class FileDetailContent extends React.Component {
       imgHeight: e.target.height
     })
   }
-  commitReactArea(e) {
+  commitReactArea(data,e) {
+    e.stopPropagation()
+    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    this.setState({
+      ...data,
+      isInEdditOperate: false
+    },() => {
+      const { point_number } = this.state
+      this.props.updateDatas({
+        filePreviewPointNumCommits: []
+      })
+      this.props.getPreviewFileCommits({
+        id: filePreviewCurrentFileId,
+        point_number,
+        type: 'point'
+      })
+    })
+
+  }
+  commitReactArea2(e) {
     e.stopPropagation()
   }
   isObj(obj) {
@@ -83,8 +120,13 @@ export default class FileDetailContent extends React.Component {
         height: punctuateArea,
         isAready: false
       }
+      this.props.updateDatas({
+        filePreviewPointNumCommits: []
+      })
       this.setState({
-        currentRect: property
+        currentRect: property,
+        isInEdditOperate: true,
+        point_number: ''
       })
     }
   }
@@ -97,6 +139,9 @@ export default class FileDetailContent extends React.Component {
       that.setState({
         isInAdding: false,
         currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+      })
+      that.props.updateDatas({
+        filePreviewPointNumCommits: []
       })
     }, 100)
 
@@ -139,7 +184,12 @@ export default class FileDetailContent extends React.Component {
         isAready: false
       }
       this.setState({
-        currentRect: property
+        currentRect: property,
+        isInEdditOperate: true,
+        point_number: ''
+      })
+      this.props.updateDatas({
+        filePreviewPointNumCommits: []
       })
     }
 
@@ -201,11 +251,11 @@ export default class FileDetailContent extends React.Component {
 
   render() {
 
-    const { rects = [], imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false } = this.state
-    const fileDetailContentOutWidth = !!this.refs.fileDetailContentOut? this.refs.fileDetailContentOut.clientWidth: 0
-    const fileDetailContentOutHeight = !!this.refs.fileDetailContentOut? this.refs.fileDetailContentOut.clientHeight: 0
+    const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false } = this.state
     const { clientHeight } =this.props
-    const { datas: { isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0 } }= this.props.model
+
+    const fileDetailContentOutHeight = clientHeight - 60
+    const { datas: { filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0 } }= this.props.model
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -229,17 +279,24 @@ export default class FileDetailContent extends React.Component {
           <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
           <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
             {rects.map((value, key) => {
-              const { x, y, width, height } = value
+              const { flag, coordinates } = value
+              const { x, y, width, height } = JSON.parse(coordinates)
               return (
-                <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}></div>
+                <div onClick={this.commitReactArea.bind(this,{currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}>
+                  <div className={indexStyles.flag}>
+                    {flag}
+                  </div>
+                </div>
               )
             })}
-            <div onClick={this.commitReactArea.bind(this)} onMouseDown={this.commitReactArea.bind(this)}
-                 style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+            {isInEdditOperate?(
+              <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
+                   style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+            ):('')}
 
             {isInAdding? (
               <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                <Comment {...this.props} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
+                <Comment {...this.props} currentRect={currentRect} point_number={this.state.point_number} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
               </div>
             ) : ('')}
 
@@ -253,6 +310,10 @@ export default class FileDetailContent extends React.Component {
       dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
     )
 
+    // console.log('ssss','rects',rects)
+    // // console.log('ssss',1,'filePreviewCommits',filePreviewCommits)
+    // // console.log('ssss',2,'filePreviewPointNumCommits', filePreviewPointNumCommits )
+    // console.log('ssss',3,'filePreviewCommitPoints', filePreviewCommitPoints)
     return (
       <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight - 60}}>
         {filePreviewIsUsable? (

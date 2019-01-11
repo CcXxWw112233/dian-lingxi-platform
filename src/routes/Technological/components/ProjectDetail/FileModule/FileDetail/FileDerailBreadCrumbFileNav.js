@@ -24,8 +24,8 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
     const { filedata_2 = [] } = datas
     const { file_id, version_id, file_resource_id } = filedata_2[key]
     //接下来打开文件
-    this.props.updateDatas({filePreviewCurrentId: file_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_resource_id})
+    this.props.updateDatas({filePreviewCurrentId: file_id, filePreviewCurrentVersionId: version_id,filePreviewCurrentFileId: file_id})
+    this.props.filePreview({id: file_resource_id, file_id})
     this.props.fileVersionist({version_id : version_id})
   }
   render() {
