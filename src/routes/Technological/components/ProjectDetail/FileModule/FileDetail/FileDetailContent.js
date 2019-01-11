@@ -4,6 +4,8 @@ import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../utils/util";
 import Comment from './Comment/Comment'
+import Comment2 from './Comment/Comment2'
+import CommentListItem2 from './Comment/CommentListItem2'
 
 export default class FileDetailContent extends React.Component {
 
@@ -202,7 +204,7 @@ export default class FileDetailContent extends React.Component {
     const { rects = [], imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false } = this.state
     const fileDetailContentOutWidth = !!this.refs.fileDetailContentOut? this.refs.fileDetailContentOut.clientWidth: 0
     const fileDetailContentOutHeight = !!this.refs.fileDetailContentOut? this.refs.fileDetailContentOut.clientHeight: 0
-
+    const { clientHeight } =this.props
     const { datas: { isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0 } }= this.props.model
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
@@ -220,7 +222,6 @@ export default class FileDetailContent extends React.Component {
         </div>
       )
     }
-
 
     const punctuateDom = (
       <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
@@ -244,7 +245,6 @@ export default class FileDetailContent extends React.Component {
 
           </div>
         </div>
-        {/*<Comment {...this.props} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>*/}
 
       </div>
     )
@@ -254,9 +254,9 @@ export default class FileDetailContent extends React.Component {
     )
 
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'}>
+      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight - 60}}>
         {filePreviewIsUsable? (
-          iframeDom
+          punctuateDom
         ):(
           <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex',justifyContent:'center',alignItems: 'center', fontSize: 16,color: '#595959'}}>
             <div>
@@ -267,8 +267,8 @@ export default class FileDetailContent extends React.Component {
 
         {/*width: isExpandFrame?0:420*/}
 
-        <div className={indexStyles.fileDetailContentRight} style={{width: 420}}>
-          <div className={indexStyles.fileDetailContentRight_top}>
+        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
+          <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
              <div>版本信息</div>
              <div className={indexStyles.versionInfoList}>
                {filePreviewCurrentVersionList.map((value, key ) => {
@@ -276,8 +276,15 @@ export default class FileDetailContent extends React.Component {
                })}
              </div>
           </div>
-        </div>
 
+          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
+            <CommentListItem2 {...this.props} />
+          </div>
+          <div className={indexStyles.fileDetailContentRight_bott}>
+            <Comment2 {...this.props}></Comment2>
+          </div>
+
+        </div>
 
       </div>
     )
