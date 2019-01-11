@@ -38,6 +38,8 @@ export default class CommentListItem extends React.Component {
 
     const { datas:{ filePreviewPointNumCommits = [] } } = this.props.model
 
+
+
     const { closeNormal } = this.state
     const listItem = (value) => {
       const { full_name, avatar, text, create_time, id } = value
