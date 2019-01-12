@@ -180,7 +180,8 @@ export default class HeaderNav extends React.Component{
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, nickname, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, current_org={}, phone, qq, status, updateTime, username, wechat,} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
     const userInfoMenu = (
@@ -188,8 +189,14 @@ export default class HeaderNav extends React.Component{
         <div className={indexStyle.triangle} ></div>
         <Menu onClick={this.handleMenuClick.bind(this)} selectable={false} >
           <SubMenu key="sub" title={
-            <div style={{width: '100%',height:'100%',padding:'0 16 0 16px', overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
-             {orgnizationName}
+            <div style={{display: 'flex',alignItems:'center'}}>
+              <div style={{flex: 1,overflow: 'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',fontSize:16, color: '#000' }} >
+                {orgnizationName}
+              </div>
+              {identity_type !== '1'?(
+                <div style={{ padding:'0 4px',fontSize: 12, height:24,lineHeight: '24px',backgroundColor: '#f5f5f5',borderRadius: 24,margin: '0 16px 0 4px'}}>访客</div>
+              ):('')}
+
             </div>}>
             {currentUserOrganizes.map((value, key) => {
               const { name, id } = value
@@ -208,14 +215,14 @@ export default class HeaderNav extends React.Component{
             </Menu.Item>
           </SubMenu>
           <Menu.Divider key="none_1"/>
-          {currentUserOrganizes.length?(
+          {currentUserOrganizes.length && identity_type == '1'?(
             <Menu.Item  key="2" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>团队/{currentNounPlanFilterName(MEMBERS)}</span></span>
+                <span  className={indexStyle.specificalItem}><Icon type="team" /><span className={indexStyle.specificalItemText}>{currentNounPlanFilterName(MEMBERS)}</span></span>
               </div>
             </Menu.Item>
           ):('')}
-          {currentUserOrganizes.length?(
+          {currentUserOrganizes.length && identity_type == '1'?(
             <Menu.Item key="3" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
                 <span  className={indexStyle.specificalItem}><Icon type="home" /><span className={indexStyle.specificalItemText}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</span></span>
@@ -223,7 +230,7 @@ export default class HeaderNav extends React.Component{
             </Menu.Item>
           ):('')}
 
-          {currentUserOrganizes.length?(
+          {currentUserOrganizes.length && identity_type == '1'?(
             <Menu.Item key="4" style={{padding:0,margin: 0}}>
               <div className={indexStyle.itemDiv}>
                 <span  className={indexStyle.specificalItem}><Icon type="user-add" /><span className={indexStyle.specificalItemText}>邀请{currentNounPlanFilterName(MEMBERS)}加入</span>

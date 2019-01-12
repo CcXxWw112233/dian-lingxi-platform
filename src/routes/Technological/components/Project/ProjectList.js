@@ -9,7 +9,7 @@ import ShowAddMenberModal from './ShowAddMenberModal'
 import { checkIsHasPermission,currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE, PROJECTS} from "../../../../globalset/js/constant";
 import { message } from 'antd'
-
+import Cookies from 'js-cookie'
 const Panel = Collapse.Panel
 
 export default class Projectlist extends React.Component {
@@ -30,7 +30,8 @@ export default class Projectlist extends React.Component {
     const { datas = {} } = this.props.model
     const { projectList = {}, collapseActiveKeyArray = [] }  = datas
     const { star = [], create = [], participate = [] } = projectList
-
+    const { current_org = {}} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { identity_type } = current_org //是否访客 1不是 0是
     const addItem = (
       <div className={indexStyle.addListItem} onClick={this.addItem.bind(this)}>
         <Icon type="plus-circle-o" style={{fontSize: 18, color: '#8c8c8c',marginTop: 6}} />
@@ -45,12 +46,15 @@ export default class Projectlist extends React.Component {
             ))}
             {/*{addItem}*/}
           </Panel>
-          <Panel header={`我管理的${currentNounPlanFilterName(PROJECTS)}`} key="2"  style={customPanelStyle}>
-            {create.map((value, key) => (
-              <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
-            ))}
-            {addItem}
-          </Panel>
+          {identity_type == '1'? (
+            <Panel header={`我管理的${currentNounPlanFilterName(PROJECTS)}`} key="2"  style={customPanelStyle}>
+              {create.map((value, key) => (
+                <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
+              ))}
+              {addItem}
+            </Panel>
+          ):('')}
+
           <Panel header={`我参与的${currentNounPlanFilterName(PROJECTS)}`} key="3"  style={customPanelStyle}>
             {participate.map((value, key) => (
               <ElseProject {...this.props}  itemDetailInfo={value} key={key}/>
