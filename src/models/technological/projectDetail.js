@@ -10,7 +10,7 @@ import {
 } from "../../services/technological/project";
 import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
 import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
-import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
@@ -98,6 +98,7 @@ export default {
               filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
               filePreviewCommitPoints: [], //文件图评点列表
               filePreviewCommitType: '0', //新增评论 1 回复圈点评论
+              filePreviewCommitPointNumber: '',//评论当前的点
 
               //流程
               processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
@@ -845,15 +846,16 @@ export default {
       }
     },
     * getPreviewFileCommits({ payload }, { select, call, put }) {
-      let res = yield call(getPreviewFileCommits, payload)
-      const { type, point_number  } = payload
+      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const { type } = payload
       let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
+      let res = yield call(getPreviewFileCommits, {...payload, point_number: type == 'point'?filePreviewCommitPointNumber: ''})
+
       if(isApiResponseOk(res)) {
          yield put({
            type: 'updateDatas',
            payload: {
              [name]: res.data ,
-             point_number
            }
          })
       }else{
@@ -880,6 +882,14 @@ export default {
       //filePreviewCommitType 0 新增 1 回复
       if(isApiResponseOk(res)) {
         const flag = res.data.flag
+
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCommitPointNumber: flag
+          }
+        })
+
         if(type == '1') {
           yield put({
             type: 'getPreviewFileCommits',
@@ -904,6 +914,7 @@ export default {
             id: file_id
           }
         })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
 
@@ -912,6 +923,7 @@ export default {
 
     * deleteCommit({ payload }, { select, call, put }) {
       let res = yield call(deleteCommit, payload)
+      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
       const { file_id, type, point_number } = payload
       if(isApiResponseOk(res)) {
         yield put({
@@ -927,7 +939,7 @@ export default {
             payload: {
               id: file_id,
               type: 'point',
-              point_number
+              point_number: filePreviewCommitPointNumber
             }
           })
         }

@@ -26,6 +26,10 @@ export default class CommentListItem extends React.Component {
     this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
   }
 
+  commitClicShowEdit(data) {
+    this.props.commitClicShowEdit(data)
+  }
+
   render() {
 
     const { datas:{ filePreviewCommits = [] } } = this.props.model
@@ -46,7 +50,7 @@ export default class CommentListItem extends React.Component {
                   <span style={{marginLeft: 6}}>评论了</span>
                 ):('')}
                 {type == '1'?(
-                  <span className={CommentStyles.full_name_quan}>圈点{flag}</span>
+                  <span className={CommentStyles.full_name_quan} onClick={this.commitClicShowEdit.bind(this, value)}>圈点{flag}</span>
                 ):('')}
 
                 </div>

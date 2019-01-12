@@ -11,6 +11,9 @@ export default class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
     const { file_resource_id, file_id } = value
+    this.setState({
+      imgLoaded: false
+    })
     this.props.updateDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
     this.props.filePreview({id: file_resource_id, file_id})
   }
@@ -26,7 +29,7 @@ export default class FileDetailContent extends React.Component {
     isInAdding: false, //用来判断是否显示评论下拉
     isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
-    point_number: '',
+    imgLoaded: false,
   }
   constructor() {
     super();
@@ -56,7 +59,8 @@ export default class FileDetailContent extends React.Component {
     const { maxImageWidth } = this.state
     this.setState({
       imgWidth: e.target.width >= maxImageWidth? maxImageWidth : e.target.width,
-      imgHeight: e.target.height
+      imgHeight: e.target.height,
+      imgLoaded: true
     })
   }
   commitReactArea(data,e) {
@@ -66,13 +70,15 @@ export default class FileDetailContent extends React.Component {
       ...data,
       isInEdditOperate: false
     },() => {
-      const { point_number } = this.state
+      const { point_number } = data
+      this.props.updateDatas({
+        filePreviewCommitPointNumber: point_number
+      })
       this.props.updateDatas({
         filePreviewPointNumCommits: []
       })
       this.props.getPreviewFileCommits({
         id: filePreviewCurrentFileId,
-        point_number,
         type: 'point'
       })
     })
@@ -80,6 +86,23 @@ export default class FileDetailContent extends React.Component {
   }
   commitReactArea2(e) {
     e.stopPropagation()
+  }
+  commitClicShowEdit(data) {
+    const { flag, coordinates, } = data
+    console.log(coordinates)
+    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    this.setState({
+      currentRect: JSON.parse(coordinates),
+      isInAdding: true,
+      isInEdditOperate: true
+    })
+    this.props.updateDatas({
+      filePreviewCommitPointNumber: flag
+    })
+    this.props.getPreviewFileCommits({
+      type: 'point',
+      id: filePreviewCurrentFileId,
+    })
   }
   isObj(obj) {
     if(!obj || typeof obj !='object') {
@@ -123,10 +146,13 @@ export default class FileDetailContent extends React.Component {
       this.props.updateDatas({
         filePreviewPointNumCommits: []
       })
+
+      this.props.updateDatas({
+        filePreviewCommitPointNumber: ''
+      })
       this.setState({
         currentRect: property,
         isInEdditOperate: true,
-        point_number: ''
       })
     }
   }
@@ -186,10 +212,11 @@ export default class FileDetailContent extends React.Component {
       this.setState({
         currentRect: property,
         isInEdditOperate: true,
-        point_number: ''
       })
+
       this.props.updateDatas({
-        filePreviewPointNumCommits: []
+        filePreviewPointNumCommits: [],
+        filePreviewCommitPointNumber: ''
       })
     }
 
@@ -296,7 +323,7 @@ export default class FileDetailContent extends React.Component {
 
             {isInAdding? (
               <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                <Comment {...this.props} currentRect={currentRect} point_number={this.state.point_number} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
+                <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
               </div>
             ) : ('')}
 
@@ -339,10 +366,10 @@ export default class FileDetailContent extends React.Component {
           </div>
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <CommentListItem2 {...this.props} />
+            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
-            <Comment2 {...this.props}></Comment2>
+            <Comment2 {...this.props} ></Comment2>
           </div>
 
         </div>

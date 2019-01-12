@@ -17,6 +17,7 @@ export const selectCurrentProcessInstanceId = state => state[(`projectDetail`)].
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetail`)].datas.currentParrentDirectoryId  //当前文件夹id
 export const selectBreadcrumbList= state => state[(`projectDetail`)].datas.breadcrumbList  //
+export const selectFilePreviewCommitPointNumber= state => state[(`projectDetail`)].datas.filePreviewCommitPointNumber
 
 //新消息
 export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem  //

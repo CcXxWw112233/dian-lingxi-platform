@@ -32,12 +32,11 @@ export default class Comment extends React.Component {
     })
   }
   submitComment() {
-    const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId  } } = this.props.model
+    const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId, filePreviewCommitPointNumber  } } = this.props.model
     const { board_id } = projectDetailInfoData
-    const { point_number } = this.props
     this.props.addFileCommit({
       board_id,
-      point_number: point_number,
+      point_number: filePreviewCommitPointNumber,
       comment: toString(this.state.editText),
       file_id: filePreviewCurrentFileId,
       type: '1',
@@ -68,7 +67,7 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ projectDetailInfoData = {}, filePreviewCommitPointNumber } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -82,12 +81,12 @@ export default class Comment extends React.Component {
 
     const { leftSpaceDivWH = 40 } = this.props
     return (
-      <div className={CommentStyles.commentOut} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} >
-        <div tabIndex="0" hideFocus="true" onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
-        <CommentListItem {...this.props} point_number={this.props.point_number}/>
+      <div className={CommentStyles.commentOut} id={'ssss'} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+        <div tabIndex="0" hideFocus="true" id={'ssss'} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+        <CommentListItem {...this.props} point_number={filePreviewCommitPointNumber}/>
         </div>
 
-      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
