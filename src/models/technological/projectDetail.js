@@ -99,6 +99,7 @@ export default {
               filePreviewCommitPoints: [], //文件图评点列表
               filePreviewCommitType: '0', //新增评论 1 回复圈点评论
               filePreviewCommitPointNumber: '',//评论当前的点
+              filePreviewIsRealImage: true, //当前预览的图片是否真正图片
 
               //流程
               processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
@@ -619,6 +620,7 @@ export default {
           payload: {
             filePreviewIsUsable: res.data.isUsable,
             filePreviewUrl: res.data.url,
+            filePreviewIsRealImage: res.data.isRealImage,
           }
         })
         const { file_id } = payload
