@@ -17,6 +17,8 @@ import MenuSearch from '../TecPublic/MenuSearch'
 import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../utils/businessFunction";
 import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import AddModalForm from './components/AddModalForm'
+
 
 let is_starinit = null
 
@@ -26,6 +28,7 @@ export default class Header extends React.Component {
     isInitEntry: true, // isinitEntry isCollection用于处理收藏
     isCollection: false,
     ShowAddMenberModalVisibile: false,
+    AddModalFormVisibile: false,
     ellipsisShow: false,//是否出现...菜单
     dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
     //修改项目名称所需state
@@ -104,11 +107,44 @@ export default class Header extends React.Component {
       }
     });
   }
+  confirm_2(board_id,type) {
+    const that = this
+    let defineNoun = '操作'
+    switch (type){
+      case '0':
+        defineNoun='删除'
+        break
+      case '1':
+        defineNoun='归档'
+        break
+      default:
+        break
+    }
+    Modal.confirm({
+      title: `确认要${defineNoun}该${currentNounPlanFilterName(PROJECTS)}吗？`,
+      zIndex: 2000,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        if(type ==='1'){
+          that.props.archivedProject({board_id, is_archived: '1'})
+        }else if(type === '0') {
+          that.props.deleteProject(board_id)
+        }
+      }
+    });
+  }
+
   //出现confirm-------------end
   //添加项目组成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+  setAddModalFormVisibile() {
+    this.setState({
+      AddModalFormVisibile: !this.state.AddModalFormVisibile
     })
   }
   //菜单按钮点击
@@ -132,17 +168,21 @@ export default class Header extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.archivedProject({board_id, is_archived: '1'})
+        this.confirm_2(board_id, '1')
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.deleteProject(board_id)
+        this.confirm_2(board_id, '0')
+        // this.props.deleteProject(board_id)
         break
       case '4':
         this.confirm(board_id )
+        break
+      case '5':
+        this.setAddModalFormVisibile()
         break
       default:
         return
@@ -347,7 +387,8 @@ export default class Header extends React.Component {
     this.props.getTaskGroupList({
       type: '2',
       board_id: board_id,
-      arrange_type: key
+      arrange_type: key,
+      operateType: '1'
     })
   }
   //任务操作---end
@@ -384,16 +425,21 @@ export default class Header extends React.Component {
     //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
+        <Menu.Item key={'5'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+            编辑应用
+          </div>
+        </Menu.Item>
         <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
             邀请成员加入
           </div>
         </Menu.Item>
-        <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            {currentNounPlanFilterName(PROJECTS)}归档
-          </div>
-        </Menu.Item>
+        {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
+          {/*<div className={indexStyle.elseProjectMemu}>*/}
+            {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
+          {/*</div>*/}
+        {/*</Menu.Item>*/}
         <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
             删除{currentNounPlanFilterName(PROJECTS)}
@@ -413,6 +459,7 @@ export default class Header extends React.Component {
     const uploadProps = {
       name: 'file',
       withCredentials: true,
+      multiple:true,
       action: `${REQUEST_DOMAIN_FILE}/file/upload`,
       data: {
         board_id,
@@ -602,7 +649,7 @@ export default class Header extends React.Component {
 
     return (
       // style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}
-      <div className={globalStyles.page_min_width} style={{position:'fixed', top: '64px',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}>
+      <div className={`${globalStyles.page_min_width} ${indexStyle.headoutMaskDown}`} style={{position:'fixed',width: '100%', zIndex: 1, backgroundColor: '#ffffff'}}>
       <div className={indexStyle.headout}>
          <div className={indexStyle.left}>
            <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
@@ -651,7 +698,8 @@ export default class Header extends React.Component {
           </div>
         </div>
       </div>
-      <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <AddModalForm {...this.props} board_id = {board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)}/>
       </div>
   )
   }

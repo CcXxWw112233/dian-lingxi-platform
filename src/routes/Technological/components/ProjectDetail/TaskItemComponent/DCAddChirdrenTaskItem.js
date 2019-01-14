@@ -75,6 +75,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   chirldrenTaskChargeChange({ user_id, full_name, avatar }) {
     const { chirldTaskItemValue } = this.props
     const { card_id, executors=[] } = chirldTaskItemValue
+
     executors[0] = {
       user_id,
       user_name: full_name,
@@ -84,7 +85,26 @@ export default class DCAddChirdrenTaskItem extends React.Component{
       card_id,
       users: user_id,
     })
+
   }
+
+  deleteExcutor({ user_id, full_name, avatar }){
+    const { chirldTaskItemValue } = this.props
+    const { card_id, executors=[] } = chirldTaskItemValue
+    executors[0] = {
+      user_id:'',
+      user_name: '',
+      avatar: ''
+    }
+    this.props.removeTaskExecutor({
+      card_id,
+      user_id : user_id,
+    })
+    this.setState({
+      ss:1
+    })
+  }
+
   datePickerChange(date, dateString) {
     if(!dateString) {
       return false
@@ -160,7 +180,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16}}>&#xe70f;</div>
             </Popconfirm>
             <Dropdown overlay={
-              <DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+              <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
             }>
               {executor.user_id? (
                 <Tooltip title={executor.user_name || executor.full_name || '佚名'}>

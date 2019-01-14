@@ -47,7 +47,7 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
         valiResult = validatePositiveInt(value)
         break;
       case 'negative':
-        valiResult = '负数'
+        valiResult = validateNegative(value)
         break;
       case 'two_decimal_places':
         valiResult = validateTwoDecimal(value)

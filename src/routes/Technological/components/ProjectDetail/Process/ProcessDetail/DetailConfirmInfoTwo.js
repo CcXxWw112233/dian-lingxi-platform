@@ -4,11 +4,12 @@ import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Toolt
 import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
-import { createProcess, getProcessList } from '../../../../../../services/technological/process'
+import { deleteProcessFile, getProcessList } from '../../../../../../services/technological/process'
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
-
+import PreviewFileModal from './component/PreviewFileModal'
+import {filePreview} from "../../../../../../services/technological/file";
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
@@ -20,6 +21,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
     due_time: '',
     isShowBottDetail: false, //是否显示底部详情
     fileList: [],
+    previewFileModalVisibile: false, //预览
+    filePreviewIsUsable: true,
+    filePreviewUrl: '',
+    current_file_resource_id:''
   }
   componentWillMount(nextProps) {
     const { itemKey  } = this.props
@@ -28,10 +33,37 @@ export default class DetailConfirmInfoTwo extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
     this.propsChangeSetIsShowBottDetail(this.props)
+    this.initSetFileList(this.props)
   }
   componentWillReceiveProps (nextProps) {
     this.propsChangeSetIsShowBottDetail(nextProps)
+    this.initSetFileList(nextProps)
   }
+  //初始化设置fileList
+  initSetFileList(props) {
+    const { itemKey  } = props
+    const { datas: { processEditDatas } } = this.props.model
+    const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
+    let fileList = []
+    for(let i = 0; i < fileDataList.length; i++) {
+      if(fileDataList[i]) {
+        fileList.push(fileDataList[i])
+        fileList[fileList.length - 1]['name'] = fileDataList[i].file_name || (fileDataList[i].response && fileDataList[i].response.data? fileDataList[i].response.data.file_name:'')
+        fileList[fileList.length - 1]['uid'] = fileDataList[i].id || (fileDataList[i].response && fileDataList[i].response.data? fileDataList[i].response.data.id:'')
+      } else {
+
+      }
+    }
+    for(let i = 0; i < fileList.length; i++) {
+      if(!fileList[i]['status']) {
+        fileList[i]['status'] = 'done'
+      }
+    }
+    this.setState({
+      fileList: fileList
+    })
+  }
+
   //isShowBottDetail是否在当前步骤
   propsChangeSetIsShowBottDetail(props) {
     const { datas: { processEditDatas, processInfo = {} } } = props.model
@@ -160,6 +192,32 @@ export default class DetailConfirmInfoTwo extends React.Component {
     return themeCode
   }
 
+  //预览
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
+  }
+  setPreview(data) {
+    this.setState({
+      ...data
+    })
+  }
+  onPreview(e) {
+    const that = this
+    const id = e.file_resource_id || (e.response.data? e.response.data.file_resource_id: '')
+    that.setPreviewFileModalVisibile()
+    that.setState({
+      current_file_resource_id: id
+    })
+    filePreview({id: id}).then((value) => {
+      that.setState({
+        filePreviewIsUsable: value.data.isUsable,
+        filePreviewUrl: value.data.url
+      })
+    })
+  }
+
   render() {
     const that = this
     const { due_time, isShowBottDetail, fileList } = this.state
@@ -185,7 +243,6 @@ export default class DetailConfirmInfoTwo extends React.Component {
       }
     }
 
-    // console.log( processEditDatas[itemKey])
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -335,12 +392,15 @@ export default class DetailConfirmInfoTwo extends React.Component {
           contianner = (
             <div className={indexStyles.fileList}>
               {fileDataList.map((value, key) => {
-                return (
-                  <span style={{cursor: 'pointer', lineHeight: '33px', marginRight: 40}} key={key}><i
-                    className={globalStyles.authTheme}
-                    style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer'}}
-                    dangerouslySetInnerHTML={{__html: this.judgeFileType(value)}}></i>{value}</span>
-                )
+                if(value) {
+                  return (
+                    <div style={{cursor: 'pointer', lineHeight: '33px', marginRight: 40}} key={key} onClick={this.onPreview.bind(this, value)}><i
+                      className={globalStyles.authTheme}
+                      style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer'}}
+                      dangerouslySetInnerHTML={{__html: this.judgeFileType(value.file_name)}}></i>{value.file_name}</div>
+                  )
+                }
+
               })}
             </div>
           )
@@ -387,7 +447,6 @@ export default class DetailConfirmInfoTwo extends React.Component {
       )
     }
 
-
     const dragProps = {
       name: 'file',
       multiple: true,
@@ -395,7 +454,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       action: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
       data: {
         flow_instance_id : processInfo.id,
-        node_fileupload_id : processEditDatas[itemKey].id
+        node_instance_id : processEditDatas[itemKey].id
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
@@ -432,7 +491,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
         if (info.file.status === 'done' &&  info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
-          info.fileList.pop()
+          // info.fileList.pop()
+          for(let i=0; i < info.fileList.length; i++) {
+            if(info.file.uid == info.fileList[i].uid) {
+              info.fileList.splice(i, 1)
+            }
+          }
           message.error(`${info.file.name} 上传失败。`);
         }
         that.setState({
@@ -442,13 +506,16 @@ export default class DetailConfirmInfoTwo extends React.Component {
         that.funTransitionHeight(element, 500,  true)
       },
       onRemove(e) {
-        const message = e.response.message
+        // const message = e.response.message
+        const id = e.id || (e.response.data? e.response.data.id: '')
         return new Promise((resolve, reject) => {
-          getProcessList().then((value) => {
+          deleteProcessFile({id}).then((value) => {
             if(value.code !=='0') {
               message.warn('删除失败，请重新删除。')
               reject()
             }else {
+              const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
+              that.funTransitionHeight(element, 500,  true)
               resolve()
             }
           }).catch(err => {
@@ -457,6 +524,19 @@ export default class DetailConfirmInfoTwo extends React.Component {
           })
         })
 
+      },
+      onPreview(e) {
+        const id = e.file_resource_id || (e.response.data? e.response.data.file_resource_id: '')
+        that.setPreviewFileModalVisibile()
+        that.setState({
+          current_file_resource_id: id
+        })
+        filePreview({id: id}).then((value) => {
+          that.setState({
+            filePreviewIsUsable: value.data.isUsable,
+            filePreviewUrl: value.data.url
+          })
+        })
       }
     }
 
@@ -495,6 +575,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           </div>
         </Card>
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
+        <PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
       </div>
     )
   }

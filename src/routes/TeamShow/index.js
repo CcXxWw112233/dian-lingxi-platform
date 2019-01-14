@@ -75,20 +75,21 @@ const TeamShow = (options) => {
 
   const routes = [
     {
-      path: '/teamShow/editTeamShow',
+      path: '/technological/teamShow/editTeamShow',
       component: () => import('./Component/EditTeamShow'),
     }, {
-      path: '/teamShow/teamList',
+      path: '/technological/teamShow/teamList',
       component: () => import('./Component/TeamList'),
     }, {
-      path: '/teamShow/teamInfo',
+      path: '/technological/teamShow/teamInfo',
       component: () => import('./Component/TeamInfo'),
     }
   ]
   return (
     <LocaleProvider locale={zh_CN}>
-      <div className={globalClassNmae.page_style_3} style={{ minWidth:1440, position: 'relative'}}>
-        <HeaderNav {...HeaderNavProps} updateDatas={updateDatas} />
+      {/*className={globalClassNmae.page_style_3}*/}
+      <div  style={{ minWidth:1440, position: 'relative'}}>
+        {/*<HeaderNav {...HeaderNavProps} updateDatas={updateDatas} />*/}
         {
           routes.map(({ path, ...dynamics }, key) =>{
             return (<Route key={key}

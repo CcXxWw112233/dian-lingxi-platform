@@ -5,12 +5,12 @@ import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../globalset/j
 import { routerRedux } from "dva/router";
 import { getUrlQueryString } from '../../utils/util'
 import {
-  addMenbersInProject, archivedProject, cancelCollection, deleteProject,collectionProject,
-  quitProject
+  addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
+  quitProject, getAppsList, addProjectApp
 } from "../../services/technological/project";
-import { getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
-import { selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
+import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
+import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
@@ -53,64 +53,76 @@ export default {
           }
         }
         board_id = Cookies.get('board_id')
-        dispatch({
-          type: 'updateDatas',
-          payload:{
-            projectRoles: [], //项目角色
-            //全局任务key
-            appsSelectKey: undefined, //应用key
-            appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
-            //项目详情和任务
-            projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
-            isInitEntry: false, //是否初次进来项目详情
-            drawContent: {}, //任务右方抽屉内容
-            drawerVisible: false, //查看任务的抽屉是否可见
-            projectDetailInfoData: {}, //项目详情全部数据
-            cardCommentList: [], //任务评论列表
-            projectGoupList: [], //项目分组列表
-            taskGroupList: [],  //任务列表
-            boardTagList: [], //项目标签列表
-            getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+        const initialData = () => {
+          dispatch({
+            type: 'updateDatas',
+            payload:{
+              projectRoles: [], //项目角色
+              //全局任务key
+              appsSelectKey: undefined, //应用key
+              appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
+              appsList: [], //全部app列表
+              //项目详情和任务
+              projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
+              isInitEntry: false, //是否初次进来项目详情
+              drawContent: {}, //任务右方抽屉内容
+              drawerVisible: false, //查看任务的抽屉是否可见
+              projectDetailInfoData: {}, //项目详情全部数据
+              cardCommentList: [], //任务评论列表
+              projectGoupList: [], //项目分组列表
+              taskGroupList: [],  //任务列表
+              boardTagList: [], //项目标签列表
+              getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
 
-            // 文档
-            fileList: [], //文档列表
-            filedata_1: [], //文档列表--文件夹
-            filedata_2: [], //文档列表--文件
-            selectedRowKeys: [],//选择的列表项
-            isInAddDirectory: false, //是否正在创建文件家判断标志
-            moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-            openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
-            currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-            breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
-            currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
-            isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
-            treeFolderData: {}, //文件夹树状结构
-            filePreviewIsUsable: true, //文件是否可以预览标记
-            filePreviewUrl: '',  //预览文件url
-            filePreviewCurrentId: '', //当前预览的文件id
-            filePreviewCurrentVersionId: '', //当前预览文件版本id
-            filePreviewCurrentVersionList: [], //预览文件的版本列表
-            filePreviewCurrentVersionKey: 0, //预览文件选中的key
+              // 文档
+              fileList: [], //文档列表
+              filedata_1: [], //文档列表--文件夹
+              filedata_2: [], //文档列表--文件
+              selectedRowKeys: [],//选择的列表项
+              isInAddDirectory: false, //是否正在创建文件家判断标志
+              moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+              openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+              currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
+              breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+              currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+              isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+              treeFolderData: {}, //文件夹树状结构
+              filePreviewIsUsable: true, //文件是否可以预览标记
+              filePreviewUrl: '',  //预览文件url
+              filePreviewCurrentId: '', //当前预览的文件resource_id
+              filePreviewCurrentFileId: '', //当前预览的文件id
+              filePreviewCurrentVersionId: '', //当前预览文件版本id
+              filePreviewCurrentVersionList: [], //预览文件的版本列表
+              filePreviewCurrentVersionKey: 0, //预览文件选中的key
+              filePreviewCommits: [],//文件评论列表
+              filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
+              filePreviewCommitPoints: [], //文件图评点列表
+              filePreviewCommitType: '0', //新增评论 1 回复圈点评论
+              filePreviewCommitPointNumber: '',//评论当前的点
+              filePreviewIsRealImage: true, //当前预览的图片是否真正图片
 
-            //流程
-            processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
-            node_type: '1', //节点类型， 默认1
-            processCurrentEditStep: 0, //编辑第几步，默认 0
-            processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-            processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) ,//每一步的每一个类型，记录，数组的全部数据step * type
-            processTemplateList: [], //流程模板列表
-            templateInfo: {},  //所选择的流程模板的信息数据
-            processInfo: {},  //所选中的流程的信息
-            processList: [],   //流程列表
-            processDynamics: [], //流程动态列表,
-            currentProcessInstanceId: '', //当前查看的流程实例id
+              //流程
+              processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+              node_type: '1', //节点类型， 默认1
+              processCurrentEditStep: 0, //编辑第几步，默认 0
+              processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+              processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) ,//每一步的每一个类型，记录，数组的全部数据step * type
+              processTemplateList: [], //流程模板列表
+              templateInfo: {},  //所选择的流程模板的信息数据
+              processInfo: {},  //所选中的流程的信息
+              processList: [],   //流程列表
+              processDynamics: [], //流程动态列表,
+              currentProcessInstanceId: '', //当前查看的流程实例id
 
-          //  团队展示发布
-            teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
-            editTeamShowPreview: false, //编辑预览状态
-            editTeamShowSave: false,  //编辑保存状态
-          }
-        })
+              //  团队展示发布
+              teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
+              editTeamShowPreview: false, //编辑预览状态
+              editTeamShowSave: false,  //编辑保存状态
+            }
+          })
+        }
+        initialData()
+
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({ //查询项目角色列表
             type: 'getProjectRoles',
@@ -122,6 +134,12 @@ export default {
             type: 'initProjectDetail',
             payload:{
               id: board_id
+            }
+          })
+          dispatch({
+            type: 'getAppsList',
+            payload: {
+              type:'2'
             }
           })
 
@@ -281,6 +299,20 @@ export default {
 
 
 
+    },
+
+    * getAppsList({ payload }, { select, call, put }) {
+      let res = yield call(getAppsList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            appsList: res.data
+          }
+        })
+      }else{
+
+      }
     },
 
     //流程
@@ -588,8 +620,23 @@ export default {
           payload: {
             filePreviewIsUsable: res.data.isUsable,
             filePreviewUrl: res.data.url,
+            filePreviewIsRealImage: res.data.isRealImage,
           }
         })
+        const { file_id } = payload
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -800,6 +847,111 @@ export default {
 
       }
     },
+    * getPreviewFileCommits({ payload }, { select, call, put }) {
+      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const { type } = payload
+      let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
+      let res = yield call(getPreviewFileCommits, {...payload, point_number: type == 'point'?filePreviewCommitPointNumber: ''})
+
+      if(isApiResponseOk(res)) {
+         yield put({
+           type: 'updateDatas',
+           payload: {
+             [name]: res.data ,
+           }
+         })
+      }else{
+
+      }
+    },
+    * getFileCommitPoints({ payload }, { select, call, put }) {
+      let res = yield call(getFileCommitPoints, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCommitPoints: res.data ,
+          }
+        })
+      }else{
+
+      }
+    },
+
+    * addFileCommit({ payload }, { select, call, put }) {
+      let res = yield call(addFileCommit, payload)
+      const { file_id,type, filePreviewCommitType = '0' } = payload
+      //filePreviewCommitType 0 新增 1 回复
+      if(isApiResponseOk(res)) {
+        const flag = res.data.flag
+
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCommitPointNumber: flag
+          }
+        })
+
+        if(type == '1') {
+          yield put({
+            type: 'getPreviewFileCommits',
+            payload: {
+              id: file_id,
+              type: 'point',
+              point_number: flag
+            }
+          })
+        }
+
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id,
+          }
+        })
+
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+
+      }
+    },
+
+    * deleteCommit({ payload }, { select, call, put }) {
+      let res = yield call(deleteCommit, payload)
+      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const { file_id, type, point_number } = payload
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id,
+          }
+        })
+
+        if(type === '1') {
+          yield put({
+            type: 'getPreviewFileCommits',
+            payload: {
+              id: file_id,
+              type: 'point',
+              point_number: filePreviewCommitPointNumber
+            }
+          })
+        }
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+
+      }
+    },
+
     //文档----------end
 
 
@@ -966,6 +1118,21 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
+    * addProjectApp({ payload }, { select, call, put }) {
+      let res = yield call(addProjectApp, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'initProjectDetail',
+          payload: {
+            id: board_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     //项目增删改查--end
 
     //任务---start
@@ -1049,10 +1216,18 @@ export default {
     },
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
-      const  { type, board_id, arrange_type, calback } = payload
+      const  { type, board_id, arrange_type, calback, operateType } = payload
       let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
       if (typeof calback === 'function') {
         calback()
+      }
+      if(operateType === '1') { //代表分类查询选择
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            taskGroupList: []
+          }
+        })
       }
       // message.destroy()
       if(isApiResponseOk(res)) {
@@ -1187,29 +1362,49 @@ export default {
       }
     },
 
-    * changeTaskType({ payload }, { select, call, put }) { //
+    * changeTaskType({ payload }, { select, call, put }) { // 此方法注释掉的地方是先前做了任务跳转sss
       const { requestObj, indexObj } = payload
-      const { board_id } = requestObj
-      const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
+      // const { board_id } = requestObj
+      // const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
       let res = yield call(changeTaskType, requestObj)
+      const getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
 
       if(isApiResponseOk(res)) {
-        Cookies.set('board_id', board_id,{expires: 30, path: ''})
-        yield  put({
-          type: 'projectDetailInfo',
-          payload:{
-            id: Cookies.get('board_id')
+        //跳转操作
+        // Cookies.set('board_id', board_id,{expires: 30, path: ''})
+        // yield  put({
+        //   type: 'projectDetailInfo',
+        //   payload:{
+        //     id: Cookies.get('board_id')
+        //   }
+        // })
+        // yield  put({
+        //   type: 'getProjectGoupList',
+        //   payload:{
+        //   }
+        // })
+        // yield  put({
+        //   type: 'putTask',
+        //   payload: indexObj
+        // })
+        yield put({
+          type: 'getTaskGroupList',
+          payload: {
+            type: '2',
+            board_id: board_id,
+            arrange_type: getTaskGroupListArrangeType,
+            calback: function () {
+              message.success('移动成功', MESSAGE_DURATION_TIME)
+            }
           }
         })
-        yield  put({
-          type: 'getProjectGoupList',
-          payload:{
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawerVisible: false
           }
         })
-        yield  put({
-          type: 'putTask',
-          payload: indexObj
-        })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1244,7 +1439,14 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
+    * removeTaskExecutor({ payload }, { select, call, put }) { //
+      let res = yield call(removeTaskExecutor, payload)
+      if(isApiResponseOk(res)) {
+        message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
     * completeTask({ payload }, { select, call, put }) { //
       const { is_realize  } = payload
       let res = yield call(completeTask, payload)

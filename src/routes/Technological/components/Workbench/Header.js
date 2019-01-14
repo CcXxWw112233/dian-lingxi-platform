@@ -54,7 +54,7 @@ export default class Header extends React.Component {
 
         <div className={indexStyle.left}>
           <Dropdown visible={visibleEdit}
-                    trigger={['click']}
+                    // trigger={['click']}
                     onVisibleChange={this.onVisibleChangeEdit.bind(this)}
                     overlay={<EditCardDrop {...this.props} visibleEdit={visibleEdit}/>}>
           <div>编辑卡片</div>

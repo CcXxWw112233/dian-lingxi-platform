@@ -5,6 +5,7 @@ import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
+import indexStyles from './index.less'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -17,6 +18,12 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    addProjectApp(data) {
+      dispatch({
+        type: getEffectOrReducerByName('addProjectApp'),
+        payload: data
+      })
+    },
     getTaskGroupList(data){
       dispatch({
         type: getEffectOrReducerByName('getTaskGroupList'),
@@ -228,6 +235,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    removeTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName('removeTaskExecutor'),
+        payload: data
+      })
+    },
     completeTask(data){
       dispatch({
         type: getEffectOrReducerByName('completeTask'),
@@ -383,7 +396,25 @@ const ProjectDetail = (props) => {
         type: getEffectOrReducerByName('filePreview'),
         payload: params
       })
-    }
+    },
+    getPreviewFileCommits(params) {
+      dispatch({
+        type: getEffectOrReducerByName('getPreviewFileCommits'),
+        payload: params
+      })
+    },
+    addFileCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName('addFileCommit'),
+        payload: params
+      })
+    },
+    deleteCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName('deleteCommit'),
+        payload: params
+      })
+    },
   }
   const ProcessProps = {
     modal,
@@ -491,7 +522,7 @@ const ProjectDetail = (props) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...ProcessProps} updateDatas={updateDatas} />)
+        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
         break
       case '3':
         appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
@@ -508,7 +539,7 @@ const ProjectDetail = (props) => {
   return(
     // minHeight: '100%',
     <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
-      <div style={{height: 108,}}></div>
+      <div className={indexStyles.headerMaskDown}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}

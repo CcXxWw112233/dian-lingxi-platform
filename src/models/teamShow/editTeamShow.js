@@ -16,7 +16,7 @@ export default modelExtend(technological, {
     setup({ dispatch, history }) {
       history.listen((location) => {
         message.destroy()
-        if (location.pathname === '/teamShow/editTeamShow') {
+        if (location.pathname === '/technological/teamShow/editTeamShow') {
           dispatch({
             type: 'updateDatas',
             payload:{
@@ -86,7 +86,7 @@ export default modelExtend(technological, {
         yield put({
           type: 'routingJump',
           payload: {
-            route: '/teamShow/teamList'
+            route: '/technological/teamShow/teamList'
           }
         })
       }else{

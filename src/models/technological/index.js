@@ -38,7 +38,7 @@ export default {
             naviHeadTabIndex = '2'
           }else if(location.pathname === '/technological/newsDynamic'){
             naviHeadTabIndex = '1'
-          } else if(location.pathname === '/technological/teamList') {
+          } else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
             naviHeadTabIndex = '5'
           }
           dispatch({
@@ -119,6 +119,24 @@ export default {
         }
       })
     },
+
+    //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
+    * onlyGetUserInfo({ payload }, { select, call, put }) {
+      let res = yield call(getUSerInfo, {ss:'1'})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userInfo: res.data, //当前用户信息
+          }
+        })
+        //存储
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * getUSerInfo({ payload }, { select, call, put }) { //提交表单
       let res = yield call(getUSerInfo, payload)
       if(isApiResponseOk(res)) {

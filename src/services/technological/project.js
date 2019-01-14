@@ -103,3 +103,12 @@ export async function collectionProject(id) {
     }
   },{ isNotLoading: true });
 }
+
+// 添加项目app
+export async function addProjectApp(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/app/add`,
+    method: 'POST',
+    data
+  });
+}

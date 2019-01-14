@@ -17,17 +17,17 @@ const Dragger = Upload.Dragger
 
 export default class Comment extends React.Component {
   state = {
-    editText: '',
+    editText: toContentState(''),
     submitButtonDisabled: true
   }
   MentionSpacerClick() {
   }
-  MentionEditorChange(e,value) {
+  MentionEditorChange(editorState) {
     this.setState({
-      editText: toString(e)
+      editText: editorState
     },function () {
       this.setState({
-        submitButtonDisabled: !!!this.state.editText
+        submitButtonDisabled: !!!toString(this.state.editText)
       })
     })
   }
@@ -40,13 +40,18 @@ export default class Comment extends React.Component {
     const { card_id } = drawContent
     this.props.addCardNewComment({
       card_id,
-      comment: this.state.editText
+      comment: toString(this.state.editText)
+    })
+    this.setState({
+      editText: toContentState(''),
+      submitButtonDisabled: true
     })
   }
 
 
   render() {
 
+    const { editText } = this.state
     const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
@@ -102,6 +107,7 @@ export default class Comment extends React.Component {
                   onChange ={this.MentionEditorChange.bind(this)}
                   className={CommentStyles.mention}
                   style={{ width: '100%',border:' none', outline: 'none', height: 48}}
+                  value={editText}
                   suggestions={suggestions}
                 />
               <div className={CommentStyles.functionBar}>

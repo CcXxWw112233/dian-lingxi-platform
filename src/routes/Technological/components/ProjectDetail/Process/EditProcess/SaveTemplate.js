@@ -26,6 +26,9 @@ class SaveTemplate extends React.Component {
     })
   }
   onCancel = () => {
+    this.setState({
+      stepContinueDisabled: true
+    })
     this.props.setSaveTemplateModalVisible()
   }
   // 提交表单
@@ -41,6 +44,9 @@ class SaveTemplate extends React.Component {
         values['template_no'] = ''
         values['type'] = '1'
         // console.log(values)
+        this.setState({
+          stepContinueDisabled: true
+        })
         this.props.setSaveTemplateModalVisible()
         //发送请求
         this.props.saveProcessTemplate ? this.props.saveProcessTemplate(values) : false

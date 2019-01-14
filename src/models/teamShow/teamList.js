@@ -16,7 +16,7 @@ export default modelExtend(technological, {
     setup({ dispatch, history }) {
       history.listen((location) => {
         message.destroy()
-        if (location.pathname === '/teamShow/teamList') {
+        if (location.pathname === '/technological/teamShow/teamList') {
           dispatch({
             type: 'updateDatas',
             payload: {

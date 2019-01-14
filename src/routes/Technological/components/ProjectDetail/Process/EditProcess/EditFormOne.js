@@ -165,9 +165,12 @@ export default class EditFormOne extends React.Component {
                 <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>
               </RadioGroup>
-              <div>
-                <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
-              </div>
+              {deadline_type === '3'? (
+                <div>
+                  <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
+                </div>
+              ): ('')}
+
             </div>
           </div>
           {/*推进人*/}
@@ -182,15 +185,18 @@ export default class EditFormOne extends React.Component {
                 <Radio className={indexStyles.ratio}value={'2'}>启动{currentNounPlanFilterName(FLOWS)}时指定</Radio>
                 <Radio className={indexStyles.ratio} value={'3'}>固定人选</Radio>
               </RadioGroup>
-              <div>
-                <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
-                {/*<Mention*/}
+              {assignee_type === '3'? (
+                <div>
+                  <MentionAssignees {...this.props} defaultAssignees={defaultAssignees} suggestions={suggestions} mentionOnChange={this.mentionOnChange.bind(this)}/>
+                  {/*<Mention*/}
                   {/*style={{ width: '100%', height: 70 }}*/}
                   {/*onChange={this.mentionOnChange.bind(this)}*/}
                   {/*defaultValue={toContentState(defaultAssignees)}*/}
                   {/*suggestions={suggestions}*/}
-                {/*/>*/}
-              </div>
+                  {/*/>*/}
+                </div>
+              ) :('')}
+
             </div>
           </div>
           {/*流转*/}
@@ -201,7 +207,7 @@ export default class EditFormOne extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.transferModeChange.bind(this)} value={transfer_mode}>
-                <Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>
+                {/*<Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>*/}
                 <Radio className={indexStyles.ratio}value={'2'}>下一步</Radio>
               </RadioGroup>
               <Checkbox value="1"  onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
@@ -209,9 +215,11 @@ export default class EditFormOne extends React.Component {
             </div>
           </div>
           {/*删除*/}
-          <div style={{textAlign: 'center'}}>
-            <Button style={{color: 'red',margin: '0 auto'}} onClick={this.deleteProcessStep.bind(this)}>删除步骤</Button>
-          </div>
+          {/*<div style={{textAlign: 'center'}}>*/}
+            {/*<Button style={{color: 'red',margin: '0 auto'}} onClick={this.deleteProcessStep.bind(this)}>删除步骤</Button>*/}
+          {/*</div>*/}
+          <div style={{height: 20}}></div>
+
         </div>
       </div>
     )

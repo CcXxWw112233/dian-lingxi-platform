@@ -68,6 +68,8 @@ export default class ProcessStartConfirm extends React.Component {
     const editorProps = {
       height: 0,
       contentFormat: 'html',
+      placeholder:'输入流程描述',
+      contentStyle:{minHeight: 150,height:'auto'},
       initialContent: description,
       onHTMLChange:(e) => {
         const { datas:{ templateInfo = {} } } = this.props.model
@@ -116,7 +118,7 @@ export default class ProcessStartConfirm extends React.Component {
             {/*<div>投决立项</div>*/}
           {/*</div>*/}
           <div style={{marginTop: 14}}>
-            <Input defaultValue={name} style={{height: 40,fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
+            <Input placeholder={'输入流程名称'} defaultValue={name} style={{height: 40,fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
           </div>
           <div className={indexStyles.editorWraper}>
             <BraftEditor {...editorProps} style={{fontSize:12}}/>
