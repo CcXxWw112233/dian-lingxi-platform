@@ -9,34 +9,22 @@ import dva from "dva/index";
 import indexStyles from './index.less'
 import modelExtend from 'dva-model-extend'
 import ClassBasicModel from '../../models/technological'
-import { LocaleProvider, Icon } from 'antd';
+import { LocaleProvider, Icon, Layout, Menu, } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import  ImChat from './ImChat.js'
+import SiderLeft from './Sider/SiderLeft'
+import SiderRight from './Sider/SiderRight'
+
+const { Header, Sider, Content } = Layout;
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
-// const organizationMemberPermissions = JSON.parse(localStorage.getItem('organizationMemberPermissions')) || []
-// for(let i = 0; i < organizationMemberPermissions.length; i++) {
-//   const obj = {}
-//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-//   if(organizationMemberPermissions[i].permission_type === '1'){
-//     // console.log(str2)
-//   }
-// }
-// for(let i = 0; i < organizationMemberPermissions.length; i++) {
-//   const obj = {}
-//   const str = `export const ${organizationMemberPermissions[i].code.replace(/\:/gim,'_').toUpperCase()} = '${organizationMemberPermissions[i].code}' //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-//   const str2 = `public static final String ${organizationMemberPermissions[i].code.replace(/\:/gim, '_').toUpperCase()} = "${organizationMemberPermissions[i].code}";  //${organizationMemberPermissions[i].name} permission_type=${organizationMemberPermissions[i].permission_type}`
-//
-//   if(organizationMemberPermissions[i].permission_type === '2'){
-//     // console.log(str2)
-//   }
-// }
 @connect(mapStateToProps)
 export default class Technological extends React.Component{
+
   render() {
+
     const { dispatch, model } = this.props
     const app = dva();
     //导航栏props-------------
@@ -130,26 +118,60 @@ export default class Technological extends React.Component{
         component: () => import('../TeamShow/index'),
       },
     ]
+
+    const iniLayout = (
+      <div className={globalClassNmae.page_style_3} style={{ position: 'relative'}}>
+        <HeaderNav {...HeaderNavProps}/>
+
+        {
+          routes.map(({ path, ...dynamics }, key) =>{
+            return (<Route key={key}
+                // exact
+                           path={path}
+                           component={dynamic({
+                             app,
+                             ...dynamics,
+                           })}
+              />
+            )})
+        }
+      </div>
+    )
+
+    const newLayout = (
+      <Layout >
+        <Sider  collapsedWidth={64}  theme={'light'} collapsed={true} />
+        <SiderLeft  {...HeaderNavProps} />
+        <Layout style={{  backgroundColor: 'rgba(245,245,245,1)'}}>
+          <Content style={{
+            margin: '0 16px',
+          }}
+          >
+            <div className={globalClassNmae.page_style_3} >
+              {
+              routes.map(({ path, ...dynamics }, key) =>{
+                return (<Route key={key}
+                               //exact
+                               path={path}
+                               component={dynamic({
+                                 app,
+                                 ...dynamics,
+                               })}
+                  />
+                )})
+              }
+             </div>
+          </Content>
+        </Layout>
+        <SiderRight />
+      </Layout>
+
+    )
+
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
-        <div className={globalClassNmae.page_style_3} style={{ position: 'relative'}}>
-          <HeaderNav {...HeaderNavProps}/>
-          {
-            routes.map(({ path, ...dynamics }, key) =>{
-              return (<Route key={key}
-                             // exact
-                             path={path}
-                             component={dynamic({
-                               app,
-                               ...dynamics,
-                             })}
-                />
-              )})
-          }
-          <ImChat {...this.props} />
-
-          </div>
+        {newLayout}
       </LocaleProvider>
     );
   }

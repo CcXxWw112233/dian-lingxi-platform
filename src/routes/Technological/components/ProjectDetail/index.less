@@ -7,7 +7,12 @@ body { height: 100%; padding: 0; margin: 0; }
   height: 108px;
 }
 .headoutMaskDown{
-  top: 64px;
+  top: 0;//64px;
+  position:absolute;
+  z-index: 0;
+  width: 100%;
+  //z-index: ;
+  background-color: #ffffff
 }
 .headout {
   position: relative;
@@ -116,7 +121,7 @@ body { height: 100%; padding: 0; margin: 0; }
 
 @media screen and (max-height: 900px) {
   .headoutMaskDown{
-    top: 48px;
+    top: 0px;
   }
   .headerMaskDown{
     height: 80px;

@@ -155,6 +155,9 @@ const Routers = function ({ history, app }) {
       path: '/test',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Test/'),
+    },{
+      path: '/index',
+      component: () => import('./routes/Index'),
     },
   ]
   //去掉exact

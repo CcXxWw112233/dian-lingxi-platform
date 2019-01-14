@@ -33,13 +33,11 @@ export default {
           })
 
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
-            naviHeadTabIndex = '3'
+            naviHeadTabIndex = 1
           }else if(location.pathname === '/technological/workbench'){
-            naviHeadTabIndex = '2'
-          }else if(location.pathname === '/technological/newsDynamic'){
-            naviHeadTabIndex = '1'
-          } else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
-            naviHeadTabIndex = '5'
+            naviHeadTabIndex = 0
+          }else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
+            naviHeadTabIndex = 4
           }
           dispatch({
             type: 'upDateNaviHeadTabIndex',
