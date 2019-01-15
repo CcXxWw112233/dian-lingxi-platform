@@ -555,7 +555,9 @@ const ProjectDetail = (props) => {
         <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
       </Drawer>
       {/*应用界面*/}
-      {filterAppsModule(appsSelectKey)}
+      <div style={{padding:'0 20px'}}>
+        {filterAppsModule(appsSelectKey)}
+      </div>
     </div>
   )
 };
