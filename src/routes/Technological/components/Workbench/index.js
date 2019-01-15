@@ -190,15 +190,11 @@ const Workbench = (props) => {
       {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
         <div className={indexStyles.cardItem}>
-          <div  className={indexStyles.cardItem_left}>
+          <div  className={indexStyles.cardItem_left} style={{width: boxList.length>1?'50%':'100%'}}>
             {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
             {boxList.map((value, key) => {
               const { code, name, id } = value
-              let flag = false
-              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
-              if(arr.indexOf(code) !== -1){
-                flag = true
-              }
+              let flag = key % 2 == 0
 
               let container = ''
               if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
@@ -219,43 +215,35 @@ const Workbench = (props) => {
               return flag && <div key={id}>{container}</div>
             })}
           </div>
-          <div  className={indexStyles.cardItem_right}>
-            {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
-            {boxList.map((value, key) => {
-              const { code, name, id } = value
-              let flag = false
-              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
-              if(arr.indexOf(code) == -1){
-                flag = true
-              }
-              let container = ''
-              if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
-                container = (
-                  <CardContentArticle
-                                     {...this.props}
-                                      title={name} {...cardContentListProps}
-                                      updateDatas={updateDatas}
-                                      CardContentType={code}
-                                      boxId={id}
-                                      itemValue={value}
-                                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
-                )
-              }else{
-                container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
-                )
-              }
-              return  flag && <div key={id}>{container}</div>
-            })}
-          </div>
-          {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
-          {/*<CardContent title={'会议安排'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'meeting'}/>*/}
-          {/*<CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'task'}/>*/}
-          {/*<CardContent title={'审核进程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'waitingDoFlows'}/>*/}
-          {/*<CardContent title={'我的文档'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'file'}/>*/}
-          {/*<CardContentArticle title={'优秀案例'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'case'} appType={WE_APP_TYPE_KNOW_CITY} />*/}
-          {/*<CardContent title={'隐翼地图'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'yymap'}/>*/}
-          {/*<CardContentArticle title={'政策法规'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'policy'} appType={WE_APP_TYPE_KNOW_POLICY}/>*/}
+          {boxList.length>1?(
+            <div  className={indexStyles.cardItem_right}>
+              {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
+              {boxList.map((value, key) => {
+                const { code, name, id } = value
+                let flag = key % 2 != 0
+
+                let container = ''
+                if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
+                  container = (
+                    <CardContentArticle
+                      {...this.props}
+                      title={name} {...cardContentListProps}
+                      updateDatas={updateDatas}
+                      CardContentType={code}
+                      boxId={id}
+                      itemValue={value}
+                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
+                  )
+                }else{
+                  container = (
+                    <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                  )
+                }
+                return  flag && <div key={id}>{container}</div>
+              })}
+            </div>
+          ):('')}
+
         </div>
 
     </div>
