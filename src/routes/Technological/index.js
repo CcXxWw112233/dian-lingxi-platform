@@ -147,7 +147,7 @@ export default class Technological extends React.Component{
             margin: '0 16px',
           }}
           >
-            <div className={globalClassNmae.page_style_3} >
+            <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
               routes.map(({ path, ...dynamics }, key) =>{
                 return (<Route key={key}

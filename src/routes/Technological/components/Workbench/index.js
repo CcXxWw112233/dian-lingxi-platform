@@ -7,6 +7,7 @@ import Header from './Header'
 import CardContentArticle from './CardContent/CardContentArticle'
 import {WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY} from "../../../../globalset/js/constant";
 import EditCardDrop from './HeaderComponent/EditCardDrop'
+import PersonNews from './PersonNews'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 
@@ -186,6 +187,7 @@ const Workbench = (props) => {
   }
   return(
     <div>
+      <PersonNews />
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
