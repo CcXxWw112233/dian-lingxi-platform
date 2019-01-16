@@ -7,6 +7,7 @@ import {ORGANIZATION} from "../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../../HeaderNav/CreateOrganizationModal'
 import NewsListNewDatas from '../../NewsDynamic/NewsListNewDatas'
+import InitialNews from './component/InitialNews'
 
 export default class PersonNews extends React.Component {
 
@@ -176,7 +177,6 @@ export default class PersonNews extends React.Component {
 
     return (
       <div>
-        {/*<div className={indexStyles.mask} onScroll={this.maskScroll.bind(this)} style={{width: clientWidth, height: clientHeight}}></div>*/}
         {isShowBottDetail?(
           <div className={indexStyles.mask} onMouseOver={this.maskOver.bind(this,false)} onMouseOut={this.maskOver.bind(this,true)} onScroll={this.maskScroll.bind(this)} style={{width: maskWidth, height: clientHeight}}></div>
         ):('')}
@@ -198,11 +198,17 @@ export default class PersonNews extends React.Component {
             </div>
           </div>
           <div  id={'dynamicsContainer'} onScroll={this.newsOutScroll.bind(this)} className={isShowBottDetail?indexStyles.contain2:indexStyles.contain2_hide} style={{maxHeight: clientHeight*0.8, overflow:!isShowBottDetail?'hidden':'auto'}}>
-            <NewsListNewDatas {...this.props} />
+            {!isShowBottDetail? (
+              <InitialNews{...this.props} />
+            ) : (
+              <NewsListNewDatas {...this.props} />
+            )}
+            {/*<InitialNews{...this.props} />*/}
           </div>
           <div className={indexStyles.spin_turn} onClick={this.setIsShowBottDetail.bind(this)}>
             <Icon type={!isShowBottDetail?'down':'up'} />
           </div>
+          <div  className={indexStyles.bott_opacity}></div>
           <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
         </div>
       </div>
