@@ -8,8 +8,10 @@ import CardContentArticle from './CardContent/CardContentArticle'
 import {WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY} from "../../../../globalset/js/constant";
 import EditCardDrop from './HeaderComponent/EditCardDrop'
 import PersonNews from './PersonNews'
+import technological from "../../../../models/technological";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
+const getEffectOrReducerByName_2 = name => `technological/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -185,9 +187,74 @@ const Workbench = (props) => {
       })
     }
   }
+  const PersonNewsProps = {
+    model,
+    logout() {
+      dispatch({
+        type: getEffectOrReducerByName_2('logout'),
+      })
+    },
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName_2('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    },
+    updateDatas (payload) {
+      dispatch({
+        type: getEffectOrReducerByName_2('updateDatas') ,
+        payload:payload
+      })
+    },
+    //组织
+    getSearchOrganizationList(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('getSearchOrganizationList'),
+        payload: data
+      })
+    },
+    createOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('createOrganization'),
+        payload: data
+      })
+    },
+    updateOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('updateOrganization'),
+      })
+    },
+    applyJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('applyJoinOrganization'),
+        payload: data
+      })
+    },
+    inviteJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('inviteJoinOrganization'),
+        payload: data
+      })
+    },
+    uploadOrganizationLogo(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('uploadOrganizationLogo'),
+        payload: data
+      })
+    },
+    changeCurrentOrg(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('changeCurrentOrg'),
+        payload: data
+      })
+    }
+  }
+
   return(
     <div>
-      <PersonNews />
+      <PersonNews {...PersonNewsProps} />
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
@@ -254,8 +321,11 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, loading }) {
-  return { modal, model: workbench, loading }
+function mapStateToProps({ modal, workbench, technological, loading }) {
+  const modelObj = {
+    datas: {...technological['datas'],...workbench['datas']}
+  }
+  return { modal, model: modelObj, loading }
 }
 export default connect(mapStateToProps)(Workbench)
 

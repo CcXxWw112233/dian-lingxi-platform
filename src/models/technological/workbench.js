@@ -291,7 +291,6 @@ export default modelExtend(technological, {
       }
     },
     * getJourneyList({ payload }, { select, call, put }) {
-      console.log(payload)
       let res = yield call(getMeetingList, payload)
       if(isApiResponseOk(res)) {
         yield put({

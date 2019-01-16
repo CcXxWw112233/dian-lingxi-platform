@@ -83,9 +83,17 @@ export default class SiderLeft extends React.Component {
     })
   }
 
+  setCreateOrgnizationOModalVisable() {
+    this.setState({
+      createOrganizationVisable: !this.state.createOrganizationVisable
+    })
+  }
   handleOrgListMenuClick = (e) => {
     const { key } = e
-    this.setState({ menuVisible: false });
+    if('10' == key) {
+      this.setCreateOrgnizationOModalVisable()
+      return
+    }
     const { datas: {currentUserOrganizes = []}} = this.props.model
     for(let val of currentUserOrganizes) {
       if(key === val['id']){
@@ -136,7 +144,7 @@ export default class SiderLeft extends React.Component {
     const { logo } = currentSelectOrganize
 
     const orgListMenu = (
-      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={false} >
+      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} >
         {currentUserOrganizes.map((value, key) => {
           const { name, id } = value
           return (
@@ -145,6 +153,11 @@ export default class SiderLeft extends React.Component {
             </Menu.Item>
           )
         })}
+        <Menu.Item key="10" >
+          <div className={indexStyles.itemDiv} style={{ color: color_4}}>
+            <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+          </div>
+        </Menu.Item>
       </Menu>
     )
 
