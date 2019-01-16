@@ -24,6 +24,7 @@ export default class SiderRight extends React.Component {
     const data = [{id: '123',type:'1'},{id: '321', type: '0'}]
 
     return (
+      <div  id={'siderRight'} className={indexStyles.siderRight}>
       <Sider
         collapsible
         onCollapse={this.onCollapse.bind(this)}
@@ -60,6 +61,7 @@ export default class SiderRight extends React.Component {
           })}
         </div>
       </Sider>
+      </div>
     )
   }
 }

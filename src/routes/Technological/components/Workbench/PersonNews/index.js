@@ -6,21 +6,33 @@ import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 import {ORGANIZATION} from "../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../../HeaderNav/CreateOrganizationModal'
+import NewsListNewDatas from '../../NewsDynamic/NewsListNewDatas'
 
 export default class PersonNews extends React.Component {
 
   state = {
     createOrganizationVisable: false,
-    width: document.getElementById('technologicalOut').clientWidth - 20
+    width: document.getElementById('technologicalOut').clientWidth - 20,
+    isShowBottDetail: false,
+
+    clientHeight: document.documentElement.clientHeight,//获取页面可见高度
+    clientWidth: document.documentElement.clientWidth,//获取页面可见高度
+    siderRightWidth: 56, //右边栏宽度
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY.bind(this,'person_news_out'))
+    this.listenSiderRightresize()
   }
   resizeTTY(type) {
     const width = document.getElementById('technologicalOut').clientWidth;//获取页面可见高度
+    const clientHeight = document.documentElement.clientHeight//获取页面可见高度
+    const clientWidth = document.documentElement.clientWidth + 16//获取页面可见高度
+
     this.setState({
-      width
+      width,
+      clientHeight,
+      clientWidth
     })
   }
 
@@ -64,14 +76,81 @@ export default class PersonNews extends React.Component {
       }
     }
   }
+
+  //展开与关闭
+  setIsShowBottDetail() {
+    const element = document.getElementById('dynamicsContainer')
+    const that = this
+    this.setState({
+      isShowBottDetail: !this.state.isShowBottDetail
+    },function () {
+      setTimeout(function () {
+        that.setState({
+          isShowBottDetailStyleSet: that.state.isShowBottDetail
+        })
+      },200)
+      this.funTransitionHeight(element, 200,  this.state.isShowBottDetail)
+    })
+  }
+  funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
+    if (typeof window.getComputedStyle == "undefined") return;
+    const height = window.getComputedStyle(element).height;
+    element.style.transition = "none";    // mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.height = "auto";
+    const targetHeight = window.getComputedStyle(element).height;
+    element.style.height = height;
+    element.offsetWidth;
+    if (time) element.style.transition = "height "+ time +"ms";
+    element.style.height = !!type ? targetHeight : 0;
+  };
+
+  newsOutScroll(e) {
+    e.stopPropagation()
+  }
+
+  maskScroll(e) {
+    e.stopPropagation()
+  }
+  maskOver(bool,e){
+    // document.querySelector('body').style.overflow = bool?'':'hidden'
+  }
+
+  //监听右边栏宽高变化
+  listenSiderRightresize() {
+    const that = this
+    // Firefox和Chrome早期版本中带有前缀
+    const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+    // 选择目标节点
+    const target = document.getElementById('siderRight');
+   // 创建观察者对象
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        that.setState({
+          siderRightWidth: document.getElementById('siderRight').clientWidth === 56 ? 300: 56
+        })
+      });
+    });
+    // 配置观察选项:
+    const config = {
+      attributes: true,//检测属性变动
+      subtree: true,
+      // childList: true,//检测子节点变动
+      // characterData: true//节点内容或节点文本的变动。
+    }
+    // 传入目标节点和观察选项
+    observer.observe(target, config);
+    // /停止观察
+    // observer.disconnect();
+   //https://blog.csdn.net/zfz5720/article/details/83095535
+  }
   render(){
-    const { width } = this.state
-    const transWidth = width < min_page_width ? min_page_width : width
-    const avatar = 'http://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/2018-11-13/172f2c924443a267cea532150e76d344.jpg'
+    const { width, isShowBottDetail, isShowBottDetailStyleSet, clientHeight, clientWidth, siderRightWidth } = this.state
+    let transWidth = width < min_page_width ? min_page_width : width
+    transWidth = isShowBottDetail?transWidth - siderRightWidth:transWidth
 
     const { datas = {} } = this.props.model
     const {  currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org={},name} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { current_org={},name, avatar} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
 
@@ -93,26 +172,39 @@ export default class PersonNews extends React.Component {
       </Menu>
     )
 
-    return (
-      <div className={indexStyles.person_news_out} style={{width: transWidth}}>
-        <div className={indexStyles.contain1}>
-          <div className={indexStyles.contain1_one}>
-            <Avatar size={32} src={avatar}>u</Avatar>
-          </div>
-          <Dropdown overlay={orgListMenu}>
-          <div className={indexStyles.contain1_one}>
-            您好,{orgnizationName}
-          </div>
-          </Dropdown>
-          <div className={indexStyles.contain1_one} onClick={() => { this.props.routingJump('/technological/accoutSet')}}>
-            {name}
-          </div>
-          <div className={indexStyles.contain1_one} onClick={this.logout.bind(this)}>
-            退出
-          </div>
-        </div>
-        <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+    const maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
 
+    return (
+      <div>
+        {/*<div className={indexStyles.mask} onScroll={this.maskScroll.bind(this)} style={{width: clientWidth, height: clientHeight}}></div>*/}
+        {isShowBottDetail?(
+          <div className={indexStyles.mask} onMouseOver={this.maskOver.bind(this,false)} onMouseOut={this.maskOver.bind(this,true)} onScroll={this.maskScroll.bind(this)} style={{width: maskWidth, height: clientHeight}}></div>
+        ):('')}
+        <div className={indexStyles.person_news_out} style={{width: transWidth, position:!isShowBottDetail?'relative':'fixed',zIndex: !isShowBottDetail?1:100}}>
+          <div className={indexStyles.contain1}>
+            <div className={indexStyles.contain1_one}>
+              <Avatar size={32} src={avatar}>u</Avatar>
+            </div>
+            <Dropdown overlay={orgListMenu}>
+            <div className={indexStyles.contain1_one}>
+              您好,{orgnizationName}
+            </div>
+            </Dropdown>
+            <div className={indexStyles.contain1_one} onClick={() => { this.props.routingJump('/technological/accoutSet')}}>
+              {name}
+            </div>
+            <div className={indexStyles.contain1_one} onClick={this.logout.bind(this)}>
+              退出
+            </div>
+          </div>
+          <div  id={'dynamicsContainer'} onScroll={this.newsOutScroll.bind(this)} className={isShowBottDetail?indexStyles.contain2:indexStyles.contain2_hide} style={{maxHeight: clientHeight*0.8, overflow:!isShowBottDetail?'hidden':'auto'}}>
+            <NewsListNewDatas {...this.props} />
+          </div>
+          <div className={indexStyles.spin_turn} onClick={this.setIsShowBottDetail.bind(this)}>
+            <Icon type={!isShowBottDetail?'down':'up'} />
+          </div>
+          <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+        </div>
       </div>
     )
   }

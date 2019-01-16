@@ -12,6 +12,7 @@ import technological from "../../../../models/technological";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
+const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -251,10 +252,32 @@ const Workbench = (props) => {
       })
     }
   }
+  const NewsListProps = {
+    modal,
+    model,
+    showModal() {
+      dispatch({ type: 'modal/showModal' })
+    },
+    hideModal() {
+      dispatch({ type: 'modal/hideModal' })
+    },
+    getNewsDynamicList(next_id) {
+      dispatch({
+        type: getEffectOrReducerByName_3('getNewsDynamicList'),
+        payload: {next_id}
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_3('addCardNewComment'),
+        payload: data
+      })
+    }
+  }
 
   return(
     <div>
-      <PersonNews {...PersonNewsProps} />
+      <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
       <div className={indexStyles.workbenchOut}>
@@ -321,9 +344,9 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, loading }) {
+function mapStateToProps({ modal, workbench, technological,newsDynamic, loading }) {
   const modelObj = {
-    datas: {...technological['datas'],...workbench['datas']}
+    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas']}
   }
   return { modal, model: modelObj, loading }
 }

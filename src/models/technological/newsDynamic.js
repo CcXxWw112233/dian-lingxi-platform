@@ -31,7 +31,7 @@ export default {
           }
         }
 
-        if (location.pathname === '/technological/newsDynamic') {
+        if (location.pathname === '/technological/newsDynamic' || location.pathname === '/technological/workbench') {
           dispatch({
             type: 'updateDatas',
             payload:{
