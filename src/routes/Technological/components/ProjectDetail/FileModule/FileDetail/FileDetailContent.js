@@ -32,7 +32,7 @@ export default class FileDetailContent extends React.Component {
     imgHeight: 0,
     imgWidth: 0, //获取到的图片宽高
     punctuateArea: 48, //点击圈点的
-    maxImageWidth: 900,//设置imagload的最大值
+    maxImageWidth: 600,//设置imagload的最大值
     currentRect: { x: 0 ,y: 0, width: 0, height: 0 }, //当前操作的矩形属性
     isInAdding: false, //用来判断是否显示评论下拉
     isInEdditOperate: false, //用来判断不是点击存在的圈
@@ -122,8 +122,10 @@ export default class FileDetailContent extends React.Component {
   }
   operateAreaClick(e) {
     const target = this.refs.operateArea//event.target || event.srcElement;
-    this.x1 = e.pageX - target.offsetLeft;
-    this.y1 = e.pageY - target.offsetTop;
+    const { clientWidth,modalTop = 20 } = this.props
+    const offsetDe = clientWidth * 0.1
+    this.x1 = e.pageX - target.offsetLeft - offsetDe;
+    this.y1 = e.pageY - target.offsetTop - modalTop;
     this.SelectedRect = {x: 0, y: 0 }
     if(!this.isDragging) {
       const { punctuateArea, imgHeight, imgWidth } = this.state
@@ -198,8 +200,10 @@ export default class FileDetailContent extends React.Component {
     })
     // 取得target上被单击的点
     const target = this.refs.operateArea//event.target || event.srcElement;
-    this.x1 = e.pageX - target.offsetLeft;
-    this.y1 = e.pageY - target.offsetTop;
+    const { clientWidth,modalTop = 20 } = this.props
+    const offsetDe = clientWidth * 0.1
+    this.x1 = e.pageX - target.offsetLeft - offsetDe;
+    this.y1 = e.pageY - target.offsetTop - modalTop;
     this.SelectedRect = {x: 0, y: 0 }
     this.isDragging = false
 
@@ -234,10 +238,12 @@ export default class FileDetailContent extends React.Component {
     this.isDragging = true
 
     // 判断拖拽对象是否存在
+    const { clientWidth,modalTop = 20 } = this.props
+    const offsetDe = clientWidth * 0.1
     if (this.isObj(this.SelectedRect)) {
       // 取得鼠标位置
-      const x = e.pageX - target.offsetLeft;
-      const y = e.pageY - target.offsetTop;
+      const x = e.pageX - target.offsetLeft - offsetDe;
+      const y = e.pageY - target.offsetTop - modalTop;
       //------------------------
       //设置高度
       this.SelectedRect.x= x-this.x1;
@@ -294,9 +300,9 @@ export default class FileDetailContent extends React.Component {
   render() {
 
     const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode } = this.state
-    const { clientHeight } =this.props
+    const { clientHeight, offsetTopDeviation } =this.props
 
-    const fileDetailContentOutHeight = clientHeight - 60
+    const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
@@ -358,7 +364,7 @@ export default class FileDetailContent extends React.Component {
     )
 
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight - 60}}>
+      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
         {filePreviewIsUsable? (
             filePreviewIsRealImage?(
               punctuateDom
@@ -385,7 +391,7 @@ export default class FileDetailContent extends React.Component {
              </div>
           </div>
 
-          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
+          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>

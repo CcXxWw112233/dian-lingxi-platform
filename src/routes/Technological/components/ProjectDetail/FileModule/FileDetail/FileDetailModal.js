@@ -23,16 +23,22 @@ class FileDetailModal extends React.Component {
   render() {
     const { visible  } = this.props;
 
+    const modalTop = 20
+
     return(
       <CustormModal
         visible={visible}
-        width={600}
+        width={'80%'}
+        // height={600}
         zIndex={1006}
+        closable={false}
         maskClosable={false}
         footer={null}
         destroyOnClose
+        bodyStyle={{top: 0}}
+        style={{top: modalTop}}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} />}
+        overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
       />
     )
   }
