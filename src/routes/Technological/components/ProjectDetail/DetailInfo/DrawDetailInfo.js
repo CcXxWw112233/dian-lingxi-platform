@@ -116,7 +116,6 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-
   render() {
 
     const { editDetaiDescription, detaiDescriptionValue } = this.state
@@ -208,7 +207,7 @@ export default class DrawDetailInfo extends React.Component {
     }
     const EditArea = (
       <div>
-        <TextArea defaultValue={description || detaiDescriptionValue} autosize className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
+        <TextArea defaultValue={description || detaiDescriptionValue} autosize={true} className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
         <div style={{ textAlign: 'right'}}>
           <div>
             <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>

@@ -5,6 +5,8 @@ import AddModalFormStyles from './AddModalForm.less'
 import {validateEmail, validateTel} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import CustormModal from '../../../../components/CustormModal'
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 class ShowAddMenberModal extends React.Component {
@@ -90,7 +92,7 @@ class ShowAddMenberModal extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={modalVisible}
           width={472}
           zIndex={1006}
@@ -99,9 +101,10 @@ class ShowAddMenberModal extends React.Component {
           destroyOnClose
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
+          overInner={step_3}
         >
-          {step_3}
-        </Modal>
+          {/*{step_3}*/}
+        </CustormModal>
       </div>
     )
   }

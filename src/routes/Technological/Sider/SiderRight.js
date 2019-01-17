@@ -18,6 +18,12 @@ export default class SiderRight extends React.Component {
     })
   }
 
+  setCollapsed() {
+    this.setState({
+      collapsed: !this.state.collapsed
+    })
+  }
+
   render() {
     const { collapsed } = this.state
 
@@ -28,37 +34,39 @@ export default class SiderRight extends React.Component {
       <Sider
         collapsible
         onCollapse={this.onCollapse.bind(this)}
-        className={indexStyles.siderRight} collapsible defaultCollapsed={true} collapsedWidth={56} width={300} theme={'light'}
+        className={indexStyles.siderRight} collapsible defaultCollapsed={true} collapsed={collapsed} trigger={null} collapsedWidth={56} width={300} theme={'light'}
       >
-        <div className={indexStyles.contain_1}>
-          <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>&#xe795;</div>
-          <div className={indexStyles.right}>通知</div>
-        </div>
-        <div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>
-          <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>
-            &#xe710;
+        <div className={indexStyles.siderRightInner} style={{width:collapsed?56:300}}>
+          <div className={indexStyles.contain_1} onClick={this.setCollapsed.bind(this)}>
+            <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>&#xe795;</div>
+            <div className={indexStyles.right}>通知</div>
           </div>
-          <div className={indexStyles.right}>
-            <input className={indexStyles.input} placeholder={'查找团队成员或项目'} />
+          <div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>
+            <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>
+              &#xe710;
+            </div>
+            <div className={indexStyles.right}>
+              <input className={indexStyles.input} placeholder={'查找团队成员或项目'} />
+            </div>
           </div>
-        </div>
-        <div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>
-          {data.map((value, key) => {
-            return (
-              <div key={key}>
-                <InitialChat itemValue={value} />
-              </div>
-            )
-          })}
-        </div>
-        <div className={`${indexStyles.contain_3}`} style={{display: !collapsed?'block': 'none'}}>
-          {data.map((value, key) => {
-            return (
-              <div key={key}>
-                <GroupChat collapsed={collapsed} itemValue={value} />
-              </div>
-            )
-          })}
+          <div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>
+            {data.map((value, key) => {
+              return (
+                <div key={key}>
+                  <InitialChat itemValue={value} />
+                </div>
+              )
+            })}
+          </div>
+          <div className={`${indexStyles.contain_3}`} style={{display: !collapsed?'block': 'none'}}>
+            {data.map((value, key) => {
+              return (
+                <div key={key}>
+                  <GroupChat collapsed={collapsed} itemValue={value} />
+                </div>
+              )
+            })}
+          </div>
         </div>
       </Sider>
       </div>

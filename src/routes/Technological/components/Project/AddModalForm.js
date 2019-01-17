@@ -6,6 +6,7 @@ import StepTwoList from './StepTwoList'
 import { validateTel, validateEmail } from '../../../../utils/verify'
 import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import CustormModal from '../../../../components/CustormModal'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -222,7 +223,7 @@ class AddModalForm extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={modalVisible} //modalVisible
           maskClosable={false}
           width={472}
@@ -230,8 +231,7 @@ class AddModalForm extends React.Component {
           destroyOnClose
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
-        >
-          <div style={{height: step=== 2 ? 'auto':440}}>
+          overInner={( <div style={{height: step=== 2 ? 'auto':440}}>
             <div style={{display: step === 1?'block': 'none'}}>
               {step_1}
             </div>
@@ -242,17 +242,39 @@ class AddModalForm extends React.Component {
               {step_3}
             </div>
             {/*{step === 1 ? (*/}
-              {/*step_1*/}
+            {/*step_1*/}
             {/*) : (*/}
-              {/*step === 2 ? (step_2) : (step_3)*/}
+            {/*step === 2 ? (step_2) : (step_3)*/}
             {/*)}*/}
             <div className={AddModalFormStyles.circleOut}>
               <div className={step===1 ? AddModalFormStyles.chooseCircle : ''}></div>
               <div className={step===2 ? AddModalFormStyles.chooseCircle : ''}></div>
               <div className={step===3 ? AddModalFormStyles.chooseCircle : ''}></div>
             </div>
-          </div>
-        </Modal>
+          </div>)}
+        >
+          {/*<div style={{height: step=== 2 ? 'auto':440}}>*/}
+            {/*<div style={{display: step === 1?'block': 'none'}}>*/}
+              {/*{step_1}*/}
+            {/*</div>*/}
+            {/*<div style={{display: step === 2?'block': 'none'}}>*/}
+              {/*{step_2}*/}
+            {/*</div>*/}
+            {/*<div style={{display: step === 3?'block': 'none'}}>*/}
+              {/*{step_3}*/}
+            {/*</div>*/}
+            {/*/!*{step === 1 ? (*!/*/}
+              {/*/!*step_1*!/*/}
+            {/*/!*) : (*!/*/}
+              {/*/!*step === 2 ? (step_2) : (step_3)*!/*/}
+            {/*/!*)}*!/*/}
+            {/*<div className={AddModalFormStyles.circleOut}>*/}
+              {/*<div className={step===1 ? AddModalFormStyles.chooseCircle : ''}></div>*/}
+              {/*<div className={step===2 ? AddModalFormStyles.chooseCircle : ''}></div>*/}
+              {/*<div className={step===3 ? AddModalFormStyles.chooseCircle : ''}></div>*/}
+            {/*</div>*/}
+          {/*</div>*/}
+        </CustormModal>
       </div>
     )
   }

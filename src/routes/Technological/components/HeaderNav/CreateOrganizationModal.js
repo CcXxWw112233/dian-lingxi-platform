@@ -4,6 +4,7 @@ import { Modal, Form, Button, Input, message, Select, Spin } from 'antd'
 import styles from './CreateOrganizationModal.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
 import { getSearchOrganizationList } from '../../../../services/technological/organizationMember'
+import CustormModal from '../../../../components/CustormModal'
 
 
 const Option = Select.Option
@@ -221,7 +222,7 @@ class CreateOrganizationModal extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={createOrganizationVisable} //createOrganizationVisable
           width={472}
           zIndex={1006}
@@ -230,9 +231,10 @@ class CreateOrganizationModal extends React.Component {
           destroyOnClose={true}
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
+          overInner={formContain}
         >
-          {formContain}
-        </Modal>
+          {/*{formContain}*/}
+        </CustormModal>
       </div>
     )
   }

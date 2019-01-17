@@ -6,6 +6,7 @@ import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
+import DetailInfoModal from './DetailInfo/DetailInfoModal'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -543,17 +544,18 @@ const ProjectDetail = (props) => {
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}
-      <Drawer
-        placement="left"
-        closable={false}
-        visible={projectInfoDisplay}
-        width={376}
-        top={172}
-        zIndex={0}
-        maskStyle={{top: 0, }}
-      >
-        <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
-      </Drawer>
+      {/*<Drawer*/}
+        {/*placement="left"*/}
+        {/*closable={false}*/}
+        {/*visible={projectInfoDisplay}*/}
+        {/*width={376}*/}
+        {/*top={172}*/}
+        {/*zIndex={0}*/}
+        {/*maskStyle={{top: 0, }}*/}
+      {/*>*/}
+        {/*<DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
+      {/*</Drawer>*/}
+      <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
       {/*应用界面*/}
       <div style={{padding:'0 20px'}}>
         {filterAppsModule(appsSelectKey)}
