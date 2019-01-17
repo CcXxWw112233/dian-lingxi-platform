@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
+import CustormModal from '../../../../../components/CustormModal'
 
 class PreviewFileModal extends React.Component {
 
@@ -49,7 +50,7 @@ class PreviewFileModal extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={modalVisible} //modalVisible
           width={700}
           zIndex={1006}
@@ -58,9 +59,10 @@ class PreviewFileModal extends React.Component {
           maskClosable={false}
           style={{textAlign:'center',}}
           onCancel={this.onCancel}
+          overInner={containner()}
         >
-          {containner()}
-        </Modal>
+          {/*{containner()}*/}
+        </CustormModal>
       </div>
     )
   }

@@ -5,6 +5,7 @@ import CreateItem from './CreateItem'
 import DrawerContent from './DrawerContent'
 import { Drawer } from 'antd'
 import {stopPropagation} from "../../../../../utils/util";
+import DrawContentModal from './components/DrawContentModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
 function changeClientHeight() {
@@ -197,22 +198,27 @@ export default class CreateTask extends React.Component {
             ):('')}
           </div>
         </div>
-        <Drawer
-          placement="right"
-          closable={false}
-          onClose={this.setDrawerVisibleClose.bind(this)}
-          visible={drawerVisible} //this.state.drawerVisible
-          width={520}
-          destroyOnClose
-          zIndex={1}
-          maskStyle={{top: clientHeight<900?48:64}}
-          style={{marginTop: clientHeight<900?48:64,}}
-        >
-          <DrawerContent
-            {...this.props}
-            setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)}
-          />
-        </Drawer>
+        {/*<Drawer*/}
+          {/*placement="right"*/}
+          {/*closable={false}*/}
+          {/*onClose={this.setDrawerVisibleClose.bind(this)}*/}
+          {/*visible={drawerVisible} //this.state.drawerVisible*/}
+          {/*width={520}*/}
+          {/*destroyOnClose*/}
+          {/*zIndex={1}*/}
+          {/*maskStyle={{top: clientHeight<900?48:64}}*/}
+          {/*style={{marginTop: clientHeight<900?48:64,}}*/}
+        {/*>*/}
+          {/*<DrawerContent*/}
+            {/*{...this.props}*/}
+            {/*setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)}*/}
+          {/*/>*/}
+        {/*</Drawer>*/}
+        {/*任务详细弹窗*/}
+        <DrawContentModal
+          {...this.props}
+          visible={drawerVisible}
+          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} />
       </div>
     )
   }
