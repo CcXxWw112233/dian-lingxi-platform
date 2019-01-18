@@ -17,6 +17,8 @@ import TeachingEffect from './School/TeachingEffect'
 import PreviewFileModal from '../PreviewFileModal.js'
 import CollectionProjectItem from './CollectionProjectItem'
 import MyCircleItem from './MyCircleItem'
+import TaskDetailModal from './Modal/TaskDetailModal'
+
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -150,7 +152,11 @@ export default class CardContent extends React.Component{
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     })
   }
-
+  setTaskDetailModalVisibile(){
+    this.setState({
+      TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
+    })
+  }
   render(){
     const { datas = {} } = this.props.model
     const { projectStarList = [], responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
@@ -167,7 +173,7 @@ export default class CardContent extends React.Component{
           contanner = (
             responsibleTaskList.length? (
               responsibleTaskList.map((value, key)=> (
-                <TaskItem {...this.props} key={key} itemValue={value}itemKey={key} />
+                <TaskItem {...this.props} key={key} itemValue={value}itemKey={key} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}/>
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -283,7 +289,7 @@ export default class CardContent extends React.Component{
             todoList.length? (
               todoList.map((value, key)=> {
                 return(
-                  <Todo {...this.props} key={key} itemValue={value}itemKey={key} />
+                  <Todo {...this.props} key={key} itemValue={value}itemKey={key} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}/>
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -368,6 +374,9 @@ export default class CardContent extends React.Component{
         {'MY_DOCUMENT' === CardContentType ? (
           <PreviewFileModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
         ) : ('')}
+        {'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType?(
+          <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}  />
+        ):('')}
       </div>
     )
   }

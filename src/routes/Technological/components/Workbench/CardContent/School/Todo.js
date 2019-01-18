@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 
 export default class TaskItem extends React.Component {
   itemOneClick(e) {
-    // e.stopPropagation();
+    e.stopPropagation();
     // const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
     // const {  datas:{ taskGroupList } } = this.props.model
     // const { card_id, is_realize = '0' } = itemValue
@@ -21,15 +21,19 @@ export default class TaskItem extends React.Component {
     this.props.updateDatas({todoList})
     this.props.completeTask(obj)
   }
-  gotoBoardDetail(board_id) {
+  gotoBoardDetail(board_id,e) {
+    e.stopPropagation();
     Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
+  }
+  itemClick(e) {
+    this.props.setTaskDetailModalVisibile()
   }
   render() {
     const { itemValue = {} } = this.props
     const { is_realize, board_id, board_name, name } = itemValue
     return (
-      <div className={indexstyles.taskItem}>
+      <div className={indexstyles.taskItem} onClick={this.itemClick.bind(this)}>
         <div className={is_realize === '1' ? indexstyles.nomalCheckBoxActive: indexstyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
           <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
         </div>

@@ -13,6 +13,7 @@ import technological from "../../../../models/technological";
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
 const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
+const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -274,6 +275,177 @@ const Workbench = (props) => {
       })
     }
   }
+  const CreateTaskProps = {
+    modal,
+    model,
+    updateDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas') ,
+        payload:payload
+      })
+    },
+    deleteTaskFile(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTaskFile'),
+        payload: data,
+      })
+    },
+    addTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskGroup'),
+        payload: data,
+      })
+    },
+    deleteTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTaskGroup'),
+        payload: data,
+      })
+    },
+    updateTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateTaskGroup'),
+        payload: data,
+      })
+    },
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('getTaskGroupList'),
+        payload: data
+      })
+    },
+    addTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTask'),
+        payload: data
+      })
+    },
+    updateTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('updateTask'),
+        payload: data
+      })
+    },
+    deleteTask(id){
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTask'),
+        payload: {
+          id
+        }
+      })
+    },
+    updateChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('updateChirldTask'),
+        payload: data
+      })
+    },
+    deleteChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteChirldTask'),
+        payload: data
+      })
+    },
+
+    archivedTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('archivedTask'),
+        payload: data
+      })
+    },
+    changeTaskType(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('changeTaskType'),
+        payload: data
+      })
+    },
+    addChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addChirldTask'),
+        payload: data
+      })
+    },
+    addTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskExecutor'),
+        payload: data
+      })
+    },
+    removeTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeTaskExecutor'),
+        payload: data
+      })
+    },
+    completeTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('completeTask'),
+        payload: data
+      })
+    },
+    addTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskTag'),
+        payload: data
+      })
+    },
+    removeTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeTaskTag'),
+        payload: data
+      })
+    },
+    removeProjectMenbers(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeProjectMenbers'),
+        payload: data
+      })
+    },
+    getCardCommentList(id) {
+      dispatch({
+        type: getEffectOrReducerByName_4('getCardCommentList'),
+        payload: {
+          id
+        }
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('addCardNewComment'),
+        payload: data
+      })
+    },
+    deleteCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteCardNewComment'),
+        payload: data
+      })
+    },
+    getBoardTagList(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('getBoardTagList'),
+        payload: data
+      })
+    },
+    updateBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateBoardTag'),
+        payload: data
+      })
+    },
+    toTopBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('toTopBoardTag'),
+        payload: data
+      })
+    },
+    deleteBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteBoardTag'),
+        payload: data
+      })
+    }
+  }
 
   return(
     <div>
@@ -301,7 +473,7 @@ const Workbench = (props) => {
                 )
               }else{
                 container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
               return flag && <div key={id}>{container}</div>
@@ -328,7 +500,7 @@ const Workbench = (props) => {
                   )
                 }else{
                   container = (
-                    <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                    <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                   )
                 }
                 return  flag && <div key={id}>{container}</div>
@@ -344,9 +516,9 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological,newsDynamic, loading }) {
+function mapStateToProps({ modal, workbench, technological,newsDynamic, workbenchTaskDetail, loading }) {
   const modelObj = {
-    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas']}
+    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas']}
   }
   return { modal, model: modelObj, loading }
 }
