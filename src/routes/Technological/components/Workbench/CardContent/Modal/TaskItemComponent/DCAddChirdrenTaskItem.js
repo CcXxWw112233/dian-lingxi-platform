@@ -121,6 +121,11 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   deleteConfirm( {card_id, chirldDataIndex}) {
     this.props.deleteChirldTask({card_id, chirldDataIndex})
+
+
+    const { datas:{ drawContent = {} } } = this.props.model
+    drawContent['child_data'].splice(chirldDataIndex, 1)
+    this.props.updateTaskDatas({drawContent})
   }
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props

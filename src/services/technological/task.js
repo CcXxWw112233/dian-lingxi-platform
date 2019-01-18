@@ -225,3 +225,11 @@ export async function deleteBoardTag(data) {
   });
 }
 
+//查询任务详情
+export async function getCardDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/detail/${params.id}`,
+    method: 'GET',
+    params
+  });
+}

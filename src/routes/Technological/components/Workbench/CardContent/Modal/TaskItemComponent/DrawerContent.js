@@ -49,6 +49,12 @@ export default class DrawContent extends React.Component {
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
   }
+
+  constructor() {
+    super()
+    this.initSet = true
+  }
+
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}} } = this.props.model
@@ -57,25 +63,28 @@ export default class DrawContent extends React.Component {
       brafitEditHtml: description
     })
 
-    //任务附件
-    let attachment_fileList = []
-    for(let i = 0; i < attachment_data.length; i++) {
-      if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
-        attachment_fileList.push(attachment_data[i])
-        // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
-        attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
-      }
-    }
-    this.setState({
-      attachment_fileList
-    })
   }
   componentWillReceiveProps(nextProps) {
     const { datas:{ drawContent = {}} } = nextProps.model
-    let { description } = drawContent
+    let { description, attachment_data = [] } = drawContent
     this.setState({
       brafitEditHtml: description
     })
+    // 任务附件
+    if(this.initSet) {  //只可以设置一次
+      this.initSet = false
+      let attachment_fileList = []
+      for(let i = 0; i < attachment_data.length; i++) {
+        if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
+          attachment_fileList.push(attachment_data[i])
+          // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+          attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+        }
+      }
+      this.setState({
+        attachment_fileList
+      })
+    }
   }
   //firstLine -------start
   //分组状态选择
@@ -148,7 +157,7 @@ export default class DrawContent extends React.Component {
     }
     this.props.completeTask(obj)
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({drawContent})
+    this.props.updateTaskDatas({drawContent})
   }
   titleTextAreaChangeBlur(e) {
     const { datas:{ drawContent = {} } } = this.props.model
@@ -164,7 +173,7 @@ export default class DrawContent extends React.Component {
     })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateTaskDatas({drawContent})
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -177,8 +186,7 @@ export default class DrawContent extends React.Component {
   //第二行状态栏编辑------------------start
     //设置任务负责人组件---------------start
   setList(id) {
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
-    const { board_id } = projectDetailInfoData
+    const { datas:{ board_id } } = this.props.model
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
   chirldrenTaskChargeChange(data) {
@@ -285,7 +293,7 @@ export default class DrawContent extends React.Component {
       start_time: start_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateTaskDatas({drawContent})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
@@ -302,7 +310,7 @@ export default class DrawContent extends React.Component {
       due_time: due_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateTaskDatas({drawContent})
   }
   compareStartDueTime = (start_time, due_time) => {
     if(!start_time || !due_time) {
@@ -473,7 +481,6 @@ export default class DrawContent extends React.Component {
       this.setPreviewFileModalVisibile()
     }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
       const src = e.target.getAttribute('src')
-      console.log(src)
       this.setState({
         previewFileType : 'video',
         previewFileSrc: src
@@ -495,16 +502,15 @@ export default class DrawContent extends React.Component {
     return colorArr[n]
   }
   tagClose({ label_id, label_name, key}) {
-    const { datas:{ drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
+    const { datas:{ drawContent = {} } } = this.props.model
     const { card_id } = drawContent
-    // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id? 'label_id':'label_name'
     this.props.removeTaskTag({
       card_id,
       [keyCode]: label_id || label_name,
     })
-    taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
-    this.props.updateDatas({taskGroupList})
+    drawContent['label_data'].splice(key, 1)
+    this.props.updateTaskDatas({drawContent})
   }
   addTag() {
     this.setState({
@@ -527,9 +533,8 @@ export default class DrawContent extends React.Component {
     if(! e.target.value) {
       return false
     }
-    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ drawContent = {},  board_id } } = this.props.model
     const { card_id, label_data = [] } = drawContent
-    const { board_id } = projectDetailInfoData
     label_data.push({label_name: e.target.value})
     this.props.addTaskTag({
       card_id,
@@ -545,9 +550,8 @@ export default class DrawContent extends React.Component {
       tagDropdownVisible: false,
       tagInputValue: ''
     })
-    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ drawContent = {},  board_id } } = this.props.model
     const { card_id, label_data = [] } = drawContent
-    const { board_id } = projectDetailInfoData
     const { name, color } = data
     label_data.push({label_name: name,label_color:color})
     this.props.addTaskTag({
@@ -582,10 +586,10 @@ export default class DrawContent extends React.Component {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
 
-    const { data = [], board_name } = projectDetailInfoData //任务执行人列表
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
+    let { board_name, list_name, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
@@ -606,7 +610,7 @@ export default class DrawContent extends React.Component {
       onChange:(e) => {
         // const { datas:{ drawContent = {} } } = this.props.model
         // drawContent['description'] = e
-        // this.props.updateDatas({drawContent})
+        // this.props.updateTaskDatas({drawContent})
         this.setState({
           brafitEditHtml: e
         })
@@ -683,7 +687,6 @@ export default class DrawContent extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
-        // console.log(1, file, fileList)
         if (file.status === 'done' &&  file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
@@ -692,7 +695,6 @@ export default class DrawContent extends React.Component {
               fileList.splice(i, 1)
             }
           }
-          // fileList.pop()
         }
         that.setState({
           attachment_fileList: fileList
@@ -767,7 +769,7 @@ export default class DrawContent extends React.Component {
             {/*<div className={DrawerContentStyles.contain_1}>*/}
               {/*<Dropdown overlay={projectGroupMenu}>*/}
                 {/*<div className={DrawerContentStyles.left}>*/}
-                  {/*<span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>*/}
+                  {/*<span>{board_name} </span> <Icon type="right" /> <span>{'list_name'}</span>*/}
                 {/*</div>*/}
               {/*</Dropdown>*/}
               {/*<Dropdown overlay={topRightMenu}>*/}

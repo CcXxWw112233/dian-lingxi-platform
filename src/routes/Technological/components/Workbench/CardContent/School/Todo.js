@@ -12,7 +12,6 @@ export default class TaskItem extends React.Component {
     const {  datas:{ todoList=[] } } = this.props.model
     const { itemValue = {}, itemKey } = this.props
     const { is_realize, board_id, board_name, name, id } = itemValue
-    console.log(itemKey)
     const obj = {
       card_id: id,
       is_realize: is_realize === '1' ? '0' : '1'
@@ -27,6 +26,10 @@ export default class TaskItem extends React.Component {
     this.props.routingJump('/technological/projectDetail')
   }
   itemClick(e) {
+    const { itemValue = {} } = this.props
+    const { id, board_id } = itemValue
+    this.props.updateTaskDatas({board_id})
+    this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
   }
   render() {

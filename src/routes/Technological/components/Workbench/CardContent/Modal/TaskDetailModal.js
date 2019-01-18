@@ -14,6 +14,9 @@ class TaskDetailModal extends React.Component {
   componentWillReceiveProps(nextProps) {}
 
   onCancel() {
+    this.props.updateTaskDatas({
+      drawContent: {}
+    })
     this.props.setTaskDetailModalVisibile()
   }
 
@@ -27,7 +30,7 @@ class TaskDetailModal extends React.Component {
         zIndex={1006}
         maskClosable={false}
         footer={null}
-        destroyOnClose
+        destroyOnClose={true}
         onCancel={this.onCancel.bind(this)}
         overInner={<DrawContent {...this.props} />}
       />

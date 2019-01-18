@@ -278,9 +278,15 @@ const Workbench = (props) => {
   const CreateTaskProps = {
     modal,
     model,
-    updateDatas(payload) {
+    getCardDetail(payload){
       dispatch({
-        type: getEffectOrReducerByName('updateDatas') ,
+        type: getEffectOrReducerByName_4('getCardDetail') ,
+        payload:payload
+      })
+    },
+    updateTaskDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateDatas') ,
         payload:payload
       })
     },

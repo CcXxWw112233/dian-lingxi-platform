@@ -50,7 +50,14 @@ export async function setMemberRoleInProject(data) {
   });
 }
 
-
+// 获取项目成员列表
+export async function getBoardMembers(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user/${params.id}`,
+    method: 'GET',
+    params
+  });
+}
 
 
 

@@ -60,9 +60,8 @@ export default class DCAddChirdrenTask extends React.Component{
 
   //添加子任务
   addChirldTask() {
-    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas:{ drawContent = {}, board_id } } = this.props.model
     const { card_id, child_data = [], list_id } = drawContent
-    const { board_id } = projectDetailInfoData
     const  obj = {
       card_id,
       board_id,
