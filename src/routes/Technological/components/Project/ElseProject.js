@@ -182,10 +182,11 @@ export default class ElseProject extends React.Component{
     })
   }
   projectListItemClick(route,board_id,a) {
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    //暂时去掉访客限制
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump(route)
   }
