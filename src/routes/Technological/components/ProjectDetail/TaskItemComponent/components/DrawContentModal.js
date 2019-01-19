@@ -24,7 +24,7 @@ class DrawContentModal extends React.Component {
     return(
       <CustormModal
         visible={visible}
-        width={472}
+        width={'80%'}
         zIndex={1006}
         maskClosable={false}
         footer={null}
