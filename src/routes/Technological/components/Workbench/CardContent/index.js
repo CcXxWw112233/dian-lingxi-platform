@@ -18,6 +18,7 @@ import PreviewFileModal from '../PreviewFileModal.js'
 import CollectionProjectItem from './CollectionProjectItem'
 import MyCircleItem from './MyCircleItem'
 import TaskDetailModal from './Modal/TaskDetailModal'
+import FileDetailModal from './Modal/FileDetailModal'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -371,11 +372,11 @@ export default class CardContent extends React.Component{
            {/*<CollectionProjectItem />*/}
            {/*<MyCircleItem />*/}
         </div>
-        {'MY_DOCUMENT' === CardContentType ? (
-          <PreviewFileModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
+        {('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (
+          <FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
         ) : ('')}
         {'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType?(
-          <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}  />
+          <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
         ):('')}
       </div>
     )

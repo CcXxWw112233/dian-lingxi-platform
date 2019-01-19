@@ -14,6 +14,9 @@ const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
 const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
+const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+
+
 
 const Workbench = (props) => {
   // console.log(props)
@@ -452,6 +455,118 @@ const Workbench = (props) => {
       })
     }
   }
+  const FileModuleProps = {
+    modal,
+    model,
+    updateFileDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName_5('updateDatas') ,
+        payload:payload
+      })
+    },
+    getFileList(params){
+      dispatch({
+        type: getEffectOrReducerByName('getFileList'),
+        payload: params
+      })
+    },
+    fileCopy(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileCopy'),
+        payload: data
+      })
+    },
+    fileDownload(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileDownload'),
+        payload: params
+      })
+    },
+    fileRemove(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileRemove'),
+        payload: data
+      })
+    },
+    fileMove(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileMove'),
+        payload: data
+      })
+    },
+    fileUpload(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileUpload'),
+        payload: data
+      })
+    },
+    fileVersionist(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileVersionist'),
+        payload: params
+      })
+    },
+    recycleBinList(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('recycleBinList'),
+        payload: params
+      })
+    },
+    deleteFile(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('deleteFile'),
+        payload: data
+      })
+    },
+    restoreFile(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('restoreFile'),
+        payload: data
+      })
+    },
+    getFolderList(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('getFolderList'),
+        payload: params
+      })
+    },
+    addNewFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('addNewFolder'),
+        payload: data
+      })
+    },
+    updateFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('updateFolder'),
+        payload: data
+      })
+    },
+    filePreview(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('filePreview'),
+        payload: params
+      })
+    },
+    getPreviewFileCommits(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('getPreviewFileCommits'),
+        payload: params
+      })
+    },
+    addFileCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('addFileCommit'),
+        payload: params
+      })
+    },
+    deleteCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('deleteCommit'),
+        payload: params
+      })
+    },
+  }
 
   return(
     <div>
@@ -474,12 +589,12 @@ const Workbench = (props) => {
                                      title={name} {...cardContentListProps}
                                       updateDatas={updateDatas} CardContentType={code}
                                       boxId={id}
-                                    itemValue={value}
+                                      itemValue={value}
                                       appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
                 )
               }else{
                 container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                 )
               }
               return flag && <div key={id}>{container}</div>
@@ -506,7 +621,7 @@ const Workbench = (props) => {
                   )
                 }else{
                   container = (
-                    <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                    <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
                   )
                 }
                 return  flag && <div key={id}>{container}</div>
@@ -522,9 +637,9 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological,newsDynamic, workbenchTaskDetail, loading }) {
+function mapStateToProps({ modal, workbench, technological,newsDynamic, workbenchTaskDetail, workbenchFileDetail, loading }) {
   const modelObj = {
-    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas']}
+    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas']}
   }
   return { modal, model: modelObj, loading }
 }

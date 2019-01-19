@@ -14,7 +14,7 @@ export default {
           dispatch({
             type: 'routingJump',
             payload: {
-              route: '/technological/project'
+              route: '/technological/workbench'
             }
           })
         }

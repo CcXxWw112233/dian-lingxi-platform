@@ -54,16 +54,30 @@ export default class FileItem extends React.Component {
     Cookies.set('board_id', board_id,{expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
-  previewFile(file_resource_id,e) {
+  previewFile(data,e) {
+    const { board_id, board_name, file_name,create_time,file_resource_id, file_id, id, folder_id } = data
+
     this.props.setPreviewFileModalVisibile()
-    this.props.filePreview({id: file_resource_id,})
+    this.props.updateFileDatas({
+      seeFileInput: 'file',
+      board_id,
+      filePreviewCurrentId: file_resource_id,
+      currentParrentDirectoryId: folder_id,
+      filePreviewCurrentFileId: id,
+      filePreviewCurrentVersionId: file_id
+    })
+    this.props.filePreview({id: file_resource_id,file_id:id})
+    this.props.fileVersionist({
+      version_id:file_id,
+      isNeedPreviewFile:false,
+    })
   }
   render() {
     const { itemValue = {} } = this.props
-    const { board_id, board_name, file_name,create_time,file_resource_id } = itemValue
+    const { board_id, board_name, file_name,create_time,file_resource_id, file_id, id } = itemValue
 
     return (
-      <div className={indexstyles.fileItem} onClick={this.previewFile.bind(this, file_resource_id)}>
+      <div className={indexstyles.fileItem} onClick={this.previewFile.bind(this, {...itemValue})}>
         <div>
           <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
         </div>

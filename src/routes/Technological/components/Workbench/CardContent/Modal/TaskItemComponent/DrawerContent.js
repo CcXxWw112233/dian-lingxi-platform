@@ -584,7 +584,7 @@ export default class DrawContent extends React.Component {
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
+    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [], board_id } } = this.props.model
 
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
@@ -706,28 +706,38 @@ export default class DrawContent extends React.Component {
       },
       onPreview(e,a) {
         const file_resource_id = e.file_id || e.response.data.file_resource_id
-        that.setState({
-          previewFileType : 'attachment',
+        const id = e.file_id || e.response.data.file_resource_id
+        // that.setState({
+        //   previewFileType : 'attachment',
+        // })
+        // filePreview({id: file_resource_id}).then((value) => {
+        //   let url = ''
+        //   let isUsable = true
+        //   if(value.code==='0') {
+        //     url = value.data.url
+        //     isUsable = value.data.isUsable
+        //   } else {
+        //     message.warn('文件预览失败')
+        //     return false
+        //   }
+        //   that.setState({
+        //     previewFileSrc: url,
+        //     isUsable: isUsable
+        //   })
+        // }).catch(err => {
+        //   message.warn('文件预览失败')
+        //   return false
+        // })
+        // that.setPreviewFileModalVisibile()
+
+        that.props.setPreviewFileModalVisibile()
+        that.props.updateFileDatas({
+          seeFileInput: 'task',
+          board_id,
+          filePreviewCurrentId: file_resource_id,
+          filePreviewCurrentFileId: id,
         })
-        filePreview({id: file_resource_id}).then((value) => {
-          let url = ''
-          let isUsable = true
-          if(value.code==='0') {
-            url = value.data.url
-            isUsable = value.data.isUsable
-          } else {
-            message.warn('文件预览失败')
-            return false
-          }
-          that.setState({
-            previewFileSrc: url,
-            isUsable: isUsable
-          })
-        }).catch(err => {
-          message.warn('文件预览失败')
-          return false
-        })
-        that.setPreviewFileModalVisibile()
+        that.props.filePreview({id: file_resource_id,file_id:id})
       },
       onRemove(e) {
         const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)
