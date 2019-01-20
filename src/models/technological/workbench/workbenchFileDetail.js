@@ -1,14 +1,10 @@
-import { getBoardMembers,setMemberRoleInProject,projectDetailInfo, updateProject, removeMenbers } from '../../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../../services/technological/file'
-import { getCardDetail, removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
 import Cookies from "js-cookie";
-import {currentNounPlanFilterName} from "../../../utils/businessFunction";
-import { selectDrawContent, selectBoardId } from './selects'
-import {selectBreadcrumbList, selectCurrentParrentDirectoryId, selectFilePreviewCommitPointNumber} from "../select";
+import {  selectFilePreviewCommitPointNumber } from './selects'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -106,8 +102,6 @@ export default {
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
       const { isNeedPreviewFile } = payload //是否需要重新读取文档
-      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
