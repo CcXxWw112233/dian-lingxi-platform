@@ -43,24 +43,28 @@ export default {
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          if(!Cookies.get('userInfo')) {
-            dispatch({
-              type:'getUSerInfo',
-              payload: {}
-            })
-          }else {
-            const { current_org } = JSON.parse(Cookies.get('userInfo'))
-            if(current_org) {
-              dispatch({
-                type:'setcurrentSelectOrganizeByCookiesUSerInfo',
-                payload: {}
-              })
-              dispatch({
-                type:'getOrganizationMemberPermissions',
-                payload: {}
-              })
-            }
-          }
+          dispatch({
+            type:'getUSerInfo',
+            payload: {}
+          })
+          // if(!Cookies.get('userInfo')) {
+          //   dispatch({
+          //     type:'getUSerInfo',
+          //     payload: {}
+          //   })
+          // }else {
+          //   const { current_org } = JSON.parse(Cookies.get('userInfo'))
+          //   if(current_org) {
+          //     dispatch({
+          //       type:'setcurrentSelectOrganizeByCookiesUSerInfo',
+          //       payload: {}
+          //     })
+          //     dispatch({
+          //       type:'getOrganizationMemberPermissions',
+          //       payload: {}
+          //     })
+          //   }
+          // }
           //查询所在组织列表
           dispatch({
             type:'getCurrentUserOrganizes',

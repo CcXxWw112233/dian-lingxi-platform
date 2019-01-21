@@ -123,6 +123,7 @@ const Routers = function ({ history, app }) {
         import('./models/technological/workbench'),
         import('./models/technological/workbench/workbenchTaskDetail'),
         import('./models/technological/workbench/workbenchFileDetail'),
+        import('./models/technological/workbench/workbenchEditTeamShow'),
         import('./models/technological/organizationMember'),
         import('./models/modal'),
         import('./models/teamShow'),
