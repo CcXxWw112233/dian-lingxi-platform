@@ -84,6 +84,7 @@ export default class GroupContent extends React.Component {
       <div style={{maxHeight: 600, height:600}}>
         <iframe
           src={`http://www.new-di.com/other/LifeSchedule/index.html`}
+          // src={`http://www.baidu.com`}
           frameBorder="0"
           width="100%"
           height="100%"
