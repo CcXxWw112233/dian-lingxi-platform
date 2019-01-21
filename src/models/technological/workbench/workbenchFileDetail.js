@@ -219,6 +219,13 @@ export default {
           })
         }
 
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
 

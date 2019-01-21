@@ -488,29 +488,6 @@ export default {
       }
     },
 
-    * listenWsCardNewComment({ payload }, { select, call, put }) { //
-      const { newsData } = payload
-      const id = newsData.activityTypeId
-      const newsUserId = newsData.userId
-      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
-      const drawContent = yield select(selectDrawContent)
-      const drawerVisible = yield select(selectDrawerVisible)
-      const { card_id } = drawContent
-      // 当且仅当发送消息的用户不是当前用户， 当前查看的任务id和推送的任务id一样,抽屉可见
-      if(id === card_id && newsUserId !== currentUserId && drawerVisible) {
-        let res = yield call(getCardCommentList, id)
-        if(isApiResponseOk(res)) {
-          yield put({
-            type: 'updateDatas',
-            payload:{
-              cardCommentList: res.data
-            }
-          })
-        }else{
-        }
-      }
-    },
-
     //评论--end
 
 
