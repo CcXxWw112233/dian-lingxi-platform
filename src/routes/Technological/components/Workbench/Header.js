@@ -62,7 +62,8 @@ export default class Header extends React.Component {
 
     const { datas: { cardGroupKey = 0 }}= this.props.model
     const userInfo = Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')) : {}
-    const { role_name } = userInfo
+    const { current_org = {} } = userInfo
+    const { role_name } = current_org
     //前端根据当前用户的组织角色返回对应tab名称
     const roleNameRetureTabName = (role_name) => {
       let arr = ['工作内容','我的文档','我的生活','我的展示']
@@ -87,6 +88,7 @@ export default class Header extends React.Component {
     }
     let tabArr = []
     tabArr = roleNameRetureTabName(role_name)
+    console.log('tabArr',role_name,tabArr)
 
     return (
       <div className={indexStyle.headerOut}>
