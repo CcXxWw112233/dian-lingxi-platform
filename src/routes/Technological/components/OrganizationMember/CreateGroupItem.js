@@ -218,7 +218,7 @@ export default class TaskItem extends React.Component {
             }
             return contain
           })}
-          {is_default === '0'? (
+          {is_default === '0' && editable === '1'? (
             <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
             </div>

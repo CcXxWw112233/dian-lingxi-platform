@@ -149,10 +149,11 @@ export default class SiderLeft extends React.Component {
     const orgListMenu = (
       <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} >
         {currentUserOrganizes.map((value, key) => {
-          const { name, id } = value
+          const { name, id, identity_type } = value
           return (
             <Menu.Item key={id} >
               {name}
+              {identity_type == '0'? (<span style={{display: 'inline-block',backgroundColor:'#e5e5e5',padding:'0 4px', borderRadius:40,marginLeft: 6}}>访客</span>) : ('')}
             </Menu.Item>
           )
         })}
