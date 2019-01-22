@@ -4,7 +4,10 @@ import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../utils/businessFunction";
-import {MEMBERS, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORGANIZATION} from "../../../globalset/js/constant";
+import {
+  DASHBOARD, MEMBERS, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORGANIZATION, PROJECTS
+} from "../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
@@ -112,11 +115,11 @@ export default class SiderLeft extends React.Component {
     const navArray = [
       {
         theme: '&#xe6f7;',
-        name: '工作台'
+        name: currentNounPlanFilterName(DASHBOARD)
       },
       {
         theme: '&#xe60a;',
-        name: '项目'
+        name: currentNounPlanFilterName(PROJECTS)
       },
       {
         theme: '&#xe65a;',

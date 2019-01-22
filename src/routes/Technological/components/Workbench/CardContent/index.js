@@ -221,7 +221,7 @@ export default class CardContent extends React.Component{
             meetingLsit.length? (
               meetingLsit.map((value2, key2)=> {
                 return(
-                  <MeetingItem {...this.props} key={key2} itemKey={key2}  itemValue={value2}  />
+                  <MeetingItem {...this.props} key={key2} itemKey={key2}  itemValue={value2} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} />
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -266,7 +266,7 @@ export default class CardContent extends React.Component{
             schedulingList.length? (
               schedulingList.map((value, key)=> {
                 return(
-                  <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} />
+                  <SchedulingItem {...this.props} key={key} itemValue={value}itemKey={key} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} />
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -278,7 +278,7 @@ export default class CardContent extends React.Component{
             journeyList.length? (
               journeyList.map((value, key)=> {
                 return(
-                  <Journey {...this.props} key={key} itemValue={value}itemKey={key} />
+                  <Journey {...this.props} key={key} itemValue={value}itemKey={key} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} />
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -372,12 +372,15 @@ export default class CardContent extends React.Component{
            {/*<CollectionProjectItem />*/}
            {/*<MyCircleItem />*/}
         </div>
-        {('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (
-          <FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
-        ) : ('')}
-        {'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType?(
-          <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
-        ):('')}
+        <FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
+        <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+
+        {/*{('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (*/}
+          {/*<FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />*/}
+        {/*) : ('')}*/}
+        {/*{'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType?(*/}
+          {/*<TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />*/}
+        {/*):('')}*/}
       </div>
     )
   }
