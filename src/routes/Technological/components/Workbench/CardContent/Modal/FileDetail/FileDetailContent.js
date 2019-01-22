@@ -124,8 +124,8 @@ export default class FileDetailContent extends React.Component {
     const target = this.refs.operateArea//event.target || event.srcElement;
     const { clientWidth,modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
-    this.x1 = e.pageX - target.offsetLeft - offsetDe;
-    this.y1 = e.pageY - target.offsetTop - modalTop;
+    this.x1 = e.clientX - target.offsetLeft - offsetDe;
+    this.y1 = e.clientY - target.offsetTop - modalTop;
     this.SelectedRect = {x: 0, y: 0 }
     if(!this.isDragging) {
       const { punctuateArea, imgHeight, imgWidth } = this.state
@@ -202,8 +202,8 @@ export default class FileDetailContent extends React.Component {
     const target = this.refs.operateArea//event.target || event.srcElement;
     const { clientWidth,modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
-    this.x1 = e.pageX - target.offsetLeft - offsetDe;
-    this.y1 = e.pageY - target.offsetTop - modalTop;
+    this.x1 = e.clientX - target.offsetLeft - offsetDe;
+    this.y1 = e.clientY - target.offsetTop - modalTop;
     this.SelectedRect = {x: 0, y: 0 }
     this.isDragging = false
 
@@ -242,8 +242,8 @@ export default class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     if (this.isObj(this.SelectedRect)) {
       // 取得鼠标位置
-      const x = e.pageX - target.offsetLeft - offsetDe;
-      const y = e.pageY - target.offsetTop - modalTop;
+      const x = e.clientX - target.offsetLeft - offsetDe;
+      const y = e.clientY - target.offsetTop - modalTop;
       //------------------------
       //设置高度
       this.SelectedRect.x= x-this.x1;

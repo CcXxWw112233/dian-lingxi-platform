@@ -157,6 +157,8 @@ export default {
              payload: {}
            })
         }
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+
         //组织切换重新加载
         const { operateType } = payload
         if(operateType === 'changeOrg') {
@@ -164,10 +166,12 @@ export default {
           if(locallocation.pathname === '/technological/projectDetail') {
             redirectHash = '/technological/project'
           }
+          if(document.getElementById('iframImCircle')) {
+            document.getElementById('iframImCircle').src = `http://www.new-di.com/im?timestamp=${new Date().getTime()}`;;
+          }
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }
         //存储
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -243,6 +247,7 @@ export default {
           payload: {
           }
         })
+
         // //组织切换重新加载
         // const redirectHash =  locallocation.pathname
         // if(locallocation.pathname === '/technological/projectDetail') {

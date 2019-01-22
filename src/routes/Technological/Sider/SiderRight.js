@@ -47,6 +47,7 @@ export default class SiderRight extends React.Component {
               frameBorder="0"
               width="100%"
               height="100%"
+              id={'iframImCircle'}
             ></iframe>
           </div>
           {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
