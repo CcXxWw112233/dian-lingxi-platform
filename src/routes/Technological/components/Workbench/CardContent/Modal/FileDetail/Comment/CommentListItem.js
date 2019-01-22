@@ -66,7 +66,7 @@ export default class CommentListItem extends React.Component {
       )
     }
     return (
-      <div className={CommentStyles.commentListItemBox}  tabIndex="0" hideFocus="true" style={{outline: 0,}}  onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+      <div className={CommentStyles.commentListItemBox}  tabIndex="0" hideFocus="true" style={{outline: 0,maxHeight:126,overflowY: 'scroll'}}  onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
         {filePreviewPointNumCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(

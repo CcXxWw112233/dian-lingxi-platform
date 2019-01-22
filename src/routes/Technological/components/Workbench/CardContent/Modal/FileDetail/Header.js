@@ -155,13 +155,13 @@ export default class Header extends React.Component {
           {/*<FileDerailBreadCrumbFileNav {...this.props}/>*/}
         </div>
         <div className={indexStyles.fileDetailHeadRight}>
-          {seeFileInput === 'file'?(
-            <Upload {...uploadProps}  showUploadList={false}>
-              <Button style={{height: 24, marginLeft:14}}>
-                <Icon type="upload" />更新版本
-              </Button>
-            </Upload>
-          ):('')}
+          {/*{seeFileInput === 'file'?(*/}
+            {/*<Upload {...uploadProps}  showUploadList={false}>*/}
+              {/*<Button style={{height: 24, marginLeft:14}}>*/}
+                {/*<Icon type="upload" />更新版本*/}
+              {/*</Button>*/}
+            {/*</Upload>*/}
+          {/*):('')}*/}
 
           <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
             <Icon type="download" />下载

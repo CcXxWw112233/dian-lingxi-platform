@@ -18,7 +18,7 @@ export default class FileDetailContent extends React.Component {
     this.props.filePreview({id: file_resource_id, file_id})
     this.setState({
       imgLoaded: false,
-      editMode: false,
+      editMode: true,
       currentRect: { x: 0 ,y: 0, width: 0, height: 0 },
       isInAdding: false,
       isInEdditOperate: false,
@@ -38,7 +38,7 @@ export default class FileDetailContent extends React.Component {
     isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
     imgLoaded: false,
-    editMode: false,
+    editMode: true,
   }
   constructor() {
     super();
@@ -344,7 +344,7 @@ export default class FileDetailContent extends React.Component {
               ):('')}
 
               {isInAdding? (
-                <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+                <div style={{position: 'absolute',zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
                   <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
                 </div>
               ) : ('')}
@@ -383,16 +383,16 @@ export default class FileDetailContent extends React.Component {
         <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
           {/*width: isExpandFrame?0:420*/}
           {/*从文件卡片查看的时候才有*/}
-          {seeFileInput === 'file'? (
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-              <div>版本信息</div>
-              <div className={indexStyles.versionInfoList}>
-                {filePreviewCurrentVersionList.map((value, key ) => {
-                  return (<div key={key}>{getVersionItem(value, key )}</div>)
-                })}
-              </div>
-            </div>
-          ): ('')}
+          {/*{seeFileInput === 'file'? (*/}
+            {/*<div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>*/}
+              {/*<div>版本信息</div>*/}
+              {/*<div className={indexStyles.versionInfoList}>*/}
+                {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
+                  {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
+                {/*})}*/}
+              {/*</div>*/}
+            {/*</div>*/}
+          {/*): ('')}*/}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />
