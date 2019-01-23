@@ -183,6 +183,15 @@ export default class FileDetailContent extends React.Component {
     }, 100)
 
   }
+
+  //deleteCommitSet
+  deleteCommitSet(e) {
+    this.setState({
+      isInAdding: false,
+      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+    })
+  }
+
   setMentionFocus(bool) {
     this.setState({
       mentionFocus: bool
@@ -345,7 +354,7 @@ export default class FileDetailContent extends React.Component {
 
               {isInAdding? (
                 <div style={{position: 'absolute',zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                  <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
+                  <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
                 </div>
               ) : ('')}
 
@@ -395,7 +404,7 @@ export default class FileDetailContent extends React.Component {
           {/*): ('')}*/}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />
+            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
             <Comment2 {...this.props} ></Comment2>

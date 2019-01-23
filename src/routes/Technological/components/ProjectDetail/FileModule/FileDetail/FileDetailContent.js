@@ -297,6 +297,13 @@ export default class FileDetailContent extends React.Component {
     })
   }
 
+  deleteCommitSet(e) {
+    this.setState({
+      isInAdding: false,
+      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+    })
+  }
+
   render() {
 
     const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode } = this.state
@@ -394,7 +401,7 @@ export default class FileDetailContent extends React.Component {
           ) : ('')}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />
+            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
             <Comment2 {...this.props} ></Comment2>

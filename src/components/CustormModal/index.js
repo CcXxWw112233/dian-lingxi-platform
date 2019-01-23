@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import {min_page_width} from "./../../globalset/js/styles";
+import indexstyles from './index.less'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
