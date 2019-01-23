@@ -303,7 +303,7 @@ export default class FileDetailContent extends React.Component {
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { seeFileInput,filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -382,14 +382,16 @@ export default class FileDetailContent extends React.Component {
         {/*width: isExpandFrame?0:420*/}
 
         <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
-          <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-             <div>版本信息</div>
-             <div className={indexStyles.versionInfoList}>
-               {filePreviewCurrentVersionList.map((value, key ) => {
-                 return (<div key={key}>{getVersionItem(value, key )}</div>)
-               })}
-             </div>
-          </div>
+          {seeFileInput === 'fileModule'? (
+            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+              <div>版本信息</div>
+              <div className={indexStyles.versionInfoList}>
+                {filePreviewCurrentVersionList.map((value, key ) => {
+                  return (<div key={key}>{getVersionItem(value, key )}</div>)
+                })}
+              </div>
+            </div>
+          ) : ('')}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} />

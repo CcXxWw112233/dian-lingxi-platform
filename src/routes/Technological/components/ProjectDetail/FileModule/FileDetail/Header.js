@@ -91,7 +91,7 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const { datas: { isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
+    const { datas: { seeFileInput,isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, } = projectDetailInfoData
     //文件版本更新
     const uploadProps = {
@@ -154,14 +154,20 @@ export default class Header extends React.Component {
     return (
       <div className={indexStyles.fileDetailHead}>
         <div className={indexStyles.fileDetailHeadLeft}>
-          <FileDerailBreadCrumbFileNav {...this.props}/>
-        </div>
+          {seeFileInput === 'fileModule'? (
+            <FileDerailBreadCrumbFileNav {...this.props}/>
+          ):('')}
+          </div>
+
         <div className={indexStyles.fileDetailHeadRight}>
-          <Upload {...uploadProps}  showUploadList={false}>
-            <Button style={{height: 24, marginLeft:14}}>
-              <Icon type="upload" />更新版本
-            </Button>
-          </Upload>
+          {seeFileInput === 'fileModule'? (
+            <Upload {...uploadProps}  showUploadList={false}>
+              <Button style={{height: 24, marginLeft:14}}>
+                <Icon type="upload" />更新版本
+              </Button>
+            </Upload>
+          ):('')}
+
           <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
             <Icon type="download" />下载
           </Button>
@@ -169,9 +175,11 @@ export default class Header extends React.Component {
             {/*<Icon type="star" />收藏*/}
           {/*</Button>*/}
           <div style={{cursor: 'pointer'}}>
-            <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id:filePreviewCurrentFileId, type: '2' } )}>
-              <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
-            </Dropdown>
+            {seeFileInput === 'fileModule'? (
+              <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id:filePreviewCurrentFileId, type: '2' } )}>
+                <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
+              </Dropdown>
+            ):('')}
             <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
             <Tooltip title={'关闭预览'} placement={'left'}>
              <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>

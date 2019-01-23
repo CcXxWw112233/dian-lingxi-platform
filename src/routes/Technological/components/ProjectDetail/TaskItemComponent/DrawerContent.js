@@ -580,7 +580,7 @@ export default class DrawContent extends React.Component {
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
+    const { datas:{ isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
@@ -704,28 +704,37 @@ export default class DrawContent extends React.Component {
       },
       onPreview(e,a) {
         const file_resource_id = e.file_id || e.response.data.file_resource_id
+        const id = e.file_id || e.response.data.file_resource_id
+
         that.setState({
           previewFileType : 'attachment',
         })
-        filePreview({id: file_resource_id}).then((value) => {
-          let url = ''
-          let isUsable = true
-          if(value.code==='0') {
-            url = value.data.url
-            isUsable = value.data.isUsable
-          } else {
-            message.warn('文件预览失败')
-            return false
-          }
-          that.setState({
-            previewFileSrc: url,
-            isUsable: isUsable
-          })
-        }).catch(err => {
-          message.warn('文件预览失败')
-          return false
-        })
+        // filePreview({id: file_resource_id}).then((value) => {
+        //   let url = ''
+        //   let isUsable = true
+        //   if(value.code==='0') {
+        //     url = value.data.url
+        //     isUsable = value.data.isUsable
+        //   } else {
+        //     message.warn('文件预览失败')
+        //     return false
+        //   }
+        //   that.setState({
+        //     previewFileSrc: url,
+        //     isUsable: isUsable
+        //   })
+        // }).catch(err => {
+        //   message.warn('文件预览失败')
+        //   return false
+        // })
         that.setPreviewFileModalVisibile()
+        that.props.updateDatas({
+          seeFileInput: 'taskModule',
+          isInOpenFile: true,
+          filePreviewCurrentId: file_resource_id,
+          filePreviewCurrentFileId: id,
+        })
+        that.props.filePreview({id: file_resource_id,file_id:id})
       },
       onRemove(e) {
         const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)
@@ -1016,7 +1025,8 @@ export default class DrawContent extends React.Component {
             </Upload>
           </div>
 
-          <PreviewFileModal {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+          {/*查看任务附件*/}
+          <PreviewFileModal {...this.props} modalVisible={isInOpenFile}  />
           <div  className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>

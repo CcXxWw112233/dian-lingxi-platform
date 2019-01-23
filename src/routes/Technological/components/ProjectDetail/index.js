@@ -526,7 +526,7 @@ const ProjectDetail = (props) => {
         appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
         break
       case '3':
-        appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
+        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas}/>)
         break
       case '4':
         appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
