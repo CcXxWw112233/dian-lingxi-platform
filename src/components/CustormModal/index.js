@@ -61,7 +61,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle, style, onCancel, bodyStyle, closable = true } = this.props;
+    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle={}, style={}, onCancel, bodyStyle={}, closable = true } = this.props;
     const { clientWidth, siderRightWidth,clientHeight }= this.state
     const maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
 
