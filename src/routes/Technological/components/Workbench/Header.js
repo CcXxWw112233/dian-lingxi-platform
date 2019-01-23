@@ -71,7 +71,7 @@ export default class Header extends React.Component {
         case '项目负责人':
           arr = ['项目工作','我的文档','我的生活','我的展示']
           break
-        case '专家':
+        case '设计师':
           arr = ['项目工作','我的文档','我的生活','我的展示']
           break
         case '老师':

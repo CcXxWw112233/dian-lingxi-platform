@@ -565,9 +565,9 @@ export default class NewsListNewDatas extends React.Component {
 
     return (
       <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
-        {isHasNewDynamic?(
-          <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
-        ): ('')}
+        {/*{isHasNewDynamic?(*/}
+          {/*<div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>*/}
+        {/*): ('')}*/}
         {newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
           return (

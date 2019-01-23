@@ -18,7 +18,7 @@ export default class FileDetailContent extends React.Component {
     this.props.filePreview({id: file_resource_id, file_id})
     this.setState({
       imgLoaded: false,
-      editMode: false,
+      editMode: true,
       currentRect: { x: 0 ,y: 0, width: 0, height: 0 },
       isInAdding: false,
       isInEdditOperate: false,
@@ -38,7 +38,7 @@ export default class FileDetailContent extends React.Component {
     isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
     imgLoaded: false,
-    editMode: false,
+    editMode: true,
   }
   constructor() {
     super();

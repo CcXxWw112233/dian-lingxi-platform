@@ -579,6 +579,19 @@ export default class DrawContent extends React.Component {
       ...data,
     })
   }
+
+  //发起会议按钮
+  meetingMenuClick(e) {
+    const { key } = e
+    if (key == '1') {
+      window.open('https://zoom.us/start/webmeeting')
+    } else if(key == '2') {
+      window.open('https://zoom.us/start/videomeeting')
+    } else if(key == '3') {
+      window.open('https://zoom.us/start/sharemeeting')
+    }
+  }
+
   render() {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
@@ -634,6 +647,28 @@ export default class DrawContent extends React.Component {
       </Menu>
     )
 
+    const meetingMenu = (
+      <Menu onClick={this.meetingMenuClick.bind(this)}>
+        <Menu.Item key="1">
+          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
+            &#xe760;
+          </i>
+          仅语音会议
+        </Menu.Item>
+        <Menu.Item key="2">
+          <i className={`${globalStyle.authTheme}`}  style={{marginRight: 8}}>
+            &#xe601;
+          </i>
+          语音视频会议
+        </Menu.Item>
+        <Menu.Item key="3">
+          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
+            &#xe746;
+          </i>
+          屏幕或白板共享会议
+        </Menu.Item>
+      </Menu>
+    )
     const projectGroupMenu = (
       <Menu onClick={this.projectGroupMenuClick.bind(this)} mode="vertical">
         {projectGoupList.map((value, key) => {
@@ -916,9 +951,19 @@ export default class DrawContent extends React.Component {
                     style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
                 </span>
               </div>
-              <div style={{display: 'none'}}>
-                <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-              </div>
+              {type === '0'?('') :(
+                <div >
+                  <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                </div>
+              )}
+              {type === '0'?('') :(
+                <div>
+                  <Dropdown overlay={meetingMenu}>
+                    <span>发起远程会议</span>
+                  </Dropdown>
+                </div>
+              )}
+
               <div style={{display: 'none'}}>
                 {!isSetedAlarm ? (
                   <Dropdown overlay={alarmMenu}>
