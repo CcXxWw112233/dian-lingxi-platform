@@ -5,6 +5,8 @@ import BraftEditor from 'braft-editor'
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
 import PreviewFileModal from './PreviewFileModal'
+import PreviewFileModalRichText from './PreviewFileModalRichText'
+
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
@@ -763,7 +765,7 @@ export default class DrawContent extends React.Component {
         //   message.warn('文件预览失败')
         //   return false
         // })
-        that.setPreviewFileModalVisibile()
+        // that.setPreviewFileModalVisibile()
         that.props.updateDatas({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
@@ -1072,6 +1074,9 @@ export default class DrawContent extends React.Component {
 
           {/*查看任务附件*/}
           <PreviewFileModal {...this.props} modalVisible={isInOpenFile}  />
+          {/*查看*/}
+          <PreviewFileModalRichText {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+
           <div  className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>

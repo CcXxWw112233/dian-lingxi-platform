@@ -1,8 +1,8 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
-import CustormModal from '../../../../../../../components/CustormModal'
+import CustormModal from '../../../../../components/CustormModal'
 
-class PreviewFileModal extends React.Component {
+class PreviewFileModalRichText extends React.Component {
 
   state = {
   }
@@ -48,6 +48,8 @@ class PreviewFileModal extends React.Component {
       return contain
     }
 
+    const modalTop = 20
+
     return(
       <div>
         <CustormModal
@@ -56,8 +58,8 @@ class PreviewFileModal extends React.Component {
           zIndex={1006}
           footer={null}
           destroyOnClose
+          style={{}}
           maskClosable={false}
-          style={{textAlign:'center',}}
           onCancel={this.onCancel}
           overInner={containner()}
         >
@@ -67,4 +69,4 @@ class PreviewFileModal extends React.Component {
     )
   }
 }
-export default Form.create()(PreviewFileModal)
+export default Form.create()(PreviewFileModalRichText)
