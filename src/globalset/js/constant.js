@@ -14,7 +14,7 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 }
 
 
-export const WEBSOCKET_PATH = '47.93.4.48'//'192.168.0.30'  //WS链接地址dsfsd
+export const WEBSOCKET_PATH = '192.168.1.14'//'192.168.0.30'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326'  //WS链接地址
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间

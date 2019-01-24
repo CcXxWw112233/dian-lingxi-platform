@@ -5,18 +5,20 @@ import FileList from './FileList'
 import MoveToDirectory from './MoveToDirectory'
 import BreadCrumbFileNav from './BreadCrumbFileNav'
 import FileDetail from './FileDetail'
+import FileDetailModal from './FileDetail/FileDetailModal'
 
 export default class FileIndex extends React.Component {
   render() {
     const { datas: { isInOpenFile }= false} = this.props.model
     return (
       <div>
-        {isInOpenFile && <FileDetail {...this.props} />}
+        {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
         <div className={indexStyles.fileOut}>
           <BreadCrumbFileNav {...this.props }/>
           <FileList {...this.props} />
           <MoveToDirectory {...this.props} />
         </div>
+        <FileDetailModal  {...this.props} visible={isInOpenFile} />
       </div>
     )
   }

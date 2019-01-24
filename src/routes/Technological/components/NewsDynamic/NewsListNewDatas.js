@@ -565,9 +565,9 @@ export default class NewsListNewDatas extends React.Component {
 
     return (
       <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
-        {isHasNewDynamic?(
-          <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
-        ): ('')}
+        {/*{isHasNewDynamic?(*/}
+          {/*<div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>*/}
+        {/*): ('')}*/}
         {newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
           return (
@@ -575,7 +575,7 @@ export default class NewsListNewDatas extends React.Component {
               <div className={NewsListStyle.head}>
                 <div>{date}</div>
                 {/*全部标为已读*/}
-                <div onClick={this.allSetReaded.bind(this)}></div>
+                {/*<div onClick={this.allSetReaded.bind(this)}>全部标为已读</div>*/}
               </div>
               {newDataList.map((value, childrenKey) => {
                 const { type, TypeArrayList = [] } = value
@@ -586,11 +586,11 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           )
         })}
-        <div style={{marginBottom: 100}}>
+        <div style={{marginBottom: 20}}>
           {isHasMore?(
-            <div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
+            <div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30,maxWidth: 770, minWidth: 600, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
           ):(
-            <div  style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>
+            <div  style={{height: 30,maxWidth: 770, minWidth: 600,  margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>
           )}
         </div>
       </div>

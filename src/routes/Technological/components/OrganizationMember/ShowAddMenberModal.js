@@ -4,6 +4,9 @@ import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
 import {validateEmail, validateTel} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import CustormModal from '../../../../components/CustormModal'
+
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 class ShowAddMenberModal extends React.Component {
@@ -89,7 +92,7 @@ class ShowAddMenberModal extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={modalVisible} //modalVisible
           width={472}
           zIndex={1006}
@@ -98,9 +101,9 @@ class ShowAddMenberModal extends React.Component {
           maskClosable={false}
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
+          overInner={step_3}
         >
-          {step_3}
-        </Modal>
+        </CustormModal>
       </div>
     )
   }

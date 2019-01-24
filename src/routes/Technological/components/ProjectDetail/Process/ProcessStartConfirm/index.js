@@ -112,7 +112,7 @@ export default class ProcessStartConfirm extends React.Component {
 
     return(
       <div>
-        <Card style={{ width: 900, margin: '0 auto',marginTop: 40 }}>
+        <Card className={indexStyles.confirmOutCard}>
           {/*<div className={indexStyles.toptitle}>*/}
             {/*<div></div>*/}
             {/*<div>投决立项</div>*/}

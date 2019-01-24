@@ -17,7 +17,8 @@
       box-sizing: border-box;cursor: pointer;
     }
   }
-  width: 770px;
+  min-width: @child_page_min_width;
+  max-width: 770px;
   margin: 0 auto;
   margin-top: 40px;
   //动态
@@ -30,7 +31,8 @@
       //min-height: 80px;
       height: auto;
       border-bottom: 1px solid #f5f5f5;
-      padding: 20px 20px;
+      padding: 8px 20px;
+      background-color: rgba(245,245,245,1);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -89,7 +91,7 @@
     .top:hover{
       .right{
         .timer{
-          display: inline-block;
+          //display: inline-block;
         }
         .check{
           color: #52C41A;
@@ -97,7 +99,7 @@
       }
     }
     .bott{
-      padding: 40px 20px;
+      padding: 20px 20px;
       .news_1{
         color: #262626;
         font-size: 16px;

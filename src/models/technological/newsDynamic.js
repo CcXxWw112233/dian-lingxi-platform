@@ -31,7 +31,7 @@ export default {
           }
         }
 
-        if (location.pathname === '/technological/newsDynamic') {
+        if (location.pathname === '/technological/newsDynamic' || location.pathname === '/technological/workbench') {
           dispatch({
             type: 'updateDatas',
             payload:{
@@ -44,7 +44,9 @@ export default {
           })
           dispatch({
             type: 'getNewsDynamicList',
-            payload:{}
+            payload:{
+              next_id: '0'
+            }
           })
 
           //监听新消息setMessageItemEvent //监听消息存储在localstorage变化

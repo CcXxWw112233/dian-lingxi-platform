@@ -92,6 +92,14 @@ export async function completeTask(data) {
   });
 }
 
+//获取当前组织下我上传的文档上传的文档
+export async function getCurrentOrgFileUploads(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/uploading`,
+    method: 'GET',
+  });
+}
+
 //我上传的文档
 export async function getUploadedFileList(params) {
   return request({

@@ -240,7 +240,7 @@ export default class ProjectRole extends React.Component {
       <div className={indexStyles.TabPaneContent}>
         <Collapse accordion>
           {project_role_data.map((value, parentKey) => {
-            const { name, is_default, system_role, function_tree_data =[], content_tree_data = [], already_has_function_permission, already_has_content_permission_trans } = value
+            const { name, is_default, is_visitor, system_role, function_tree_data =[], content_tree_data = [], already_has_function_permission, already_has_content_permission_trans } = value
             const checkDisabled = !checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) || system_role ==='1'
 
             return (
@@ -255,7 +255,7 @@ export default class ProjectRole extends React.Component {
                     )}
                   </div>
                   <div className={indexStyles.parrentPanaelHeader_r} style={{display: 'block'}}>
-                    {system_role !== '1'?(
+                    {system_role !== '1' && is_visitor !== '1' ? (
                       <Dropdown overlay={operateMenu({parentKey, value})}>
                         <Icon type="ellipsis" theme="outlined" />
                       </Dropdown>

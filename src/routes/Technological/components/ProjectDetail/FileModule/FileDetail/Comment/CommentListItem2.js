@@ -24,6 +24,7 @@ export default class CommentListItem extends React.Component {
   deleteComment(id) {
     const { datas:{ filePreviewCurrentFileId }} = this.props.model
     this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
+    this.props.deleteCommitSet()
   }
 
   commitClicShowEdit(data) {

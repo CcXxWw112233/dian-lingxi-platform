@@ -116,7 +116,6 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-
   render() {
 
     const { editDetaiDescription, detaiDescriptionValue } = this.state
@@ -185,19 +184,23 @@ export default class DrawDetailInfo extends React.Component {
       )
     }
     const manOperateMenu = (props) => {
+      const { is_visitor } = props
       return(
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
-          <Menu.SubMenu title="设置角色" key={'setRole'}>
-            {projectRoles.map((value, key) => {
-              return(
-                <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
-                  <div className={DrawDetailInfoStyle.elseProjectMemu}>
-                    {value.name}
-                  </div>
-                </Menu.Item>
-              )
-            })}
-          </Menu.SubMenu>
+          {is_visitor === '0'? (
+            <Menu.SubMenu title="设置角色" key={'setRole'}>
+              {projectRoles.map((value, key) => {
+                return(
+                  <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                    <div className={DrawDetailInfoStyle.elseProjectMemu}>
+                      {value.name}
+                    </div>
+                  </Menu.Item>
+                )
+              })}
+            </Menu.SubMenu>
+          ):('')}
+
           <Menu.Item key={'removeMember'}  style={{textAlign: 'center',padding:0,margin: 0}}>
             <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
               移除成员
@@ -208,7 +211,7 @@ export default class DrawDetailInfo extends React.Component {
     }
     const EditArea = (
       <div>
-        <TextArea defaultValue={description || detaiDescriptionValue} autosize className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
+        <TextArea defaultValue={description || detaiDescriptionValue} autosize={true} className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
         <div style={{ textAlign: 'right'}}>
           <div>
             <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>

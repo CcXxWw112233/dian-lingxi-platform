@@ -7,8 +7,15 @@ import Header from './Header'
 import CardContentArticle from './CardContent/CardContentArticle'
 import {WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY} from "../../../../globalset/js/constant";
 import EditCardDrop from './HeaderComponent/EditCardDrop'
+import PersonNews from './PersonNews'
+import technological from "../../../../models/technological";
+import GroupContent from './GropContent'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
+const getEffectOrReducerByName_2 = name => `technological/${name}`
+const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
+const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
+const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -184,88 +191,398 @@ const Workbench = (props) => {
       })
     }
   }
+  const PersonNewsProps = {
+    model,
+    logout() {
+      dispatch({
+        type: getEffectOrReducerByName_2('logout'),
+      })
+    },
+    routingJump(path) {
+      dispatch({
+        type: getEffectOrReducerByName_2('routingJump'),
+        payload: {
+          route:path,
+        },
+      })
+    },
+    updateDatas (payload) {
+      dispatch({
+        type: getEffectOrReducerByName_2('updateDatas') ,
+        payload:payload
+      })
+    },
+    //组织
+    getSearchOrganizationList(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('getSearchOrganizationList'),
+        payload: data
+      })
+    },
+    createOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('createOrganization'),
+        payload: data
+      })
+    },
+    updateOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('updateOrganization'),
+      })
+    },
+    applyJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('applyJoinOrganization'),
+        payload: data
+      })
+    },
+    inviteJoinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('inviteJoinOrganization'),
+        payload: data
+      })
+    },
+    uploadOrganizationLogo(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('uploadOrganizationLogo'),
+        payload: data
+      })
+    },
+    changeCurrentOrg(data) {
+      dispatch({
+        type: getEffectOrReducerByName_2('changeCurrentOrg'),
+        payload: data
+      })
+    }
+  }
+  const NewsListProps = {
+    modal,
+    model,
+    showModal() {
+      dispatch({ type: 'modal/showModal' })
+    },
+    hideModal() {
+      dispatch({ type: 'modal/hideModal' })
+    },
+    getNewsDynamicList(next_id) {
+      dispatch({
+        type: getEffectOrReducerByName_3('getNewsDynamicList'),
+        payload: {next_id}
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_3('addCardNewComment'),
+        payload: data
+      })
+    }
+  }
+  const CreateTaskProps = {
+    modal,
+    model,
+    getCardDetail(payload){
+      dispatch({
+        type: getEffectOrReducerByName_4('getCardDetail') ,
+        payload:payload
+      })
+    },
+    updateTaskDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateDatas') ,
+        payload:payload
+      })
+    },
+    deleteTaskFile(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTaskFile'),
+        payload: data,
+      })
+    },
+    addTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskGroup'),
+        payload: data,
+      })
+    },
+    deleteTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTaskGroup'),
+        payload: data,
+      })
+    },
+    updateTaskGroup(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateTaskGroup'),
+        payload: data,
+      })
+    },
+    getTaskGroupList(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('getTaskGroupList'),
+        payload: data
+      })
+    },
+    addTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTask'),
+        payload: data
+      })
+    },
+    updateTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('updateTask'),
+        payload: data
+      })
+    },
+    deleteTask(id){
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteTask'),
+        payload: {
+          id
+        }
+      })
+    },
+    updateChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('updateChirldTask'),
+        payload: data
+      })
+    },
+    deleteChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteChirldTask'),
+        payload: data
+      })
+    },
+
+    archivedTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('archivedTask'),
+        payload: data
+      })
+    },
+    changeTaskType(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('changeTaskType'),
+        payload: data
+      })
+    },
+    addChirldTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addChirldTask'),
+        payload: data
+      })
+    },
+    addTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskExecutor'),
+        payload: data
+      })
+    },
+    removeTaskExecutor(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeTaskExecutor'),
+        payload: data
+      })
+    },
+    completeTask(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('completeTask'),
+        payload: data
+      })
+    },
+    addTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('addTaskTag'),
+        payload: data
+      })
+    },
+    removeTaskTag(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeTaskTag'),
+        payload: data
+      })
+    },
+    removeProjectMenbers(data){
+      dispatch({
+        type: getEffectOrReducerByName_4('removeProjectMenbers'),
+        payload: data
+      })
+    },
+    getCardCommentList(id) {
+      dispatch({
+        type: getEffectOrReducerByName_4('getCardCommentList'),
+        payload: {
+          id
+        }
+      })
+    },
+    addCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('addCardNewComment'),
+        payload: data
+      })
+    },
+    deleteCardNewComment(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteCardNewComment'),
+        payload: data
+      })
+    },
+    getBoardTagList(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('getBoardTagList'),
+        payload: data
+      })
+    },
+    updateBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('updateBoardTag'),
+        payload: data
+      })
+    },
+    toTopBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('toTopBoardTag'),
+        payload: data
+      })
+    },
+    deleteBoardTag(data) {
+      dispatch({
+        type: getEffectOrReducerByName_4('deleteBoardTag'),
+        payload: data
+      })
+    }
+  }
+  const FileModuleProps = {
+    modal,
+    model,
+    updateFileDatas(payload) {
+      dispatch({
+        type: getEffectOrReducerByName_5('updateDatas') ,
+        payload:payload
+      })
+    },
+    getFileList(params){
+      dispatch({
+        type: getEffectOrReducerByName('getFileList'),
+        payload: params
+      })
+    },
+    fileCopy(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileCopy'),
+        payload: data
+      })
+    },
+    fileDownload(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileDownload'),
+        payload: params
+      })
+    },
+    fileRemove(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileRemove'),
+        payload: data
+      })
+    },
+    fileMove(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileMove'),
+        payload: data
+      })
+    },
+    fileUpload(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileUpload'),
+        payload: data
+      })
+    },
+    fileVersionist(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('fileVersionist'),
+        payload: params
+      })
+    },
+    recycleBinList(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('recycleBinList'),
+        payload: params
+      })
+    },
+    deleteFile(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('deleteFile'),
+        payload: data
+      })
+    },
+    restoreFile(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('restoreFile'),
+        payload: data
+      })
+    },
+    getFolderList(params){
+      dispatch({
+        type: getEffectOrReducerByName_5('getFolderList'),
+        payload: params
+      })
+    },
+    addNewFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('addNewFolder'),
+        payload: data
+      })
+    },
+    updateFolder(data){
+      dispatch({
+        type: getEffectOrReducerByName_5('updateFolder'),
+        payload: data
+      })
+    },
+    filePreview(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('filePreview'),
+        payload: params
+      })
+    },
+    getPreviewFileCommits(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('getPreviewFileCommits'),
+        payload: params
+      })
+    },
+    addFileCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('addFileCommit'),
+        payload: params
+      })
+    },
+    deleteCommit(params) {
+      dispatch({
+        type: getEffectOrReducerByName_5('deleteCommit'),
+        payload: params
+      })
+    },
+  }
+
   return(
     <div>
+      <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-      <div className={indexStyles.workbenchOut}>
-        <div className={indexStyles.cardItem}>
-          <div  className={indexStyles.cardItem_left}>
-            {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
-            {boxList.map((value, key) => {
-              const { code, name, id } = value
-              let flag = false
-              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
-              if(arr.indexOf(code) !== -1){
-                flag = true
-              }
-
-              let container = ''
-              if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
-                container = (
-                  <CardContentArticle
-                                    {...this.props}
-                                     title={name} {...cardContentListProps}
-                                      updateDatas={updateDatas} CardContentType={code}
-                                      boxId={id}
-                                    itemValue={value}
-                                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
-                )
-              }else{
-                container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
-                )
-              }
-              return flag && <div key={id}>{container}</div>
-            })}
-          </div>
-          <div  className={indexStyles.cardItem_right}>
-            {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
-            {boxList.map((value, key) => {
-              const { code, name, id } = value
-              let flag = false
-              let arr = ['PROJECT_STATISTICS','MEETIMG_ARRANGEMENT','RESPONSIBLE_TASK','EXAMINE_PROGRESS','MY_DOCUMENT','EXCELLENT_CASE','YINYI_MAP','POLICIES_REGULATIONS']
-              if(arr.indexOf(code) == -1){
-                flag = true
-              }
-              let container = ''
-              if('EXCELLENT_CASE' === code || 'POLICIES_REGULATIONS' === code) { //优秀案例或晓策志
-                container = (
-                  <CardContentArticle
-                                     {...this.props}
-                                      title={name} {...cardContentListProps}
-                                      updateDatas={updateDatas}
-                                      CardContentType={code}
-                                      boxId={id}
-                                      itemValue={value}
-                                      appType={'EXCELLENT_CASE'===code?WE_APP_TYPE_KNOW_CITY : WE_APP_TYPE_KNOW_POLICY}/>
-                )
-              }else{
-                container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
-                )
-              }
-              return  flag && <div key={id}>{container}</div>
-            })}
-          </div>
-          {/*<CardContent title={'项目统计'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'projectCount'}/>*/}
-          {/*<CardContent title={'会议安排'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'meeting'}/>*/}
-          {/*<CardContent title={'我负责的任务'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'task'}/>*/}
-          {/*<CardContent title={'审核进程'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'waitingDoFlows'}/>*/}
-          {/*<CardContent title={'我的文档'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'file'}/>*/}
-          {/*<CardContentArticle title={'优秀案例'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'case'} appType={WE_APP_TYPE_KNOW_CITY} />*/}
-          {/*<CardContent title={'隐翼地图'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'yymap'}/>*/}
-          {/*<CardContentArticle title={'政策法规'} {...cardContentListProps} updateDatas={updateDatas} CardContentType={'policy'} appType={WE_APP_TYPE_KNOW_POLICY}/>*/}
-        </div>
-
-    </div>
+       <GroupContent {...props} updateDatas={updateDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
     </div>
   )
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, loading }) {
-  return { modal, model: workbench, loading }
+function mapStateToProps({ modal, workbench, technological,newsDynamic, workbenchTaskDetail, workbenchFileDetail, loading }) {
+  const modelObj = {
+    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas']}
+  }
+  return { modal, model: modelObj, loading }
 }
 export default connect(mapStateToProps)(Workbench)
 

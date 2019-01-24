@@ -100,7 +100,7 @@ export default {
               filePreviewCommitType: '0', //新增评论 1 回复圈点评论
               filePreviewCommitPointNumber: '',//评论当前的点
               filePreviewIsRealImage: true, //当前预览的图片是否真正图片
-
+              seeFileInput: '',//查看文件详情入口
               //流程
               processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
               node_type: '1', //节点类型， 默认1
@@ -945,6 +945,12 @@ export default {
             }
           })
         }
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
 
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)

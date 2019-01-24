@@ -121,6 +121,9 @@ const Routers = function ({ history, app }) {
         import('./models/technological/projectDetail'),
         import('./models/technological/newsDynamic'),
         import('./models/technological/workbench'),
+        import('./models/technological/workbench/workbenchTaskDetail'),
+        import('./models/technological/workbench/workbenchFileDetail'),
+        import('./models/technological/workbench/workbenchEditTeamShow'),
         import('./models/technological/organizationMember'),
         import('./models/modal'),
         import('./models/teamShow'),
@@ -155,6 +158,9 @@ const Routers = function ({ history, app }) {
       path: '/test',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Test/'),
+    },{
+      path: '/index',
+      component: () => import('./routes/Index'),
     },
   ]
   //去掉exact

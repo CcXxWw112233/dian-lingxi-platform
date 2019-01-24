@@ -1,4 +1,4 @@
-import { getImRelaId, getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask } from '../../services/technological/workbench'
+import { getImRelaId, getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask,getCurrentOrgFileUploads} from '../../services/technological/workbench'
 import { isApiResponseOk,  } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
@@ -22,6 +22,7 @@ export default modelExtend(technological, {
           dispatch({
             type:'updateDatas',
             payload: {
+              cardGroupKey: 0,
               knowCityArticles: [], //优秀案例文章列表
               knowPolicyArticles: [], //政策法规文章列表
               previewAticle: {}, //预览的文章
@@ -38,6 +39,14 @@ export default modelExtend(technological, {
               filePreviewIsUsable: true,//文档是否可见
               filePreviewUrl: '',//预览文档src
               current_file_resource_id: '',//当前操作文档id
+
+              currentOrgFileUploads: [], //当前组织下我上传的文档列表
+            }
+          })
+          dispatch({
+            type: 'getCurrentOrgFileUploads',
+            payload: {
+
             }
           })
           dispatch({
@@ -88,7 +97,6 @@ export default modelExtend(technological, {
         message.warn(res.message)
       }
     },
-
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
@@ -291,7 +299,6 @@ export default modelExtend(technological, {
       }
     },
     * getJourneyList({ payload }, { select, call, put }) {
-      console.log(payload)
       let res = yield call(getMeetingList, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -493,6 +500,22 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
+    //查询用户在当前组织内上传的文档
+    * getCurrentOrgFileUploads({ payload }, { select, call, put }) {
+      let res = yield call(getCurrentOrgFileUploads, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgFileUploads: res.data || []
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

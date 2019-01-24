@@ -6,6 +6,7 @@ import StepTwoList from '../../Project/StepTwoList'
 import { validateTel, validateEmail } from '../../../../../utils/verify'
 import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
+import CustormModal from '../../../../../components/CustormModal'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -114,7 +115,7 @@ class AddModalForm extends React.Component {
 
     return(
       <div>
-        <Modal
+        <CustormModal
           visible={modalVisible} //modalVisible
           maskClosable={false}
           width={472}
@@ -122,9 +123,10 @@ class AddModalForm extends React.Component {
           destroyOnClose
           style={{textAlign:'center'}}
           onCancel={this.onCancel}
+          overInner={step_2}
         >
-          {step_2}
-        </Modal>
+          {/*{step_2}*/}
+        </CustormModal>
       </div>
     )
   }

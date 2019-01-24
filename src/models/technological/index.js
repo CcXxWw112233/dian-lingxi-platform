@@ -33,36 +33,38 @@ export default {
           })
 
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
-            naviHeadTabIndex = '3'
+            naviHeadTabIndex = 1
           }else if(location.pathname === '/technological/workbench'){
-            naviHeadTabIndex = '2'
-          }else if(location.pathname === '/technological/newsDynamic'){
-            naviHeadTabIndex = '1'
-          } else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
-            naviHeadTabIndex = '5'
+            naviHeadTabIndex = 0
+          }else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
+            naviHeadTabIndex = 4
           }
           dispatch({
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          if(!Cookies.get('userInfo')) {
-            dispatch({
-              type:'getUSerInfo',
-              payload: {}
-            })
-          }else {
-            const { current_org } = JSON.parse(Cookies.get('userInfo'))
-            if(current_org) {
-              dispatch({
-                type:'setcurrentSelectOrganizeByCookiesUSerInfo',
-                payload: {}
-              })
-              dispatch({
-                type:'getOrganizationMemberPermissions',
-                payload: {}
-              })
-            }
-          }
+          dispatch({
+            type:'getUSerInfo',
+            payload: {}
+          })
+          // if(!Cookies.get('userInfo')) {
+          //   dispatch({
+          //     type:'getUSerInfo',
+          //     payload: {}
+          //   })
+          // }else {
+          //   const { current_org } = JSON.parse(Cookies.get('userInfo'))
+          //   if(current_org) {
+          //     dispatch({
+          //       type:'setcurrentSelectOrganizeByCookiesUSerInfo',
+          //       payload: {}
+          //     })
+          //     dispatch({
+          //       type:'getOrganizationMemberPermissions',
+          //       payload: {}
+          //     })
+          //   }
+          // }
           //查询所在组织列表
           dispatch({
             type:'getCurrentUserOrganizes',
@@ -155,6 +157,8 @@ export default {
              payload: {}
            })
         }
+        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+
         //组织切换重新加载
         const { operateType } = payload
         if(operateType === 'changeOrg') {
@@ -162,10 +166,12 @@ export default {
           if(locallocation.pathname === '/technological/projectDetail') {
             redirectHash = '/technological/project'
           }
+          if(document.getElementById('iframImCircle')) {
+            document.getElementById('iframImCircle').src = `http://www.new-di.com/im?timestamp=${new Date().getTime()}`;;
+          }
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }
         //存储
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -241,6 +247,7 @@ export default {
           payload: {
           }
         })
+
         // //组织切换重新加载
         // const redirectHash =  locallocation.pathname
         // if(locallocation.pathname === '/technological/projectDetail') {

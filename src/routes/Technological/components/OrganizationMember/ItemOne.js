@@ -158,7 +158,7 @@ export default class ItemOne extends React.Component {
     const { isShowBottDetail, bott_id } = this.state
     const { itemValue, parentItemValue } = this.props
     const { is_default } = parentItemValue
-    const { member_id, avatar, name, role_type, role_name, role_detailInfo ={} } = itemValue
+    const { member_id, avatar, name, role_type, role_name, role_detailInfo ={}, is_visitor } = itemValue
     const  {organization_name='...', role = '...', email='...', mobile='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
     const {datas: { roleList = []}} = this.props.model
     let role_detailInfo_is_has = false
@@ -168,23 +168,27 @@ export default class ItemOne extends React.Component {
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          <Menu.SubMenu title="设置角色" key={'role'}>
-            {roleList.map((value, key) => {
-              return(
-                <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
-                  <div className={CreateTaskStyle.elseProjectMemu}>
-                    {value.name}
-                  </div>
-                </Menu.Item>
-              )
-            })}
-          </Menu.SubMenu>
-          <Menu.Item key={'setGroup'}  style={{textAlign: 'center',padding:0,margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectMemu}>
-              设置分组
-            </div>
-          </Menu.Item>
-          {is_default !== '1' ? (
+          {is_visitor !== '1' ? (
+            <Menu.SubMenu title="设置角色" key={'role'}>
+              {roleList.map((value, key) => {
+                return(
+                  <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                    <div className={CreateTaskStyle.elseProjectMemu}>
+                      {value.name}
+                    </div>
+                  </Menu.Item>
+                )
+              })}
+            </Menu.SubMenu>
+          ) :('')}
+          {is_visitor !== '1' ? (
+            <Menu.Item key={'setGroup'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+              <div className={CreateTaskStyle.elseProjectMemu}>
+                设置分组
+              </div>
+            </Menu.Item>
+          ) :('')}
+          {is_default !== '1' && is_visitor !== '1' ? (
             <Menu.Item key={'remove'}  style={{textAlign: 'center',padding:0,margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 移出分组

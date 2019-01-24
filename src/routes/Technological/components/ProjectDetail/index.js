@@ -6,6 +6,7 @@ import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule  from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
+import DetailInfoModal from './DetailInfo/DetailInfoModal'
 
 import { Drawer } from 'antd'
 import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
@@ -525,7 +526,7 @@ const ProjectDetail = (props) => {
         appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
         break
       case '3':
-        appFace = (<CreateTask  {...CreateTaskProps} updateDatas={updateDatas}/>)
+        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas}/>)
         break
       case '4':
         appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
@@ -538,24 +539,27 @@ const ProjectDetail = (props) => {
   }
   return(
     // minHeight: '100%',
-    <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+    <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden',minHeight: '100vh',margin:'0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
       {/*左边抽屉*/}
-      <Drawer
-        placement="left"
-        closable={false}
-        visible={projectInfoDisplay}
-        width={376}
-        top={172}
-        zIndex={0}
-        maskStyle={{top: 0, }}
-      >
-        <DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>
-      </Drawer>
+      {/*<Drawer*/}
+        {/*placement="left"*/}
+        {/*closable={false}*/}
+        {/*visible={projectInfoDisplay}*/}
+        {/*width={376}*/}
+        {/*top={172}*/}
+        {/*zIndex={0}*/}
+        {/*maskStyle={{top: 0, }}*/}
+      {/*>*/}
+        {/*<DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
+      {/*</Drawer>*/}
+      <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
       {/*应用界面*/}
-      {filterAppsModule(appsSelectKey)}
+      <div style={{padding:'0 20px'}}>
+        {filterAppsModule(appsSelectKey)}
+      </div>
     </div>
   )
 };
