@@ -71,6 +71,8 @@ export default class FileItem extends React.Component {
       version_id:file_id,
       isNeedPreviewFile:false,
     })
+
+    this.props.getBoardMembers({id: board_id})
   }
   render() {
     const { itemValue = {} } = this.props

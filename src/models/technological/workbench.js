@@ -9,6 +9,7 @@ import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList,selectBoxUsableList} from "./select";
 import {filePreview, fileDownload} from "../../services/technological/file";
+import { postCommentToDynamics } from "../../services/technological/library";
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -516,6 +517,12 @@ export default modelExtend(technological, {
       }
     },
 
+    * postCommentToDynamics({ payload }, { select, call, put }) { //
+      const res = yield call(postCommentToDynamics, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

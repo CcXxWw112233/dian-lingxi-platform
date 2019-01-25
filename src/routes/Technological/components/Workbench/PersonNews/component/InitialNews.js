@@ -388,6 +388,26 @@ export default class InitialNews extends React.Component {
       )
     }
 
+    //@评论动态
+    const commentNews_2 = (value,parentKey, childrenKey) => {
+      return (
+        <div className={NewsListStyle.containr}>
+          {value.map((val, key) => {
+            const { map: { activity_type }, text, user_name, card_name, file_name,list_name, board_name} = val
+            return(
+              <div className={NewsListStyle.news_3}>
+                <div className={NewsListStyle.news_3_text}> {user_name} {text} {activity_type == 'cardCommentAt' && currentNounPlanFilterName(TASKS)}</div>
+                <div className={NewsListStyle.news_3_card}>{card_name || file_name}</div>
+                <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{board_name}</div>
+                {activity_type == 'cardCommentAt' && <div className={NewsListStyle.news_3_group}>分组：{list_name}</div>}
+                <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.map.create_time)}</div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
     //具体详细信息
     const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
@@ -410,6 +430,9 @@ export default class InitialNews extends React.Component {
         case  '6':
           containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
           break
+        case  '8':
+          containner = ( commentNews_2(value,parentKey, childrenKey))
+          break
         default:
           break
       }
@@ -418,9 +441,9 @@ export default class InitialNews extends React.Component {
 
     return (
       <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
-        {isHasNewDynamic?(
-          <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
-        ): ('')}
+        {/*{isHasNewDynamic?(*/}
+          {/*<div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>*/}
+        {/*): ('')}*/}
         {newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
           return (

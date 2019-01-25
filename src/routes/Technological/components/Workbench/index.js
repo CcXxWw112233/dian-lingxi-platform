@@ -38,6 +38,12 @@ const Workbench = (props) => {
   const cardContentListProps = {
     modal,
     model,
+    postCommentToDynamics(payload) {
+      dispatch({
+        type: getEffectOrReducerByName('postCommentToDynamics') ,
+        payload: payload
+      })
+    },
     updateDatas(payload) {
       dispatch({
         type: getEffectOrReducerByName('updateDatas') ,
@@ -280,6 +286,12 @@ const Workbench = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    getBoardMembers(payload) {
+      dispatch({
+        type: getEffectOrReducerByName_4('getBoardMembers') ,
+        payload:payload
+      })
+    },
     getCardDetail(payload){
       dispatch({
         type: getEffectOrReducerByName_4('getCardDetail') ,

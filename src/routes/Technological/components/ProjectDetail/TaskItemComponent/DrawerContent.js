@@ -741,8 +741,8 @@ export default class DrawContent extends React.Component {
         })
       },
       onPreview(e,a) {
-        const file_resource_id = e.file_id || e.response.data.file_resource_id
-        const id = e.file_id || e.response.data.file_resource_id
+        const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
+        const file_id = e.file_id || e.response.data.file_id
 
         that.setState({
           previewFileType : 'attachment',
@@ -770,9 +770,9 @@ export default class DrawContent extends React.Component {
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
-          filePreviewCurrentFileId: id,
+          filePreviewCurrentFileId: file_id,
         })
-        that.props.filePreview({id: file_resource_id,file_id:id})
+        that.props.filePreview({id: file_resource_id,file_id:file_id})
       },
       onRemove(e) {
         const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)

@@ -10,6 +10,8 @@ import {
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import CommentMention from '../../../../../components/CommentMention'
+
 const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
@@ -31,7 +33,7 @@ export default class Comment extends React.Component {
       })
     })
   }
-  submitComment() {
+  submitComment(editText) {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -40,7 +42,7 @@ export default class Comment extends React.Component {
     const { card_id } = drawContent
     this.props.addCardNewComment({
       card_id,
-      comment: toString(this.state.editText)
+      comment: toString(editText)
     })
     this.setState({
       editText: toContentState(''),
@@ -48,6 +50,15 @@ export default class Comment extends React.Component {
     })
   }
 
+  commentToDynamics(data) {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    this.props.postCommentToDynamics({
+      id: card_id,
+      type:"1",
+      content:[data]
+    })
+  }
 
   render() {
 
@@ -100,38 +111,39 @@ export default class Comment extends React.Component {
           </div>
           {/*<Dragger {...props} >*/}
           <div className={CommentStyles.right}>
-            <div className={CommentStyles.comment}>
-              {/*<textarea minrows = {1}  maxrows = {6}  className={CommentStyles.textArea}></textarea>*/}
-              <Mention
-                  multiLines={true}
-                  onChange ={this.MentionEditorChange.bind(this)}
-                  className={CommentStyles.mention}
-                  style={{ width: '100%',border:' none', outline: 'none', height: 48}}
-                  value={editText}
-                  suggestions={suggestions}
-                />
-              <div className={CommentStyles.functionBar}>
-                  <div  className={CommentStyles.functionBar_left}>
-                    {/*<Icon type="copyright"  onClick={this.MentionSpacerClick.bind(this)}/>*/}
-                      <Tooltip title="该功能尚未上线，敬请期待">
-                        <span style={{fontSize: 16, color: '#8c8c8c'}}>@</span>
-                      </Tooltip>
-                      <Tooltip title="该功能尚未上线，敬请期待">
-                        <span><Icon type="smile-o" style={{marginTop: 10, color: '#8c8c8c'}}/></span>
-                      </Tooltip>
-                      <span></span>
-                      <Tooltip title="该功能尚未上线，敬请期待">
-                        <span className={CommentStyles.dragSpan}><Icon type="database" style={{fontSize: 14, color: '#8c8c8c'}} /> 选择或拖拽文件</span>
-                      </Tooltip>
-                      {/*<Dragger {...props} className={CommentStyles.drag}>*/}
-                        {/*<span className={CommentStyles.dragSpan}><Icon type="database" /> 选择或拖拽文件</span>*/}
-                      {/*</Dragger>*/}
-                    </div>
-                  <div  className={CommentStyles.functionBar_right}>
-                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
-                  </div>
-                </div>
-              </div>
+            <CommentMention users={data} submitComment={this.submitComment.bind(this)} commentToDynamics={this.commentToDynamics.bind(this)}/>
+            {/*<div className={CommentStyles.comment}>*/}
+              {/*/!*<textarea minrows = {1}  maxrows = {6}  className={CommentStyles.textArea}></textarea>*!/*/}
+              {/*<Mention*/}
+                  {/*multiLines={true}*/}
+                  {/*onChange ={this.MentionEditorChange.bind(this)}*/}
+                  {/*className={CommentStyles.mention}*/}
+                  {/*style={{ width: '100%',border:' none', outline: 'none', height: 48}}*/}
+                  {/*value={editText}*/}
+                  {/*suggestions={suggestions}*/}
+                {/*/>*/}
+              {/*<div className={CommentStyles.functionBar}>*/}
+                  {/*<div  className={CommentStyles.functionBar_left}>*/}
+                    {/*/!*<Icon type="copyright"  onClick={this.MentionSpacerClick.bind(this)}/>*!/*/}
+                      {/*<Tooltip title="该功能尚未上线，敬请期待">*/}
+                        {/*<span style={{fontSize: 16, color: '#8c8c8c'}}>@</span>*/}
+                      {/*</Tooltip>*/}
+                      {/*<Tooltip title="该功能尚未上线，敬请期待">*/}
+                        {/*<span><Icon type="smile-o" style={{marginTop: 10, color: '#8c8c8c'}}/></span>*/}
+                      {/*</Tooltip>*/}
+                      {/*<span></span>*/}
+                      {/*<Tooltip title="该功能尚未上线，敬请期待">*/}
+                        {/*<span className={CommentStyles.dragSpan}><Icon type="database" style={{fontSize: 14, color: '#8c8c8c'}} /> 选择或拖拽文件</span>*/}
+                      {/*</Tooltip>*/}
+                      {/*/!*<Dragger {...props} className={CommentStyles.drag}>*!/*/}
+                        {/*/!*<span className={CommentStyles.dragSpan}><Icon type="database" /> 选择或拖拽文件</span>*!/*/}
+                      {/*/!*</Dragger>*!/*/}
+                    {/*</div>*/}
+                  {/*<div  className={CommentStyles.functionBar_right}>*/}
+                    {/*<Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>*/}
+                  {/*</div>*/}
+                {/*</div>*/}
+              {/*</div>*/}
           </div>
           {/*</Dragger>*/}
         </div>
