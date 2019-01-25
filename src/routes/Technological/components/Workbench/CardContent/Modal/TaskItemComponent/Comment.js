@@ -49,7 +49,15 @@ export default class Comment extends React.Component {
       submitButtonDisabled: true
     })
   }
-
+  commentToDynamics(data) {
+    const { datas:{ drawContent = {} } } = this.props.model
+    const { card_id } = drawContent
+    this.props.postCommentToDynamics({
+      id: card_id,
+      type:"1",
+      content:[data]
+    })
+  }
 
   render() {
 
@@ -103,7 +111,7 @@ export default class Comment extends React.Component {
           {/*<Dragger {...props} >*/}
           <div className={CommentStyles.right}>
 
-         <CommentMention users={data} submitComment={this.submitComment.bind(this)}/>
+         <CommentMention users={data} submitComment={this.submitComment.bind(this)} commentToDynamics={this.commentToDynamics.bind(this)}/>
 
             {/*<div className={CommentStyles.comment}>*/}
               {/*/!*<textarea minrows = {1}  maxrows = {6}  className={CommentStyles.textArea}></textarea>*!/*/}

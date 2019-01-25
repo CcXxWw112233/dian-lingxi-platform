@@ -38,6 +38,12 @@ const Workbench = (props) => {
   const cardContentListProps = {
     modal,
     model,
+    postCommentToDynamics(payload) {
+      dispatch({
+        type: getEffectOrReducerByName('postCommentToDynamics') ,
+        payload: payload
+      })
+    },
     updateDatas(payload) {
       dispatch({
         type: getEffectOrReducerByName('updateDatas') ,

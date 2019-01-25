@@ -15,6 +15,7 @@ import Cookies from "js-cookie";
 import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import {postCommentToDynamics} from "../../services/technological/library";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -1714,6 +1715,15 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+
+    //评论 @用户 触发动态
+    * postCommentToDynamics({ payload }, { select, call, put }) { //
+      const res = yield call(postCommentToDynamics, payload)
+      if(isApiResponseOk(res)) {
+      }else{
+      }
+    },
+
   },
 
   reducers: {

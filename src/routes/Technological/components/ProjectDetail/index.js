@@ -149,6 +149,12 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    postCommentToDynamics(data) {
+      dispatch({
+        type: getEffectOrReducerByName('postCommentToDynamics'),
+        payload: data,
+      })
+    },
     deleteTaskFile(data) {
       dispatch({
         type: getEffectOrReducerByName('deleteTaskFile'),
@@ -314,6 +320,12 @@ const ProjectDetail = (props) => {
   const FileModuleProps = {
     modal,
     model,
+    postCommentToDynamics(data) {
+      dispatch({
+        type: getEffectOrReducerByName('postCommentToDynamics'),
+        payload: data,
+      })
+    },
     getFileList(params){
       dispatch({
         type: getEffectOrReducerByName('getFileList'),
@@ -420,6 +432,12 @@ const ProjectDetail = (props) => {
   const ProcessProps = {
     modal,
     model,
+    postCommentToDynamics(data) {
+      dispatch({
+        type: getEffectOrReducerByName('postCommentToDynamics'),
+        payload: data,
+      })
+    },
     getProcessTemplateList(data){
       dispatch({
         type: getEffectOrReducerByName('saveProcessTemplate'),

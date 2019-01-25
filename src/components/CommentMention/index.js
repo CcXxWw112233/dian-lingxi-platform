@@ -98,13 +98,14 @@ export default class CommentMention extends React.Component {
 
     }
     selectUserIds = Array.from(new Set(selectUserIds))
-    console.log('sd',selectUserIds)
     if (selectUserIds.length) {
       const obj = {
         user_id: selectUserIds.join(','),
         text: str
       }
-    //  这里调用发布 @动态信息接口
+      // console.log('sd',obj)
+      //  这里调用发布 @动态信息接口
+      this.props.commentToDynamics && this.props.commentToDynamics(obj)
     }
   }
 
