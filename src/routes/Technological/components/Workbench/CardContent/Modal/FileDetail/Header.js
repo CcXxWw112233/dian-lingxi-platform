@@ -6,7 +6,7 @@ import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FILE_EDIT,
-  REQUEST_DOMAIN_FILE,PROJECT_FILES_FILE_UPDATE,
+  REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPDATE,
   UPLOAD_FILE_SIZE
 } from "../../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
@@ -36,7 +36,7 @@ export default class Header extends React.Component {
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData= {},  breadcrumbList = [] } } = this.props.model
+    const { datas: { projectDetailInfoData= {}, breadcrumbList = [] } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
@@ -90,7 +90,7 @@ export default class Header extends React.Component {
 
   render() {
     const that = this
-    const { datas: { seeFileInput, board_id,isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
+    const { datas: { seeFileInput, board_id, isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId, projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     //文件版本更新
     const uploadProps = {
       name: 'file',
@@ -103,7 +103,7 @@ export default class Header extends React.Component {
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
@@ -128,12 +128,12 @@ export default class Header extends React.Component {
         if (file.status === 'done') {
           message.success(`上传成功。`);
           that.props.updateFileDatas({filePreviewCurrentVersionKey: 0})
-          that.props.fileVersionist({version_id : filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
           setTimeout(function () {
             message.destroy()
-          },2000)
+          }, 2000)
         }
       },
     };
@@ -163,7 +163,7 @@ export default class Header extends React.Component {
             {/*</Upload>*/}
           {/*):('')}*/}
 
-          <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
+          <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
             <Icon type="download" />下载
           </Button>
           {/*<Button style={{height: 24, marginLeft:14}} >*/}
@@ -173,9 +173,9 @@ export default class Header extends React.Component {
             {/*<Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id:filePreviewCurrentFileId, type: '2' } )}>*/}
               {/*<Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>*/}
             {/*</Dropdown>*/}
-            <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+            <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
             <Tooltip title={'关闭预览'} placement={'left'}>
-             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>
+             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
             </Tooltip>
           </div>
         </div>

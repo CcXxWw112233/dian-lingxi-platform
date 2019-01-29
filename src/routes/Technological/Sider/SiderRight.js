@@ -40,13 +40,13 @@ export default class SiderRight extends React.Component {
             <div className={indexStyles.right}>通知</div>
           </div>
           <div style={{height: document.documentElement.clientHeight - 58, padding:'20px 12px'}}>
-            {/*<iframe*/}
-              {/*src={`http://www.new-di.com/im`}*/}
-              {/*frameBorder="0"*/}
-              {/*width="100%"*/}
-              {/*height="100%"*/}
-              {/*id={'iframImCircle'}*/}
-            {/*></iframe>*/}
+            <iframe
+              src={`http://www.new-di.com/im`}
+              frameBorder="0"
+              width="100%"
+              height="100%"
+              id={'iframImCircle'}
+            ></iframe>
           </div>
           {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
             {/*<div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>*/}
