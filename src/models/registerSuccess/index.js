@@ -17,7 +17,7 @@ export default {
             type: 'updateDatas',
             payload: queryString.parse(location.search)
           })
-          const param =  queryString.parse(location.search)
+          const param = queryString.parse(location.search)
           if(param.type !== 'register') { //如果不是从注册页面进来，而是从邮件验证进来
             dispatch({
               type: 'initConfirm',

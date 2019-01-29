@@ -4,7 +4,7 @@ import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
-import Cookies from  'js-cookie'
+import Cookies from 'js-cookie'
 const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
@@ -17,17 +17,17 @@ export default class Comment extends React.Component {
   }
   MentionSpacerClick() {
   }
-  MentionEditorChange(e,value) {
+  MentionEditorChange(e, value) {
     this.setState({
       editText: toString(e)
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!this.state.editText
       })
     })
   }
   submitComment() {
-    const { card_id,parentKey, childrenKey } = this.props
+    const { card_id, parentKey, childrenKey } = this.props
     this.props.addCardNewComment({
       card_id,
       comment: this.state.editText,
@@ -38,7 +38,7 @@ export default class Comment extends React.Component {
 
 
   render() {
-    const { datas:{  projectDetailInfoData = {} } } = this.props.model
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -90,11 +90,11 @@ export default class Comment extends React.Component {
                   multiLines={true}
                   onChange ={this.MentionEditorChange.bind(this)}
                   className={CommentStyles.mention}
-                  style={{ width: '100%',border:' none', outline: 'none', height: 48}}
+                  style={{ width: '100%', border: ' none', outline: 'none', height: 48}}
                   suggestions={suggestions}
                 />
               <div className={CommentStyles.functionBar}>
-                  <div  className={CommentStyles.functionBar_left}>
+                  <div className={CommentStyles.functionBar_left}>
                     {/*<Icon type="copyright"  onClick={this.MentionSpacerClick.bind(this)}/>*/}
                       <Tooltip title="该功能尚未上线，敬请期待">
                         <span style={{fontSize: 16, color: '#8c8c8c'}}>@</span>
@@ -110,8 +110,8 @@ export default class Comment extends React.Component {
                         {/*<span className={CommentStyles.dragSpan}><Icon type="database" /> 选择或拖拽文件</span>*/}
                       {/*</Dragger>*/}
                     </div>
-                  <div  className={CommentStyles.functionBar_right}>
-                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
+                  <div className={CommentStyles.functionBar_right}>
+                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height: 24, width: 58, marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
                   </div>
                 </div>
               </div>

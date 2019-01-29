@@ -4,7 +4,6 @@ import indexStyles from './index.less'
 
 const TreeNode = Tree.TreeNode;
 
-
 export default class TreeGroupModal extends React.Component {
 
   state={
@@ -62,7 +61,7 @@ export default class TreeGroupModal extends React.Component {
           onOk={this.onOk}
         >
           <div className={indexStyles.MoveToDirectoryOut}>
-            <Tree  checkable  multiple onCheck={this.onCheck.bind(this)}>
+            <Tree checkable multiple onCheck={this.onCheck.bind(this)}>
               {loop(groupTreeList)}
             </Tree>
           </div>

@@ -40,7 +40,7 @@ export default class PreviewModal extends React.Component {
           maskClosable={false}
           footer={null}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
         >
           {step}

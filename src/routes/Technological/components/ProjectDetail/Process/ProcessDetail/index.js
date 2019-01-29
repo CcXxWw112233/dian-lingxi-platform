@@ -38,8 +38,8 @@ export default class ProcessDetail extends React.Component {
     const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
     const { curr_node_sort } = processInfo
     const defaultProps = {
-      canvaswidth: 210,// 画布宽度
-      canvasheight: 210,// 画布高度
+      canvaswidth: 210, // 画布宽度
+      canvasheight: 210, // 画布高度
       x0: 105,
       y0: 105,
       r: 96,
@@ -49,18 +49,18 @@ export default class ProcessDetail extends React.Component {
       LinearGradientColor2: '#499BE6'
     }
     const {
-      x0,//原点坐标
+      x0, //原点坐标
       y0,
-      r,// 半径
+      r, // 半径
       lineWidth, // 画笔宽度
       strokeStyle, //画笔颜色
       LinearGradientColor1, //起始渐变颜色
       LinearGradientColor2, //结束渐变颜色
-      Percentage,// 进度百分比
+      Percentage, // 进度百分比
     } = defaultProps
     let ele = document.getElementById("time_graph_canvas")
     let circle = ele.getContext("2d");
-    circle.clearRect(0,0,210,210);//清空
+    circle.clearRect(0, 0, 210, 210);//清空
     //创建多个圆弧
     const length = processEditDatas.length
     for (let i = 0; i < length; i++) {
@@ -76,7 +76,7 @@ export default class ProcessDetail extends React.Component {
         color = '#f2f2f2'
       }
       circle.strokeStyle = color; //curr_node_sort
-      circle.arc(x0, y0, r,0.6* Math.PI + i*1.83/length* Math.PI ,  0.6* Math.PI + i*1.83/length* Math.PI + 1.83/length* Math.PI - 0.03*Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
+      circle.arc(x0, y0, r, 0.6* Math.PI + i*1.83/length* Math.PI, 0.6* Math.PI + i*1.83/length* Math.PI + 1.83/length* Math.PI - 0.03*Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
       circle.stroke();//对当前路径进行描边
       circle.restore()
       circle.closePath()
@@ -106,11 +106,11 @@ export default class ProcessDetail extends React.Component {
   render() {
     const { isShowAll } = this.state
     const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
-    const { name, description, status } = processInfo  //status 1 正在进行 2,暂停 3完成
+    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
     // console.log('processDynamics', processDynamics)
     // const
     //过滤消息内容
-    const   filterTitleContain = (messageValue) => {
+    const filterTitleContain = (messageValue) => {
       const { activity_type } = messageValue
       let contain = ''
       let messageContain = (<div></div>)
@@ -259,7 +259,7 @@ export default class ProcessDetail extends React.Component {
         {/*</div>*/}
         </div>
           {/*描述*/}
-        <div className={indexStyles.description}  dangerouslySetInnerHTML = {{ __html:description }}></div>
+        <div className={indexStyles.description} dangerouslySetInnerHTML = {{ __html: description }}></div>
 
         <div className={indexStyles.bottContainer}>
           <div className={indexStyles.bottContainer_left}>
@@ -267,7 +267,7 @@ export default class ProcessDetail extends React.Component {
               <div style={{ width: 210, height: 210}}>
                 <canvas id="time_graph_canvas" width={210} height={210}></canvas>
               </div>
-              <img id="node_img" src={sssimg} style={{position: 'absolute',width: 20, height: 20,bottom: 0,left:95}}/>
+              <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, bottom: 0, left: 95}}/>
             </div>
           </div>
           <div className={indexStyles.bottContainer_right} >

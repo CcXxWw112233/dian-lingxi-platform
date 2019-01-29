@@ -1,9 +1,9 @@
 import React from 'react'
-import {  Icon, Layout, Menu, Input, Avatar} from 'antd';
+import { Layout} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
-import GroupChat from './comonent/GroupChat'
-import InitialChat from './comonent/InitialChat'
+// import GroupChat from './comonent/GroupChat'
+// import InitialChat from './comonent/InitialChat'
 
 const { Sider } = Layout;
 
@@ -27,14 +27,12 @@ export default class SiderRight extends React.Component {
   render() {
     const { collapsed } = this.state
 
-    const data = [{id: '123',type:'1'},{id: '321', type: '0'}]
-
     return (
-      <div  id={'siderRight'} className={indexStyles.siderRight}>
+      <div id={'siderRight'} className={indexStyles.siderRight}>
       <Sider
         collapsible
         onCollapse={this.onCollapse.bind(this)}
-        className={indexStyles.siderRight}  defaultCollapsed={true} collapsed={collapsed} trigger={null} collapsedWidth={56} width={300} theme={'light'}
+        className={indexStyles.siderRight} defaultCollapsed={true} collapsed={collapsed} trigger={null} collapsedWidth={56} width={300} theme={'light'}
       >
         <div className={indexStyles.siderRightInner} style={{width:collapsed?56:300}}>
           <div className={indexStyles.contain_1} onClick={this.setCollapsed.bind(this)}>

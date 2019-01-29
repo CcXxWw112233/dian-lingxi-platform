@@ -12,12 +12,12 @@ export default class MenuSearchSingleNormal extends React.Component{
     const { keyWord } = this.state
     const { listData, searchName } = this.props
     this.setState({
-      resultArr: this.fuzzyQuery(listData,searchName, keyWord)
+      resultArr: this.fuzzyQuery(listData, searchName, keyWord)
     })
   }
   componentWillReceiveProps (nextProps) {
     const { keyWord } = this.state
-    const { listData,searchName } = nextProps
+    const { listData, searchName } = nextProps
     this.setState({
       resultArr: this.fuzzyQuery(listData, searchName, keyWord)
     })
@@ -28,14 +28,14 @@ export default class MenuSearchSingleNormal extends React.Component{
     if(!key) {
       return false
     }
-    const { listData}  = this.props
+    const { listData} = this.props
     const data = listData[Number(key)]
     //此处为启动流程界面查询逻辑(查询模板信息)
     if(this.props.MenuSearchSingleClick && typeof this.props.MenuSearchSingleClick === 'function'){
       this.props.MenuSearchSingleClick(data)
     }
   }
-  fuzzyQuery = (list,searchName, keyWord) => {
+  fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
     for (var i = 0; i < list.length; i++) {
       if (list[i][searchName].indexOf(keyWord) !== -1) {
@@ -47,7 +47,7 @@ export default class MenuSearchSingleNormal extends React.Component{
   onChange = (e) => {
     const { listData, searchName } = this.props
     const keyWord = e.target.value
-    const resultArr = this.fuzzyQuery(listData,searchName, keyWord)
+    const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
     this.setState({
       keyWord,
       resultArr
@@ -60,12 +60,12 @@ export default class MenuSearchSingleNormal extends React.Component{
     return (
       <Spin spinning={menuSearchSingleSpinning} size={'small'}>
         <Menu style={{padding: 8}} onClick={this.handleMenuReallyClick.bind(this)}>
-        <Input placeholder={Inputlaceholder}  value={keyWord}  onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
+        <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
         {
           resultArr.map((value, key) => {
             const { template_name, template_id, template_no } = value
             return (
-              <Menu.Item style={{height: 32,lineHeight: '32px'}} key={key} >
+              <Menu.Item style={{height: 32, lineHeight: '32px'}} key={key} >
                 {value[searchName]}
               </Menu.Item>
             )

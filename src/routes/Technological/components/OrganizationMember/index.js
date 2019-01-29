@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "dva/index";
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
 import Header from './Header'
 import CreateGroup from './CreateGroup'
@@ -114,18 +114,18 @@ const OrganizationMember = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
   return(
-    <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden'}}>
+    <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto', position: 'relative', width: '100%', overflow: 'hidden'}}>
       <Header {...CreateGroupProps} model={model}/>
       <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
     </div>

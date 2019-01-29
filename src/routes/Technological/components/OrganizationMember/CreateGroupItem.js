@@ -1,19 +1,19 @@
 //分组列表
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown, Avatar  } from 'antd'
-import QueueAnim from  'rc-queue-anim'
-import ItemTwo from  './ItemTwo'
+import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown, Avatar } from 'antd'
+import QueueAnim from 'rc-queue-anim'
+import ItemTwo from './ItemTwo'
 import ItemOne from './ItemOne'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_GROUP, ORG_UPMS_ORGANIZATION_MEMBER_EDIT
 } from "../../../../globalset/js/constant";
 import ShowAddMenberModal from './ShowAddMenberModal'
-import TreeGroupModal from  './TreeGroupModal'
-import MenuSearchSingleNormal from  '../../../../components/MenuSearchSingleNormal'
+import TreeGroupModal from './TreeGroupModal'
+import MenuSearchSingleNormal from '../../../../components/MenuSearchSingleNormal'
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 const Panel = Collapse.Panel
 
@@ -126,25 +126,25 @@ export default class TaskItem extends React.Component {
   MenuSearchSingleClick(data) {
     const { itemKey } = this.props
     this.props.setGroupLeader({
-      ...data, parentKey:itemKey
+      ...data, parentKey: itemKey
     })
   }
   render() {
     const { isInEditAdd, inputValue } = this.state
     const { itemValue = {}, itemKey } = this.props
-    const { name, is_default, members = [],editable, leader_id='', leader_avatar='', leader_members = []} = itemValue //is_default ==='1' 默认分组不可操作
+    const { name, is_default, members = [], editable, leader_id='', leader_avatar='', leader_members = []} = itemValue //is_default ==='1' 默认分组不可操作
 
     const { datas: { menuSearchSingleSpinning }} = this.props.model
 
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={CreateTaskStyle.elseProjectMemu}>
               重命名
             </div>
           </Menu.Item>
-          <Menu.Item key={'2'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={CreateTaskStyle.elseProjectDangerMenu}>
               删除
             </div>
@@ -165,7 +165,7 @@ export default class TaskItem extends React.Component {
                       <Icon type="ellipsis" theme="outlined" />
                     </div>
                   ) : (
-                    <Avatar onClick={this.getMembersInOneGroup.bind(this)} src={leader_avatar} size={20} icon={"user"}  style={{marginRight: 6, color: '#8c8c8c',backgroundColor: '#d9d9d9'}}></Avatar>
+                    <Avatar onClick={this.getMembersInOneGroup.bind(this)} src={leader_avatar} size={20} icon={"user"} style={{marginRight: 6, color: '#8c8c8c', backgroundColor: '#d9d9d9'}}></Avatar>
                   )}
                 </Dropdown>
               ) : (
@@ -190,12 +190,12 @@ export default class TaskItem extends React.Component {
           </div>
         ) : (
           <div>
-            <Input autoFocus defaultValue={name}  placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
+            <Input autoFocus defaultValue={name} placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
           </div>
         )}
 
         <QueueAnim >
-          {members.map((value,key) => {
+          {members.map((value, key) => {
             const { status } = value
             let contain
             if(status === '2') {
@@ -204,14 +204,14 @@ export default class TaskItem extends React.Component {
                          parentItemValue={itemValue}
                          parentKey={itemKey}
                          itemKey={key}
-                         key={key}  />
+                         key={key} />
                )
             }else if (status === '1'){
               contain = (
                 <ItemTwo {...this.props} itemValue={value}
                          parentItemValue={itemValue}
                          itemKey={key}
-                         key={key}  />
+                         key={key} />
                )
             }else {
 
@@ -219,13 +219,13 @@ export default class TaskItem extends React.Component {
             return contain
           })}
           {is_default === '0' && editable === '1'? (
-            <div  key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
+            <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
             </div>
           ) : ('')}
 
         </QueueAnim>
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         {/*<TreeGroupModal  {...this.props}/>*/}
       </div>
     )

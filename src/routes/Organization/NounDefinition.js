@@ -1,5 +1,5 @@
 import React from 'react'
-import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal , Button, Tree, message, Input } from 'antd';
+import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal, Button, Tree, message, Input } from 'antd';
 import indexStyles from './index.less'
 
 export default class NounDefinition extends React.Component {
@@ -23,7 +23,7 @@ export default class NounDefinition extends React.Component {
     for(let i in refs) {
       if(i.toLowerCase().indexOf('input_') !== -1){
         const { value } = refs[i]
-        const field_id = i.toLowerCase().replace('input_','')
+        const field_id = i.toLowerCase().replace('input_', '')
         const obj = {
           field_id,
           field_value: value
@@ -44,7 +44,7 @@ export default class NounDefinition extends React.Component {
   }
   render() {
     const { datas: {current_scheme, current_scheme_id, scheme_data=[], field_data=[], editable}} = this.props.model
-    const  field_data_value= field_data['field_value']
+    const field_data_value= field_data['field_value']
     //当为编辑状态只要有一条编辑没有数据则不能点击保存
     let saveDisabled = false
     if(editable === '1') {
@@ -68,7 +68,7 @@ export default class NounDefinition extends React.Component {
       <div>
         <div className={indexStyles.nounDefinitout} ref={`myInput`}>
           {scheme_data.map((parentValue, parentKey)=> {
-            const { field_value = [],name, id, editable } = parentValue
+            const { field_value = [], name, id, editable } = parentValue
             return (
               <div className={`${indexStyles.nounDefinit_col} ${current_scheme_id === id && parentKey!== 0 ?indexStyles.selectedDefinite2: ''}`} key={parentKey}>
                 {/*<div className={indexStyles.selectedDefinite} style={{display: current_scheme_id === id && parentKey !== 0?'block': 'none'}}></div>*/}
@@ -76,10 +76,10 @@ export default class NounDefinition extends React.Component {
                      key={parentKey}
                      onClick={this.selectCol.bind(this, {id, name, editable, parentKey})}
                      style={{borderLeft: parentKey === 0? '1px solid #e5e5e5': 'none',
-                       borderTopLeftRadius:  parentKey===0? '4px': 'none',
-                       borderTopRightRadius:  parentKey===scheme_data.length - 1? '4px': 'none',
-                       marginTop:current_scheme_id === id && parentKey!== 0 ? '-2px': '0',
-                       borderTop:current_scheme_id === id && parentKey!== 0 ?'2px solid rgba(24,144,255,1)': '1px solid #e5e5e5'
+                       borderTopLeftRadius: parentKey===0? '4px': 'none',
+                       borderTopRightRadius: parentKey===scheme_data.length - 1? '4px': 'none',
+                       marginTop: current_scheme_id === id && parentKey!== 0 ? '-2px': '0',
+                       borderTop: current_scheme_id === id && parentKey!== 0 ?'2px solid rgba(24,144,255,1)': '1px solid #e5e5e5'
                      }}>
                   {name}
                 </div>

@@ -10,15 +10,15 @@ export default class ArticleItem extends React.Component {
 
     return (
       <div>
-        {[1,2].map((value, key) => {
+        {[1, 2].map((value, key) => {
           return (
-            <div className={indexstyles.articleItem} >
+            <div className={indexstyles.articleItem} key={key}>
               <div className={indexstyles.articleItemleft}>
                 <div className={indexstyles.hoverUnderline}>{'这是一篇文章'}</div>
                 <div>
-                  <Icon type="calendar" style={{fontSize: 14, color: '#d9d9d9',marginRight: 6}}/>
+                  <Icon type="calendar" style={{fontSize: 14, color: '#d9d9d9', marginRight: 6}}/>
                   {`2018/08/08 12:00`}
-                  <Icon type="eye" style={{fontSize: 14, color: '#d9d9d9',margin: '0 4px 0 8px'}}/>
+                  <Icon type="eye" style={{fontSize: 14, color: '#d9d9d9', margin: '0 4px 0 8px'}}/>
                   {999}
                 </div>
               </div>

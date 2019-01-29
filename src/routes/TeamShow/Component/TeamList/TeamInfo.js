@@ -5,8 +5,8 @@ export default class TeamInfo extends React.Component{
     let templateHtml = ''
     const minHeight = document.body.clientHeight
     return(
-      <div style={{minHeight:minHeight , backgroundColor: '#ffffff', margin: 0, height: 'auto' }}>
-        <div  dangerouslySetInnerHTML={{__html: templateHtml}}></div>
+      <div style={{minHeight: minHeight, backgroundColor: '#ffffff', margin: 0, height: 'auto' }}>
+        <div dangerouslySetInnerHTML={{__html: templateHtml}}></div>
       </div>
     )
   }

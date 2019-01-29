@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 
 export default class ProcessItem extends React.Component {
   gotoBoardDetail(board_id) {
-    Cookies.set('board_id', board_id,{expires: 30, path: ''})
+    Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
   render() {
@@ -26,7 +26,7 @@ export default class ProcessItem extends React.Component {
     }
     return (
       <div className={indexstyles.processItem}>
-        <div>{flow_node_name || name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div>{flow_node_name || name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
         <div>
           <div style={{backgroundColor: filterColor(status)}}></div>
         </div>

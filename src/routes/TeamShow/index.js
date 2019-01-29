@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
 import { Route, Router, Switch, Link } from 'dva/router'
 import dynamic from "dva/dynamic";
@@ -22,7 +22,7 @@ const TeamShow = (options) => {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route:path,
+          route: path,
         },
       })
     },
@@ -66,8 +66,8 @@ const TeamShow = (options) => {
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
 
@@ -88,7 +88,7 @@ const TeamShow = (options) => {
   return (
     <LocaleProvider locale={zh_CN}>
       {/*className={globalClassNmae.page_style_3}*/}
-      <div  style={{ minWidth:1440, position: 'relative'}}>
+      <div style={{ minWidth: 1440, position: 'relative'}}>
         {/*<HeaderNav {...HeaderNavProps} updateDatas={updateDatas} />*/}
         {
           routes.map(({ path, ...dynamics }, key) =>{

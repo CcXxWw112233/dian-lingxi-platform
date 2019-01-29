@@ -54,7 +54,7 @@ class AddModalForm extends React.Component {
     }
     this.setState({
       appsArray
-    },function () {
+    }, function () {
       let stepTwoContinueDisabled = true
       for(let val of this.state.appsArray) {
         if(val && val !== 'itemIsNull') {
@@ -76,7 +76,7 @@ class AddModalForm extends React.Component {
       }
     }
     const { board_id, } = this.props
-    const apps  = appsString
+    const apps = appsString
     this.initialSet()
     this.props.setAddModalFormVisibile()
     this.props.addProjectApp ? this.props.addProjectApp({board_id, apps }) : false
@@ -84,15 +84,15 @@ class AddModalForm extends React.Component {
   render() {
     const { stepTwoContinueDisabled } = this.state
 
-    const {  model, modalVisible,  } = this.props;
+    const { model, modalVisible, } = this.props;
     const { datas = { }} = model
     const { appsList = [], projectDetailInfoData = {} } = datas
     const { app_data = [] } = projectDetailInfoData
 
     const step_2 = (
-      <div style={{margin: '0 auto',width: 392, height: 'auto'}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>项目功能</div>
-        <div  style={{margin: '0 auto',width: 392}}>
+      <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>项目功能</div>
+        <div style={{margin: '0 auto', width: 392}}>
           {appsList.map((value, key) => {
             const { id } = value
             let flag = true //过滤当前项目没有的app
@@ -107,8 +107,8 @@ class AddModalForm extends React.Component {
             )
           })}
         </div>
-        <div style={{marginTop: 20,marginBottom: 40,}}>
-          <Button type="primary" onClick={this.handleSubmit.bind(this)} disabled={stepTwoContinueDisabled}  style={{width: 100, height: 40}}>确认</Button>
+        <div style={{marginTop: 20, marginBottom: 40, }}>
+          <Button type="primary" onClick={this.handleSubmit.bind(this)} disabled={stepTwoContinueDisabled} style={{width: 100, height: 40}}>确认</Button>
         </div>
       </div>
     )
@@ -121,7 +121,7 @@ class AddModalForm extends React.Component {
           width={472}
           footer={null}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
           overInner={step_2}
         >

@@ -10,7 +10,7 @@ import DrawContentModal from './components/DrawContentModal'
 const documentWidth = document.querySelector('body').offsetWidth
 function changeClientHeight() {
   const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
-  return  clientHeight
+  return clientHeight
 }
 export default class CreateTask extends React.Component {
 
@@ -24,8 +24,8 @@ export default class CreateTask extends React.Component {
     super();
     this.state = {
       /*定义两个值用来存放当前元素的left和top值*/
-      needX:0,
-      needY:0
+      needX: 0,
+      needY: 0
     }
     /*定义两个值用来存放鼠标按下的地方距离元素上侧和左侧边界的值*/
     this.disX = 0;
@@ -36,7 +36,7 @@ export default class CreateTask extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
     // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
@@ -71,7 +71,7 @@ export default class CreateTask extends React.Component {
     let target = event.target || event.srcElement;
 
     //在查看任务时不可挪动
-    const { datas:{ drawerVisible  } } = this.props.model
+    const { datas: { drawerVisible } } = this.props.model
     if(drawerVisible) {
       return false
     }
@@ -87,8 +87,8 @@ export default class CreateTask extends React.Component {
       return false
     }
     this.setState({
-      needX:event.clientX - this.disX,
-      needY:event.clientY - this.disY
+      needX: event.clientX - this.disX,
+      needY: event.clientY - this.disY
     });
   }
   fnUp(){
@@ -148,7 +148,7 @@ export default class CreateTask extends React.Component {
     this.props.updateDatas({
       drawerVisible: true,
     })
-    const { drawContent:{ card_id }} = data
+    const { drawContent: { card_id }} = data
     this.props.getCardCommentList(card_id)
     this.props.updateDatas(data)
   }
@@ -164,7 +164,7 @@ export default class CreateTask extends React.Component {
 
   render() {
     const { clientHeight=changeClientHeight() } = this.state
-    const { datas:{ taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
+    const { datas: { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if(clientHeight < 900) {
       corretDegree = 44
@@ -179,10 +179,10 @@ export default class CreateTask extends React.Component {
              style={{height: clientHeight - 172 + corretDegree}}
              ref={'outerMost'}
         >
-          <div  className={CreateTaskStyle.outerMostListContainer} ref={'outerMostListContainer'}>
+          <div className={CreateTaskStyle.outerMostListContainer} ref={'outerMostListContainer'}>
             {taskGroupList.map((value, key) => {
                 return (
-                  <div style={{ width: 'auto',marginRight: 40}}
+                  <div style={{ width: 'auto', marginRight: 40}}
                     key={key}>
                     <TaskItem taskItemValue={value}
                               clientHeight={clientHeight}
@@ -194,7 +194,7 @@ export default class CreateTask extends React.Component {
                 )
               })}
             {getTaskGroupListArrangeType==='1'?(
-              <CreateItem  {...this.props}  ></CreateItem>
+              <CreateItem {...this.props} ></CreateItem>
             ):('')}
           </div>
         </div>

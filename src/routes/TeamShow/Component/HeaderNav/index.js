@@ -23,7 +23,7 @@ export default class HeaderNav extends React.Component{
   addMembers(data) {
     const { users } = data
     const { datas = {} } = this.props.model
-    const {  currentSelectOrganize = {} } = datas
+    const { currentSelectOrganize = {} } = datas
     const { id } = currentSelectOrganize
     this.props.inviteJoinOrganization({
       members: users,
@@ -57,29 +57,29 @@ export default class HeaderNav extends React.Component{
   render() {
     const { datas: { teamShowTypeList = [], teamShowTypeId }} = this.props.model
     const elseOperateMenu = (
-      <Card  className={indexStyle.menuDiv} style={{margin: 0}}>
-        <div className={indexStyle.triangle} style={{left: '50%',marginLeft: -8}} ></div>
+      <Card className={indexStyle.menuDiv} style={{margin: 0}}>
+        <div className={indexStyle.triangle} style={{left: '50%', marginLeft: -8}} ></div>
         <Menu onClick={this.elseOperateMenuClick.bind(this)} selectable={false} >
           {window.location.hash.indexOf('/teamShow/teamList') !== -1? (''): (
-            <Menu.Item key="1" style={{padding:0,margin: 0}}>
+            <Menu.Item key="1" style={{padding: 0, margin: 0}}>
               <div className={indexStyle.itemDiv}>
-                <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>团队展示</span></span>
+                <span className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>团队展示</span></span>
               </div>
             </Menu.Item>
           )}
-          <Menu.Item key="2" style={{padding:0,margin: 0}}>
+          <Menu.Item key="2" style={{padding: 0, margin: 0}}>
             <div className={indexStyle.itemDiv}>
-              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>动态</span></span>
+              <span className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>动态</span></span>
             </div>
           </Menu.Item>
-          <Menu.Item key="3" style={{padding:0,margin: 0}}>
+          <Menu.Item key="3" style={{padding: 0, margin: 0}}>
             <div className={indexStyle.itemDiv}>
-              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>工作台</span></span>
+              <span className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>工作台</span></span>
             </div>
           </Menu.Item>
-          <Menu.Item key="4" style={{padding:0,margin: 0}}>
+          <Menu.Item key="4" style={{padding: 0, margin: 0}}>
             <div className={indexStyle.itemDiv}>
-              <span  className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>项目</span></span>
+              <span className={indexStyle.specificalItem}><span className={indexStyle.specificalItemText}>项目</span></span>
             </div>
           </Menu.Item>
         </Menu>
@@ -100,9 +100,9 @@ export default class HeaderNav extends React.Component{
               {/*)*/}
             {/*})}*/}
             {/*<div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>*/}
-            <Dropdown overlay={elseOperateMenu}  placement={'bottomCenter'}>
+            <Dropdown overlay={elseOperateMenu} placement={'bottomCenter'}>
               <div style={{marginLeft: 30}}>
-                <Icon type="appstore" style={{display:'inline-block',marginTop: 6, fontSize: 16, color: '#262626' }} />
+                <Icon type="appstore" style={{display: 'inline-block', marginTop: 6, fontSize: 16, color: '#262626' }} />
               </div>
             </Dropdown>
           </div>

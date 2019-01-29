@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 let Handlers = function () {
   this.onopen = function (event, ws) {
-    Cookies.set('wsLinking', true,{expires: 30, path: ''})
+    Cookies.set('wsLinking', true, {expires: 30, path: ''})
     console.log('连上了哦')
   }
 
@@ -17,11 +17,11 @@ let Handlers = function () {
       return;
     }
     //设置updateNewMessageItem，在消息更新时使监听 setMessageItemEvent的页面能够不重复更新
-    Cookies.set('updateNewMessageItem', false,{expires: 30, path: ''}) //动态监听
-    Cookies.set('updateNewMessageItem_2', false,{expires: 30, path: ''}) //项目详情监听
+    Cookies.set('updateNewMessageItem', false, {expires: 30, path: ''}) //动态监听
+    Cookies.set('updateNewMessageItem_2', false, {expires: 30, path: ''}) //项目详情监听
     //重写setItem，将最新消息存储 动态和详情区分开
     let orignalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key,newValue){
+    localStorage.setItem = function(key, newValue){
       let setMessageItemEvent = new Event("setMessageItemEvent");
       setMessageItemEvent.key=key;
       setMessageItemEvent.newValue = newValue;
@@ -31,7 +31,7 @@ let Handlers = function () {
       setMessageItemEvent_2.key=key;
       setMessageItemEvent_2.newValue = newValue;
       window.dispatchEvent(setMessageItemEvent_2);
-      orignalSetItem.apply(this,arguments);
+      orignalSetItem.apply(this, arguments);
     }
     localStorage.setItem('newMessage', JSON.stringify(data));
 
@@ -40,7 +40,7 @@ let Handlers = function () {
   }
 
   this.onclose = function (e, ws) {
-    Cookies.set('wsLinking', false,{expires: 30, path: ''})
+    Cookies.set('wsLinking', false, {expires: 30, path: ''})
     // console.log('连接断开')
   }
 

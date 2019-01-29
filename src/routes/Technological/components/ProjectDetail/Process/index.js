@@ -13,19 +13,19 @@ export default class ProcessIndex extends React.Component {
       let containner = (<div></div>)
       switch (processPageFlagStep) {
         case '1':
-          containner =  (<WelcomProcess {...this.props}/>)
+          containner = (<WelcomProcess {...this.props}/>)
           break
         case '2':
-          containner =  (<EditProcess {...this.props}/>)
+          containner = (<EditProcess {...this.props}/>)
           break
         case '3':
-          containner =  (<ProcessStartConfirm {...this.props}></ProcessStartConfirm>)
+          containner = (<ProcessStartConfirm {...this.props}></ProcessStartConfirm>)
           break
         case '4':
-          containner =  (<ProcessDetail {...this.props}/>)
+          containner = (<ProcessDetail {...this.props}/>)
           break
         default:
-          containner =  (<WelcomProcess {...this.props}/>)
+          containner = (<WelcomProcess {...this.props}/>)
           break
       }
       return containner

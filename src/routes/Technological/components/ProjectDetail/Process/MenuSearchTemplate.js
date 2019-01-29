@@ -66,12 +66,12 @@ export default class MenuSearchTemplate extends React.Component{
     const resultArrPermission = checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)?resultArr : []
     return (
       <Menu style={{padding: 8}} onClick={this.handleMenuReallyClick.bind(this)}>
-        <Input placeholder={`搜索${currentNounPlanFilterName(FLOWS)}模板`}  value={keyWord}  onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
+        <Input placeholder={`搜索${currentNounPlanFilterName(FLOWS)}模板`} value={keyWord} onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
         {
           resultArrPermission.map((value, key) => {
             const { template_name, template_id, template_no } = value
             return (
-              <Menu.Item style={{height: 32,lineHeight: '32px'}} key={key} >
+              <Menu.Item style={{height: 32, lineHeight: '32px'}} key={key} >
                 {template_name}
               </Menu.Item>
             )

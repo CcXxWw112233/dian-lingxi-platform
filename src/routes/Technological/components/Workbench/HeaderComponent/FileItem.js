@@ -49,25 +49,25 @@ export default class FileItem extends React.Component {
     }
     return themeCode
   }
-  gotoBoardDetail(board_id,e) {
+  gotoBoardDetail(board_id, e) {
     stopPropagation(e)
-    Cookies.set('board_id', board_id,{expires: 30, path: ''})
+    Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
-  previewFile(file_resource_id,e) {
+  previewFile(file_resource_id, e) {
     this.props.setPreviewFileModalVisibile()
-    this.props.filePreview({id: file_resource_id,})
+    this.props.filePreview({id: file_resource_id, })
   }
   render() {
     const { itemValue = {} } = this.props
 
     const fileNameData = [
       {
-        name:'这是一张图片.png'
-      },{
-        name:'这是一张图片.jpg'
-      },{
-        name:'这是一份文档.doc'
+        name: '这是一张图片.png'
+      }, {
+        name: '这是一张图片.jpg'
+      }, {
+        name: '这是一份文档.doc'
       }
     ]
 
@@ -75,11 +75,11 @@ export default class FileItem extends React.Component {
       <div>
         {fileNameData.map((value, key) => {
            return(
-             <div className={indexstyles.fileItem}>
+             <div className={indexstyles.fileItem} key={key}>
                <div>
-                 <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(value.name)}}></i>
+                 <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(value.name)}}></i>
                </div>
-               <div><span className={indexstyles.hoverUnderline}>{value.name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} >#项目A</span></div>
+               <div><span className={indexstyles.hoverUnderline}>{value.name}</span><span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} >#项目A</span></div>
                <div>
                  {`2018/08/08 12:00` }
                </div>

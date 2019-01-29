@@ -90,7 +90,7 @@ export default class CardContentArticle extends React.Component{
         listData: Number(page_no) === 1? res.data : listData.concat(...data),
         scrollBlock: !(data.length < page_size),
         loadMoreText: (data.length < page_size)?'暂无更多数据': '加载中...',
-      },() => {
+      }, () => {
         this.setState({
           loadMoreDisplay: this.state.listData.length?'block': 'none',
         })
@@ -106,13 +106,13 @@ export default class CardContentArticle extends React.Component{
       this.setState({
         page_no: ++this.state.page_no,
         scrollBlock: false
-      },() => {
+      }, () => {
         this.getArticleList()
       })
     }
   }
 
-  getArticleDetail(id,e) {
+  getArticleDetail(id, e) {
     this.setPreviewArticleModalVisibile()
     this.props.getArticleDetail({
       id,
@@ -135,7 +135,7 @@ export default class CardContentArticle extends React.Component{
         <Menu
           onClick={this.handleMenuClick.bind(this)}
           // selectedKeys={[this.state.current]}
-          mode="horizontal"
+          // mode="horizontal"
         >
           <Menu.Item key="rename">
             重命名
@@ -159,7 +159,7 @@ export default class CardContentArticle extends React.Component{
             ) : (
               <Input value={localTitle}
                 // className={indexStyle.projectName}
-                     style={{resize: 'none',color: '#595959', fontSize: 16}}
+                     style={{resize: 'none', color: '#595959', fontSize: 16}}
                      maxLength={30}
                      autoFocus
                      onChange={this.localTitleChange.bind(this)}
@@ -177,9 +177,9 @@ export default class CardContentArticle extends React.Component{
           </div>
           <div className={indexstyles.contentBody} onScroll={this.contentBodyScroll.bind(this)}>
             {listData.map((value, key) => {
-              const { title,id} = value
+              const { title, id} = value
               return (
-                <div  key={id} onClick={this.getArticleDetail.bind(this, id)}>
+                <div key={id} onClick={this.getArticleDetail.bind(this, id)}>
                   <ArticleItem {...this.props} appType={appType} itemValue={value}/>
                 </div>
               )
@@ -192,7 +192,7 @@ export default class CardContentArticle extends React.Component{
 
         </div>
 
-        <PreviewArticleModal {...this.props}  modalVisible={this.state.previewArticleModalVisibile} setPreviewArticleModalVisibile={this.setPreviewArticleModalVisibile.bind(this)} />
+        <PreviewArticleModal {...this.props} modalVisible={this.state.previewArticleModalVisibile} setPreviewArticleModalVisibile={this.setPreviewArticleModalVisibile.bind(this)} />
       </div>
     )
   }

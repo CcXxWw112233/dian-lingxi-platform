@@ -11,11 +11,11 @@ export default class CollectionProjectItem extends React.Component {
   render() {
     const cancelStarProjet = (
       <i className={globalStyles.authTheme}
-         style={{color: '#FAAD14 ',fontSize: 16}}>&#xe70e;</i>
+         style={{color: '#FAAD14 ', fontSize: 16}}>&#xe70e;</i>
     )
     const starProject = (
       <i className={globalStyles.authTheme}
-         style={{color: '#FAAD14 ',fontSize: 16}}>&#xe6f8;</i>
+         style={{color: '#FAAD14 ', fontSize: 16}}>&#xe6f8;</i>
     )
 
     return (
@@ -35,7 +35,7 @@ export default class CollectionProjectItem extends React.Component {
             </div>
           </div>
           <div className={indexstyles.right}>
-            <Icon type="right" style={{fontSize:16}}/>
+            <Icon type="right" style={{fontSize: 16}}/>
           </div>
         </div>
         <div className={indexstyles.collectionProjectItem}>
@@ -53,7 +53,7 @@ export default class CollectionProjectItem extends React.Component {
             </div>
           </div>
           <div className={indexstyles.right}>
-            <Icon type="right" style={{fontSize:16}}/>
+            <Icon type="right" style={{fontSize: 16}}/>
           </div>
         </div>
       </div>

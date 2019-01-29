@@ -2,7 +2,7 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown, message } from 'antd'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   ORG_UPMS_ORGANIZATION_MEMBER_EDIT, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE
@@ -23,7 +23,7 @@ export default class ItemTwo extends React.Component {
     }
     const { key } = e
     if(key === '1') {
-      const { itemValue:{ member_id} } = this.props
+      const { itemValue: { member_id} } = this.props
       this.props.approvalMember({
         member_id,
         status: '0'
@@ -50,19 +50,19 @@ export default class ItemTwo extends React.Component {
     )
 
     return (
-      <div  key={'2'} className={CreateTaskStyle.item_2} >
+      <div key={'2'} className={CreateTaskStyle.item_2} >
         <div className={CreateTaskStyle.item_2_left}>
           <div className={CreateTaskStyle.avatar}>
             <Avatar size={40} icon="user" src={avatar}/>
           </div>
-          <div  className={CreateTaskStyle.detail}>
+          <div className={CreateTaskStyle.detail}>
              <div>{name}</div>
              <div>{role_name}</div>
           </div>
         </div>
         <div className={CreateTaskStyle.item_2_right}>
           <Dropdown overlay={operateMenu()}>
-             <Button onClick={this.passMember.bind(this,{member_id, status: '2'})} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
+             <Button onClick={this.passMember.bind(this, {member_id, status: '2'})} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
           </Dropdown>
         </div>
       </div>
@@ -73,7 +73,7 @@ export default class ItemTwo extends React.Component {
 const customPanelStyle = {
   background: '#f5f5f5',
   borderRadius: 4,
-  fontSize:12,
+  fontSize: 12,
   color: '#8c8c8c',
   border: 0,
   overflow: 'hidden',

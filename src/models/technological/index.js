@@ -1,5 +1,5 @@
 import { getUSerInfo, logout } from '../../services/technological'
-import { getOrganizationMemberPermissions,changeCurrentOrg,getSearchOrganizationList,createOrganization,updateOrganization,applyJoinOrganization,inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
+import { getOrganizationMemberPermissions, changeCurrentOrg, getSearchOrganizationList, createOrganization, updateOrganization, applyJoinOrganization, inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
 import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select";
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -7,7 +7,7 @@ import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { initWs}  from '../../components/WsNewsDynamic'
+import { initWs} from '../../components/WsNewsDynamic'
 import { selectNewMessageItem, selectImData } from './select'
 import QueryString from 'querystring'
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
@@ -44,7 +44,7 @@ export default {
           })
           //如果cookie存在用户信息，则部请求，反之则请求
           dispatch({
-            type:'getUSerInfo',
+            type: 'getUSerInfo',
             payload: {}
           })
           // if(!Cookies.get('userInfo')) {
@@ -67,7 +67,7 @@ export default {
           // }
           //查询所在组织列表
           dispatch({
-            type:'getCurrentUserOrganizes',
+            type: 'getCurrentUserOrganizes',
             payload: {}
           })
           //websocket连接判定
@@ -76,7 +76,7 @@ export default {
           }
           //页面移出时对socket和socket缓存的内容清除
           window.onbeforeunload = function () {
-            Cookies.set('wsLinking', false,{expires: 30, path: ''})
+            Cookies.set('wsLinking', false, {expires: 30, path: ''})
             localStorage.removeItem(`newMessage`)
           }
 
@@ -97,9 +97,9 @@ export default {
         }
 
         //切换组织时需要重新加载
-        const param =  QueryString.parse(location.search.replace('?', '')) || {}
+        const param = QueryString.parse(location.search.replace('?', '')) || {}
         const { redirectHash } = param
-        if(location.pathname === '/technological'  && redirectHash) {
+        if(location.pathname === '/technological' && redirectHash) {
           dispatch({
             type: 'routingJump',
             payload: {
@@ -124,7 +124,7 @@ export default {
 
     //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
     * onlyGetUserInfo({ payload }, { select, call, put }) {
-      let res = yield call(getUSerInfo, {ss:'1'})
+      let res = yield call(getUSerInfo, {ss: '1'})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -133,7 +133,7 @@ export default {
           }
         })
         //存储
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -152,17 +152,17 @@ export default {
         //当前选中的组织
         if(res.data.current_org ) {
           localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
-           yield put({  //  获取当前成员在组织中的权限列表
+           yield put({ //  获取当前成员在组织中的权限列表
              type: 'getOrganizationMemberPermissions',
              payload: {}
            })
         }
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
 
         //组织切换重新加载
         const { operateType } = payload
         if(operateType === 'changeOrg') {
-          let redirectHash =  locallocation.pathname
+          let redirectHash = locallocation.pathname
           if(locallocation.pathname === '/technological/projectDetail') {
             redirectHash = '/technological/project'
           }
@@ -191,7 +191,7 @@ export default {
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
         Cookies.remove('userInfo', { path: '' })
-        window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -221,7 +221,7 @@ export default {
         }
 
         if(res.data.length) { //当前选中的组织id OrgId要塞在sessionStorage
-          Cookies.set('org_id', res.data[0].id,{expires: 30, path: ''})
+          Cookies.set('org_id', res.data[0].id, {expires: 30, path: ''})
         }
         const { calback } = payload
         if (typeof calback === 'function') {
@@ -234,7 +234,7 @@ export default {
       let res = yield call(changeCurrentOrg, payload)
       if(isApiResponseOk(res)) {
         const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         yield put({
           type: 'getUSerInfo',
@@ -274,7 +274,7 @@ export default {
       })
       if(isApiResponseOk(res)) {
         yield put({
-          type:'updateDatas',
+          type: 'updateDatas',
           payload: {
             searchOrganizationList: res.data
           }
@@ -290,13 +290,13 @@ export default {
           type: 'getCurrentUserOrganizes',
           payload: {
             operateType: 'create',
-            calback : function () {
-              message.success(`创建${currentNounPlanFilterName(ORGANIZATION)}成功`,MESSAGE_DURATION_TIME)
+            calback: function () {
+              message.success(`创建${currentNounPlanFilterName(ORGANIZATION)}成功`, MESSAGE_DURATION_TIME)
             }
           }
         })
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * updateOrganization({ payload }, { select, call, put }) {
@@ -311,21 +311,21 @@ export default {
         yield put({
           type: 'getCurrentUserOrganizes',
           payload: {
-            calback : function () {
-              message.success(`申请加入${currentNounPlanFilterName(ORGANIZATION)}成功`,MESSAGE_DURATION_TIME)
+            calback: function () {
+              message.success(`申请加入${currentNounPlanFilterName(ORGANIZATION)}成功`, MESSAGE_DURATION_TIME)
             }
           }
         })
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * inviteJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(inviteJoinOrganization, payload)
       if(isApiResponseOk(res)) {
-        message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
+        message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * getOrganizationMemberPermissions({ payload }, { select, call, put }) {
@@ -340,7 +340,7 @@ export default {
         localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data || []))
       }else{
         localStorage.setItem('organizationMemberPermissions', JSON.stringify([]))
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     //组织 -----------
@@ -351,7 +351,7 @@ export default {
       if(isApiResponseOk(res)) {
         localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

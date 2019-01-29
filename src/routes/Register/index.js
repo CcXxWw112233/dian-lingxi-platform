@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import QueueAnim from  'rc-queue-anim'
-import { Row,  Col} from 'antd'
+import QueueAnim from 'rc-queue-anim'
+import { Row, Col} from 'antd'
 import { Card } from 'antd'
 import FormList from './FormList'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
@@ -45,16 +45,16 @@ const Register = (options) => {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route:path,
+          route: path,
         },
       })
     }
   }
   return (
     <div className={globalClassNmae.page_style_2}>
-      <QueueAnim  type="top">
+      <QueueAnim type="top">
         <div key={'reigster'}>
-          <div  style={{ maxWidth: 472,margin: '0 auto',width: '100%',background: '#FFFFFF',
+          <div style={{ maxWidth: 472, margin: '0 auto', width: '100%', background: '#FFFFFF',
             border: '1px solid rgba(217,217,217,1)',
             borderRadius: '4px'}}>
             <TopContent text={'欢迎加入'} productName={'灵犀'}/>

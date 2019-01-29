@@ -12,7 +12,7 @@ export default class EditTeamShowContent extends React.Component {
 
   handleEditorChangeProps(value) {
     this.props.updateDatas({
-      content:value
+      content: value
     })
   }
 
@@ -20,10 +20,10 @@ export default class EditTeamShowContent extends React.Component {
     return (
       <div id={'editTeamShowOut'} className={indexStyles.editTeamShowOut}>
         <div className={indexStyles.editTeamShow}>
-          <BaseInfo {...this.props}  />
-          <Edit  {...this.props} handleEditorChangeProps={this.handleEditorChangeProps.bind(this)}/>
+          <BaseInfo {...this.props} />
+          <Edit {...this.props} handleEditorChangeProps={this.handleEditorChangeProps.bind(this)}/>
           <div style={{height: 60}}></div>
-          <PreviewModal  {...this.props}  />
+          <PreviewModal {...this.props} />
         </div>
       </div>
     )

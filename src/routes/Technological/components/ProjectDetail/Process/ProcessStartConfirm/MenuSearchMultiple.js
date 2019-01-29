@@ -30,7 +30,7 @@ export default class MenuSearchMultiple extends React.Component{
      this.setState({
        selectedKeys
      })
-     this.props.setAssignees &&  this.props.setAssignees(selectedKeys)
+     this.props.setAssignees && this.props.setAssignees(selectedKeys)
    }
    menuSelect = ({ item, key, selectedKeys }) => {
       if(!key){
@@ -39,7 +39,7 @@ export default class MenuSearchMultiple extends React.Component{
      this.setState({
        selectedKeys
      })
-     this.props.setAssignees &&  this.props.setAssignees(selectedKeys)
+     this.props.setAssignees && this.props.setAssignees(selectedKeys)
    }
   //模糊查询
   fuzzyQuery = (list, keyWord) => {
@@ -65,11 +65,11 @@ export default class MenuSearchMultiple extends React.Component{
     const { selectedKeys, keyWord, resultArr } = this.state
     return (
     <Menu multiple={!noMutiple} style={{padding: 8}} selectedKeys={selectedKeys} onDeselect={this.menuDeselect.bind(this)} onSelect={this.menuSelect.bind(this)}>
-      <Input value={keyWord}  onChange={this.onChange.bind(this)}/>
+      <Input value={keyWord} onChange={this.onChange.bind(this)}/>
       {
         resultArr.map((val, key) => {
           return (
-            <Menu.Item style={{height: 32,lineHeight: '32px'}} key={key}>
+            <Menu.Item style={{height: 32, lineHeight: '32px'}} key={key}>
               {val}
             </Menu.Item>
           )

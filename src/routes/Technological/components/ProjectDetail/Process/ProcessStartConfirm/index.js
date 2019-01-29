@@ -52,7 +52,7 @@ export default class ProcessStartConfirm extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { processEditDatas, templateInfo = {}  } } = this.props.model
+    const { datas: { processEditDatas, templateInfo = {} } } = this.props.model
     const { name, description, id } = templateInfo
     this.props.createProcess({
       description,
@@ -68,11 +68,11 @@ export default class ProcessStartConfirm extends React.Component {
     const editorProps = {
       height: 0,
       contentFormat: 'html',
-      placeholder:'输入流程描述',
-      contentStyle:{minHeight: 150,height:'auto'},
+      placeholder: '输入流程描述',
+      contentStyle: {minHeight: 150, height: 'auto'},
       initialContent: description,
-      onHTMLChange:(e) => {
-        const { datas:{ templateInfo = {} } } = this.props.model
+      onHTMLChange: (e) => {
+        const { datas: { templateInfo = {} } } = this.props.model
         templateInfo['description'] = e
         this.props.updateDatas({templateInfo})
       },
@@ -92,16 +92,16 @@ export default class ProcessStartConfirm extends React.Component {
            containner = (<ConfirmInfoOne itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '2':
-           containner = (<ConfirmInfoTwo  itemKey={key} itemValue={value} {...this.props}/>)
+           containner = (<ConfirmInfoTwo itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '3':
-           containner = (<ConfirmInfoThree  itemKey={key} itemValue={value} {...this.props}/>)
+           containner = (<ConfirmInfoThree itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '4':
-           containner = (<ConfirmInfoFour  itemKey={key} itemValue={value} {...this.props}/>)
+           containner = (<ConfirmInfoFour itemKey={key} itemValue={value} {...this.props}/>)
            break
          case '5':
-           containner = (<ConfirmInfoFive  itemKey={key} itemValue={value} {...this.props}/>)
+           containner = (<ConfirmInfoFive itemKey={key} itemValue={value} {...this.props}/>)
            break
          default:
            containner = (<div></div>)
@@ -118,18 +118,18 @@ export default class ProcessStartConfirm extends React.Component {
             {/*<div>投决立项</div>*/}
           {/*</div>*/}
           <div style={{marginTop: 14}}>
-            <Input placeholder={'输入流程名称'} defaultValue={name} style={{height: 40,fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
+            <Input placeholder={'输入流程名称'} defaultValue={name} style={{height: 40, fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
           </div>
           <div className={indexStyles.editorWraper}>
-            <BraftEditor {...editorProps} style={{fontSize:12}}/>
+            <BraftEditor {...editorProps} style={{fontSize: 12}}/>
           </div>
           <div style={{marginTop: 14}}>
             {processEditDatas.map((value, key) => {
               return (<div key={key}>{filterItem(value, key)}</div>)
             })}
           </div>
-          <div style={{textAlign: 'center',marginTop: 40}} >
-            <Button disabled={!!!name || !this.verrificationForm()} style={{height: 40,lineHeight: '40px',margin: '0 auto'}} type={'primary'} onClick={this.startProcess.bind(this)}>开始流程</Button>
+          <div style={{textAlign: 'center', marginTop: 40}} >
+            <Button disabled={!!!name || !this.verrificationForm()} style={{height: 40, lineHeight: '40px', margin: '0 auto'}} type={'primary'} onClick={this.startProcess.bind(this)}>开始流程</Button>
           </div>
         </Card>
       </div>

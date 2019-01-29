@@ -1,4 +1,4 @@
-import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow,getCurrentOrgTeamShowList } from '../../../services/teamShow'
+import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow, getCurrentOrgTeamShowList } from '../../../services/teamShow'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, PAGINATION_PAGE_SIZE} from "../../../globalset/js/constant";
@@ -18,11 +18,11 @@ export default modelExtend(technological, {
         if (location.pathname === '/technological/workbench') {
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               //  团队展示发布
               teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
               editTeamShowPreview: false, //编辑预览状态
-              editTeamShowSave: false,  //编辑保存状态
+              editTeamShowSave: false, //编辑保存状态
               teamShowTypeList: [], //团队秀类型
               currentOrgTeamShowList: [], //当前组织团队秀类型
               operateType: '1', //1新增， 2 修改
@@ -41,7 +41,7 @@ export default modelExtend(technological, {
           })
           dispatch({
             type: 'getTeamShowTypeList',
-            payload:{}
+            payload: {}
           })
           dispatch({
             type: 'getCurrentOrgTeamShowList',
@@ -134,7 +134,7 @@ export default modelExtend(technological, {
             currentTeamShowName: '',
             currentTeamShowId: '',
             currentTeamShowShowId: '',
-            currentTeamShowTypeId:''
+            currentTeamShowTypeId: ''
           }
         })
         yield put({
@@ -151,7 +151,7 @@ export default modelExtend(technological, {
     },
     * getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
       const { calBack } = payload
-      let res = yield call(getTeamShowList, {current: '1', size: PAGINATION_PAGE_SIZE,})
+      let res = yield call(getTeamShowList, {current: '1', size: PAGINATION_PAGE_SIZE, })
       if(isApiResponseOk(res)) {
         if(res.data.records && res.data.records.length) {
           yield put({

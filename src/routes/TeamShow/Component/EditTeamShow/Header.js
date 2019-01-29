@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyle from './index.less'
-import { Icon, Menu, Dropdown, Tooltip,Button } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Button } from 'antd'
 import SaveModal from './SaveModal'
 import {color_4} from '../../../../globalset/js/styles'
 import BraftEditor from 'braft-editor'
@@ -46,7 +46,7 @@ export default class Header extends React.Component {
           currentTeamShowShowId: '',
           currentTeamShowName: '',
           currentTeamShowId: '',
-          currentTeamShowTypeId:'',
+          currentTeamShowTypeId: '',
         })
         break
       default:
@@ -90,12 +90,12 @@ export default class Header extends React.Component {
             </div>
           </Dropdown>
           <div className={indexStyle.right}>
-            <div style={{display: 'flex',alignItems: 'center', }}>
+            <div style={{display: 'flex', alignItems: 'center', }}>
               {operateType === '2'? (
-                <Button  style={{height: 24,color: '#F5222D',background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(217,217,217,1)'}} onClick={this.deleteTeam.bind(this,currentTeamShowShowId)}>删除</Button>
+                <Button style={{height: 24, color: '#F5222D', background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(217,217,217,1)'}} onClick={this.deleteTeam.bind(this, currentTeamShowShowId)}>删除</Button>
               ) : ('')}
-              <Button  style={{height: 24,marginLeft:14}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
-              <Button type={'primary'}  style={{height: 24,marginLeft:14}} onClick={this.editTeamShowSave.bind(this)}>保存</Button>
+              <Button style={{height: 24, marginLeft: 14}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
+              <Button type={'primary'} style={{height: 24, marginLeft: 14}} onClick={this.editTeamShowSave.bind(this)}>保存</Button>
             </div>
           </div>
         </div>

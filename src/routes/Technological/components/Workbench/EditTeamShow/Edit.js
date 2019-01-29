@@ -18,7 +18,7 @@ export default class Edit extends React.Component {
     this.props.handleEditorChangeProps(content)
   }
   isJSON = (str) => {
-    if (typeof str == 'string') {
+    if (typeof str === 'string') {
       try {
         var obj=JSON.parse(str);
         if(str.indexOf('{')>-1){
@@ -35,7 +35,7 @@ export default class Edit extends React.Component {
   }
   myUploadFn = (param) => {
     const serverURL = `${REQUEST_DOMAIN_TEAM_SHOW}/upload`
-    const xhr = new XMLHttpRequest
+    const xhr = new XMLHttpRequest()
     const fd = new FormData()
 
     const successFn = (response) => {
@@ -102,7 +102,7 @@ export default class Edit extends React.Component {
             contentFormat = {'html'}
             onChange = {this.handleEditorChange.bind(this)}
             media={{uploadFn: this.myUploadFn}}
-            contentStyle={{minHeight: 500, height: 1000,overflow: 'auto'}}
+            contentStyle={{minHeight: 500, height: 1000, overflow: 'auto'}}
           />
         )}
 

@@ -13,8 +13,8 @@ export default class CreateGroup extends React.Component {
     super();
     this.state = {
       /*定义两个值用来存放当前元素的left和top值*/
-      needX:0,
-      needY:0
+      needX: 0,
+      needY: 0
     }
     /*定义两个值用来存放鼠标按下的地方距离元素上侧和左侧边界的值*/
     this.disX = 0;
@@ -52,8 +52,8 @@ export default class CreateGroup extends React.Component {
       return false
     }
     this.setState({
-      needX:event.clientX - this.disX,
-      needY:event.clientY - this.disY
+      needX: event.clientX - this.disX,
+      needY: event.clientY - this.disY
     });
   }
   fnUp(){
@@ -62,11 +62,11 @@ export default class CreateGroup extends React.Component {
   }
 
   render() {
-    const { datas:{ groupList = [] }} = this.props.model
+    const { datas: { groupList = [] }} = this.props.model
     return (
       <div className={CreateTaskStyle.outerMost}
            style={{
-             left:this.state.needX,
+             left: this.state.needX,
             }}
            onMouseDown={this.fnDown.bind(this)}
            ref={'outerMost'}
@@ -77,8 +77,8 @@ export default class CreateGroup extends React.Component {
                         {...this.props}></CreateGroupItem>
             )
           })}
-          <CreateItem  {...this.props}  ></CreateItem>
-        <TreeGroupModal  {...this.props}/>
+          <CreateItem {...this.props} ></CreateItem>
+        <TreeGroupModal {...this.props}/>
 
       </div>
     )

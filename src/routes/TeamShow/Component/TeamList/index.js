@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "dva/index";
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
 import TeamInfo from './TeamInfo'
 import TeamList from './TeamList'
@@ -16,14 +16,14 @@ const Team = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
   const EditTeamShowContentProps = {

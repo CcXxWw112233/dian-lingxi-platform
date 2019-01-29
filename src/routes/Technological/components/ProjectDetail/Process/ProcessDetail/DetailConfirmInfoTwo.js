@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Tooltip,Avatar } from 'antd'
-import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Tooltip, Avatar } from 'antd'
+import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
 import { deleteProcessFile, getProcessList } from '../../../../../../services/technological/process'
@@ -24,10 +24,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
     previewFileModalVisibile: false, //预览
     filePreviewIsUsable: true,
     filePreviewUrl: '',
-    current_file_resource_id:''
+    current_file_resource_id: ''
   }
   componentWillMount(nextProps) {
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     //设置底部可伸缩部分id
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
@@ -41,7 +41,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
   }
   //初始化设置fileList
   initSetFileList(props) {
-    const { itemKey  } = props
+    const { itemKey } = props
     const { datas: { processEditDatas } } = this.props.model
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
     let fileList = []
@@ -82,10 +82,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
   }
   datePickerChange(date, dateString) {
     this.setState({
-      due_time:dateString
+      due_time: dateString
     })
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
     this.props.updateDatas({
       processEditDatas
@@ -94,7 +94,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     const { assignees = [] } = processEditDatas[itemKey]
     const userInfo = JSON.parse(Cookies.get('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
@@ -104,7 +104,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     for(let i = 0; i < assignees.length; i++) {
       if(assignees[i].user_id === currentUserId) {
         assignees[i] = users[data[0]]
-        willSetAssignee =  users[data[0]].user_id
+        willSetAssignee = users[data[0]].user_id
         break;
       }
     }
@@ -123,16 +123,16 @@ export default class DetailConfirmInfoTwo extends React.Component {
   setIsShowBottDetail() {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
-    },function () {
-      this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
+    }, function () {
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
     })
     const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == "undefined") return;
+    if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = "auto";
     const targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
@@ -226,7 +226,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation,require_data={} } = processEditDatas[itemKey]
+    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data={} } = processEditDatas[itemKey]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
     const fileTypeArray = limit_file_type.split(',') //文档类型
@@ -263,13 +263,13 @@ export default class DetailConfirmInfoTwo extends React.Component {
     }
 
     const imgOrAvatar = (img) => {
-      return  img ? (
+      return img ? (
         <div>
-          <img src={img} style={{width: 18, height: 18,marginRight:8,borderRadius: 16, margin:'0 8px'}} />
+          <img src={img} style={{width: 18, height: 18, marginRight: 8, borderRadius: 16, margin: '0 8px'}} />
         </div>
       ):(
-        <div style={{lineHeight: '18px',height:18,width: 16,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
-          <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
+        <div style={{lineHeight: '18px', height: 18, width: 16, borderRadius: 18, backgroundColor: '#e8e8e8', marginRight: 8, textAlign: 'center', margin: '0 8px', marginTop: 2, }}>
+          <Icon type={'user'} style={{fontSize: 10, color: '#8c8c8c', }}/>
         </div>
       )
     }
@@ -281,12 +281,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
           break
         case '2':
           container = (
-            <div  style={{display: 'flex'}}>
+            <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name, mobile, email } = value
                 if (key <= 6)
                   return(
-                    <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
+                    <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
@@ -296,12 +296,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
           break
         case '3':
           container = (
-            <div  style={{display: 'flex'}}>
+            <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
                 if (key <= 6)
                   return(
-                    <Tooltip  key={key} placement="top" title={name || '佚名'}>
+                    <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
@@ -324,7 +324,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         case '2':
           container = (
             <div style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '/',true)}
+              {timestampToTimeNormal(deadline_value, '/', true)}
             </div>
           )
           break
@@ -339,11 +339,11 @@ export default class DetailConfirmInfoTwo extends React.Component {
     }
     const filterBorderStyle = (sort) => {
       if (Number(sort) < Number(curr_node_sort)) {
-        return {border:'2px solid rgba(83,196,26,1)'}
+        return {border: '2px solid rgba(83,196,26,1)'}
       }else if(Number(sort) === Number(curr_node_sort)) {
-        return {border:'2px solid rgba(24,144,255,1)'}
+        return {border: '2px solid rgba(24,144,255,1)'}
       }else if(Number(sort) > Number(curr_node_sort)) {
-        return {border:'2px solid rgba(140,140,140,1)'}
+        return {border: '2px solid rgba(140,140,140,1)'}
       }else {}
     }
     const filterBottOperate = () => {
@@ -355,7 +355,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div>
               {enable_revocation === '1' ? (
                 <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-                  <Button  onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
+                  <Button onClick={this.setOpinionModalVisible.bind(this, '0')} style={{color: 'red'}}>撤回</Button>
                 </div>
               ):(<div></div>)}
             </div>
@@ -432,13 +432,13 @@ export default class DetailConfirmInfoTwo extends React.Component {
       return (
         <div className={indexStyles.commentListItem}>
           <div className={indexStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={indexStyles.right}>
             <div className={indexStyles.top}>
               <div className={indexStyles.full_name}>{name}</div>
               <div className={indexStyles.create_time}>
-                {time?timestampToTimeNormal(time,'',true): ''}
+                {time?timestampToTimeNormal(time, '', true): ''}
               </div>
             </div>
             <div className={indexStyles.text}>{comment}</div>
@@ -450,15 +450,15 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const dragProps = {
       name: 'file',
       multiple: true,
-      withCredentials:true,
+      withCredentials: true,
       action: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
       data: {
-        flow_instance_id : processInfo.id,
-        node_instance_id : processEditDatas[itemKey].id
+        flow_instance_id: processInfo.id,
+        node_instance_id: processEditDatas[itemKey].id
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       fileList: this.state.fileList,
       beforeUpload(e) {
@@ -477,7 +477,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
 
         }
       },
-      onChange(info, e ,d) {
+      onChange(info, e, d) {
         if(fileList.length >= limit_file_num ) { //已经上传的文件达到限制
           return false
         }
@@ -488,7 +488,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         }else {
         }
         // console.log('info',info)
-        if (info.file.status === 'done' &&  info.file.response.code === '0') {
+        if (info.file.status === 'done' && info.file.response.code === '0') {
           message.success(`${info.file.name} 上传成功。`);
         } else if (info.file.status === 'error' || (info.file.response && info.file.response.code !== '0')) {
           // info.fileList.pop()
@@ -500,10 +500,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
           message.error(`${info.file.name} 上传失败。`);
         }
         that.setState({
-          fileList:  info.fileList.length < limit_file_num ? info.fileList : info.fileList.slice(0, limit_file_num)
+          fileList: info.fileList.length < limit_file_num ? info.fileList : info.fileList.slice(0, limit_file_num)
         })
         const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
-        that.funTransitionHeight(element, 500,  true)
+        that.funTransitionHeight(element, 500, true)
       },
       onRemove(e) {
         // const message = e.response.message
@@ -515,7 +515,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
               reject()
             }else {
               const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
-              that.funTransitionHeight(element, 500,  true)
+              that.funTransitionHeight(element, 500, true)
               resolve()
             }
           }).catch(err => {
@@ -542,7 +542,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
-        <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
+        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
@@ -554,7 +554,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
               {filterDueTime(deadline_type)}
-              <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
+              <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
           <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={ConfirmInfoOut_1_bott_Id} >
@@ -575,7 +575,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           </div>
         </Card>
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
-        <PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
+        <PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
       </div>
     )
   }

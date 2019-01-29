@@ -33,7 +33,7 @@ const AccountSet = (options) => {
     },
     getVerificationcode(data, calback) {
       dispatch({
-        type:getEffectOrReducerByName('getVerificationcode'),
+        type: getEffectOrReducerByName('getVerificationcode'),
         payload: {
           data,
           calback
@@ -42,33 +42,33 @@ const AccountSet = (options) => {
     },
     checkMobileIsRegisted(data) {
       dispatch({
-        type:getEffectOrReducerByName('checkMobileIsRegisted'),
+        type: getEffectOrReducerByName('checkMobileIsRegisted'),
         payload: { data }
       })
     },
     checkEmailIsRegisted(data) {
       dispatch({
-        type:getEffectOrReducerByName('checkEmailIsRegisted'),
+        type: getEffectOrReducerByName('checkEmailIsRegisted'),
         payload: { data }
       })
     },
     getUserInfo(data) {
       dispatch({
-        type:getEffectOrReducerByName('getUserInfo'),
+        type: getEffectOrReducerByName('getUserInfo'),
         payload: data
       })
     }
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
     return(
       <div>
-        <div style={{height: 48,width:1152,margin:'0 auto'}}></div>
-        <div  style={{width:1152,margin:'0 auto'}} className={indexStyle.page_card_2}>
+        <div style={{height: 48, width: 1152, margin: '0 auto'}}></div>
+        <div style={{width: 1152, margin: '0 auto'}} className={indexStyle.page_card_2}>
           <AccountSetMenu {...menuFormProps} updateDatas={updateDatas}></AccountSetMenu>
         </div>
       </div>

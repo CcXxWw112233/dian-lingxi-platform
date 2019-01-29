@@ -1,9 +1,9 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Button, Icon, Input, Dropdown, Menu } from 'antd'
-import MenuSearchStyles from  '../../TecPublic/MenuSearch.less'
+import MenuSearchStyles from '../../TecPublic/MenuSearch.less'
 import MenuSearchTemplate from './MenuSearchTemplate'
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 
 export default class WelcomProcess extends React.Component {
@@ -33,7 +33,7 @@ export default class WelcomProcess extends React.Component {
             processTemplateList.map((value, key) => {
               const { template_name, template_id, template_no } = value
               return (
-                <Menu.Item style={{height: 32,lineHeight: '22px'}} key={key} >
+                <Menu.Item style={{height: 32, lineHeight: '22px'}} key={key} >
                   {template_name}
                 </Menu.Item>
               )
@@ -61,11 +61,11 @@ export default class WelcomProcess extends React.Component {
             </div>
             {/* </MenuSearchTemplate>MenuSearch(processTemplateList)*/}
             <Dropdown overlay={<MenuSearchTemplate {...this.props}/>}>
-              <Button style={{width: 110,marginTop: 20}}>选择模板<Icon type={'down'} style={{fontSize: 12}}/></Button>
+              <Button style={{width: 110, marginTop: 20}}>选择模板<Icon type={'down'} style={{fontSize: 12}}/></Button>
             </Dropdown>
           </div>
 
-          <div  className={indexStyles.openRight}>
+          <div className={indexStyles.openRight}>
             <div className={indexStyles.title}>没有模板或不了解{currentNounPlanFilterName(FLOWS)}模板是什么...</div>
             <div className={indexStyles.listItem}>
               <div></div>
@@ -75,7 +75,7 @@ export default class WelcomProcess extends React.Component {
               <div></div>
               <div>按需选择是否保存为模板便于后续管理同类事情；</div>
             </div>
-            <Button type={'primary'} style={{width: 190,marginTop: 20}} onClick={this.startEdit.bind(this)}>引导我开始创建新的{currentNounPlanFilterName(FLOWS)}</Button>
+            <Button type={'primary'} style={{width: 190, marginTop: 20}} onClick={this.startEdit.bind(this)}>引导我开始创建新的{currentNounPlanFilterName(FLOWS)}</Button>
           </div>
         </div>
       </div>

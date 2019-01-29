@@ -3,7 +3,7 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 
 export default class Header extends React.Component {
@@ -70,7 +70,7 @@ export default class Header extends React.Component {
         <div className={indexStyle.left}>
           <div>全部{currentNounPlanFilterName(MEMBERS)} · {member_count}</div>
           <Dropdown overlay={menu()}>
-             <div><Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+             <div><Icon type="down" style={{fontSize: 14, color: '#595959'}}/></div>
           </Dropdown>
         </div>
 
@@ -79,10 +79,10 @@ export default class Header extends React.Component {
           <Tooltip title={'该功能尚未上线，敬请期待！'}>
             <div>批量导入{currentNounPlanFilterName(MEMBERS)}</div>
           </Tooltip>
-          <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16, color: '#e5e5e5'}}/>
+          <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16, color: '#e5e5e5'}}/>
         </div>
       </div>
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
       </div>
     )

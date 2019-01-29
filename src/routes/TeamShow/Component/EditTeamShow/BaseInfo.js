@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_EDIT,REQUEST_DOMAIN_TEAM_SHOW,
+  NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_EDIT, REQUEST_DOMAIN_TEAM_SHOW,
   REQUEST_DOMAIN, UPLOAD_FILE_SIZE
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
@@ -23,7 +23,7 @@ export default class BaseInfo extends React.Component {
   }
   textAreaChange(e) {
     this.props.updateDatas({
-      summary: e.target.value.replace(/\n/gim,'<br/>'),
+      summary: e.target.value.replace(/\n/gim, '<br/>'),
     })
     this.setPreviewHtml()
   }
@@ -100,29 +100,29 @@ export default class BaseInfo extends React.Component {
       clear: 'both',
     }
     return {
-      editTop,editTop_left_div, editTop_right_div,editTop_right_div_input,editTop_right_div_textArea,
-      detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,dangerouslySetInnerHTML,
+      editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea,
+      detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, dangerouslySetInnerHTML,
 
     }
   }
   showEdit() {
     this.props.updateDatas({
-      editTeamShowPreview:false,
+      editTeamShowPreview: false,
       editTeamShowSave: false
     })
   }
   render() {
     const that = this
     const {datas: {name, cover_img, summary, content }} = this.props.model
-    const { editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea,dangerouslySetInnerHTML,
-      detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,detailInfoOut } = this.styles()
+    const { editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea, dangerouslySetInnerHTML,
+      detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, detailInfoOut } = this.styles()
     const uploadProps = {
       name: 'file',
       withCredentials: true,
       action: `${REQUEST_DOMAIN_TEAM_SHOW}/upload`,
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(e.size == 0) {
@@ -193,7 +193,7 @@ export default class BaseInfo extends React.Component {
               </div>
             )}
           </Upload>
-          <div  style={{...editTop_right_div}}>
+          <div style={{...editTop_right_div}}>
             <Input value={name} onChange={this.inputChange.bind(this)} style={{...editTop_right_div_input}} placeholder={'输入团队名称'}/>
             <TextArea value={summary} onChange={this.textAreaChange.bind(this)} style={{...editTop_right_div_textArea}} placeholder={'输入团队描述'} />
           </div>
@@ -211,7 +211,7 @@ export default class BaseInfo extends React.Component {
           </div>
           {/*下个版本不需要富文本后完全放开*/}
           {(editTeamShowPreview || editTeamShowSave )? (
-            <div  id={'editContent'} style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: contentHTML}} onClick={this.showEdit.bind(this)}></div>
+            <div id={'editContent'} style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: contentHTML}} onClick={this.showEdit.bind(this)}></div>
           ) : ('')}
 
         </div>

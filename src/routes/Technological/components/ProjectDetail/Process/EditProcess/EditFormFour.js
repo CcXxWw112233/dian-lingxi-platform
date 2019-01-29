@@ -13,7 +13,7 @@ export default class EditFormFour extends React.Component {
   //更新
   updateEdit(data, key) { //更新单个数组单个属性
     const { value } = data
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     processEditDatas[processCurrentEditStep][key] = value
 
     //更新processEditDatasRecords操作解构赋值避免操作污染
@@ -74,7 +74,7 @@ export default class EditFormFour extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   mentionOnChange2(contentState){
@@ -87,7 +87,7 @@ export default class EditFormFour extends React.Component {
     const { datas: { projectDetailInfoData = {} }} = this.props.model
     const users = projectDetailInfoData.data
     //将选择的名称转化成id
-    let strNew = str.replace(/\s@/gim,',').replace(/\s*/gim,'').replace(/@/,',')
+    let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
     let strNewArray = strNew.split(',')
     for(let i = 0; i < strNewArray.length; i++) {
       for(let j = 0; j < users.length; j++) {
@@ -97,11 +97,11 @@ export default class EditFormFour extends React.Component {
         }
       }
     }
-    strNew = strNewArray.length ? `${strNewArray.join(',').replace(/,/gim,' @')}` : ''
+    strNew = strNewArray.length ? `${strNewArray.join(',').replace(/,/gim, ' @')}` : ''
 
     const e = toContentState(strNew)
     const a = toString(e)
-    const b = a.length > 2 ? a.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : a
+    const b = a.length > 2 ? a.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : a
     this.updateEdit({value: b}, 'recipients')
 
   }
@@ -119,7 +119,7 @@ export default class EditFormFour extends React.Component {
   }
   //删除
   deleteProcessStep(){
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
@@ -137,7 +137,7 @@ export default class EditFormFour extends React.Component {
   }
 
   render() {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {} } } = this.props.model
     const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, cc_type, recipients } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
@@ -145,17 +145,17 @@ export default class EditFormFour extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim, ' @')}` : ''
     //抄送人
     let suggestions2 = []
     for(let i = 0; i < users.length; i++) {
       suggestions2.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultRecipients = recipients ? `${recipients.replace(/,/gim,'@ ')}` : ''
+    let defaultRecipients = recipients ? `${recipients.replace(/,/gim, '@ ')}` : ''
 
     //--------------------
     //抄送人@123 @234’格式的数据， @后面跟的是id。 转化数组，遍历得到id的名字，填入mention
-    let defaultRecipientsNew = recipients.replace(/\s@/gim,',').replace(/\s*/gim,'')
+    let defaultRecipientsNew = recipients.replace(/\s@/gim, ',').replace(/\s*/gim, '')
     let defaultRecipientsNewArray = defaultRecipientsNew.split(',')
     for(let i = 0; i < defaultRecipientsNewArray.length; i++) {
       for(let j = 0; j < users.length; j++) {
@@ -165,7 +165,7 @@ export default class EditFormFour extends React.Component {
         }
       }
     }
-    defaultRecipientsNew = defaultRecipientsNewArray.length ? `${defaultRecipientsNewArray.join(',').replace(/,/gim,' @')}` : ''
+    defaultRecipientsNew = defaultRecipientsNewArray.length ? `${defaultRecipientsNewArray.join(',').replace(/,/gim, ' @')}` : ''
     //----------------
 
     return (
@@ -183,8 +183,8 @@ export default class EditFormFour extends React.Component {
           {/*名称*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>名称</span><br/>
-              <span  style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
+              <span style={{fontSize: 14}}>名称</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <Input value={name} placeholder="输入步骤名称" style={{height: 40}} onChange={this.nameChange.bind(this)}/>
@@ -193,11 +193,11 @@ export default class EditFormFour extends React.Component {
           {/*描述*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>描述</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
+              <span style={{fontSize: 14}}>描述</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <TextArea value={description} style={{height: 72,resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
+              <TextArea value={description} style={{height: 72, resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
             </div>
           </div>
           {/*完成期限*/}
@@ -214,7 +214,7 @@ export default class EditFormFour extends React.Component {
               </RadioGroup>
               {deadline_type === '3'? (
                 <div>
-                  <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
+                  <InputNumber min={1} value={Number(deadline_value)} onChange={this.deadlineDayChange.bind(this)} style={{width: 70, height: 32, marginRight: 8}} />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
                 </div>
                 ):('')}
             </div>
@@ -284,7 +284,7 @@ export default class EditFormFour extends React.Component {
                 {/*<Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>*/}
                 <Radio className={indexStyles.ratio}value={'2'}>下一步</Radio>
               </RadioGroup>
-              <Checkbox value="1"  onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
+              <Checkbox value="1" onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
               <Checkbox value="2" onChange={this.enableOpinionChange.bind(this)} checked={enable_opinion === '1'} className={indexStyles.checkBox}>须填写意见</Checkbox>
             </div>
           </div>

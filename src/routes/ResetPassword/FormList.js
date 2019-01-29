@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Too
 import React from 'react'
 import indexStyle from './index.less'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
-import VerificationCode from  '../../components/VerificationCode'
+import VerificationCode from '../../components/VerificationCode'
 import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
 import sha256 from 'js-sha256'
@@ -24,7 +24,7 @@ class FormList extends React.Component {
     if(showGetVerifyCode) {
       setTimeout(function () {
         nextProps.setPropsValue({showGetVerifyCode: false}) //用来隐藏验证码提示
-      },5000)
+      }, 5000)
     }
   }
   //获取验证码
@@ -78,7 +78,7 @@ class FormList extends React.Component {
     const { mobile = '', showGetVerifyCode = false } = datas
 
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  280}}>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 280}}>
         {/* 密码 */}
         <FormItem>
           {getFieldDecorator('password', {
@@ -86,33 +86,33 @@ class FormList extends React.Component {
           })(
             <Input
               type={'password'}
-              style={{height: '40px',fontSize: 16}}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="输入新密码" />
           )}
         </FormItem>
         {/* 确认密码 */}
-        <FormItem  style={{marginTop: 0}}>
+        <FormItem style={{marginTop: 0}}>
           {getFieldDecorator('confirmPassword', {
             rules: [{ required: false, message: '请确认密码', whitespace: true }],
           })(
             <Input
               type={'password'}
-              style={{height: '40px',fontSize: 16}}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="确认密码" />
           )}
         </FormItem>
         {/*验证码*/}
-        <FormItem style={{marginTop: 0, display:!!mobile ? 'block': 'none'}}>
+        <FormItem style={{marginTop: 0, display: !!mobile ? 'block': 'none'}}>
           <Row gutter={8}>
             <Col span={14}>
               {getFieldDecorator('code', {
                 rules: [{ required: false, message: '请输入验证码' }],
               })(
-                <Input placeholder="手机验证码" style={{height: '40px',fontSize: 16,}}/>
+                <Input placeholder="手机验证码" style={{height: '40px', fontSize: 16, }}/>
               )}
             </Col>
             <Col span={10}>
-              <VerificationCode  getVerifyCode={this.getVerifyCode.bind(this)} style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}} text={'获取验证码'}/>
+              <VerificationCode getVerifyCode={this.getVerifyCode.bind(this)} style={{height: '40px', fontSize: 16, color: 'rgba(0,0,0,.65)', width: '100%'}} text={'获取验证码'}/>
             </Col>
           </Row>
         </FormItem>
@@ -121,7 +121,7 @@ class FormList extends React.Component {
         ) : ''}
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>确认修改</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%', height: 40}}>确认修改</Button>
         </FormItem>
 
 

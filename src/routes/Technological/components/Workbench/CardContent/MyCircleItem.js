@@ -18,8 +18,8 @@ export default class MyCircleItem extends React.Component {
     const { isShowBottDetail } = this.state
     this.setState({
       isShowBottDetail: isShowBottDetail === '3'?'2':'3'
-    },function () {
-      this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
+    }, function () {
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
     })
   }
   setIsShowBottDetail_2(id) {
@@ -27,14 +27,14 @@ export default class MyCircleItem extends React.Component {
     const { isShowBottDetail_2 } = this.state
     this.setState({
       isShowBottDetail_2: isShowBottDetail_2 === '3'?'2':'3'
-    },function () {
-      this.funTransitionHeight(element, 500,  this.state.isShowBottDetail_2)
+    }, function () {
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail_2)
     })
   }
    funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == "undefined") return;
+    if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = "auto";
     const targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
@@ -67,7 +67,7 @@ export default class MyCircleItem extends React.Component {
    }
 
   render() {
-    const { itemValue = {}, itemKey,  model = {} } = this.props
+    const { itemValue = {}, itemKey, model = {} } = this.props
     const { datas: { projectUserList = [], orgMembers = [], imData ={} }} = model
     const { isShowBottDetail, isShowBottDetail_2, users = [] } = this.state
     const { access_token, username } = imData
@@ -82,16 +82,16 @@ export default class MyCircleItem extends React.Component {
                 项目圈
                </div>
                <div className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail !=='1' ? (isShowBottDetail === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
-                 <Icon  type="caret-down" style={{fontSize: 16}} />
+                 <Icon type="caret-down" style={{fontSize: 16}} />
                </div>
              </div>
              <div id={'bott_1'} className={`${indexstyles.circleGroup_bott} ${isShowBottDetail !== '3'? indexstyles.ConfirmInfoOut_1_bottShow : indexstyles.ConfirmInfoOut_1_bottNormal}`} >
                {projectUserList.map((value, key) => {
                  const { users=[], board_name, board_id } = value
                  return (
-                   <div className={indexstyles.left_item} onClick={this.setUsers.bind(this,{ datalist:users})}>
+                   <div className={indexstyles.left_item} key={key} onClick={this.setUsers.bind(this, { datalist: users})}>
                      <div>{board_name}</div>
-                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group',to_name: board_name, id: board_id})}>
+                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group', to_name: board_name, id: board_id})}>
                        {/*<Icon type="folder-open" />*/}
                        &#xe639;
                      </div>
@@ -106,18 +106,17 @@ export default class MyCircleItem extends React.Component {
                <div>
                  组织圈
                </div>
-               <div className={indexstyles.circleGroup_top_caret}
-                    className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail_2 !=='1' ? (isShowBottDetail_2 === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
-                 <Icon  type="caret-down" style={{fontSize: 16}} />
+               <div className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail_2 !=='1' ? (isShowBottDetail_2 === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
+                 <Icon type="caret-down" style={{fontSize: 16}} />
                </div>
              </div>
              <div id={'bott_2'} className={`${indexstyles.circleGroup_bott} ${isShowBottDetail_2 !== '3'? indexstyles.ConfirmInfoOut_1_bottShow : indexstyles.ConfirmInfoOut_1_bottNormal}`} >
                {orgMembers.map((value, key) => {
                  const { name, org_id, members } = value
                  return (
-                   <div className={indexstyles.left_item} key={key} onClick={this.setUsers.bind(this,{ datalist:members})}>
+                   <div className={indexstyles.left_item} key={key} onClick={this.setUsers.bind(this, { datalist: members})}>
                      <div>{name}</div>
-                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group', to_name:name, id: org_id})}>
+                     <div className={`${globalStyles.authTheme} ${'imclick'}`} onClick={this.toChat.bind(this, {type: 'group', to_name: name, id: org_id})}>
                        {/*<Icon type="folder-open" />*/}
                        &#xe639;
                      </div>
@@ -134,7 +133,7 @@ export default class MyCircleItem extends React.Component {
             {users.map((value, key) => {
               const { name, full_name, avatar, id, member_id, mobile, email } = value
               return (
-                <div className={indexstyles.right_item}>
+                <div className={indexstyles.right_item} key={key}>
                   <div className={indexstyles.avatar}>
                     <Avatar icon="user" src={avatar}/>
                   </div>

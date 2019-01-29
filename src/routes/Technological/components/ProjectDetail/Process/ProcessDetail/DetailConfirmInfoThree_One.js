@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input } from 'antd'
 import indexStyles from './index.less'
-import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt,validateNegative,validateTwoDecimal, } from '../../../../../../utils/verify'
+import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../../utils/verify'
 
 export default class DetailConfirmInfoThreeOne extends React.Component {
   state={
@@ -9,7 +9,7 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
   }
   updateEdit(data, key) {
     const { itemKey, parentItemKey } = this.props
-    const { datas: {  processEditDatas = [], } } = this.props.model
+    const { datas: { processEditDatas = [], } } = this.props.model
     const { form_data=[] } = processEditDatas[parentItemKey]
     form_data[itemKey][key] = data.value
     this.props.updateDatas({
@@ -67,7 +67,7 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
   }
   render() {
     const { verificationIsTrue } = this.state
-    const { datas: {  processEditDatas = [] } } = this.props.model
+    const { datas: { processEditDatas = [] } } = this.props.model
     const { itemKey, parentItemKey, FormCanEdit } = this.props
     const { form_data=[] } = processEditDatas[parentItemKey]
     const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
@@ -120,12 +120,12 @@ export default class DetailConfirmInfoThreeOne extends React.Component {
         <div className={indexStyles.EditFormThreeOneOut_form}>
           <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
-            <div  className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
-              <div style={{display: 'flex',justifyContent: 'space-between'}}>
-                <div style={{display:'flex',alignItems: 'center'}}><div style={{maxWidth: 200, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{property_name}</div> [{filterVerificationName(verification_rule)}]  ({is_required === '1' ? '必填': '选填'})</div>
+            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <div style={{display: 'flex', alignItems: 'center'}}><div style={{maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{property_name}</div> [{filterVerificationName(verification_rule)}]  ({is_required === '1' ? '必填': '选填'})</div>
                 <div style={{color: '#F5222D', display: verificationIsTrue? 'none': 'block'}}>格式错误，请重新填写！</div>
               </div>
-              <Input value={default_value} disabled={FormCanEdit}  style={{ height: 24, width: '100%',marginTop: 4, border: verificationIsTrue? '': '1px solid #F5222D'  }} onChange={this.defaultValueChange.bind(this,verification_rule)}/>
+              <Input value={default_value} disabled={FormCanEdit} style={{ height: 24, width: '100%', marginTop: 4, border: verificationIsTrue? '': '1px solid #F5222D' }} onChange={this.defaultValueChange.bind(this, verification_rule)}/>
             </div>
           </div>
         </div>

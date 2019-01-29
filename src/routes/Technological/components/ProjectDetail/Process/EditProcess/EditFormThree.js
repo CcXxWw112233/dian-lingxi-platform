@@ -18,7 +18,7 @@ export default class EditFormThree extends React.Component {
   //更新
   updateEdit(data, key) { //更新单个数组单个属性
     const { value } = data
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     processEditDatas[processCurrentEditStep][key] = value
 
     //更新processEditDatasRecords操作解构赋值避免操作污染
@@ -76,7 +76,7 @@ export default class EditFormThree extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型
@@ -93,7 +93,7 @@ export default class EditFormThree extends React.Component {
   }
   //删除
   deleteProcessStep(){
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
@@ -118,32 +118,32 @@ export default class EditFormThree extends React.Component {
     let obj = {}
     switch (key){
       case '1':
-        obj =  { //输入框
-          "field_type":"1",
-          "property_name":"",
-          "default_value":"",
-          "verification_rule":"",
-          "val_length":"20",
-          "is_required":"1"
+        obj = { //输入框
+          "field_type": "1",
+          "property_name": "",
+          "default_value": "",
+          "verification_rule": "",
+          "val_length": "20",
+          "is_required": "1"
         }
         break
       case '2':
         obj = { //日期
-          "field_type":"2",
-          "property_name":"",
-          "default_value":"",
-          "verification_rule":"SINGLE_DATE_TIME",
-          "is_required":"1"
+          "field_type": "2",
+          "property_name": "",
+          "default_value": "",
+          "verification_rule": "SINGLE_DATE_TIME",
+          "is_required": "1"
         }
         break
       case '3': //下拉
-        obj=  {
-          "field_type":"3",
-          "property_name":"",
-          "default_value":"",
-          "verification_rule":"redio",
-          "is_required":"1",
-          "options_data":[]
+        obj= {
+          "field_type": "3",
+          "property_name": "",
+          "default_value": "",
+          "verification_rule": "redio",
+          "is_required": "1",
+          "options_data": []
         }
         break
       default:
@@ -154,7 +154,7 @@ export default class EditFormThree extends React.Component {
   }
 
   render() {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {} } } = this.props.model
     const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, form_data=[] } = processEditDatas[processCurrentEditStep]
     //推进人一项
     const users = projectDetailInfoData.data
@@ -162,7 +162,7 @@ export default class EditFormThree extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim, ' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     const filterForm = (value, key) => {
@@ -212,8 +212,8 @@ export default class EditFormThree extends React.Component {
           {/*名称*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>名称</span><br/>
-              <span  style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
+              <span style={{fontSize: 14}}>名称</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <Input value={name} placeholder="输入步骤名称" style={{height: 40}} onChange={this.nameChange.bind(this)}/>
@@ -222,26 +222,26 @@ export default class EditFormThree extends React.Component {
           {/*描述*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>描述</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
+              <span style={{fontSize: 14}}>描述</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <TextArea value={description} style={{height: 72,resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
+              <TextArea value={description} style={{height: 72, resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
             </div>
           </div>
           {/*表单*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>表单</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>填写项</span>
+              <span style={{fontSize: 14}}>表单</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>填写项</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               {form_data.map((value, key) => {
                 return (<div key={key}>{filterForm(value, key)}</div>)
               })}
               <Dropdown overlay={menuAddForm}>
-                <div style={{width: 20, height: 20,cursor: 'pointer', borderRadius: 18,marginTop: 10, alignItems: 'center', border:'2px solid #595959', textAlign: "center",display: 'flex'}}>
-                  <Icon type="plus" theme="outlined" style={{fontSize:12, color:"#262626",marginLeft:2 }}/>
+                <div style={{width: 20, height: 20, cursor: 'pointer', borderRadius: 18, marginTop: 10, alignItems: 'center', border: '2px solid #595959', textAlign: "center", display: 'flex'}}>
+                  <Icon type="plus" theme="outlined" style={{fontSize: 12, color: "#262626", marginLeft: 2 }}/>
                 </div>
               </Dropdown>
             </div>
@@ -260,7 +260,7 @@ export default class EditFormThree extends React.Component {
               </RadioGroup>
               {deadline_type === '3'? (
                 <div>
-                  <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
+                  <InputNumber min={1} value={Number(deadline_value)} onChange={this.deadlineDayChange.bind(this)} style={{width: 70, height: 32, marginRight: 8}} />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
                 </div>
               ):('')}
             </div>
@@ -302,7 +302,7 @@ export default class EditFormThree extends React.Component {
                 {/*<Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>*/}
                 <Radio className={indexStyles.ratio}value={'2'}>下一步</Radio>
               </RadioGroup>
-              <Checkbox value="1"  onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
+              <Checkbox value="1" onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
               <Checkbox value="2" onChange={this.enableOpinionChange.bind(this)} checked={enable_opinion === '1'} className={indexStyles.checkBox}>须填写意见</Checkbox>
             </div>
           </div>

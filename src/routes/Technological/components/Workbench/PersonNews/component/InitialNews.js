@@ -1,10 +1,10 @@
 import React from 'react';
 import { Card, Icon, Input } from 'antd'
 import NewsListStyle from './NewsList.less'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToTimeNormal2} from '../../../../../../utils/util'
 // import Comment from './Comment'
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 
 export default class InitialNews extends React.Component {
@@ -25,38 +25,38 @@ export default class InitialNews extends React.Component {
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
 
     //过滤消息内容
-    const   filterTitleContain = (activity_type, messageValue) => {
+    const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
       switch (activity_type) {
         //项目
         case 'createBoard':
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.user_name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'updBoard':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
-          messageContain = (<div>{messageValue.user_name} 更新了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}信息</div>)
+          messageContain = (<div>{messageValue.user_name} 更新了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}信息</div>)
           break
         case 'archivedBoard':
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
-          messageContain = (<div>{messageValue.user_name} 归档了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 归档了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'quitBoard':
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.user_name} 退出了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 退出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'delBoard':
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.user_name} 删除了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'addBoardUser':
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.user_name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'removeBoardUser':
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.user_name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.user_name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         //任务
         case 'createCard':
@@ -333,7 +333,7 @@ export default class InitialNews extends React.Component {
     const projectNews = (value) => {
       const { map: { activity_type, full_name, create_time }} = value
       return (
-        <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+        <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
       )
     }
     //任务动态
@@ -343,25 +343,25 @@ export default class InitialNews extends React.Component {
           {value.map((val, key) => {
             const { map: { activity_type }} = val
             return(
-              <div className={NewsListStyle.news_1} key={key}>{filterTitleContain(activity_type,val).messageContain}</div>
+              <div className={NewsListStyle.news_1} key={key}>{filterTitleContain(activity_type, val).messageContain}</div>
             )
           })}
         </div>
       )
     }
     //评论动态
-    const commentNews = (value,parentKey, childrenKey) => {
-      const {  list_name, board_name, card_name, cardComment, user_name} = value[0]
+    const commentNews = (value, parentKey, childrenKey) => {
+      const { list_name, board_name, card_name, cardComment, user_name} = value[0]
       if(!cardComment) {
         return false
       }
-      const  { card_id } = cardComment
+      const { card_id } = cardComment
       return (
         <div className={NewsListStyle.containr}>
           {value.map((val, key) => {
             const { map: { activity_type }} = val
             return(
-              <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3} key={key}>
                 <div className={NewsListStyle.news_3_text}> {val.user_name} 评论了{currentNounPlanFilterName(TASKS)}</div>
                 <div className={NewsListStyle.news_3_card}>{val.card_name}</div>
                 <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{val.board_name}</div>
@@ -377,25 +377,25 @@ export default class InitialNews extends React.Component {
     const processNews = (value) => {
       const { map: { activity_type, full_name, create_time}, flow_instance_name, board_name} = value
       return (
-        <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+        <div className={NewsListStyle.news_1} >{filterTitleContain(activity_type, value).messageContain}</div>
       )
     }
     //文档动态
     const fileNews = (value, key) => {
       const { map: { activity_type, full_name, create_time }, board_name} = value
       return (
-        <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+        <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
       )
     }
 
     //@评论动态
-    const commentNews_2 = (value,parentKey, childrenKey) => {
+    const commentNews_2 = (value, parentKey, childrenKey) => {
       return (
         <div className={NewsListStyle.containr}>
           {value.map((val, key) => {
-            const { map: { activity_type }, text, user_name, card_name, file_name,list_name, board_name} = val
+            const { map: { activity_type }, text, user_name, card_name, file_name, list_name, board_name} = val
             return(
-              <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3} key={key}>
                 <div className={NewsListStyle.news_3_text}> {user_name} {text} {activity_type == 'cardCommentAt' && currentNounPlanFilterName(TASKS)}</div>
                 <div className={NewsListStyle.news_3_card}>{card_name || file_name}</div>
                 <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{board_name}</div>
@@ -412,26 +412,26 @@ export default class InitialNews extends React.Component {
     const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
       switch (type) {
-        case  '1':
-          containner = ( value.map((val, key) => (<div>{projectNews(val)}</div>)) )
+        case '1':
+          containner = ( value.map((val, key) => (<div key={key}>{projectNews(val)}</div>)) )
           break
-        case  '2':
-          containner =  ( taskNews(value) )
+        case '2':
+          containner = ( taskNews(value) )
           break
-        case  '3':
-          containner = ( commentNews(value,parentKey, childrenKey))
+        case '3':
+          containner = ( commentNews(value, parentKey, childrenKey))
           break
-        case  '4':
-          containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
+        case '4':
+          containner = ( value.map((val, key) => (<div key={key}>{processNews(val)}</div>)) )
           break
-        case  '5':
-          containner = ( value.map((val, key) => (<div>{fileNews(val)}</div>)) )
+        case '5':
+          containner = ( value.map((val, key) => (<div key={key}>{fileNews(val)}</div>)) )
           break
-        case  '6':
-          containner = ( value.map((val, key) => (<div>{processNews(val)}</div>)) )
+        case '6':
+          containner = ( value.map((val, key) => (<div key={key}>{processNews(val)}</div>)) )
           break
-        case  '8':
-          containner = ( commentNews_2(value,parentKey, childrenKey))
+        case '8':
+          containner = ( commentNews_2(value, parentKey, childrenKey))
           break
         default:
           break
@@ -440,18 +440,18 @@ export default class InitialNews extends React.Component {
     }
 
     return (
-      <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
+      <div style={{paddingBottom: 100, transform: 'none', display: 'inline'}} >
         {/*{isHasNewDynamic?(*/}
           {/*<div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>*/}
         {/*): ('')}*/}
         {newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
           return (
-            <div className={NewsListStyle.itemOut}  key={parentkey}>
+            <div className={NewsListStyle.itemOut} key={parentkey}>
               {newDataList.map((value, childrenKey) => {
                 const { type, TypeArrayList = [] } = value
                 return (
-                  <div key={childrenKey}>{filterNewsType(type, TypeArrayList,parentkey, childrenKey)}</div>
+                  <div key={childrenKey}>{filterNewsType(type, TypeArrayList, parentkey, childrenKey)}</div>
                 )
               })}
             </div>

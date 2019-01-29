@@ -11,7 +11,7 @@ const { MonthPicker, RangePicker } = DatePicker
 export default class DetailConfirmInfoThreeThree extends React.Component {
   updateEdit(data, key) {
     const { itemKey, parentItemKey } = this.props
-    const { datas: {  processEditDatas = [], } } = this.props.model
+    const { datas: { processEditDatas = [], } } = this.props.model
     const { form_data=[] } = processEditDatas[parentItemKey]
     form_data[itemKey][key] = data.value
     this.props.updateDatas({
@@ -19,15 +19,15 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
     })
   }
   datePickerChange(date, dateString) {
-    this.updateEdit({value:timeToTimestamp(dateString).toString()}, 'default_value')
+    this.updateEdit({value: timeToTimestamp(dateString).toString()}, 'default_value')
   }
   rangePickerChange(date, dateString) {
     this.updateEdit({value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}`}, 'default_value')
   }
 
   render() {
-    const { datas: {  processEditDatas = [] } } = this.props.model
-    const { itemKey, parentItemKey,FormCanEdit } = this.props
+    const { datas: { processEditDatas = [] } } = this.props.model
+    const { itemKey, parentItemKey, FormCanEdit } = this.props
     const { form_data=[] } = processEditDatas[parentItemKey]
     const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
 
@@ -45,7 +45,7 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
         <div className={indexStyles.EditFormThreeOneOut_form}>
           <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
-            <div  className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
+            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
               <p>{property_name}({is_required === '1' ? '必填': '选填'})</p>
               {mode_0==='SINGLE'? (
                 <DatePicker
@@ -59,7 +59,8 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
                   value={startTime ? moment(new Date(Number(startTime))) : undefined} // [moment(new Date(signUpStartTime)), moment(new Date(signUpEndTime))]
                   onChange={this.datePickerChange.bind(this)}
                 />
-              ) : (<RangePicker
+              ) : (
+<RangePicker
                 size={'small'}
                 disabled={FormCanEdit}
                 style={{width: '100%', height: 24}}
@@ -68,7 +69,8 @@ export default class DetailConfirmInfoThreeThree extends React.Component {
                 placeholder={[]}
                 value={ (startTime && endTime) ? [moment(new Date(Number(startTime))), moment(new Date(Number(endTime)))] : undefined}
                 onChange={this.rangePickerChange.bind(this)}
-              />)}
+              />
+)}
             </div>
           </div>
         </div>

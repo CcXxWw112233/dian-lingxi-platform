@@ -15,7 +15,7 @@ export default class EditFormTwo extends React.Component {
   //更新
   updateEdit(data, key) { //更新单个数组单个属性
     const { value } = data
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     processEditDatas[processCurrentEditStep][key] = value
 
     //更新processEditDatasRecords操作解构赋值避免操作污染
@@ -74,7 +74,7 @@ export default class EditFormTwo extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@','').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型
@@ -91,7 +91,7 @@ export default class EditFormTwo extends React.Component {
   }
   //删除
   deleteProcessStep(){
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
@@ -111,11 +111,11 @@ export default class EditFormTwo extends React.Component {
     if(!validatePositiveInt(value)){
       return false
     }
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { require_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     let obj = {
-      limit_file_num:  value.toString(),
+      limit_file_num: value.toString(),
       limit_file_type,
       limit_file_size,
     }
@@ -126,7 +126,7 @@ export default class EditFormTwo extends React.Component {
     if(!validatePositiveInt(value)){
       return false
     }
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { require_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     console.log(limit_file_num)
@@ -138,7 +138,7 @@ export default class EditFormTwo extends React.Component {
     this.updateEdit({value: obj }, 'require_data')
   }
   limitFileTypeChange(values) {
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { require_data } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     let obj = {
@@ -150,7 +150,7 @@ export default class EditFormTwo extends React.Component {
   }
 
   render() {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {}  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0, projectDetailInfoData = {} } } = this.props.model
     const { name, description, deadline_type, deadline_value, is_workday, assignee_type, assignees, transfer_mode, enable_revocation, enable_opinion, require_data = {} } = processEditDatas[processCurrentEditStep]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
 
@@ -161,7 +161,7 @@ export default class EditFormTwo extends React.Component {
     for(let i = 0; i < users.length; i++) {
       suggestions.push(users[i].full_name || users[i].email || users[i].mobile)
     }
-    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim,' @')}` : ''
+    let defaultAssignees = assignees ? `@${assignees.replace(/,/gim, ' @')}` : ''
     // defaultAssignees = defaultAssignees || `@${suggestions[0]}`
 
     return (
@@ -179,8 +179,8 @@ export default class EditFormTwo extends React.Component {
           {/*名称*/}
           <div className={indexStyles.editBottItem}>
              <div className={indexStyles.editBottItem_left}>
-               <span  style={{fontSize: 14}}>名称</span><br/>
-               <span  style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
+               <span style={{fontSize: 14}}>名称</span><br/>
+               <span style={{fontSize: 12, color: '#8c8c8c'}}>给步骤起个名称</span>
              </div>
              <div className={indexStyles.editBottItem_right}>
                <Input value={name} placeholder="输入步骤名称" style={{height: 40}} onChange={this.nameChange.bind(this)}/>
@@ -189,11 +189,11 @@ export default class EditFormTwo extends React.Component {
           {/*描述*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
-              <span  style={{fontSize: 14}}>描述</span><br/>
-              <span style={{fontSize: 12,color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
+              <span style={{fontSize: 14}}>描述</span><br/>
+              <span style={{fontSize: 12, color: '#8c8c8c'}}>指引如何完成与<br/>明确标准</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
-              <TextArea value={description} style={{height: 72,resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
+              <TextArea value={description} style={{height: 72, resize: 'none'}} onChange={this.descriptionChange.bind(this)} placeholder="输入描述"/>
             </div>
           </div>
           {/*要求*/}
@@ -204,19 +204,19 @@ export default class EditFormTwo extends React.Component {
             </div>
             <div className={indexStyles.editBottItem_right}>
               <div style={{color: '#262626'}}>
-                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)}  onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} min={1} max={100} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}></span>
+                限制上传数量为&nbsp;&nbsp;<InputNumber value={Number(limit_file_num)} onChange={this.limitFileNumChange.bind(this)} style={{width: 70}} min={1} max={100} />&nbsp;&nbsp;个文件<span style={{color: '#8c8c8c'}}></span>
               </div>
               <div style={{color: '#262626'}}>
                 限制文件格式为&nbsp;&nbsp;
-                <Checkbox.Group defaultValue={limit_file_type_default} onChange={this.limitFileTypeChange.bind(this)} style={{color: '#262626',marginTop: 14}}>
+                <Checkbox.Group defaultValue={limit_file_type_default} onChange={this.limitFileTypeChange.bind(this)} style={{color: '#262626', marginTop: 14}}>
                   <Checkbox value="1" style={{color: '#262626'}}>文档</Checkbox>
                   <Checkbox value="2" style={{color: '#262626'}}>图像</Checkbox>
                   <Checkbox value="3" style={{color: '#262626'}}>音频</Checkbox>
                   <Checkbox value="4" style={{color: '#262626'}}>视频</Checkbox>
                 </Checkbox.Group>
               </div>
-              <div style={{color: '#262626',marginTop: 14}}>
-                限制文件大小为&nbsp;&nbsp;<InputNumber value={Number(limit_file_size)}  onChange={this.limitFileSizeChange.bind(this)} style={{width: 70}} defaultValue={0} min={0} max={UPLOAD_PROCESS_FILE_SIZE} />&nbsp;&nbsp;MB<span style={{color: '#8c8c8c'}}>（最大为{UPLOAD_PROCESS_FILE_SIZE}MB）</span>
+              <div style={{color: '#262626', marginTop: 14}}>
+                限制文件大小为&nbsp;&nbsp;<InputNumber value={Number(limit_file_size)} onChange={this.limitFileSizeChange.bind(this)} style={{width: 70}} defaultValue={0} min={0} max={UPLOAD_PROCESS_FILE_SIZE} />&nbsp;&nbsp;MB<span style={{color: '#8c8c8c'}}>（最大为{UPLOAD_PROCESS_FILE_SIZE}MB）</span>
               </div>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default class EditFormTwo extends React.Component {
               </RadioGroup>
               {deadline_type === '3'? (
                 <div>
-                  <InputNumber min={1} value={Number(deadline_value)}  onChange={this.deadlineDayChange.bind(this)} style={{width:70, height: 32,marginRight: 8}}  />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
+                  <InputNumber min={1} value={Number(deadline_value)} onChange={this.deadlineDayChange.bind(this)} style={{width: 70, height: 32, marginRight: 8}} />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
                 </div>
               ):('')}
             </div>
@@ -278,7 +278,7 @@ export default class EditFormTwo extends React.Component {
                 {/*<Radio className={indexStyles.ratio} value={'1'}>自由选择</Radio>*/}
                 <Radio className={indexStyles.ratio}value={'2'}>下一步</Radio>
               </RadioGroup>
-              <Checkbox value="1"  onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
+              <Checkbox value="1" onChange={this.enableRevocationChange.bind(this)} checked={enable_revocation === '1'} className={indexStyles.checkBox}>可撤回</Checkbox>
               <Checkbox value="2" onChange={this.enableOpinionChange.bind(this)} checked={enable_opinion === '1'} className={indexStyles.checkBox}>须填写意见</Checkbox>
             </div>
           </div>

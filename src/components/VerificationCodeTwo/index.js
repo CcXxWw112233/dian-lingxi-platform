@@ -29,9 +29,9 @@ export default class VerificationCodeTwo extends React.Component{
 
     that.setState({
       buttonDisabled: true,
-    },function () {
+    }, function () {
       this.props.getVerifyCode({
-        calback:function () {
+        calback: function () {
           const {initTimeValue } = that.state
           that.setState({
             interval: setInterval(function () {
@@ -108,7 +108,7 @@ export default class VerificationCodeTwo extends React.Component{
     const buttonDisabled = this.state.buttonDisabled
     return (
       //,color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)'
-      <div className={this.props.className} style={{...style, color:`${buttonDisabled?'#bfbfbf':''}`}} onClick={this.buttonClickAction.bind(this)}>{this.state.initTimeText}</div>
+      <div className={this.props.className} style={{...style, color: `${buttonDisabled?'#bfbfbf':''}`}} onClick={this.buttonClickAction.bind(this)}>{this.state.initTimeText}</div>
     //
     );
   }

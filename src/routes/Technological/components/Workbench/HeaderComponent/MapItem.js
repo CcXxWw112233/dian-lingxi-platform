@@ -11,7 +11,7 @@ export default class ProjectCountItem extends React.Component {
   render() {
     return (
       <div style={{cursor: 'pointer'}} >
-        <img src={mapSrc}  />
+        <img src={mapSrc} />
       </div>
     )
   }

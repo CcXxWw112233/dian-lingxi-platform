@@ -1,11 +1,11 @@
 import React from 'react'
-import {  Icon, Layout, Menu, Dropdown} from 'antd';
+import { Icon, Layout, Menu, Dropdown} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import {checkIsHasPermission, currentNounPlanFilterName} from "../../../utils/businessFunction";
+import { currentNounPlanFilterName } from "../../../utils/businessFunction";
 import {
-  DASHBOARD, MEMBERS, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  DASHBOARD, MEMBERS,
   ORGANIZATION, PROJECTS
 } from "../../../globalset/js/constant";
 import Cookies from 'js-cookie'
@@ -78,7 +78,7 @@ export default class SiderLeft extends React.Component {
   addMembers(data) {
     const { users } = data
     const { datas = {} } = this.props.model
-    const {  currentSelectOrganize = {} } = datas
+    const { currentSelectOrganize = {} } = datas
     const { id } = currentSelectOrganize
     this.props.inviteJoinOrganization({
       members: users,
@@ -100,7 +100,7 @@ export default class SiderLeft extends React.Component {
     const { datas: {currentUserOrganizes = []}} = this.props.model
     for(let val of currentUserOrganizes) {
       if(key === val['id']){
-        Cookies.set('org_id',val.id,{expires: 30, path: ''})
+        Cookies.set('org_id', val.id, {expires: 30, path: ''})
         localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
         this.props.updateDatas({currentSelectOrganize: val})
         this.props.changeCurrentOrg({org_id: val.id})
@@ -140,8 +140,8 @@ export default class SiderLeft extends React.Component {
     ]
 
     const { datas = {} } = this.props.model
-    const { naviHeadTabIndex = {}, currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org={},} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { current_org={}, } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
@@ -153,13 +153,13 @@ export default class SiderLeft extends React.Component {
           return (
             <Menu.Item key={id} >
               {name}
-              {identity_type == '0'? (<span style={{display: 'inline-block',backgroundColor:'#e5e5e5',padding:'0 4px', borderRadius:40,marginLeft: 6}}>访客</span>) : ('')}
+              {identity_type == '0'? (<span style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6}}>访客</span>) : ('')}
             </Menu.Item>
           )
         })}
         <Menu.Item key="10" >
           <div className={indexStyles.itemDiv} style={{ color: color_4}}>
-            <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+            <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
           </div>
         </Menu.Item>
       </Menu>
@@ -171,18 +171,18 @@ export default class SiderLeft extends React.Component {
         collapsible
         onMouseOver={this.setCollapsed.bind(this, false)}
         onMouseOut={this.setCollapsed.bind(this, true)}
-        className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`}  collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
+        className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <div className={indexStyles.contain_1}>
           <div className={indexStyles.left}>
             <img src={logo || linxiLogo} className={indexStyles.left_img}/>
           </div>
           <div className={indexStyles.middle}>
-            <div  className={indexStyles.middle_top}>{orgnizationName}</div>
+            <div className={indexStyles.middle_top}>{orgnizationName}</div>
             {identity_type == '1'? (
               <div className={indexStyles.middle_bott}>
               <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
-              <div  onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#','')}`)} >管理后台</div>
+              <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
               <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>
             </div>
             ) : (
@@ -205,7 +205,7 @@ export default class SiderLeft extends React.Component {
             const { theme, name } = value
             return (
               <div key={key} className={`${indexStyles.navItem} ${key== naviHeadTabIndex?indexStyles.navItemSelected: ''}`} onClick={this.menuClick.bind(this, key)}>
-                <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`}  dangerouslySetInnerHTML={{__html: theme}}></div>
+                <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`} dangerouslySetInnerHTML={{__html: theme}}></div>
                 <div className={indexStyles.navItem_right}> {name}</div>
               </div>
             )
@@ -214,7 +214,7 @@ export default class SiderLeft extends React.Component {
 
         <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
 
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)}  modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
       </Sider>
 

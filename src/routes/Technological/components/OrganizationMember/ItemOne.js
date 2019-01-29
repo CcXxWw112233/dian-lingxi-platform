@@ -2,7 +2,7 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown, Modal, message } from 'antd'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
@@ -18,15 +18,15 @@ export default class ItemOne extends React.Component {
   }
   componentWillMount() {
     const { itemKey, parentKey, itemValue } = this.props
-    const {  role_detailInfo = {} } = itemValue
+    const { role_detailInfo = {} } = itemValue
     this.setState({
       bott_id: `bott_${parentKey}_${itemKey * 100 + 1}`
     })
   }
   componentDidUpdate(props) {
     //成员信息重新渲染后重新计算高度
-    const {  itemValue } = props
-    const {  role_detailInfo = {} } = itemValue
+    const { itemValue } = props
+    const { role_detailInfo = {} } = itemValue
     let role_detailInfo_is_has = false
     for(let val in role_detailInfo) {
       role_detailInfo_is_has = true
@@ -97,7 +97,7 @@ export default class ItemOne extends React.Component {
     const { member_id } = itemValue
     const group_id = parentItemValue.id
     const org_id = Cookies.get('org_id')
-    this.props.removeMembersWithGroup({member_id,group_id,org_id})
+    this.props.removeMembersWithGroup({member_id, group_id, org_id})
   }
   //停用
   discontinueConfirm(member_id) {
@@ -122,15 +122,15 @@ export default class ItemOne extends React.Component {
   //设置转动出现详情
   setIsShowBottDetail() {
     const that = this
-    const {itemValue: { member_id },  itemKey, parentKey} = this.props
+    const {itemValue: { member_id }, itemKey, parentKey} = this.props
     const { bott_id } = this.state
     const element = document.getElementById(bott_id)
     const { datas: {groupList = []}} = this.props.model
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
-    },function () {
+    }, function () {
       if(this.state.isShowBottDetail){ //点击打开的时候，如果成员信息未存在就请求
-        const role_detailInfo =  groupList[parentKey]['members'][itemKey]['role_detailInfo'] || {}
+        const role_detailInfo = groupList[parentKey]['members'][itemKey]['role_detailInfo'] || {}
         let role_detailInfo_is_has = false
         for(let val in role_detailInfo) {
           role_detailInfo_is_has = true
@@ -139,13 +139,13 @@ export default class ItemOne extends React.Component {
           this.props.getMemberInfo({member_id, parentKey, itemKey})
         }
       }
-      this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
     })
   }
   funTransitionHeight = (element, time, type) => { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == "undefined") return;
+    if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = "auto";
     const targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
@@ -159,7 +159,7 @@ export default class ItemOne extends React.Component {
     const { itemValue, parentItemValue } = this.props
     const { is_default } = parentItemValue
     const { member_id, avatar, name, role_type, role_name, role_detailInfo ={}, is_visitor } = itemValue
-    const  {organization_name='...', role = '...', email='...', mobile='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
+    const {organization_name='...', role = '...', email='...', mobile='...', wechat = '...', card_data = [], workflow_data =[]} = role_detailInfo
     const {datas: { roleList = []}} = this.props.model
     let role_detailInfo_is_has = false
     for(let val in role_detailInfo) {
@@ -172,7 +172,7 @@ export default class ItemOne extends React.Component {
             <Menu.SubMenu title="设置角色" key={'role'}>
               {roleList.map((value, key) => {
                 return(
-                  <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                  <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
                     <div className={CreateTaskStyle.elseProjectMemu}>
                       {value.name}
                     </div>
@@ -182,20 +182,20 @@ export default class ItemOne extends React.Component {
             </Menu.SubMenu>
           ) :('')}
           {is_visitor !== '1' ? (
-            <Menu.Item key={'setGroup'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <Menu.Item key={'setGroup'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 设置分组
               </div>
             </Menu.Item>
           ) :('')}
           {is_default !== '1' && is_visitor !== '1' ? (
-            <Menu.Item key={'remove'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <Menu.Item key={'remove'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 移出分组
               </div>
             </Menu.Item>
            ) : ('')}
-          <Menu.Item key={'discontinue'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={CreateTaskStyle.elseProjectDangerMenu}>
               停用
             </div>
@@ -205,13 +205,13 @@ export default class ItemOne extends React.Component {
     }
 
     return (
-      <div  className={CreateTaskStyle.item_1} >
+      <div className={CreateTaskStyle.item_1} >
         <div className={CreateTaskStyle.item_1_top}>
           <div className={CreateTaskStyle.item_1_top_left}>
             <div className={CreateTaskStyle.avatar}>
               <Avatar size={40} icon="user" src={avatar}/>
             </div>
-            <div  className={CreateTaskStyle.detail}>
+            <div className={CreateTaskStyle.detail}>
               <div>{name}</div>
               <div>{role_name}</div>
             </div>
@@ -222,18 +222,18 @@ export default class ItemOne extends React.Component {
                 <div><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             ) : ('')}
-            <div className={isShowBottDetail ? CreateTaskStyle.upDown_up: CreateTaskStyle.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
+            <div className={isShowBottDetail ? CreateTaskStyle.upDown_up: CreateTaskStyle.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
           </div>
         </div>
         <div className={CreateTaskStyle.item_1_middle} style={{display: 'none'}}>
-          {[1,2,3,4,5].map((value, key) => {
+          {[1, 2, 3, 4, 5].map((value, key) => {
             return(
               <div key={key}></div>
             )
           })}
         </div>
         <div className={isShowBottDetail && role_detailInfo_is_has? CreateTaskStyle.item_1_bott_show:CreateTaskStyle.item_1_bott_normal} id={bott_id}
-             style={{paddingTop: isShowBottDetail?'10px': 0,paddingBottom: isShowBottDetail?'10px': 0, }}
+             style={{paddingTop: isShowBottDetail?'10px': 0, paddingBottom: isShowBottDetail?'10px': 0, }}
         >
           <div className={CreateTaskStyle.item_1_bott_con1}>
              <div className={CreateTaskStyle.item_1_bott_con1_item}>
@@ -264,7 +264,7 @@ export default class ItemOne extends React.Component {
             {card_data.map((value, key) => {
               const { is_realize, name, board_name } = value
               return (
-                <div className={CreateTaskStyle.item_1_bott_con2_taskItem} style={{textDecoration:is_realize === '1'? 'line-through': 'none' }}>
+                <div className={CreateTaskStyle.item_1_bott_con2_taskItem} style={{textDecoration: is_realize === '1'? 'line-through': 'none' }}>
                   {name} <i>#{board_name}</i>
                 </div>
               )
@@ -287,7 +287,7 @@ export default class ItemOne extends React.Component {
 const customPanelStyle = {
   background: '#f5f5f5',
   borderRadius: 4,
-  fontSize:12,
+  fontSize: 12,
   color: '#8c8c8c',
   border: 0,
   overflow: 'hidden',

@@ -38,8 +38,8 @@ class ShowAddMenberModal extends React.Component {
       if (!err) {
         values['board_id'] = this.props.board_id
         if(this.state.users) {
-          let users = this.state.users.replace(/\n/gim,',') //替代换行符
-          let usersArr = users.split(',')   //转成数组
+          let users = this.state.users.replace(/\n/gim, ',') //替代换行符
+          let usersArr = users.split(',') //转成数组
           let usersNewArr = []
           for(let val of usersArr) {
             if(val) {
@@ -49,7 +49,7 @@ class ShowAddMenberModal extends React.Component {
           users = usersNewArr.join(',')
           for(let val of usersNewArr ) {
             if(!validateTel(val) && !validateEmail(val)) {
-              message.warn('请正确输入被邀请人的手机号或者邮箱。',MESSAGE_DURATION_TIME)
+              message.warn('请正确输入被邀请人的手机号或者邮箱。', MESSAGE_DURATION_TIME)
               return false
             }
           }
@@ -61,31 +61,31 @@ class ShowAddMenberModal extends React.Component {
     });
   }
   render() {
-    const { modalVisible  } = this.props;
+    const { modalVisible } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { stepThreeContinueDisabled } = this.state
 
     const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('othersInfo', {
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208, resize:'none'}}
+            <TextArea style={{height: 208, resize: 'none'}}
                       onChange={this.usersChange.bind(this)}
                       placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
           )}
         </FormItem>
-        <div style={{marginTop :-10}}>
-          <DragValidation  listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
+        <div style={{marginTop: -10}}>
+          <DragValidation listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
         </div>
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>发送邀请</Button>
+          <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>发送邀请</Button>
         </FormItem>
       </Form>
     )
@@ -99,7 +99,7 @@ class ShowAddMenberModal extends React.Component {
           maskClosable={false}
           footer={null}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
           overInner={step_3}
         >

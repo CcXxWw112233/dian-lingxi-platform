@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip,Avatar } from 'antd'
-import MenuSearchMultiple  from '../ProcessStartConfirm/MenuSearchMultiple'
+import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip, Avatar } from 'antd'
+import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
@@ -16,7 +16,7 @@ export default class DetailConfirmInfoFour extends React.Component {
     isShowBottDetail: false, //是否显示底部详情
   }
   componentWillMount(nextProps) {
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     //设置底部可伸缩部分id
     this.setState({
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
@@ -44,10 +44,10 @@ export default class DetailConfirmInfoFour extends React.Component {
   }
   datePickerChange(date, dateString) {
     this.setState({
-      due_time:dateString
+      due_time: dateString
     })
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
     this.props.updateDatas({
       processEditDatas
@@ -56,7 +56,7 @@ export default class DetailConfirmInfoFour extends React.Component {
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
-    const { itemKey  } = this.props
+    const { itemKey } = this.props
     const { assignees = [] } = processEditDatas[itemKey]
     const userInfo = JSON.parse(Cookies.get('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
@@ -66,7 +66,7 @@ export default class DetailConfirmInfoFour extends React.Component {
     for(let i = 0; i < assignees.length; i++) {
       if(assignees[i].user_id === currentUserId) {
         assignees[i] = users[data[0]]
-        willSetAssignee =  users[data[0]].user_id
+        willSetAssignee = users[data[0]].user_id
         break;
       }
     }
@@ -85,16 +85,16 @@ export default class DetailConfirmInfoFour extends React.Component {
   setIsShowBottDetail() {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
-    },function () {
-      this.funTransitionHeight(element, 500,  this.state.isShowBottDetail)
+    }, function () {
+      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
     })
     const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == "undefined") return;
+    if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = "auto";
     const targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
@@ -139,13 +139,13 @@ export default class DetailConfirmInfoFour extends React.Component {
     }
 
     const imgOrAvatar = (img) => {
-      return  img ? (
+      return img ? (
         <div>
-          <img src={img} style={{width: 18, height: 18,marginRight:8,borderRadius: 16, margin:'0 8px'}} />
+          <img src={img} style={{width: 18, height: 18, marginRight: 8, borderRadius: 16, margin: '0 8px'}} />
         </div>
       ):(
-        <div style={{lineHeight: '18px',height:18,width: 16,borderRadius:18,backgroundColor:'#e8e8e8',marginRight:8,textAlign: 'center',margin:'0 8px',marginTop: 2,}}>
-          <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
+        <div style={{lineHeight: '18px', height: 18, width: 16, borderRadius: 18, backgroundColor: '#e8e8e8', marginRight: 8, textAlign: 'center', margin: '0 8px', marginTop: 2, }}>
+          <Icon type={'user'} style={{fontSize: 10, color: '#8c8c8c', }}/>
         </div>
       )
     }
@@ -157,12 +157,12 @@ export default class DetailConfirmInfoFour extends React.Component {
           break
         case '2':
           container = (
-            <div  style={{display: 'flex'}}>
+            <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name, mobile, email } = value
                 if (key <= 6)
                   return(
-                    <Tooltip  key={key} placement="top" title={name || mobile || email || '佚名'}>
+                    <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
@@ -172,12 +172,12 @@ export default class DetailConfirmInfoFour extends React.Component {
           break
         case '3':
           container = (
-            <div  style={{display: 'flex'}}>
+            <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
                 if (key <= 6)
                   return(
-                    <Tooltip  key={key} placement="top" title={name || '佚名'}>
+                    <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
@@ -199,8 +199,8 @@ export default class DetailConfirmInfoFour extends React.Component {
           break
         case '2':
           container = (
-            <div  style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '/',true)}
+            <div style={{color: '#595959'}}>
+              {timestampToTimeNormal(deadline_value, '/', true)}
             </div>
           )
           break
@@ -215,11 +215,11 @@ export default class DetailConfirmInfoFour extends React.Component {
     }
     const filterBorderStyle = (sort) => {
       if (Number(sort) < Number(curr_node_sort)) {
-        return {border:'2px solid rgba(83,196,26,1)'}
+        return {border: '2px solid rgba(83,196,26,1)'}
       }else if(Number(sort) === Number(curr_node_sort)) {
-        return {border:'2px solid rgba(24,144,255,1)'}
+        return {border: '2px solid rgba(24,144,255,1)'}
       }else if(Number(sort) > Number(curr_node_sort)) {
-        return {border:'2px solid rgba(140,140,140,1)'}
+        return {border: '2px solid rgba(140,140,140,1)'}
       }else {}
     }
     const filterBottOperate = () => {
@@ -265,7 +265,7 @@ export default class DetailConfirmInfoFour extends React.Component {
             const { name, avatar, mobile, email } = value
             if (key <= 20)
               return(
-                <Tooltip  key={key} placement="top" title={name|| avatar || mobile ||email || '佚名'}>
+                <Tooltip key={key} placement="top" title={name|| avatar || mobile ||email || '佚名'}>
                   <div>{imgOrAvatar2()}</div>
                 </Tooltip>
               )
@@ -277,15 +277,15 @@ export default class DetailConfirmInfoFour extends React.Component {
 
 
     const imgOrAvatar2 = (img) => {
-      return  img ? (
-        <div style={{width: 26, height: 26,position: 'relative',marginRight:10}}>
-          <img src={img} style={{width: 26, height: 26,borderRadius: 22, }} />
-          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+      return img ? (
+        <div style={{width: 26, height: 26, position: 'relative', marginRight: 10}}>
+          <img src={img} style={{width: 26, height: 26, borderRadius: 22, }} />
+          <div style={{position: 'absolute', lineHeight: '10px', height: 12, color: '#ffffff', fontSize: 10, width: 12, bottom: 0, right: 0, backgroundColor: 'green', borderRadius: 8, textAlign: 'center'}}>√</div>
         </div>
       ):(
-        <div style={{lineHeight: '26px',height:26,width: 26,borderRadius:22,backgroundColor:'#e8e8e8',marginRight:10,textAlign: 'center',marginTop: 2,position: 'relative'}}>
-          <Icon type={'user'} style={{fontSize:10,color: '#8c8c8c',}}/>
-          <div style={{position: 'absolute',lineHeight:'10px',height:12,color: '#ffffff',fontSize:10,width:12,bottom:0,right:0,backgroundColor: 'green',borderRadius: 8,textAlign:'center'}}>√</div>
+        <div style={{lineHeight: '26px', height: 26, width: 26, borderRadius: 22, backgroundColor: '#e8e8e8', marginRight: 10, textAlign: 'center', marginTop: 2, position: 'relative'}}>
+          <Icon type={'user'} style={{fontSize: 10, color: '#8c8c8c', }}/>
+          <div style={{position: 'absolute', lineHeight: '10px', height: 12, color: '#ffffff', fontSize: 10, width: 12, bottom: 0, right: 0, backgroundColor: 'green', borderRadius: 8, textAlign: 'center'}}>√</div>
         </div>
       )
     }
@@ -294,13 +294,13 @@ export default class DetailConfirmInfoFour extends React.Component {
       return (
         <div className={indexStyles.commentListItem}>
           <div className={indexStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={indexStyles.right}>
             <div className={indexStyles.top}>
               <div className={indexStyles.full_name}>{name}</div>
               <div className={indexStyles.create_time}>
-                {time?timestampToTimeNormal(time,'',true): ''}
+                {time?timestampToTimeNormal(time, '', true): ''}
               </div>
             </div>
             <div className={indexStyles.text}>{comment}</div>
@@ -311,7 +311,7 @@ export default class DetailConfirmInfoFour extends React.Component {
 
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
-        <Card style={{width: '100%',backgroundColor: '#f5f5f5'}}>
+        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
@@ -323,7 +323,7 @@ export default class DetailConfirmInfoFour extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
               {filterDueTime(deadline_type)}
-              <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon  onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
+              <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
           <div className={isShowBottDetail? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={ConfirmInfoOut_1_bott_Id} >

@@ -9,7 +9,7 @@ class PreviewFileModal extends React.Component {
     clientHeight: document.documentElement.clientHeight
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
     // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
@@ -31,10 +31,10 @@ class PreviewFileModal extends React.Component {
     this.props.fileDownload({ids: current_file_resource_id})
   }
   render() {
-    const { modalVisible,} = this.props;
+    const { modalVisible, } = this.props;
     const { clientHeight } = this.state
     const {filePreviewIsUsable, filePreviewUrl, current_file_resource_id } = this.props
-    const  getIframe = (src) => {
+    const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
     }
@@ -48,7 +48,7 @@ class PreviewFileModal extends React.Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          style={{textAlign:'center',}}
+          style={{textAlign: 'center', }}
           onCancel={this.onCancel}
         >
           {!filePreviewIsUsable?(

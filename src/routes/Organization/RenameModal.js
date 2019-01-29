@@ -45,19 +45,19 @@ class RenameModal extends React.Component {
     const { stepContinueDisabled } = this.state
     // console.log(this.props)
     const formContain = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>{reName_Add_type==='1'? '重命名': (reName_Add_type==='2'?'添加': '复制')}</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>{reName_Add_type==='1'? '重命名': (reName_Add_type==='2'?'添加': '复制')}</div>
         <FormItem style={{width: 336}}>
           {getFieldDecorator('name', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
-            <Input  placeholder={'输入名称'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50}/>
+            <Input placeholder={'输入名称'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50}/>
           )}
         </FormItem>
 
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>保存</Button>
+          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>保存</Button>
         </FormItem>
       </Form>
     )
@@ -71,7 +71,7 @@ class RenameModal extends React.Component {
           footer={null}
           maskClosable={false}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
         >
           {formContain}

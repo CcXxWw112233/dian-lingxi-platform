@@ -23,7 +23,7 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { datas:{ projectDetailInfoData = {}, cardCommentList = [] } } = this.props.model
+    const { datas: { projectDetailInfoData = {}, cardCommentList = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => (
@@ -47,7 +47,7 @@ export default class CommentListItem extends React.Component {
             )}
           </div>
         ) : ('')}
-        <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
+        <div onMouseOver={this.boxOnMouseOver.bind(this)}>
           {cardCommentList.map((value, key) => {
             if(closeNormal && key > 19) {
               return false

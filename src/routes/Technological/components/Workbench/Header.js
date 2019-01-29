@@ -66,43 +66,43 @@ export default class Header extends React.Component {
     const { role_name } = current_org
     //前端根据当前用户的组织角色返回对应tab名称
     const roleNameRetureTabName = (role_name) => {
-      let arr = ['工作内容','我的文档','我的生活','我的展示']
+      let arr = ['工作内容', '我的文档', '我的生活', '我的展示']
       switch (role_name) {
         case '项目负责人':
-          arr = ['项目工作','我的文档','我的生活','我的展示']
+          arr = ['项目工作', '我的文档', '我的生活', '我的展示']
           break
         case '设计师':
-          arr = ['项目工作','我的文档','我的生活','我的展示']
+          arr = ['项目工作', '我的文档', '我的生活', '我的展示']
           break
         case '老师':
-          arr = ['我的教学','我的课件','我的生活','我的展厅']
+          arr = ['我的教学', '我的课件', '我的生活', '我的展厅']
           break
         case '学生':
-          arr = ['我的学习','我的文档','我的生活','我的展厅']
+          arr = ['我的学习', '我的文档', '我的生活', '我的展厅']
           break
         default:
-          arr = ['工作内容','我的文档','我的生活','我的展示']
+          arr = ['工作内容', '我的文档', '我的生活', '我的展示']
           break
       }
       return arr
     }
     let tabArr = []
     tabArr = roleNameRetureTabName(role_name)
-    console.log('tabArr',role_name,tabArr)
 
     return (
       <div className={indexStyle.headerOut}>
 
         <div className={indexStyle.left}>
-          {tabArr.map((value,key) => {
+          {tabArr.map((value, key) => {
             let contain = (<div></div>)
             if(key == 0 && cardGroupKey == 0) {
               contain = (
                 <Dropdown visible={visibleEdit}
                   // trigger={['click']}
+                          key={key}
                           onVisibleChange={this.onVisibleChangeEdit.bind(this)}
                           overlay={<EditCardDrop {...this.props} visibleEdit={visibleEdit}/>}>
-                  <div onClick={this.setCardGroupKey.bind(this, key)} className={cardGroupKey == key?indexStyle.groupSelect:indexStyle.groupnoSelect}>
+                  <div onClick={this.setCardGroupKey.bind(this, key)} key={key} className={cardGroupKey == key?indexStyle.groupSelect:indexStyle.groupnoSelect}>
                     {value}
                     {/*<i className={globalStyles.authTheme} style={{fontSize: 12, transform:'rotate(10deg)'}}>&#xe701;</i>*/}
                     <Icon type="down" />
@@ -110,7 +110,7 @@ export default class Header extends React.Component {
                 </Dropdown>
               )
             } else {
-              contain = (<div onClick={this.setCardGroupKey.bind(this, key)} className={cardGroupKey == key?indexStyle.groupSelect:indexStyle.groupnoSelect}>{value}</div>)
+              contain = (<div onClick={this.setCardGroupKey.bind(this, key)} key={key} className={cardGroupKey == key?indexStyle.groupSelect:indexStyle.groupnoSelect}>{value}</div>)
             }
             return contain
           })}

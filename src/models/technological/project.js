@@ -15,7 +15,7 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload: {
-              collapseActiveKeyArray: ['1','2','3'], //折叠面板打开的key
+              collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
             }
           })
           dispatch({
@@ -27,7 +27,7 @@ export default {
           dispatch({
             type: 'getAppsList',
             payload: {
-              type:'2'
+              type: '2'
             }
           })
         }else{

@@ -21,7 +21,7 @@ class DetailInfoModal extends React.Component {
   }
 
   render() {
-    const { modalVisible  } = this.props;
+    const { modalVisible } = this.props;
 
     return(
       <CustormModal

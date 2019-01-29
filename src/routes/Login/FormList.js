@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Too
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../globalset/css/globalClassName.less'
-import VerificationCodeTwo from  '../../components/VerificationCodeTwo'
+import VerificationCodeTwo from '../../components/VerificationCodeTwo'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import sha256 from 'js-sha256'
@@ -80,7 +80,7 @@ class FormList extends React.Component {
     });
   }
   //验证账户，输入过程
-  verifyAccountByChange = (e,name) => {
+  verifyAccountByChange = (e, name) => {
     const value = e.target.value
     let loginType =this.state.loginType
     if(name === 'account') { //输入框是账户
@@ -120,14 +120,14 @@ class FormList extends React.Component {
     const { isMobile} = this.state
     const { loginType } = this.props
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 输入账户 */}
         <FormItem >
           {getFieldDecorator('account', {
             rules: [{ required: false, message: '请输入账号', whitespace: true }],
           })(
             <Input
-              style={{height: '40px',fontSize: 16}}
+              style={{height: '40px', fontSize: 16}}
               prefix={<Icon type="user" style={{ color: '#8C8C8C', fontSize: 16 }} />}
               maxLength={40} placeholder="手机号/邮箱"
               onBlur = {this.verifyByBlur.bind(null, 'account')}
@@ -143,21 +143,21 @@ class FormList extends React.Component {
               rules: [{ required: false, message: '请输入验证码', whitespace: true }],
             })(
               <Input
-                style={{height: '40px',fontSize: 16, color: '#8C8C8C'}}
+                style={{height: '40px', fontSize: 16, color: '#8C8C8C'}}
                 prefix={<Icon type="lock" style={{ color: '#8C8C8C', fontSize: 16 }} />}
                 maxLength={32} placeholder={loginType === 'password'? '密码' : '验证码'}
                 type={loginType === 'password'? 'password' : 'text'}
               />
             )}
           </FormItem>
-          <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
-            <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
+          <div style={{position: 'absolute', top: 0, right: 0, color: '#bfbfbf', height: '40px', lineHeight: '40px', padding: '0 16px 0 16px', cursor: 'pointer', display: 'flex'}}>
+            <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf', }}></div>
             {loginType==='password'? (
               <div className={globalStyles.link_mouse}
-                   onClick={this.routingJump.bind(this,'/retrievePassword')}
-                   style={{height: '36px',marginTop:2,backgroundColor:'#ffffff',fontSize: 16,width: 100, lineHeight: '36px',textAlign: 'center'}}>忘记密码</div>
+                   onClick={this.routingJump.bind(this, '/retrievePassword')}
+                   style={{height: '36px', marginTop: 2, backgroundColor: '#ffffff', fontSize: 16, width: 100, lineHeight: '36px', textAlign: 'center'}}>忘记密码</div>
             ): (
-              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile?globalStyles.link_mouse : ''} style={{height: '36px',marginTop:2,backgroundColor:'#ffffff',fontSize: 16,width: 100,lineHeight: '36px',textAlign: 'center'}} text={'获取验证码'}/>
+              <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile?globalStyles.link_mouse : ''} style={{height: '36px', marginTop: 2, backgroundColor: '#ffffff', fontSize: 16, width: 100, lineHeight: '36px', textAlign: 'center'}} text={'获取验证码'}/>
             )}
           </div>
 
@@ -165,7 +165,7 @@ class FormList extends React.Component {
 
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40, fontSize: 16}}>登录</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%', height: 40, fontSize: 16}}>登录</Button>
         </FormItem>
 
 

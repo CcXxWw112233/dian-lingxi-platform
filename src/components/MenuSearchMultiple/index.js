@@ -14,13 +14,13 @@ export default class MenuSearchMultiple extends React.Component{
    state = {
      resultArr: [],
      keyWord: '',
-     selectedKeys:[]
+     selectedKeys: []
    }
   componentWillMount() {
     const { keyWord } = this.state
     const { listData, searchName, selectedKeys = [] } = this.props
     this.setState({
-      resultArr: this.fuzzyQuery(listData,searchName, keyWord),
+      resultArr: this.fuzzyQuery(listData, searchName, keyWord),
       selectedKeys
     })
   }
@@ -48,11 +48,11 @@ export default class MenuSearchMultiple extends React.Component{
     })
   }
   onCheck() {
-     if(this.props.onCheck && typeof this.props.onCheck  === 'function' ) {
+     if(this.props.onCheck && typeof this.props.onCheck === 'function' ) {
        this.props.onCheck(this.state.selectedKeys)
      }
   }
-  fuzzyQuery = (list,searchName, keyWord) => {
+  fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
     for (var i = 0; i < list.length; i++) {
       if (list[i][searchName].indexOf(keyWord) !== -1) {
@@ -64,14 +64,14 @@ export default class MenuSearchMultiple extends React.Component{
   onChange = (e) => {
     const { listData, searchName } = this.props
     const keyWord = e.target.value
-    const resultArr = this.fuzzyQuery(listData,searchName, keyWord)
+    const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
     this.setState({
       keyWord,
       resultArr
     })
   }
   render(){
-    const { keyWord, resultArr,selectedKeys=[] } = this.state
+    const { keyWord, resultArr, selectedKeys=[] } = this.state
     const { Inputlaceholder='搜索', searchName, menuSearchSingleSpinning, keyCode } = this.props
 
     return (
@@ -81,11 +81,11 @@ export default class MenuSearchMultiple extends React.Component{
               onDeselect={this.handleMenuReallyDeselect.bind(this)}
               onSelect={this.handleMenuReallySelect.bind(this)} multiple >
 
-        <Input placeholder={Inputlaceholder}  value={keyWord}  onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
+        <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
         {
           resultArr.map((value, key) => {
             return (
-              <Menu.Item style={{height: 32,lineHeight: '32px'}} key={value[keyCode]} >
+              <Menu.Item style={{height: 32, lineHeight: '32px'}} key={value[keyCode]} >
                 {value[searchName]}
               </Menu.Item>
             )
