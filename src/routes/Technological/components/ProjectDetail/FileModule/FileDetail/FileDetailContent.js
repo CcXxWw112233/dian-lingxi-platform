@@ -338,7 +338,7 @@ export default class FileDetailContent extends React.Component {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this,{currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this,{currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height,border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
@@ -347,7 +347,7 @@ export default class FileDetailContent extends React.Component {
               })}
               {isInEdditOperate?(
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+                     style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height,border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
               ):('')}
 
               {isInAdding? (

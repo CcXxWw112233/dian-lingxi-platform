@@ -171,7 +171,7 @@ export default class SiderLeft extends React.Component {
         collapsible
         onMouseOver={this.setCollapsed.bind(this, false)}
         onMouseOut={this.setCollapsed.bind(this, true)}
-        className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsible collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
+        className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`}  collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <div className={indexStyles.contain_1}>
           <div className={indexStyles.left}>

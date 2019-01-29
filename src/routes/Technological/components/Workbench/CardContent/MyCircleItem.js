@@ -81,8 +81,7 @@ export default class MyCircleItem extends React.Component {
                <div>
                 项目圈
                </div>
-               <div className={indexstyles.circleGroup_top_caret}
-                    className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail !=='1' ? (isShowBottDetail === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
+               <div className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail !=='1' ? (isShowBottDetail === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
                  <Icon  type="caret-down" style={{fontSize: 16}} />
                </div>
              </div>
