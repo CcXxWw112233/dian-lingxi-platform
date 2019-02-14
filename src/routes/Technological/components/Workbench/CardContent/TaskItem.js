@@ -26,8 +26,9 @@ export default class TaskItem extends React.Component {
   }
   itemClick(data, e) {
     const { id, board_id } = data
-    this.props.updateTaskDatas({board_id})
-    this.props.updateFileDatas({board_id})
+    // this.props.updateTaskDatas({board_id})
+    // this.props.updateFileDatas({board_id})
+    this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
   }

@@ -16,6 +16,7 @@ const getEffectOrReducerByName_2 = name => `technological/${name}`
 const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -35,6 +36,13 @@ const Workbench = (props) => {
       payload: payload
     })
   }
+  const updatePublicDatas = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByName_6('updateDatas'),
+      payload: payload
+    })
+  }
+
   const cardContentListProps = {
     modal,
     model,
@@ -584,15 +592,15 @@ const Workbench = (props) => {
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...props} updateDatas={updateDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
+       <GroupContent {...props} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
     </div>
   )
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, workbenchFileDetail, loading }) {
+function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, workbenchFileDetail, workbenchPublicDatas, loading }) {
   const modelObj = {
-    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas']}
+    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas']}
   }
   return { modal, model: modelObj, loading }
 }

@@ -1,15 +1,15 @@
-import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads} from '../../services/technological/workbench'
-import { isApiResponseOk, } from '../../utils/handleResponseData'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads} from '../../../services/technological/workbench'
+import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import {getAppsList} from "../../services/technological/project";
+import {getAppsList} from "../../../services/technological/project";
 import modelExtend from 'dva-model-extend'
-import technological from './index'
-import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "./select";
-import {filePreview, fileDownload} from "../../services/technological/file";
-import { postCommentToDynamics } from "../../services/technological/library";
+import technological from '../index'
+import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "../select";
+import {filePreview, fileDownload} from "../../../services/technological/file";
+import { postCommentToDynamics } from "../../../services/technological/library";
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {

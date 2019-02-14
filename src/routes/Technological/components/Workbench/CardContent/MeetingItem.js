@@ -10,8 +10,9 @@ export default class MeetingItem extends React.Component {
   itemClick(e) {
     const { itemValue = {} } = this.props
     const { id, board_id } = itemValue
-    this.props.updateTaskDatas({board_id})
-    this.props.updateFileDatas({board_id})
+    // this.props.updateTaskDatas({board_id})
+    // this.props.updateFileDatas({board_id})
+    this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
   }

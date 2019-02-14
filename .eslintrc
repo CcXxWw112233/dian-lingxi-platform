@@ -84,7 +84,8 @@
     "react/sort-comp": "off",
     "no-plusplus": "off",
     "comma-spacing": 2,
-    "key-spacing": [2]
+    "key-spacing": [2],
+    "eqeqeq": "off"
   },
   "parserOptions": {
     "ecmaFeatures": {
