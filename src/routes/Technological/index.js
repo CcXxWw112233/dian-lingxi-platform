@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect,  } from 'dva';
-import QueueAnim from  'rc-queue-anim'
+import { connect, } from 'dva';
+import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
 import HeaderNav from './components/HeaderNav'
 import { Route, Router, Switch, Link } from 'dva/router'
@@ -12,7 +12,7 @@ import ClassBasicModel from '../../models/technological'
 import { LocaleProvider, Icon, Layout, Menu, } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import  ImChat from './ImChat.js'
+import ImChat from './ImChat.js'
 import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
 
@@ -39,14 +39,14 @@ export default class Technological extends React.Component{
         dispatch({
           type: getEffectOrReducerByName('routingJump'),
           payload: {
-            route:path,
+            route: path,
           },
         })
       },
       updateDatas (payload) {
         dispatch({
-          type: getEffectOrReducerByName('updateDatas') ,
-          payload:payload
+          type: getEffectOrReducerByName('updateDatas'),
+          payload: payload
         })
       },
       //组织
@@ -140,9 +140,9 @@ export default class Technological extends React.Component{
 
     const newLayout = (
       <Layout >
-        <Sider  collapsedWidth={64}  theme={'light'} collapsed={true} />
-        <SiderLeft  {...HeaderNavProps} />
-        <Layout style={{  backgroundColor: 'rgba(245,245,245,1)'}}>
+        <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
+        <SiderLeft {...HeaderNavProps} />
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)'}}>
           <Content style={{
             margin: '0 16px',
           }}
