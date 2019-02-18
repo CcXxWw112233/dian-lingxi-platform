@@ -5,11 +5,11 @@ import { Table, Button, Menu, Dropdown, Icon, Input, message } from 'antd';
 import CreatDirector from './CreatDirector'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FILES_FILE_DOWNLOAD,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
@@ -89,14 +89,14 @@ export default class FileList extends React.Component {
   //列表排序, 有限排序文件夹
   normalSort(filedata_1, filedata_2, key, state) {
     const that = this
-    filedata_1.sort(function(a,b){
+    filedata_1.sort(function(a, b){
       if(that.state[state]) {
         return a[key].localeCompare(b[key]);
       } else {
         return b[key].localeCompare(a[key]);
       }
     });
-    filedata_2.sort(function(a,b){
+    filedata_2.sort(function(a, b){
       if(that.state[state]) {
         return a[key].localeCompare(b[key]);
       } else {
@@ -146,26 +146,26 @@ export default class FileList extends React.Component {
   }
   listSort(key) {
     const { datas = {} } = this.props.model
-    const {  fileList, filedata_1, filedata_2, selectedRowKeys } = datas
+    const { fileList, filedata_1, filedata_2, selectedRowKeys } = datas
     switch (key) {
       case '1':
         this.setState({
           nameSort: !this.state.nameSort
-        },function () {
+        }, function () {
           this.normalSort(filedata_1, filedata_2, 'file_name', 'nameSort')
         })
         break
       case '2':
         this.setState({
           sizeSort: !this.state.sizeSort
-        },function () {
+        }, function () {
           this.sizeSort(filedata_1, filedata_2, 'file_size', 'sizeSort')
         })
         break
       case '3':
         this.setState({
           creatorSort: !this.state.creatorSort
-        },function () {
+        }, function () {
           this.normalSort(filedata_1, filedata_2, 'creator', 'creatorSort')
         })
         break
@@ -223,7 +223,7 @@ export default class FileList extends React.Component {
   }
 
   //文件夹或文件点击
-  open(data,type) {
+  open(data, type) {
     const { datas = {} } = this.props.model
     const { breadcrumbList = [], currentParrentDirectoryId } = datas
     const { belong_folder_id, file_id } = data
@@ -247,15 +247,15 @@ export default class FileList extends React.Component {
     this.open(data, '2')
     const { file_id, version_id, file_resource_id } = data
     //接下来打开文件
-    this.props.updateDatas({isInOpenFile: true,seeFileInput: 'fileModule',filePreviewCurrentFileId:file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
+    this.props.updateDatas({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
     this.props.filePreview({id: file_resource_id, file_id})
-    this.props.fileVersionist({version_id : version_id})
+    this.props.fileVersionist({version_id: version_id})
   }
 
   render() {
     const { datas = {} } = this.props.model
     const { selectedRowKeys, fileList } = datas
-    const {  nameSort, sizeSort, creatorSort, } = this.state;
+    const { nameSort, sizeSort, creatorSort, } = this.state;
 
     const operationMenu = (data) => {
       const { type } = data
@@ -278,7 +278,7 @@ export default class FileList extends React.Component {
 
     const columns = [
       {
-        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '1')} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down" : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         key: 'file_name',
         render: (data) => {
           const {type, file_name, isInAdd} = data
@@ -288,20 +288,20 @@ export default class FileList extends React.Component {
             )
           }else {
             return(type === '1' ?
-              (<span onClick={this.openDirectory.bind(this,data)} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{file_name}</span>)
-              : (<span onClick={this.openFile.bind(this,data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>))
+              (<span onClick={this.openDirectory.bind(this, data)} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>{file_name}</span>)
+              : (<span onClick={this.openFile.bind(this, data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>))
           }
         }
       }, {
-        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '2')}>大小<Icon type={sizeSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '2')}>大小<Icon type={sizeSort? "caret-down" : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         dataIndex: 'file_size',
         key: 'file_size',
       }, {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
-      },  {
-        title:<div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={creatorSort? "caret-down"  : "caret-up" }  theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+      }, {
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={creatorSort? "caret-down" : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         dataIndex: 'creator',
         key: 'creator',
       },
@@ -337,8 +337,8 @@ export default class FileList extends React.Component {
             selectedRowKeys,
             onChange: this.onSelectChange,
             getCheckboxProps: data => ({
-              disabled: data.type === '1',//data.isInAdd === true || data.type === '1', // Column configuration not to be checked
-              name:  data.file_id,//data.file_id,
+              disabled: data.type === '1', //data.isInAdd === true || data.type === '1', // Column configuration not to be checked
+              name: data.file_id, //data.file_id,
             }),
           }}
           columns={columns}

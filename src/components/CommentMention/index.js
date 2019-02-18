@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
 import indexStyles from './index.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
-import  Cookies  from 'js-cookie'
+import Cookies from 'js-cookie'
 
 const { toString, toContentState, Nav } = Mention;
 
@@ -22,7 +22,7 @@ export default class CommentMention extends React.Component {
   MentionEditorChange(editorState) {
     this.setState({
       editText: editorState
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!toString(this.state.editText)
       })
@@ -54,7 +54,7 @@ export default class CommentMention extends React.Component {
         }
       }
     }
-    selectUsers.push(value.replace('@',''))
+    selectUsers.push(value.replace('@', ''))
 
     selectUsers = Array.from(new Set(selectUsers))
     selectUserIds = Array.from(new Set(selectUserIds)) //这里包含了已选的和重新选的 ，已删除的还去掉
@@ -73,7 +73,7 @@ export default class CommentMention extends React.Component {
     if(arr) {
       for(let val of arr) {
         if(val) {
-          arr_2.push(val.replace(/(^\s*)|(\s*$)/g,"").replace('@', ''))
+          arr_2.push(val.replace(/(^\s*)|(\s*$)/g, "").replace('@', ''))
         }
       }
     }
@@ -119,7 +119,7 @@ export default class CommentMention extends React.Component {
 
   render() {
 
-    const { editText,selectUserIds, selectUsers } = this.state
+    const { editText, selectUserIds, selectUsers } = this.state
     const { users = [] } = this.props
     //将名字添加进数组， 如果有相同的名称则用手机号或者email区分
     let suggestions = []
@@ -134,7 +134,7 @@ export default class CommentMention extends React.Component {
             break
           }
         }
-        suggestions[i] =  <Nav children={value} value={value} />
+        suggestions[i] = <Nav children={value} value={value} />
       }
     }
 
@@ -149,12 +149,12 @@ export default class CommentMention extends React.Component {
           onChange ={this.MentionEditorChange.bind(this)}
           // onSelect = {this.onSelect.bind(this)}
           className={indexStyles.mention}
-          style={{ width: '100%',border:' none', outline: 'none', height: 48}}
+          style={{ width: '100%', border: ' none', outline: 'none', height: 48}}
           value={editText}
           suggestions={suggestions}
         />
         <div className={indexStyles.functionBar}>
-          <div  className={indexStyles.functionBar_left}>
+          <div className={indexStyles.functionBar_left}>
             {/*<Icon type="copyright"  onClick={this.MentionSpacerClick.bind(this)}/>*/}
             <Tooltip title="该功能尚未上线，敬请期待">
               <span style={{fontSize: 16, color: '#8c8c8c'}}>@</span>
@@ -164,8 +164,8 @@ export default class CommentMention extends React.Component {
             </Tooltip>
             <span></span>
           </div>
-          <div  className={indexStyles.functionBar_right}>
-            <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height:24,width: 58,marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
+          <div className={indexStyles.functionBar_right}>
+            <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height: 24, width: 58, marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
           </div>
         </div>
       </div>

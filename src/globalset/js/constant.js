@@ -14,8 +14,8 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 }
 
 
-export const WEBSOCKET_PATH = '192.168.1.14'//'192.168.0.30'  //WS链接地址dsfsd
-export const WEBSOCKET_PORT= '9326'  //WS链接地址
+export const WEBSOCKET_PATH = '47.93.53.149'//'192.168.0.30'  //WS链接地址dsfsd
+export const WEBSOCKET_PORT= '9326' //WS链接地址
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
 export const MESSAGE_DURATION_TIME = 3 //message弹框时间
@@ -71,7 +71,7 @@ export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看�
 
 
 //名词定义
-export const NORMAL_NOUN_PLAN = {"Organization":"组织","Tasks":"卡片","Flows":"流程","Dashboard":"与我相关","Projects":"看板","Files":"文件","Members":"成员","Catch_Up":"动态"}
+export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态"}
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'

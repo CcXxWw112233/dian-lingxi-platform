@@ -17,8 +17,8 @@ import TeachingEffect from './TeachingEffect'
 export default class CardContentNormal extends React.Component{
 
   render(){
-    const {  itemValue={} } = this.props
-    const { code, name,  } = itemValue
+    const { itemValue={} } = this.props
+    const { code, name, } = itemValue
     const filterItem = (code) => {
       let contanner = (<div></div>)
       switch (code) {
@@ -90,7 +90,7 @@ export default class CardContentNormal extends React.Component{
             <MeetingItem />
           )
           break
-        case 'TO_DO':  //代办事项 --任务
+        case 'TO_DO': //代办事项 --任务
           contanner = (
             <TaskItem />
           )

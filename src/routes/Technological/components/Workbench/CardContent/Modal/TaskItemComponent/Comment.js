@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
 import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
-import  Cookies  from 'js-cookie'
+import Cookies from 'js-cookie'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";
@@ -27,7 +27,7 @@ export default class Comment extends React.Component {
   MentionEditorChange(editorState) {
     this.setState({
       editText: editorState
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!toString(this.state.editText)
       })
@@ -38,7 +38,7 @@ export default class Comment extends React.Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({
       card_id,
@@ -50,19 +50,19 @@ export default class Comment extends React.Component {
     })
   }
   commentToDynamics(data) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.postCommentToDynamics({
       id: card_id,
-      type:"1",
-      content:[data]
+      type: "1",
+      content: [data]
     })
   }
 
   render() {
 
     const { editText } = this.state
-    const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {

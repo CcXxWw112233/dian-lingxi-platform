@@ -49,13 +49,13 @@ export default class FileItem extends React.Component {
     }
     return themeCode
   }
-  gotoBoardDetail(board_id,e) {
+  gotoBoardDetail(board_id, e) {
     stopPropagation(e)
-    Cookies.set('board_id', board_id,{expires: 30, path: ''})
+    Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
-  previewFile(data,e) {
-    const { board_id, board_name, file_name,create_time,file_resource_id, file_id, id, folder_id } = data
+  previewFile(data, e) {
+    const { board_id, board_name, file_name, create_time, file_resource_id, file_id, id, folder_id } = data
 
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
@@ -66,24 +66,24 @@ export default class FileItem extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: file_id
     })
-    this.props.filePreview({id: file_resource_id,file_id:id})
+    this.props.filePreview({id: file_resource_id, file_id: id})
     this.props.fileVersionist({
-      version_id:file_id,
-      isNeedPreviewFile:false,
+      version_id: file_id,
+      isNeedPreviewFile: false,
     })
-
+    this.props.updatePublicDatas({ board_id })
     this.props.getBoardMembers({id: board_id})
   }
   render() {
     const { itemValue = {} } = this.props
-    const { board_id, board_name, file_name,create_time,file_resource_id, file_id, id } = itemValue
+    const { board_id, board_name, file_name, create_time, file_resource_id, file_id, id } = itemValue
 
     return (
       <div className={indexstyles.fileItem} onClick={this.previewFile.bind(this, {...itemValue})}>
         <div>
-          <i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
+          <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
         </div>
-        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
         <div>
           {timestampToTimeNormal(create_time, '/', true) }
         </div>

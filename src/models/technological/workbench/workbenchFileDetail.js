@@ -2,9 +2,9 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
-import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../../services/technological/file'
+import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import {  selectFilePreviewCommitPointNumber } from './selects'
+import { selectFilePreviewCommitPointNumber } from './selects'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -20,22 +20,22 @@ export default {
           const initialData = () => {
             dispatch({
               type: 'updateDatas',
-              payload:{
-                seeFileInput: 'file',//看文件的入口
+              payload: {
+                seeFileInput: 'file', //看文件的入口
                 currentParrentDirectoryId: '', //当前预览文件的文件夹id
                 board_id: '',
                 filePreviewIsUsable: true, //文件是否可以预览标记
-                filePreviewUrl: '',  //预览文件url
+                filePreviewUrl: '', //预览文件url
                 filePreviewCurrentId: '', //当前预览的文件resource_id
                 filePreviewCurrentFileId: '', //当前预览的文件id
                 filePreviewCurrentVersionId: '', //当前预览文件版本id
                 filePreviewCurrentVersionList: [], //预览文件的版本列表
                 filePreviewCurrentVersionKey: 0, //预览文件选中的key
-                filePreviewCommits: [],//文件评论列表
+                filePreviewCommits: [], //文件评论列表
                 filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
                 filePreviewCommitPoints: [], //文件图评点列表
                 filePreviewCommitType: '0', //新增评论 1 回复圈点评论
-                filePreviewCommitPointNumber: '',//评论当前的点
+                filePreviewCommitPointNumber: '', //评论当前的点
                 filePreviewIsRealImage: true, //当前预览的图片是否真正图片
               }
             })
@@ -105,7 +105,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             filePreviewCurrentVersionList: res.data,
           }
         })
@@ -123,7 +123,7 @@ export default {
       }
     },
     * getPreviewFileCommits({ payload }, { select, call, put }) {
-      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
       const { type } = payload
       let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
       let res = yield call(getPreviewFileCommits, {...payload, point_number: type == 'point'?filePreviewCommitPointNumber: ''})
@@ -132,7 +132,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            [name]: res.data ,
+            [name]: res.data,
           }
         })
       }else{
@@ -145,7 +145,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewCommitPoints: res.data ,
+            filePreviewCommitPoints: res.data,
           }
         })
       }else{
@@ -154,7 +154,7 @@ export default {
     },
     * addFileCommit({ payload }, { select, call, put }) {
       let res = yield call(addFileCommit, payload)
-      const { file_id,type, filePreviewCommitType = '0' } = payload
+      const { file_id, type, filePreviewCommitType = '0' } = payload
       //filePreviewCommitType 0 新增 1 回复
       if(isApiResponseOk(res)) {
         const flag = res.data.flag
@@ -198,7 +198,7 @@ export default {
     },
     * deleteCommit({ payload }, { select, call, put }) {
       let res = yield call(deleteCommit, payload)
-      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
       const { file_id, type, point_number } = payload
       if(isApiResponseOk(res)) {
         yield put({

@@ -1,10 +1,10 @@
-import { getBoardMembers,setMemberRoleInProject,projectDetailInfo, updateProject, removeMenbers } from '../../../services/technological/prjectDetail'
+import { getBoardMembers, setMemberRoleInProject, projectDetailInfo, updateProject, removeMenbers } from '../../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
-import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../../services/technological/file'
-import { getCardDetail, removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
+import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
+import { getCardDetail, removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers, getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
 import Cookies from "js-cookie";
 import {currentNounPlanFilterName} from "../../../utils/businessFunction";
 import { selectDrawContent, selectBoardId } from './selects'
@@ -23,13 +23,13 @@ export default {
           const initialData = () => {
             dispatch({
               type: 'updateDatas',
-              payload:{
+              payload: {
                 projectDetailInfoData: {}, //项目详情全部数据
                 board_id: '',
                 drawContent: {}, //任务右方抽屉内容
                 drawerVisible: false, //查看任务的抽屉是否可见
                 cardCommentList: [], //任务评论列表
-                taskGroupList: [],  //任务列表
+                taskGroupList: [], //任务列表
                 boardTagList: [], //项目标签列表
               }
             })
@@ -50,7 +50,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             drawContent: res.data,
           }
         })
@@ -75,7 +75,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             projectDetailInfoData: {data: res.data},
           }
         })
@@ -93,7 +93,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             projectDetailInfoData: res.data,
           }
         })
@@ -104,7 +104,7 @@ export default {
     //任务---start
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
-      const  { type, board_id, arrange_type, calback, operateType } = payload
+      const { type, board_id, arrange_type, calback, operateType } = payload
       let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
       if (typeof calback === 'function') {
         calback()
@@ -112,7 +112,7 @@ export default {
       if(operateType === '1') { //代表分类查询选择
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList: []
           }
         })
@@ -121,7 +121,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList: res.data
           }
         })
@@ -132,7 +132,7 @@ export default {
     * updateTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
 
-      const drawContent = yield  select(selectDrawContent)
+      const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -145,7 +145,7 @@ export default {
             drawContent,
           }
         })
-        message.success('更新成功',MESSAGE_DURATION_TIME)
+        message.success('更新成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -155,7 +155,7 @@ export default {
       const { id } = payload
       let res = yield call(deleteTask, id)
       if(isApiResponseOk(res)) {
-        message.success('删除成功',MESSAGE_DURATION_TIME)
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -163,7 +163,7 @@ export default {
 
     * updateChirldTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
-      const drawContent = yield  select(selectDrawContent)
+      const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -176,7 +176,7 @@ export default {
             drawContent,
           }
         })
-        message.success('更新成功',MESSAGE_DURATION_TIME)
+        message.success('更新成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -186,7 +186,7 @@ export default {
       const {card_id, chirldDataIndex} = payload
       let res = yield call(deleteTask, card_id)
       if(isApiResponseOk(res)) {
-        message.success('删除成功',MESSAGE_DURATION_TIME)
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -195,7 +195,7 @@ export default {
     * archivedTask({ payload }, { select, call, put }) { //
       let res = yield call(archivedTask, payload)
       if(isApiResponseOk(res)) {
-        message.success(`已归档`,MESSAGE_DURATION_TIME)
+        message.success(`已归档`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -236,7 +236,7 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-        drawContent.child_data[0] =  payload
+        drawContent.child_data[0] = payload
         drawContent.child_data[0]['card_id'] = res.data.id
         // yield put({
         //   type: 'updateDatas',
@@ -267,14 +267,14 @@ export default {
       }
     },
     * completeTask({ payload }, { select, call, put }) { //
-      const { is_realize  } = payload
+      const { is_realize } = payload
       const board_id = yield select(selectBoardId)
 
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
           yield put({
             type: 'projectDetailInfo',
-            payload:{
+            payload: {
               id: board_id,
               calback: function () {
                 message.success(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}`: `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
@@ -338,7 +338,7 @@ export default {
         drawContent.label_data[length-1].label_id = res.data.label_id
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             drawContent
           }
         })
@@ -435,7 +435,7 @@ export default {
       const { id } = payload
       yield put({
         type: 'updateDatas',
-        payload:{
+        payload: {
           cardCommentList: []
         }
       })
@@ -443,7 +443,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             cardCommentList: res.data
           }
         })
@@ -459,7 +459,7 @@ export default {
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               cardCommentList: res.data
             }
           })
@@ -477,7 +477,7 @@ export default {
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               cardCommentList: res.data
             }
           })

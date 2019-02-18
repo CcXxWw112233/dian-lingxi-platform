@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
 import CommentStyles from './Comment2.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem2'
-import  Cookies  from 'js-cookie'
+import Cookies from 'js-cookie'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../../../utils/businessFunction";
@@ -26,7 +26,7 @@ export default class Comment extends React.Component {
   MentionEditorChange(editorState) {
     this.setState({
       editText: editorState
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!toString(this.state.editText)
       })
@@ -34,7 +34,7 @@ export default class Comment extends React.Component {
   }
   submitComment() {
 
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({
       card_id,
@@ -67,7 +67,7 @@ export default class Comment extends React.Component {
       // return;
     }
     if(code == '13' && !ctrl && !shift && !alt) {
-      const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId, board_id  } } = this.props.model
+      const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
       const { text } = this.state
       if(!text) {
         return
@@ -89,7 +89,7 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -117,7 +117,7 @@ export default class Comment extends React.Component {
       },
     };
     return (
-      <div className={CommentStyles.out}  tabIndex="0" hideFocus={true} style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out} tabIndex="0" hideFocus={true} style={{outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
@@ -130,7 +130,7 @@ export default class Comment extends React.Component {
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1}  className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}

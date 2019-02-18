@@ -1,7 +1,7 @@
 import { Card, Icon, Dropdown, Input, Menu } from 'antd'
 import indexstyles from '../index.less'
 import React from 'react'
-import MenuSearchMultiple from  '../CardContent/MenuSearchMultiple'
+import MenuSearchMultiple from '../CardContent/MenuSearchMultiple'
 import FileDetailModal from '../CardContent/Modal/FileDetailModal'
 import FileList from './FileList'
 
@@ -64,11 +64,11 @@ export default class CardContent extends React.Component{
     this.props.getItemBoxFilter({
       id: boxId,
       board_ids: data.join(','),
-      selected_board_data:data,
+      selected_board_data: data,
       itemKey
     })
   }
-  onVisibleChange(e,a){
+  onVisibleChange(e, a){
     this.setState({
       dropDonwVisible: e
     })
@@ -117,7 +117,7 @@ export default class CardContent extends React.Component{
         case 'MY_STAR_FILE':
           contanner = (
             <div>
-               <FileList {...this.props}  CardContentType={'MY_STAR_FILE'} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+               <FileList {...this.props} CardContentType={'MY_STAR_FILE'} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
             </div>
           )
           break
@@ -152,7 +152,7 @@ export default class CardContent extends React.Component{
     }
 
     return (
-      <div className={indexstyles.cardDetail} style={{maxHeight:CardContentType=='MY_UPLOAD_FILE' ? 680: ''}}>
+      <div className={indexstyles.cardDetail} style={{maxHeight: CardContentType=='MY_UPLOAD_FILE' ? 680: ''}}>
         <div className={indexstyles.contentTitle}>
           {/*<div>{title}</div>*/}
           <div className={indexstyles.titleDetail} >{localTitle}</div>
@@ -161,7 +161,7 @@ export default class CardContent extends React.Component{
           {filterItem(CardContentType)}
         </div>
 
-        <FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
+        <FileDetailModal {...this.props} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
       </div>
     )

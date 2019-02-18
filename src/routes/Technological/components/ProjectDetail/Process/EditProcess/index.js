@@ -21,7 +21,7 @@ export default class EditProcess extends React.Component {
     saveTemplateModalVisible: false
   }
   nodeTypeClick(node_type) {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     if(processCurrentEditStep===0 && node_type === '5') {
       message.warn(`${currentNounPlanFilterName(FLOWS)}节点第一步不能为审批类型`)
       return false
@@ -64,7 +64,7 @@ export default class EditProcess extends React.Component {
     return true
   }
   addNode(node_type) { //添加每一项默认里程碑开始，当前步数跳到最新
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
     const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
 
@@ -90,7 +90,7 @@ export default class EditProcess extends React.Component {
   }
 
   currentEditStepClick(data) {
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep = 0 } } = this.props.model
     const { value, key } = data
     const { node_type } = value
 
@@ -119,7 +119,7 @@ export default class EditProcess extends React.Component {
   //当设置为启动流程时指定，过滤掉设置的值,用于保存模板和直接启动接口调用
   requestFilterProcessEditDatas() {
     const { datas: { processEditDatas = [] } } = this.props.model
-    const  newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+    const newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
     for(let i = 0; i < newProcessEditDatas.length; i ++ ) {
       if(newProcessEditDatas[i]['deadline_type'] === '2'){
         newProcessEditDatas[i]['deadline_value'] = ''
@@ -159,7 +159,7 @@ export default class EditProcess extends React.Component {
     this.props.directStartSaveTemplate({
       board_id,
       is_retain: '0',
-      node_data: this.requestFilterProcessEditDatas(),//processEditDatas,
+      node_data: this.requestFilterProcessEditDatas(), //processEditDatas,
       type: '1',
       template_no: '',
     })
@@ -177,7 +177,7 @@ export default class EditProcess extends React.Component {
   //删除
   deleteProcessStep(e){
     e.stopPropagation()
-    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep  } } = this.props.model
+    const { datas: { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep } } = this.props.model
     if(processEditDatas.length <= 1|| processEditDatasRecords.length <= 1) {
       return false
     }
@@ -197,8 +197,8 @@ export default class EditProcess extends React.Component {
       processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
     })
     this.props.updateDatas({
-      processEditDatasRecords:newProcessEditDatasRecords,
-      processEditDatas:newProcessEditDatas,
+      processEditDatasRecords: newProcessEditDatasRecords,
+      processEditDatas: newProcessEditDatas,
       node_type: processEditDatas[processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0]['node_type'],
     })
   }
@@ -282,7 +282,7 @@ export default class EditProcess extends React.Component {
           <div></div>
           <Button type={'primary'}style={{marginTop: 36}} onClick={this.setSaveTemplateModalVisible.bind(this)}>保存模板</Button>
           <Button style={{marginTop: 14}} onClick={this.directStart.bind(this)}>直接启动</Button>
-          <Button  style={{marginTop: 14, color: 'red'}} onClick={this.quitEdit.bind(this)}>退出编辑</Button>
+          <Button style={{marginTop: 14, color: 'red'}} onClick={this.quitEdit.bind(this)}>退出编辑</Button>
         </div>
         <SaveTemplate requestFilterProcessEditDatas={this.requestFilterProcessEditDatas.bind(this)} {...this.props} setSaveTemplateModalVisible={this.setSaveTemplateModalVisible.bind(this)} saveTemplateModalVisible = {this.state.saveTemplateModalVisible}/>
 

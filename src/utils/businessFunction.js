@@ -36,7 +36,7 @@ export const checkIsHasPermissionInBoard = (code) => {
 
 //返回当前名词定义对应名称
 export const currentNounPlanFilterName = (code) => {
-  let currentNounPlan = localStorage.getItem('currentNounPlan')    ///|| NORMAL_NOUN_PLAN
+  let currentNounPlan = localStorage.getItem('currentNounPlan') ///|| NORMAL_NOUN_PLAN
   if(currentNounPlan) {
     currentNounPlan = JSON.parse(currentNounPlan)
   } else {

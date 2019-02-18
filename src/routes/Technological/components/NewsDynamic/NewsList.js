@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Icon, Input } from 'antd'
 import NewsListStyle from './NewsList.less'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
 
@@ -27,15 +27,17 @@ export default class NewsList extends React.Component {
       <div className={NewsListStyle.news_1}>严世威 邀请你加入了「协作工作平台」项目。</div>
     )
     //项目动态编辑
-    const news_2 = (<div className={NewsListStyle.news_2}>
+    const news_2 = (
+<div className={NewsListStyle.news_2}>
       欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。
       不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。
       此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。
       如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
-    </div>)
+    </div>
+)
     //时间动态动态
     const news_3 = (
-      <div  className={NewsListStyle.news_3}>
+      <div className={NewsListStyle.news_3}>
         <div className={NewsListStyle.news_3_text}>严世威 邀请你加入了「协作工作平台」项目。</div>
         <div className={NewsListStyle.news_3_time}>17:00</div>
       </div>
@@ -43,7 +45,7 @@ export default class NewsList extends React.Component {
     //评论动态
     const news_4 = (
       <div className={NewsListStyle.news_4}>
-        <div  className={NewsListStyle.news_4_top}>
+        <div className={NewsListStyle.news_4_top}>
           <div className={NewsListStyle.news_4_left}>
             <img src="" />
           </div>
@@ -59,11 +61,11 @@ export default class NewsList extends React.Component {
             </div>
           </div>
         </div>
-        <div  className={NewsListStyle.news_4_middle}>
+        <div className={NewsListStyle.news_4_middle}>
           <img src="" />
           <img src="" />
         </div>
-        <div  className={NewsListStyle.news_4_bottom}>
+        <div className={NewsListStyle.news_4_bottom}>
           <Comment {...this.props} />
         </div>
       </div>
@@ -81,38 +83,38 @@ export default class NewsList extends React.Component {
       </div>
     )
     //过滤消息内容
-    const   filterTitleContain = (activity_type, messageValue) => {
+    const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
       switch (activity_type) {
         //项目
         case 'createBoard':
           contain = '创建项目'
-          messageContain = (<div>{messageValue.user_name} 创建项目「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 创建项目「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         case 'updBoard':
           contain = '更新项目信息'
-          messageContain = (<div>{messageValue.user_name} 更新了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目信息。</div>)
+          messageContain = (<div>{messageValue.user_name} 更新了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目信息。</div>)
           break
         case 'archivedBoard':
           contain = '项目归档'
-          messageContain = (<div>{messageValue.user_name} 归档了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 归档了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         case 'quitBoard':
           contain = '退出项目'
-          messageContain = (<div>{messageValue.user_name} 退出了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 退出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         case 'delBoard':
           contain = '删除项目'
-          messageContain = (<div>{messageValue.user_name} 删除了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         case 'addBoardUser':
           contain = '添加项目成员'
-          messageContain = (<div>{messageValue.user_name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         case 'removeBoardUser':
           contain = '移除项目成员'
-          messageContain = (<div>{messageValue.user_name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF',cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
+          messageContain = (<div>{messageValue.user_name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」项目。</div>)
           break
         //任务
         case 'createCard':
@@ -366,7 +368,7 @@ export default class NewsList extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
-                <div>{filterTitleContain(activity_type,value).contain}</div>
+                <div>{filterTitleContain(activity_type, value).contain}</div>
                 <div>{timestampToTime(create_time)}</div>
               </div>
             </div>
@@ -375,7 +377,7 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
           </div>
         </div>
       )
@@ -393,7 +395,7 @@ export default class NewsList extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>项目：{board_name}<Icon type="caret-right"  style={{fontSize: 8}}/> 分组 {list_name}</div>
+                <div>项目：{board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name}</div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -401,7 +403,7 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
           </div>
         </div>
       )
@@ -420,7 +422,7 @@ export default class NewsList extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>项目：{board_name} <Icon type="caret-right"  style={{fontSize: 8}}/> 分组 {list_name}</div>
+                <div>项目：{board_name} <Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name}</div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -430,7 +432,7 @@ export default class NewsList extends React.Component {
           <div className={NewsListStyle.bott}>
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
-              <div  className={NewsListStyle.news_4_top}>
+              <div className={NewsListStyle.news_4_top}>
                 <div className={NewsListStyle.news_4_left}>
                   {/*<img src="" />*/}
                   {avatar?(
@@ -451,11 +453,11 @@ export default class NewsList extends React.Component {
                   </div>
                 </div>
               </div>
-              <div  className={NewsListStyle.news_4_middle}>
+              <div className={NewsListStyle.news_4_middle}>
                 {/*<img src="" />*/}
                 {/*<img src="" />*/}
               </div>
-              <div  className={NewsListStyle.news_4_bottom}>
+              <div className={NewsListStyle.news_4_bottom}>
                 <Comment {...this.props} />
               </div>
             </div>
@@ -484,7 +486,7 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
           </div>
         </div>
       )
@@ -501,7 +503,7 @@ export default class NewsList extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
-                <div>{filterTitleContain(activity_type,value).contain}</div>
+                <div>{filterTitleContain(activity_type, value).contain}</div>
                 <div>项目： {board_name}</div>
               </div>
             </div>
@@ -510,7 +512,7 @@ export default class NewsList extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type,value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(activity_type, value).messageContain}</div>
           </div>
         </div>
       )
@@ -520,22 +522,22 @@ export default class NewsList extends React.Component {
     const filterNewsType = (type, value) => {
       let containner = (<div></div>)
       switch (type) {
-        case  '1':
+        case '1':
           containner = ( projectNews(value) )
           break
-        case  '2':
+        case '2':
           containner = ( taskNews(value) )
           break
-        case  '3':
+        case '3':
           containner = ( commentNews(value) )
           break
-        case  '4':
+        case '4':
           containner = ( processNews(value) )
           break
-        case  '5':
+        case '5':
           containner = ( fileNews(value) )
           break
-        case  '6':
+        case '6':
           containner = ( processNews(value) )
           break
         default:
@@ -545,14 +547,14 @@ export default class NewsList extends React.Component {
     }
 
     return (
-      <div style={{paddingBottom:100, transform: 'none', display:'inline'}} >
+      <div style={{paddingBottom: 100, transform: 'none', display: 'inline'}} >
         {isHasNewDynamic?(
           <div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>
         ): ('')}
         {newsDynamicList.map((value, key)=> {
           const { date, dataList = []} = value
           return (
-            <div className={NewsListStyle.itemOut}  key={key}>
+            <div className={NewsListStyle.itemOut} key={key}>
               <div className={NewsListStyle.head}>
                 <div>{date}</div>
                 <div onClick={this.allSetReaded.bind(this)}>全部标为已读</div>
@@ -568,9 +570,9 @@ export default class NewsList extends React.Component {
         })}
         <div style={{marginBottom: 100}}>
           {isHasMore?(
-            <div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
+            <div onClick={this.getNewsDynamicListNext.bind(this, next_id)} style={{height: 30, width: 770, margin: '0 auto', lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5', borderRadius: 4, marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
           ):(
-            <div  style={{height: 30, width: 770, margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>
+            <div style={{height: 30, width: 770, margin: '0 auto', lineHeight: '30px', textAlign: 'center', marginTop: 20, color: '#8c8c8c'}}>没有更多了...</div>
           )}
         </div>
       </div>

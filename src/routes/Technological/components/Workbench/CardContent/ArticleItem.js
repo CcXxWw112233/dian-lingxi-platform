@@ -14,9 +14,9 @@ export default class ArticleItem extends React.Component {
         <div className={indexstyles.articleItemleft}>
           <div className={indexstyles.hoverUnderline}>{title}</div>
           <div>
-            <Icon type="calendar" style={{fontSize: 14, color: '#d9d9d9',marginRight: 6}}/>
+            <Icon type="calendar" style={{fontSize: 14, color: '#d9d9d9', marginRight: 6}}/>
              {timestampToTimeNormal(create_time)}
-            <Icon type="eye" style={{fontSize: 14, color: '#d9d9d9',margin: '0 4px 0 8px'}}/>
+            <Icon type="eye" style={{fontSize: 14, color: '#d9d9d9', margin: '0 4px 0 8px'}}/>
             {view_count}
           </div>
         </div>

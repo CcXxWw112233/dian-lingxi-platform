@@ -13,7 +13,7 @@ class PreviewArticleModal extends React.Component {
     this.props.setPreviewArticleModalVisibile()
   }
   render() {
-    const { modalVisible,} = this.props;
+    const { modalVisible, } = this.props;
     const {datas: { previewAticle ={}, spinning } } = this.props.model
     const { content='文章加载中', title } = previewAticle
     return(
@@ -25,7 +25,7 @@ class PreviewArticleModal extends React.Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          style={{textAlign:'center',}}
+          style={{textAlign: 'center', }}
           onCancel={this.onCancel}
         >
           <Spin tip="正在获取文章..." spinning={spinning}>

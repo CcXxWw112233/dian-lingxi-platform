@@ -1,5 +1,5 @@
 import React from 'react'
-import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal , Button, Tree, message } from 'antd';
+import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal, Button, Tree, message } from 'antd';
 import indexStyles from './index.less'
 import RenameModal from './RenameModal'
 import {
@@ -19,13 +19,13 @@ export default class ProjectRole extends React.Component {
     renameModalVisable: false, //重命名或添加item modal显示
   };
   // 全选
-  onCheckAllChange = ({parentKey,childKey},e) => {
+  onCheckAllChange = ({parentKey, childKey}, e) => {
     const { datas: { project_role_data }} = this.props.model
     let arr = []
     for(let val of project_role_data[parentKey]['function_tree_data'][childKey]['child_data']){
       arr.push(val.id)
     }
-    project_role_data[parentKey]['function_tree_data'][childKey]['selects'] =   e.target.checked? arr : []
+    project_role_data[parentKey]['function_tree_data'][childKey]['selects'] = e.target.checked? arr : []
     project_role_data[parentKey]['function_tree_data'][childKey]['indeterminate'] = false
     project_role_data[parentKey]['function_tree_data'][childKey]['checkedAll'] = e.target.checked
 
@@ -33,13 +33,13 @@ export default class ProjectRole extends React.Component {
       project_role_data
     })
   }
-  groupOnChange = ({parentKey,childKey}, checkedList ) => {
+  groupOnChange = ({parentKey, childKey}, checkedList ) => {
     const { datas: { project_role_data }} = this.props.model
     let arr = []
     for(let val of project_role_data[parentKey]['function_tree_data'][childKey]['child_data']){
       arr.push(val.id)
     }
-    project_role_data[parentKey]['function_tree_data'][childKey]['selects'] =  checkedList
+    project_role_data[parentKey]['function_tree_data'][childKey]['selects'] = checkedList
     project_role_data[parentKey]['function_tree_data'][childKey]['checkedAll'] = checkedList.length === arr.length
     project_role_data[parentKey]['function_tree_data'][childKey]['indeterminate'] = !!checkedList.length && (checkedList.length < arr.length)
 
@@ -168,7 +168,7 @@ export default class ProjectRole extends React.Component {
       return false
     }
     const { name } = values
-    this.props.createRole({name,type: '2'})
+    this.props.createRole({name, type: '2'})
   }
 
   finallySave({value, parentKey}) {
@@ -178,7 +178,7 @@ export default class ProjectRole extends React.Component {
     let function_data = []
     let content_data = []
     for(let i = 0; i < function_tree_data.length; i++) {
-      function_data =  function_data.concat(function_tree_data[i]['selects'])
+      function_data = function_data.concat(function_tree_data[i]['selects'])
     }
     function_data = Array.from(new Set(function_data))
 
@@ -195,24 +195,24 @@ export default class ProjectRole extends React.Component {
       return (
         <Menu onClick={this.handleMenuClick.bind(this, {parentKey, value})}>
           {is_default !== '1'?(
-            <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectMemu}>
                 设为默认
               </div>
             </Menu.Item>
           ): ('') }
-          <Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyles.elseProjectMemu}>
               复制
             </div>
           </Menu.Item>
-          <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyles.elseProjectMemu}>
               重命名
             </div>
           </Menu.Item>
           {is_default !== '1'?(
-            <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectDangerMenu}>
                 删除
               </div>
@@ -266,7 +266,7 @@ export default class ProjectRole extends React.Component {
                 <Collapse bordered={false} >
                   {/*二级折叠*/}
                   {function_tree_data.map((value, childKey) => {
-                    const { child_data,checkedAll ,indeterminate, selects } = value //indeterminate, checkedAll
+                    const { child_data, checkedAll, indeterminate, selects } = value //indeterminate, checkedAll
                     const { name } = value
                     return(
                       <Panel header={<
@@ -274,16 +274,16 @@ export default class ProjectRole extends React.Component {
                         <Checkbox
                           disabled={checkDisabled}
                           indeterminate={indeterminate}
-                          onChange={this.onCheckAllChange.bind(this,{parentKey,childKey})}
+                          onChange={this.onCheckAllChange.bind(this, {parentKey, childKey})}
                           checked={checkedAll}
                           style={{marginRight: 12 }} />
                           {name}</div>}
                              style={{...childrenPanelStyles}} key={childKey}>
                         <div className={indexStyles.childrenPanelContent}>
                           <div style={checkBoxAllStyles}>
-                            <Checkbox disabled={checkDisabled} indeterminate={indeterminate} onChange={this.onCheckAllChange.bind(this,{parentKey,childKey})} checked={checkedAll} style={{marginRight: 12 }}></Checkbox>
+                            <Checkbox disabled={checkDisabled} indeterminate={indeterminate} onChange={this.onCheckAllChange.bind(this, {parentKey, childKey})} checked={checkedAll} style={{marginRight: 12 }}></Checkbox>
                           </div>
-                          <Checkbox.Group style={{ width: '100%' }} onChange={this.groupOnChange.bind(this, {parentKey,childKey})} value={ selects } disabled={checkDisabled}>
+                          <Checkbox.Group style={{ width: '100%' }} onChange={this.groupOnChange.bind(this, {parentKey, childKey})} value={ selects } disabled={checkDisabled}>
                             <Row style={childrenPanelRowsStyles}>
                               {child_data.map((value, key) => {
                                 const { id, name } = value
@@ -309,7 +309,7 @@ export default class ProjectRole extends React.Component {
                     {/*searchPlaceholder={'请选择'}*/}
                     {/*style={{width: '100%',}}*/}
                   {/*/>*/}
-                  <Tree  checkable  multiple onCheck={this.onCheck.bind(this, parentKey)} disabled={checkDisabled} checkedKeys={already_has_content_permission_trans}>
+                  <Tree checkable multiple onCheck={this.onCheck.bind(this, parentKey)} disabled={checkDisabled} checkedKeys={already_has_content_permission_trans}>
                     {/*{loop(content_tree_data)}*/}
                   {content_tree_data.map((value, key) => {
                     const { board_id, board_name, app_data } = value
@@ -327,8 +327,8 @@ export default class ProjectRole extends React.Component {
                   </Tree>
                 </div>
                 {system_role !== '1'? (
-                  <div style={{margin: '0 auto',marginTop: 20, textAlign: 'center'}}>
-                    <Button type={'primary'} disabled={checkDisabled}  onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
+                  <div style={{margin: '0 auto', marginTop: 20, textAlign: 'center'}}>
+                    <Button type={'primary'} disabled={checkDisabled} onClick={this.finallySave.bind(this, {value, parentKey})}>保存</Button>
                   </div>
                 ) : ('')}
               </Panel>
@@ -339,7 +339,7 @@ export default class ProjectRole extends React.Component {
           <Icon type="plus-circle" theme="outlined" />
         </div>
         {/*重命名,添加*/}
-        <RenameModal reName_Add_type={this.state.reName_Add_type}  copy={this.copy.bind(this)} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
+        <RenameModal reName_Add_type={this.state.reName_Add_type} copy={this.copy.bind(this)} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
       </div>
     )
   }
@@ -353,7 +353,7 @@ const checkBoxAllStyles = { //全选checkbox外层div
   position: 'absolute',
   top: 12,
   left: 40}
-const childrenPanelRowsStyles  = { //子panel下的Row
+const childrenPanelRowsStyles = { //子panel下的Row
    lineHeight: '34px'
 }
 const childrenPanelTitle = {

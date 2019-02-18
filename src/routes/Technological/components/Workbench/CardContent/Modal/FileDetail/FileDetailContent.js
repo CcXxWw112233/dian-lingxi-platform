@@ -19,7 +19,7 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       imgLoaded: false,
       editMode: true,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 },
+      currentRect: { x: 0, y: 0, width: 0, height: 0 },
       isInAdding: false,
       isInEdditOperate: false,
       mentionFocus: false,
@@ -32,8 +32,8 @@ export default class FileDetailContent extends React.Component {
     imgHeight: 0,
     imgWidth: 0, //获取到的图片宽高
     punctuateArea: 48, //点击圈点的
-    maxImageWidth: 600,//设置imagload的最大值
-    currentRect: { x: 0 ,y: 0, width: 0, height: 0 }, //当前操作的矩形属性
+    maxImageWidth: 600, //设置imagload的最大值
+    currentRect: { x: 0, y: 0, width: 0, height: 0 }, //当前操作的矩形属性
     isInAdding: false, //用来判断是否显示评论下拉
     isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
@@ -72,14 +72,14 @@ export default class FileDetailContent extends React.Component {
       imgLoaded: true
     })
   }
-  commitReactArea(data,e) {
+  commitReactArea(data, e) {
     e.stopPropagation()
-    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
     this.setState({
       ...data,
       isInEdditOperate: false,
-      isInAdding:true
-    },() => {
+      isInAdding: true
+    }, () => {
       const { point_number } = data
       this.props.updateFileDatas({
         filePreviewCommitPointNumber: point_number
@@ -99,7 +99,7 @@ export default class FileDetailContent extends React.Component {
   }
   commitClicShowEdit(data) {
     const { flag, coordinates, } = data
-    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
     this.setState({
       currentRect: JSON.parse(coordinates),
       isInAdding: true,
@@ -114,7 +114,7 @@ export default class FileDetailContent extends React.Component {
     })
   }
   isObj(obj) {
-    if(!obj || typeof obj !='object') {
+    if(!obj || typeof obj !=='object') {
       return false
     } else {
       return true
@@ -122,7 +122,7 @@ export default class FileDetailContent extends React.Component {
   }
   operateAreaClick(e) {
     const target = this.refs.operateArea//event.target || event.srcElement;
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
@@ -175,7 +175,7 @@ export default class FileDetailContent extends React.Component {
       }
       that.setState({
         isInAdding: false,
-        currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+        currentRect: { x: 0, y: 0, width: 0, height: 0 }
       })
       that.props.updateFileDatas({
         filePreviewPointNumCommits: []
@@ -188,7 +188,7 @@ export default class FileDetailContent extends React.Component {
   deleteCommitSet(e) {
     this.setState({
       isInAdding: false,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+      currentRect: { x: 0, y: 0, width: 0, height: 0 }
     })
   }
 
@@ -209,7 +209,7 @@ export default class FileDetailContent extends React.Component {
     })
     // 取得target上被单击的点
     const target = this.refs.operateArea//event.target || event.srcElement;
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
@@ -247,7 +247,7 @@ export default class FileDetailContent extends React.Component {
     this.isDragging = true
 
     // 判断拖拽对象是否存在
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     if (this.isObj(this.SelectedRect)) {
       // 取得鼠标位置
@@ -258,15 +258,15 @@ export default class FileDetailContent extends React.Component {
       this.SelectedRect.x= x-this.x1;
       this.SelectedRect.y= y-this.y1;
 
-      const {  imgWidth, imgHeight, punctuateArea } = this.state
+      const { imgWidth, imgHeight, punctuateArea } = this.state
 
       // 更新拖拽的最新矩形
-      let px = x < this.x1 ? this.x1 -  Math.abs(this.SelectedRect.x) : x -  Math.abs(this.SelectedRect.x)
-      let py = y < this.y1 ? this.y1 -  Math.abs(this.SelectedRect.y) : y -  Math.abs(this.SelectedRect.y)
+      let px = x < this.x1 ? this.x1 - Math.abs(this.SelectedRect.x) : x - Math.abs(this.SelectedRect.x)
+      let py = y < this.y1 ? this.y1 - Math.abs(this.SelectedRect.y) : y - Math.abs(this.SelectedRect.y)
       let width = Math.abs(this.SelectedRect.x)
       let height = Math.abs(this.SelectedRect.y)
 
-      if(imgWidth - px  - width< 0) { //右边界
+      if(imgWidth - px - width< 0) { //右边界
         width = imgWidth - px
       } else if(x < punctuateArea/2) { //左边界
         width = 0
@@ -308,12 +308,12 @@ export default class FileDetailContent extends React.Component {
 
   render() {
 
-    const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: {seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
-    const  getIframe = (src) => {
+    const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
     }
@@ -321,7 +321,7 @@ export default class FileDetailContent extends React.Component {
     const getVersionItem = (value, key ) => {
       const { file_name, creator, update_time, file_size } = value
       return (
-        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this,{value, key})}>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, {value, key})}>
           <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{update_time}</div>
@@ -332,15 +332,15 @@ export default class FileDetailContent extends React.Component {
 
     const punctuateDom = (
       <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-        <div  style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }}  ref={'operateArea'}>
-          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
+        <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
           {imgLoaded && editMode? (
-            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
               {rects.map((value, key) => {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this,{currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this, {currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
@@ -349,12 +349,12 @@ export default class FileDetailContent extends React.Component {
               })}
               {isInEdditOperate?(
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height, backgroundColor: 'red',border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+                     style={{position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}} />
               ):('')}
 
               {isInAdding? (
-                <div style={{position: 'absolute',zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                  <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
+                <div style={{position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+                  <Comment {...this.props} currentRect={currentRect} setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
                 </div>
               ) : ('')}
 
@@ -381,7 +381,7 @@ export default class FileDetailContent extends React.Component {
               iframeDom
             )
         ):(
-          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex',justifyContent:'center',alignItems: 'center', fontSize: 16,color: '#595959'}}>
+          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
             <div>
               当前文件不支持预览，您可点击下载再进行查看
             </div>
@@ -404,7 +404,7 @@ export default class FileDetailContent extends React.Component {
           {/*): ('')}*/}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
+            <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
             <Comment2 {...this.props} ></Comment2>

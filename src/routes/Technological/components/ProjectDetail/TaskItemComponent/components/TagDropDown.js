@@ -25,7 +25,7 @@ export default class TagDropDown extends React.Component {
     })
   }
 
-  fuzzyQuery = (list,searchName, keyWord) => {
+  fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
     for (var i = 0; i < list.length; i++) {
       if(searchName) {

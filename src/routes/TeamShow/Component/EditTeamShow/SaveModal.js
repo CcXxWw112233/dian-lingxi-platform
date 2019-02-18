@@ -26,12 +26,12 @@ class SaveModal extends React.Component {
         const { datas: {name, summary, cover_img, content, currentTeamShowShowId} } = this.props.model
         this.props.addTeamShow({
           content: html,
-          cover_img:cover_img,
+          cover_img: cover_img,
           name: name,
           show_type_id: values['show_type_id'],
           summary: summary,
           show_id: currentTeamShowShowId,
-          tabtile:'',
+          tabtile: '',
         })
       }
     });
@@ -51,15 +51,15 @@ class SaveModal extends React.Component {
     const { datas: {teamShowTypeList = [], currentTeamShowTypeId}} = this.props.model
 
     const formContain = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>发布信息</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>发布信息</div>
         {/*性质*/}
         <FormItem style={{width: 336}}>
               {getFieldDecorator('show_type_id', {
                 initialValue: currentTeamShowTypeId || (teamShowTypeList.length ?teamShowTypeList[0].id: ''),
                 rules: [{ required: false, message: '', whitespace: true }],
               })(
-                <Select  style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
+                <Select style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
                   {teamShowTypeList.map((value, key) => {
                     const { name, id } = value
                     return (
@@ -72,7 +72,7 @@ class SaveModal extends React.Component {
 
         {/* 确认 */}
         <FormItem>
-          <Button type="primary"  htmlType={'submit'} style={{marginTop:20,width: 208, height: 40}}>提交</Button>
+          <Button type="primary" htmlType={'submit'} style={{marginTop: 20, width: 208, height: 40}}>提交</Button>
         </FormItem>
       </Form>
     )
@@ -86,7 +86,7 @@ class SaveModal extends React.Component {
           footer={null}
           maskClosable={false}
           destroyOnClose={true}
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
         >
           {formContain}

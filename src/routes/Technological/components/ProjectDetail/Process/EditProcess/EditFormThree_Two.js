@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Input, Checkbox, Select, Button, DatePicker  } from 'antd'
+import { Input, Checkbox, Select, Button, DatePicker } from 'antd'
 import moment from 'moment';
 import EditFormThreeTwoModal from './EditFormThree_Two_Modal'
 
@@ -18,7 +18,7 @@ export default class EditFormThree_One extends React.Component {
   }
   updateEdit(data, key) {
     const { itemKey } = this.props
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
     form_data[itemKey][key] = data.value
     this.props.updateEdit({value: form_data }, 'form_data')
@@ -43,7 +43,7 @@ export default class EditFormThree_One extends React.Component {
     this.updateEdit({value: value}, 'options_data')
   }
   deleteItemForm() {
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
     form_data.splice(itemKey, 1)
@@ -52,7 +52,7 @@ export default class EditFormThree_One extends React.Component {
     })
   }
   render() {
-    const { datas: {  processEditDatas = [], processCurrentEditStep = 0,  } } = this.props.model
+    const { datas: { processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
     const { property_name, default_value, verification_rule, options_data = [], is_required, } = form_data[itemKey]
@@ -65,15 +65,15 @@ export default class EditFormThree_One extends React.Component {
          <div className={indexStyles.EditFormThreeOneOut_form}>
            <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
            <div className={indexStyles.EditFormThreeOneOut_form_right}>
-             <div  className={indexStyles.EditFormThreeOneOutItem}>
+             <div className={indexStyles.EditFormThreeOneOutItem}>
                <p>标题</p>
                <Input value={property_name} style={{width: 68, height: 24}} onChange={this.propertyNameChange.bind(this)}/>
              </div>
-             <div  className={indexStyles.EditFormThreeOneOutItem}>
+             <div className={indexStyles.EditFormThreeOneOutItem}>
                <p>选项</p>
                <Button style={{width: 122, height: 24}} onClick={this.setShowModalVisibile.bind(this)}>编辑选项</Button>
              </div>
-             <div  className={indexStyles.EditFormThreeOneOutItem}>
+             <div className={indexStyles.EditFormThreeOneOutItem}>
                <p>默认值</p>
                {/*mode=*/}
                {/*filter(d=>d)去掉假值*/}
@@ -83,15 +83,15 @@ export default class EditFormThree_One extends React.Component {
                  } )}
                </Select>
              </div>
-             <div  className={indexStyles.EditFormThreeOneOutItem}>
+             <div className={indexStyles.EditFormThreeOneOutItem}>
                <p>预设规则</p>
-               <Select value={verification_rule} style={{ width: 86}} size={'small'}  onChange={this.verificationRuleChange.bind(this)}>
+               <Select value={verification_rule} style={{ width: 86}} size={'small'} onChange={this.verificationRuleChange.bind(this)}>
                  <Option value="redio">单选</Option>
                  <Option value="multiple">多选</Option>
                  <Option value="province">省市区</Option>
                </Select>
              </div>
-             <div  className={indexStyles.EditFormThreeOneOutItem} style={{textAlign: 'center'}}>
+             <div className={indexStyles.EditFormThreeOneOutItem} style={{textAlign: 'center'}}>
                <p>必填</p>
                <Checkbox onChange={this.isRequiredCheck.bind(this)} checked={is_required === '1'} />
              </div>

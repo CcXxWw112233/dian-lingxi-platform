@@ -5,15 +5,15 @@ import { Icon, Menu, Dropdown, Tooltip, Collapse, Card } from 'antd'
 
 export default class CollectionProject extends React.Component{
   render() {
-    const taskMan = [1,2,3,4,5,6,7,8]
+    const taskMan = [1, 2, 3, 4, 5, 6, 7, 8]
     return (
-      <Card style={{position: 'relative',height: 'auto'}}>
+      <Card style={{position: 'relative', height: 'auto'}}>
         <div className={indexStyle.listOutmask}></div>
         <div className={indexStyle.listOut}>
           <div className={indexStyle.left}>
             <div className = {indexStyle.top}>
               <span>[项目实例]关于切从未如此一目了然</span>
-              <Icon className={indexStyle.star} type="star" style={{margin: '4px 0 0 8px',color: '#FAAD14'}} />
+              <Icon className={indexStyle.star} type="star" style={{margin: '4px 0 0 8px', color: '#FAAD14'}} />
             </div>
             <div className ={indexStyle.bottom}>
               {taskMan.map((value, key) => {
@@ -22,8 +22,8 @@ export default class CollectionProject extends React.Component{
                 }
               })}
               {taskMan.length > 7? (
-                <div style={{display: 'flex',fontSize: 12}}>
-                  <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize:18}}/></div>{taskMan.length}位任务执行人
+                <div style={{display: 'flex', fontSize: 12}}>
+                  <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize: 18}}/></div>{taskMan.length}位任务执行人
                 </div>
               ) : ('')}
             </div>

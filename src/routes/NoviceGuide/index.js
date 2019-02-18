@@ -24,14 +24,14 @@ const NoviceGuide = (options) => {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route:path,
+          route: path,
         },
       })
     },
     updateDatas (payload) {
       dispatch({
-        type: getEffectOrReducerByName('updateDatas') ,
-        payload:payload
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: payload
       })
     },
   }

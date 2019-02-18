@@ -14,7 +14,7 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
 
   updateEdit(data, key) {
     const { itemKey, parentItemKey } = this.props
-    const { datas: {  processEditDatas = [], } } = this.props.model
+    const { datas: { processEditDatas = [], } } = this.props.model
     const { form_data=[] } = processEditDatas[parentItemKey]
     form_data[itemKey][key] = data.value
     this.props.updateDatas({
@@ -31,10 +31,10 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
   }
 
   render() {
-    const { datas: {  processEditDatas = [] } } = this.props.model
+    const { datas: { processEditDatas = [] } } = this.props.model
     const { itemKey, parentItemKey, FormCanEdit } = this.props
     const { form_data=[] } = processEditDatas[parentItemKey]
-    const { property_name, default_value, verification_rule, val_length, is_required, options_data = [],  } = form_data[itemKey]
+    const { property_name, default_value, verification_rule, val_length, is_required, options_data = [], } = form_data[itemKey]
 
     const multipleSelectChildren = [];
     for (let i = 10; i < 36; i++) {
@@ -45,7 +45,7 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
       if('province' === verification_rule) {
         container = (
           <div>
-            <Cascader disabled={FormCanEdit} options={areaData} onChange={this.areaChange.bind(this)} size={'small'} placeholder="请选择省市区"  style={{ width: '100%'}}/>
+            <Cascader disabled={FormCanEdit} options={areaData} onChange={this.areaChange.bind(this)} size={'small'} placeholder="请选择省市区" style={{ width: '100%'}}/>
           </div>
         )
       }else {
@@ -66,7 +66,7 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
         <div className={indexStyles.EditFormThreeOneOut_form}>
           <div className={indexStyles.EditFormThreeOneOut_form_left}></div>
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
-            <div  className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
+            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
               <p>{property_name}({is_required === '1' ? '必填': '选填'})</p>
               {fiterSelect(verification_rule)}
             </div>

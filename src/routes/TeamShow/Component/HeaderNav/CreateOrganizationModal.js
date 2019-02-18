@@ -12,7 +12,7 @@ class CreateOrganizationModal extends React.Component {
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
     operateType: '0', //0默认申请加入 ‘1’创建组织
-    createButtonVisible:false, //输入框里面的按钮
+    createButtonVisible: false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
   }
@@ -61,7 +61,7 @@ class CreateOrganizationModal extends React.Component {
     this.setState({
       operateType: type,
       seachAreaVisible: type === '1'? false: true,
-      createButtonVisible:false,
+      createButtonVisible: false,
       stepContinueDisabled: this.state.name ? false :true
     })
   }
@@ -82,10 +82,10 @@ class CreateOrganizationModal extends React.Component {
   //清空所有元素
   clearChange() {
     this.setState({
-      name:'',
+      name: '',
       stepContinueDisabled: true,
       operateType: '0',
-      createButtonVisible:false,
+      createButtonVisible: false,
       seachAreaVisible: false,
       searchTimer: null,
       org_id: ''
@@ -115,21 +115,21 @@ class CreateOrganizationModal extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     const formContain = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>创建或加入组织</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>创建或加入组织</div>
         <FormItem style={{width: 336}}>
           {getFieldDecorator('name', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
             <div style={{position: 'relative'}}>
-              <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
+              <Input placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120, height: 40}}/>
               {createButtonVisible? (
                 <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
                  {searchOrganizationList.length? (
                    <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
-                     <Spin  spinning={spinning} size={'small'}>
+                     <Spin spinning={spinning} size={'small'}>
                        {searchOrganizationList.map((value, key) => (
-                         <div className={styles.searChItem} key={value.key} onClick={this.searchResultItemClick.bind(this, {name:value.name, id: value.id})}>{value.name}</div>
+                         <div className={styles.searChItem} key={value.key} onClick={this.searchResultItemClick.bind(this, {name: value.name, id: value.id})}>{value.name}</div>
                        ))}
                      </Spin>
                    </div>
@@ -148,7 +148,7 @@ class CreateOrganizationModal extends React.Component {
             {getFieldDecorator('remarks', {
               rules: [{ required: false, message: '', whitespace: true }],
             })(
-              <TextArea style={{height: 208, resize:'none'}}
+              <TextArea style={{height: 208, resize: 'none'}}
                         onChange={this.descriptionChange.bind(this)}
                         placeholder="申请加入说明" maxLength={300}/>
             )}
@@ -161,7 +161,7 @@ class CreateOrganizationModal extends React.Component {
                 initialValue: '1',
                 rules: [{ required: false, message: '', whitespace: true }],
               })(
-                <Select  style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
+                <Select style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
                   <Option value="1">投资商</Option>
                   <Option value="2">设计院</Option>
                   <Option value="3">学校</Option>
@@ -177,7 +177,7 @@ class CreateOrganizationModal extends React.Component {
                 initialValue: '1',
                 rules: [{ required: false, message: '', whitespace: true }],
               })(
-                <Select  style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
+                <Select style={{ height: 40 }} size={'large'} placeholder={'请选择'}>
                   <Option value="1">1~30人</Option>
                   <Option value="2">31~100人</Option>
                   <Option value="3">101~300人</Option>
@@ -186,13 +186,13 @@ class CreateOrganizationModal extends React.Component {
                 </Select>
               )}
             </FormItem>
-            <div style={{marginTop: -8,textAlign:'left', fontSize: 13,color: '#8c8c8c'}}>准确填写信息有助于我们为你安排专属顾问，协助你与你的组织成员快速上手使用。</div>
+            <div style={{marginTop: -8, textAlign: 'left', fontSize: 13, color: '#8c8c8c'}}>准确填写信息有助于我们为你安排专属顾问，协助你与你的组织成员快速上手使用。</div>
           </div>
           )}
 
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>
+          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>
             {operateType === '0'? '发送请求' : '创建企业'}
           </Button>
         </FormItem>
@@ -208,7 +208,7 @@ class CreateOrganizationModal extends React.Component {
           footer={null}
           maskClosable={false}
           destroyOnClose={true}
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
         >
           {formContain}

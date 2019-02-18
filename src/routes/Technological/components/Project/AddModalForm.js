@@ -85,7 +85,7 @@ class AddModalForm extends React.Component {
     }
     this.setState({
       appsArray
-    },function () {
+    }, function () {
       let stepTwoContinueDisabled = true
       console.log(this.state.appsArray)
       for(let val of this.state.appsArray) {
@@ -116,8 +116,8 @@ class AddModalForm extends React.Component {
 
         //参与人
         if(this.state.users) {
-          let users = this.state.users.replace(/\n/gim,',') //替代换行符
-          let usersArr = users.split(',')   //转成数组
+          let users = this.state.users.replace(/\n/gim, ',') //替代换行符
+          let usersArr = users.split(',') //转成数组
           let usersNewArr = []
           for(let val of usersArr) {
             if(val) {
@@ -127,7 +127,7 @@ class AddModalForm extends React.Component {
           users = usersNewArr.join(',')
           for(let val of usersNewArr ) {
             if(!validateTel(val) && !validateEmail(val)) {
-              message.warn('请正确输入被邀请人的手机号或者邮箱。',MESSAGE_DURATION_TIME)
+              message.warn('请正确输入被邀请人的手机号或者邮箱。', MESSAGE_DURATION_TIME)
               return false
             }
           }
@@ -146,8 +146,8 @@ class AddModalForm extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     const step_1 = (
-      <Form  style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
+      <Form style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
         {/* 项目名称 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('board_name', {
@@ -163,58 +163,58 @@ class AddModalForm extends React.Component {
           {getFieldDecorator('description', {
             // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208,resize: 'none'}} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
+            <TextArea style={{height: 208, resize: 'none'}} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
                       onChange={this.descriptionChange.bind(this)}/>
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepOneContinueDisabled}  onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={stepOneContinueDisabled} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
         </FormItem>
       </Form>
     )
 
     const step_2 = (
-      <div style={{margin: '0 auto',width: 392, height: 'auto'}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
-        <div  style={{margin: '0 auto',width: 392}}>
+      <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
+        <div style={{margin: '0 auto', width: 392}}>
           {appsList.map((value, key) => {
             return (
               <StepTwoList itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
             )
           })}
         </div>
-        <div style={{marginTop: 20,marginBottom: 40,}}>
-          <Button onClick={this.lastStep.bind(this,1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
+        <div style={{marginTop: 20, marginBottom: 40, }}>
+          <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
           <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
         </div>
       </div>
     )
     const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
 
         {/* 他人信息 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('users', {
             // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <TextArea style={{height: 208,resize: 'none'}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"
+            <TextArea style={{height: 208, resize: 'none'}} placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"
                        onChange={this.usersChange.bind(this)}/>
           )}
         </FormItem>
         {step===3?(
-          <div style={{marginTop :-10}}>
-            <DragValidation  listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
+          <div style={{marginTop: -10}}>
+            <DragValidation listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
           </div>
         ):('')}
 
         {/* 确认 */}
         <FormItem
         >
-          <div style={{marginTop: 20,marginBottom: 40,}}>
-            <Button onClick={this.lastStep.bind(this,2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
+          <div style={{marginTop: 20, marginBottom: 40, }}>
+            <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
             <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
           </div>
         </FormItem>
@@ -229,7 +229,7 @@ class AddModalForm extends React.Component {
           width={472}
           footer={null}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
           overInner={( <div style={{height: step=== 2 ? 'auto':440}}>
             <div style={{display: step === 1?'block': 'none'}}>

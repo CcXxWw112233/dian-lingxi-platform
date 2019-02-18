@@ -14,11 +14,11 @@ export default class GuideDetail extends React.Component {
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
     operateType: '0', //0默认申请加入 ‘1’创建组织
-    createButtonVisible:false, //输入框里面的按钮
+    createButtonVisible: false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
     searchOrganizationList: [], //搜索列表
-    orgProperty: '1',//组织性质
+    orgProperty: '1', //组织性质
     spinning: false,
   }
   nameChange(e) {
@@ -81,7 +81,7 @@ export default class GuideDetail extends React.Component {
     this.setState({
       operateType: type,
       seachAreaVisible: type === '1'? false: true,
-      createButtonVisible:false,
+      createButtonVisible: false,
       stepContinueDisabled: this.state.name ? false :true
     })
   }
@@ -124,14 +124,14 @@ export default class GuideDetail extends React.Component {
         <div className={indexStyles.contain4}>
 
           <div style={{position: 'relative'}}>
-            <Input  placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120,height: 40}}/>
+            <Input placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120, height: 40}}/>
             {createButtonVisible? (
               <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
             {searchOrganizationList.length? (
               <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
-                <Spin  spinning={spinning} size={'small'}>
+                <Spin spinning={spinning} size={'small'}>
                   {searchOrganizationList.map((value, key) => (
-                    <div className={indexStyles.searChItem} key={value.id} onClick={this.searchResultItemClick.bind(this, {name:value.name, id: value.id})}>{value.name}</div>
+                    <div className={indexStyles.searChItem} key={value.id} onClick={this.searchResultItemClick.bind(this, {name: value.name, id: value.id})}>{value.name}</div>
                   ))}
                 </Spin>
               </div>
@@ -148,7 +148,7 @@ export default class GuideDetail extends React.Component {
           ) : (
             <div>
               {/*组织性质*/}
-              <Select  style={{ height: 40, width: 350, marginTop: 16 }} value={orgProperty} size={'large'} placeholder={'请选择'} onChange={this.setOrgProperty.bind(this)}>
+              <Select style={{ height: 40, width: 350, marginTop: 16 }} value={orgProperty} size={'large'} placeholder={'请选择'} onChange={this.setOrgProperty.bind(this)}>
                 <Option value="1">投资商</Option>
                 <Option value="2">设计院</Option>
                 <Option value="3">学校</Option>
@@ -160,7 +160,7 @@ export default class GuideDetail extends React.Component {
               </div>
           )}
 
-          <Button type={operateType === '0'?'' : 'primary'} disabled={stepContinueDisabled}  onClick={this.submitButton.bind(this)} style={{marginTop:20,width: 208, height: 40}}>
+          <Button type={operateType === '0'?'' : 'primary'} disabled={stepContinueDisabled} onClick={this.submitButton.bind(this)} style={{marginTop: 20, width: 208, height: 40}}>
             {operateType === '0'? '申请加入' : '创建组织'}
           </Button>
         </div>

@@ -69,19 +69,19 @@ export default class MenuSearch extends React.Component{
     const { keyWord, resultArr } = this.state
 
     return (
-      <Menu  style={{padding: 8}}  onClick={this.menuClick.bind(this)} selectedKeys={[currentProcessInstanceId]}>
-        <Input placeholder={'搜索流程'}  value={keyWord}  onChange={this.onChange.bind(this)}/>
+      <Menu style={{padding: 8}} onClick={this.menuClick.bind(this)} selectedKeys={[currentProcessInstanceId]}>
+        <Input placeholder={'搜索流程'} value={keyWord} onChange={this.onChange.bind(this)}/>
         {
           resultArr.map((val, key) => {
             const { name, id } = val
             return (
-              <Menu.Item style={{height: 32,lineHeight: '32px'}} key={id}>
+              <Menu.Item style={{height: 32, lineHeight: '32px'}} key={id}>
                 {name}
               </Menu.Item>
             )
           })
         }
-        <div onClick={this.addProcess.bind(this)} style={{minWidth: 160, height: 32,borderTop: '1px solid #f2f2f2', lineHeight:'32px', cursor: 'pointer', margin: '0 auto',textAlign: 'center'}}>
+        <div onClick={this.addProcess.bind(this)} style={{minWidth: 160, height: 32, borderTop: '1px solid #f2f2f2', lineHeight: '32px', cursor: 'pointer', margin: '0 auto', textAlign: 'center'}}>
           <Icon type={'plus'}/>
         </div>
       </Menu>

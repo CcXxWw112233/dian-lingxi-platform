@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from 'antd'
 import FirstEntryStyle from './FirstEntry.less'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 
 
 export default class FirstEntry extends React.Component {

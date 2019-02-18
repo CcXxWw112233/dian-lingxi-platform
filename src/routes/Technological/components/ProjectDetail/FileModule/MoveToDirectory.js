@@ -15,12 +15,12 @@ export default class MoveToDirectory extends React.Component {
     this.props.updateDatas({moveToDirectoryVisiblie: false})
   }
   //重新改变面包屑，递归
-  findChildrenParent = (arr, childDataKey, key, value, originalData,  callback) => {
+  findChildrenParent = (arr, childDataKey, key, value, originalData, callback) => {
     const { datas: { breadcrumbList = [] } } = this.props.model
     for (var i = 0; i < arr.length; i++) {
       if (arr[i][key] == value) {
         callback(arr[i])
-        this.findChildrenParent(originalData, 'child_data','folder_id', arr[i]['parent_id'], originalData, function (data) {
+        this.findChildrenParent(originalData, 'child_data', 'folder_id', arr[i]['parent_id'], originalData, function (data) {
           data['type'] = '1'
           data['file_name'] = data['folder_name']
           data['file_id'] = data['folder_id']
@@ -38,7 +38,7 @@ export default class MoveToDirectory extends React.Component {
 
   onOk = () => {
     const that = this
-    const  selectFolderId = this.state.selectFolderId
+    const selectFolderId = this.state.selectFolderId
     if(!selectFolderId) {
       message.warn('请选择一个目标文件夹')
       return false
@@ -64,7 +64,7 @@ export default class MoveToDirectory extends React.Component {
         this.props.updateDatas({
           currentParrentDirectoryId: selectFolderId,
         })
-        this.findChildrenParent([{...treeFolderData}], 'child_data','folder_id', selectFolderId, [{...treeFolderData}], function (data) {
+        this.findChildrenParent([{...treeFolderData}], 'child_data', 'folder_id', selectFolderId, [{...treeFolderData}], function (data) {
           data['type'] = '1'
           data['file_name'] = data['folder_name']
           data['file_id'] = data['folder_id']

@@ -15,7 +15,7 @@ export default class DCAddChirdrenTask extends React.Component{
     isSelectUserIcon: false, // default '#8c8c8c, hover #595959
     isSelectCalendarIcon: false,
     isShowUserCalendar: false,
-    List: [1,2,3,4],
+    List: [1, 2, 3, 4],
     due_time: '', //日期选择后的日期‘2018-08-07’
     name: '',
     executors: [],
@@ -30,7 +30,7 @@ export default class DCAddChirdrenTask extends React.Component{
   }
   //设置子任务负责人组件---------------start
   setList(id) {
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
@@ -45,8 +45,8 @@ export default class DCAddChirdrenTask extends React.Component{
 
   deleteExcutor(data){
     let executors = []
-     const obj =  {
-      user_id:'',
+     const obj = {
+      user_id: '',
       user_name: '',
       avatar: ''
     }
@@ -60,9 +60,9 @@ export default class DCAddChirdrenTask extends React.Component{
 
   //添加子任务
   addChirldTask() {
-    const { datas:{ drawContent = {}, board_id } } = this.props.model
+    const { datas: { drawContent = {}, board_id } } = this.props.model
     const { card_id, child_data = [], list_id } = drawContent
-    const  obj = {
+    const obj = {
       card_id,
       board_id,
       list_id,
@@ -152,7 +152,7 @@ export default class DCAddChirdrenTask extends React.Component{
 
   render() {
     const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar, executors = [] } = this.state
-    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
     const { data = [] } = projectDetailInfoData //任务执行人列表
 
@@ -194,24 +194,24 @@ export default class DCAddChirdrenTask extends React.Component{
                   {executor.user_id? (
                     <Tooltip title={executor.full_name || '佚名'}>
                       {/*{imgOrAvatar(executor.avatar)}*/}
-                      <Avatar size={16} src={executor.avatar} style={{fontSize: 14 , margin:'4px 12px 0 12px',}}>{executor.full_name.substring(0,1) || '佚'}</Avatar>
+                      <Avatar size={16} src={executor.avatar} style={{fontSize: 14, margin: '4px 12px 0 12px', }}>{executor.full_name.substring(0, 1) || '佚'}</Avatar>
                     </Tooltip>
                   ) : (
                     <div>
                       {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
-                      <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}}>&#xe70c;</div>
+                      <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16, margin: '0 12px', cursor: 'pointer'}}>&#xe70c;</div>
                     </div>
                   )}
                   {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>*/}
                 </Dropdown>
-                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}`} style={{fontSize: 16,marginRight:'12px',cursor: 'pointer'}}>&#xe709;</div>
+                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}`} style={{fontSize: 16, marginRight: '12px', cursor: 'pointer'}}>&#xe709;</div>
                 {/*<Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>*/}
                 <DatePicker onChange={this.datePickerChange.bind(this)}
                             placeholder={'选择截止日期'}
                             format="YYYY/MM/DD HH:mm"
                             showTime={{format: 'HH:mm'}}
-                            style={{opacity: 0, width: 16,background: '#000000',position: 'absolute',right: 50,zIndex:2}} />
-                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20,padding: '0 5px',fontSize: 12,}}>保存</Button>
+                            style={{opacity: 0, width: 16, background: '#000000', position: 'absolute', right: 50, zIndex: 2}} />
+                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20, padding: '0 5px', fontSize: 12, }}>保存</Button>
               </div>
             </div>
           </div>

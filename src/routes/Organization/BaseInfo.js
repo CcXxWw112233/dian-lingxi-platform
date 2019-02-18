@@ -43,7 +43,7 @@ export default class BaseInfo extends React.Component {
     this.storeChange('member_join_model', e.target.value)
   }
   memberJoinContent(e) {
-    const newvalue =  e.target.value? e.target.value.replace(/\s/gim,',') :  ''
+    const newvalue = e.target.value? e.target.value.replace(/\s/gim, ',') : ''
     this.storeChange('member_join_content', newvalue)
   }
   deleteUpload() {
@@ -60,12 +60,12 @@ export default class BaseInfo extends React.Component {
       return false
     }
     const { datas: { currentOrganizationInfo = {} }} = this.props.model
-    const {  name, logo_id, member_join_model, member_join_content,id } = currentOrganizationInfo
+    const { name, logo_id, member_join_model, member_join_content, id } = currentOrganizationInfo
 
     //将邮箱后缀转化
     let new_member_join_content = member_join_content
     if(member_join_model === '3'){
-      let memberArr = member_join_content.split(',')   //转成数组
+      let memberArr = member_join_content.split(',') //转成数组
       let newMemberArr = []
       for (let val of memberArr) {
         if (val !== ''){
@@ -73,12 +73,12 @@ export default class BaseInfo extends React.Component {
         }
       }
       if(!member_join_content) {
-        message.warn('请输入邮箱后缀名。',MESSAGE_DURATION_TIME)
+        message.warn('请输入邮箱后缀名。', MESSAGE_DURATION_TIME)
         return false
       }
       for(let val of newMemberArr ) {
         if(!validateEmailSuffix(val)) {
-          message.warn('请正确输入邮箱后缀名。',MESSAGE_DURATION_TIME)
+          message.warn('请正确输入邮箱后缀名。', MESSAGE_DURATION_TIME)
           return false
         }
       }
@@ -88,17 +88,17 @@ export default class BaseInfo extends React.Component {
       name,
       member_join_model,
       member_join_content: new_member_join_content,
-      logo:logo_id,
+      logo: logo_id,
       org_id: id
     }
     this.props.updateOrganization(obj)
   //  请求
   }
   render() {
-    const {  uploading, saveButtonDisabled } = this.state
+    const { uploading, saveButtonDisabled } = this.state
     const { datas: { currentOrganizationInfo = {} }} = this.props.model
     const { logo, name, logo_id, member_join_model, member_join_content } = currentOrganizationInfo
-    const newMember_join_content = member_join_content? member_join_content.replace(/\,/gim,' ') : ''
+    const newMember_join_content = member_join_content? member_join_content.replace(/\,/gim, ' ') : ''
     const that = this
     const uploadProps = {
       name: 'file',
@@ -106,7 +106,7 @@ export default class BaseInfo extends React.Component {
       action: `${REQUEST_DOMAIN}/organization/logo_upload`,
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
@@ -133,8 +133,8 @@ export default class BaseInfo extends React.Component {
             uploading: false
           })
           if (file.response && file.response.data) {
-            that.storeChange('logo',file.response.data.logo)
-            that.storeChange('logo_id',file.response.data.logo_id)
+            that.storeChange('logo', file.response.data.logo)
+            that.storeChange('logo_id', file.response.data.logo_id)
           }
         }
         if (file.status === 'done') {
@@ -169,7 +169,7 @@ export default class BaseInfo extends React.Component {
         <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(ORGANIZATION)}LOGO
         </div>
-        <div  className={indexStyles.baseInfo_des}>你的企业标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
+        <div className={indexStyles.baseInfo_des}>你的企业标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
         <div className={indexStyles.UploadOut}>
           {logo? (
             <img src={logo} />
@@ -184,7 +184,7 @@ export default class BaseInfo extends React.Component {
           </Upload>
           <div style={{width: 120}} >
             {uploading?(
-              <span><Icon type="loading"  style={{fontSize:20,marginLeft:12}}/>'上传中...'</span>
+              <span><Icon type="loading" style={{fontSize: 20, marginLeft: 12}}/>'上传中...'</span>
             ):('')}
           </div>
         </div>
@@ -192,16 +192,16 @@ export default class BaseInfo extends React.Component {
         <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(MEMBERS)}加入模式
         </div>
-        <div  className={indexStyles.baseInfo_des}>设置新{currentNounPlanFilterName(MEMBERS)}以何种方式加入或找到{currentNounPlanFilterName(ORGANIZATION)}。</div>
+        <div className={indexStyles.baseInfo_des}>设置新{currentNounPlanFilterName(MEMBERS)}以何种方式加入或找到{currentNounPlanFilterName(ORGANIZATION)}。</div>
         <RadioGroup onChange={this.ratioOnChange} value={member_join_model} style={{marginTop: 8}}>
           <Radio style={radioStyle} value={'1'}>仅能通过邀请加入</Radio>
           <Radio style={radioStyle} value={'2'}>申请加入者需通过许可</Radio>
           <Radio style={radioStyle} value={'3'}>任意满足以下邮箱后缀名并完成邮件认证的用户可自动加入。</Radio>
         </RadioGroup>
         <Input placeholder={'@examlpe.com'} style={{marginTop: 8}} onChange={this.memberJoinContent.bind(this)} value={newMember_join_content}/>
-        <div  className={indexStyles.baseInfo_des} style={{color: '#BFBFBF'}}>请使用空格符号分隔多个后缀名</div>
-        <div style={{margin: '0 auto',marginTop: 20, textAlign: 'center'}}>
-          <Button type={'primary'}  onClick={this.finallySave.bind(this)}  disabled={saveButtonDisabled}>保存</Button>
+        <div className={indexStyles.baseInfo_des} style={{color: '#BFBFBF'}}>请使用空格符号分隔多个后缀名</div>
+        <div style={{margin: '0 auto', marginTop: 20, textAlign: 'center'}}>
+          <Button type={'primary'} onClick={this.finallySave.bind(this)} disabled={saveButtonDisabled}>保存</Button>
         </div>
       </div>
     )

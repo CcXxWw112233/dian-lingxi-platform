@@ -16,13 +16,13 @@ export default class DrawDetailInfo extends React.Component {
 
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
-    isSoundsEvrybody_2: false,//edit是否通知项目所有人
-    editDetaiDescription :false ,//是否处于编辑状态
+    isSoundsEvrybody_2: false, //edit是否通知项目所有人
+    editDetaiDescription: false, //是否处于编辑状态
     detaiDescriptionValue: detaiDescription,
     ShowAddMenberModalVisibile: false
   }
 
-  handleSetRoleMenuClick(props,{ key }) {
+  handleSetRoleMenuClick(props, { key }) {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -31,12 +31,12 @@ export default class DrawDetailInfo extends React.Component {
     const { board_id } = projectDetailInfoData //data是参与人列表
     const { user_id } = props
     if(/^role_\w+/.test(key)) {
-      this.props.setMemberRoleInProject({board_id, user_id, role_id: key.replace('role_','')}) //设置角色
+      this.props.setMemberRoleInProject({board_id, user_id, role_id: key.replace('role_', '')}) //设置角色
       return false
     }
     switch (key) {
       case 'removeMember':
-        this.confirm({board_id,user_id})
+        this.confirm({board_id, user_id})
         break
       default:
         break
@@ -53,7 +53,7 @@ export default class DrawDetailInfo extends React.Component {
     Modal.confirm({
       title: '确认将他移出项目吗？',
       zIndex: 2000,
-      content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
+      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
         <span >退出后将无法获取该项目的相关动态</span>
         {/*<div style={{marginTop:20,}}>*/}
         {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
@@ -61,7 +61,7 @@ export default class DrawDetailInfo extends React.Component {
       </div>,
       okText: '确认',
       cancelText: '取消',
-      onOk()  {
+      onOk() {
         that.props.removeMenbers(data)
       }
     });
@@ -90,7 +90,7 @@ export default class DrawDetailInfo extends React.Component {
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     projectDetailInfoData['description'] = e.target.value
   }
-  editSave(board_id,e) {
+  editSave(board_id, e) {
     const {datas: { projectDetailInfoData = {} } } = this.props.model
 
     const obj = {
@@ -125,7 +125,7 @@ export default class DrawDetailInfo extends React.Component {
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
-      const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...',we_chat='...'} = props
+      const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
@@ -133,8 +133,8 @@ export default class DrawDetailInfo extends React.Component {
               {avatar?(
                 <img src={avatar} />
               ):(
-                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                  <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
+                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                  <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
                 </div>
               )}
             </div>
@@ -191,7 +191,7 @@ export default class DrawDetailInfo extends React.Component {
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
-                  <Menu.Item key={`role_${value.id}`}  style={{textAlign: 'center',padding:0,margin: 0}}>
+                  <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
                     <div className={DrawDetailInfoStyle.elseProjectMemu}>
                       {value.name}
                     </div>
@@ -201,7 +201,7 @@ export default class DrawDetailInfo extends React.Component {
             </Menu.SubMenu>
           ):('')}
 
-          <Menu.Item key={'removeMember'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'removeMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
               移除成员
             </div>
@@ -214,9 +214,9 @@ export default class DrawDetailInfo extends React.Component {
         <TextArea defaultValue={description || detaiDescriptionValue} autosize={true} className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
         <div style={{ textAlign: 'right'}}>
           <div>
-            <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
+            <Checkbox style={{color: 'rgba(0,0,0, .8)', fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
           </div>
-          <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this,board_id)}>保存</Button>
+          <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this, board_id)}>保存</Button>
         </div>
       </div>
     )
@@ -248,9 +248,9 @@ export default class DrawDetailInfo extends React.Component {
                         {/*<Icon type="close" />*/}
                       {/*</div>*/}
                       <Dropdown overlay={manImageDropdown(value)}>
-                        {avatar?(<img src={avatar}  />): (
-                          <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                            <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
+                        {avatar?(<img src={avatar} />): (
+                          <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                            <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
                           </div>
                         )
                         }
@@ -260,7 +260,7 @@ export default class DrawDetailInfo extends React.Component {
                 }else{
                   return(
                     <div className={DrawDetailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                      <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold',marginTop: 8}}/>
+                      <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8}}/>
                     </div>
                   )
                 }

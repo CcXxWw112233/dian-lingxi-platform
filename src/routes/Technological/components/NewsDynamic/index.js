@@ -1,10 +1,10 @@
 import React from 'react';
 import {connect} from "dva/index";
-import Header from  './Header'
+import Header from './Header'
 import FirstEntry from './FirstEntry'
 import NewsList from './NewsList'
 import NewsListNewDatas from './NewsListNewDatas'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 
 const getEffectOrReducerByName = name => `newsDynamic/${name}`
 
@@ -37,20 +37,20 @@ const NewsDynamic = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
   return(
     <div>
         <Header/>
-      <QueueAnim  type="top">
+      <QueueAnim type="top">
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>
         ) : (

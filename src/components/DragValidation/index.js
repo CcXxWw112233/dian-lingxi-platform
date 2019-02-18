@@ -1,13 +1,13 @@
 import React from 'react';
 import indexStyles from './index.less'
-import { Icon } from  'antd'
+import { Icon } from 'antd'
 
 export default class DragValidation extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       /*定义两个值用来存放当前元素的left和top值*/
-      needX:0,
+      needX: 0,
       blockMaxLeft: 0,
       completeValidation: false, //是否已经完成验证，初始默认未完成
     }
@@ -60,7 +60,7 @@ export default class DragValidation extends React.Component{
     document.onmuseup = null;
     this.handleNeedX('', 'up')
   }
-  handleNeedX = (event ,type) => {
+  handleNeedX = (event, type) => {
     let needX
     if(type === 'move') { //滑动过程中
       const positionSubstract = event.clientX - this.disX //元素距离父元素坐边距离
@@ -115,7 +115,7 @@ export default class DragValidation extends React.Component{
     document.ontouchend = null;
     this.handleNeedXTouch('', 'up')
   }
-  handleNeedXTouch = (event ,type) => {
+  handleNeedXTouch = (event, type) => {
     let needX = 0
     if(type === 'move') { //滑动过程中
       const positionSubstract = event.touches[0].clientX - this.disX //元素距离父元素坐边距离
@@ -148,7 +148,7 @@ export default class DragValidation extends React.Component{
           请按住滑块，拖动到最右边
         </div>
         <div className={indexStyles.dragSlideBlock}
-             style={{left:this.state.needX, top: 0}}
+             style={{left: this.state.needX, top: 0}}
              onMouseDown={this.mouseDown.bind(this)}
              onTouchStart={this.touchDown.bind(this)}
              ref="dragSlideBlock"

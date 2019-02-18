@@ -88,11 +88,11 @@ class BindAccountForm extends React.Component {
       },
     };
     const { email, mobile } = {}
-    const { isMobile, isHasCode,  isEmail } = this.state
+    const { isMobile, isHasCode, isEmail } = this.state
     return (
       <div>
         {/*修改邮箱*/}
-        <Form layout="inline" onSubmit={this.handleSubmit} style={{padding:'20px 0',width: 600, display: 'flex'}}>
+        <Form layout="inline" onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600, display: 'flex'}}>
           {/* 邮箱 */}
           <FormItem
             {...formItemLayout}
@@ -112,7 +112,7 @@ class BindAccountForm extends React.Component {
           {/* 确认 */}
           <FormItem
           >
-            <Button type="primary" onClick={this.formButtonSubmit.bind(this,'email')} style={{height: 40, marginLeft: 48}} disabled={!isEmail}>发送邮件验证</Button>
+            <Button type="primary" onClick={this.formButtonSubmit.bind(this, 'email')} style={{height: 40, marginLeft: 48}} disabled={!isEmail}>发送邮件验证</Button>
           </FormItem>
         </Form>
         <Alert
@@ -124,11 +124,11 @@ class BindAccountForm extends React.Component {
           style={{marginLeft: 106}}
         />
         {/*修改手机*/}
-        <Form layout="inline" onSubmit={this.handleSubmit} style={{padding:'20px 0',width: 600, display:'flex'}}>
+        <Form layout="inline" onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600, display: 'flex'}}>
           {/* 手机 */}
           <FormItem
             {...formItemLayout}
-            style={{marginLeft:12}}
+            style={{marginLeft: 12}}
             label={(
               <span style={{fontSize: 16}}>
                 手机
@@ -140,32 +140,32 @@ class BindAccountForm extends React.Component {
               rules: [{ required: false, message: '', whitespace: false }],
             })(
               <div className={indexStyle.personInfoInput}>
-                <Input placeholder=""  style={{width: 160,height: 40}} onChange={this.mobileChange.bind(this)}/>
+                <Input placeholder="" style={{width: 160, height: 40}} onChange={this.mobileChange.bind(this)}/>
               </div>
             )}
           </FormItem>
 
           {/* 验证码 */}
-          <div style={{position: 'relative', marginTop: 0,marginLeft: -32, width: 240}}>
+          <div style={{position: 'relative', marginTop: 0, marginLeft: -32, width: 240}}>
             <FormItem >
               {getFieldDecorator('code', {
                 rules: [{ required: false, message: '请输入验证码', whitespace: true }],
               })(
                 <Input
-                  style={{height: '40px',fontSize: 16, color: '#8C8C8C',width: 240}}
+                  style={{height: '40px', fontSize: 16, color: '#8C8C8C', width: 240}}
                   maxLength={10} onChange={this.codeChange.bind(this)}
                 />
               )}
             </FormItem>
-              <div style={{position: 'absolute',top:0 ,right: 0, color: '#bfbfbf',height: '40px',lineHeight: '40px',padding: '0 16px 0 16px',cursor: 'pointer',display: 'flex'}}>
-                <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf',}}></div>
+              <div style={{position: 'absolute', top: 0, right: 0, color: '#bfbfbf', height: '40px', lineHeight: '40px', padding: '0 16px 0 16px', cursor: 'pointer', display: 'flex'}}>
+                <div style={{height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf', }}></div>
                 {/*<div>获取验证码</div>*/}
-                <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile ? globalStyles.link_mouse : ''} style={{height: '40px',fontSize: 16,width: 100,textAlign: 'center'}} text={'获取验证码'}/>
+                <VerificationCodeTwo getVerifyCode={this.getVerifyCode.bind(this)} className={isMobile ? globalStyles.link_mouse : ''} style={{height: '40px', fontSize: 16, width: 100, textAlign: 'center'}} text={'获取验证码'}/>
               </div>
           </div>
           {/* 确认 */}
           <FormItem>
-            <Button type="primary" htmlType="submit" onClick={this.formButtonSubmit.bind(this,'mobile')} style={{height: 40, marginLeft: 12,}} disabled={!isMobile || !isHasCode}>修改</Button>
+            <Button type="primary" htmlType="submit" onClick={this.formButtonSubmit.bind(this, 'mobile')} style={{height: 40, marginLeft: 12, }} disabled={!isMobile || !isHasCode}>修改</Button>
           </FormItem>
         </Form>
       </div>

@@ -85,7 +85,7 @@ class PersonalInfoForm extends React.Component {
       action: `${REQUEST_DOMAIN}/user/upload`,
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(e.size == 0) {
@@ -130,7 +130,7 @@ class PersonalInfoForm extends React.Component {
       },
     };
     return (
-      <Form onSubmit={this.handleSubmit} style={{padding:'20px 0',width: 600}}>
+      <Form onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600}}>
         {/* 姓名 */}
         <FormItem
           {...formItemLayout}
@@ -176,7 +176,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: orgnization || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <div className={indexStyle.personInfoInput} style={{color:'rgb(38, 38, 38)'}}>{current_org_name}</div>
+            <div className={indexStyle.personInfoInput} style={{color: 'rgb(38, 38, 38)'}}>{current_org_name}</div>
           )}
         </FormItem>
         {/* 头像 */}
@@ -194,9 +194,9 @@ class PersonalInfoForm extends React.Component {
             <div style={{display: 'flex'}}>
               <div className={indexStyle.avatar}>
                 {avatar?(
-                  <img src={avatar} style={{width:'100%',height: '100%',borderRadius: 40}}></img>
+                  <img src={avatar} style={{width: '100%', height: '100%', borderRadius: 40}}></img>
                 ):(
-                  <Icon type="user" style={{fontSize: 28, color: '#ffffff',display: 'inline-block',margin: '0 auto',marginTop:6}}/>
+                  <Icon type="user" style={{fontSize: 28, color: '#ffffff', display: 'inline-block', margin: '0 auto', marginTop: 6}}/>
                 )}
 
               </div>
@@ -207,7 +207,7 @@ class PersonalInfoForm extends React.Component {
               </Upload>
               <div style={{width: 120}} >
                 {uploading?(
-                  <span><Icon type="loading"  style={{fontSize:20,marginLeft:12}}/>'上传中...'</span>
+                  <span><Icon type="loading" style={{fontSize: 20, marginLeft: 12}}/>'上传中...'</span>
                 ):('')}
               </div>
             </div>
@@ -226,7 +226,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: email || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16,color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
+            <div style={{marginLeft: 12, fontSize: 16, color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*手机号*/}
@@ -242,7 +242,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: mobile || undefined,
             rules: [{ required: false }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16 ,color: '#262626'}}>{ mobile || '未绑定' } <Button style={{fontSize: 14, color:'rgba(0,0,0,.65)',marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
+            <div style={{marginLeft: 12, fontSize: 16, color: '#262626'}}>{ mobile || '未绑定' } <Button style={{fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*  微信 */}
@@ -265,7 +265,7 @@ class PersonalInfoForm extends React.Component {
         <FormItem
           {...formItemLayout}
         >
-          <Button type="primary" htmlType="submit" style={{marginLeft: 112,width: 80, height: 40,fontSize:16}}>确认</Button>
+          <Button type="primary" htmlType="submit" style={{marginLeft: 112, width: 80, height: 40, fontSize: 16}}>确认</Button>
         </FormItem>
       </Form>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "dva/index";
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
 import CardContent from './CardContent'
 import Header from './Header'
@@ -16,6 +16,7 @@ const getEffectOrReducerByName_2 = name => `technological/${name}`
 const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 
 const Workbench = (props) => {
   // console.log(props)
@@ -25,29 +26,36 @@ const Workbench = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
+  const updatePublicDatas = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByName_6('updateDatas'),
+      payload: payload
+    })
+  }
+
   const cardContentListProps = {
     modal,
     model,
     postCommentToDynamics(payload) {
       dispatch({
-        type: getEffectOrReducerByName('postCommentToDynamics') ,
+        type: getEffectOrReducerByName('postCommentToDynamics'),
         payload: payload
       })
     },
     updateDatas(payload) {
       dispatch({
-        type: getEffectOrReducerByName('updateDatas') ,
-        payload:payload
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: payload
       })
     },
     completeTask(data) {
@@ -162,7 +170,7 @@ const Workbench = (props) => {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route:path,
+          route: path,
         },
       })
     },
@@ -208,14 +216,14 @@ const Workbench = (props) => {
       dispatch({
         type: getEffectOrReducerByName_2('routingJump'),
         payload: {
-          route:path,
+          route: path,
         },
       })
     },
     updateDatas (payload) {
       dispatch({
-        type: getEffectOrReducerByName_2('updateDatas') ,
-        payload:payload
+        type: getEffectOrReducerByName_2('updateDatas'),
+        payload: payload
       })
     },
     //组织
@@ -288,20 +296,20 @@ const Workbench = (props) => {
     model,
     getBoardMembers(payload) {
       dispatch({
-        type: getEffectOrReducerByName_4('getBoardMembers') ,
-        payload:payload
+        type: getEffectOrReducerByName_4('getBoardMembers'),
+        payload: payload
       })
     },
     getCardDetail(payload){
       dispatch({
-        type: getEffectOrReducerByName_4('getCardDetail') ,
-        payload:payload
+        type: getEffectOrReducerByName_4('getCardDetail'),
+        payload: payload
       })
     },
     updateTaskDatas(payload) {
       dispatch({
-        type: getEffectOrReducerByName_4('updateDatas') ,
-        payload:payload
+        type: getEffectOrReducerByName_4('updateDatas'),
+        payload: payload
       })
     },
     deleteTaskFile(data) {
@@ -471,8 +479,8 @@ const Workbench = (props) => {
     model,
     updateFileDatas(payload) {
       dispatch({
-        type: getEffectOrReducerByName_5('updateDatas') ,
-        payload:payload
+        type: getEffectOrReducerByName_5('updateDatas'),
+        payload: payload
       })
     },
     getFileList(params){
@@ -584,15 +592,15 @@ const Workbench = (props) => {
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       <Header {...cardContentListProps} />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...props} updateDatas={updateDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
+       <GroupContent {...props} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
     </div>
   )
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological,newsDynamic, workbenchTaskDetail, workbenchFileDetail, loading }) {
+function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, workbenchFileDetail, workbenchPublicDatas, loading }) {
   const modelObj = {
-    datas: {...technological['datas'],...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas']}
+    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas']}
   }
   return { modal, model: modelObj, loading }
 }

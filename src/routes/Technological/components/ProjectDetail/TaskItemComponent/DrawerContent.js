@@ -1,6 +1,6 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Tag, Input, Dropdown, Menu,DatePicker, Checkbox , message } from 'antd'
+import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message } from 'antd'
 import BraftEditor from 'braft-editor'
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
@@ -47,13 +47,13 @@ export default class DrawContent extends React.Component {
     // 第二行状态
     isSetedAlarm: false,
     alarmTime: '',
-    previewFileModalVisibile:false, //文件预览是否打开状态
+    previewFileModalVisibile: false, //文件预览是否打开状态
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ drawContent = {}} } = this.props.model
+    const { datas: { drawContent = {}} } = this.props.model
     let { description, attachment_data = [] } = drawContent
     this.setState({
       brafitEditHtml: description
@@ -73,7 +73,7 @@ export default class DrawContent extends React.Component {
     })
   }
   componentWillReceiveProps(nextProps) {
-    const { datas:{ drawContent = {}} } = nextProps.model
+    const { datas: { drawContent = {}} } = nextProps.model
     let { description } = drawContent
     this.setState({
       brafitEditHtml: description
@@ -86,7 +86,7 @@ export default class DrawContent extends React.Component {
     const parentKey = Number(pathArr[1])
     const childKey = Number(pathArr[0])
 
-    const { datas:{ drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
     const { card_id } = drawContent
     const list_id = projectGoupList[parentKey].list_data[childKey].list_id
     const board_id = projectGoupList[parentKey].board_id
@@ -102,7 +102,7 @@ export default class DrawContent extends React.Component {
     this.props.changeTaskType({requestObj, indexObj})
   }
   topRightMenuClick({key}) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     if(key === '1') {
       if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
@@ -128,7 +128,7 @@ export default class DrawContent extends React.Component {
       okText: '确认',
       cancelText: '取消',
       zIndex: 2000,
-      onOk()  {
+      onOk() {
         that.props.setDrawerVisibleClose()
         that.props.deleteTask(card_id)
       }
@@ -142,7 +142,7 @@ export default class DrawContent extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {
       card_id,
@@ -153,7 +153,7 @@ export default class DrawContent extends React.Component {
     this.props.updateDatas({drawContent})
   }
   titleTextAreaChangeBlur(e) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id, description, due_time, start_time } = drawContent
     drawContent['card_name'] = e.target.value
     const updateObj ={
@@ -179,12 +179,12 @@ export default class DrawContent extends React.Component {
   //第二行状态栏编辑------------------start
     //设置任务负责人组件---------------start
   setList(id) {
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
   chirldrenTaskChargeChange(data) {
-    const { datas:{ drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { card_id, executors=[] } = drawContent
     //单个任务执行人
     const { user_id, full_name, avatar } = data
@@ -218,7 +218,7 @@ export default class DrawContent extends React.Component {
       that.setState({
         excutorsOut_left_width
       })
-    },300)
+    }, 300)
 
     this.props.addTaskExecutor({
       card_id,
@@ -227,10 +227,10 @@ export default class DrawContent extends React.Component {
 
   }
   setChargeManIsSelf() {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id, executors=[] } = drawContent
     const userInfo = JSON.parse(Cookies.get('userInfo'))
-    const { id, full_name,fullName, email, mobile, avatar } = userInfo
+    const { id, full_name, fullName, email, mobile, avatar } = userInfo
     executors[0] = {
       user_id: id,
       user_name: full_name || fullName || mobile || email,
@@ -274,7 +274,7 @@ export default class DrawContent extends React.Component {
   }
     //开始时间
   startDatePickerChange(e, timeString) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
     if(!this.compareStartDueTime(start_timeStamp, due_time)) {
@@ -291,7 +291,7 @@ export default class DrawContent extends React.Component {
   }
     //截止时间
   endDatePickerChange(e, timeString) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id, start_time} = drawContent
     const due_timeStamp = timeToTimestamp(timeString)
     if(!this.compareStartDueTime(start_time, due_timeStamp)) {
@@ -318,21 +318,21 @@ export default class DrawContent extends React.Component {
     return true
   }
   disabledDueTime = (due_time) => {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { start_time } = drawContent
     if (!start_time || !due_time) {
       return false;
     }
-    const newStartTime = start_time.toString().length > 10 ?  Number(start_time).valueOf() / 1000 :  Number(start_time).valueOf()
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time).valueOf() / 1000 : Number(start_time).valueOf()
     return Number(due_time.valueOf()) / 1000 < newStartTime;
   }
   disabledStartTime = (start_time) => {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { due_time } = drawContent
     if (!start_time || !due_time) {
       return false;
     }
-    const newDueTime = due_time.toString().length > 10 ?  Number(due_time).valueOf() / 1000 :  Number(due_time).valueOf()
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time).valueOf() / 1000 : Number(due_time).valueOf()
     return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
   }
   //第二行状态栏编辑------------------end
@@ -352,7 +352,7 @@ export default class DrawContent extends React.Component {
   }
   quitBrafitEdit(e) {
     e.stopPropagation();
-    const { datas:{ drawContent = {}} } = this.props.model
+    const { datas: { drawContent = {}} } = this.props.model
     let { description } = drawContent
     this.setState({
       isInEdit: false,
@@ -362,7 +362,7 @@ export default class DrawContent extends React.Component {
   }
   saveBrafitEdit(e) {
     e.stopPropagation();
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     let { card_id} = drawContent
     let { brafitEditHtml } = this.state
     if(typeof brafitEditHtml === 'object') {
@@ -396,7 +396,7 @@ export default class DrawContent extends React.Component {
     })
   }
   isJSON = (str) => {
-    if (typeof str == 'string') {
+    if (typeof str === 'string') {
       try {
         var obj=JSON.parse(str);
         if(str.indexOf('{')>-1){
@@ -413,7 +413,7 @@ export default class DrawContent extends React.Component {
   }
   myUploadFn = (param) => {
     const serverURL = `${REQUEST_DOMAIN_FILE}/upload`
-    const xhr = new XMLHttpRequest
+    const xhr = new XMLHttpRequest()
     const fd = new FormData()
 
     const successFn = (response) => {
@@ -469,7 +469,7 @@ export default class DrawContent extends React.Component {
     if(e.target.nodeName.toUpperCase() === 'IMG') {
       const src = e.target.getAttribute('src')
       this.setState({
-        previewFileType : 'img',
+        previewFileType: 'img',
         previewFileSrc: src
       })
       this.setPreviewFileModalVisibile()
@@ -477,7 +477,7 @@ export default class DrawContent extends React.Component {
       const src = e.target.getAttribute('src')
       console.log(src)
       this.setState({
-        previewFileType : 'video',
+        previewFileType: 'video',
         previewFileSrc: src
       })
       this.setPreviewFileModalVisibile()
@@ -492,12 +492,12 @@ export default class DrawContent extends React.Component {
 
   //标签-------------start
   randomColorArray() {
-    const colorArr = ['magenta','red','volcano','orange','gold','lime','green','cyan','blue','geekblue','purple']
-    const n =  Math.floor(Math.random() * colorArr.length + 1)-1;
+    const colorArr = ['magenta', 'red', 'volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple']
+    const n = Math.floor(Math.random() * colorArr.length + 1)-1;
     return colorArr[n]
   }
   tagClose({ label_id, label_name, key}) {
-    const { datas:{ drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
     const { card_id } = drawContent
     // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id? 'label_id':'label_name'
@@ -529,7 +529,7 @@ export default class DrawContent extends React.Component {
     if(! e.target.value) {
       return false
     }
-    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
     label_data.push({label_name: e.target.value})
@@ -547,11 +547,11 @@ export default class DrawContent extends React.Component {
       tagDropdownVisible: false,
       tagInputValue: ''
     })
-    const { datas:{ drawContent = {},  projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
     const { name, color } = data
-    label_data.push({label_name: name,label_color:color})
+    label_data.push({label_name: name, label_color: color})
     this.props.addTaskTag({
       card_id,
       board_id,
@@ -592,10 +592,10 @@ export default class DrawContent extends React.Component {
 
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag,  isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas:{ isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0,  boardTagList = [] } } = this.props.model
+    const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex]
@@ -617,8 +617,8 @@ export default class DrawContent extends React.Component {
       height: 0,
       contentFormat: 'html',
       value: editorState,
-      media:{uploadFn: this.myUploadFn},
-      onChange:(e) => {
+      media: {uploadFn: this.myUploadFn},
+      onChange: (e) => {
         // const { datas:{ drawContent = {} } } = this.props.model
         // drawContent['description'] = e
         // this.props.updateDatas({drawContent})
@@ -654,7 +654,7 @@ export default class DrawContent extends React.Component {
           仅语音会议
         </Menu.Item>
         <Menu.Item key="2">
-          <i className={`${globalStyle.authTheme}`}  style={{marginRight: 8}}>
+          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
             &#xe601;
           </i>
           语音视频会议
@@ -685,12 +685,12 @@ export default class DrawContent extends React.Component {
 
     const topRightMenu = (
       <Menu onClick={this.topRightMenuClick.bind(this)}>
-        <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+        <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
           <div className={DrawerContentStyles.elseProjectMemu}>
             归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
-        <Menu.Item key={'2'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+        <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
           <div className={DrawerContentStyles.elseProjectDangerMenu}>
             删除{currentNounPlanFilterName(TASKS)}
           </div>
@@ -709,7 +709,7 @@ export default class DrawContent extends React.Component {
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(e.size == 0) {
@@ -722,7 +722,7 @@ export default class DrawContent extends React.Component {
       },
       onChange({ file, fileList, event }) {
         // console.log(1, file, fileList)
-        if (file.status === 'done' &&  file.response.code === '0') {
+        if (file.status === 'done' && file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
           for(let i=0; i < fileList.length; i++) {
@@ -740,12 +740,12 @@ export default class DrawContent extends React.Component {
           drawContent
         })
       },
-      onPreview(e,a) {
+      onPreview(e, a) {
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
 
         that.setState({
-          previewFileType : 'attachment',
+          previewFileType: 'attachment',
         })
         // filePreview({id: file_resource_id}).then((value) => {
         //   let url = ''
@@ -772,10 +772,10 @@ export default class DrawContent extends React.Component {
           filePreviewCurrentId: file_resource_id,
           filePreviewCurrentFileId: file_id,
         })
-        that.props.filePreview({id: file_resource_id,file_id:file_id})
+        that.props.filePreview({id: file_resource_id, file_id: file_id})
       },
       onRemove(e) {
-        const attachment_id  = e.id || (e.response.data && e.response.data.attachment_id)
+        const attachment_id = e.id || (e.response.data && e.response.data.attachment_id)
         if(!attachment_id){
           return
         }
@@ -819,7 +819,7 @@ export default class DrawContent extends React.Component {
               </Dropdown>
               <Dropdown overlay={topRightMenu}>
                 <div className={DrawerContentStyles.right}>
-                  <Icon type="ellipsis" style={{fontSize: 20,marginTop:2}} />
+                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2}} />
                 </div>
               </Dropdown>
             </div>
@@ -830,7 +830,7 @@ export default class DrawContent extends React.Component {
              <div className={DrawerContentStyles.contain_2}>
                {type === '0' ?(
                  <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
-                   <Icon type="check" style={{color: '#FFFFFF',fontSize:16, fontWeight:'bold',marginTop: 2}}/>
+                   <Icon type="check" style={{color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2}}/>
                  </div>
                ):(
                  <div style={{width: 24, height: 24, color: '#595959'}}>
@@ -847,7 +847,7 @@ export default class DrawContent extends React.Component {
                            onClick={this.setTitleIsEdit.bind(this, true)}
                            autoFocus={true}
                            maxLength={100}
-                           style={{display: 'block',fontSize: 20, color: '#262626',resize:'none', marginLeft: -4, padding: '0 4px'}}/>
+                           style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}/>
                )}
              </div>
           </div>
@@ -868,17 +868,17 @@ export default class DrawContent extends React.Component {
                   <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
                   <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                     {executors.map((value, key) => {
-                      const { avatar,name, user_name, user_id } = value
+                      const { avatar, name, user_name, user_id } = value
                       return (
                         <div style={{display: 'flex', alignItems: 'center'}} key={user_id}>
                           {avatar? (
                             <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4}} src={avatar} />
                           ) : (
-                            <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center',justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                            <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
                               <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
                             </div>
                           )}
-                          <div  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8}}>{name || user_name || '佚名'}</div>
+                          <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8}}>{name || user_name || '佚名'}</div>
                         </div>
                       )
                     })}
@@ -886,8 +886,8 @@ export default class DrawContent extends React.Component {
                   </Dropdown>
 
                   <Dropdown overlay={<ExcutorList listData={executors}/>}>
-                    <div  className={DrawerContentStyles.excutorsOut_right} style={{backgroundColor: (typeof excutorsOut_left_width =='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new =='number'&& excutorsOut_left_width_new > 340) ?'#f5f5f5': ''}}>
-                      <Icon type="ellipsis" style={{marginTop:2,display: (typeof excutorsOut_left_width =='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new =='number'&& excutorsOut_left_width_new > 340)?'block': 'none'}} />
+                    <div className={DrawerContentStyles.excutorsOut_right} style={{backgroundColor: (typeof excutorsOut_left_width ==='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new ==='number'&& excutorsOut_left_width_new > 340) ?'#f5f5f5': ''}}>
+                      <Icon type="ellipsis" style={{marginTop: 2, display: (typeof excutorsOut_left_width ==='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new ==='number'&& excutorsOut_left_width_new > 340)?'block': 'none'}} />
                     </div>
                   </Dropdown>
                 </div>
@@ -914,11 +914,11 @@ export default class DrawContent extends React.Component {
                       {executor.avatar? (
                         <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={executor.avatar} />
                       ) : (
-                        <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center',justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
+                        <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
                           <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
                         </div>
                       )}
-                      <div  style={{overflow: 'hidden',verticalAlign:' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80}}>{executor.user_name || '佚名'}</div>
+                      <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80}}>{executor.user_name || '佚名'}</div>
                     </div>
                   </Dropdown>
                   )}
@@ -929,26 +929,26 @@ export default class DrawContent extends React.Component {
               </div>
               <div>
                 {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time,'/', true) : '开始' }
+                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始' }
                   <DatePicker
                     disabledDate={this.disabledStartTime.bind(this)}
                     onChange={this.startDatePickerChange.bind(this)}
                     placeholder={'开始时间'}
                     format="YYYY/MM/DD HH:mm"
                     showTime={{format: 'HH:mm'}}
-                    style={{opacity: 0, width: !start_time? 16 : 100, height: 20,background: '#000000', cursor: 'pointer', position: 'absolute',right:  !start_time? 8 : 0,zIndex:1}} />
+                    style={{opacity: 0, width: !start_time? 16 : 100, height: 20, background: '#000000', cursor: 'pointer', position: 'absolute', right: !start_time? 8 : 0, zIndex: 1}} />
                 </span>
                  &nbsp;
                 {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
                 &nbsp;
-                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time,'/', true) : '截止时间'}
+                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
                   <DatePicker
                     disabledDate={this.disabledDueTime.bind(this)}
                     placeholder={'截止时间'}
                     format="YYYY/MM/DD HH:mm"
                     showTime={{format: 'HH:mm'}}
                     onChange={this.endDatePickerChange.bind(this)}
-                    style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20,background: '#000000',position: 'absolute',right: 0,zIndex:1}} />
+                    style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1}} />
                 </span>
               </div>
               {type === '0'?('') :(
@@ -985,16 +985,16 @@ export default class DrawContent extends React.Component {
               </div>
               {/*onClick={this.goEdit.bind(this)}*/}
               <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
-                <div style={{cursor: 'pointer'}}  dangerouslySetInnerHTML={{__html:typeof description === 'object'? description.toHTML() :description}}></div>
+                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: typeof description === 'object'? description.toHTML() :description}}></div>
               </div>
             </div>
           ) : (
             <div>
               <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
-                <BraftEditor {...editorProps} style={{fontSize:12}}/>
+                <BraftEditor {...editorProps} style={{fontSize: 12}}/>
               </div>
               <div style={{marginTop: 20, textAlign: 'right'}}>
-                <Button size={'small'} style={{fontSize: 12,marginRight:16}} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
+                <Button size={'small'} style={{fontSize: 12, marginRight: 16}} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
                 <Button size={'small'} style={{fontSize: 12}} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
               </div>
             </div>
@@ -1014,7 +1014,7 @@ export default class DrawContent extends React.Component {
             <div className={DrawerContentStyles.contain_5}>
                 {label_data.map((value, key) => {
                   let flag = false //如果项目列表
-                  for(let i = 0; i <  boardTagList.length; i++) {
+                  for(let i = 0; i < boardTagList.length; i++) {
                     if(value['label_id'] == boardTagList[i]['id']) {
                       flag = true
                       break;
@@ -1022,11 +1022,13 @@ export default class DrawContent extends React.Component {
                   }
                   const { label_color = '90,90,90' } = value
                   return(
-                    flag && <Tag closable
+                    flag && (
+<Tag closable
                                  visible={true}
-                                 style={{marginTop: 8,color: `rgba(${label_color})`,backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
+                                 style={{marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
                                  onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})}
                                  key={key} >{value.label_name}</Tag>
+)
                   )
                 })}
 
@@ -1038,9 +1040,9 @@ export default class DrawContent extends React.Component {
                 ) : (
                   <Dropdown visible={this.state.tagDropdownVisible}
                             overlay={<TagDropDown {...this.props} tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
-                    <div style={{marginTop: 8,position: 'relative', width: 'auto', height: 'auto'}}>
+                    <div style={{marginTop: 8, position: 'relative', width: 'auto', height: 'auto'}}>
                     <Input autoFocus={true} placeholder={'标签'}
-                           style={{height: 24,paddingRight: 20, fontSize: 14, color: '#8c8c8c',minWidth: 62, maxWidth: 100}}
+                           style={{height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100}}
                            onChange={this.setTagInputValue.bind(this)}
                            // onBlur={this.tagAddComplete.bind(this)}
                            maxLength={8}
@@ -1054,7 +1056,7 @@ export default class DrawContent extends React.Component {
             </div>
           </div>
           {child_data.length?(
-            <div  className={DrawerContentStyles.divContent_1}>
+            <div className={DrawerContentStyles.divContent_1}>
               <div className={DrawerContentStyles.spaceLine}></div>
             </div>
           ):('')}
@@ -1064,20 +1066,20 @@ export default class DrawContent extends React.Component {
           <DCAddChirdrenTask {...this.props}/>
 
           {/*上传任务附件*/}
-          <div  className={DrawerContentStyles.divContent_1}>
+          <div className={DrawerContentStyles.divContent_1}>
             <Upload {...uploadProps}>
-              <Button  size={'small'} style={{fontSize: 12, marginTop:16,}} >
+              <Button size={'small'} style={{fontSize: 12, marginTop: 16, }} >
                 <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
               </Button>
             </Upload>
           </div>
 
           {/*查看任务附件*/}
-          <PreviewFileModal {...this.props} modalVisible={isInOpenFile}  />
+          <PreviewFileModal {...this.props} modalVisible={isInOpenFile} />
           {/*查看*/}
-          <PreviewFileModalRichText {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+          <PreviewFileModalRichText {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
-          <div  className={DrawerContentStyles.divContent_1}>
+          <div className={DrawerContentStyles.divContent_1}>
             <div className={DrawerContentStyles.spaceLine} ></div>
           </div>
         </div>

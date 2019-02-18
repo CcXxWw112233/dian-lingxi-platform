@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal,Checkbox, Form, message } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal, Checkbox, Form, message } from 'antd'
 import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
@@ -24,8 +24,8 @@ export default class ElseProject extends React.Component{
     isInitEntry: true,
     isCollection: false,
     isSoundsEvrybody: false,
-    ellipsisShow: false,//是否出现...菜单
-    dropdownVisibleChangeValue: false,//是否出现...菜单辅助判断标志
+    ellipsisShow: false, //是否出现...菜单
+    dropdownVisibleChangeValue: false, //是否出现...菜单辅助判断标志
   }
 
   //出现confirm-------------start
@@ -38,7 +38,7 @@ export default class ElseProject extends React.Component{
     const that = this
     Modal.confirm({
       title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
-      content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
+      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
                   <span >退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
                   {/*<div style={{marginTop:20,}}>*/}
                     {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
@@ -51,7 +51,7 @@ export default class ElseProject extends React.Component{
       }
     });
   }
-  confirm_2(board_id,type) {
+  confirm_2(board_id, type) {
     const that = this
     let defineNoun = '操作'
     switch (type){
@@ -96,7 +96,7 @@ export default class ElseProject extends React.Component{
     }
     this.setState({
       ellipsisShow: false,
-      dropdownVisibleChangeValue:false
+      dropdownVisibleChangeValue: false
     })
     const { key } = e
     switch (key) {
@@ -144,11 +144,11 @@ export default class ElseProject extends React.Component{
     const { is_star } = itemDetailInfo
     this.setState({
       isInitEntry: false,
-    },function () {
+    }, function () {
       this.setState({
         isCollection: is_starinit === '1' ? false : this.state.isInitEntry ? false : !this.state.isCollection,
         starOpacity: 1
-      },function () {
+      }, function () {
         if(this.state.isCollection) {
           this.props.collectionProject(id)
         }else{
@@ -181,18 +181,18 @@ export default class ElseProject extends React.Component{
       dropdownVisibleChangeValue: visible,
     })
   }
-  projectListItemClick(route,board_id,a) {
+  projectListItemClick(route, board_id, a) {
     //暂时去掉访客限制
     // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    Cookies.set('board_id', board_id,{expires: 30, path: ''})
+    Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump(route)
   }
 
   render() {
-    const { starType,starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
+    const { starType, starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
     const { itemDetailInfo = {}} = this.props
     const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
 
@@ -200,7 +200,7 @@ export default class ElseProject extends React.Component{
     const menu = (board_id) => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
-          <Menu.Item key={'1'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
               邀请{currentNounPlanFilterName(MEMBERS)}加入
             </div>
@@ -210,13 +210,13 @@ export default class ElseProject extends React.Component{
               {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
             {/*</div>*/}
           {/*</Menu.Item>*/}
-          <Menu.Item key={'3'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+          <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
               删除{currentNounPlanFilterName(PROJECTS)}
             </div>
           </Menu.Item>
           {is_create !== '1'? (
-            <Menu.Item key={'4'}  style={{textAlign: 'center',padding:0,margin: 0}}>
+            <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyle.elseProjectDangerMenu}>
                 退出{currentNounPlanFilterName(PROJECTS)}
               </div>
@@ -227,13 +227,13 @@ export default class ElseProject extends React.Component{
     }
     const manImageDropdown = (props) =>{
       const { avatar, email, full_name, mobile, user_id, user_name, we_chat = '无' } = props
-      return  (
+      return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>
             <div className={detailInfoStyle.left}>
               {avatar ? (<img src={avatar} />) : (
-                <div  style={{backgroundColor: '#f2f2f2',textAlign:'center',width: 32, height: 32, borderRadius: 32}}>
-                  <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20,marginTop: 6}}/>
+                <div style={{backgroundColor: '#f2f2f2', textAlign: 'center', width: 32, height: 32, borderRadius: 32}}>
+                  <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20, marginTop: 6}}/>
                 </div>
               )}
             </div>
@@ -282,20 +282,20 @@ export default class ElseProject extends React.Component{
          onMouseOver={this.starMouseOver.bind(this)}
          onMouseLeave={this.starMouseLeave.bind(this)}
          onClick={this.starClick.bind(this, board_id)}
-         style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 ',fontSize: 16}}>&#xe70e;</i>
+         style={{margin: '0 0 0 8px', opacity: starOpacity, color: '#FAAD14 ', fontSize: 16}}>&#xe70e;</i>
     )
     const starProject = (
       <i className={globalStyles.authTheme}
          onMouseOver={this.starMouseOver.bind(this)}
          onMouseLeave={this.starMouseLeave.bind(this)}
          onClick={this.starClick.bind(this, board_id)}
-         style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 ',fontSize: 16}}>&#xe6f8;</i>
+         style={{margin: '0 0 0 8px', opacity: starOpacity, color: '#FAAD14 ', fontSize: 16}}>&#xe6f8;</i>
     )
     return (
       <div>
-        <Card style={{position: 'relative',height: 'auto', marginTop: 20}}>
+        <Card style={{position: 'relative', height: 'auto', marginTop: 20}}>
           <div className={indexStyle.listOutmask}></div>
-          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail`,board_id)}>
+          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail`, board_id)}>
             <div className={indexStyle.left}>
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
                 <span>{board_name}</span>
@@ -307,7 +307,7 @@ export default class ElseProject extends React.Component{
                         {/*onClick={this.starClick.bind(this, board_id)}*/}
                         {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />*/}
                     <Dropdown overlay={menu(board_id)} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
-                      <Icon type="ellipsis"  style={{fontSize:18,margin: '0 0 0 8px',display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
+                      <Icon type="ellipsis" style={{fontSize: 18, margin: '0 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
                     </Dropdown>
                 </span>
               </div>
@@ -320,7 +320,7 @@ export default class ElseProject extends React.Component{
                         {avatar? (
                           <img src={avatar} key={key} className={indexStyle.taskManImag}></img>
                         ):(
-                          <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2',textAlign:'center'}}>
+                          <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2', textAlign: 'center'}}>
                             <Icon type={'user'} style={{color: '#8c8c8c'}}/>
                           </div>
                         )
@@ -330,8 +330,8 @@ export default class ElseProject extends React.Component{
                   }
                 })}
                 {data.length > 7? (
-                  <div style={{display: 'flex',fontSize: 12}}>
-                    <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize:18}}/></div>{user_count}位任务执行人
+                  <div style={{display: 'flex', fontSize: 12}}>
+                    <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{fontSize: 18}}/></div>{user_count}位任务执行人
                   </div>
                 ) : ('')}
               </div>

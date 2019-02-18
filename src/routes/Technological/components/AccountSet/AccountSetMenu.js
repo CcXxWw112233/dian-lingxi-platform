@@ -10,7 +10,7 @@ export default class AccountSetMenu extends React.Component {
     super(props)
   }
   state = {
-    SelectedKeys : '1', //菜单所选项
+    SelectedKeys: '1', //菜单所选项
   }
   //选择菜单
   handleMenuClick = ({key}) => {
@@ -29,7 +29,7 @@ export default class AccountSetMenu extends React.Component {
     let Dom
     switch (SelectedKeys) {
       case '1':
-        Dom =  <PersonalInfoForm {...this.props} handleMenuClick={this.handleMenuClick.bind(this)}/>
+        Dom = <PersonalInfoForm {...this.props} handleMenuClick={this.handleMenuClick.bind(this)}/>
         break
       case '2':
         Dom = <BindAccountForm {...this.props}/>
@@ -57,18 +57,18 @@ export default class AccountSetMenu extends React.Component {
             defaultSelectedKeys={[SelectedKeys]}
             mode="inline"
           >
-            <Menu.Item key="1" style={{ fontSize: 16,color:'#8C8C8C',height:48 }}>
-              <div style={{height: '100%',paddingTop:4, boxSizing: 'border-box'}}>
+            <Menu.Item key="1" style={{ fontSize: 16, color: '#8C8C8C', height: 48 }}>
+              <div style={{height: '100%', paddingTop: 4, boxSizing: 'border-box'}}>
                 个人信息
               </div>
             </Menu.Item>
-            <Menu.Item key="2" style={{ fontSize: 16,color:'#8c8c8c',height:48  }}>
-              <div style={{height: '100%',paddingTop:4, boxSizing: 'border-box'}}>
+            <Menu.Item key="2" style={{ fontSize: 16, color: '#8c8c8c', height: 48 }}>
+              <div style={{height: '100%', paddingTop: 4, boxSizing: 'border-box'}}>
                 账户绑定
               </div>
             </Menu.Item>
-            <Menu.Item key="3" style={{ fontSize: 16,color:'#8c8c8c',height:48  }}>
-              <div style={{height: '100%',paddingTop:4, boxSizing: 'border-box'}}>
+            <Menu.Item key="3" style={{ fontSize: 16, color: '#8c8c8c', height: 48 }}>
+              <div style={{height: '100%', paddingTop: 4, boxSizing: 'border-box'}}>
                 密码修改
               </div>
             </Menu.Item>

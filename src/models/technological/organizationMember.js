@@ -23,7 +23,7 @@ export default modelExtend(technological, {
         if (location.pathname === '/technological/organizationMember') {
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               groupList: [], //全部分组
               TreeGroupModalVisiblie: false, //树状分组是否可见
               groupTreeList: [], //树状分组数据
@@ -80,12 +80,12 @@ export default modelExtend(technological, {
           calback()
         }
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
 
       }
     },
     * getGroupTreeList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupTreeList,{})
+      let res = yield call(getGroupTreeList, {})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -94,7 +94,7 @@ export default modelExtend(technological, {
           }
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
 
       }
     },
@@ -103,9 +103,9 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success('创建分组成功',MESSAGE_DURATION_TIME)
+              message.success('创建分组成功', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -114,7 +114,7 @@ export default modelExtend(technological, {
           payload: {}
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * updateGroup({ payload }, { select, call, put }) {
@@ -141,9 +141,9 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success('删除分组成功',MESSAGE_DURATION_TIME)
+              message.success('删除分组成功', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -152,7 +152,7 @@ export default modelExtend(technological, {
           payload: {}
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * removeMembersWithGroup({ payload }, { select, call, put }) {
@@ -160,14 +160,14 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(`已将${currentNounPlanFilterName(MEMBERS)}移出该分组`,MESSAGE_DURATION_TIME)
+              message.success(`已将${currentNounPlanFilterName(MEMBERS)}移出该分组`, MESSAGE_DURATION_TIME)
             }
           }
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * setMemberWitchGroup({ payload }, { select, call, put }) {
@@ -175,9 +175,9 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(`设置${currentNounPlanFilterName(MEMBERS)}分组成功`,MESSAGE_DURATION_TIME)
+              message.success(`设置${currentNounPlanFilterName(MEMBERS)}分组成功`, MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -195,9 +195,9 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(`邀请${currentNounPlanFilterName(MEMBERS)}加入分组成功`,MESSAGE_DURATION_TIME)
+              message.success(`邀请${currentNounPlanFilterName(MEMBERS)}加入分组成功`, MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -211,14 +211,14 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(status === '0'?`已拒绝${currentNounPlanFilterName(MEMBERS)}加入`:'已通过审批',MESSAGE_DURATION_TIME)
+              message.success(status === '0'?`已拒绝${currentNounPlanFilterName(MEMBERS)}加入`:'已通过审批', MESSAGE_DURATION_TIME)
             }
           }
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * discontinueMember({ payload }, { select, call, put }) {
@@ -226,14 +226,14 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(`已停用该${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
+              message.success(`已停用该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
             }
           }
         })
       }else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * getCurrentOrgRole({ payload }, { select, call, put }) {
@@ -246,7 +246,7 @@ export default modelExtend(technological, {
           }
         })
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * setMemberRole({ payload }, { select, call, put }) {
@@ -275,8 +275,8 @@ export default modelExtend(technological, {
       if (isApiResponseOk(res)) {
         groupList[parentKey]['members'][itemKey]['role_detailInfo'] = res.data
         yield put({
-          type:'updateDatas',
-          payload:{
+          type: 'updateDatas',
+          payload: {
             groupList,
           }
         })
@@ -292,7 +292,7 @@ export default modelExtend(technological, {
       yield put({
         type: 'updateDatas',
         payload: {
-          menuSearchSingleSpinning:true,
+          menuSearchSingleSpinning: true,
         }
       })
       let res = yield call(getMembersInOneGroup, {group_id})
@@ -307,8 +307,8 @@ export default modelExtend(technological, {
       if (isApiResponseOk(res)) {
         groupList[parentKey]['leader_members'] = res.data
         yield put({
-          type:'updateDatas',
-          payload:{
+          type: 'updateDatas',
+          payload: {
             groupList,
           }
         })
@@ -325,8 +325,8 @@ export default modelExtend(technological, {
         groupList[parentKey]['leader_avatar'] = avatar
         groupList[parentKey]['leader_name'] = name
         yield put({
-          type:'updateDatas',
-          payload:{
+          type: 'updateDatas',
+          payload: {
             groupList,
           }
         })
@@ -341,14 +341,14 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
-          payload:{
+          payload: {
             calback: function () {
-              message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`,MESSAGE_DURATION_TIME)
+              message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
             }
           }
         })
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * routingJump({ payload }, { call, put }) {

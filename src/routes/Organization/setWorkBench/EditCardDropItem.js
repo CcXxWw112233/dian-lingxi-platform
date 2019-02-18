@@ -1,6 +1,6 @@
 import React from 'react'
 import EditCardDropStyle from './index.less'
-import { Icon, Menu, Dropdown, Tooltip, Card,Input, Checkbox } from 'antd'
+import { Icon, Menu, Dropdown, Tooltip, Card, Input, Checkbox } from 'antd'
 import CardContentNormal from './CardContentNormal'
 
 export default class EditCardDropItem extends React.Component {
@@ -9,7 +9,7 @@ export default class EditCardDropItem extends React.Component {
     checked: false,
   }
   componentWillMount(){ // 进来之后设置选中
-    const { already_has_boxs=[], itemValue, parentKey ,collapseStatus} = this.props
+    const { already_has_boxs=[], itemValue, parentKey, collapseStatus} = this.props
     const { id } = itemValue
     let flag= false
     for(let val of already_has_boxs) {
@@ -56,12 +56,12 @@ export default class EditCardDropItem extends React.Component {
     })
   }
 
-  CheckChange({id, parentKey},e) {
+  CheckChange({id, parentKey}, e) {
      const checked = e.target.checked
      const { datas: { orgnization_role_data = [] } } = this.props.model
      this.setState({
        checked
-     },() => {
+     }, () => {
        const newChecked = this.state.checked
        if(newChecked) { //添加选中
          if(orgnization_role_data[parentKey]['already_has_boxs'].indexOf(id) == -1) {
@@ -82,14 +82,14 @@ export default class EditCardDropItem extends React.Component {
     const { code, name, id } = itemValue
 
     return (
-      <div  className={`${EditCardDropStyle.card_set_item} ${bottVisible !== '1' ? (bottVisible === '2' ? EditCardDropStyle.showBott2 : EditCardDropStyle.hideBott2): EditCardDropStyle.hideinit}`}>
+      <div className={`${EditCardDropStyle.card_set_item} ${bottVisible !== '1' ? (bottVisible === '2' ? EditCardDropStyle.showBott2 : EditCardDropStyle.hideBott2): EditCardDropStyle.hideinit}`}>
         <div className={EditCardDropStyle.card_set_item_top}>
           <div className={EditCardDropStyle.check}>
-            <Checkbox checked={checked} onChange={this.CheckChange.bind(this,{id, parentKey})} />
+            <Checkbox checked={checked} onChange={this.CheckChange.bind(this, {id, parentKey})} />
           </div>
           <div className={EditCardDropStyle.name}>{name}</div>
-          <div  className={`${EditCardDropStyle.turn} ${bottVisible!=='1'?(bottVisible === '2'?EditCardDropStyle.upDown_up: EditCardDropStyle.upDown_down): ''}`}>
-            <Icon type="down"  onClick={this.setBottVisible.bind(this)} />
+          <div className={`${EditCardDropStyle.turn} ${bottVisible!=='1'?(bottVisible === '2'?EditCardDropStyle.upDown_up: EditCardDropStyle.upDown_down): ''}`}>
+            <Icon type="down" onClick={this.setBottVisible.bind(this)} />
           </div>
         </div>
         <div className={`${EditCardDropStyle.card_set_item_bott} ${bottVisible !== '1' ? (bottVisible === '2' ? EditCardDropStyle.showBott : EditCardDropStyle.hideBott) : EditCardDropStyle.noDoc}`} >

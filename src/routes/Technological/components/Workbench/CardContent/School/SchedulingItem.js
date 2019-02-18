@@ -10,8 +10,9 @@ export default class SchedulingItem extends React.Component {
   itemClick(e) {
     const { itemValue = {} } = this.props
     const { id, board_id } = itemValue
-    this.props.updateTaskDatas({board_id})
-    this.props.updateFileDatas({board_id})
+    // this.props.updateTaskDatas({board_id})
+    // this.props.updateFileDatas({board_id})
+    this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
   }
@@ -24,7 +25,7 @@ export default class SchedulingItem extends React.Component {
         <div>
           <Icon type="calendar" style={{fontSize: 16, color: '#8c8c8c'}}/>
         </div>
-        <div>{name}<span style={{marginLeft: 6,color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time,'',true)}~${timestampToTimeNormal(due_time,'',true)}`}</span></div>
+        <div>{name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
       </div>
     )
   }

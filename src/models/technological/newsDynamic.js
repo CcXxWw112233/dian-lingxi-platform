@@ -4,7 +4,7 @@ import { message, notification } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import { newsDynamicHandleTime, timestampToTime } from '../../utils/util'
-import { selectNewsDynamicList,selectNewsDynamicListOriginal} from './select'
+import { selectNewsDynamicList, selectNewsDynamicListOriginal} from './select'
 import Cookies from 'js-cookie'
 
 
@@ -27,30 +27,30 @@ export default {
                 isHasNewDynamic: true,
               },
             })
-            Cookies.set('updateNewMessageItem', true,{expires: 30, path: ''})
+            Cookies.set('updateNewMessageItem', true, {expires: 30, path: ''})
           }
         }
 
         if (location.pathname === '/technological/newsDynamic' || location.pathname === '/technological/workbench') {
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               isFirstEntry: false, //是否第一次进来
               newsDynamicList: [], //存放消息记录的数组
               newsDynamicListOriginal: [],
-              isHasMore: true,//是否还可以查询更多
+              isHasMore: true, //是否还可以查询更多
               isHasNewDynamic: false, //是否有新消息
             }
           })
           dispatch({
             type: 'getNewsDynamicList',
-            payload:{
+            payload: {
               next_id: '0'
             }
           })
 
           //监听新消息setMessageItemEvent //监听消息存储在localstorage变化
-          window.addEventListener('setMessageItemEvent',evenListentNewMessage,false);
+          window.addEventListener('setMessageItemEvent', evenListentNewMessage, false);
           // window.addEventListener("setMessageItemEvent", function (e) {
           //   // console.log(e.newValue)
           //   // console.log(localStorage.getItem('newMessage'))
@@ -72,7 +72,7 @@ export default {
           //   }
           // });
         }else{
-          window.removeEventListener('setMessageItemEvent',evenListentNewMessage,false);
+          window.removeEventListener('setMessageItemEvent', evenListentNewMessage, false);
         }
       })
     },
@@ -85,7 +85,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            newsDynamicListOriginal:[]
+            newsDynamicListOriginal: []
           }
         })
       }
@@ -117,10 +117,10 @@ export default {
         //-------------2018.10.18修改合并相邻相近任务
         let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
         //将相邻且activity_type_id相同而且type等于固定类型的归为一条
-        const  removeEmptyArrayEle = (arr) => {
+        const removeEmptyArrayEle = (arr) => {
           for(var i = 0; i < arr.length; i++) {
             if(arr[i] == undefined) {
-              arr.splice(i,1);
+              arr.splice(i, 1);
               i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
               // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
             }
@@ -146,7 +146,7 @@ export default {
                   break
                 }
               }
-              newsDynamicListTransform[i]['newDataList'][key] = { type: '2',TypeArrayList }
+              newsDynamicListTransform[i]['newDataList'][key] = { type: '2', TypeArrayList }
             }else if(value.map['type'] === '3'){ //处理评论
               let TypeArrayList = []
               for (let j = key; j < dataList.length - 1; j++) {
@@ -157,9 +157,9 @@ export default {
                   break
                 }
               }
-              newsDynamicListTransform[i]['newDataList'][key] = { type: '3',TypeArrayList }
+              newsDynamicListTransform[i]['newDataList'][key] = { type: '3', TypeArrayList }
             }else {
-              newsDynamicListTransform[i]['newDataList'][key] = { type: value.map['type'] ,TypeArrayList: [dataList[key]] }
+              newsDynamicListTransform[i]['newDataList'][key] = { type: value.map['type'], TypeArrayList: [dataList[key]] }
             }
           })
           //已经合并的任务存在了，但是未合并的单条任务没有存进来，需要手动添加
@@ -174,11 +174,11 @@ export default {
           newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
         }
         //-------------2018.10.18修改合并相邻相近任务结束
-        console.log(2,newsDynamicListTransform)
+        console.log(2, newsDynamicListTransform)
         yield put({
           type: 'updateDatas',
           payload: {
-            newsDynamicList: newsDynamicListTransform,//: newsDynamicList,
+            newsDynamicList: newsDynamicListTransform, //: newsDynamicList,
             newsDynamicListOriginal,
             next_id: res.data.next_id,
             isHasMore: res.data.list.length ? true: false
@@ -194,7 +194,7 @@ export default {
         // 将评论的内容添加到前面
         const newsDynamicList = yield select(selectNewsDynamicList)
         let newItem = JSON.parse(JSON.stringify(newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'][0]))
-        const { user_name, full_name,mobile,email, avatar } = JSON.parse(Cookies.get('userInfo'))
+        const { user_name, full_name, mobile, email, avatar } = JSON.parse(Cookies.get('userInfo'))
         newItem['user_name'] = full_name || mobile || email
         newItem['avatar'] = avatar
         newItem['cardComment']['text'] = comment

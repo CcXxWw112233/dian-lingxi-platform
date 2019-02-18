@@ -3,7 +3,7 @@ import {connect} from "dva/index";
 import Header from './Header'
 import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
-import FileModule  from './FileModule'
+import FileModule from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
 import DetailInfoModal from './DetailInfo/DetailInfoModal'
@@ -15,7 +15,7 @@ const getEffectOrReducerByName = name => `projectDetail/${name}`
 
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
-  const { datas:{ projectInfoDisplay, taskGroupList, appsSelectKey } } = model
+  const { datas: { projectInfoDisplay, taskGroupList, appsSelectKey } } = model
   const HeaderListProps = {
     modal,
     model,
@@ -526,14 +526,14 @@ const ProjectDetail = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
 
@@ -557,7 +557,7 @@ const ProjectDetail = (props) => {
   }
   return(
     // minHeight: '100%',
-    <div style={{ height: 'auto' , position: 'relative',width: '100%', overflow: 'hidden',minHeight: '100vh',margin:'0 auto'}}>
+    <div style={{ height: 'auto', position: 'relative', width: '100%', overflow: 'hidden', minHeight: '100vh', margin: '0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
       <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
       {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
@@ -575,7 +575,7 @@ const ProjectDetail = (props) => {
       {/*</Drawer>*/}
       <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
       {/*应用界面*/}
-      <div style={{padding:'0 20px'}}>
+      <div style={{padding: '0 20px'}}>
         {filterAppsModule(appsSelectKey)}
       </div>
     </div>

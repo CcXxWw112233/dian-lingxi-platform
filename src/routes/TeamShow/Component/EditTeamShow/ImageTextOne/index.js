@@ -47,7 +47,7 @@ export default class ImageTextOne extends React.Component {
   }
   render() {
     const that = this
-    const {   detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott, } = this.styles()
+    const { detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott, } = this.styles()
     const { logoUrl } = this.state
     const uploadProps = {
       name: 'file',

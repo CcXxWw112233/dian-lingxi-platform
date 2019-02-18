@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from "dva/index";
 import Header from './Header'
 import ProjectList from './ProjectList'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 
 const getEffectOrReducerByName = name => `project/${name}`
 
@@ -72,7 +72,7 @@ const Project = (props) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route:path,
+        route: path,
       },
     })
   }

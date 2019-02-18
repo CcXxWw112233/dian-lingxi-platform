@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import {getAppsList} from "../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
-import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow,getCurrentOrgTeamShowList } from '../../services/teamShow'
+import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow, getCurrentOrgTeamShowList } from '../../services/teamShow'
 import queryString from 'query-string';
 
 let naviHeadTabIndex //导航栏naviTab选项
@@ -63,7 +63,7 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             detaiInfo: res.data,
           }
         })

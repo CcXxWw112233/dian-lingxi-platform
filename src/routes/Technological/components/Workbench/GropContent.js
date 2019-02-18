@@ -16,7 +16,7 @@ export default class GroupContent extends React.Component {
 
     const container_0 = (
       <div className={indexStyles.cardItem}>
-        <div  className={indexStyles.cardItem_left} style={{width: boxList.length>1?'50%':'100%'}}>
+        <div className={indexStyles.cardItem_left} style={{width: boxList.length>1?'50%':'100%'}}>
           {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
           {boxList.map((value, key) => {
             const { code, name, id } = value
@@ -35,14 +35,14 @@ export default class GroupContent extends React.Component {
               )
             }else{
               container = (
-                <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                <CardContent {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id} updateDatas={updateDatas} CardContentType={code} />
               )
             }
             return flag && <div key={id}>{container}</div>
           })}
         </div>
         {boxList.length>1?(
-          <div  className={indexStyles.cardItem_right}>
+          <div className={indexStyles.cardItem_right}>
             {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
             {boxList.map((value, key) => {
               const { code, name, id } = value
@@ -62,10 +62,10 @@ export default class GroupContent extends React.Component {
                 )
               }else{
                 container = (
-                  <CardContent  {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id}  updateDatas={updateDatas} CardContentType={code}  />
+                  <CardContent {...this.props} title={name} itemValue={value} itemKey={key} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} boxId={id} updateDatas={updateDatas} CardContentType={code} />
                 )
               }
-              return  flag && <div key={id}>{container}</div>
+              return flag && <div key={id}>{container}</div>
             })}
           </div>
         ):('')}
@@ -74,14 +74,14 @@ export default class GroupContent extends React.Component {
     )
 
     const container_1 = (
-      <div  className={indexStyles.cardItem} style={{display: 'block'}}>
-        <CardContentFileModule  {...this.props} title={'我上传的文档'} CardContentType={'MY_UPLOAD_FILE'} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps}  updateDatas={updateDatas} />
-        <CardContentFileModule  {...this.props} title={'我收藏的文档'} CardContentType={'MY_STAR_FILE'} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps}  updateDatas={updateDatas} />
+      <div className={indexStyles.cardItem} style={{display: 'block'}}>
+        <CardContentFileModule {...this.props} title={'我上传的文档'} CardContentType={'MY_UPLOAD_FILE'} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} updateDatas={updateDatas} />
+        <CardContentFileModule {...this.props} title={'我收藏的文档'} CardContentType={'MY_STAR_FILE'} {...cardContentListProps} {...CreateTaskProps} {...FileModuleProps} updateDatas={updateDatas} />
       </div>
     )
 
     const container_2 = (
-      <div style={{maxHeight: 600, height:600}}>
+      <div style={{maxHeight: 600, height: 600}}>
         <iframe
           src={`http://www.new-di.com/other/LifeSchedule/index.html`}
           // src={`http://www.baidu.com`}

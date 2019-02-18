@@ -41,13 +41,13 @@ export default class ImageTextOne extends React.Component {
       textAlign: 'left',
     }
     return {
-      detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,
+      detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott,
 
     }
   }
   render() {
     const that = this
-    const {   detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott, } = this.styles()
+    const { detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, } = this.styles()
     const { logoUrl } = this.state
     const uploadProps = {
       name: 'file',
@@ -55,7 +55,7 @@ export default class ImageTextOne extends React.Component {
       action: `${REQUEST_DOMAIN}/organization/logo_upload`,
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(e.size == 0) {

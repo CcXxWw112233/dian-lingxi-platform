@@ -9,12 +9,12 @@ const TextArea = Input.TextArea
 class CustormModal extends React.Component {
   state = {
     siderRightWidth: 56, //右边栏宽度
-    clientHeight: document.documentElement.clientHeight,//获取页面可见高度
-    clientWidth: document.documentElement.clientWidth,//获取页面可见高度
+    clientHeight: document.documentElement.clientHeight, //获取页面可见高度
+    clientWidth: document.documentElement.clientWidth, //获取页面可见高度
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'modal'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'modal'))
     this.listenSiderRightresize()
   }
 
@@ -39,7 +39,7 @@ class CustormModal extends React.Component {
     });
     // 配置观察选项:
     const config = {
-      attributes: true,//检测属性变动
+      attributes: true, //检测属性变动
       subtree: true,
       // childList: true,//检测子节点变动
       // characterData: true//节点内容或节点文本的变动。
@@ -63,7 +63,7 @@ class CustormModal extends React.Component {
 
   render() {
     const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle={}, style={}, onCancel, bodyStyle={}, closable = true } = this.props;
-    const { clientWidth, siderRightWidth,clientHeight }= this.state
+    const { clientWidth, siderRightWidth, clientHeight }= this.state
     const maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
 
     return(
@@ -77,7 +77,7 @@ class CustormModal extends React.Component {
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
         maskStyle={{height: clientHeight, width: maskWidth, ...maskStyle}}
-        style={{width: maskWidth,...style}}
+        style={{width: maskWidth, ...style}}
         bodyStyle={{...bodyStyle}}
         onCancel={onCancel}
       >

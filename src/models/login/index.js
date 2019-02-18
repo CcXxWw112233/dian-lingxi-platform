@@ -17,7 +17,7 @@ export default {
         message.destroy()
         if (location.pathname === '/login') {
           Cookies.set('is401', false, {expires: 30, path: ''})
-          redirectLocation = location.search.replace('?redirect=','')
+          redirectLocation = location.search.replace('?redirect=', '')
         }
       })
     },
@@ -28,7 +28,7 @@ export default {
       if(isApiResponseOk(res)) {
 
         const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         Cookies.set('is401', false, {expires: 30, path: ''})
 

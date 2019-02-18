@@ -15,7 +15,7 @@ export default class MessageRoute extends React.Component{
   }
   constructor(props) {
     super(props)
-    dispatch =  this.props.dispatch
+    dispatch = this.props.dispatch
     const { isNeedTimeDown = false } = this.props
     isNeedTimeDown ? this.timeDown() :''
   }
@@ -41,7 +41,7 @@ export default class MessageRoute extends React.Component{
         clearInterval(interval)
       }
       console.log(initTime)
-    },1000)
+    }, 1000)
   }
   render() {
     const { dispatch, discriptionText, jumpText } = this.props

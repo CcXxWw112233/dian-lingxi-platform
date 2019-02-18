@@ -10,7 +10,7 @@ export default class MyShowItem extends React.Component {
     const { itemValue = {}, itemKey } = this.props
     return (
       <div className={indexstyles.myshowItem}>
-        <div  className={indexstyles.contain1}>
+        <div className={indexstyles.contain1}>
           <div className={indexstyles.contain1_item}>
             <div>今日浏览量</div>
             <div>57</div>
@@ -24,7 +24,7 @@ export default class MyShowItem extends React.Component {
             <div>57</div>
           </div>
         </div>
-        <div  className={indexstyles.contain2}>
+        <div className={indexstyles.contain2}>
           <div className={indexstyles.contain2_item}>
             关于我们
           </div>

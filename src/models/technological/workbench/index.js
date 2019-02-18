@@ -1,15 +1,15 @@
-import { getImRelaId, getUserImToken, getProjectStarList,getTodoList,getOrgMembers,getProjectUserList,updateBox,addBox, deleteBox,getBoxUsableList,getProjectList,getMeetingList,getBoxList, getItemBoxFilter,getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask,getCurrentOrgFileUploads} from '../../services/technological/workbench'
-import { isApiResponseOk,  } from '../../utils/handleResponseData'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads} from '../../../services/technological/workbench'
+import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import {getAppsList} from "../../services/technological/project";
+import {getAppsList} from "../../../services/technological/project";
 import modelExtend from 'dva-model-extend'
-import technological from './index'
-import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList,selectBoxUsableList} from "./select";
-import {filePreview, fileDownload} from "../../services/technological/file";
-import { postCommentToDynamics } from "../../services/technological/library";
+import technological from '../index'
+import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "../select";
+import {filePreview, fileDownload} from "../../../services/technological/file";
+import { postCommentToDynamics } from "../../../services/technological/library";
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -21,7 +21,7 @@ export default modelExtend(technological, {
         message.destroy()
         if (location.pathname === '/technological/workbench') {
           dispatch({
-            type:'updateDatas',
+            type: 'updateDatas',
             payload: {
               cardGroupKey: 0,
               knowCityArticles: [], //优秀案例文章列表
@@ -33,13 +33,13 @@ export default modelExtend(technological, {
               projectStarList: [],
               projectUserList: [], //项目列表（只返回用户信息）
               orgMembers: [], //组织用户列表
-              boxUsableList: [],//用户当前可用盒子列表
+              boxUsableList: [], //用户当前可用盒子列表
               boxCheckDisabled: false,
               imData: {}, //用户信息
 
-              filePreviewIsUsable: true,//文档是否可见
-              filePreviewUrl: '',//预览文档src
-              current_file_resource_id: '',//当前操作文档id
+              filePreviewIsUsable: true, //文档是否可见
+              filePreviewUrl: '', //预览文档src
+              current_file_resource_id: '', //当前操作文档id
 
               currentOrgFileUploads: [], //当前组织下我上传的文档列表
             }
@@ -203,7 +203,7 @@ export default modelExtend(technological, {
           case 'JOURNEY': //行程安排 --会议
             eventName= 'getJourneyList'
             break
-          case 'TO_DO':  //代办事项 --任务
+          case 'TO_DO': //代办事项 --任务
             eventName= 'getTodoList'
              break
           default:
@@ -313,7 +313,7 @@ export default modelExtend(technological, {
       }
     },
     * getTodoList({ payload }, { select, call, put }) {
-      let res = yield call(getTodoList , payload)
+      let res = yield call(getTodoList, payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -342,7 +342,7 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             boxUsableList: res.data
           }
         })
@@ -387,7 +387,7 @@ export default modelExtend(technological, {
       }
     },
     * updateBox({ payload }, { select, call, put }) { //
-      const { box_id , name} = payload
+      const { box_id, name} = payload
       const boxList = yield select(selectBoxList)
       let res = yield call(updateBox, payload)
       if(isApiResponseOk(res)) {
@@ -419,7 +419,7 @@ export default modelExtend(technological, {
         const newlist = Number(page_no) === 1? res.data:odlist.concat([...res.data])
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             [updateListName]: newlist
           }
         })
@@ -428,7 +428,7 @@ export default modelExtend(technological, {
     * getArticleDetail({ payload }, { select, call, put }) { //
       yield put({
         type: 'updateDatas',
-        payload:{
+        payload: {
           spinning: true
         }
       })
@@ -436,7 +436,7 @@ export default modelExtend(technological, {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             previewAticle: res.data,
             spinning: false
           }

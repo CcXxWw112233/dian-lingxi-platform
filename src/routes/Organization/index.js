@@ -11,7 +11,7 @@ import NounDefinition from "./NounDefinition";
 import {ORGANIZATION, PROJECTS} from "../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
 
-const  TabPane = Tabs.TabPane
+const TabPane = Tabs.TabPane
 
 const getEffectOrReducerByName = name => `organization/${name}`
 
@@ -20,15 +20,15 @@ const Organization = (options) => {
   const { datas: { tabSelectKey }} = model
   const updateDatas = (payload) => {
     dispatch({
-      type: getEffectOrReducerByName('updateDatas') ,
-      payload:payload
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: payload
     })
   }
   const routingJump = (path) => {
     dispatch({
-      type: getEffectOrReducerByName('routingJump') ,
-      payload:{
-        route:path,
+      type: getEffectOrReducerByName('routingJump'),
+      payload: {
+        route: path,
       }
     })
   }
@@ -132,7 +132,7 @@ const Organization = (options) => {
           <Icon type="left" theme="outlined" />返回
         </div>
         <div className={indexStyles.topTitle}>
-          <Icon type="home" theme="outlined"  style={{color: color_4,fontSize: 32}} />
+          <Icon type="home" theme="outlined" style={{color: color_4, fontSize: 32}} />
           <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>

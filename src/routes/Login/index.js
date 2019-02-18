@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import QueueAnim from  'rc-queue-anim'
-import { Row,  Col, Tooltip, Card} from 'antd'
+import QueueAnim from 'rc-queue-anim'
+import { Row, Col, Tooltip, Card} from 'antd'
 import FormList from './FormList'
 import globalClassName from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
@@ -78,7 +78,7 @@ class Login extends React.Component {
                 <div className={indexStyles.bottomWholeLeft} style={{marginTop: -8}}>
                   <Tooltip placement="top" title={'即将上线'}>
                     <i className={globalClassName.authTheme}
-                       style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer',}}>&#xe6be;</i>
+                       style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', }}>&#xe6be;</i>
                   </Tooltip>
                   <Tooltip placement="top" title={'即将上线'}>
                     <i className={globalClassName.authTheme} style={{

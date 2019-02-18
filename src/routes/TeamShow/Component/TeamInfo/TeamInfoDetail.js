@@ -36,24 +36,24 @@ export default class TeamInfoDetail extends React.Component{
     }
 
     return {
-      detailInfoOut,detailInfo,detailInfo_top,detaiInfo_middle,detailInfo_bott,
+      detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott,
 
     }
   }
   render(){
-    const {detailInfo_top,detaiInfo_middle,detailInfo_bott,detailInfo } = this.styles()
+    const {detailInfo_top, detaiInfo_middle, detailInfo_bott, detailInfo } = this.styles()
     const minHeight = document.body.clientHeight - 64
     const {datas: {detaiInfo = {}}} = this.props.model
     const {content, cover_img, name, summary} = detaiInfo
     return(
-      <div style={{minHeight:minHeight , backgroundColor: '#ffffff', margin: 0, height: 'auto' }}>
+      <div style={{minHeight: minHeight, backgroundColor: '#ffffff', margin: 0, height: 'auto' }}>
         <div style={{...detailInfo}}>
           <img src={cover_img} style={{...detailInfo_top}} />
           <div style={{...detaiInfo_middle}}>{name}</div>
           <div style={{...detailInfo_bott}} dangerouslySetInnerHTML={{__html: summary}}></div>
         </div>
 
-        <div  dangerouslySetInnerHTML={{__html: content}} style={{width: 1200, margin: '0 auto',overflow: 'hidden'}}></div>
+        <div dangerouslySetInnerHTML={{__html: content}} style={{width: 1200, margin: '0 auto', overflow: 'hidden'}}></div>
       </div>
     )
   }

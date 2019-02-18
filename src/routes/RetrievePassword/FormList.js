@@ -29,7 +29,7 @@ class FormList extends React.Component {
     })
   }
   //输入确认方式
-  verifyAccountByChange = (e,name) => {
+  verifyAccountByChange = (e, name) => {
     const value = e.target.value
     if(name === 'account') { //输入框是账户
       let accountType = ''
@@ -70,14 +70,14 @@ class FormList extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  280}}>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 280}}>
         {/* 绑定的手机号或邮箱 */}
-        <FormItem  style={{marginTop: 0}}>
+        <FormItem style={{marginTop: 0}}>
           {getFieldDecorator('mobile', {
             rules: [{ required: false, message: '请输入绑定的手机号或邮箱', whitespace: true }],
           })(
             <Input
-              style={{height: '40px',fontSize: 16}}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="绑定的手机号或邮箱"
               onChange = {(e) => this.verifyAccountByChange(e, 'account')}
             />
@@ -88,7 +88,7 @@ class FormList extends React.Component {
 
         {/* 确认 */}
         <FormItem style={{marginTop: 20}}>
-          <Button type="primary" htmlType="submit" style={{width: '100%',height: 40}}>{this.state.accountType === 'mobile' ? '下一步': '发送邮件'}</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%', height: 40}}>{this.state.accountType === 'mobile' ? '下一步': '发送邮件'}</Button>
         </FormItem>
 
 

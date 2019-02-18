@@ -26,7 +26,7 @@
 // export default RouterConfig;
 import React from 'react'
 import PropTypes from 'prop-types'
-import  './components/Message'
+import './components/Message'
 import { Switch, Route, Redirect, routerRedux, Router } from 'dva/router'
 import dynamic from 'dva/dynamic'
 const { ConnectedRouter } = routerRedux
@@ -120,8 +120,10 @@ const Routers = function ({ history, app }) {
         import('./models/technological/project'),
         import('./models/technological/projectDetail'),
         import('./models/technological/newsDynamic'),
-        import('./models/technological/workbench'),
+        import('./models/technological/workbench/index'),
         import('./models/technological/workbench/workbenchTaskDetail'),
+        import('./models/technological/workbench/workbenchPublicDatas'),
+
         import('./models/technological/workbench/workbenchFileDetail'),
         import('./models/technological/workbench/workbenchEditTeamShow'),
         import('./models/technological/organizationMember'),
@@ -132,15 +134,15 @@ const Routers = function ({ history, app }) {
         import('./models/teamShow/teamInfo'),
       ],
       component: () => import('./routes/Technological/'),
-    },{
+    }, {
       path: '/emailRedirect',
       models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/'),
-    },{
+    }, {
       path: '/organization',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Organization/'),
-    },{
+    }, {
       path: '/teamShow',
       models: () => [
         import('./models/teamShow'),
@@ -150,15 +152,15 @@ const Routers = function ({ history, app }) {
         import('./models/modal')
       ],
       component: () => import('./routes/TeamShow/'),
-    },,{
+    },, {
       path: '/noviceGuide',
       models: () => [import('./models/noviceGuide')],
       component: () => import('./routes/NoviceGuide'),
-    },{
+    }, {
       path: '/test',
       models: () => [import('./models/organization')],
       component: () => import('./routes/Test/'),
-    },{
+    }, {
       path: '/index',
       component: () => import('./routes/Index'),
     },
@@ -171,7 +173,7 @@ const Routers = function ({ history, app }) {
           routes.map(({ path, ...dynamics }, key) => {
             return (
               <Route key={key}
-                     exact={(path.indexOf('/technological') !== -1  || path.indexOf('/teamShow') !== -1 )? false : true}
+                     exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1 )? false : true}
                      path={path}
                      component={dynamic({
                        app,

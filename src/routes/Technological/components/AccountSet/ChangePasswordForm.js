@@ -76,7 +76,7 @@ class ChangePasswordForm extends React.Component {
       },
     };
     return (
-      <Form onSubmit={this.handleSubmit} style={{padding:'20px 0',width: 600}}>
+      <Form onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600}}>
         {/* 当前密码 */}
         <FormItem
           {...formItemLayout}
@@ -134,7 +134,7 @@ class ChangePasswordForm extends React.Component {
         <FormItem
           {...formItemLayout}
         >
-          <Button type="primary" htmlType="submit" style={{marginLeft: 112,width: 80, height: 40,fontSize:16}}>确认</Button>
+          <Button type="primary" htmlType="submit" style={{marginLeft: 112, width: 80, height: 40, fontSize: 16}}>确认</Button>
         </FormItem>
       </Form>
     );

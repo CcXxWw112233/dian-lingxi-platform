@@ -2,7 +2,7 @@
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import React from 'react'
 import indexStyle from './index.less'
-import VerificationCode from  '../../components/VerificationCode'
+import VerificationCode from '../../components/VerificationCode'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import {message} from "antd";
 import {MESSAGE_DURATION_TIME} from "../../globalset/js/constant";
@@ -31,7 +31,7 @@ class FormList extends React.Component {
     password: '',
   }
 
-  setFormFieldsState(type,e){
+  setFormFieldsState(type, e){
     this.setState({
       [type]: e.target.value
     })
@@ -166,39 +166,39 @@ class FormList extends React.Component {
     }
 
     return (
-      <Form onSubmit={this.handleSubmit}  style={{margin: '0 auto',width:  272}}>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 姓名 */}
         <FormItem>
           {getFieldDecorator('name', {
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
             <Input
-              onChange={this.setFormFieldsState.bind(this,'name')}
-              style={{height: '40px',fontSize: 16}}
+              onChange={this.setFormFieldsState.bind(this, 'name')}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="姓名" />
           )}
         </FormItem>
         {/* 邮箱 */}
-        <FormItem  style={{marginTop: 0}}>
+        <FormItem style={{marginTop: 0}}>
           {getFieldDecorator('email', {
             rules: [{ required: false, message: '请输入邮箱', whitespace: true }],
           })(
             <Input
-              onChange={this.setFormFieldsState.bind(this,'email')}
-              style={{height: '40px',fontSize: 16}}
+              onChange={this.setFormFieldsState.bind(this, 'email')}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="邮箱"
               onBlur = {this.verifyByBlur.bind(null, 'email')}
             />
           )}
         </FormItem>
         {/* 电话 */}
-        <FormItem  style={{marginTop: 0}}>
+        <FormItem style={{marginTop: 0}}>
           {getFieldDecorator('mobile', {
             rules: [{ required: false, message: '请输入手机号', whitespace: true }],
           })(
             <Input
-              onChange={this.setFormFieldsState.bind(this,'mobile')}
-              style={{height: '40px',fontSize: 16}}
+              onChange={this.setFormFieldsState.bind(this, 'mobile')}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="手机号"
               onBlur = {this.verifyByBlur.bind(null, 'mobile')}
             />
@@ -211,23 +211,23 @@ class FormList extends React.Component {
               {getFieldDecorator('verifycode', {
                 rules: [{ required: false, message: '请输入验证码' }],
               })(
-                <Input placeholder="验证码" style={{height: '40px',fontSize: 16,}} onChange={this.setFormFieldsState.bind(this,'verifycode')}/>
+                <Input placeholder="验证码" style={{height: '40px', fontSize: 16, }} onChange={this.setFormFieldsState.bind(this, 'verifycode')}/>
               )}
             </Col>
             <Col span={10}>
-              <VerificationCode  getVerifyCode={this.getVerifyCode.bind(this)} style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}} text={'获取验证码'}/>
+              <VerificationCode getVerifyCode={this.getVerifyCode.bind(this)} style={{height: '40px', fontSize: 16, color: 'rgba(0,0,0,.65)', width: '100%'}} text={'获取验证码'}/>
               {/*<Button style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}}>获取验证码</Button>*/}
             </Col>
           </Row>
         </FormItem>
         {/* 密码 */}
-        <FormItem  style={{marginTop: 0}}>
+        <FormItem style={{marginTop: 0}}>
           {getFieldDecorator('password', {
             rules: [{ required: false, message: '请输入密码', whitespace: true }],
           })(
             <Input
-              onChange={this.setFormFieldsState.bind(this,'password')}
-              style={{height: '40px',fontSize: 16}}
+              onChange={this.setFormFieldsState.bind(this, 'password')}
+              style={{height: '40px', fontSize: 16}}
               maxLength={40} placeholder="密码(数字与字母组合，至少6位)"
               type={'password'}
               onBlur = {this.verifyByBlur.bind(null, 'password')}
@@ -244,7 +244,7 @@ class FormList extends React.Component {
         </div>
         {/* 确认 */}
         <FormItem style={{marginTop: 24}}>
-          <Button type="primary"   disabled={submitButtonDisabledLocal} htmlType="submit" style={{width: '100%',height: 40, fontSize: 16}}>注册</Button>
+          <Button type="primary" disabled={submitButtonDisabledLocal} htmlType="submit" style={{width: '100%', height: 40, fontSize: 16}}>注册</Button>
         </FormItem>
       </Form>
     );

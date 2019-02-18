@@ -7,7 +7,7 @@ import MeetingItem from "./MeetingItem";
 import ProjectCountItem from './ProjectCountItem'
 import MapItem from './MapItem'
 import React from 'react'
-import MenuSearchMultiple from  '../CardContent/MenuSearchMultiple'
+import MenuSearchMultiple from '../CardContent/MenuSearchMultiple'
 import SchedulingItem from './School/SchedulingItem'
 import Journey from './School/Journey'
 import Todo from './School/Todo'
@@ -37,19 +37,19 @@ export default class CardContent extends React.Component{
     const { CardContentType, boxId } = this.props
     switch (CardContentType) {
       case 'RESPONSIBLE_TASK':
-        this.props.getResponsibleTaskList({id:boxId})
+        this.props.getResponsibleTaskList({id: boxId})
         break
       case 'EXAMINE_PROGRESS': //待处理的流程
-        this.props.getBackLogProcessList({id:boxId})
+        this.props.getBackLogProcessList({id: boxId})
         break
       case 'joinedFlows': //参与的流程
-        this.props.getJoinedProcessList({id:boxId})
+        this.props.getJoinedProcessList({id: boxId})
         break
       case 'MY_DOCUMENT':
-        this.props.getUploadedFileList({id:boxId})
+        this.props.getUploadedFileList({id: boxId})
         break
       case 'MEETIMG_ARRANGEMENT':
-        this.props.getMeetingList({id:boxId})
+        this.props.getMeetingList({id: boxId})
         break
       case 'PROJECT_STATISTICS':
         break
@@ -69,7 +69,7 @@ export default class CardContent extends React.Component{
       case 'JOURNEY': //行程安排 --会议
         this.props.getJourneyList({id: boxId})
         break
-      case 'TO_DO':  //代办事项 --任务
+      case 'TO_DO': //代办事项 --任务
         this.props.getTodoList({id: boxId})
         break
       case 'SCHOOLWORK_CORRECTION': //作业批改
@@ -123,11 +123,11 @@ export default class CardContent extends React.Component{
     this.props.getItemBoxFilter({
       id: boxId,
       board_ids: data.join(','),
-      selected_board_data:data,
+      selected_board_data: data,
       itemKey
     })
   }
-  onVisibleChange(e,a){
+  onVisibleChange(e, a){
     this.setState({
       dropDonwVisible: e
     })
@@ -160,7 +160,7 @@ export default class CardContent extends React.Component{
   }
   render(){
     const { datas = {} } = this.props.model
-    const { projectStarList = [], responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [],journeyList = [], todoList =[]} = datas
+    const { projectStarList = [], responsibleTaskList=[], uploadedFileList=[], joinedProcessList=[], backLogProcessList=[], meetingLsit= [], projectList=[], schedulingList = [], journeyList = [], todoList =[]} = datas
     const { title, CardContentType, itemValue={} } = this.props
     const { selected_board_data = [] } = itemValue //已选board id
 
@@ -186,7 +186,7 @@ export default class CardContent extends React.Component{
           contanner = (
             backLogProcessList.length? (
               backLogProcessList.map((value, key)=> (
-                <ProcessItem  {...this.props} key={key}  itemValue={value} />
+                <ProcessItem {...this.props} key={key} itemValue={value} />
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -198,7 +198,7 @@ export default class CardContent extends React.Component{
           contanner = (
             joinedProcessList.length?(
               joinedProcessList.map((value, key)=> (
-                <ProcessItem {...this.props} key={key}  itemValue={value}  />
+                <ProcessItem {...this.props} key={key} itemValue={value} />
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -209,7 +209,7 @@ export default class CardContent extends React.Component{
           contanner = (
             uploadedFileList.length? (
               uploadedFileList.map((value, key)=> (
-                <FileItem  {...this.props}  key={key}  itemValue={value} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}/>
+                <FileItem {...this.props} key={key} itemValue={value} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}/>
               ))
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -221,7 +221,7 @@ export default class CardContent extends React.Component{
             meetingLsit.length? (
               meetingLsit.map((value2, key2)=> {
                 return(
-                  <MeetingItem {...this.props} key={key2} itemKey={key2}  itemValue={value2} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} />
+                  <MeetingItem {...this.props} key={key2} itemKey={key2} itemValue={value2} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} />
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -243,7 +243,7 @@ export default class CardContent extends React.Component{
             projectStarList.length? (
               projectStarList.map((value2, key2)=> {
                 return(
-                  <CollectionProjectItem {...this.props} key={key2} itemKey={key2}  itemValue={value2}  />
+                  <CollectionProjectItem {...this.props} key={key2} itemKey={key2} itemValue={value2} />
                 )})
             ):(
               <div style={{marginTop: 12}}>暂无数据</div>
@@ -252,12 +252,12 @@ export default class CardContent extends React.Component{
           break
         case 'MY_SHOW':
           contanner = (
-            <MyShowItem   {...this.props} />
+            <MyShowItem {...this.props} />
           )
           break
         case 'MY_CIRCLE':
           contanner = (
-            <MyCircleItem   {...this.props} />
+            <MyCircleItem {...this.props} />
           )
           break
         //老师
@@ -348,7 +348,7 @@ export default class CardContent extends React.Component{
           ) : (
             <Input value={localTitle}
                    // className={indexStyle.projectName}
-                     style={{resize: 'none',color: '#595959', fontSize: 16}}
+                     style={{resize: 'none', color: '#595959', fontSize: 16}}
                       maxLength={30}
                      autoFocus
                      onChange={this.localTitleChange.bind(this)}
@@ -372,8 +372,8 @@ export default class CardContent extends React.Component{
            {/*<CollectionProjectItem />*/}
            {/*<MyCircleItem />*/}
         </div>
-        <FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />
-        <TaskDetailModal {...this.props}  modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+        <FileDetailModal {...this.props} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+        <TaskDetailModal {...this.props} modalVisible={this.state.TaskDetailModalVisibile} setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
         {/*{('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (*/}
           {/*<FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />*/}

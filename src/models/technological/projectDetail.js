@@ -1,4 +1,4 @@
-import { getProjectRoles,setMemberRoleInProject,projectDetailInfo, updateProject, removeMenbers } from '../../services/technological/prjectDetail'
+import { getProjectRoles, setMemberRoleInProject, projectDetailInfo, updateProject, removeMenbers } from '../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../globalset/js/constant";
@@ -8,11 +8,11 @@ import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
   quitProject, getAppsList, addProjectApp
 } from "../../services/technological/project";
-import {getFileCommitPoints,getPreviewFileCommits,addFileCommit,deleteCommit ,getFileList,filePreview,fileCopy,fileDownload,fileRemove,fileMove,fileUpload,fileVersionist,recycleBinList,deleteFile,restoreFile,getFolderList,addNewFolder,updateFolder, } from '../../services/technological/file'
-import { removeTaskExecutor, deleteTaskFile,deleteTaskGroup,updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,getBoardTagList, updateBoardTag,toTopBoardTag,deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
-import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData,selectGetTaskGroupListArrangeType,selectCurrentProcessInstanceId,selectDrawerVisible,selectBreadcrumbList,selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
+import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../services/technological/file'
+import { removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers, getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment } from "../../services/technological/task";
+import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData, selectGetTaskGroupListArrangeType, selectCurrentProcessInstanceId, selectDrawerVisible, selectBreadcrumbList, selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from './select'
 import Cookies from "js-cookie";
-import { fillFormComplete,getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList,createProcess,completeProcessTask,getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
+import { fillFormComplete, getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList, createProcess, completeProcessTask, getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../routes/Technological/components/ProjectDetail/Process/constant'
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
 import {postCommentToDynamics} from "../../services/technological/library";
@@ -32,7 +32,7 @@ export default {
         //监听新消息setMessageItemEvent 公用函数
         const evenListentNewMessage = (e) => {
           if(!Cookies.get('updateNewMessageItem_2') || Cookies.get('updateNewMessageItem_2') === 'false' ) {
-            console.log('projectDetail',JSON.parse(JSON.parse(e.newValue)),JSON.parse(JSON.parse(e.newValue)).type)
+            console.log('projectDetail', JSON.parse(JSON.parse(e.newValue)), JSON.parse(JSON.parse(e.newValue)).type)
             const newValue = JSON.parse(JSON.parse(e.newValue))
             const { type } = newValue
             if(Number(type) === 3) { //监听评论
@@ -50,14 +50,14 @@ export default {
                 },
               })
             }
-            Cookies.set('updateNewMessageItem_2', true,{expires: 30, path: ''})
+            Cookies.set('updateNewMessageItem_2', true, {expires: 30, path: ''})
           }
         }
         board_id = Cookies.get('board_id')
         const initialData = () => {
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               projectRoles: [], //项目角色
               //全局任务key
               appsSelectKey: undefined, //应用key
@@ -71,7 +71,7 @@ export default {
               projectDetailInfoData: {}, //项目详情全部数据
               cardCommentList: [], //任务评论列表
               projectGoupList: [], //项目分组列表
-              taskGroupList: [],  //任务列表
+              taskGroupList: [], //任务列表
               boardTagList: [], //项目标签列表
               getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
 
@@ -79,46 +79,46 @@ export default {
               fileList: [], //文档列表
               filedata_1: [], //文档列表--文件夹
               filedata_2: [], //文档列表--文件
-              selectedRowKeys: [],//选择的列表项
+              selectedRowKeys: [], //选择的列表项
               isInAddDirectory: false, //是否正在创建文件家判断标志
               moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
               openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
               currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-              breadcrumbList: [],  //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+              breadcrumbList: [], //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
               currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
               isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
               treeFolderData: {}, //文件夹树状结构
               filePreviewIsUsable: true, //文件是否可以预览标记
-              filePreviewUrl: '',  //预览文件url
+              filePreviewUrl: '', //预览文件url
               filePreviewCurrentId: '', //当前预览的文件resource_id
               filePreviewCurrentFileId: '', //当前预览的文件id
               filePreviewCurrentVersionId: '', //当前预览文件版本id
               filePreviewCurrentVersionList: [], //预览文件的版本列表
               filePreviewCurrentVersionKey: 0, //预览文件选中的key
-              filePreviewCommits: [],//文件评论列表
+              filePreviewCommits: [], //文件评论列表
               filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
               filePreviewCommitPoints: [], //文件图评点列表
               filePreviewCommitType: '0', //新增评论 1 回复圈点评论
-              filePreviewCommitPointNumber: '',//评论当前的点
+              filePreviewCommitPointNumber: '', //评论当前的点
               filePreviewIsRealImage: true, //当前预览的图片是否真正图片
-              seeFileInput: '',//查看文件详情入口
+              seeFileInput: '', //查看文件详情入口
               //流程
               processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
               node_type: '1', //节点类型， 默认1
               processCurrentEditStep: 0, //编辑第几步，默认 0
               processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-              processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) ,//每一步的每一个类型，记录，数组的全部数据step * type
+              processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
               processTemplateList: [], //流程模板列表
-              templateInfo: {},  //所选择的流程模板的信息数据
-              processInfo: {},  //所选中的流程的信息
-              processList: [],   //流程列表
+              templateInfo: {}, //所选择的流程模板的信息数据
+              processInfo: {}, //所选中的流程的信息
+              processList: [], //流程列表
               processDynamics: [], //流程动态列表,
               currentProcessInstanceId: '', //当前查看的流程实例id
 
               //  团队展示发布
               teamShowCertainOneShow: true, //编辑的时候展示，提交时设为false
               editTeamShowPreview: false, //编辑预览状态
-              editTeamShowSave: false,  //编辑保存状态
+              editTeamShowSave: false, //编辑保存状态
             }
           })
         }
@@ -127,27 +127,27 @@ export default {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({ //查询项目角色列表
             type: 'getProjectRoles',
-            payload:{
+            payload: {
               type: '2',
             }
           })
           dispatch({
             type: 'initProjectDetail',
-            payload:{
+            payload: {
               id: board_id
             }
           })
           dispatch({
             type: 'getAppsList',
             payload: {
-              type:'2'
+              type: '2'
             }
           })
 
           //监听消息存储在localstorage变化
-          window.addEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
+          window.addEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
         }else{
-          window.removeEventListener('setMessageItemEvent_2',evenListentNewMessage,false);
+          window.removeEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
         }
       })
     },
@@ -161,9 +161,9 @@ export default {
       if(isApiResponseOk(result)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             projectDetailInfoData: result.data,
-            appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1),//设置默认
+            appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
             appsSelectKeyIsAreadyClickArray: [result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
             //文档需要数据初始化
             breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
@@ -241,7 +241,7 @@ export default {
       const newAppsSelectKeyIsAreadyClickArray = Array.from(new Set(appsSelectKeyIsAreadyClickArray))
       yield put({
         type: 'updateDatas',
-        payload:{
+        payload: {
           appsSelectKeyIsAreadyClickArray: newAppsSelectKeyIsAreadyClickArray
         }
       })
@@ -323,7 +323,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               processTemplateList: res.data || []
             }
           })
@@ -403,7 +403,7 @@ export default {
         })
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: res.data.id
           }
         })
@@ -435,12 +435,12 @@ export default {
           type: 'updateDatas',
           payload: {
             processInfo: {...res.data, curr_node_sort},
-            processEditDatas: res.data.nodes || [] ,
+            processEditDatas: res.data.nodes || [],
             processPageFlagStep: '4'
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics,{flow_instance_id: id})
+        const res2 = yield call(getProessDynamics, {flow_instance_id: id})
         if(isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
@@ -470,7 +470,7 @@ export default {
       // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
       if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
         console.log('进入查询状态')
-        const res = yield call(getProessDynamics,{flow_instance_id: id})
+        const res = yield call(getProessDynamics, {flow_instance_id: id})
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
@@ -488,10 +488,10 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: instance_id,
             calback: function () {
-              message.success('已完成节点',MESSAGE_DURATION_TIME)
+              message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -505,10 +505,10 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: instance_id,
             calback: function () {
-              message.success('已完成节点',MESSAGE_DURATION_TIME)
+              message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -523,10 +523,10 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: instance_id,
             calback: function () {
-              message.success('撤回成功',MESSAGE_DURATION_TIME)
+              message.success('撤回成功', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -540,10 +540,10 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: instance_id,
             calback: function () {
-              message.success('已拒绝',MESSAGE_DURATION_TIME)
+              message.success('已拒绝', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -557,10 +557,10 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
-          payload:  {
+          payload: {
             id: instance_id,
             calback: function () {
-              message.success('推进人设置成功',MESSAGE_DURATION_TIME)
+              message.success('推进人设置成功', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -671,7 +671,7 @@ export default {
           type: 'getFolderList',
           payload: {
             board_id: board_id,
-            calback:function () {
+            calback: function () {
               message.success('复制成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -722,7 +722,7 @@ export default {
           type: 'getFolderList',
           payload: {
             board_id: board_id,
-            calback:function () {
+            calback: function () {
               message.success('已成功移入回收站', MESSAGE_DURATION_TIME)
             }
           }
@@ -751,7 +751,7 @@ export default {
            type: 'getFolderList',
            payload: {
              board_id: board_id,
-             calback:function () {
+             calback: function () {
                message.success('移动成功', MESSAGE_DURATION_TIME)
              }
            }
@@ -770,7 +770,7 @@ export default {
         breadcrumbList[breadcrumbList.length - 1] = res.data[0]
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             filePreviewCurrentVersionList: res.data,
             breadcrumbList,
           }
@@ -831,7 +831,7 @@ export default {
           type: 'getFolderList',
           payload: {
             board_id: board_id,
-            calback:function () {
+            calback: function () {
               message.success('已成功添加文件夹', MESSAGE_DURATION_TIME)
             }
           }
@@ -849,7 +849,7 @@ export default {
       }
     },
     * getPreviewFileCommits({ payload }, { select, call, put }) {
-      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
       const { type } = payload
       let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
       let res = yield call(getPreviewFileCommits, {...payload, point_number: type == 'point'?filePreviewCommitPointNumber: ''})
@@ -858,7 +858,7 @@ export default {
          yield put({
            type: 'updateDatas',
            payload: {
-             [name]: res.data ,
+             [name]: res.data,
            }
          })
       }else{
@@ -871,7 +871,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewCommitPoints: res.data ,
+            filePreviewCommitPoints: res.data,
           }
         })
       }else{
@@ -881,7 +881,7 @@ export default {
 
     * addFileCommit({ payload }, { select, call, put }) {
       let res = yield call(addFileCommit, payload)
-      const { file_id,type, filePreviewCommitType = '0' } = payload
+      const { file_id, type, filePreviewCommitType = '0' } = payload
       //filePreviewCommitType 0 新增 1 回复
       if(isApiResponseOk(res)) {
         const flag = res.data.flag
@@ -926,7 +926,7 @@ export default {
 
     * deleteCommit({ payload }, { select, call, put }) {
       let res = yield call(deleteCommit, payload)
-      const  filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
       const { file_id, type, point_number } = payload
       if(isApiResponseOk(res)) {
         yield put({
@@ -973,7 +973,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             projectDetailInfoData: res.data,
             appsSelectKey: appsSelectKey || (res.data.app_data[0]? res.data.app_data[0].key : 1)
           }
@@ -1000,7 +1000,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
-          payload:{
+          payload: {
             id: board_id,
             calback: function () {
               message.success('设置角色成功', MESSAGE_DURATION_TIME)
@@ -1017,7 +1017,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
-          payload:{
+          payload: {
             id: board_id,
             calback: function () {
               message.success(`已从${currentNounPlanFilterName(PROJECTS)}移除该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
@@ -1034,7 +1034,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
-          payload:{
+          payload: {
             id: board_id,
             calback: function () {
               message.success('更新成功', MESSAGE_DURATION_TIME)
@@ -1097,7 +1097,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
-          payload:{
+          payload: {
             id: board_id,
             calback: function () {
               message.success(`${currentNounPlanFilterName(PROJECTS)}添加${currentNounPlanFilterName(MEMBERS)}成功`, MESSAGE_DURATION_TIME)
@@ -1223,7 +1223,7 @@ export default {
     },
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
-      const  { type, board_id, arrange_type, calback, operateType } = payload
+      const { type, board_id, arrange_type, calback, operateType } = payload
       let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
       if (typeof calback === 'function') {
         calback()
@@ -1231,7 +1231,7 @@ export default {
       if(operateType === '1') { //代表分类查询选择
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList: []
           }
         })
@@ -1240,7 +1240,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList: res.data
           }
         })
@@ -1271,9 +1271,9 @@ export default {
     * updateTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
       const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
-      const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+      const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
       const taskGroupList = yield select(selectTaskGroupList) //
-      const drawContent = yield  select(selectDrawContent)
+      const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -1288,7 +1288,7 @@ export default {
             taskGroupList
           }
         })
-        message.success('更新成功',MESSAGE_DURATION_TIME)
+        message.success('更新成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1300,15 +1300,15 @@ export default {
       if(isApiResponseOk(res)) {
         const taskGroupList = yield select(selectTaskGroupList)
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
-        const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+        const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
         taskGroupList[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList
           }
         })
-        message.success('删除成功',MESSAGE_DURATION_TIME)
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1317,9 +1317,9 @@ export default {
     * updateChirldTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
       const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
-      const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+      const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
       const taskGroupList = yield select(selectTaskGroupList) //
-      const drawContent = yield  select(selectDrawContent)
+      const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -1334,7 +1334,7 @@ export default {
             taskGroupList
           }
         })
-        message.success('更新成功',MESSAGE_DURATION_TIME)
+        message.success('更新成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1346,15 +1346,15 @@ export default {
       if(isApiResponseOk(res)) {
         const taskGroupList = yield select(selectTaskGroupList)
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
-        const taskGroupListIndex_index = yield  select(selectTaskGroupListIndexIndex)
+        const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
         taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['child_data'].splice(chirldDataIndex, 1)
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupList
           }
         })
-        message.success('删除成功',MESSAGE_DURATION_TIME)
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1363,7 +1363,7 @@ export default {
     * archivedTask({ payload }, { select, call, put }) { //
       let res = yield call(archivedTask, payload)
       if(isApiResponseOk(res)) {
-        message.success(`已归档`,MESSAGE_DURATION_TIME)
+        message.success(`已归档`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -1424,7 +1424,7 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
-        drawContent.child_data[0] =  payload
+        drawContent.child_data[0] = payload
         drawContent.child_data[0]['card_id'] = res.data.id
         // yield put({
         //   type: 'updateDatas',
@@ -1455,12 +1455,12 @@ export default {
       }
     },
     * completeTask({ payload }, { select, call, put }) { //
-      const { is_realize  } = payload
+      const { is_realize } = payload
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
           yield put({
             type: 'projectDetailInfo',
-            payload:{
+            payload: {
               id: board_id,
               calback: function () {
                 message.success(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}`: `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
@@ -1482,12 +1482,12 @@ export default {
     },
 
     * putTask({ payload }, { select, call, put }) {
-      let res = yield call(getTaskGroupList,  {type: '2', board_id: Cookies.get('board_id'), arrange_type: '1'})
+      let res = yield call(getTaskGroupList, {type: '2', board_id: Cookies.get('board_id'), arrange_type: '1'})
       const { taskGroupListIndex, taskGroupListIndex_index } = payload
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             taskGroupListIndex,
             taskGroupListIndex_index,
             taskGroupList: res.data,
@@ -1538,7 +1538,7 @@ export default {
         drawContent.label_data[length-1].label_id = res.data.label_id
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             drawContent
           }
         })
@@ -1632,7 +1632,7 @@ export default {
       const { id } = payload
       yield put({
         type: 'updateDatas',
-        payload:{
+        payload: {
           cardCommentList: []
         }
       })
@@ -1640,7 +1640,7 @@ export default {
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             cardCommentList: res.data
           }
         })
@@ -1656,7 +1656,7 @@ export default {
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               cardCommentList: res.data
             }
           })
@@ -1674,7 +1674,7 @@ export default {
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               cardCommentList: res.data
             }
           })
@@ -1699,7 +1699,7 @@ export default {
         if(isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
-            payload:{
+            payload: {
               cardCommentList: res.data
             }
           })

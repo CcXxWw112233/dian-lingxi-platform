@@ -27,7 +27,7 @@ export default {
     * getUSerInfo({ payload }, { select, call, put }) { //提交表单
       let res = yield call(getUSerInfo, payload)
       if(isApiResponseOk(res)) {
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
         yield put({
           type: 'routingJump',
           payload: {
@@ -43,7 +43,7 @@ export default {
       let res = yield call(changeCurrentOrg, payload)
       if(isApiResponseOk(res)) {
         const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0],{expires: 30, path: ''})
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         yield put({
           type: 'getUSerInfo',
@@ -58,7 +58,7 @@ export default {
     * applyJoinOrganization({ payload }, { select, call, put }) {
       let res = yield call(applyJoinOrganization, payload)
       if(isApiResponseOk(res)) {
-        message.success(`已申请加入`,MESSAGE_DURATION_TIME)
+        message.success(`已申请加入`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -70,7 +70,7 @@ export default {
           }
         })
       }else{
-        message.warn(`${res.message},请稍后访问...`,MESSAGE_DURATION_TIME)
+        message.warn(`${res.message},请稍后访问...`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -82,7 +82,7 @@ export default {
       let res = yield call(createOrganization, payload)
       if(isApiResponseOk(res)) {
         //查询一遍
-        message.success(`创建组织成功`,MESSAGE_DURATION_TIME)
+        message.success(`创建组织成功`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })
@@ -94,7 +94,7 @@ export default {
           }
         })
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * routingJump({ payload }, { call, put }) {

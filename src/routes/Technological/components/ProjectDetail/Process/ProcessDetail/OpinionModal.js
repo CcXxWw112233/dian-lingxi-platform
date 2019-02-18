@@ -32,8 +32,8 @@ class OpinionModal extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { operateType, itemValue, isFillForm, form_id, form_data } = this.props //isFillForm form_id填写表单的特殊处理
-        const { datas:{processInfo = {}} } = this.props.model
-        const  instance_id  = processInfo.id //流程实例id
+        const { datas: {processInfo = {}} } = this.props.model
+        const instance_id = processInfo.id //流程实例id
         const { id } = itemValue
         values['flow_node_instance_id'] = id
         values['instance_id'] = instance_id
@@ -46,7 +46,7 @@ class OpinionModal extends React.Component {
               instance_id,
               flow_instance_id: instance_id,
               node_id: id,
-              values:JSON.stringify(form_data),
+              values: JSON.stringify(form_data),
               message: values['message']
             }
             this.props.fillFormComplete ? this.props.fillFormComplete(obj): false
@@ -67,22 +67,22 @@ class OpinionModal extends React.Component {
     const { stepContinueDisabled } = this.state
 
     const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto',width: 336}}>
-        <div style={{fontSize: 20,color: '#595959',marginTop: 28,marginBottom: 28}}>填写意见</div>
+      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>填写意见</div>
 
         {/* 意见 */}
         <FormItem style={{width: 336}}>
           {getFieldDecorator('message', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
-            <TextArea style={{height: 208, resize:'none'}}
+            <TextArea style={{height: 208, resize: 'none'}}
                       onChange={this.descriptionChange.bind(this)}
                       placeholder={`请输入意见${enableOpinion === '1'? '(必填)': '(选填)'}`} maxLength={1000}/>
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={enableOpinion === '1' ?stepContinueDisabled : false} htmlType={'submit'} onClick={this.nextStep} style={{marginTop:20,width: 208, height: 40}}>确定</Button>
+          <Button type="primary" disabled={enableOpinion === '1' ?stepContinueDisabled : false} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>确定</Button>
         </FormItem>
       </Form>
     )
@@ -96,7 +96,7 @@ class OpinionModal extends React.Component {
           footer={null}
           maskClosable={false}
           destroyOnClose
-          style={{textAlign:'center'}}
+          style={{textAlign: 'center'}}
           onCancel={this.onCancel}
         >
           {step_3}

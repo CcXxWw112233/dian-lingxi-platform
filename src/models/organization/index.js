@@ -17,7 +17,7 @@ import { selectTabSelectKey } from './select'
 import {checkIsHasPermission} from "../../utils/businessFunction";
 import {getUSerInfo} from "../../services/technological";
 
-export default  {
+export default {
   namespace: 'organization',
   state: [],
   subscriptions: {
@@ -29,7 +29,7 @@ export default  {
           const {name, member_join_model, member_join_content, logo, logo_id, id} = currentSelectOrganize
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               currentOrganizationInfo: { //组织信息
                 name,
                 member_join_model,
@@ -46,18 +46,18 @@ export default  {
               // permission_data: [], //权限数据
               //名词定义
               current_scheme_local: '', //已选方案名称
-              current_scheme: '',  //当前方案名称
+              current_scheme: '', //当前方案名称
               current_scheme_id: '',
               scheme_data: [],
               field_data: [],
-              editable: '0',//当前是否在自定义编辑状态 1是 0 否
+              editable: '0', //当前是否在自定义编辑状态 1是 0 否
             }
           })
 
           if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){ //如果有权限才去查
             dispatch({
               type: 'getRolePermissions',
-              payload:{
+              payload: {
                 type: '1',
               }
             })
@@ -86,12 +86,12 @@ export default  {
           type: 'getUSerInfo',
           payload: {
             calBack: function () {
-              message.success('更新组织信息成功',MESSAGE_DURATION_TIME)
+              message.success('更新组织信息成功', MESSAGE_DURATION_TIME)
             }
           }
         })
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -107,7 +107,7 @@ export default  {
           localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
         }
         //存储
-        Cookies.set('userInfo', res.data,{expires: 30, path: ''})
+        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
       }else{
       }
     },
@@ -121,7 +121,7 @@ export default  {
           const { already_has_content_permission = [], already_has_function_permission = [] } = role_data[i]
           //权限树
           role_data[i]['function_tree_data'] = JSON.parse(JSON.stringify(function_tree_data))
-          const authDataChild =  role_data[i]['function_tree_data']
+          const authDataChild = role_data[i]['function_tree_data']
           for(let j = 0; j < authDataChild.length ; j ++) { //取出相同的
             let selects = []
             for(let k = 0; k < authDataChild[j].child_data.length; k++) {
@@ -132,7 +132,7 @@ export default  {
               }
             }
             role_data[i]['function_tree_data'][j]['selects'] = selects
-            if(selects.length ===   authDataChild[j].child_data.length) {
+            if(selects.length === authDataChild[j].child_data.length) {
               role_data[i]['function_tree_data'][j]['checkedAll'] = true
               role_data[i]['function_tree_data'][j]['indeterminate'] = false
             }else {
@@ -351,10 +351,10 @@ export default  {
     * getCurrentNounPlan({ payload }, { select, call, put }) {
       let res = yield call(getCurrentNounPlan, payload)
       if(isApiResponseOk(res)) {
-        message.success('已保存',MESSAGE_DURATION_TIME)
+        message.success('已保存', MESSAGE_DURATION_TIME)
         localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
       }else{
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

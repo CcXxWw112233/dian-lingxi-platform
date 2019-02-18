@@ -42,9 +42,9 @@ export default class Header extends React.Component {
         </div>
         <div className={indexStyle.right}>
           <Dropdown overlay={menu}>
-            <div>全部项目 <Icon type="down"  style={{fontSize:14,color:'#595959'}}/></div>
+            <div>全部项目 <Icon type="down" style={{fontSize: 14, color: '#595959'}}/></div>
           </Dropdown>
-         <Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>
+         <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16}}/>
         </div>
       </div>
     )

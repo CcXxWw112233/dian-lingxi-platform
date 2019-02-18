@@ -5,8 +5,8 @@ export default class Drag extends React.Component{
     super();
     this.state = {
       /*定义两个值用来存放当前元素的left和top值*/
-      needX:0,
-      needY:0
+      needX: 0,
+      needY: 0
     }
     /*定义两个值用来存放鼠标按下的地方距离元素上侧和左侧边界的值*/
     this.disX = 0;
@@ -37,8 +37,8 @@ export default class Drag extends React.Component{
     /*事件源对象兼容*/
     let target = event.target || event.srcElement;
     this.setState({
-      needX:event.clientX - this.disX,
-      needY:event.clientY - this.disY
+      needX: event.clientX - this.disX,
+      needY: event.clientY - this.disY
     });
   }
   fnUp(){
@@ -50,12 +50,12 @@ export default class Drag extends React.Component{
   render(){
     /*返回元素*/
     return (
-      <div style={{width:this.props.style.width,
-        height:this.props.style.height,
-        backgroundColor:this.props.style.backgroundColor,
-        position:this.props.style.position,
-        left:this.state.needX,
-        top:this.state.needY}}
+      <div style={{width: this.props.style.width,
+        height: this.props.style.height,
+        backgroundColor: this.props.style.backgroundColor,
+        position: this.props.style.position,
+        left: this.state.needX,
+        top: this.state.needY}}
            onMouseDown={this.fnDown.bind(this)}
            onTouchStart={this.fnDown.bind(this)}
       ></div>

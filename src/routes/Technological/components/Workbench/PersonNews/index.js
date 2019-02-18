@@ -16,13 +16,13 @@ export default class PersonNews extends React.Component {
     width: document.getElementById('technologicalOut').clientWidth - 20,
     isShowBottDetail: false,
 
-    clientHeight: document.documentElement.clientHeight,//获取页面可见高度
-    clientWidth: document.documentElement.clientWidth,//获取页面可见高度
+    clientHeight: document.documentElement.clientHeight, //获取页面可见高度
+    clientWidth: document.documentElement.clientWidth, //获取页面可见高度
     siderRightWidth: 56, //右边栏宽度
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'person_news_out'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'person_news_out'))
     this.listenSiderRightresize()
   }
   resizeTTY(type) {
@@ -69,7 +69,7 @@ export default class PersonNews extends React.Component {
     const { datas: {currentUserOrganizes = []}} = this.props.model
     for(let val of currentUserOrganizes) {
       if(key === val['id']){
-        Cookies.set('org_id',val.id,{expires: 30, path: ''})
+        Cookies.set('org_id', val.id, {expires: 30, path: ''})
         localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
         this.props.updateDatas({currentSelectOrganize: val})
         this.props.changeCurrentOrg({org_id: val.id})
@@ -84,19 +84,19 @@ export default class PersonNews extends React.Component {
     const that = this
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
-    },function () {
+    }, function () {
       setTimeout(function () {
         that.setState({
           isShowBottDetailStyleSet: that.state.isShowBottDetail
         })
-      },200)
-      this.funTransitionHeight(element, 200,  this.state.isShowBottDetail)
+      }, 200)
+      this.funTransitionHeight(element, 200, this.state.isShowBottDetail)
     })
   }
   funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == "undefined") return;
+    if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
-    element.style.transition = "none";    // mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.transition = "none"; // mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = "auto";
     const targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
@@ -112,7 +112,7 @@ export default class PersonNews extends React.Component {
   maskScroll(e) {
     e.stopPropagation()
   }
-  maskOver(bool,e){
+  maskOver(bool, e){
     // document.querySelector('body').style.overflow = bool?'':'hidden'
   }
 
@@ -133,7 +133,7 @@ export default class PersonNews extends React.Component {
     });
     // 配置观察选项:
     const config = {
-      attributes: true,//检测属性变动
+      attributes: true, //检测属性变动
       subtree: true,
       // childList: true,//检测子节点变动
       // characterData: true//节点内容或节点文本的变动。
@@ -150,8 +150,8 @@ export default class PersonNews extends React.Component {
     transWidth = isShowBottDetail?transWidth - siderRightWidth:transWidth
 
     const { datas = {} } = this.props.model
-    const {  currentUserOrganizes = [] , currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org={},name, avatar} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { current_org={}, name, avatar} = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
 
@@ -167,7 +167,7 @@ export default class PersonNews extends React.Component {
         })}
         <Menu.Item key="10" >
           <div className={indexStyles.itemDiv} style={{ color: color_4}}>
-            <Icon type="plus-circle" theme="outlined"  style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+            <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
           </div>
         </Menu.Item>
       </Menu>
@@ -178,9 +178,9 @@ export default class PersonNews extends React.Component {
     return (
       <div>
         {isShowBottDetail?(
-          <div className={indexStyles.mask} onMouseOver={this.maskOver.bind(this,false)} onMouseOut={this.maskOver.bind(this,true)} onScroll={this.maskScroll.bind(this)} style={{width: maskWidth, height: clientHeight}}></div>
+          <div className={indexStyles.mask} onMouseOver={this.maskOver.bind(this, false)} onMouseOut={this.maskOver.bind(this, true)} onScroll={this.maskScroll.bind(this)} style={{width: maskWidth, height: clientHeight}}></div>
         ):('')}
-        <div className={indexStyles.person_news_out} style={{width: transWidth, position:!isShowBottDetail?'relative':'fixed',zIndex: !isShowBottDetail?1:100}}>
+        <div className={indexStyles.person_news_out} style={{width: transWidth, position: !isShowBottDetail?'relative':'fixed', zIndex: !isShowBottDetail?1:100}}>
           <div className={indexStyles.contain1}>
             <div className={indexStyles.contain1_one}>
               <Avatar size={32} src={avatar}>u</Avatar>
@@ -197,7 +197,7 @@ export default class PersonNews extends React.Component {
               退出
             </div>
           </div>
-          <div  id={'dynamicsContainer'} onScroll={this.newsOutScroll.bind(this)} className={isShowBottDetail?indexStyles.contain2:indexStyles.contain2_hide} style={{maxHeight: clientHeight*0.8, overflow:!isShowBottDetail?'hidden':'auto'}}>
+          <div id={'dynamicsContainer'} onScroll={this.newsOutScroll.bind(this)} className={isShowBottDetail?indexStyles.contain2:indexStyles.contain2_hide} style={{maxHeight: clientHeight*0.8, overflow: !isShowBottDetail?'hidden':'auto'}}>
             {!isShowBottDetail? (
               <InitialNews{...this.props} />
             ) : (
@@ -208,7 +208,7 @@ export default class PersonNews extends React.Component {
           <div className={indexStyles.spin_turn} onClick={this.setIsShowBottDetail.bind(this)}>
             <Icon type={!isShowBottDetail?'down':'up'} />
           </div>
-          <div  className={indexStyles.bott_opacity}></div>
+          <div className={indexStyles.bott_opacity}></div>
           <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
         </div>
       </div>

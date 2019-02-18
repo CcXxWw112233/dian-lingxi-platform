@@ -4,13 +4,13 @@ import indexStyles from './index.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, message } from 'antd';
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FILES_FILE_DOWNLOAD,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 import {timestampToTimeNormal} from "../../../../../utils/util";
 
-import {ORGANIZATION,TASKS,FLOWS,DASHBOARD,PROJECTS,FILES,MEMBERS,CATCH_UP} from "../../../../../globalset/js/constant";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
 import Cookies from 'js-cookie'
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
@@ -90,14 +90,14 @@ export default class FileList extends React.Component {
   //列表排序, 有限排序文件夹
   normalSort(filedata_1, filedata_2, key, state) {
     const that = this
-    filedata_1.sort(function(a,b){
+    filedata_1.sort(function(a, b){
       if(that.state[state]) {
         return a[key].localeCompare(b[key]);
       } else {
         return b[key].localeCompare(a[key]);
       }
     });
-    filedata_2.sort(function(a,b){
+    filedata_2.sort(function(a, b){
       if(that.state[state]) {
         return a[key].localeCompare(b[key]);
       } else {
@@ -147,26 +147,26 @@ export default class FileList extends React.Component {
   }
   listSort(key) {
     const { datas = {} } = this.props.model
-    const {  fileList, filedata_1, filedata_2, selectedRowKeys } = datas
+    const { fileList, filedata_1, filedata_2, selectedRowKeys } = datas
     switch (key) {
       case '1':
         this.setState({
           nameSort: !this.state.nameSort
-        },function () {
+        }, function () {
           this.normalSort(filedata_1, filedata_2, 'file_name', 'nameSort')
         })
         break
       case '2':
         this.setState({
           sizeSort: !this.state.sizeSort
-        },function () {
+        }, function () {
           this.sizeSort(filedata_1, filedata_2, 'file_size', 'sizeSort')
         })
         break
       case '3':
         this.setState({
           creatorSort: !this.state.creatorSort
-        },function () {
+        }, function () {
           this.normalSort(filedata_1, filedata_2, 'creator', 'creatorSort')
         })
         break
@@ -224,7 +224,7 @@ export default class FileList extends React.Component {
   }
 
   //文件夹或文件点击
-  open(data,type) {
+  open(data, type) {
     const { datas = {} } = this.props.model
     const { breadcrumbList = [], currentParrentDirectoryId } = datas
     const { belong_folder_id, file_id } = data
@@ -256,23 +256,23 @@ export default class FileList extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: file_id
     })
-    this.props.filePreview({id: file_resource_id,file_id:id})
+    this.props.filePreview({id: file_resource_id, file_id: id})
     this.props.fileVersionist({
-      version_id:file_id,
-      isNeedPreviewFile:false,
+      version_id: file_id,
+      isNeedPreviewFile: false,
     })
   }
 
   gotoBoard(data) {
     const { board_id, file_resource_id, file_id, id, folder_id } = data
-    Cookies.set('board_id', board_id,{expires: 30, path: ''})
+    Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump('/technological/projectDetail')
   }
 
   render() {
     const { datas = {} } = this.props.model
     const { currentOrgFileUploads } = datas
-    const {  nameSort, sizeSort, creatorSort, } = this.state;
+    const { nameSort, sizeSort, creatorSort, } = this.state;
 
     const {CardContentType} =this.props
 
@@ -287,12 +287,12 @@ export default class FileList extends React.Component {
 
     const columns = [
       {
-        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down"  : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
+        title: <div style={{color: '#8c8c8c', cursor: 'pointer'}} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort? "caret-down" : "caret-up" } theme="outlined" style={{fontSize: 10, marginLeft: 6, color: '#595959'}}/></div>,
         key: 'file_name',
         render: (data) => {
           const { file_name} = data
           return (
-            <span onClick={this.openFile.bind(this,data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal',fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>
+            <span onClick={this.openFile.bind(this, data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>
           )
         }
       }, {
@@ -301,7 +301,7 @@ export default class FileList extends React.Component {
         render: (data) => {
           const { board_name } = data
           return (
-            <span onClick={this.gotoBoard.bind(this,data )} style={{cursor: 'pointer'}}>
+            <span onClick={this.gotoBoard.bind(this, data )} style={{cursor: 'pointer'}}>
               {board_name}
             </span>
           )
@@ -312,8 +312,8 @@ export default class FileList extends React.Component {
         render: (data) => {
           const { update_time } = data
           return (
-            <span  style={{cursor: 'pointer'}}>
-               {timestampToTimeNormal(update_time,'',true)}
+            <span style={{cursor: 'pointer'}}>
+               {timestampToTimeNormal(update_time, '', true)}
             </span>
            )
         }
