@@ -71,7 +71,7 @@ export default class FileItem extends React.Component {
       version_id: file_id,
       isNeedPreviewFile: false,
     })
-
+    this.props.updatePublicDatas({ board_id })
     this.props.getBoardMembers({id: board_id})
   }
   render() {
