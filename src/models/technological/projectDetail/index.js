@@ -21,7 +21,8 @@ import QueryString from 'querystring'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
-let board_id
+let board_id = null
+let pathname = null
 // appsSelectKey 项目详情里面应用的app标志
 export default {
   namespace: 'projectDetail',
@@ -56,7 +57,7 @@ export default {
         }
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
-
+        pathname = location.pathname
         const initialData = () => {
           dispatch({
             type: 'updateDatas',
@@ -124,7 +125,9 @@ export default {
         //缓存下来当前项目的权限
         localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
         if(result.data.app_data[0] ) {
+          let routeName = ''
           if( result.data.app_data[0].key === '3') { //任务
+            routeName = 'task'
             yield put({
               type: 'getProjectGoupList'
             })
@@ -143,6 +146,7 @@ export default {
               }
             })
           }else if(result.data.app_data[0].key === '4'){ //文档
+            routeName = 'file'
             yield put({
               type: 'getFileList',
               payload: {
@@ -156,6 +160,7 @@ export default {
               }
             })
           }else if(result.data.app_data[0].key === '2') {
+            routeName = 'flows'
             yield put({
               type: 'getProcessTemplateList',
               payload: {
@@ -170,6 +175,15 @@ export default {
               }
             })
           }
+          // if(pathname === '/technological/projectDetail') {
+          //   yield put({
+          //     type: 'routingJump',
+          //     payload: {
+          //       route: `/technological/projectDetail/${routeName}?board_id=${board_id}`
+          //     }
+          //   })
+          // }
+
         }
 
       }else{

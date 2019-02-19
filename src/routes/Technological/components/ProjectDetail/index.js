@@ -594,7 +594,6 @@ function mapStateToProps({ modal, projectDetail, projectDetailTask, projectDetai
   const modelObj = {
     datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
   }
-  console.log('modelObj', modelObj)
   return { modal, model: modelObj, loading }
 }
 export default connect(mapStateToProps)(ProjectDetail)

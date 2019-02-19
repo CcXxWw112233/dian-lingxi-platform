@@ -766,7 +766,7 @@ export default class DrawContent extends React.Component {
         //   return false
         // })
         // that.setPreviewFileModalVisibile()
-        that.props.updateDatasTask({
+        that.props.updateDatasFile({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
