@@ -20,7 +20,7 @@ export default class ProcessStartConfirm extends React.Component {
     const value = e.target.value
     const { datas: { templateInfo = {} } } = this.props.model
     templateInfo['name'] = value
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       templateInfo
     })
   }
@@ -74,7 +74,7 @@ export default class ProcessStartConfirm extends React.Component {
       onHTMLChange: (e) => {
         const { datas: { templateInfo = {} } } = this.props.model
         templateInfo['description'] = e
-        this.props.updateDatas({templateInfo})
+        this.props.updateDatasProcess({templateInfo})
       },
       fontSizes: [14],
       controls: [

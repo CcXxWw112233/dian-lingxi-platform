@@ -19,7 +19,7 @@ export default class WelcomProcess extends React.Component {
     this.props.getTemplateInfo && this.props.getTemplateInfo(template_id)
   }
   startEdit() {
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processPageFlagStep: '2'
     })
   }

@@ -32,7 +32,7 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
 
-        if (location.pathname === '/technological/projectDetail/process') {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {

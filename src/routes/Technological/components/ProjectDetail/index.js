@@ -19,7 +19,7 @@ const getEffectOrReducerByNameProcess = name => `projectDetailProcess/${name}`
 const ProjectDetail = (props) => {
   const { dispatch, model, modal } = props
   const { datas = { } } = model
-  const { projectInfoDisplay } = datas
+  const { projectInfoDisplay, appsSelectKey } = datas
   const HeaderListProps = {
     modal,
     model,
@@ -31,7 +31,7 @@ const ProjectDetail = (props) => {
     },
     getTaskGroupList(data){
       dispatch({
-        type: getEffectOrReducerByName('getTaskGroupList'),
+        type: getEffectOrReducerByNameTask('getTaskGroupList'),
         payload: data
       })
     },
@@ -86,7 +86,7 @@ const ProjectDetail = (props) => {
     },
     getProcessInfo(data){
       dispatch({
-        type: getEffectOrReducerByName('getProcessInfo'),
+        type: getEffectOrReducerByNameProcess('getProcessInfo'),
         payload: data
       })
     },
@@ -555,30 +555,17 @@ const ProjectDetail = (props) => {
     })
   }
 
-  const routes = [
-    {
-      path: '/technological/projectDetail/file',
-      component: () => import('./FileModule'),
-    }, {
-      path: '/technological/projectDetail/task',
-      component: () => import('./TaskItemComponent/index'),
-    }, {
-      path: '/technological/projectDetail/process',
-      component: () => import('./Process'),
-    },
-  ]
-
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
+        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '3':
-        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas}/>)
+        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '4':
-        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       default:
         // appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
@@ -596,18 +583,7 @@ const ProjectDetail = (props) => {
       <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
       {/*应用界面*/}
       <div style={{padding: '0 20px'}}>
-        {
-          routes.map(({ path, ...dynamics }, key) =>{
-            return (<Route key={key}
-                // exact
-                           path={path}
-                           component={dynamic({
-                             ...dynamics,
-                           })}
-              />
-            )})
-        }
-        {/*{filterAppsModule(appsSelectKey)}*/}
+        {filterAppsModule(appsSelectKey)}
       </div>
     </div>
   )
@@ -616,8 +592,9 @@ const ProjectDetail = (props) => {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading }) {
   const modelObj = {
-    datas: {...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], ...projectDetail['datas'], }
+    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
   }
+  console.log('modelObj', modelObj)
   return { modal, model: modelObj, loading }
 }
 export default connect(mapStateToProps)(ProjectDetail)

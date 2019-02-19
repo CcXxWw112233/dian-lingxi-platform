@@ -35,13 +35,12 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
 
-        if (location.pathname === '/technological/projectDetail/task') {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {
               drawContent: {}, //任务右方抽屉内容
               drawerVisible: false, //查看任务的抽屉是否可见
-              projectDetailInfoData: {}, //项目详情全部数据
               cardCommentList: [], //任务评论列表
               projectGoupList: [], //项目分组列表
               taskGroupList: [], //任务列表
@@ -577,7 +576,6 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            drawerVisible: true,
             cardCommentList: res.data
           }
         })
@@ -651,6 +649,7 @@ export default modelExtend(projectDetail, {
 
   reducers: {
     updateDatas(state, action) {
+      console.log('sss',1111)
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },

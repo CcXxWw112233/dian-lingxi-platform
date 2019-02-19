@@ -62,6 +62,7 @@ export default {
             type: 'updateDatas',
             payload: {
               projectRoles: [], //项目角色
+              board_id,
               //全局任务key
               appsSelectKey: undefined, //应用key
               appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
@@ -115,9 +116,9 @@ export default {
             projectDetailInfoData: result.data,
             appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
             appsSelectKeyIsAreadyClickArray: [result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
-            //文档需要数据初始化
-            breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
-            currentParrentDirectoryId: result.data.folder_id,
+            // //文档需要数据初始化
+            // breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
+            // currentParrentDirectoryId: result.data.folder_id,
           }
         })
         //缓存下来当前项目的权限

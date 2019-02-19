@@ -33,7 +33,7 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
 
-        if (location.pathname === '/technological/projectDetail/file') {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {
@@ -66,7 +66,6 @@ export default modelExtend(projectDetail, {
               seeFileInput: '', //查看文件详情入口
             }
           })
-
           dispatch({
             type: 'initialget',
             payload: {
@@ -85,6 +84,15 @@ export default modelExtend(projectDetail, {
       let result = yield call(projectDetailInfo, id)
       if(isApiResponseOk(result)) {
         yield put({
+          type: 'updateDatas',
+          payload: {
+            //文档需要数据初始化
+            breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
+            currentParrentDirectoryId: result.data.folder_id,
+          }
+        })
+
+        yield put({
           type: 'getFileList',
           payload: {
             folder_id: result.data.folder_id
@@ -96,7 +104,6 @@ export default modelExtend(projectDetail, {
             board_id: board_id
           }
         })
-
       }else{
       }
     },

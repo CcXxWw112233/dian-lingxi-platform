@@ -18,11 +18,11 @@ export default class Header extends React.Component {
   closeFile() {
     const { datas: { breadcrumbList = [] } }= this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    this.props.updateDatas({isInOpenFile: false, filePreviewUrl: '', filePreviewCurrentVersionKey: 0})
+    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', filePreviewCurrentVersionKey: 0})
   }
   zoomFrame() {
     const { datas: { isExpandFrame = false } }= this.props.model
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       isExpandFrame: !isExpandFrame,
     })
   }
@@ -54,7 +54,7 @@ export default class Header extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatas({
+        this.props.updateDatasFile({
           copyOrMove: '0',
           openMoveDirectoryType: '3',
           moveToDirectoryVisiblie: true,
@@ -65,7 +65,7 @@ export default class Header extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatas({
+        this.props.updateDatasFile({
           copyOrMove: '1',
           openMoveDirectoryType: '3',
           moveToDirectoryVisiblie: true,
@@ -81,7 +81,7 @@ export default class Header extends React.Component {
           arrays: JSON.stringify([{type, id: file_id}])
         })
         breadcrumbList.splice(breadcrumbList.length - 1, 1)
-        this.props.updateDatas({isInOpenFile: false})
+        this.props.updateDatasFile({isInOpenFile: false})
         break
       default:
         break
@@ -129,7 +129,7 @@ export default class Header extends React.Component {
         }
         if (file.status === 'done') {
           message.success(`上传成功。`);
-          that.props.updateDatas({filePreviewCurrentVersionKey: 0})
+          that.props.updateDatasFile({filePreviewCurrentVersionKey: 0})
           that.props.fileVersionist({version_id : filePreviewCurrentVersionId, isNeedPreviewFile: true})
         } else if (file.status === 'error') {
           message.error(`上传失败。`);

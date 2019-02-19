@@ -14,7 +14,7 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       imgLoaded: false
     })
-    this.props.updateDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+    this.props.updateDatasFile({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
     this.props.filePreview({id: file_resource_id, file_id})
     this.setState({
       imgLoaded: false,
@@ -81,10 +81,10 @@ export default class FileDetailContent extends React.Component {
       isInAdding:true
     },() => {
       const { point_number } = data
-      this.props.updateDatas({
+      this.props.updateDatasFile({
         filePreviewCommitPointNumber: point_number
       })
-      this.props.updateDatas({
+      this.props.updateDatasFile({
         filePreviewPointNumCommits: []
       })
       this.props.getPreviewFileCommits({
@@ -105,7 +105,7 @@ export default class FileDetailContent extends React.Component {
       isInAdding: true,
       isInEdditOperate: true
     })
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       filePreviewCommitPointNumber: flag
     })
     this.props.getPreviewFileCommits({
@@ -154,11 +154,11 @@ export default class FileDetailContent extends React.Component {
         height: punctuateArea,
         isAready: false
       }
-      this.props.updateDatas({
+      this.props.updateDatasFile({
         filePreviewPointNumCommits: []
       })
 
-      this.props.updateDatas({
+      this.props.updateDatasFile({
         filePreviewCommitPointNumber: ''
       })
       this.setState({
@@ -177,7 +177,7 @@ export default class FileDetailContent extends React.Component {
         isInAdding: false,
         currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
       })
-      that.props.updateDatas({
+      that.props.updateDatasFile({
         filePreviewPointNumCommits: []
       })
     }, 100)
@@ -227,7 +227,7 @@ export default class FileDetailContent extends React.Component {
         isInEdditOperate: true,
       })
 
-      this.props.updateDatas({
+      this.props.updateDatasFile({
         filePreviewPointNumCommits: [],
         filePreviewCommitPointNumber: ''
       })

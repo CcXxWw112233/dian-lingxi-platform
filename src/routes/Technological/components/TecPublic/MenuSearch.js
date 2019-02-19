@@ -50,11 +50,11 @@ export default class MenuSearch extends React.Component{
   menuClick = ({ item, key, selectedKeys }) => {
     if(key) {
       this.props.getProcessInfo({id: key})
-      this.props.updateDatas({currentProcessInstanceId: key})
+      this.props.updateDatasProcess({currentProcessInstanceId: key})
     }
   }
   addProcess = () => {
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processInfo: {},
       processPageFlagStep: '1',
       node_type: '1', //节点类型
@@ -62,7 +62,7 @@ export default class MenuSearch extends React.Component{
       processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
       processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)) //每一步的每一个类型，记录，数组的全部数据step * type
     })
-    this.props.updateDatas({currentProcessInstanceId: ''})
+    this.props.updateDatasProcess({currentProcessInstanceId: ''})
   }
   render() {
     const {datas: { processList = [], currentProcessInstanceId}} = this.props.model

@@ -260,7 +260,7 @@ export default class Header extends React.Component {
   }
   //文档操作----start
   quitOperateFile() {
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       selectedRowKeys: [],
     })
   }
@@ -275,7 +275,7 @@ export default class Header extends React.Component {
         }
       }
     }
-    this.props.updateDatas({selectedRowKeys: newSelectedRowKeys})
+    this.props.updateDatasFile({selectedRowKeys: newSelectedRowKeys})
   }
   createDirectory() {
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)){
@@ -297,7 +297,7 @@ export default class Header extends React.Component {
     }
     fileList.unshift(obj)
     filedata_1.unshift(obj)
-    this.props.updateDatas({fileList, filedata_1, isInAddDirectory: true})
+    this.props.updateDatasFile({fileList, filedata_1, isInAddDirectory: true})
   }
   collectionFile() {
 
@@ -342,7 +342,7 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       copyOrMove: '0', //copy是1
       openMoveDirectoryType: '1',
       moveToDirectoryVisiblie: true
@@ -353,7 +353,7 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       copyOrMove: '1', //copy是1
       openMoveDirectoryType: '1',
       moveToDirectoryVisiblie: true
@@ -382,7 +382,7 @@ export default class Header extends React.Component {
   handleaskAppMenuClick(board_id, e) {
     e.domEvent.stopPropagation();
     const { key } = e
-    this.props.updateDatas({
+    this.props.updateDatasTask({
       getTaskGroupListArrangeType: key
     })
     this.props.getTaskGroupList({

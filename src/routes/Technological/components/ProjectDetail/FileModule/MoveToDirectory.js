@@ -12,7 +12,7 @@ export default class MoveToDirectory extends React.Component {
   }
 
   onCancel = () => {
-    this.props.updateDatas({moveToDirectoryVisiblie: false})
+    this.props.updateDatasFile({moveToDirectoryVisiblie: false})
   }
   //重新改变面包屑，递归
   findChildrenParent = (arr, childDataKey, key, value, originalData, callback) => {
@@ -31,7 +31,7 @@ export default class MoveToDirectory extends React.Component {
         this.findChildrenParent(arr[i][childDataKey], childDataKey, key, value, originalData, callback);
       }
     }
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       breadcrumbList
     })
   }
@@ -43,7 +43,7 @@ export default class MoveToDirectory extends React.Component {
       message.warn('请选择一个目标文件夹')
       return false
     }
-    this.props.updateDatas({moveToDirectoryVisiblie: false})
+    this.props.updateDatasFile({moveToDirectoryVisiblie: false})
     const { datas: { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } } = this.props.model
 
     let file_ids
@@ -61,7 +61,7 @@ export default class MoveToDirectory extends React.Component {
       //存在文件移动的情况同时是从文件预览进来的,移动过后改变面包屑路径
       if(copyOrMove === '0') {
         breadcrumbList.splice(0, breadcrumbList.length - 1)
-        this.props.updateDatas({
+        this.props.updateDatasFile({
           currentParrentDirectoryId: selectFolderId,
         })
         this.findChildrenParent([{...treeFolderData}], 'child_data', 'folder_id', selectFolderId, [{...treeFolderData}], function (data) {
@@ -69,7 +69,7 @@ export default class MoveToDirectory extends React.Component {
           data['file_name'] = data['folder_name']
           data['file_id'] = data['folder_id']
           breadcrumbList.unshift(data)
-          that.props.updateDatas({
+          that.props.updateDatasFile({
             breadcrumbList
           })
         });
