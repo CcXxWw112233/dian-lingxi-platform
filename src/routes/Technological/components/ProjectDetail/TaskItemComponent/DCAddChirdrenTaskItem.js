@@ -63,7 +63,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
       is_realize: is_realize === '1' ? '0' : '1'
     }
     drawContent['child_data'][chirldDataIndex]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
     this.props.completeTask(obj)
   }
   //设置子任务负责人组件---------------start

@@ -54,7 +54,7 @@ export default class TagDropDownItem extends React.Component {
     const { itemValue = {}, itemKey } = this.props
     const { id, board_id } = itemValue
     // boardTagList[itemKey][key] = data[key]
-    // this.props.updateDatas({
+    // this.props.updateDatasTask({
     //   boardTagList
     // })
     this.props.updateBoardTag({...data, board_id, id})

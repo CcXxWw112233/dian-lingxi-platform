@@ -20,7 +20,6 @@ class DrawContentModal extends React.Component {
 
   render() {
     const { visible } = this.props;
-
     return(
       <CustormModal
         visible={visible}

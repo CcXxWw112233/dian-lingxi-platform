@@ -150,7 +150,7 @@ export default class DrawContent extends React.Component {
     }
     this.props.completeTask(obj)
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
   titleTextAreaChangeBlur(e) {
     const { datas: { drawContent = {} } } = this.props.model
@@ -166,7 +166,7 @@ export default class DrawContent extends React.Component {
     })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -287,7 +287,7 @@ export default class DrawContent extends React.Component {
       start_time: start_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
@@ -304,7 +304,7 @@ export default class DrawContent extends React.Component {
       due_time: due_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
   compareStartDueTime = (start_time, due_time) => {
     if(!start_time || !due_time) {
@@ -506,7 +506,7 @@ export default class DrawContent extends React.Component {
       [keyCode]: label_id || label_name,
     })
     taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
-    this.props.updateDatas({taskGroupList})
+    this.props.updateDatasTask({taskGroupList})
   }
   addTag() {
     this.setState({
@@ -621,7 +621,7 @@ export default class DrawContent extends React.Component {
       onChange: (e) => {
         // const { datas:{ drawContent = {} } } = this.props.model
         // drawContent['description'] = e
-        // this.props.updateDatas({drawContent})
+        // this.props.updateDatasTask({drawContent})
         this.setState({
           brafitEditHtml: e
         })
@@ -736,7 +736,7 @@ export default class DrawContent extends React.Component {
           attachment_fileList: fileList
         })
         drawContent['attachment_data'] = fileList
-        that.props.updateDatas({
+        that.props.updateDatasTask({
           drawContent
         })
       },
@@ -766,7 +766,7 @@ export default class DrawContent extends React.Component {
         //   return false
         // })
         // that.setPreviewFileModalVisibile()
-        that.props.updateDatas({
+        that.props.updateDatasTask({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
