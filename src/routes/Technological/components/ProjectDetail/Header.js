@@ -18,6 +18,7 @@ import {checkIsHasPermissionInBoard, checkIsHasPermission} from "../../../../uti
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import AddModalForm from './components/AddModalForm'
+import DetailInfo from './DetailInfo'
 
 
 let is_starinit = null
@@ -699,6 +700,7 @@ export default class Header extends React.Component {
           </div>
         </div>
       </div>
+        <DetailInfo {...this.props} modalVisible={projectInfoDisplay} />
         <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         <AddModalForm {...this.props} board_id = {board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)}/>
       </div>

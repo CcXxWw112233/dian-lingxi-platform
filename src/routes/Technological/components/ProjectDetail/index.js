@@ -1,16 +1,13 @@
 import React from 'react';
 import {connect} from "dva/index";
 import Header from './Header'
-import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
-import DetailInfoModal from './DetailInfo/DetailInfoModal'
 import { Route, Router, Switch, Link } from 'dva/router'
 import { Drawer } from 'antd'
 import dynamic from "dva/dynamic";
-
 const getEffectOrReducerByName = name => `projectDetail/${name}`
 const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
 const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
@@ -577,10 +574,9 @@ const ProjectDetail = (props) => {
     // minHeight: '100%',
     <div style={{ height: 'auto', position: 'relative', width: '100%', overflow: 'hidden', minHeight: '100vh', margin: '0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
-      <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask}
+      <Header {...DetailInfoProps} {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask}
               updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />
 
-      <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
       {/*应用界面*/}
       <div style={{padding: '0 20px'}}>
         {filterAppsModule(appsSelectKey)}
