@@ -24,7 +24,9 @@ import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {currentNounPlanFilterName} from "../../../utils/businessFunction";
 import QueryString from 'querystring'
 
-let board_id
+let board_id = null
+let appsSelectKey = null
+
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailTask',
   state: [],
@@ -34,8 +36,9 @@ export default modelExtend(projectDetail, {
 
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
+        appsSelectKey = param.appsSelectKey
 
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '3') {
           dispatch({
             type: 'updateDatas',
             payload: {

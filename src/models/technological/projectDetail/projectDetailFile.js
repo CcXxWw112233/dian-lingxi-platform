@@ -22,7 +22,9 @@ import {isApiResponseOk} from "../../../utils/handleResponseData";
 import QueryString from 'querystring'
 import {projectDetailInfo} from "../../../services/technological/prjectDetail";
 
-let board_id
+let board_id = null
+let appsSelectKey = null
+
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
   state: [],
@@ -32,8 +34,9 @@ export default modelExtend(projectDetail, {
 
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
+        appsSelectKey = param.appsSelectKey
 
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
           dispatch({
             type: 'updateDatas',
             payload: {

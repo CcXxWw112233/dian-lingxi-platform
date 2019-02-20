@@ -22,7 +22,7 @@ import QueryString from 'querystring'
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
 let board_id = null
-let pathname = null
+let appsSelectKey = null
 // appsSelectKey 项目详情里面应用的app标志
 export default {
   namespace: 'projectDetail',
@@ -57,7 +57,13 @@ export default {
         }
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
-        pathname = location.pathname
+        appsSelectKey = param.appsSelectKey
+
+        const isInBoardDetailRouteChange = Cookies.get('isInBoardDetailRouteChange') //判断是否是在当前路由页面切换参数引起的页面变化
+        const setIsInBoardDetailRouteChange = (val) => {
+          Cookies.set('isInBoardDetailRouteChange', val, {expires: 30, path: ''})
+        }
+
         const initialData = () => {
           dispatch({
             type: 'updateDatas',
@@ -74,32 +80,37 @@ export default {
             }
           })
         }
-        initialData()
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          dispatch({ //查询项目角色列表
-            type: 'getProjectRoles',
-            payload: {
-              type: '2',
-            }
-          })
-          dispatch({
-            type: 'initProjectDetail',
-            payload: {
-              id: board_id
-            }
-          })
-          dispatch({
-            type: 'getAppsList',
-            payload: {
-              type: '2'
-            }
-          })
-
-          //监听消息存储在localstorage变化
+          const appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
+          if(!appsSelectKeyIsAreadyClickArray.length) { //如果还没有点过app,即从其他页面进来
+            dispatch({ //查询项目角色列表
+              type: 'getProjectRoles',
+              payload: {
+                type: '2',
+              }
+            })
+            dispatch({
+              type: 'initProjectDetail',
+              payload: {
+                id: board_id
+              }
+            })
+            dispatch({
+              type: 'getAppsList',
+              payload: {
+                type: '2'
+              }
+            })
+          }
           window.addEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
         }else{
-          window.removeEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
+          Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
+          initialData()
+        }
+        //刷新页面时去除掉appsSelectKeyIsAreadyClickArray
+        window.onbeforeunload = function () {
+          Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
         }
       })
     },
@@ -109,161 +120,56 @@ export default {
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id } = payload
       let result = yield call(projectDetailInfo, id)
-      const appsSelectKey = yield select(selectAppsSelectKey)
+      // const appsSelectKey = yield select(selectAppsSelectKey)
       if(isApiResponseOk(result)) {
         yield put({
           type: 'updateDatas',
           payload: {
             projectDetailInfoData: result.data,
-            appsSelectKey: appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
-            appsSelectKeyIsAreadyClickArray: [result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
-            // //文档需要数据初始化
-            // breadcrumbList: [{file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1'}],
-            // currentParrentDirectoryId: result.data.folder_id,
+            appsSelectKey: appsSelectKey || 1, //appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
+            appsSelectKeyIsAreadyClickArray: [appsSelectKey || 1], //[result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
+          }
+        })
+        yield put({
+          type: 'appsSelectKeyIsAreadyClickArray',
+          payload: {
+            appsSelectKey
           }
         })
         //缓存下来当前项目的权限
         localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
-        if(result.data.app_data[0] ) {
-          let routeName = ''
-          if( result.data.app_data[0].key === '3') { //任务
-            routeName = 'task'
-            yield put({
-              type: 'getProjectGoupList'
-            })
-            yield put({
-              type: 'getTaskGroupList',
-              payload: {
-                type: '2',
-                board_id: board_id,
-                arrange_type: '1'
-              }
-            })
-            yield put({
-              type: 'getBoardTagList',
-              payload: {
-                board_id
-              }
-            })
-          }else if(result.data.app_data[0].key === '4'){ //文档
-            routeName = 'file'
-            yield put({
-              type: 'getFileList',
-              payload: {
-                folder_id: result.data.folder_id
-              }
-            })
-            yield put({
-              type: 'getFolderList',
-              payload: {
-                board_id: board_id
-              }
-            })
-          }else if(result.data.app_data[0].key === '2') {
-            routeName = 'flows'
-            yield put({
-              type: 'getProcessTemplateList',
-              payload: {
-                board_id: board_id
-              }
-            })
-            yield put({
-              type: 'getProcessList',
-              payload: {
-                board_id: board_id,
-                type: '1'
-              }
-            })
-          }
-          // if(pathname === '/technological/projectDetail') {
-          //   yield put({
-          //     type: 'routingJump',
-          //     payload: {
-          //       route: `/technological/projectDetail/${routeName}?board_id=${board_id}`
-          //     }
-          //   })
-          // }
-
-        }
-
       }else{
         //权限缓存空数组
         localStorage.setItem('currentBoardPermission', JSON.stringify([]))
       }
     },
+
     //点击app选项，将点击过的key push进数组，根据已经点击过的数组判断不在重新拉取数据
     * appsSelect({ payload }, { select, call, put }) {
       const { appsSelectKey } = payload
-      let appsSelectKeyIsAreadyClickArray = []
-      appsSelectKeyIsAreadyClickArray = yield select(selectAppsSelectKeyIsAreadyClickArray)
-      let flag = true
-      for (let val of appsSelectKeyIsAreadyClickArray) {
-        if(appsSelectKey === val) {
-          flag = false
-        }
-      }
-      appsSelectKeyIsAreadyClickArray.push(appsSelectKey)
-      const newAppsSelectKeyIsAreadyClickArray = Array.from(new Set(appsSelectKeyIsAreadyClickArray))
       yield put({
-        type: 'updateDatas',
+        type: 'appsSelectKeyIsAreadyClickArray',
         payload: {
-          appsSelectKeyIsAreadyClickArray: newAppsSelectKeyIsAreadyClickArray
+          appsSelectKey
         }
       })
-      if(!flag) {
-        return false
-      }
+      yield put({
+        type: 'routingJump',
+        payload: {
+          route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}`
+        }
+      })
 
-      if( appsSelectKey === '3') { //任务
-        yield put({
-          type: 'getProjectGoupList'
-        })
-        yield put({
-          type: 'getTaskGroupList',
-          payload: {
-            type: '2',
-            board_id: board_id,
-            arrange_type: '1'
-          }
-        })
-        yield put({
-          type: 'getBoardTagList',
-          payload: {
-            board_id
-          }
-        })
+    },
 
-      }else if(appsSelectKey === '2'){ //流程
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            board_id: board_id
-          }
-        })
-        yield put({
-          type: 'getProcessList',
-          payload: {
-            board_id: board_id,
-            type: '1'
-          }
-        })
-      }else if(appsSelectKey === '4') { //文档
-        const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-        yield put({
-          type: 'getFileList',
-          payload: {
-            folder_id: currentParrentDirectoryId
-          }
-        })
-        yield put({
-          type: 'getFolderList',
-          payload: {
-            board_id: board_id
-          }
-        })
-      }
+    * appsSelectKeyIsAreadyClickArray({ payload }, { select, call, put }) {
+      const { appsSelectKey } = payload
 
-
+      //存储appsSelectKeyIsAreadyClickArray
+      let appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
+      appsSelectKeyIsAreadyClickArray.push(appsSelectKey)
+      const newAppsSelectKeyIsAreadyClickArray = Array.from(new Set(appsSelectKeyIsAreadyClickArray))
+      Cookies.set('appsSelectKeyIsAreadyClickArray', JSON.stringify(newAppsSelectKeyIsAreadyClickArray), {expires: 30, path: ''})
 
     },
 
@@ -314,6 +220,7 @@ export default {
 
       }
     },
+
     * setMemberRoleInProject({ payload }, { select, call, put }) {
       const res = yield call(setMemberRoleInProject, payload)
       if(isApiResponseOk(res)) {
@@ -460,8 +367,6 @@ export default {
     },
 
     //项目增删改查--end
-
-
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

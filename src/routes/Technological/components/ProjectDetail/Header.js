@@ -545,7 +545,7 @@ export default class Header extends React.Component {
     }
 
     const appsOperator = (appsSelectKey) => { //右方操作图标
-      let operatorConent = ''
+      let operatorConent = <div style={{ color: '#ffffff'}}>s</div>
       switch (appsSelectKey) {
         case '2':
           operatorConent = (
