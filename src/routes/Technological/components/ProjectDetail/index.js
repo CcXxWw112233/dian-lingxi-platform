@@ -151,6 +151,12 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    cardItemClickEffect(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('cardItemClickEffect'),
+        payload: data,
+      })
+    },
     postCommentToDynamics(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('postCommentToDynamics'),

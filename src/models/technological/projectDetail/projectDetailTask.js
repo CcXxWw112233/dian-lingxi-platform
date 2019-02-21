@@ -8,7 +8,7 @@ import {
   addChirldTask, addTask, addTaskExecutor, addTaskGroup, addTaskTag,
   archivedTask, changeTaskType, completeTask,
   deleteBoardTag, deleteCardNewComment, deleteTask, deleteTaskFile, deleteTaskGroup, getBoardTagList,
-  getCardCommentList,
+  getCardCommentList, getCardDetail,
   getProjectGoupList, getTaskGroupList,
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
@@ -26,7 +26,7 @@ import QueryString from 'querystring'
 
 let board_id = null
 let appsSelectKey = null
-
+let card_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailTask',
   state: [],
@@ -37,33 +37,25 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
+        card_id = param.card_id
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '3') {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              drawContent: {}, //任务右方抽屉内容
-              drawerVisible: false, //查看任务的抽屉是否可见
-              cardCommentList: [], //任务评论列表
-              projectGoupList: [], //项目分组列表
-              taskGroupList: [], //任务列表
-              boardTagList: [], //项目标签列表
-              getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
-            }
-          })
+          // dispatch({
+          //   type: 'updateDatas',
+          //   payload: {
+          //     drawContent: {}, //任务右方抽屉内容
+          //     drawerVisible: false, //查看任务的抽屉是否可见
+          //     cardCommentList: [], //任务评论列表
+          //     projectGoupList: [], //项目分组列表
+          //     taskGroupList: [], //任务列表
+          //     boardTagList: [], //项目标签列表
+          //     getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+          //   }
+          // })
 
           dispatch({
             type: 'getProjectGoupList',
             payload: {
-            }
-          })
-
-          dispatch({
-            type: 'getTaskGroupList',
-            payload: {
-              type: '2',
-              board_id: board_id,
-              arrange_type: '1'
             }
           })
 
@@ -74,11 +66,88 @@ export default modelExtend(projectDetail, {
             }
           })
 
+          //两者都去查询列表接口，不同的地方在于如果有card_id则要先查询任务列表，匹配得到taskGroupListIndex和taskGroupListIndex_index然后再去查询任务详细信息，
+          if(card_id) {
+            dispatch({
+              type: 'getTaskGroupListByUrl', //'getTaskGroupList',
+              payload: {
+                type: '2',
+                board_id: board_id,
+                arrange_type: '1'
+              }
+            })
+            // dispatch({
+            //   type: 'getCardDetail',
+            //   payload: {
+            //     id: card_id
+            //   }
+            // })
+          } else {
+            dispatch({
+              type: 'getTaskGroupList',
+              payload: {
+                type: '2',
+                board_id: board_id,
+                arrange_type: '1'
+              }
+            })
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                drawContent: {}, //任务右方抽屉内容
+                drawerVisible: false, //查看任务的抽屉是否可见
+                // cardCommentList: [], //任务评论列表
+                // projectGoupList: [], //项目分组列表
+                // taskGroupList: [], //任务列表
+                // boardTagList: [], //项目标签列表
+                // getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+              }
+            })
+          }
+
         }
       })
     },
   },
   effects: {
+
+    //获取任务详情信息， 通过url
+    * getCardDetail({ payload }, { select, call, put }) { //查看项目详情信息
+      const { id, board_id } = payload
+      let res = yield call(getCardDetail, { id})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawerVisible: true,
+            drawContent: res.data,
+          }
+        })
+      }else{
+      }
+    },
+
+    //获取任务详情信息, 点击任务
+    * cardItemClickEffect({ payload }, { select, call, put }) { //查看项目详情信息
+      const { taskGroupListIndex, taskGroupListIndex_index, drawContent = {} } = payload
+      const { card_id } = drawContent
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          taskGroupListIndex,
+          taskGroupListIndex_index,
+          card_id,
+        }
+      })
+      yield put({
+        type: 'routingJump',
+        payload: {
+          route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}&card_id=${card_id}`
+        }
+      })
+
+    },
+
     //任务---start
     * addTaskGroup({ payload }, { select, call, put }) { //
       let res = yield call(addTaskGroup, payload)
@@ -184,8 +253,45 @@ export default modelExtend(projectDetail, {
       }
     },
 
+    * getTaskGroupListByUrl({ payload }, { select, call, put }) { //
+      const { type, board_id, arrange_type, calback, operateType } = payload
+      let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
+      // message.destroy()
+      if(isApiResponseOk(res)) {
+        if(card_id) {
+          yield put({
+            type: 'getCardDetail',
+            payload: {
+              id: card_id
+            }
+          })
+        }
+        let taskGroupListIndex = 0
+        let taskGroupListIndex_index = 0
+        for(let i = 0; i < res.data.length; i ++) {
+          for(let j = 0; j < res.data[i]['card_data'].length; j ++) {
+            if (card_id === res.data[i]['card_data'][j]['card_id']) {
+              taskGroupListIndex = i
+              taskGroupListIndex_index = j
+              break
+            }
+          }
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            taskGroupList: res.data,
+            taskGroupListIndex,
+            taskGroupListIndex_index
+          }
+        })
+      }else{
+      }
+    },
+
     * addTask({ payload }, { select, call, put }) { //
-      let res = yield call(addTask, payload)
+      let { add_type = '1' } = payload
+      let res = yield call(addTask, {...payload, add_type})
       let getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
       if(isApiResponseOk(res)) {
         yield put({
@@ -193,7 +299,7 @@ export default modelExtend(projectDetail, {
           payload: {
             type: '2',
             board_id: board_id,
-            arrange_type: getTaskGroupListArrangeType,
+            arrange_type: getTaskGroupListArrangeType || '1',
             calback: function () {
               message.success('添加成功', MESSAGE_DURATION_TIME)
             }
@@ -335,7 +441,7 @@ export default modelExtend(projectDetail, {
           payload: {
             type: '2',
             board_id: board_id,
-            arrange_type: getTaskGroupListArrangeType,
+            arrange_type: getTaskGroupListArrangeType || '1',
             calback: function () {
               message.success('移动成功', MESSAGE_DURATION_TIME)
             }
@@ -652,7 +758,6 @@ export default modelExtend(projectDetail, {
 
   reducers: {
     updateDatas(state, action) {
-      console.log('sss',1111)
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },

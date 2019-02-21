@@ -302,7 +302,7 @@ export default class TaskItem extends React.Component {
           })}
         {/*</QueueAnim>*/}
         </div>
-        <QueueAnim type={'bottom'} duration={200}>
+        {/*<QueueAnim type={'bottom'} duration={200}>*/}
           {!isAddEdit ? (
             <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
@@ -364,7 +364,7 @@ export default class TaskItem extends React.Component {
 
             </div>
           )}
-        </QueueAnim>
+        {/*</QueueAnim>*/}
       </div>
     )
   }

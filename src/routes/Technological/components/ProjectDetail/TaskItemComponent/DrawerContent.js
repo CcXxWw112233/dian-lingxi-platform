@@ -136,13 +136,19 @@ export default class DrawContent extends React.Component {
   }
   //firstLine----------end
 
+  //更新父级任务列表的当前任务
+  updateParentTaskList(name, value) {
+    const { datas: { taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    this.props.updateDatasTask({ taskGroupList})
+  }
   //标题-------start
   setIsCheck() {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {
       card_id,
@@ -150,12 +156,14 @@ export default class DrawContent extends React.Component {
     }
     this.props.completeTask(obj)
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatasTask({drawContent})
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
+    this.props.updateDatasTask({drawContent, taskGroupList})
   }
   titleTextAreaChangeBlur(e) {
-    const { datas: { drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
     const { card_id, description, due_time, start_time } = drawContent
     drawContent['card_name'] = e.target.value
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['card_name'] = e.target.value
     const updateObj ={
       card_id,
       name: e.target.value,
@@ -166,7 +174,7 @@ export default class DrawContent extends React.Component {
     })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent})
+    this.props.updateDatasTask({drawContent, taskGroupList})
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -210,6 +218,7 @@ export default class DrawContent extends React.Component {
       }
     }
     drawContent['executors'] = newExecutors
+    this.updateParentTaskList('executors', newExecutors)
     //用于判判断任务执行人菜单是否显示
     const that = this
     setTimeout(function () {
@@ -236,6 +245,8 @@ export default class DrawContent extends React.Component {
       user_name: full_name || fullName || mobile || email,
       avatar: avatar
     }
+    this.updateParentTaskList('executors', executors)
+
     this.props.addTaskExecutor({
       card_id,
       users: id
@@ -505,8 +516,9 @@ export default class DrawContent extends React.Component {
       card_id,
       [keyCode]: label_id || label_name,
     })
+    drawContent['label_data'].splice(key, 1)
     taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
-    this.props.updateDatasTask({taskGroupList})
+    this.props.updateDatasTask({taskGroupList, drawContent})
   }
   addTag() {
     this.setState({
@@ -540,6 +552,8 @@ export default class DrawContent extends React.Component {
       label_name: e.target.value,
       length: label_data.length
     })
+    this.updateParentTaskList('label_data', label_data)
+
   }
   tagDropItemClick(data) {
     this.setState({
@@ -560,6 +574,8 @@ export default class DrawContent extends React.Component {
       label_name: name,
       length: label_data.length
     })
+    this.updateParentTaskList('label_data', label_data)
+
   }
   setTagInputValue(e) {
     this.setState({
@@ -598,7 +614,7 @@ export default class DrawContent extends React.Component {
     const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
-    const { list_name } = taskGroupList[taskGroupListIndex]
+    const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
     let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况

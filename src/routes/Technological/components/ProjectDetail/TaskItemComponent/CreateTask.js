@@ -37,6 +37,8 @@ export default class CreateTask extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
+    const target = this.refs.outerMost
+    target.scrollTo(this.scrollLeft, 0)
     // window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
@@ -143,13 +145,15 @@ export default class CreateTask extends React.Component {
   }
   // 右方抽屉弹窗---start
   setDrawerVisibleOpen(data) {
-    const that = this
-    const { drawContent: { card_id }} = data
+    // const that = this
+    // const { drawContent: { card_id }} = data
     this.props.updateDatasTask(data)
-    this.props.getCardCommentList(card_id)
-    this.props.updateDatasTask({
-      drawerVisible: true,
-    })
+    // this.props.getCardCommentList(card_id)
+    // this.props.updateDatasTask({
+    //   drawerVisible: true,
+    // })
+    this.props.cardItemClickEffect(data)
+
   }
 
   setDrawerVisibleClose() {
