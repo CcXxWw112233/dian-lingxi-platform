@@ -102,6 +102,13 @@ export default {
                 type: '2'
               }
             })
+          } else {
+            dispatch({
+              type: 'noSelected',
+              payload: {
+
+              }
+            })
           }
           window.addEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
         }else{
@@ -161,6 +168,32 @@ export default {
       })
 
     },
+
+    //适应初始化进来已经存在appSelectedArray在cookies,导致没有获取到项目详情信息，先判断项目信息已经获取与否，没有就执行initProjectDetail
+    * noSelected({ payload }, { select, call, put }) {
+      const projectDetailInfoData = yield select(selectProjectDetailInfoData)
+      if(!projectDetailInfoData || JSON.stringify(projectDetailInfoData) == '{}') {
+        yield put({
+          type: 'getProjectRoles',
+          payload: {
+            type: '2',
+          }
+        })
+        yield put({
+          type: 'initProjectDetail',
+          payload: {
+            id: board_id
+          }
+        })
+        yield put({
+          type: 'getAppsList',
+          payload: {
+            type: '2'
+          }
+        })
+      }
+    },
+
 
     * appsSelectKeyIsAreadyClickArray({ payload }, { select, call, put }) {
       const { appsSelectKey } = payload
