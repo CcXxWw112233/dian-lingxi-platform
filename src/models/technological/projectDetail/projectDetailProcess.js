@@ -23,7 +23,7 @@ import QueryString from 'querystring'
 
 let board_id = null
 let appsSelectKey = null
-
+let flow_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailProcess',
   state: [],
@@ -34,6 +34,7 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
+        flow_id = param.flow_id
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '2') {
           dispatch({
@@ -68,6 +69,15 @@ export default modelExtend(projectDetail, {
               type: '1'
             }
           })
+
+          if(flow_id) {
+            dispatch({
+              type: 'getProcessInfoByUrl',
+              payload: {
+                currentProcessInstanceId: flow_id
+              }
+            })
+          }
 
         }
       })
@@ -167,6 +177,61 @@ export default modelExtend(projectDetail, {
         })
       }else{
         message.warn(res.message)
+      }
+    },
+
+    * changeFlowIdToUrl({ payload }, { select, call, put }) {
+      const { currentProcessInstanceId } = payload
+      yield put({
+        type: 'routingJump',
+        payload: {
+          route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}&flow_id=${currentProcessInstanceId}`
+        }
+      })
+    },
+
+    * getProcessInfoByUrl({ payload }, { select, call, put }) {
+      const { currentProcessInstanceId } = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          currentProcessInstanceId
+        }
+      })
+      let res = yield call(getProcessInfo, currentProcessInstanceId)
+      if(isApiResponseOk(res)) {
+        //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
+        const curr_node_id = res.data.curr_node_id
+        let curr_node_sort
+        for (let i=0; i<res.data.nodes.length; i++ ) {
+          if(curr_node_id === res.data.nodes[i].id) {
+            curr_node_sort = res.data.nodes[i].sort
+            break
+          }
+        }
+        curr_node_sort = curr_node_sort || res.data.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processInfo: {...res.data, curr_node_sort},
+            processEditDatas: res.data.nodes || [],
+            processPageFlagStep: '4'
+          }
+        })
+        //查询流程动态
+        const res2 = yield call(getProessDynamics, {flow_instance_id: currentProcessInstanceId})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDynamics: res2.data
+            }
+          })
+        }else{
+
+        }
+      }else{
+
       }
     },
     * getProcessInfo({ payload }, { select, call, put }) {

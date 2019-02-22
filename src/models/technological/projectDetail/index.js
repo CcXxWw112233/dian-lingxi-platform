@@ -71,7 +71,7 @@ export default {
               projectRoles: [], //项目角色
               board_id,
               //全局任务key
-              appsSelectKey: undefined, //应用key
+              appsSelectKey: appsSelectKey, //应用key
               appsSelectKeyIsAreadyClickArray: [], //点击过的appsSelectKey push进数组，用来记录无需重新查询数据
               appsList: [], //全部app列表
               //项目详情和任务

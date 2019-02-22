@@ -90,10 +90,10 @@ export default {
             })
           }
 
-          dispatch({
-            type: 'getUserImToken',
-            payload: {}
-          })
+          // dispatch({
+          //   type: 'getUserImToken',
+          //   payload: {}
+          // })
         }
 
         //切换组织时需要重新加载

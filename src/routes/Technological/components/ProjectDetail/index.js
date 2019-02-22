@@ -87,6 +87,12 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
+    changeFlowIdToUrl(data) {
+      dispatch({
+        type: getEffectOrReducerByNameProcess('changeFlowIdToUrl'),
+        payload: data
+      })
+    },
     setMemberRoleInProject(data){
       dispatch({
         type: getEffectOrReducerByName('setMemberRoleInProject'),

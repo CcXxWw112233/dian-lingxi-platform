@@ -49,8 +49,9 @@ export default class MenuSearch extends React.Component{
 
   menuClick = ({ item, key, selectedKeys }) => {
     if(key) {
-      this.props.getProcessInfo({id: key})
-      this.props.updateDatasProcess({currentProcessInstanceId: key})
+      // this.props.getProcessInfo({id: key})
+      // this.props.updateDatasProcess({currentProcessInstanceId: key})
+      this.props.changeFlowIdToUrl({id: key, currentProcessInstanceId: key})
     }
   }
   addProcess = () => {
