@@ -247,9 +247,10 @@ export default class FileList extends React.Component {
     this.open(data, '2')
     const { file_id, version_id, file_resource_id } = data
     //接下来打开文件
-    this.props.updateDatasFile({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_resource_id, file_id})
-    this.props.fileVersionist({version_id: version_id})
+    // this.props.updateDatasFile({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
+    // this.props.filePreview({id: file_resource_id, file_id})
+    // this.props.fileVersionist({version_id: version_id})
+    this.props.openFileInUrl({file_id})
   }
 
   render() {
@@ -328,7 +329,6 @@ export default class FileList extends React.Component {
 
       },
     ];
-
 
     return (
       <div className={indexStyles.tableOut} style={{minHeight: (bodyOffsetHeight)}}>

@@ -160,3 +160,29 @@ export async function getFileCommitPoints(params) {
     params,
   });
 }
+
+
+//文件预览-通过file_id, 从分享url里面获取
+export async function filePreviewByUrl(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
+    method: 'GET',
+    params,
+  });
+}
+//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表
+export async function fileInfoByUrl(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/info/${params.id}`,
+    method: 'GET',
+    params,
+  });
+}
+//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)
+export async function fileInfoByUrl_2(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/info`,
+    method: 'GET',
+    params,
+  });
+}

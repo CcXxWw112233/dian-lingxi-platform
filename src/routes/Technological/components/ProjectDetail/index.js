@@ -333,6 +333,12 @@ const ProjectDetail = (props) => {
   const FileModuleProps = {
     modal,
     model,
+    openFileInUrl(data) {
+      dispatch({
+        type: getEffectOrReducerByNameFile('openFileInUrl'),
+        payload: data,
+      })
+    },
     postCommentToDynamics(data) {
       dispatch({
         type: getEffectOrReducerByNameFile('postCommentToDynamics'),

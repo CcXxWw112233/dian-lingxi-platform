@@ -83,6 +83,15 @@ export default {
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           const appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
+
+          //全局变化应用key
+          dispatch({
+            type: 'updateDatas',
+            payload: {
+              appsSelectKey
+            }
+          })
+
           if(!appsSelectKeyIsAreadyClickArray.length) { //如果还没有点过app,即从其他页面进来
             dispatch({ //查询项目角色列表
               type: 'getProjectRoles',

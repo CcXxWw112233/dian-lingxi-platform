@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
 import {
+  filePreviewByUrl,
+  fileInfoByUrl,
   addFileCommit, addNewFolder, deleteCommit, deleteFile, fileCopy, fileDownload, fileMove, filePreview, fileRemove,
   fileUpload,
   fileVersionist,
@@ -24,7 +26,7 @@ import {projectDetailInfo} from "../../../services/technological/prjectDetail";
 
 let board_id = null
 let appsSelectKey = null
-
+let file_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
   state: [],
@@ -35,6 +37,7 @@ export default modelExtend(projectDetail, {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
+        file_id = param.file_id
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
           dispatch({
@@ -42,7 +45,7 @@ export default modelExtend(projectDetail, {
             payload: {
               // 文档
               fileList: [], //文档列表
-              filedata_1: [], //文档列表--文件夹
+              filedata_1: [], //文档列表--文件夹breadcrumbList
               filedata_2: [], //文档列表--文件
               selectedRowKeys: [], //选择的列表项
               isInAddDirectory: false, //是否正在创建文件家判断标志
@@ -75,7 +78,21 @@ export default modelExtend(projectDetail, {
               id: board_id
             }
           })
+          if(file_id) {
+            dispatch({
+              type: 'previewFileByUrl',
+              payload: {
+                file_id,
+              }
+            })
+            dispatch({
+              type: 'fileInfoByUrl',
+              payload: {
+                file_id,
+              }
+            })
 
+          }
         }
       })
     },
@@ -94,7 +111,6 @@ export default modelExtend(projectDetail, {
             currentParrentDirectoryId: result.data.folder_id,
           }
         })
-
         yield put({
           type: 'getFileList',
           payload: {
@@ -110,6 +126,99 @@ export default modelExtend(projectDetail, {
       }else{
       }
     },
+    // 从url预览
+    * previewFileByUrl({ payload }, { select, call, put }) {
+      const { file_id } = payload
+      let res = yield call(filePreviewByUrl, {id: file_id})
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          isInOpenFile: true,
+          seeFileInput: 'fileModule',
+          filePreviewCurrentFileId: file_id,
+          // filePreviewCurrentId: file_resource_id,
+          // filePreviewCurrentVersionId: version_id
+        }
+
+      })
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewIsUsable: res.data.isUsable,
+            filePreviewUrl: res.data.url,
+            filePreviewIsRealImage: res.data.isRealImage,
+          }
+        })
+        const { file_id } = payload
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
+          }
+        })
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * fileInfoByUrl({ payload }, { select, call, put }) {
+      const { file_id } = payload
+      let res = yield call(fileInfoByUrl, {id: file_id})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCurrentVersionList: res.data.version_list,
+            filePreviewCurrentVersionId: res.data.version_list[0]['version_id']
+          }
+        })
+        let breadcrumbList = yield select(selectBreadcrumbList)
+        let arr = []
+        const target_path = res.data.target_path
+        //递归添加路径
+        const digui = (name, data) => {
+          if(data[name] && data['parent_id'] != '0') {
+            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+            digui(name, data[name])
+          }else {
+          }
+        }
+        digui('parent_folder', target_path)
+        const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2'})
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            breadcrumbList: newbreadcrumbList
+          }
+        })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * openFileInUrl({ payload }, { select, call, put }) {
+      const { file_id } = payload
+      yield put({
+        type: 'routingJump',
+        payload: {
+          route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}&file_id=${file_id}`
+        }
+      })
+    },
+
 
     * getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
@@ -183,6 +292,7 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
     * fileUpload({ payload }, { select, call, put }) {
       let res = yield call(fileUpload, payload)
       if(isApiResponseOk(res)) {
