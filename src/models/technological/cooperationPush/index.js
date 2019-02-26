@@ -25,12 +25,6 @@ const model_workbenchTaskDetail = name => `workbenchTaskDetail/${name}`
 const model_workbenchFileDetail = name => `workbenchFileDetail/${name}`
 const model_workbenchPublicDatas = name => `workbenchPublicDatas/${name}`
 
-window.onload = function () {
-  alert(3)
-  Cookies.set('wsLinking', 'false', {expires: 30, path: ''})
-  localStorage.removeItem(`newMessage`)
-}
-
 //消息推送model
 export default {
   namespace: 'cooperationPush',
@@ -41,23 +35,24 @@ export default {
         message.destroy()
         //头部table key
         if (location.pathname.indexOf('/technological') !== -1) {
-
-          //页面移出时对socket和socket缓存的内容清除
-
           //websocket连接判定
-          console.log('1111', Cookies.get('wsLinking'))
-          if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-            alert(1)
-            initWs()
+          setTimeout(function () {
+            console.log('1111', Cookies.get('wsLinking'))
+            if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+              initWs()
+            }
+          }, 3000)
+          //页面移出时对socket和socket缓存的内容清除
+          window.onload = function () {
+            Cookies.set('wsLinking', 'false', {expires: 30, path: ''})
+            localStorage.removeItem(`newMessage`)
           }
-
         }
 
       })
     },
   },
   effects: {
-
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
