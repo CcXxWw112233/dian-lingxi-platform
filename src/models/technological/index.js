@@ -70,15 +70,15 @@ export default {
             type: 'getCurrentUserOrganizes',
             payload: {}
           })
-          //websocket连接判定
-          if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-            initWs()
-          }
-          //页面移出时对socket和socket缓存的内容清除
-          window.onbeforeunload = function () {
-            Cookies.set('wsLinking', false, {expires: 30, path: ''})
-            localStorage.removeItem(`newMessage`)
-          }
+          // //websocket连接判定
+          // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+          //   // initWs()
+          // }
+          // //页面移出时对socket和socket缓存的内容清除
+          // window.onbeforeunload = function () {
+          //   Cookies.set('wsLinking', false, {expires: 30, path: ''})
+          //   localStorage.removeItem(`newMessage`)
+          // }
 
           //当前名词定义的方案
           const currentNounPlan = localStorage.getItem('currentNounPlan')

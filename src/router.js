@@ -116,6 +116,8 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/technological',
       models: () => [import('./models/technological'),
+        import('./models/technological/cooperationPush'),
+
         import('./models/technological/accountSet'),
         import('./models/technological/project'),
         import('./models/technological/projectDetail/index'),
