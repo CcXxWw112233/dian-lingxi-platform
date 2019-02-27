@@ -1,17 +1,12 @@
-import { getUSerInfo, logout } from '../../../services/technological'
-import { getOrganizationMemberPermissions, changeCurrentOrg, getSearchOrganizationList, createOrganization, updateOrganization, applyJoinOrganization, inviteJoinOrganization, getCurrentUserOrganizes } from '../../../services/technological/organizationMember'
-import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./../select";
-import { getCurrentNounPlan } from '../../../services/organization'
-import { isApiResponseOk } from '../../../utils/handleResponseData'
+
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs} from '../../../components/WsNewsDynamic'
-import { selectNewMessageItem, selectImData } from './../select'
 import QueryString from 'querystring'
-import {currentNounPlanFilterName} from "../../../utils/businessFunction";
-import {getUserImToken} from "../../../services/technological/workbench";
+import { selectDrawContent, selectCardId, selectTaskGroupList, selectGetTaskGroupListArrangeType } from './../select'
+
 
 //定义model名称
 const model_projectDetail = name => `projectDetail/${name}`
@@ -26,11 +21,13 @@ const model_workbenchFileDetail = name => `workbenchFileDetail/${name}`
 const model_workbenchPublicDatas = name => `workbenchPublicDatas/${name}`
 
 //消息推送model
+let dispathes
 export default {
   namespace: 'cooperationPush',
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
+      dispathes = dispatch
       history.listen((location) => {
         message.destroy()
         //头部table key
@@ -38,22 +35,18 @@ export default {
           //websocket连接判定
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
-            // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-            //   dispatch({
-            //     type: 'connectWsToModel',
-            //     payload: {}
-            //   })
-            //
-            // }
-            const calback = function (event) {
-              dispatch({
-                type: 'connectWsToModel',
-                payload: {
-                  event
-                }
-              })
+            if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+              const calback = function (event) {
+                dispatch({
+                  type: 'connectWsToModel',
+                  payload: {
+                    event
+                  }
+                })
+              }
+              initWs(calback)
             }
-            initWs(calback)
+
           }, 3000)
           //页面移出时对socket和socket缓存的内容清除
           window.onload = function () {
@@ -80,14 +73,52 @@ export default {
       yield put({
         type: 'handleWsData',
         payload: {
-          data
+          res: data
         }
       })
     },
 
-    * handleWsData({ payload }, { call, put }) {
-      const { data } = payload
+    * handleWsData({ payload }, { call, put, select }) {
+      const { res } = payload
+      const { data } = res
       console.log('eeedddaaa', data)
+
+      let coperate = data[0] //协作
+      let news = data[1] //消息
+      //获取消息协作类型
+      const coperateName = coperate.e
+      const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+      let coperateData = JSON.parse(coperate.d)
+
+      switch (coperateType) {
+        case 'change:card': //监听到修改任务
+          const drawContent = yield select(selectDrawContent)
+          const card_id = yield select(selectCardId)
+          const operate_card_id = coperateName.substring(coperateName.indexOf('/') + 1)
+          //如果当前查看的任务和推送的任务id一样，会发生更新
+          if(card_id == operate_card_id) {
+            dispathes({
+              type: model_projectDetailTask('updateDatas'),
+              payload: {
+                drawContent: {...drawContent, ...coperateData}
+              }
+            })
+          }
+          break
+        case 'change:cards':
+          const taskGroupList = yield select(selectTaskGroupList)
+          const { board_id, list_id, item = {card_name: '11', card_id: 'sss'} } = coperateData
+          for(let i = 0; i < taskGroupList.length; i++ ) {
+            if(list_id === taskGroupList[i]['list_id']){
+              taskGroupList[i]['card_data'].unshift(item)
+              break
+            }
+          }
+          console.log(coperateData)
+          break
+        default:
+          break
+      }
 
     },
 

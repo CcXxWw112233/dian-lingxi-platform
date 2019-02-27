@@ -38,6 +38,12 @@ export default modelExtend(projectDetail, {
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         card_id = param.card_id
+        dispatch({
+          type: 'updateDatas',
+          payload: {
+            card_id
+          }
+        })
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '3') {
           // dispatch({

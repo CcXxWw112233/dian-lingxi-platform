@@ -10,6 +10,8 @@ export const selectTaskGroupListIndexIndex = state => state[(`projectDetailTask`
 export const selectDrawContent = state => state[(`projectDetailTask`)].datas.drawContent //任务右方抽屉
 export const selectDrawerVisible = state => state[(`projectDetailTask`)].datas.drawerVisible //任务右方抽屉
 export const selectGetTaskGroupListArrangeType = state => state[(`projectDetailTask`)].datas.getTaskGroupListArrangeType
+export const selectCardId = state => state[(`projectDetailTask`)].datas.card_id
+
 
 //流程
 export const selectCurrentProcessInstanceId = state => state[(`projectDetailProcess`)].datas.currentProcessInstanceId //当前查看的流程实例id
