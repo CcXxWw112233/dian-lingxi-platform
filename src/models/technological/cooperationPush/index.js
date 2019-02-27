@@ -38,9 +38,22 @@ export default {
           //websocket连接判定
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
-            if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-              initWs()
+            // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+            //   dispatch({
+            //     type: 'connectWsToModel',
+            //     payload: {}
+            //   })
+            //
+            // }
+            const calback = function (event) {
+              dispatch({
+                type: 'connectWsToModel',
+                payload: {
+                  event
+                }
+              })
             }
+            initWs(calback)
           }, 3000)
           //页面移出时对socket和socket缓存的内容清除
           window.onload = function () {
@@ -53,6 +66,31 @@ export default {
     },
   },
   effects: {
+    * connectWsToModel({ payload }, { call, put }) {
+      const { event } = payload
+      if(!event) {
+        return
+      }
+      let data = event.data;
+      //服务器端回复心跳内容
+      if(data=="pong"){
+        return;
+      }
+      data = JSON.parse(data)
+      yield put({
+        type: 'handleWsData',
+        payload: {
+          data
+        }
+      })
+    },
+
+    * handleWsData({ payload }, { call, put }) {
+      const { data } = payload
+      console.log('eeedddaaa', data)
+
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));

@@ -3,7 +3,6 @@ import { Handler } from './Handler'
 import Cookies from 'js-cookie'
 import { WEBSOCKET_PATH, WEBSOCKET_PORT } from '../../globalset/js/constant'
 
-
 let ws_protocol = 'ws'; // ws 或 wss
 let ip = WEBSOCKET_PATH
 let port = WEBSOCKET_PORT
@@ -15,10 +14,10 @@ let handler = new Handler()
 let tiows
 const Authorization = Cookies.get('Authorization')
 const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
-const initWsFun = () => {
+const initWsFun = (calback) => {
   let queryString = `uid=${id}&token=${Authorization}`
   let param = null
-  tiows = new tio.ws(ws_protocol, ip, port, queryString, param, handler, heartbeatTimeout, reconnInterval, binaryType)
+  tiows = new tio.ws(ws_protocol, ip, port, queryString, param, handler, heartbeatTimeout, reconnInterval, binaryType, calback)
   tiows.connect()
 }
 export const sendWsFun =(value) => {
