@@ -12,7 +12,10 @@ import {
   selectGetTaskGroupListArrangeType,
   selectProjectDetailBoardId,
   selectCurrentProcessTemplateList,
-  selectCurrentProcessList
+  selectCurrentProcessList,
+  selectCurrentProcessInstanceId,
+  selectCurrentParrentDirectoryId,
+  selectFileList,
 } from './../select'
 
 //定义model名称
@@ -43,17 +46,25 @@ export default {
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
             if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-              const calback = function (event) {
-                dispatch({
-                  type: 'connectWsToModel',
-                  payload: {
-                    event
-                  }
-                })
-              }
-              initWs(calback)
+              // const calback = function (event) {
+              //   dispatch({
+              //     type: 'connectWsToModel',
+              //     payload: {
+              //       event
+              //     }
+              //   })
+              // }
+              // initWs(calback)
             }
-
+            const calback = function (event) {
+              dispatch({
+                type: 'connectWsToModel',
+                payload: {
+                  event
+                }
+              })
+            }
+            initWs(calback)
           }, 3000)
           //页面移出时对socket和socket缓存的内容清除
           window.onload = function () {
@@ -88,7 +99,8 @@ export default {
     * handleWsData({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
-      console.log('eeedddaaa', data)
+      console.log('eee', data)
+
       const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
       let coperate = data[0] //协作
@@ -97,12 +109,13 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
+      console.log('eee', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
 
-      let board_id_ = getAfterNameId(coperateName)
+      let board_id_
       switch (coperateType) {
         case 'change:card': //监听到修改任务
           const drawContent = yield select(selectDrawContent)
@@ -129,6 +142,7 @@ export default {
           }
           break
         case 'change:flow:template':
+          board_id_ = getAfterNameId(coperateName)
           if(board_id_ == currentProjectBoardId) {
             const { flow_template_list = [] } = coperateData
             dispathes({
@@ -140,6 +154,7 @@ export default {
           }
           break
         case 'change:flow:instance':
+          board_id_
           if(board_id_ == currentProjectBoardId) {
             const processList = yield select(selectCurrentProcessList)
             processList.push(coperateData)
@@ -151,7 +166,67 @@ export default {
             })
           }
           break
-        case '':
+        case 'change:flow':
+          const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
+          const flow_id = getAfterNameId(coperateName)
+          if(currentProcessInstanceId == flow_id) {
+            const curr_node_id = coperateData.curr_node_id
+            let curr_node_sort
+            for (let i = 0; i < coperateData.nodes.length; i++ ) {
+              if(curr_node_id === coperateData.nodes[i].id) {
+                curr_node_sort = coperateData.nodes[i].sort
+                break
+              }
+            }
+            curr_node_sort = curr_node_sort || coperateData.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
+            yield put({
+              type: model_projectDetailProcess('updateDatas'),
+              payload: {
+                processInfo: {...coperateData, curr_node_sort},
+                processEditDatas: coperateData.nodes || [],
+              }
+            })
+          }
+
+          break
+        case 'change:file':
+          const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+          const directoryId = getAfterNameId(coperateName)
+          //当当前的文件夹id 和操作的文件id的所属文件夹id 一样
+          if(currentParrentDirectoryId == directoryId) {
+            const fileList = yield select(selectFileList)
+            const fileType = coperateData.type
+            //fileType 2 表示新增文件 1 表示新增文件夹
+            //处理数据结构根据projectDetailFile =》 getFileList方法
+            if(fileType == '2') {
+              fileList.push(coperateData)
+              yield put({
+                type: model_projectDetailFile('updateDatas'),
+                payload: {
+                  fileList
+                }
+              })
+            } else if(fileType == '1') {
+              //先文件夹后文件
+              const obj = {...coperateData, file_name: coperateData['folder_name'], file_id: coperateData['folder_id']}
+              for(let i = 0; i < fileList.length; i++) {
+                if(fileList[i].type == '2') {
+                  if(i > 0) {
+                    fileList.splice(i, 0, obj )
+                  } else {
+                    fileList.unshift(obj )
+                  }
+                  yield put({
+                    type: model_projectDetailFile('updateDatas'),
+                    payload: {
+                      fileList
+                    }
+                  })
+                  break
+                }
+              }
+            }
+          }
           break
         default:
           break

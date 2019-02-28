@@ -23,6 +23,7 @@ export const selectCurrentProcessList = state => state[(`projectDetailProcess`)]
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id
 export const selectBreadcrumbList= state => state[(`projectDetailFile`)].datas.breadcrumbList //
 export const selectFilePreviewCommitPointNumber= state => state[(`projectDetailFile`)].datas.filePreviewCommitPointNumber
+export const selectFileList= state => state[(`projectDetailFile`)].datas.fileList
 
 //新消息
 export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem //
