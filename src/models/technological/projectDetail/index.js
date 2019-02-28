@@ -59,6 +59,13 @@ export default {
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
 
+        dispatch({
+          type: 'updateDatas',
+          payload: {
+            board_id
+          }
+        })
+
         const isInBoardDetailRouteChange = Cookies.get('isInBoardDetailRouteChange') //判断是否是在当前路由页面切换参数引起的页面变化
         const setIsInBoardDetailRouteChange = (val) => {
           Cookies.set('isInBoardDetailRouteChange', val, {expires: 30, path: ''})

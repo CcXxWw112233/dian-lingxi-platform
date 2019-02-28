@@ -1,5 +1,6 @@
 
 export const selectProjectDetailInfoData = state => state[(`projectDetail`)].datas.projectDetailInfoData //项目详情
+export const selectProjectDetailBoardId = state => state[(`projectDetail`)].datas.board_id //项目详情
 
 export const selectAppsSelectKey = state => state[(`projectDetail`)].datas.appsSelectKey //应用key
 export const selectAppsSelectKeyIsAreadyClickArray = state => state[(`projectDetail`)].datas.appsSelectKeyIsAreadyClickArray ////点击过的appsSelectKey push进数组，用来记录无需重新查询数据
@@ -15,6 +16,8 @@ export const selectCardId = state => state[(`projectDetailTask`)].datas.card_id
 
 //流程
 export const selectCurrentProcessInstanceId = state => state[(`projectDetailProcess`)].datas.currentProcessInstanceId //当前查看的流程实例id
+export const selectCurrentProcessTemplateList = state => state[(`projectDetailProcess`)].datas.processTemplateList
+export const selectCurrentProcessList = state => state[(`projectDetailProcess`)].datas.processList
 
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id

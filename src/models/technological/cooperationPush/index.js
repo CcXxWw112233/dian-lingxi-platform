@@ -5,8 +5,15 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import { initWs} from '../../../components/WsNewsDynamic'
 import QueryString from 'querystring'
-import { selectDrawContent, selectCardId, selectTaskGroupList, selectGetTaskGroupListArrangeType } from './../select'
-
+import {
+  selectDrawContent,
+  selectCardId,
+  selectTaskGroupList,
+  selectGetTaskGroupListArrangeType,
+  selectProjectDetailBoardId,
+  selectCurrentProcessTemplateList,
+  selectCurrentProcessList
+} from './../select'
 
 //定义model名称
 const model_projectDetail = name => `projectDetail/${name}`
@@ -82,6 +89,7 @@ export default {
       const { res } = payload
       const { data } = res
       console.log('eeedddaaa', data)
+      const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
       let coperate = data[0] //协作
       let news = data[1] //消息
@@ -90,6 +98,11 @@ export default {
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
 
+      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+        return coperateName.substring(coperateName.indexOf('/') + 1)
+      }
+
+      let board_id_ = getAfterNameId(coperateName)
       switch (coperateType) {
         case 'change:card': //监听到修改任务
           const drawContent = yield select(selectDrawContent)
@@ -114,7 +127,31 @@ export default {
               break
             }
           }
-          console.log(coperateData)
+          break
+        case 'change:flow:template':
+          if(board_id_ == currentProjectBoardId) {
+            const { flow_template_list = [] } = coperateData
+            dispathes({
+              type: model_projectDetailProcess('updateDatas'),
+              payload: {
+                processTemplateList: flow_template_list
+              }
+            })
+          }
+          break
+        case 'change:flow:instance':
+          if(board_id_ == currentProjectBoardId) {
+            const processList = yield select(selectCurrentProcessList)
+            processList.push(coperateData)
+            dispathes({
+              type: model_projectDetailProcess('updateDatas'),
+              payload: {
+                processList
+              }
+            })
+          }
+          break
+        case '':
           break
         default:
           break
