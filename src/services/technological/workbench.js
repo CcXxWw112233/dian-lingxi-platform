@@ -220,7 +220,7 @@ export async function getArticleDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/article/${params.id}`,
     method: 'GET',
-    params:{
+    params: {
       ...params,
       openid: '0',
     },

@@ -67,7 +67,7 @@ class DropdownSelectWithSearch extends Component {
           onChange={this.handleInputValueChange}
         />
         <Menu
-          defaultSelectedKeys={selectedItem.board_id ? [selectedItem.board_id] : []}
+          defaultSelectedKeys={selectedItem&&selectedItem.board_id ? [selectedItem.board_id] : []}
         >
           {/* <Menu.Item key="0">
             <a href="http://www.alipay.com/">1st menu item</a>
@@ -92,7 +92,7 @@ class DropdownSelectWithSearch extends Component {
           <div className={titleClassName}>
             <p>
               <span />
-              <span>{selectedItem.board_name ? selectedItem.board_name : initSearchTitle}</span>
+              <span>{selectedItem&&selectedItem.board_name ? selectedItem.board_name : initSearchTitle}</span>
               <span />
             </p>
           </div>

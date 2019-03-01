@@ -1,4 +1,5 @@
 import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads} from '../../../services/technological/workbench'
+import {addTask} from '../../../services/technological/task'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../../globalset/js/constant";
@@ -10,7 +11,6 @@ import technological from '../index'
 import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "../select";
 import {filePreview, fileDownload} from "../../../services/technological/file";
 import { postCommentToDynamics } from "../../../services/technological/library";
-import { stat } from 'fs';
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -44,7 +44,6 @@ export default modelExtend(technological, {
 
               currentOrgFileUploads: [], //当前组织下我上传的文档列表
               currentSelectedProjectMembersList: [],
-              currentSelectedProjectInAddTaskModal: {}, //添加任务弹窗当前选择的项目
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
             }
           })
@@ -77,9 +76,13 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    * addTask({payload}, {call, put}) {
+      const {data} = payload
+      const res = yield call(addTask, data)
+      console.log(res, 'add task')
+    },
     * handleCurrentSelectedProjectChange({payload}, {select, put, call}) {
       const {board_id} = payload
-      console.log(board_id, 'handleCurrentSelectedProjectChangehandleCurrentSelectedProjectChangehandleCurrentSelectedProjectChange')
       yield put({type: 'setProjectTabCurrentSelectedProject', payload: {
         projectId: board_id
       }})
@@ -170,7 +173,6 @@ export default modelExtend(technological, {
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
-      console.log(res, 'get all project list. --------------------------------------------------')
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -230,7 +232,6 @@ export default modelExtend(technological, {
       }
       if(isApiResponseOk(res)) {
         const {box_data, current_selected_board_id: projectId} = res.data
-        console.log(projectId, 'projectIdprojectIdprojectIdprojectIdprojectIdprojectIdprojectIdprojectId')
         const orgBoxList = [...box_data]
         const shouldSortedOrder = ['RESPONSIBLE_TASK', 'EXAMINE_PROGRESS', 'MEETIMG_ARRANGEMENT', 'MY_DOCUMENT']
         const boxListAfterSortedOrder = shouldSortedOrder.reduce((acc, curr) => {
@@ -254,7 +255,7 @@ export default modelExtend(technological, {
           }
         })
       }else{
-
+        message.warn('获取工作台看板数据失败， 请稍后再试')
       }
     },
     * getItemBoxFilter({ payload }, { select, call, put }) {
@@ -652,32 +653,5 @@ export default modelExtend(technological, {
         datas: {...state.datas, projectList: [shouldPrepositionProject, ...othersProjects]}
       }
     },
-    updateCurrentSelectedProjectInAddTaskModal(state, action) {
-      const {project} = action.payload
-      if(project === 'init') {
-        const projectList = state.datas.projectList
-        const projectTabCurrentSelectedProject = state.datas.projectTabCurrentSelectedProject
-        if(projectTabCurrentSelectedProject === '0') {
-          return {
-            ...state,
-            datas: {...state.datas, currentSelectedProjectInAddTaskModal: {}}
-          }
-        }else {
-          const findedCurrentProject = projectList.find(item => item.board_id === projectTabCurrentSelectedProject)
-          if(findedCurrentProject) {
-            return {
-              ...state,
-        datas: {...state.datas, currentSelectedProjectInAddTaskModal: {...findedCurrentProject}}
-            }
-          }else{
-            return state
-          }
-        }
-      }
-      return {
-        ...state,
-        datas: {...state.datas, currentSelectedProjectInAddTaskModal: {...project}}
-      }
-    }
   },
 });

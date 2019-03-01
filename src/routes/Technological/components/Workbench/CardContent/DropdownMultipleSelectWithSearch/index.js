@@ -63,11 +63,14 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
   };
   handleSelectedItem = selectedKeys => {
+    const {handleSelectedItemChange} = this.props
     this.setState((state, props) => {
+      const hasSelectedList = selectedKeys.map(item =>
+        props.list.find(i => i.id === item)
+      )
+      handleSelectedItemChange(hasSelectedList)
       return {
-        selectedList: selectedKeys.map(item =>
-          props.list.find(i => i.id === item)
-        )
+        selectedList: hasSelectedList
       };
     });
   };

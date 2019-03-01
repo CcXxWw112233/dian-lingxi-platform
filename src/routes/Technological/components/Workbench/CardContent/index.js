@@ -42,14 +42,15 @@ export default class CardContent extends React.Component {
     //修改项目名称所需state
     localTitle: "",
     isInEditTitle: false,
-    addTaskModalVisible: false
+    addTaskModalVisible: false,
+    addMeetingModalVisible: false,
   };
   componentWillMount() {
     const { CardContentType, boxId } = this.props;
     switch (CardContentType) {
       case "RESPONSIBLE_TASK":
-      let that = this
-      // Promise.resolve(that.props.setProjectTabCurrentSelectedProject('0')).then(() => this.props.getResponsibleTaskList({ id: boxId }))
+        let that = this;
+        // Promise.resolve(that.props.setProjectTabCurrentSelectedProject('0')).then(() => this.props.getResponsibleTaskList({ id: boxId }))
         this.props.getResponsibleTaskList({ id: boxId });
         break;
       case "EXAMINE_PROGRESS": //待处理的流程
@@ -171,48 +172,87 @@ export default class CardContent extends React.Component {
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
   }
-  handleAddTask = (type) => {
-    const {dispatch} = this.props
-    console.log(type, 'clicked modal type.')
-    if(type === 'RESPONSIBLE_TASK') {
-
+  handleAddTask = type => {
+    this.handleAddATask(type);
+  };
+  handleAddATask = type => {
+    const modalObj = {
+      'RESPONSIBLE_TASK': 'addTaskModalVisible',
+      'MEETIMG_ARRANGEMENT': 'addMeetingModalVisible'
     }
-    console.log(dispatch, 'dispatch')
-    Promise.resolve(dispatch({
-      type: 'workbench/updateCurrentSelectedProjectInAddTaskModal',
-      payload: {
-        project: 'init'
+    const visibleType = Object.keys(modalObj).find(item => item === type)
+    if(!visibleType){
+      return
+    }
+    // if (type !== "RESPONSIBLE_TASK") {
+    //   return;
+    // }
+    const {
+      dispatch,
+      model: {
+        datas: { projectList, projectTabCurrentSelectedProject }
       }
-    })).then(() => this.setState({
-      addTaskModalVisible: true
-    }))
+    } = this.props;
+    //如果当前的项目选择不是 "所有参与的项目", 并且用户的项目列表，有当前选择的项目，那么就去拉取当前项目的所有用户
+    const isProjectListExistCurrentSelectedProject = projectList.find(
+      item => item.board_id === projectTabCurrentSelectedProject
+    );
 
+    const visibleValue = modalObj[visibleType]
+    if (
+      isProjectListExistCurrentSelectedProject &&
+      projectTabCurrentSelectedProject !== "0"
+    ) {
+      Promise.resolve(
+        dispatch({
+          type: "workbench/fetchCurrentSelectedProjectMembersList",
+          payload: {
+            projectId: projectTabCurrentSelectedProject
+          }
+        })
+      ).then(() =>
+        this.setState({
+          [visibleValue]: true
+        })
+      );
+    } else {
+      this.setState({
+        [visibleValue]: true
+      });
+    }
   };
   addTaskModalVisibleChange = flag => {
     this.setState({
       addTaskModalVisible: flag
     });
   };
-  noContentTooltip = (prompt = '添加任务', type = 'RESPONSIBLE_TASK') => {
-    return (<>
-        <div className={indexstyles.operatorBar}>
-      <Tooltip title={prompt}>
-        <p onClick={() => this.handleAddTask(type)}>
-          <span></span>
-        </p>
-      </Tooltip>
-    </div>
-    </>)
+  addMeetingModalVisibleChange = flag => {
+    this.setState({
+      addMeetingModalVisible: flag
+    })
   }
-  noContent = (prompt = '添加任务', type = 'RESPONSIBLE_TASK') => {
+  noContentTooltip = (prompt = "添加任务", type = "RESPONSIBLE_TASK") => {
     return (
       <>
-      <div className={indexstyles.noContentWrapper}>
-        <p className={indexstyles.noContentImg} />
-        <p className={indexstyles.noContentHint}>暂无数据</p>
-      </div>
-      {this.noContentTooltip(prompt, type)}
-    </>
+        <div className={indexstyles.operatorBar}>
+          {/* <Tooltip title={prompt}> */}
+            <p onClick={() => this.handleAddTask(type)}>
+              <span />
+            </p>
+          {/* </Tooltip> */}
+        </div>
+      </>
+    );
+  };
+  noContent = (prompt = "添加任务", type = "RESPONSIBLE_TASK") => {
+    return (
+      <>
+        <div className={indexstyles.noContentWrapper}>
+          <p className={indexstyles.noContentImg} />
+          <p className={indexstyles.noContentHint}>暂无数据</p>
+        </div>
+        {this.noContentTooltip(prompt, type)}
+      </>
     );
   };
   render() {
@@ -227,12 +267,13 @@ export default class CardContent extends React.Component {
       projectList = [],
       schedulingList = [],
       journeyList = [],
-      todoList = []
+      todoList = [],
+      projectTabCurrentSelectedProject
     } = datas;
     const { title, CardContentType, itemValue = {} } = this.props;
     const { selected_board_data = [] } = itemValue; //已选board id
 
-    const { localTitle, isInEditTitle, addTaskModalVisible } = this.state;
+    const { localTitle, isInEditTitle, addTaskModalVisible, addMeetingModalVisible } = this.state;
     const filterItem = CardContentType => {
       let contanner = <div />;
       switch (CardContentType) {
@@ -254,11 +295,11 @@ export default class CardContent extends React.Component {
                   />
                 ))}
               </div>
-              {this.noContentTooltip('添加任务', 'RESPONSIBLE_TASK')}
+              {this.noContentTooltip("添加任务", "RESPONSIBLE_TASK")}
             </div>
           ) : (
             // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent('添加任务', 'RESPONSIBLE_TASK')}</>
+            <>{this.noContent("添加任务", "RESPONSIBLE_TASK")}</>
           );
           break;
         //审核
@@ -266,15 +307,15 @@ export default class CardContent extends React.Component {
           contanner = backLogProcessList.length ? (
             <div>
               <div>
-            {backLogProcessList.map((value, key) => (
-              <ProcessItem {...this.props} key={key} itemValue={value} />
-            ))}
-            </div>
-            {this.noContentTooltip('发起流程', 'EXAMINE_PROGRESS')}
+                {backLogProcessList.map((value, key) => (
+                  <ProcessItem {...this.props} key={key} itemValue={value} />
+                ))}
+              </div>
+              {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")}
             </div>
           ) : (
             // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent('发起流程', '"EXAMINE_PROGRESS"')}</>
+            <>{this.noContent("发起流程", '"EXAMINE_PROGRESS"')}</>
           );
           break;
         //我参与的会议
@@ -282,24 +323,24 @@ export default class CardContent extends React.Component {
           contanner = meetingLsit.length ? (
             <div>
               <div>
-            {meetingLsit.map((value2, key2) => {
-              return (
-                <MeetingItem
-                  {...this.props}
-                  key={key2}
-                  itemKey={key2}
-                  itemValue={value2}
-                  setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                    this
-                  )}
-                />
-              );
-            })}
-            </div>
-            {this.noContentTooltip('添加日程', "MEETIMG_ARRANGEMENT")}
+                {meetingLsit.map((value2, key2) => {
+                  return (
+                    <MeetingItem
+                      {...this.props}
+                      key={key2}
+                      itemKey={key2}
+                      itemValue={value2}
+                      setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
+                        this
+                      )}
+                    />
+                  );
+                })}
+              </div>
+              {this.noContentTooltip("添加日程", "MEETIMG_ARRANGEMENT")}
             </div>
           ) : (
-            <>{this.noContent('添加日程', "MEETIMG_ARRANGEMENT")}</>
+            <>{this.noContent("添加日程", "MEETIMG_ARRANGEMENT")}</>
             // <div style={{marginTop: 12}}>暂无数据</div>
           );
           break;
@@ -308,24 +349,22 @@ export default class CardContent extends React.Component {
           contanner = uploadedFileList.length ? (
             <div>
               <div>
-                {
-                  uploadedFileList.map((value, key) => (
-                    <FileItem
-                      {...this.props}
-                      key={key}
-                      itemValue={value}
-                      setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
-                        this
-                      )}
-                    />
-                  ))
-                }
+                {uploadedFileList.map((value, key) => (
+                  <FileItem
+                    {...this.props}
+                    key={key}
+                    itemValue={value}
+                    setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
+                      this
+                    )}
+                  />
+                ))}
               </div>
-              {this.noContentTooltip('上传文档', "MY_DOCUMENT")}
+              {this.noContentTooltip("上传文档", "MY_DOCUMENT")}
             </div>
           ) : (
             // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent('上传文档', "MY_DOCUMENT")}</>
+            <>{this.noContent("上传文档", "MY_DOCUMENT")}</>
           );
           break;
         case "joinedFlows": //参与的流程
@@ -521,9 +560,20 @@ export default class CardContent extends React.Component {
           )}
         />
         <AddTaskModal
+          modalTitle='添加任务'
+          taskType='RESPONSIBLE_TASK'
+          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
           projectList={projectList}
           addTaskModalVisible={addTaskModalVisible}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange}
+        />
+        <AddTaskModal
+          modalTitle='添加日程'
+          taskType='MEETIMG_ARRANGEMENT'
+          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          projectList={projectList}
+          addTaskModalVisible={addMeetingModalVisible}
+          addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
         />
         {/*{('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (*/}
         {/*<FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />*/}
