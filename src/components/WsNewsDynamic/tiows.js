@@ -48,7 +48,9 @@ tio.ws = function (ws_url, ip, port, paramStr, param, handler, heartbeatTimeout,
     if (isReconnect) {
       const Authorization = Cookies.get('Authorization')
       const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
-      _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+      // _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+      _url = `${ws_url}?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+
     }
     let ws = new WebSocket(_url)
     this.ws = ws
