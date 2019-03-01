@@ -210,8 +210,9 @@ export default {
               for( let i =0; i < fileList.length; i++ ) {
                 if(fileList[i]['file_id'] == id) {
                   fileList.splice(i, 1)
+                  break
                 }
-                break
+
               }
             } else {
               //fileType 2 表示新增文件 1 表示新增文件夹
@@ -234,17 +235,17 @@ export default {
                     } else {
                       fileList.unshift(obj )
                     }
-                    dispathes({
-                      type: model_projectDetailFile('updateDatas'),
-                      payload: {
-                        fileList
-                      }
-                    })
                     break
                   }
                 }
               }
             }
+            dispathes({
+              type: model_projectDetailFile('updateDatas'),
+              payload: {
+                fileList
+              }
+            })
 
           }
           break
@@ -294,14 +295,12 @@ export default {
           const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
 
           //删除点 存在最后一条is_last和点flag
-          let flag_ = coperateData('flag')
-          let is_last = coperateData('is_last')
-          if(flag_ && is_last) {
-            // alert(1)
+          let flag_ = coperateData['flag']
+          let is_last = coperateData['is_last']
+          if(flag_ && is_last == '1') {
             for(let i = 0; i < filePreviewCommitPoints.length; i ++) {
               if(filePreviewCommitPoints[i]['flag'] == flag_) {
-                // alert(2)
-                filePreviewCommitPoints.splice(i, 0)
+                filePreviewCommitPoints.splice(i, 1)
                 break
               }
             }
@@ -315,7 +314,6 @@ export default {
               }
             }
           }
-
 
           if(filePreviewCommits) { //处理整体评论
             for(let i = 0; i < filePreviewCommits.length; i ++) {
@@ -334,6 +332,44 @@ export default {
               filePreviewCommitPoints
             }
           })
+          break
+        case 'change:file:operation':
+          let ids = getAfterNameId(coperateName)
+          let idArr = ids.split('/')
+          let fileList_ = yield select(selectFileList)
+          let folder_id = yield select(selectCurrentParrentDirectoryId)
+          let coFileList = coperateData['file_list']
+          if(idArr.length == 1) { //复制
+            if(idArr[0] == folder_id) {
+              fileList_ = [].concat(fileList_, coFileList)
+            }
+          }else if(idArr.length == 2) { //移动
+            if(idArr[0] != idArr[1]) { ////移入的文件和移除的文件夹不是同一个
+              if(idArr[1] == folder_id) { //当前文件夹有文件移除
+                 for(let i = 0; i< fileList_.length; i++) {
+                   for (let j = 0; j < coFileList.length; j++) {
+                     if(fileList_[i]['file_id'] == coFileList[j]['file_id']) {
+                       fileList_.splice(i, 1)
+                       break
+                     }
+
+                   }
+                 }
+              }else if(idArr[0] == folder_id){ //当前文件夹有文件移进
+                fileList_ = [].concat(fileList_, coFileList)
+              }
+
+            }
+          } else {
+
+          }
+          dispathes({
+            type: model_projectDetailFile('updateDatas'),
+            payload: {
+              fileList: fileList_
+            }
+          })
+
           break
         default:
           break
