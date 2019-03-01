@@ -1,4 +1,4 @@
-import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads} from '../../../services/technological/workbench'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads} from '../../../services/technological/workbench'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../../globalset/js/constant";
@@ -10,6 +10,7 @@ import technological from '../index'
 import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "../select";
 import {filePreview, fileDownload} from "../../../services/technological/file";
 import { postCommentToDynamics } from "../../../services/technological/library";
+import { stat } from 'fs';
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -42,6 +43,9 @@ export default modelExtend(technological, {
               current_file_resource_id: '', //当前操作文档id
 
               currentOrgFileUploads: [], //当前组织下我上传的文档列表
+              currentSelectedProjectMembersList: [],
+              currentSelectedProjectInAddTaskModal: {}, //添加任务弹窗当前选择的项目
+              projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
             }
           })
           dispatch({
@@ -73,6 +77,71 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    * handleCurrentSelectedProjectChange({payload}, {select, put, call}) {
+      const {board_id} = payload
+      console.log(board_id, 'handleCurrentSelectedProjectChangehandleCurrentSelectedProjectChangehandleCurrentSelectedProjectChange')
+      yield put({type: 'setProjectTabCurrentSelectedProject', payload: {
+        projectId: board_id
+      }})
+      //除了'所有参与的项目', 使选中的项目排在第一个
+      if(board_id !== '0') {
+        yield put({type: 'reSortProjectList', payload: {board_id}})
+      }
+      //设置项目 id
+      const setProjectIdRes = yield call(setCurrentProjectIdToServer, {payload: {id: board_id}})
+      if(isApiResponseOk(setProjectIdRes)){
+      const [responsibleTaskListRes, backLogProcessListRes, meetingListRes, orgFileUploadsRes] = yield [
+        call(getCurrentResponsibleTask),
+        call(getCurrentBackLogProcessList),
+        call(getCurrentMeetingList),
+        call(getcurrentOrgFileUploads)
+      ]
+      const isAllResOk = () => isApiResponseOk(responsibleTaskListRes) && isApiResponseOk(backLogProcessListRes) && isApiResponseOk(meetingListRes) && isApiResponseOk(orgFileUploadsRes)
+      if(isAllResOk()) {
+        yield [
+           put({
+            type: 'updateDatas',
+            payload: {
+              responsibleTaskList: responsibleTaskListRes.data
+            }
+          }),
+          put({
+            type: 'updateDatas',
+            payload: {
+              backLogProcessList: backLogProcessListRes.data
+            }
+          }),
+          put({
+            type: 'updateDatas',
+            payload: {
+              meetingLsit: meetingListRes.data
+            }
+          }),
+          put({
+            type: 'updateDatas',
+            payload: {
+              uploadedFileList: orgFileUploadsRes.data,
+            }
+          })
+        ]
+      } else {
+        message.warn('获取当前项目数据失败， 请稍后再试')
+      }
+      } else {
+         message.warn('切换项目失败，请稍后再试')
+      }
+    },
+    * fetchCurrentSelectedProjectMembersList({payload: {projectId}}, {call, put}) {
+      let res = yield call(getCurrentSelectedProjectMembersList, {projectId})
+      if(isApiResponseOk(res)){
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentSelectedProjectMembersList: res.data
+          }
+        })
+      }
+    },
     * getUserImToken({ payload }, { select, call, put }) {
       let res = yield call(getUserImToken, payload)
       if(isApiResponseOk(res)) {
@@ -101,6 +170,7 @@ export default modelExtend(technological, {
 
     * getProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
+      console.log(res, 'get all project list. --------------------------------------------------')
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -159,10 +229,28 @@ export default modelExtend(technological, {
         calback()
       }
       if(isApiResponseOk(res)) {
+        const {box_data, current_selected_board_id: projectId} = res.data
+        console.log(projectId, 'projectIdprojectIdprojectIdprojectIdprojectIdprojectIdprojectIdprojectId')
+        const orgBoxList = [...box_data]
+        const shouldSortedOrder = ['RESPONSIBLE_TASK', 'EXAMINE_PROGRESS', 'MEETIMG_ARRANGEMENT', 'MY_DOCUMENT']
+        const boxListAfterSortedOrder = shouldSortedOrder.reduce((acc, curr) => {
+          const box = orgBoxList.find(item => item.code === curr)
+          if(box) {
+            return [...acc, box]
+          } else {
+            return acc
+          }
+        }, [])
         yield put({
           type: 'updateDatas',
           payload: {
-            boxList: res.data
+            boxList: boxListAfterSortedOrder
+          }
+        })
+        yield put({
+          type: 'setProjectTabCurrentSelectedProject',
+          payload: {
+            projectId: projectId
           }
         })
       }else{
@@ -221,7 +309,8 @@ export default modelExtend(technological, {
       }
     },
     * getMeetingList({ payload }, { select, call, put }) {
-      let res = yield call(getMeetingList, payload)
+      // let res = yield call(getMeetingList, payload)
+      let res = yield call(getCurrentMeetingList)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -233,8 +322,9 @@ export default modelExtend(technological, {
 
       }
     },
-    * getResponsibleTaskList({ payload }, { select, call, put }) {
-      let res = yield call(getResponsibleTaskList, payload)
+    * getResponsibleTaskList(_, { select, call, put }) {
+      let res = yield call(getCurrentResponsibleTask)
+      // let res = yield call(getResponsibleTaskList, payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -247,7 +337,8 @@ export default modelExtend(technological, {
       }
     },
     * getUploadedFileList({ payload }, { select, call, put }) {
-      let res = yield call(getUploadedFileList, payload)
+      // let res = yield call(getUploadedFileList, payload)
+      let res = yield call(getcurrentOrgFileUploads)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -260,7 +351,8 @@ export default modelExtend(technological, {
       }
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
-      let res = yield call(getBackLogProcessList, payload)
+      // let res = yield call(getBackLogProcessList, payload)
+      let res = yield call(getCurrentBackLogProcessList)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -535,6 +627,56 @@ export default modelExtend(technological, {
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },
+      }
+    },
+    emptyCurrentSelectedProjectMembersList(state, action) {
+      return {
+        ...state,
+        datas: {...state.datas, currentSelectedProjectMembersList: []}
+      }
+    },
+    setProjectTabCurrentSelectedProject(state, action) {
+      const {projectId} = action.payload
+      return {
+        ...state,
+        datas: {...state.datas, projectTabCurrentSelectedProject: projectId}
+      }
+    },
+    reSortProjectList(state, action) {
+      const {board_id} = action.payload
+      const shouldPrepositionProject = state.datas.projectList.find(item => item.board_id === board_id)
+      const othersProjects = state.datas.projectList.filter(item => item.board_id !== board_id)
+
+      return {
+        ...state,
+        datas: {...state.datas, projectList: [shouldPrepositionProject, ...othersProjects]}
+      }
+    },
+    updateCurrentSelectedProjectInAddTaskModal(state, action) {
+      const {project} = action.payload
+      if(project === 'init') {
+        const projectList = state.datas.projectList
+        const projectTabCurrentSelectedProject = state.datas.projectTabCurrentSelectedProject
+        if(projectTabCurrentSelectedProject === '0') {
+          return {
+            ...state,
+            datas: {...state.datas, currentSelectedProjectInAddTaskModal: {}}
+          }
+        }else {
+          const findedCurrentProject = projectList.find(item => item.board_id === projectTabCurrentSelectedProject)
+          if(findedCurrentProject) {
+            return {
+              ...state,
+        datas: {...state.datas, currentSelectedProjectInAddTaskModal: {...findedCurrentProject}}
+            }
+          }else{
+            return state
+          }
+        }
+      }
+      return {
+        ...state,
+        datas: {...state.datas, currentSelectedProjectInAddTaskModal: {...project}}
       }
     }
   },

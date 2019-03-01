@@ -169,7 +169,6 @@ class BindAccountForm extends React.Component {
           </FormItem>
         </Form>
       </div>
-
     );
   }
 }

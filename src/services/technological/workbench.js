@@ -1,6 +1,57 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN,REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+
+//每次点击选区project的时候， 发送 board_id (project id) 给后台， -_- ..
+export async function setCurrentProjectIdToServer({payload: {id}}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/set`,
+    method: 'PUT',
+    data: {
+      id
+    }
+  })
+}
+
+//获取当前项目我的文档
+export async function getcurrentOrgFileUploads() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我参与的会议
+export async function getCurrentMeetingList() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我审核的流程
+export async function getCurrentBackLogProcessList() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/backlog`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我负责的任务
+export async function getCurrentResponsibleTask() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible`,
+    method: 'GET'
+  })
+}
+
+//获取当前选择的项目的成员列表
+export async function getCurrentSelectedProjectMembersList({projectId}) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,
+    method: 'GET'
+  })
+}
 
 //获取项目列表
 export async function getProjectList(params) {
