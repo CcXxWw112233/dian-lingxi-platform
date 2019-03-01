@@ -65,6 +65,10 @@ export default {
           //     })
           //   }
           // }
+          dispatch({
+            type: 'fetchBoxAll',
+            payload: {}
+          })
           //查询所在组织列表
           dispatch({
             type: 'getCurrentUserOrganizes',
@@ -141,6 +145,7 @@ export default {
 
     * getUSerInfo({ payload }, { select, call, put }) { //提交表单
       let res = yield call(getUSerInfo, payload)
+      console.log(res, 'current user info includes origanition info----------------------------------------')
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -200,6 +205,7 @@ export default {
     //组织 -----------
     * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
       let res = yield call(getCurrentUserOrganizes, {})
+      console.log(res, 'get current use organization list.+++++++++++++++++++++++++++++++++++')
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

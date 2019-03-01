@@ -10,6 +10,7 @@ import EditCardDrop from './HeaderComponent/EditCardDrop'
 import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
+import ProjectListBar from './ProjectListBar'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -202,6 +203,14 @@ const Workbench = (props) => {
       dispatch({
         type: getEffectOrReducerByName('updateBox'),
         payload: data
+      })
+    },
+    setProjectTabCurrentSelectedProject(projectId) {
+      dispatch({
+        type: 'workbench/setProjectTabCurrentSelectedProject',
+        payload: {
+          projectId
+        }
       })
     }
   }
@@ -591,6 +600,7 @@ const Workbench = (props) => {
     <div>
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       <Header {...cardContentListProps} />
+      <ProjectListBar />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        <GroupContent {...props} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
     </div>
