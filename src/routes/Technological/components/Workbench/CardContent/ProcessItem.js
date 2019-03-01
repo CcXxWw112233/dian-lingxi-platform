@@ -4,13 +4,12 @@ import { Icon } from 'antd'
 import Cookies from 'js-cookie'
 
 export default class ProcessItem extends React.Component {
-  gotoBoardDetail(board_id) {
-    Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    this.props.routingJump('/technological/projectDetail')
+  gotoBoardDetail({flow_instance_id, board_id}) {
+    this.props.routingJump(`/technological/projectDetail?board_id=${board_id}&appsSelectKey=2&flow_id=${flow_instance_id}`)
   }
   render() {
     const { itemValue = {} } = this.props
-    const { flow_node_name, name, board_name, board_id, status='1' } = itemValue //status 1running 2stop 3 complete
+    const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
     const filterColor = (status)=> {
       let color = '#f2f2f2'
       if('1' ===status){
@@ -26,7 +25,7 @@ export default class ProcessItem extends React.Component {
     }
     return (
       <div className={indexstyles.processItem}>
-        <div>{flow_node_name || name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div>{flow_node_name || name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, {flow_instance_id, board_id})}>#{board_name}</span></div>
         <div>
           <div style={{backgroundColor: filterColor(status)}}></div>
         </div>

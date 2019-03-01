@@ -15,10 +15,10 @@ tio.ws = {}
  * @param {*} reconnInterval 重连间隔时间 单位：毫秒
  * @param {*} binaryType 'blob' or 'arraybuffer';//arraybuffer是字节
  */
-tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTimeout, reconnInterval, binaryType, calback) {
+tio.ws = function (ws_url, ip, port, paramStr, param, handler, heartbeatTimeout, reconnInterval, binaryType, calback) {
   this.ip = ip
   this.port = port
-  this.url = ws_protocol + '://' + ip + ':' + port
+  this.url = ws_url//ws_protocol + '://' + ip + ':' + port
   this.binaryType = binaryType || 'arraybuffer'
 
   if (paramStr) {

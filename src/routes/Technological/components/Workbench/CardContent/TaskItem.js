@@ -20,9 +20,9 @@ export default class TaskItem extends React.Component {
     this.props.updateDatas({responsibleTaskList})
     this.props.completeTask(obj)
   }
-  gotoBoardDetail(board_id, e) {
-    Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    this.props.routingJump('/technological/projectDetail')
+  gotoBoardDetail({id, board_id}, e) {
+    // Cookies.set('board_id', board_id, {expires: 30, path: ''})
+    this.props.routingJump(`/technological/projectDetail?board_id=${board_id}&appsSelectKey=3&card_id=${id}`)
   }
   itemClick(data, e) {
     const { id, board_id } = data
@@ -65,7 +65,7 @@ export default class TaskItem extends React.Component {
               <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', }} key={key} onClick={this.itemClick.bind(this, {id, board_id })}>{`< ${name}`}</span>
             )
           })}
-          <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', }} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span>
+          <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', }} onClick={this.gotoBoardDetail.bind(this, {id, board_id})}>#{board_name}</span>
         </div>
       </div>
     )

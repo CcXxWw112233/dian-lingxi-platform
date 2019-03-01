@@ -49,10 +49,9 @@ export default class FileItem extends React.Component {
     }
     return themeCode
   }
-  gotoBoardDetail(board_id, e) {
+  gotoBoardDetail({id, board_id }, e) {
     stopPropagation(e)
-    Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    this.props.routingJump('/technological/projectDetail')
+    this.props.routingJump(`/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}`)
   }
   previewFile(data, e) {
     const { board_id, board_name, file_name, create_time, file_resource_id, file_id, id, folder_id } = data
@@ -83,7 +82,7 @@ export default class FileItem extends React.Component {
         <div>
           <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 20, color: '#1890FF', cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>
         </div>
-        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, board_id)}>#{board_name}</span></div>
+        <div><span className={indexstyles.hoverUnderline}>{file_name}</span><span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, {id, board_id})}>#{board_name}</span></div>
         <div>
           {timestampToTimeNormal(create_time, '/', true) }
         </div>
