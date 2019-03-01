@@ -196,36 +196,50 @@ export default {
           if(currentParrentDirectoryId == directoryId) {
             const fileList = yield select(selectFileList)
             const fileType = coperateData.type
-            //fileType 2 表示新增文件 1 表示新增文件夹
-            //处理数据结构根据projectDetailFile =》 getFileList方法
-            if(fileType == '2') {
-              fileList.push(coperateData)
-              yield put({
-                type: model_projectDetailFile('updateDatas'),
-                payload: {
-                  fileList
+
+            const { status } = coperateData
+            //status 2删除
+            if(status == '2') {
+              const { id } = coperateData
+              for( let i =0; i < fileList.length; i++ ) {
+                if(fileList[i]['file_id'] == id) {
+                  fileList.splice(i, 1)
                 }
-              })
-            } else if(fileType == '1') {
-              //先文件夹后文件
-              const obj = {...coperateData, file_name: coperateData['folder_name'], file_id: coperateData['folder_id']}
-              for(let i = 0; i < fileList.length; i++) {
-                if(fileList[i].type == '2') {
-                  if(i > 0) {
-                    fileList.splice(i, 0, obj )
-                  } else {
-                    fileList.unshift(obj )
+                break
+              }
+            } else {
+              //fileType 2 表示新增文件 1 表示新增文件夹
+              //处理数据结构根据projectDetailFile =》 getFileList方法
+              if(fileType == '2') {
+                fileList.push(coperateData)
+                yield put({
+                  type: model_projectDetailFile('updateDatas'),
+                  payload: {
+                    fileList
                   }
-                  yield put({
-                    type: model_projectDetailFile('updateDatas'),
-                    payload: {
-                      fileList
+                })
+              } else if(fileType == '1') {
+                //先文件夹后文件
+                const obj = {...coperateData, file_name: coperateData['folder_name'], file_id: coperateData['folder_id']}
+                for(let i = 0; i < fileList.length; i++) {
+                  if(fileList[i].type == '2') {
+                    if(i > 0) {
+                      fileList.splice(i, 0, obj )
+                    } else {
+                      fileList.unshift(obj )
                     }
-                  })
-                  break
+                    yield put({
+                      type: model_projectDetailFile('updateDatas'),
+                      payload: {
+                        fileList
+                      }
+                    })
+                    break
+                  }
                 }
               }
             }
+
           }
           break
         default:

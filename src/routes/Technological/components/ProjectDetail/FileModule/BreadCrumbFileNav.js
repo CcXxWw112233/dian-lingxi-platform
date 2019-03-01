@@ -27,7 +27,7 @@ export default class BreadCrumbFileNav extends React.Component {
           >
             {breadcrumbList.map((value, key) => {
               return(
-                <Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this,{value, key})}>{value.file_name}</Breadcrumb.Item>
+                <Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this, {value, key})}>{value && value.file_name}</Breadcrumb.Item>
               )
             })}
           </Breadcrumb>

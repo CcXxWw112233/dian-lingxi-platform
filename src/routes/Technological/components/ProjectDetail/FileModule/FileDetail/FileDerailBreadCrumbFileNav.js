@@ -48,7 +48,7 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
             separator=">"
           >
             {breadcrumbList.map((value, key) => {
-              return (<Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this,{value, key})}>{value.file_name}</Breadcrumb.Item> )
+              return (<Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this,{value, key})}>{value && value.file_name}</Breadcrumb.Item> )
             })}
           </Breadcrumb>
           <Dropdown overlay={menu}>

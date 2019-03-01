@@ -176,7 +176,7 @@ export default modelExtend(projectDetail, {
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data.version_list,
-            filePreviewCurrentVersionId: res.data.version_list[0]['version_id']
+            filePreviewCurrentVersionId: res.data.version_list.length?res.data.version_list[0]['version_id']: ''
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList)
