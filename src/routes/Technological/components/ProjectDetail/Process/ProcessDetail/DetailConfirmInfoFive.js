@@ -48,7 +48,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
 
@@ -71,7 +71,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     }
 
     processEditDatas[itemKey]['assignees'] = assignees
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
     //重新指派推进人接口

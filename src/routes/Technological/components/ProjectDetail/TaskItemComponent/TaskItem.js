@@ -4,7 +4,7 @@ import CreateTaskStyle from './CreateTask.less'
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import { Icon, Checkbox, Collapse, Input, message, Dropdown, Menu, Modal, Button, Avatar, DatePicker } from 'antd'
 import QueueAnim from 'rc-queue-anim'
-import ItemOne from './ItemOne'
+// import ItemOne from './ItemOne'
 import ItemTwo from './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
 import { timeToTimestamp, stopPropagation} from '../../../../../utils/util'
@@ -302,7 +302,7 @@ export default class TaskItem extends React.Component {
           })}
         {/*</QueueAnim>*/}
         </div>
-        <QueueAnim type={'bottom'} duration={200}>
+        {/*<QueueAnim type={'bottom'} duration={200}>*/}
           {!isAddEdit ? (
             <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
@@ -364,7 +364,7 @@ export default class TaskItem extends React.Component {
 
             </div>
           )}
-        </QueueAnim>
+        {/*</QueueAnim>*/}
       </div>
     )
   }

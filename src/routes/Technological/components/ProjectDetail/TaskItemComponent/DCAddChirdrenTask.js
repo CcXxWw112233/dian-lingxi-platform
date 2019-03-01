@@ -58,6 +58,13 @@ export default class DCAddChirdrenTask extends React.Component{
   }
   //设置子任务负责人组件---------------end
 
+  //更新父级任务列表的当前任务
+  updateParentTaskList(name, value) {
+    const { datas: { taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    this.props.updateDatasTask({ taskGroupList})
+  }
+
   //添加子任务
   addChirldTask() {
     const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
@@ -77,6 +84,7 @@ export default class DCAddChirdrenTask extends React.Component{
       length: child_data.length,
     }
     drawContent['child_data'].unshift(obj)
+    this.updateParentTaskList('child_data', drawContent['child_data'])
     this.props.addChirldTask(obj)
     this.setState({
       isShowUserCalendar: false,

@@ -188,7 +188,7 @@ export default class ElseProject extends React.Component{
     //   return false
     // }
     Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    this.props.routingJump(route)
+    this.props.routingJump(`${route}?board_id=${board_id}`)
   }
 
   render() {

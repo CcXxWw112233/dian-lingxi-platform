@@ -38,7 +38,7 @@ export default class ItemTwo extends React.Component {
       is_realize: is_realize === '1' ? '0' : '1'
     }
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({taskGroupList})
+    this.props.updateDatasTask({taskGroupList})
     this.props.completeTask(obj)
   }
   seeDetailInfo(data, e) {
@@ -49,6 +49,7 @@ export default class ItemTwo extends React.Component {
       collapseClose: !this.state.collapseClose
     })
   }
+
   render() {
     const { itemValue = {} } = this.props
     const { card_id, card_name, child_data=[], is_realize = '0', executors = [], type='0', start_time, due_time, label_data = [] } = itemValue

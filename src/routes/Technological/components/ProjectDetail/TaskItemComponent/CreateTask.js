@@ -15,18 +15,19 @@ function changeClientHeight() {
 export default class CreateTask extends React.Component {
 
   state = {
-    // drawerVisible: false,
+    drawerVisible: false,
     taskGroupListMouseOver: true,
     clientHeight: changeClientHeight(), //分组列表高度
-
+    /*定义两个值用来存放当前元素的left和top值*/
+    needX: 0,
+    needY: 0
   }
   constructor(){
     super();
-    this.state = {
-      /*定义两个值用来存放当前元素的left和top值*/
-      needX: 0,
-      needY: 0
-    }
+    // this.state = {
+    //   needX: 0,
+    //   needY: 0
+    // }
     /*定义两个值用来存放鼠标按下的地方距离元素上侧和左侧边界的值*/
     this.disX = 0;
     this.disY = 0;
@@ -36,7 +37,9 @@ export default class CreateTask extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
+    const target = this.refs.outerMost
+    target.scrollTo(this.scrollLeft, 0)
+    // window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
     // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
@@ -142,28 +145,28 @@ export default class CreateTask extends React.Component {
   }
   // 右方抽屉弹窗---start
   setDrawerVisibleOpen(data) {
-    // this.setState({
+    // const that = this
+    // const { drawContent: { card_id }} = data
+    this.props.updateDatasTask(data)
+    // this.props.getCardCommentList(card_id)
+    // this.props.updateDatasTask({
     //   drawerVisible: true,
     // })
-    this.props.updateDatas({
-      drawerVisible: true,
-    })
-    const { drawContent: { card_id }} = data
-    this.props.getCardCommentList(card_id)
-    this.props.updateDatas(data)
+    this.props.cardItemClickEffect(data)
+
   }
+
   setDrawerVisibleClose() {
     // this.setState({
     //   drawerVisible: false,
     // })
-    this.props.updateDatas({
+    this.props.updateDatasTask({
       drawerVisible: false,
     })
   }
   //右方抽屉弹窗---end
-
   render() {
-    const { clientHeight=changeClientHeight() } = this.state
+    const { clientHeight=changeClientHeight(), } = this.state
     const { datas: { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if(clientHeight < 900) {
@@ -198,22 +201,7 @@ export default class CreateTask extends React.Component {
             ):('')}
           </div>
         </div>
-        {/*<Drawer*/}
-          {/*placement="right"*/}
-          {/*closable={false}*/}
-          {/*onClose={this.setDrawerVisibleClose.bind(this)}*/}
-          {/*visible={drawerVisible} //this.state.drawerVisible*/}
-          {/*width={520}*/}
-          {/*destroyOnClose*/}
-          {/*zIndex={1}*/}
-          {/*maskStyle={{top: clientHeight<900?48:64}}*/}
-          {/*style={{marginTop: clientHeight<900?48:64,}}*/}
-        {/*>*/}
-          {/*<DrawerContent*/}
-            {/*{...this.props}*/}
-            {/*setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)}*/}
-          {/*/>*/}
-        {/*</Drawer>*/}
+
         {/*任务详细弹窗*/}
         <DrawContentModal
           {...this.props}

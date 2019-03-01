@@ -40,7 +40,7 @@ export default class ConfirmInfoThree extends React.Component {
       const { datas: { processEditDatas = [] } } = this.props.model
       const str = assigneesArray.join(',')
       processEditDatas[itemKey]['assignees'] = str
-      this.props.updateDatas({
+      this.props.updateDatasProcess({
         processEditDatas
       })
     }
@@ -70,7 +70,7 @@ export default class ConfirmInfoThree extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
 
@@ -91,7 +91,7 @@ export default class ConfirmInfoThree extends React.Component {
     }
     const str = willSetAssigneesArray.join(',')
     processEditDatas[itemKey]['assignees'] = str
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
   }

@@ -1,18 +1,18 @@
 import React from 'react';
 import {connect} from "dva/index";
-import Process from './Process'
+import CreateTask from './CreateTask'
 import { Route, Router, Switch, Link } from 'dva/router'
 import { Drawer } from 'antd'
 
-const ProcessIndex = (props) => {
+const Task = (props) => {
 
   return(
    <div>
-     <Process {...props} />
+     <CreateTask {...props} />
    </div>
   )
 };
 
-export default ProcessIndex
+export default Task
 
 

@@ -23,7 +23,7 @@ export default class ItemTwoChirldren extends React.Component {
       is_realize: is_realize === '1' ? '0' : '1'
     }
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['child_data'][ItemTwoChirldrenIndex]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({taskGroupList})
+    this.props.updateDatasTask({taskGroupList})
     this.props.completeTask(obj)
   }
   render() {

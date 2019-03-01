@@ -8,7 +8,7 @@ class PreviewFileModal extends React.Component {
   state = {
   }
   onCancel = () => {
-    this.props.updateDatas({
+    this.props.updateDatasTask({
       isInOpenFile: false
     })
     this.props.setPreviewFileModalVisibile()

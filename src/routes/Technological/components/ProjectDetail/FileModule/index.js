@@ -1,25 +1,21 @@
-import React from 'react'
-import indexStyles from './index.less'
-import { Table, Button } from 'antd';
-import FileList from './FileList'
-import MoveToDirectory from './MoveToDirectory'
-import BreadCrumbFileNav from './BreadCrumbFileNav'
-import FileDetail from './FileDetail'
-import FileDetailModal from './FileDetail/FileDetailModal'
+import React from 'react';
+import {connect} from "dva/index";
+import FileIndex from './FileModule'
+import { Route, Router, Switch, Link } from 'dva/router'
+import { Drawer } from 'antd'
 
-export default class FileIndex extends React.Component {
-  render() {
-    const { datas: { isInOpenFile }= false} = this.props.model
-    return (
-      <div>
-        {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
-        <div className={indexStyles.fileOut}>
-          <BreadCrumbFileNav {...this.props }/>
-          <FileList {...this.props} />
-          <MoveToDirectory {...this.props} />
-        </div>
-        <FileDetailModal {...this.props} visible={isInOpenFile} />
-      </div>
-    )
-  }
-}
+const getEffectOrReducerByName = name => `projectDetail/${name}`
+const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
+
+const FileModuleIndex = (props) => {
+
+  return(
+   <div>
+     <FileIndex {...props} />
+   </div>
+  )
+};
+
+export default FileModuleIndex
+
+

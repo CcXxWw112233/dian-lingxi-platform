@@ -30,6 +30,7 @@ import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
+import ContentRaletion from './components/ContentRaletion'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -50,6 +51,8 @@ export default class DrawContent extends React.Component {
     previewFileModalVisibile: false, //文件预览是否打开状态
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
+    isInEditContentRelation: false, //内容关联状态是否在编辑中
+    contentDropVisible: false, //内容关联点击drop
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
@@ -136,13 +139,19 @@ export default class DrawContent extends React.Component {
   }
   //firstLine----------end
 
+  //更新父级任务列表的当前任务
+  updateParentTaskList(name, value) {
+    const { datas: { taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    this.props.updateDatasTask({ taskGroupList})
+  }
   //标题-------start
   setIsCheck() {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {
       card_id,
@@ -150,12 +159,14 @@ export default class DrawContent extends React.Component {
     }
     this.props.completeTask(obj)
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({drawContent})
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
+    this.props.updateDatasTask({drawContent, taskGroupList})
   }
   titleTextAreaChangeBlur(e) {
-    const { datas: { drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
     const { card_id, description, due_time, start_time } = drawContent
     drawContent['card_name'] = e.target.value
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['card_name'] = e.target.value
     const updateObj ={
       card_id,
       name: e.target.value,
@@ -166,7 +177,7 @@ export default class DrawContent extends React.Component {
     })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent, taskGroupList})
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -210,6 +221,7 @@ export default class DrawContent extends React.Component {
       }
     }
     drawContent['executors'] = newExecutors
+    this.updateParentTaskList('executors', newExecutors)
     //用于判判断任务执行人菜单是否显示
     const that = this
     setTimeout(function () {
@@ -236,6 +248,8 @@ export default class DrawContent extends React.Component {
       user_name: full_name || fullName || mobile || email,
       avatar: avatar
     }
+    this.updateParentTaskList('executors', executors)
+
     this.props.addTaskExecutor({
       card_id,
       users: id
@@ -287,7 +301,7 @@ export default class DrawContent extends React.Component {
       start_time: start_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
@@ -304,7 +318,7 @@ export default class DrawContent extends React.Component {
       due_time: due_timeStamp,
     }
     this.props.updateTask({updateObj})
-    this.props.updateDatas({drawContent})
+    this.props.updateDatasTask({drawContent})
   }
   compareStartDueTime = (start_time, due_time) => {
     if(!start_time || !due_time) {
@@ -505,8 +519,9 @@ export default class DrawContent extends React.Component {
       card_id,
       [keyCode]: label_id || label_name,
     })
+    drawContent['label_data'].splice(key, 1)
     taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
-    this.props.updateDatas({taskGroupList})
+    this.props.updateDatasTask({taskGroupList, drawContent})
   }
   addTag() {
     this.setState({
@@ -540,6 +555,8 @@ export default class DrawContent extends React.Component {
       label_name: e.target.value,
       length: label_data.length
     })
+    this.updateParentTaskList('label_data', label_data)
+
   }
   tagDropItemClick(data) {
     this.setState({
@@ -560,6 +577,8 @@ export default class DrawContent extends React.Component {
       label_name: name,
       length: label_data.length
     })
+    this.updateParentTaskList('label_data', label_data)
+
   }
   setTagInputValue(e) {
     this.setState({
@@ -590,15 +609,23 @@ export default class DrawContent extends React.Component {
     }
   }
 
+  // 内容关联
+  setIsInEditContentRelation(bool) {
+    this.setState({
+      isInEditContentRelation: bool,
+      contentDropVisible: bool
+    })
+  }
+
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [] } } = this.props.model
 
     const { data = [], board_name } = projectDetailInfoData //任务执行人列表
-    const { list_name } = taskGroupList[taskGroupListIndex]
+    const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
     let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
@@ -621,7 +648,7 @@ export default class DrawContent extends React.Component {
       onChange: (e) => {
         // const { datas:{ drawContent = {} } } = this.props.model
         // drawContent['description'] = e
-        // this.props.updateDatas({drawContent})
+        // this.props.updateDatasTask({drawContent})
         this.setState({
           brafitEditHtml: e
         })
@@ -736,7 +763,7 @@ export default class DrawContent extends React.Component {
           attachment_fileList: fileList
         })
         drawContent['attachment_data'] = fileList
-        that.props.updateDatas({
+        that.props.updateDatasTask({
           drawContent
         })
       },
@@ -766,7 +793,7 @@ export default class DrawContent extends React.Component {
         //   return false
         // })
         // that.setPreviewFileModalVisibile()
-        that.props.updateDatas({
+        that.props.updateDatasFile({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
@@ -1002,11 +1029,18 @@ export default class DrawContent extends React.Component {
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_6}>
-              <div className={DrawerContentStyles.contain_6_add}>
-                <Icon type="plus" style={{marginRight: 4}}/>关联内容
+            {!isInEditContentRelation ? (
+              <div className={DrawerContentStyles.contain_6} >
+                <div className={DrawerContentStyles.contain_6_add} onClick={this.setIsInEditContentRelation.bind(this, true)}>
+                  <Icon type="plus" style={{marginRight: 4}}/>关联内容
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={DrawerContentStyles.contain_6} >
+                <ContentRaletion {...this.props} />
+              </div>
+            ) }
+
           </div>
 
           {/*标签*/}

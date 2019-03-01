@@ -54,12 +54,12 @@ export default modelExtend(technological, {
 
             }
           })
-          dispatch({
-            type: 'getUserImToken',
-            payload: {
-
-            }
-          })
+          // dispatch({
+          //   type: 'getUserImToken',
+          //   payload: {
+          //
+          //   }
+          // })
           dispatch({
             type: 'getBoxList',
             payload: {}
