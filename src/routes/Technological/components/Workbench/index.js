@@ -599,7 +599,7 @@ const Workbench = (props) => {
   return(
     <div>
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
-      <Header {...cardContentListProps} />
+      {/* <Header {...cardContentListProps} /> */}
       <ProjectListBar />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        <GroupContent {...props} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>
