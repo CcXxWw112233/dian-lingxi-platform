@@ -39,6 +39,13 @@ export default modelExtend(projectDetail, {
         appsSelectKey = param.appsSelectKey
         file_id = param.file_id
 
+        dispatch({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCurrentFileId: file_id
+          }
+        })
+
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
           // dispatch({
           //   type: 'updateDatas',

@@ -16,6 +16,12 @@ import {
   selectCurrentProcessInstanceId,
   selectCurrentParrentDirectoryId,
   selectFileList,
+  selectFilePreviewCurrentFileId,
+  selectFilePreviewCommits,
+  selectFilePreviewPointNumCommits,
+  selectFilePreviewCommitPointNumber,
+  filePreviewCommitPoints,
+  selectFilePreviewCommitPoints,
 } from './../select'
 
 //定义model名称
@@ -179,7 +185,7 @@ export default {
               }
             }
             curr_node_sort = curr_node_sort || coperateData.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
-            yield put({
+            dispathes({
               type: model_projectDetailProcess('updateDatas'),
               payload: {
                 processInfo: {...coperateData, curr_node_sort},
@@ -212,7 +218,7 @@ export default {
               //处理数据结构根据projectDetailFile =》 getFileList方法
               if(fileType == '2') {
                 fileList.push(coperateData)
-                yield put({
+                dispathes({
                   type: model_projectDetailFile('updateDatas'),
                   payload: {
                     fileList
@@ -228,7 +234,7 @@ export default {
                     } else {
                       fileList.unshift(obj )
                     }
-                    yield put({
+                    dispathes({
                       type: model_projectDetailFile('updateDatas'),
                       payload: {
                         fileList
@@ -241,6 +247,93 @@ export default {
             }
 
           }
+          break
+        case 'change:file:comment':
+          const comment_file_id = getAfterNameId(coperateName)
+          let file_id = yield select(selectFilePreviewCurrentFileId)
+          if(comment_file_id == file_id) { //如果推送评论的文档id和查看的id是一样
+            const filePreviewCommits = yield select(selectFilePreviewCommits) || []
+            const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
+            const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
+            const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+
+            let pointNo = coperateData['flag']
+            if(pointNo) { //圈评
+              if(pointNo == filePreviewCommitPointNumber) { //如果是当前圈评的这个点
+                filePreviewPointNumCommits.push(coperateData)
+              } else {
+                let isHasPoint = false
+                //如果没有这个点，则添加这个点
+                for(let i = 0; i < filePreviewCommitPoints.length; i++ ) {
+                  if(filePreviewCommitPoints[i]['flag'] == pointNo) {
+                    isHasPoint = true
+                    break
+                  }
+                }
+                if(!isHasPoint) {
+                  filePreviewCommitPoints.push(coperateData)
+                }
+              }
+            }
+            filePreviewCommits.push(coperateData)
+            dispathes({
+              type: model_projectDetailFile('updateDatas'),
+              payload: {
+                filePreviewCommits,
+                filePreviewPointNumCommits,
+                filePreviewCommitPoints
+              }
+            })
+          }
+          break
+        case 'change:file:comment:delete':
+          let commitId = getAfterNameId(coperateName)
+          const filePreviewCommits = yield select(selectFilePreviewCommits) || []
+          const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
+          const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
+          const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+
+          //删除点 存在最后一条is_last和点flag
+          let flag_ = coperateData('flag')
+          let is_last = coperateData('is_last')
+          if(flag_ && is_last) {
+            // alert(1)
+            for(let i = 0; i < filePreviewCommitPoints.length; i ++) {
+              if(filePreviewCommitPoints[i]['flag'] == flag_) {
+                // alert(2)
+                filePreviewCommitPoints.splice(i, 0)
+                break
+              }
+            }
+          }
+
+          if(filePreviewPointNumCommits){ //处理点的评论
+            for(let i = 0; i < filePreviewPointNumCommits.length; i ++) {
+              if(filePreviewPointNumCommits[i]['id'] == commitId) {
+                filePreviewPointNumCommits.splice(i, 1)
+                break
+              }
+            }
+          }
+
+
+          if(filePreviewCommits) { //处理整体评论
+            for(let i = 0; i < filePreviewCommits.length; i ++) {
+              if(filePreviewCommits[i]['id'] == commitId) {
+                filePreviewCommits.splice(i, 1)
+                break
+              }
+            }
+          }
+
+          dispathes({
+            type: model_projectDetailFile('updateDatas'),
+            payload: {
+              filePreviewCommits,
+              filePreviewPointNumCommits,
+              filePreviewCommitPoints
+            }
+          })
           break
         default:
           break
