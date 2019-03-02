@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   Card,
   Icon,
@@ -6,7 +7,7 @@ import {
   Menu,
   Tooltip,
   Modal,
-  Button
+  Button,
 } from "antd";
 import indexstyles from "../index.less";
 import TaskItem from "./TaskItem";
@@ -29,6 +30,7 @@ import MyCircleItem from "./MyCircleItem";
 import TaskDetailModal from "./Modal/TaskDetailModal";
 import FileDetailModal from "./Modal/FileDetailModal";
 import AddTaskModal from "./Modal/AddTaskModal";
+import AddProgressModal from './Modal/AddProgressModal'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -44,6 +46,8 @@ export default class CardContent extends React.Component {
     isInEditTitle: false,
     addTaskModalVisible: false,
     addMeetingModalVisible: false,
+    uploadFileModalVisible: false,
+    addProcessModalVisible: false,
   };
   componentWillMount() {
     const { CardContentType, boxId } = this.props;
@@ -173,20 +177,22 @@ export default class CardContent extends React.Component {
     });
   }
   handleAddTask = type => {
+    console.log(type, 'bbbbbbbbbbbbbbbbbbbbbbbbbbb')
     this.handleAddATask(type);
   };
   handleAddATask = type => {
     const modalObj = {
       'RESPONSIBLE_TASK': 'addTaskModalVisible',
-      'MEETIMG_ARRANGEMENT': 'addMeetingModalVisible'
+      'MEETIMG_ARRANGEMENT': 'addMeetingModalVisible',
+      'MY_DOCUMENT': 'uploadFileModalVisible',
+      'EXAMINE_PROGRESS': 'addProcessModalVisible'
     }
     const visibleType = Object.keys(modalObj).find(item => item === type)
+    console.log(visibleType, 'oooooooooooooooooooooooooo')
     if(!visibleType){
       return
     }
-    // if (type !== "RESPONSIBLE_TASK") {
-    //   return;
-    // }
+
     const {
       dispatch,
       model: {
@@ -199,7 +205,51 @@ export default class CardContent extends React.Component {
     );
 
     const visibleValue = modalObj[visibleType]
-    if (
+
+    if(isProjectListExistCurrentSelectedProject &&
+      projectTabCurrentSelectedProject !== "0" &&
+      visibleType === 'EXAMINE_PROGRESS'
+      ) {
+        console.log('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+        Promise.resolve(
+          dispatch({
+            type: "workbench/fetchCurrentSelectedProjectTemplateList",
+            payload: {
+              board_id: projectTabCurrentSelectedProject
+            }
+          })
+        )
+        .then(() =>
+          this.setState({
+            [visibleValue]: true
+          })
+        );
+      }
+    else if(isProjectListExistCurrentSelectedProject &&
+      projectTabCurrentSelectedProject !== "0" &&
+      visibleType === 'MY_DOCUMENT'
+      ) {
+        Promise.resolve(
+          dispatch({
+            type: "workbench/fetchCurrentSelectedProjectMembersList",
+            payload: {
+              projectId: projectTabCurrentSelectedProject
+            }
+          })
+        )
+        .then(() => dispatch({
+          type: 'workbench/fetchCurrentSelectedProjectFileFolderList',
+          payload: {
+            board_id: projectTabCurrentSelectedProject
+          }
+        }))
+        .then(() =>
+          this.setState({
+            [visibleValue]: true
+          })
+        );
+      }
+      else if (
       isProjectListExistCurrentSelectedProject &&
       projectTabCurrentSelectedProject !== "0"
     ) {
@@ -230,6 +280,19 @@ export default class CardContent extends React.Component {
     this.setState({
       addMeetingModalVisible: flag
     })
+  }
+  uploadFileModalVisibleChange = flag => {
+    this.setState({
+      uploadFileModalVisible: flag
+    })
+  }
+  addProcessModalVisibleChange = flag => {
+    this.setState({
+      addProcessModalVisible: flag
+    })
+  }
+  handleSelectFileFolderChange = (folder_id) => {
+
   }
   noContentTooltip = (prompt = "添加任务", type = "RESPONSIBLE_TASK") => {
     return (
@@ -273,7 +336,7 @@ export default class CardContent extends React.Component {
     const { title, CardContentType, itemValue = {} } = this.props;
     const { selected_board_data = [] } = itemValue; //已选board id
 
-    const { localTitle, isInEditTitle, addTaskModalVisible, addMeetingModalVisible } = this.state;
+    const { localTitle, isInEditTitle, addTaskModalVisible, addMeetingModalVisible, uploadFileModalVisible, addProcessModalVisible } = this.state;
     const filterItem = CardContentType => {
       let contanner = <div />;
       switch (CardContentType) {
@@ -574,6 +637,22 @@ export default class CardContent extends React.Component {
           projectList={projectList}
           addTaskModalVisible={addMeetingModalVisible}
           addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
+        />
+        <AddTaskModal
+          modalTitle='上传文档'
+          taskType='MY_DOCUMENT'
+          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          projectList={projectList}
+          addTaskModalVisible={uploadFileModalVisible}
+          addTaskModalVisibleChange={this.uploadFileModalVisibleChange}
+        />
+        <AddProgressModal
+          modalTitle='发起流程'
+          taskType='EXAMINE_PROGRESS'
+          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          projectList={projectList}
+          addProcessModalVisible={addProcessModalVisible}
+          addProcessModalVisibleChange={this.addProcessModalVisibleChange}
         />
         {/*{('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (*/}
         {/*<FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />*/}

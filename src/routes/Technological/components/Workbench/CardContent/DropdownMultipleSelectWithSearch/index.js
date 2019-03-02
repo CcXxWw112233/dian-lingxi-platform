@@ -38,20 +38,28 @@ class DropdownMultipleSelectWithSearch extends Component {
   };
   handleClickedSelectAllBtn = () => {
     const { selectedList } = this.state;
-    const { list } = this.props;
+    const { list, handleSelectedItemChange } = this.props;
+
+    //如果现在是部分选中，那么就全选
     if (
       (list.length &&
         selectedList.length &&
         list.length !== selectedList.length) ||
       (list.length && !selectedList.length)
     ) {
-      this.setState({
-        selectedList: [...list]
-      });
+      this.setState((state, props) => {
+        handleSelectedItemChange(list)
+        return {
+          selectedList: [...list]
+        }
+      })
     } else {
-      this.setState({
-        selectedList: []
-      });
+      this.setState((state, props) => {
+        handleSelectedItemChange([])
+        return {
+          selectedList: []
+        }
+      })
     }
   };
   handleClickedAddBtn = e => {
@@ -244,10 +252,11 @@ class DropdownMultipleSelectWithSearch extends Component {
   }
   render() {
     const { dropdownOptionVisible, selectedList } = this.state;
+    const {itemTitle} = this.props
     return (
       <div className={styles.wrapper}>
         <div className={styles.content}>
-          <div className={styles.contentTitle}>执行人 </div>
+          <div className={styles.contentTitle}>{itemTitle} </div>
           <div className={styles.contentList}>
             {this.renderSelectedItem(selectedList)}
           </div>
