@@ -1,5 +1,6 @@
-import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads} from '../../../services/technological/workbench'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList} from '../../../services/technological/workbench'
 import {addTask} from '../../../services/technological/task'
+import {getFolderList} from './../../../services/technological/file'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME, WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY, PAGINATION_PAGE_SIZE } from "../../../globalset/js/constant";
@@ -44,6 +45,7 @@ export default modelExtend(technological, {
 
               currentOrgFileUploads: [], //当前组织下我上传的文档列表
               currentSelectedProjectMembersList: [],
+              currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
             }
           })
@@ -76,6 +78,25 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    * fetchCurrentSelectedProjectTemplateList({payload}, {call, put}) {
+      const {board_id} = payload
+      let res = yield call(getProgressTemplateList, {board_id})
+      console.log(res, 'template template.')
+    },
+    * fetchCurrentSelectedProjectFileFolderList({payload}, {call, put}) {
+      const {board_id} = payload
+      let res = yield call(getFolderList, {board_id})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentSelectedProjectFileFolderList: res.data
+          }
+        })
+      } else {
+        message.error('获取当前项目文件夹失败，请稍后再试。')
+      }
+    },
     * addTask({payload}, {call, put}) {
       const {data} = payload
       const res = yield call(addTask, data)
@@ -634,6 +655,12 @@ export default modelExtend(technological, {
       return {
         ...state,
         datas: {...state.datas, currentSelectedProjectMembersList: []}
+      }
+    },
+    emptyCurrentSelectedProjectFileFolderList(state, action) {
+      return {
+        ...state,
+        datas: {...state.datas, currentSelectedProjectFileFolderList: []}
       }
     },
     setProjectTabCurrentSelectedProject(state, action) {

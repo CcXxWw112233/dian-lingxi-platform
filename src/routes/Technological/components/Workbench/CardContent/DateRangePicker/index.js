@@ -31,10 +31,11 @@ class DateRangePicker extends Component {
     })
   }
   disabledDueTime = due_time => {
-    const { start_time } = this.props;
+    const { start_time } = this.state;
     if (!start_time || !due_time) {
       return false;
     }
+
     const newStartTime =
       start_time.toString().length > 10
         ? Number(start_time).valueOf() / 1000
@@ -54,7 +55,7 @@ class DateRangePicker extends Component {
     const {start_time, due_time} = this.state
     return (
       <div>
-        {start_time && due_time ? (
+        {start_time || due_time ? (
           ""
         ) : (
           <span style={{ color: "#bfbfbf" }}>设置</span>
@@ -86,9 +87,9 @@ class DateRangePicker extends Component {
         </span>
         &nbsp;
         {start_time && due_time ? (
-          <span style={{ color: "#bfbfbf" }}>-</span>
+          <span style={{ color: "#bfbfbf" }}> -- </span>
         ) : (
-          <span style={{ color: "#bfbfbf" }}>或</span>
+          <span style={{ color: "#bfbfbf" }}> -- </span>
         )}
         &nbsp;
         <span style={{ position: "relative" }}>

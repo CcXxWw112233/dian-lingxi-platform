@@ -1,6 +1,24 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+
+//获取项目流程模板
+export async function getProgressTemplateList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/template`,
+    method: 'GET',
+    params
+  })
+}
+
+//删除文件
+export async function deleteUploadFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/file/remove`,
+    method: 'DELETE',
+    data
+  })
+}
 
 //每次点击选区project的时候， 发送 board_id (project id) 给后台， -_- ..
 export async function setCurrentProjectIdToServer({payload: {id}}) {
