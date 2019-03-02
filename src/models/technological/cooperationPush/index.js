@@ -16,6 +16,13 @@ import {
   selectCurrentProcessInstanceId,
   selectCurrentParrentDirectoryId,
   selectFileList,
+  selectFilePreviewCurrentFileId,
+  selectFilePreviewCommits,
+  selectFilePreviewPointNumCommits,
+  selectFilePreviewCommitPointNumber,
+  filePreviewCommitPoints,
+  selectFilePreviewCommitPoints,
+  selectProjectDetailInfoData,
 } from './../select'
 
 //定义model名称
@@ -117,12 +124,54 @@ export default {
 
       let board_id_
       switch (coperateType) {
+        case 'change:board':
+          let op_board_id = getAfterNameId(coperateName)
+          let is_deleted_ = coperateData['is_deleted']
+          if(op_board_id == currentProjectBoardId) {
+            if(is_deleted_ == '0') {
+              let projectDetailInfoData = yield select(selectProjectDetailInfoData)
+              projectDetailInfoData = {...projectDetailInfoData, ...coperateData}
+              dispathes({
+                type: model_projectDetail('updateDatas'),
+                payload: {
+                  projectDetailInfoData
+                }
+              })
+            } else if(is_deleted_ == '1'){
+              message.warn('当前项目已被删除')
+            }
+
+          }
+          break
         case 'change:card': //监听到修改任务
           const drawContent = yield select(selectDrawContent)
           const card_id = yield select(selectCardId)
           const operate_card_id = coperateName.substring(coperateName.indexOf('/') + 1)
+          let taskGroupList_ = yield select(selectTaskGroupList)
+
+          let is_archived_ = coperateData['is_archived']
+
+          if(is_archived_ == '1') { //归档
+            for (let i = 0; i < taskGroupList_.length; i++ ){
+              for (let j = 0; j < taskGroupList_[i]['card_data'].length; j++) {
+                if(operate_card_id == taskGroupList_[i]['card_data'][j]['card_id']) {
+                  taskGroupList_[i]['card_data'].splice(j, 1)
+                  break
+                }
+              }
+            }
+          }
           //如果当前查看的任务和推送的任务id一样，会发生更新
           if(card_id == operate_card_id) {
+            if(is_archived_ == '1') {
+              dispathes({
+                type: model_projectDetailTask('updateDatas'),
+                payload: {
+                  drawerVisible: false
+                }
+              })
+            }
+
             dispathes({
               type: model_projectDetailTask('updateDatas'),
               payload: {
@@ -130,16 +179,112 @@ export default {
               }
             })
           }
+          dispathes({
+            type: model_projectDetailTask('updateDatas'),
+            payload: {
+              taskGroupList: taskGroupList_
+            }
+          })
           break
         case 'change:cards':
-          const taskGroupList = yield select(selectTaskGroupList)
-          const { board_id, list_id, item = {card_name: '11', card_id: 'sss'} } = coperateData
-          for(let i = 0; i < taskGroupList.length; i++ ) {
-            if(list_id === taskGroupList[i]['list_id']){
-              taskGroupList[i]['card_data'].unshift(item)
-              break
+          let taskGroupList = yield select(selectTaskGroupList)
+          let id_arr_ = getAfterNameId(coperateName).split('/')
+          let board_id_ = id_arr_[0]
+          let list_id = id_arr_[1]
+          let { is_archived, is_deleted } = coperateData
+          if(is_archived=='1' || is_deleted == '1') {
+
+          }
+          if(board_id_ == currentProjectBoardId) { //当前查看的项目
+            for(let i = 0; i < taskGroupList.length; i++ ) {
+              if(list_id === taskGroupList[i]['list_id']){ //匹配到list_id
+                //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+                let is_has_realize = false
+                for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                  if(taskGroupList[i]['card_data'][j]['is_realize'] == '1') {
+                    is_has_realize = true
+                    taskGroupList[i]['card_data'].splice(j, 0, coperateData)
+                    break
+                  }
+                }
+                if(!is_has_realize) {
+                  taskGroupList[i]['card_data'].push(coperateData)
+                }
+                break
+              }
             }
           }
+
+          dispathes({
+            type: model_projectDetailTask('updateDatas'),
+            payload: {
+              taskGroupList
+            }
+          })
+          break
+        case 'delete:cards':
+           id_arr_ = getAfterNameId(coperateName).split('/')
+           taskGroupList = yield select(selectTaskGroupList)
+           board_id_ = id_arr_[0]
+           list_id = id_arr_[1]
+          let op_card_id = coperateData['card_id']
+          if(board_id_ == currentProjectBoardId) { //当前查看的项目
+            for(let i = 0; i< taskGroupList.length; i++) {
+              if(list_id == taskGroupList[i]['list_id']) {
+                for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                  if(op_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
+                    taskGroupList[i]['card_data'].splice(j, 1)
+                    break
+                  }
+                }
+                break
+              }
+            }
+          }
+          dispathes({
+            type: model_projectDetailTask('updateDatas'),
+            payload: {
+              taskGroupList
+            }
+          })
+          break
+        case 'change:card:list':
+          taskGroupList = yield select(selectTaskGroupList)
+          board_id_ = getAfterNameId(coperateName)
+          is_deleted = coperateData['is_deleted']
+          let op_list_id = coperateData['list_id']
+          if(board_id_ !== currentProjectBoardId) {
+            if(is_deleted == '0') { //增加列表或修改列表
+              //如果时修改则替换，如果时增加则push
+              let is_has_list = false
+              for(let i = 0; i < taskGroupList.length; i++ ) {
+                if(op_list_id == taskGroupList[i]['list_id']) {
+                  is_has_list = true
+                  taskGroupList[i] = coperateData
+                  break
+                }
+              }
+              if(!is_has_list) {
+                taskGroupList.push(coperateData)
+              }
+            } else if(is_deleted == '1') { //删除列表
+              for(let i = 0; i < taskGroupList.length; i++ ) {
+                if(op_list_id == taskGroupList[i]['list_id'] ) {
+                  taskGroupList.splice(i, 1)
+                  break
+                }
+              }
+            } else {
+
+            }
+          }
+          dispathes({
+            type: model_projectDetailTask('updateDatas'),
+            payload: {
+              taskGroupList
+            }
+          })
+
           break
         case 'change:flow:template':
           board_id_ = getAfterNameId(coperateName)
@@ -179,7 +324,7 @@ export default {
               }
             }
             curr_node_sort = curr_node_sort || coperateData.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
-            yield put({
+            dispathes({
               type: model_projectDetailProcess('updateDatas'),
               payload: {
                 processInfo: {...coperateData, curr_node_sort},
@@ -204,15 +349,16 @@ export default {
               for( let i =0; i < fileList.length; i++ ) {
                 if(fileList[i]['file_id'] == id) {
                   fileList.splice(i, 1)
+                  break
                 }
-                break
+
               }
             } else {
               //fileType 2 表示新增文件 1 表示新增文件夹
               //处理数据结构根据projectDetailFile =》 getFileList方法
               if(fileType == '2') {
                 fileList.push(coperateData)
-                yield put({
+                dispathes({
                   type: model_projectDetailFile('updateDatas'),
                   payload: {
                     fileList
@@ -228,19 +374,141 @@ export default {
                     } else {
                       fileList.unshift(obj )
                     }
-                    yield put({
-                      type: model_projectDetailFile('updateDatas'),
-                      payload: {
-                        fileList
-                      }
-                    })
                     break
                   }
                 }
               }
             }
+            dispathes({
+              type: model_projectDetailFile('updateDatas'),
+              payload: {
+                fileList
+              }
+            })
 
           }
+          break
+        case 'change:file:comment':
+          const comment_file_id = getAfterNameId(coperateName)
+          let file_id = yield select(selectFilePreviewCurrentFileId)
+          if(comment_file_id == file_id) { //如果推送评论的文档id和查看的id是一样
+            const filePreviewCommits = yield select(selectFilePreviewCommits) || []
+            const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
+            const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
+            const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+
+            let pointNo = coperateData['flag']
+            if(pointNo) { //圈评
+              if(pointNo == filePreviewCommitPointNumber) { //如果是当前圈评的这个点
+                filePreviewPointNumCommits.push(coperateData)
+              } else {
+                let isHasPoint = false
+                //如果没有这个点，则添加这个点
+                for(let i = 0; i < filePreviewCommitPoints.length; i++ ) {
+                  if(filePreviewCommitPoints[i]['flag'] == pointNo) {
+                    isHasPoint = true
+                    break
+                  }
+                }
+                if(!isHasPoint) {
+                  filePreviewCommitPoints.push(coperateData)
+                }
+              }
+            }
+            filePreviewCommits.push(coperateData)
+            dispathes({
+              type: model_projectDetailFile('updateDatas'),
+              payload: {
+                filePreviewCommits,
+                filePreviewPointNumCommits,
+                filePreviewCommitPoints
+              }
+            })
+          }
+          break
+        case 'change:file:comment:delete':
+          let commitId = getAfterNameId(coperateName)
+          const filePreviewCommits = yield select(selectFilePreviewCommits) || []
+          const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
+          const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
+          const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+
+          //删除点 存在最后一条is_last和点flag
+          let flag_ = coperateData['flag']
+          let is_last = coperateData['is_last']
+          if(flag_ && is_last == '1') {
+            for(let i = 0; i < filePreviewCommitPoints.length; i ++) {
+              if(filePreviewCommitPoints[i]['flag'] == flag_) {
+                filePreviewCommitPoints.splice(i, 1)
+                break
+              }
+            }
+          }
+
+          if(filePreviewPointNumCommits){ //处理点的评论
+            for(let i = 0; i < filePreviewPointNumCommits.length; i ++) {
+              if(filePreviewPointNumCommits[i]['id'] == commitId) {
+                filePreviewPointNumCommits.splice(i, 1)
+                break
+              }
+            }
+          }
+
+          if(filePreviewCommits) { //处理整体评论
+            for(let i = 0; i < filePreviewCommits.length; i ++) {
+              if(filePreviewCommits[i]['id'] == commitId) {
+                filePreviewCommits.splice(i, 1)
+                break
+              }
+            }
+          }
+
+          dispathes({
+            type: model_projectDetailFile('updateDatas'),
+            payload: {
+              filePreviewCommits,
+              filePreviewPointNumCommits,
+              filePreviewCommitPoints
+            }
+          })
+          break
+        case 'change:file:operation':
+          let ids = getAfterNameId(coperateName)
+          let idArr = ids.split('/')
+          let fileList_ = yield select(selectFileList)
+          let folder_id = yield select(selectCurrentParrentDirectoryId)
+          let coFileList = coperateData['file_list']
+          if(idArr.length == 1) { //复制
+            if(idArr[0] == folder_id) {
+              fileList_ = [].concat(fileList_, coFileList)
+            }
+          }else if(idArr.length == 2) { //移动
+            if(idArr[0] != idArr[1]) { ////移入的文件和移除的文件夹不是同一个
+              if(idArr[1] == folder_id) { //当前文件夹有文件移除
+                 for(let i = 0; i< fileList_.length; i++) {
+                   for (let j = 0; j < coFileList.length; j++) {
+                     if(fileList_[i]['file_id'] == coFileList[j]['file_id']) {
+                       fileList_.splice(i, 1)
+                       break
+                     }
+
+                   }
+                 }
+              }else if(idArr[0] == folder_id){ //当前文件夹有文件移进
+                fileList_ = [].concat(fileList_, coFileList)
+              }
+
+            }
+          } else {
+
+          }
+          dispathes({
+            type: model_projectDetailFile('updateDatas'),
+            payload: {
+              fileList: fileList_
+            }
+          })
+
           break
         default:
           break

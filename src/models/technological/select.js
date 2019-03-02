@@ -24,7 +24,10 @@ export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFil
 export const selectBreadcrumbList= state => state[(`projectDetailFile`)].datas.breadcrumbList //
 export const selectFilePreviewCommitPointNumber= state => state[(`projectDetailFile`)].datas.filePreviewCommitPointNumber
 export const selectFileList= state => state[(`projectDetailFile`)].datas.fileList
-
+export const selectFilePreviewCurrentFileId= state => state[(`projectDetailFile`)].datas.filePreviewCurrentFileId//当前所预览的file_id
+export const selectFilePreviewCommits= state => state[(`projectDetailFile`)].datas.filePreviewCommits
+export const selectFilePreviewPointNumCommits = state => state[(`projectDetailFile`)].datas.filePreviewPointNumCommits
+export const selectFilePreviewCommitPoints = state => state[(`projectDetailFile`)].datas.filePreviewCommitPoints
 //新消息
 export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem //
 

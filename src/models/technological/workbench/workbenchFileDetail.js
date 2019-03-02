@@ -4,7 +4,7 @@ import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalse
 import { routerRedux } from "dva/router";
 import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import { selectFilePreviewCommitPointNumber } from './selects'
+import { workbench_selectFilePreviewCommitPointNumber } from './selects'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -123,7 +123,7 @@ export default {
       }
     },
     * getPreviewFileCommits({ payload }, { select, call, put }) {
-      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(workbench_selectFilePreviewCommitPointNumber)
       const { type } = payload
       let name = type != 'point' ? 'filePreviewCommits':'filePreviewPointNumCommits'
       let res = yield call(getPreviewFileCommits, {...payload, point_number: type == 'point'?filePreviewCommitPointNumber: ''})
@@ -198,7 +198,7 @@ export default {
     },
     * deleteCommit({ payload }, { select, call, put }) {
       let res = yield call(deleteCommit, payload)
-      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(workbench_selectFilePreviewCommitPointNumber)
       const { file_id, type, point_number } = payload
       if(isApiResponseOk(res)) {
         yield put({

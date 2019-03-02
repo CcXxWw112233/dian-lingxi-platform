@@ -7,7 +7,7 @@ import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit,
 import { getCardDetail, removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers, getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
 import Cookies from "js-cookie";
 import {currentNounPlanFilterName} from "../../../utils/businessFunction";
-import { selectDrawContent, selectBoardId } from './selects'
+import { workbench_selectDrawContent, workbench_selectBoardId } from './selects'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -132,7 +132,7 @@ export default {
     * updateTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
 
-      const drawContent = yield select(selectDrawContent)
+      const drawContent = yield select(workbench_selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -163,7 +163,7 @@ export default {
 
     * updateChirldTask({ payload }, { select, call, put }) { //
       const { updateObj } = payload
-      const drawContent = yield select(selectDrawContent)
+      const drawContent = yield select(workbench_selectDrawContent)
       const { description } = updateObj
       let res = yield call(updateTask, updateObj)
       if(isApiResponseOk(res)) {
@@ -203,7 +203,7 @@ export default {
 
     * changeTaskType({ payload }, { select, call, put }) { // 此方法注释掉的地方是先前做了任务跳转sss
       const { requestObj, indexObj } = payload
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
       let res = yield call(changeTaskType, requestObj)
       if(isApiResponseOk(res)) {
         yield put({
@@ -234,7 +234,7 @@ export default {
       const newPayload = {...payload}
       newPayload.executors ? delete newPayload.executors: '' //去掉不需要的数据
       let res = yield call(addChirldTask, newPayload)
-      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
+      const drawContent = yield select(workbench_selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
         drawContent.child_data[0] = payload
         drawContent.child_data[0]['card_id'] = res.data.id
@@ -268,7 +268,7 @@ export default {
     },
     * completeTask({ payload }, { select, call, put }) { //
       const { is_realize } = payload
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
 
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
@@ -329,11 +329,11 @@ export default {
 
     * addTaskTag({ payload }, { select, call, put }) { //
       const { length } = payload
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
 
       let res = yield call(addTaskTag, payload)
 
-      const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
+      const drawContent = yield select(workbench_selectDrawContent) //  获取到全局设置filter,分页设置
       if(isApiResponseOk(res)) {
         drawContent.label_data[length-1].label_id = res.data.label_id
         yield put({
@@ -375,7 +375,7 @@ export default {
     },
 
     * updateBoardTag({ payload }, { select, call, put }) { //
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
       let res = yield call(updateBoardTag, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -393,7 +393,7 @@ export default {
     },
 
     * toTopBoardTag({ payload }, { select, call, put }) { //
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
       let res = yield call(toTopBoardTag, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -411,7 +411,7 @@ export default {
     },
 
     * deleteBoardTag({ payload }, { select, call, put }) { //
-      const board_id = yield select(selectBoardId)
+      const board_id = yield select(workbench_selectBoardId)
       let res = yield call(deleteBoardTag, payload)
       if(isApiResponseOk(res)) {
         yield put({
