@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import {getAppsList} from "../../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from '../index'
-import {selectKnowPolicyArticles, selectKnowCityArticles, selectBoxList, selectBoxUsableList} from "../select";
+import {workbench_selectKnowPolicyArticles, workbench_selectKnowCityArticles, workbench_selectBoxList, workbench_selectBoxUsableList} from "./selects";
 import {filePreview, fileDownload} from "../../../services/technological/file";
 import { postCommentToDynamics } from "../../../services/technological/library";
 import { stat } from 'fs';
@@ -260,7 +260,7 @@ export default modelExtend(technological, {
     * getItemBoxFilter({ payload }, { select, call, put }) {
       const { board_ids, id, itemKey }= payload
       const res = yield call(getItemBoxFilter, {board_ids, id})
-      const boxList = yield select(selectBoxList)
+      const boxList = yield select(workbench_selectBoxList)
       let code = ''
       for(let i =0; i <boxList.length; i++) {
         if(id === boxList[i]['id']) {
@@ -480,7 +480,7 @@ export default modelExtend(technological, {
     },
     * updateBox({ payload }, { select, call, put }) { //
       const { box_id, name} = payload
-      const boxList = yield select(selectBoxList)
+      const boxList = yield select(workbench_selectBoxList)
       let res = yield call(updateBox, payload)
       if(isApiResponseOk(res)) {
         for(let i = 0; i < boxList.length; i++ ){
@@ -503,8 +503,8 @@ export default modelExtend(technological, {
     * getArticleList({ payload }, { select, call, put }) { //
       const { appType, page_no } = payload
       const res = yield call(getArticleList, payload)
-      const knowCityArticles = yield select(selectKnowCityArticles)
-      const knowPolicyArticles = yield select(selectKnowPolicyArticles)
+      const knowCityArticles = yield select(workbench_selectKnowCityArticles)
+      const knowPolicyArticles = yield select(workbench_selectKnowPolicyArticles)
       const updateListName = appType === WE_APP_TYPE_KNOW_CITY ? `knowCityArticles` : `knowPolicyArticles`
       const odlist = appType === WE_APP_TYPE_KNOW_CITY? [...knowCityArticles] : [...knowPolicyArticles]
       if(isApiResponseOk(res)) {
