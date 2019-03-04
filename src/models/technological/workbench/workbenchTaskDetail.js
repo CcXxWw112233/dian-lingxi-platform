@@ -26,6 +26,7 @@ export default {
               payload: {
                 projectDetailInfoData: {}, //项目详情全部数据
                 board_id: '',
+                card_id: '',
                 drawContent: {}, //任务右方抽屉内容
                 drawerVisible: false, //查看任务的抽屉是否可见
                 cardCommentList: [], //任务评论列表
@@ -45,6 +46,12 @@ export default {
     //获取当前点击任务的项目详细信息
     * getCardDetail({ payload }, { select, call, put }) { //查看项目详情信息
       const { id, board_id } = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          card_id: id
+        }
+      })
       let res = yield call(getCardDetail, { id})
 
       if(isApiResponseOk(res)) {
