@@ -3,6 +3,8 @@ import { Menu, Dropdown, Input } from "antd";
 import classNames from "classnames/bind";
 import styles from "./index.less";
 import MenuItem from "antd/lib/menu/MenuItem";
+import AddModalFormWithExplicitProps from "./../../../Project/AddModalFormWithExplicitProps";
+import { connect } from "dva/index";
 
 let cx = classNames.bind(styles);
 
@@ -11,8 +13,9 @@ class DropdownSelectWithSearch extends Component {
     super(props);
     this.state = {
       visible: false,
+      addNewProjectModalVisible: false,
       inputValue: "",
-      filteredList: this.props.list ? this.props.list : [],
+      filteredList: this.props.list ? this.props.list : []
     };
   }
   handleVisibleChange = flag => {
@@ -21,45 +24,105 @@ class DropdownSelectWithSearch extends Component {
     });
   };
   handleInputValueChange = e => {
-    const {list} = this.props
-    if(!e.target.value) {
+    const { list } = this.props;
+    if (!e.target.value) {
       this.setState({
-        inputValue: '',
+        inputValue: "",
         filteredList: Array.isArray(list) ? list : []
-      })
-    }else{
+      });
+    } else {
       this.setState({
         inputValue: e.target.value,
-        filteredList: Array.isArray(list) ? list.filter(item => item['board_name'].includes(e.target.value)) : []
-      })
+        filteredList: Array.isArray(list)
+          ? list.filter(item => item["board_name"].includes(e.target.value))
+          : []
+      });
     }
   };
-  handleSeletedMenuItem = (item) => {
-    const {handleSelectedItem, list} = this.props
-    handleSelectedItem(item)
+  handleSeletedMenuItem = item => {
+    const { handleSelectedItem, list } = this.props;
+    handleSelectedItem(item);
     this.setState({
-      inputValue: '',
+      inputValue: "",
       visible: false,
       filteredList: Array.isArray(list) ? list : []
-    })
-
-  }
+    });
+  };
+  handleClickedNewProjectItem = e => {
+    if (e) e.stopPropagation();
+    this.showModal();
+    console.log("clicked new project");
+  };
   renderMenuItem = filteredList => {
     return filteredList.map((item, index) => (
       <Menu.Item key={item.board_id}>
-        <p onClick={this.handleSeletedMenuItem.bind(this, item)}>{item.board_name}</p>
+        <p onClick={this.handleSeletedMenuItem.bind(this, item)}>
+          {item.board_name}
+        </p>
       </Menu.Item>
     ));
   };
-  render() {
-    const { initSearchTitle, selectedItem } = this.props;
-    const { visible, filteredList, inputValue } = this.state;
-    let titleClassName = cx({
-      title: true,
-      active: visible
+  renderNoContent = () => {
+    return (
+      <div className={styles.addNewProject__wrapper}>
+        <div className={styles.addNewProject__content}>
+          <p
+            className={styles.addNewProject__content_item}
+            onClick={this.handleClickedNewProjectItem}
+          >
+            <span className={styles.addNewProject__content_item_icon} />
+            <span className={styles.addNewProject__content_item_title}>
+              新建项目
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  };
+  showModal = () => {
+    const { dispatch } = this.props;
+    this.setState({
+      addNewProjectModalVisible: true
+    }, () => {
+      dispatch({
+      type: "project/getAppsList",
+      payload: {
+        type: '2'
+      }
     });
-
-    const content = (
+    });
+  };
+  handleSubmitNewProject = data => {
+    const { dispatch } = this.props;
+    Promise.resolve(dispatch({
+      type: 'project/addNewProject',
+      payload: data
+    })).then(() => {
+      dispatch({
+        type: 'workbench/getProjectList',
+        payload: {}
+      })
+    })
+    .then(() => {
+      this.hideModal()
+    })
+  }
+  hideModal = () => {
+    this.setState({
+      addNewProjectModalVisible: false,
+    })
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: "modal/hideModal"
+    // });
+  };
+  content = () => {
+    const { list, selectedItem } = this.props;
+    const { filteredList, inputValue } = this.state;
+    if (!list || !list.length) {
+    return <>{this.renderNoContent()}</>;
+    }
+    return (
       <div>
         <Input
           placeholder="搜索"
@@ -67,36 +130,52 @@ class DropdownSelectWithSearch extends Component {
           onChange={this.handleInputValueChange}
         />
         <Menu
-          defaultSelectedKeys={selectedItem&&selectedItem.board_id ? [selectedItem.board_id] : []}
+          defaultSelectedKeys={
+            selectedItem && selectedItem.board_id ? [selectedItem.board_id] : []
+          }
         >
-          {/* <Menu.Item key="0">
-            <a href="http://www.alipay.com/">1st menu item</a>
-          </Menu.Item>
-          <Menu.Item key="1">
-            <a href="http://www.taobao.com/">2nd menu item</a>
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item key="3">3rd menu item</Menu.Item> */}
           {this.renderMenuItem(filteredList)}
         </Menu>
       </div>
     );
+  };
+  render() {
+    const { initSearchTitle, selectedItem, project } = this.props;
+    const { visible, addNewProjectModalVisible } = this.state;
+    let titleClassName = cx({
+      title: true,
+      active: visible
+    });
     return (
       <div className={styles.wrapper}>
-        <Dropdown
-          overlay={content}
-          trigger={["click"]}
-          visible={visible}
-          onVisibleChange={this.handleVisibleChange}
-        >
-          <div className={titleClassName}>
-            <p>
-              <span />
-              <span>{selectedItem&&selectedItem.board_name ? selectedItem.board_name : initSearchTitle}</span>
-              <span />
-            </p>
-          </div>
-        </Dropdown>
+        {!addNewProjectModalVisible && (
+          <Dropdown
+            overlay={this.content()}
+            trigger={["click"]}
+            visible={visible}
+            onVisibleChange={this.handleVisibleChange}
+          >
+            <div className={titleClassName}>
+              <p style={{ marginBottom: 0 }}>
+                <span />
+                <span>
+                  {selectedItem && selectedItem.board_name
+                    ? selectedItem.board_name
+                    : initSearchTitle}
+                </span>
+                <span />
+              </p>
+            </div>
+          </Dropdown>
+        )}
+        <AddModalFormWithExplicitProps
+          addNewProjectModalVisible={addNewProjectModalVisible}
+          key="1"
+          hideModal={this.hideModal}
+          showModal={this.showModal}
+          project={project}
+          handleSubmitNewProject={this.handleSubmitNewProject}
+        />
       </div>
     );
   }
@@ -104,7 +183,12 @@ class DropdownSelectWithSearch extends Component {
 
 DropdownSelectWithSearch.defaultProps = {
   initSearchTitle: "default",
-  list: []
+  list: [],
+  selectedItem: []
 };
 
-export default DropdownSelectWithSearch;
+function mapStateToProps({ modal, project, loading }) {
+  return { modal, project };
+}
+
+export default connect(mapStateToProps)(DropdownSelectWithSearch);

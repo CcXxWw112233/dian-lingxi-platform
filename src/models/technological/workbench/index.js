@@ -81,7 +81,7 @@ export default modelExtend(technological, {
     * fetchCurrentSelectedProjectTemplateList({payload}, {call, put}) {
       const {board_id} = payload
       let res = yield call(getProgressTemplateList, {board_id})
-      console.log(res, 'template template.')
+      // console.log(res, 'template template.')
     },
     * fetchCurrentSelectedProjectFileFolderList({payload}, {call, put}) {
       const {board_id} = payload
@@ -100,15 +100,15 @@ export default modelExtend(technological, {
     * addTask({payload}, {call, put}) {
       const {data} = payload
       const res = yield call(addTask, data)
-      console.log(res, 'add task')
+      // console.log(res, 'add task')
     },
     * handleCurrentSelectedProjectChange({payload}, {select, put, call}) {
-      const {board_id} = payload
+      const {board_id, shouldResortPosition} = payload
       yield put({type: 'setProjectTabCurrentSelectedProject', payload: {
         projectId: board_id
       }})
       //除了'所有参与的项目', 使选中的项目排在第一个
-      if(board_id !== '0') {
+      if(board_id !== '0' && shouldResortPosition) {
         yield put({type: 'reSortProjectList', payload: {board_id}})
       }
       //设置项目 id

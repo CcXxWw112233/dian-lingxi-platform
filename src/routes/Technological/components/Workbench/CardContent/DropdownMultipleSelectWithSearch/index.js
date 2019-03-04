@@ -3,13 +3,36 @@ import { Menu, Dropdown, Input, message, Icon } from "antd";
 import styles from "./index.less";
 import chackImg from "./../../../../../../assets/check@2x.png";
 import personGroupImg from "./../../../../../../assets/person_group@2x.png";
+import Cookies from "js-cookie";
 
+/*eslint-disable*/
 class DropdownMultipleSelectWithSearch extends Component {
-  state = {
-    selectedList: [],
-    searchValue: "",
-    dropdownOptionVisible: false
-  };
+  constructor(props) {
+    super(props)
+    const currentUser = this.getCurrentUserFromCookie('userInfo')
+    const { list, handleSelectedItemChange } = props;
+    const findUserInList = list.find(item => item.id === currentUser.id)
+    if(findUserInList) {
+      handleSelectedItemChange([findUserInList])
+    }
+    this.state = {
+      selectedList: findUserInList ? [findUserInList] : [],
+      searchValue: "",
+     dropdownOptionVisible: false
+    }
+  }
+  getCurrentUserFromCookie = key => {
+    try{
+      const currentUserFromCookie = JSON.parse(Cookies.get(key));
+        if (currentUserFromCookie) {
+          return currentUserFromCookie
+        } else {
+          message.error(`从Cookie中获取 ${key} 失败`)
+        }
+    }catch(e) {
+      message.error(`从Cookie中获取 ${key} 失败`)
+    }
+  }
   handleSearchValue = e => {
     this.setState({
       searchValue: e.target.value
@@ -21,12 +44,16 @@ class DropdownMultipleSelectWithSearch extends Component {
     });
   };
   handleDeleteSelectedItem = shouldDeleteItem => {
+    const {handleSelectedItemChange} = this.props
     this.setState(state => {
       return {
         selectedList: state.selectedList.filter(
           item => item.id !== shouldDeleteItem.id
         )
       };
+    }, () => {
+      const {selectedList} = this.state
+      handleSelectedItemChange(selectedList)
     });
   };
   handleDeleteSelectedItemAll = () => {
@@ -34,6 +61,9 @@ class DropdownMultipleSelectWithSearch extends Component {
       return {
         selectedList: []
       };
+    }, () => {
+      const {handleSelectedItemChange} = this.props
+      handleSelectedItemChange([])
     });
   };
   handleClickedSelectAllBtn = () => {
@@ -48,18 +78,18 @@ class DropdownMultipleSelectWithSearch extends Component {
       (list.length && !selectedList.length)
     ) {
       this.setState((state, props) => {
-        handleSelectedItemChange(list)
+        handleSelectedItemChange(list);
         return {
           selectedList: [...list]
-        }
-      })
+        };
+      });
     } else {
       this.setState((state, props) => {
-        handleSelectedItemChange([])
+        handleSelectedItemChange([]);
         return {
           selectedList: []
-        }
-      })
+        };
+      });
     }
   };
   handleClickedAddBtn = e => {
@@ -71,12 +101,12 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
   };
   handleSelectedItem = selectedKeys => {
-    const {handleSelectedItemChange} = this.props
+    const { handleSelectedItemChange } = this.props;
     this.setState((state, props) => {
       const hasSelectedList = selectedKeys.map(item =>
         props.list.find(i => i.id === item)
-      )
-      handleSelectedItemChange(hasSelectedList)
+      );
+      handleSelectedItemChange(hasSelectedList);
       return {
         selectedList: hasSelectedList
       };
@@ -137,7 +167,9 @@ class DropdownMultipleSelectWithSearch extends Component {
                 style={{ width: "20", height: "20", borderRadius: "50%" }}
               />
             )}
-            <span style={{marginLeft: '5px', userSelect: 'none'}}>{item.full_name}</span>
+            <span style={{ marginLeft: "5px", userSelect: "none" }}>
+              {item.full_name}
+            </span>
             <span style={{ position: "absolute", width: "20px", right: "0" }}>
               {isSelectCurrItem && <img src={chackImg} alt="" width="16" />}
             </span>
@@ -173,16 +205,16 @@ class DropdownMultipleSelectWithSearch extends Component {
           </div>
         )}
         <div className={styles.dropdownContentMenuWrapper}>
-        <Menu
-          // style={{ maxHeight: "240px", overflowY: "auto" }}
-          multiple={true}
-          onClick={this.handleClickedMenuItem}
-          onSelect={this.handleSelectedMenuItem}
-          onDeselect={this.handleDeSelectedMenuItem}
-          selectedKeys={selectedKeys}
-        >
-          {this.renderMenuItem()}
-        </Menu>
+          <Menu
+            // style={{ maxHeight: "240px", overflowY: "auto" }}
+            multiple={true}
+            onClick={this.handleClickedMenuItem}
+            onSelect={this.handleSelectedMenuItem}
+            onDeselect={this.handleDeSelectedMenuItem}
+            selectedKeys={selectedKeys}
+          >
+            {this.renderMenuItem()}
+          </Menu>
         </div>
       </div>
     );
@@ -220,7 +252,17 @@ class DropdownMultipleSelectWithSearch extends Component {
               alt=""
             />
           ) : (
-            <Icon type="user" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px'}} className={styles.contentListItemImg} />
+            <Icon
+              type="user"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "24px",
+                height: "24px"
+              }}
+              className={styles.contentListItemImg}
+            />
           )}
           <span
             className={styles.contentListItemDeleBtn}
@@ -231,28 +273,48 @@ class DropdownMultipleSelectWithSearch extends Component {
     ));
   };
   comparePropsList = (nextList, currList) => {
-    if(nextList.length !== currList.length) {
-      return false
+    if (nextList.length !== currList.length) {
+      return false;
     }
-    const isFindAllNextListInCurrList = () => nextList.every(item => currList.find(i => i.id === item.id))
-    if(!isFindAllNextListInCurrList()) {
-      return false
+    const isFindAllNextListInCurrList = () =>
+      nextList.every(item => currList.find(i => i.id === item.id));
+    if (!isFindAllNextListInCurrList()) {
+      return false;
     }
-    return true
-  }
-  componentWillReceiveProps(nextProps){
-    const {list} = this.props
-    const isReceiveSameListFromProps = this.comparePropsList(nextProps.list, list)
-    if(!isReceiveSameListFromProps) {
-      this.setState({
-        selectedList: [],
-        searchValue: ''
-      })
+    return true;
+  };
+  componentWillReceiveProps(nextProps) {
+    const { list, handleSelectedItemChange } = this.props;
+    const isReceiveSameListFromProps = this.comparePropsList(
+      nextProps.list,
+      list
+    );
+    if (!isReceiveSameListFromProps) {
+      const currentUserFromCookie = this.getCurrentUserFromCookie('userInfo')
+      if(currentUserFromCookie) {
+        const currentUserId = currentUserFromCookie.id;
+          const currentUserInList = list.find(
+            item => item.id === currentUserId
+          );
+          this.setState({
+            selectedList: currentUserInList ? [currentUserInList] : [],
+            searchValue: ""
+          }, () => {
+            if(currentUserInList) {
+              handleSelectedItemChange([currentUserInList])
+            }
+          });
+      } else {
+        this.setState({
+          selectedList: [],
+          searchValue: ""
+        });
+      }
     }
   }
   render() {
     const { dropdownOptionVisible, selectedList } = this.state;
-    const {itemTitle} = this.props
+    const { itemTitle } = this.props;
     return (
       <div className={styles.wrapper}>
         <div className={styles.content}>

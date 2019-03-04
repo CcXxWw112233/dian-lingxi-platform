@@ -10,7 +10,7 @@ import { deleteUploadFile } from "./../../../../../../services/technological/wor
 import DropdownSelectWithSearch from "./../DropdownSelectWithSearch/index";
 import DropdownMultipleSelectWithSearch from "./../DropdownMultipleSelectWithSearch/index";
 import DateRangePicker from "./../DateRangePicker/index";
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie'
 
 /* eslint-disable */
 @connect(({ workbench }) => ({ workbench }))
@@ -183,6 +183,7 @@ class AddTaskModal extends Component {
     });
   };
   handleSelectedItemChange = list => {
+    console.log(list, 'listttttttttttttttttttt-------------------')
     this.setState({
       currentSelectedProjectMember: list
     });
@@ -229,7 +230,7 @@ class AddTaskModal extends Component {
         projectTabCurrentSelectedProject !== "0"
       ) {
         this.setState({
-          currentSelectedProject: isProjectListExistCurrentSelectedProject
+          currentSelectedProject: isProjectListExistCurrentSelectedProject,
         });
       }
     }
@@ -242,7 +243,7 @@ class AddTaskModal extends Component {
       start_time,
       due_time,
       attachment_fileList,
-      currentSelectedFileFolder
+      currentSelectedFileFolder,
     } = this.state;
     const {
       projectList,
@@ -324,7 +325,7 @@ class AddTaskModal extends Component {
             attachment_fileList: fileList
           },
           () => {
-            console.log(attachment_fileList, "has upload files list. ");
+            // console.log(attachment_fileList, "has upload files list. ");
           }
         );
         // drawContent["attachment_data"] = fileList;
@@ -364,29 +365,13 @@ class AddTaskModal extends Component {
           .catch(err => {
             message.error("删除失败，请稍后再试");
           });
-
-        // })
-        // return new Promise((resolve, reject) => {
-        //   deleteTaskFile({ attachment_id })
-        //     .then(value => {
-        //       if (value.code !== "0") {
-        //         message.warn("删除失败，请重新删除。");
-        //         reject();
-        //       } else {
-        //         resolve();
-        //       }
-        //     })
-        //     .catch(err => {
-        //       message.warn("删除失败，请重新删除。");
-        //       reject();
-        //     });
-        // });
       }
     };
 
     return (
       <Modal
         visible={addTaskModalVisible}
+        // maskClosable={false}
         title={
           // <div style={{ textAlign: "center" }}>{"添加内容" + modalTitle}</div>
           <div style={{ textAlign: "center" }}>{"添加内容"}</div>
@@ -412,6 +397,7 @@ class AddTaskModal extends Component {
             {taskType === "MY_DOCUMENT" && (
               <div className={styles.addTaskModalSelectFileFolder}>
                 <Cascader
+                  className={styles.addTaskModalSelectFileFolder__selectWrapper}
                   options={[folderOptions]}
                   onChange={this.handleSelectedFileFolderChange}
                   placeholder="选择一个文件夹"
@@ -463,6 +449,7 @@ class AddTaskModal extends Component {
                   itemTitle={taskType === "RESPONSIBLE_TASK" ? '执行人' : '参与人'}
                   list={currentSelectedProjectMembersList}
                   handleSelectedItemChange={this.handleSelectedItemChange}
+                  currentSelectedProjectMember={currentSelectedProjectMember}
                 />
               </div>
               <div className={styles.confirmBtn}>

@@ -177,7 +177,6 @@ export default class CardContent extends React.Component {
     });
   }
   handleAddTask = type => {
-    console.log(type, 'bbbbbbbbbbbbbbbbbbbbbbbbbbb')
     this.handleAddATask(type);
   };
   handleAddATask = type => {
@@ -187,8 +186,7 @@ export default class CardContent extends React.Component {
       'MY_DOCUMENT': 'uploadFileModalVisible',
       'EXAMINE_PROGRESS': 'addProcessModalVisible'
     }
-    const visibleType = Object.keys(modalObj).find(item => item === type)
-    console.log(visibleType, 'oooooooooooooooooooooooooo')
+    const visibleType = Object.keys(modalObj).find(item => item == type)
     if(!visibleType){
       return
     }
@@ -210,7 +208,7 @@ export default class CardContent extends React.Component {
       projectTabCurrentSelectedProject !== "0" &&
       visibleType === 'EXAMINE_PROGRESS'
       ) {
-        console.log('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+
         Promise.resolve(
           dispatch({
             type: "workbench/fetchCurrentSelectedProjectTemplateList",
@@ -374,11 +372,11 @@ export default class CardContent extends React.Component {
                   <ProcessItem {...this.props} key={key} itemValue={value} />
                 ))}
               </div>
-              {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")}
+              {/* {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")} */}
             </div>
-          ) : (
+          ) : (<></>
             // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent("发起流程", '"EXAMINE_PROGRESS"')}</>
+            // <>{this.noContent("发起流程", "EXAMINE_PROGRESS")}</>
           );
           break;
         //我参与的会议

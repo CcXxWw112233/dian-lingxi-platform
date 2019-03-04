@@ -16,18 +16,22 @@ const ProjectListBarCell = ({
     [styles.projectListBarCellWrapper]: true,
     [styles.projectListBarCellActive]: shouldActive === board_id ? true : false
   })
+  const handleClickedCell_ = (e, board_id) => {
+    if(e) e.stopPropagation()
+    handleClickedCell(board_id)
+  }
   return (
-    <div
+    <li
       className={projectListBarCellClass}
-      onClick={() => handleClickedCell(board_id)}
+      onClick={(e) => handleClickedCell_(e, board_id)}
     >
       <Tooltip title={org_name ? board_name + " #" + org_name : board_name}>
-        <p className={styles.projectListBarCellContent}>
+        <a className={styles.projectListBarCellContent}>
           <span>{board_name}</span>
           {org_name && `#${org_name}`}
-        </p>
+        </a>
       </Tooltip>
-    </div>
+    </li>
   );
 };
 
