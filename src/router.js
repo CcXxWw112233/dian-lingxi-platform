@@ -168,6 +168,9 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/index',
       component: () => import('./routes/Index'),
+    }, {
+      path: '/iframeOut',
+      component: () => import('./routes/IframeOut'),
     },
   ]
   //去掉exact

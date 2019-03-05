@@ -70,7 +70,6 @@ export default {
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
             if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-              console.log(10)
               const calback = function (event) {
                 dispatch({
                   type: 'connectWsToModel',
@@ -92,10 +91,10 @@ export default {
             // initWs(calback)
           }, 3000)
           //页面移出时对socket和socket缓存的内容清除
-          // window.onload = function () {
-          //   Cookies.set('wsLinking', 'false', {expires: 30, path: ''})
-          //   localStorage.removeItem(`newMessage`)
-          // }
+          window.onload = function () {
+            Cookies.set('wsLinking', 'false', {expires: 30, path: ''})
+            localStorage.removeItem(`newMessage`)
+          }
         }
 
       })
