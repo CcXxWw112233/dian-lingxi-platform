@@ -6,8 +6,10 @@ import DrawerContent from './DrawerContent'
 import { Drawer } from 'antd'
 import {stopPropagation} from "../../../../../utils/util";
 import DrawContentModal from './components/DrawContentModal'
+import QueryString from 'querystring'
 
 const documentWidth = document.querySelector('body').offsetWidth
+let defaultScrollLeft = 0;
 function changeClientHeight() {
   const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
   return clientHeight
@@ -33,15 +35,44 @@ export default class CreateTask extends React.Component {
     this.disY = 0;
 
     //横向滚动条位置
-    this.scrollLeft = 0
+    let task_page_scrollLeft = localStorage.getItem('task_page_scrollLeft')
+    this.scrollLeft = task_page_scrollLeft || 0
     this.resizeTTY.bind(this)
   }
+
+
   componentDidMount() {
     const target = this.refs.outerMost
     target.scrollTo(this.scrollLeft, 0)
+
+    //在本地监听一个scroll事件，缓存下来持久化，在model
+    let latoutNode = document.getElementById("taskAppOuterMost");
+    if (latoutNode) {
+      latoutNode.addEventListener("scroll", e => {
+        localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft);
+      });
+    }
     // window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
+    let latoutNode = document.getElementById("taskAppOuterMost");
+    if (latoutNode) {
+
+      //如果跳转到其他页面，则重置滚动条位置
+      const urlArr = location.href.split('?') || []
+      let param = {}
+      let appsSelectKey = '3'
+      if(urlArr[1]) {
+        param = QueryString.parse(urlArr[1])
+        appsSelectKey = param['appsSelectKey']
+      }
+      if(!appsSelectKey || appsSelectKey != '3') {
+        localStorage.setItem('task_page_scrollLeft', 0);
+        latoutNode.removeEventListener("scroll", e => {
+          localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft);
+        });
+      }
+    }
     // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
   }
   resizeTTY(type) {
@@ -177,6 +208,7 @@ export default class CreateTask extends React.Component {
         <div className={CreateTaskStyle.outerMost}
              // style={{left:this.state.needX,}}
              // onMouseDown={this.fnDown.bind(this)}
+             id={'taskAppOuterMost'}
              onWheel={this.fnWheel.bind(this)}
              onScroll={this.fnScroll.bind(this)}
              style={{height: clientHeight - 172 + corretDegree}}

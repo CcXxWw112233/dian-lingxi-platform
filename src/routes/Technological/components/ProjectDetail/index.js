@@ -14,7 +14,7 @@ const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
 const getEffectOrReducerByNameProcess = name => `projectDetailProcess/${name}`
 
 const ProjectDetail = (props) => {
-  const { dispatch, model, modal } = props
+  const { dispatch, model, modal, match } = props
   const { datas = { } } = model
   const { projectInfoDisplay, appsSelectKey } = datas
   const HeaderListProps = {
@@ -157,6 +157,7 @@ const ProjectDetail = (props) => {
   const CreateTaskProps = {
     modal,
     model,
+    match,
     cardItemClickEffect(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('cardItemClickEffect'),

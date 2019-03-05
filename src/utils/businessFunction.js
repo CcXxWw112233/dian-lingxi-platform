@@ -1,6 +1,7 @@
 //业务逻辑公共工具类
 import { message } from 'antd'
 import { NORMAL_NOUN_PLAN } from '../globalset/js/constant'
+import {getFilePDFInfo} from "../services/technological/file";
 
 //检查是否有操作权限
 export const checkIsHasPermission = (code) => {
@@ -50,4 +51,14 @@ export const currentNounPlanFilterName = (code) => {
     }
   }
   return name
+}
+
+//打开pdf文件名
+export const openPDF = (params) => {
+  const { protocol, hostname } = location
+  window.open(`${protocol}//${hostname}/#/iframeOut?operateType=openPDF&id=${params['id']}`)
+}
+//获取后缀名
+export const getSubfixName = (file_name) => {
+  return file_name ? file_name.substr(file_name.lastIndexOf(".")).toLowerCase() : ''
 }

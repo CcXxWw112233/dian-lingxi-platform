@@ -186,3 +186,12 @@ export async function fileInfoByUrl_2(params) {
     params,
   });
 }
+
+//获取pdf信息
+export async function getFilePDFInfo(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/pdf/getAnnotationEditUrl/${params.id}`,
+    method: 'GET',
+    params,
+  });
+}
