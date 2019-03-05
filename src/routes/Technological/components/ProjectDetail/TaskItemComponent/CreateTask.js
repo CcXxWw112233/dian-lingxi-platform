@@ -59,7 +59,7 @@ export default class CreateTask extends React.Component {
     if (latoutNode) {
 
       //如果跳转到其他页面，则重置滚动条位置
-      const urlArr = location.href.split('?') || []
+      const urlArr = window.location.href.split('?') || []
       let param = {}
       let appsSelectKey = '3'
       if(urlArr[1]) {
