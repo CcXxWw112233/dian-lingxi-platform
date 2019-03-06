@@ -183,7 +183,7 @@ class AddTaskModal extends Component {
     });
   };
   handleSelectedItemChange = list => {
-    console.log(list, 'listttttttttttttttttttt-------------------')
+    // console.log(list, 'listttttttttttttttttttt-------------------')
     this.setState({
       currentSelectedProjectMember: list
     });
@@ -202,7 +202,7 @@ class AddTaskModal extends Component {
       return {
         label: orgArr.folder_name,
         value: orgArr.folder_id,
-        children: []
+        // children: []
       };
     }
     return {

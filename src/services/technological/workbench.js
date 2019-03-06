@@ -1,6 +1,40 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+
+export async function createMeeting(payload) {
+  const {board_id, flag, topic, user_for} = payload
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
+    method: 'POST',
+    data: {
+      board_id,
+      flag,
+      topic,
+      user_for,
+      rela_id: board_id
+    }
+  })
+
+  // const body = {
+  //   "board_id": 0,  //null | string
+  //   "flag": 0,    //会议类型 2
+  //   "org_id": 0,  //不用传
+  //   "password": "string", //不用传
+  //   "rela_id": 0,   //如果有bord_id ,board_id | null
+  //   "topic": "string", //title
+  //   "user_for": "string" //','
+  // }
+  //flag: 2 //会议类型，全局调用时，值为：2
+}
+
+//获取当前组织的所有成员信息
+export async function getCurrentOrgAllMembers() {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/userlist`,
+    method: 'GET'
+  })
+}
 
 //获取项目流程模板
 export async function getProgressTemplateList(params) {

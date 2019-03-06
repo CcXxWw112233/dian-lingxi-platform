@@ -183,3 +183,13 @@ export const stopPropagation = (e) => {
     e.cancelBubble = true;
   };
 }
+
+//去除空格
+export const trimSpace = str => {
+  return str.replace(/\s+/g, "");
+};
+//去除换行
+
+export const trimLineBack = str => {
+  return str.replace(/<\/?.+?>/g, "").replace(/[\r\n]/g, "");
+};

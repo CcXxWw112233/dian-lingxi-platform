@@ -1,18 +1,47 @@
 import React from "react";
-import { Layout } from "antd";
+import { Layout, Popover, Select, Input, Mention, Button, message } from "antd";
 import indexStyles from "./index.less";
 import glabalStyles from "../../../globalset/css/globalClassName.less";
-
+import { connect } from "dva";
+import Cookies from "js-cookie";
+import { validateTel } from "./../../../utils/verify";
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 
 const { Sider } = Layout;
+const Option = Select.Option;
+const { TextArea } = Input;
+const { getMentions, toString, toContentState } = Mention;
+const Nav = Mention.Nav;
 
-export default class SiderRight extends React.Component {
-  state = {
-    collapsed: true
+@connect(({ technological, workbench }) => {
+  return {
+    projectList:
+      technological.datas && technological.datas.currentOrgProjectList
+        ? technological.datas.currentOrgProjectList
+        : [],
+    projectTabCurrentSelectedProject:
+      workbench.datas && workbench.datas.projectTabCurrentSelectedProject
+        ? workbench.datas.projectTabCurrentSelectedProject
+        : "0",
+    currentSelectedProjectMembersList:
+      workbench.datas && workbench.datas.currentSelectedProjectMembersList
+        ? workbench.datas.currentSelectedProjectMembersList
+        : [],
+    currentOrgAllMembers: technological.datas.currentOrgAllMembersList
   };
-
+})
+class SiderRight extends React.Component {
+  state = {
+    collapsed: true,
+    saveToProject: null,
+    meetingTitle: "",
+    videoMeetingDefaultSuggesstions: [], //mention 原始数据
+    selectedSuggestions: [], //自定义的mention选择列表
+    suggestionValue: toContentState(""), //mention的值
+    mentionSelectedMember: [], //已经选择的 item,
+    selectedMemberTextAreaValue: ""
+  };
   onCollapse(bool) {
     this.setState({
       collapsed: bool
@@ -25,8 +54,422 @@ export default class SiderRight extends React.Component {
     });
   }
 
+  handleVideoMeetingSaveSelectChange = value => {
+    this.setState({
+      saveToProject: value
+    });
+  };
+
+  handleVideoMeetingTopicChange = e => {
+    this.setState({
+      meetingTitle: e.target.value
+    });
+  };
+
+  handleVideoMeetingMemberChange = value => {
+    console.log(value, "video meetind members.");
+    const { videoMeetingDefaultSuggesstions } = this.state;
+    const searchValue = value.toLowerCase();
+    const filtered = videoMeetingDefaultSuggesstions.filter(item =>
+      item.toLowerCase().includes(searchValue)
+    );
+    const suggestions = filtered.map(suggestion => (
+      <Nav value={suggestion} data={suggestion}>
+        <span>{suggestion}</span>
+      </Nav>
+    ));
+    this.setState({
+      selectedSuggestions: suggestions
+    });
+  };
+  handleTransMentionSelectedMember = () => {
+    const { currentOrgAllMembers } = this.props;
+    const { mentionSelectedMember } = this.state;
+    //有可能存在 full_name(mobile) 和 full_name(email) 的情况
+    return mentionSelectedMember.reduce((acc, curr) => {
+      const isFindFullNameINCurr = full_name =>
+        currentOrgAllMembers.find(item => item.full_name === full_name);
+      const isFullNameWithMobleOrEmail = () =>
+        curr.endsWith(")") && isFindFullNameINCurr(curr.split("(")[0]);
+      if (isFullNameWithMobleOrEmail()) {
+        const full_name = curr.split("(")[0];
+        const getUserByFull_name = currentOrgAllMembers.find(
+          item => item.full_name === full_name
+        );
+        const isUserHasMoblie = getUserByFull_name.mobile;
+        const isUserHasEmail = getUserByFull_name.email;
+        if (isUserHasMoblie || isUserHasEmail) {
+          const mobileOrEmail = isUserHasMoblie
+            ? isUserHasMoblie
+            : isUserHasMoblie;
+          return acc ? acc + "," + mobileOrEmail : mobileOrEmail;
+        }
+        return acc;
+      } else {
+        const getUserByFull_name = currentOrgAllMembers.find(
+          item => item.full_name === curr
+        );
+        console.log(
+          getUserByFull_name,
+          "get userrrrrrrrrrrrrrrrrrr.................."
+        );
+        const isUserHasMoblie = getUserByFull_name.mobile;
+        const isUserHasEmail = getUserByFull_name.email;
+        const mobileOrEmail = isUserHasMoblie
+          ? isUserHasMoblie
+          : isUserHasEmail;
+        return acc ? acc + "," + mobileOrEmail : mobileOrEmail;
+      }
+    }, "");
+  };
+  handleTransMentionSelectedOtherMembersMobileString = () => {
+    const { selectedMemberTextAreaValue } = this.state;
+
+    //去除空格
+    const trimSpace = str => {
+      return str.replace(/\s+/g, "");
+    };
+    //去除换行
+
+    const trimLineBack = str => {
+      return str.replace(/<\/?.+?>/g, "").replace(/[\r\n]/g, "");
+    };
+
+    const trimSpaceAndLineBackArr = trimLineBack(
+      trimSpace(selectedMemberTextAreaValue)
+    )
+      .replace(/；/g, ";")
+      .split(";")
+      .map(item => item.trim())
+      .filter(item => item);
+    const isEachMobileValid = arr => arr.every(item => validateTel(item));
+    if (!isEachMobileValid(trimSpaceAndLineBackArr)) {
+      return "error";
+    } else {
+      return trimSpaceAndLineBackArr.reduce((acc, curr) => {
+        return acc ? acc + "," + curr : curr;
+      }, "");
+    }
+  };
+  handleVideoMeetingSubmit = () => {
+    const {dispatch} = this.props
+    const { meetingTitle, saveToProject } = this.state;
+    const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
+    const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
+    if (mentionSelectedOtherMembersMobileString === "error") {
+      message.error("组织外成员手机号格式有误，请检查");
+      return;
+    }
+    const mergedMeetingMemberStr = [
+      mentionSelectedMembersMobileOrEmailString,
+      mentionSelectedOtherMembersMobileString
+    ].reduce((acc, curr) => {
+      return acc ? (curr ? acc + "," + curr : acc) : curr;
+    }, "");
+    if (!mergedMeetingMemberStr || !meetingTitle) {
+      message.error("必须有【会议主题】和【参会人员】");
+      return;
+    }
+
+    const data = {
+      board_id: saveToProject,
+      flag: 2,
+      rela_id: saveToProject,
+      topic: meetingTitle,
+      user_for: mergedMeetingMemberStr
+    }
+
+
+    console.log(data, 'createMeeting post data')
+
+    Promise.resolve(
+      dispatch({
+        type: 'technological/initiateVideoMeeting',
+        payload: data,
+      })
+    ).then(res => {
+      if(res.code === '0'){
+        message.success('发起会议成功')
+        window.open(res.message)
+      } else {
+        message.error('发起会议失败')
+      }
+    })
+
+    console.log(
+      mentionSelectedMembersMobileOrEmailString,
+      mentionSelectedOtherMembersMobileString,
+      mergedMeetingMemberStr,
+      "submitttttttttttttttttttt....."
+    );
+  };
+  handleVideoMeetingPopoverVisibleChange = flag => {
+    if (flag === false) {
+      this.initVideoMeetingPopover();
+    }else {
+      this.forceUpdate()
+    }
+  };
+  initVideoMeetingPopover = () => {
+    this.setState({
+      // saveToProject: null,
+      meetingTitle: "",
+      // videoMeetingDefaultSuggesstions: [], //mention 原始数据
+      // selectedSuggestions: [], //自定义的mention选择列表
+      suggestionValue: toContentState(""), //mention的值
+      mentionSelectedMember: [], //已经选择的 item,
+      selectedMemberTextAreaValue: ""
+    });
+  };
+  getInfoFromCookie = key => {
+    try {
+      const userInfo = JSON.parse(Cookies.get(key));
+      return userInfo;
+    } catch (e) {
+      message.error("从 Cookie 中获取用户信息失败, 当发起视频会议的时候");
+    }
+  };
+  getCurrentUserNameThenSetMeetingTitle = () => {
+    const currentUser = this.getInfoFromCookie("userInfo");
+    if (currentUser) {
+      const meetingTitle = `${currentUser.full_name}发起的会议`;
+      this.setState({
+        meetingTitle
+      });
+    }
+  };
+  handleAssemVideoMeetingDefaultSuggesstions = (orgList = []) => {
+    return orgList.reduce((acc, curr) => {
+      const isHasRepeatedNameItem =
+        orgList.filter(item => item.full_name === curr.full_name).length >= 2;
+      //如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
+      //形式： full_name(mobile|email)
+      if (isHasRepeatedNameItem) {
+        const item = `${curr.full_name}(${
+          curr.mobile ? curr.mobile : curr.email
+        })`;
+        return [...acc, item];
+      }
+      return [...acc, curr.full_name];
+    }, []);
+  };
+  getVideoMeetingDefaultSuggesstions = key => {
+    const { dispatch, projectTabCurrentSelectedProject } = this.props;
+    const hasMemberInPropKey = () =>
+      !!this.props[key] && this.props[key].length;
+    Promise.resolve(hasMemberInPropKey())
+      .then(flag => {
+        if (!flag) {
+          if (key === "currentSelectedProjectMembersList") {
+            return dispatch({
+              type: "workbench/fetchCurrentSelectedProjectMembersList",
+              payload: { projectId: projectTabCurrentSelectedProject }
+            });
+          }
+          return dispatch({
+            type: "workbench/fetchCurrentOrgAllMembers",
+            payload: {}
+          });
+        }
+      })
+      .then(() => {
+        if (key === "currentSelectedProjectMembersList") {
+          const { currentSelectedProjectMembersList } = this.props;
+          if (
+            currentSelectedProjectMembersList &&
+            currentSelectedProjectMembersList.length
+          ) {
+            const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(
+              currentSelectedProjectMembersList
+            );
+            this.setState({
+              saveToProject:
+                projectTabCurrentSelectedProject === "0"
+                  ? null
+                  : projectTabCurrentSelectedProject,
+              videoMeetingDefaultSuggesstions
+            });
+          } else {
+            this.setState({
+              saveToProject:
+                projectTabCurrentSelectedProject === "0"
+                  ? null
+                  : projectTabCurrentSelectedProject,
+              videoMeetingDefaultSuggesstions: []
+            });
+          }
+        } else {
+          const { currentOrgAllMembers } = this.props;
+          if (currentOrgAllMembers && currentOrgAllMembers.length) {
+            const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(
+              currentOrgAllMembers
+            );
+            this.setState({
+              saveToProject:
+                projectTabCurrentSelectedProject === "0"
+                  ? null
+                  : projectTabCurrentSelectedProject,
+              videoMeetingDefaultSuggesstions
+            });
+          } else {
+            this.setState({
+              saveToProject:
+                projectTabCurrentSelectedProject === "0"
+                  ? null
+                  : projectTabCurrentSelectedProject,
+              videoMeetingDefaultSuggesstions: []
+            });
+          }
+        }
+      });
+  };
+  getCurrentSelectedProjectAndShouldMentionMember = () => {
+    const { projectTabCurrentSelectedProject } = this.props;
+    const hasSelectedProject = () => projectTabCurrentSelectedProject !== "0";
+    //如果已经选择过具体的项目
+    if (hasSelectedProject()) {
+      this.getVideoMeetingDefaultSuggesstions(
+        "currentSelectedProjectMembersList"
+      );
+    } else {
+      this.getVideoMeetingDefaultSuggesstions("currentOrgAllMembers");
+    }
+  };
+  handleShowVideoMeeting = () => {
+    this.getCurrentUserNameThenSetMeetingTitle();
+    this.getCurrentSelectedProjectAndShouldMentionMember();
+  };
+  handleVideoMeetingMemberSelect = (suggestion, data) => {
+    console.log("onSelect", suggestion, data);
+    const { mentionSelectedMember } = this.state;
+    const isSuggestionInMentionSelectedMemeber = () =>
+      mentionSelectedMember.find(item => item === suggestion);
+    if (!isSuggestionInMentionSelectedMemeber()) {
+      this.setState(
+        state => {
+          return {
+            mentionSelectedMember: [...state.mentionSelectedMember, suggestion]
+          };
+        },
+        () => {
+          console.log(
+            this.state.mentionSelectedMember,
+            "mmmmmmmmmmmmmmmmmmmmmmm"
+          );
+        }
+      );
+    }
+  };
+  filterHasDeletedMentionSelectedMember = oriStr => {
+    const { mentionSelectedMember } = this.state;
+    const shouldExistMentionSelectedMember = mentionSelectedMember.filter(
+      item => oriStr.includes("@" + item)
+    );
+    if (
+      shouldExistMentionSelectedMember.length !== mentionSelectedMember.length
+    ) {
+      this.setState({
+        mentionSelectedMember: shouldExistMentionSelectedMember
+      });
+    }
+  };
+  handleVideoMeetingValueChange = value => {
+    console.log(toString(value), "select value0000000000000000000");
+    this.filterHasDeletedMentionSelectedMember(toString(value));
+    this.setState({
+      suggestionValue: value
+    });
+  };
+  handleValidVideoMeetingMembers = value => {
+    console.log(value, "vavvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+    return value;
+  };
+  selectedMemberTextAreaValueChange = e => {
+    this.setState({
+      selectedMemberTextAreaValue: e.target.value
+    });
+  };
   render() {
-    const { collapsed } = this.state;
+    const {
+      collapsed,
+      saveToProject,
+      meetingTitle,
+      selectedSuggestions,
+      suggestionValue,
+      selectedMemberTextAreaValue
+    } = this.state;
+    const { projectList } = this.props;
+
+    const videoMeetingPopoverContent = (
+      <div className={indexStyles.videoMeeting__wrapper}>
+        <div className={indexStyles.videoMeeting__topic}>
+          <p className={indexStyles.videoMeeting__topic_title}>会议主题:</p>
+          <div className={indexStyles.videoMeeting__topic_content}>
+            <span className={indexStyles.videoMeeting__topic_content_save}>
+              <Select
+                defaultValue={saveToProject}
+                onChange={this.handleVideoMeetingSaveSelectChange}
+                style={{ width: "140px" }}
+              >
+                <Option value={null}>不存入项目</Option>
+                {projectList.length !== 0 &&
+                  projectList.map(project => (
+                    <Option value={project.board_id} key={project.board_id}>
+                      {project.board_name}
+                    </Option>
+                  ))}
+              </Select>
+            </span>
+            <span className={indexStyles.videoMeeting__topic_content_title}>
+              <Input
+                value={meetingTitle}
+                onChange={this.handleVideoMeetingTopicChange}
+              />
+            </span>
+          </div>
+        </div>
+        <div className={indexStyles.videoMeeting__memberNote}>
+          <p className={indexStyles.videoMeeting__memberNote_title}>
+            通知参会人：
+          </p>
+          <div className={indexStyles.videoMeeting__memberNote_content}>
+            <div
+              className={indexStyles.videoMeeting__memberNote_content_mention}
+            >
+              <Mention
+                style={{ width: "100%", height: "56px" }}
+                placeholder="使用@符号查找加入同一组织内的成员"
+                suggestions={selectedSuggestions}
+                multiLines
+                onSearchChange={this.handleVideoMeetingMemberChange}
+                placement="top"
+                onSelect={this.handleVideoMeetingMemberSelect}
+                value={suggestionValue}
+                onChange={this.handleVideoMeetingValueChange}
+              />
+            </div>
+            <div
+              className={indexStyles.videoMeeting__memberNote_content_textarea}
+            >
+              <TextArea
+                placeholder="直接列举外部参会人的手机号，多号码请用“;”区分"
+                autosize={{ minRows: 2, maxRows: 4 }}
+                value={selectedMemberTextAreaValue}
+                onChange={this.selectedMemberTextAreaValueChange}
+              />
+            </div>
+          </div>
+        </div>
+        <p className={indexStyles.videoMeeting__prompt}>
+          点击发起会议后即自动发送通知
+        </p>
+        <div className={indexStyles.videoMeeting__submitBtn}>
+          <Button type="primary" onClick={this.handleVideoMeetingSubmit}>
+            发起会议
+          </Button>
+        </div>
+      </div>
+    );
 
     return (
       <div id={"siderRight"} className={indexStyles.siderRight}>
@@ -63,7 +506,8 @@ export default class SiderRight extends React.Component {
             <div
               style={{
                 height: document.documentElement.clientHeight - 58,
-                padding: "20px 12px"
+                padding: "20px 12px",
+                paddingBottom: "40px"
               }}
               onClick={this.setCollapsed.bind(this)}
             >
@@ -76,6 +520,17 @@ export default class SiderRight extends React.Component {
                 id={"iframImCircle"}
               /> */}
             </div>
+            <Popover
+              placement="leftBottom"
+              content={videoMeetingPopoverContent}
+              onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
+              trigger="click"
+            >
+              <div
+                className={indexStyles.videoMeeting__icon}
+                onMouseEnter={this.handleShowVideoMeeting}
+              />
+            </Popover>
             {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
             {/*<div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>*/}
             {/*&#xe710;*/}
@@ -108,3 +563,5 @@ export default class SiderRight extends React.Component {
     );
   }
 }
+
+export default SiderRight;

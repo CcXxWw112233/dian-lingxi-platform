@@ -1,5 +1,6 @@
 import { getUSerInfo, logout } from '../../services/technological'
 import { getOrganizationMemberPermissions, changeCurrentOrg, getSearchOrganizationList, createOrganization, updateOrganization, applyJoinOrganization, inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
+import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
 import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select";
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -17,7 +18,7 @@ let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
-  state: [],
+  state: {},
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -65,6 +66,21 @@ export default {
           //     })
           //   }
           // }
+
+          //获取当前的用户当前组织的项目列表,
+          dispatch({
+            type: 'getCurrentOrgProjectList',
+            payload: {}
+          })
+          //获取用户当前组织的组织成员
+          dispatch({
+            type: 'fetchCurrentOrgAllMembers',
+          })
+
+          //获取工作台当前选中的项目诗句
+          dispatch({
+            type: 'workbench/getBoxList',
+          })
           dispatch({
             type: 'fetchBoxAll',
             payload: {}
@@ -74,6 +90,7 @@ export default {
             type: 'getCurrentUserOrganizes',
             payload: {}
           })
+
           // //websocket连接判定
           // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
           //   // initWs()
@@ -117,6 +134,10 @@ export default {
     },
   },
   effects: {
+    * initiateVideoMeeting({payload}, {call}) {
+        const res = yield call(createMeeting, payload)
+        return res
+    },
     * upDateNaviHeadTabIndex({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
@@ -125,7 +146,30 @@ export default {
         }
       })
     },
+    * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgProjectList: res.data
+          }
+        })
+      }else{
 
+      }
+    },
+    * fetchCurrentOrgAllMembers(_, {call, put}) {
+      let res = yield call(getCurrentOrgAllMembers)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgAllMembersList: res.data.users
+          }
+        })
+      }
+  },
     //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
     * onlyGetUserInfo({ payload }, { select, call, put }) {
       let res = yield call(getUSerInfo, {ss: '1'})
