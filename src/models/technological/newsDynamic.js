@@ -139,7 +139,7 @@ export default {
           newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
         }
         //-------------2018.10.18修改合并相邻相近任务结束
-        console.log(2, newsDynamicListTransform)
+        // console.log(2, newsDynamicListTransform)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -169,6 +169,7 @@ export default {
       if(isApiResponseOk(res)) {
         //将所得到的数据进行日期分类
         newsDynamicListOriginal = [].concat(newsDynamicListOriginal, res.data)
+        // console.log('res_0', JSON.stringify(res.data[0]))
         const data = [...newsDynamicListOriginal]//res.data.list
         let dateArray = []
         let newDataArray = []
@@ -189,7 +190,7 @@ export default {
           newDataArray.push(obj)
         }
         newsDynamicList.push(...newDataArray)
-        console.log('eeee', 2, newsDynamicList)
+        // console.log('eeee', 2, newsDynamicList)
         //-------------2018.10.18修改合并相邻相近任务
         let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
         //将相邻且activity_type_id相同而且type等于固定类型的归为一条
@@ -204,7 +205,6 @@ export default {
           return arr;
         };
         // debugger
-        return false
         for(let i = 0; i < newsDynamicListTransform.length; i++){
           const dataList = newsDynamicListTransform[i]['dataList']
           newsDynamicListTransform[i]['newDataList'] = []
@@ -214,52 +214,53 @@ export default {
             if(isNearKeyTypeTwo.indexOf(key) !== -1) {
               return false
             }
-            if(value.map['type'] === '2') { //处理任务
+            if(value['rela_type'] === '11') { //处理任务
               let TypeArrayList = []
               for (let j = key; j < dataList.length - 1; j++) {
-                if(dataList[j].map['type'] === '2' && value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '2' && j > 0 && value.map['activity_type_id'] === dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                if(dataList[j]['rela_type'] === '11' && value['rela_id'] === dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j + 1]['rela_id'] || ( dataList[j]['rela_type'] === '11' && j > 0 && value['rela_id'] === dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j - 1]['rela_id'])) {
                   isNearKeyTypeTwo.push(j)
                   TypeArrayList.push(dataList[j])
                 }else {
                   break
                 }
               }
-              newsDynamicListTransform[i]['newDataList'][key] = { type: '2', TypeArrayList }
-            }else if(value.map['type'] === '3'){ //处理评论
+              newsDynamicListTransform[i]['newDataList'][key] = { rela_type: '11', TypeArrayList }
+            }else if(value['rela_type'] === '14'){ //处理评论
               let TypeArrayList = []
               for (let j = key; j < dataList.length - 1; j++) {
-                if(dataList[j].map['type'] === '3'&& value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && dataList[j].map['activity_type_id'] === dataList[j + 1].map['activity_type_id'] || ( dataList[j].map['type'] === '3'&& value.map['activity_type_id'] ===dataList[j].map['activity_type_id'] && j > 0 && dataList[j].map['activity_type_id'] === dataList[j - 1].map['activity_type_id'])) {
+                if(dataList[j]['rela_type'] === '14'&& value['rela_id'] ===dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j + 1]['rela_id'] || ( dataList[j]['rela_type'] === '14'&& value['rela_id'] ===dataList[j]['rela_id'] && j > 0 && dataList[j]['rela_id'] === dataList[j - 1]['rela_id'])) {
                   isNearKeyTypeTwo.push(j)
                   TypeArrayList.push(dataList[j])
                 }else {
                   break
                 }
               }
-              newsDynamicListTransform[i]['newDataList'][key] = { type: '3', TypeArrayList }
+              newsDynamicListTransform[i]['newDataList'][key] = { rela_type: '14', TypeArrayList }
             }else {
-              newsDynamicListTransform[i]['newDataList'][key] = { type: value.map['type'], TypeArrayList: [dataList[key]] }
+              newsDynamicListTransform[i]['newDataList'][key] = { rela_type: value['rela_type'], TypeArrayList: [dataList[key]] }
             }
           })
           //已经合并的任务存在了，但是未合并的单条任务没有存进来，需要手动添加
           for(let k = 0; k < newsDynamicListTransform[i]['newDataList'].length; k++) {
             const newDataList = newsDynamicListTransform[i]['newDataList'][k]
-            if(newDataList && newDataList['type'] === '2' && !newDataList['TypeArrayList'].length) {
+            if(newDataList && newDataList['rela_type'] === '11' && !newDataList['TypeArrayList'].length) {
               newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
-            }else if(newDataList && newDataList['type'] === '3' && !newDataList['TypeArrayList'].length){
+            }else if(newDataList && newDataList['rela_type'] === '14' && !newDataList['TypeArrayList'].length){
               newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
             }
           }
           newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
         }
+        // debugger
         //-------------2018.10.18修改合并相邻相近任务结束
-        console.log(2, newsDynamicListTransform)
+        // console.log(2, newsDynamicListTransform)
         yield put({
           type: 'updateDatas',
           payload: {
             newsDynamicList: newsDynamicListTransform, //: newsDynamicList,
             newsDynamicListOriginal,
             next_id: res.data.next_id,
-            isHasMore: res.data.list.length ? true: false
+            isHasMore: res.data.length ? true: false
           }
         })
       }else{
