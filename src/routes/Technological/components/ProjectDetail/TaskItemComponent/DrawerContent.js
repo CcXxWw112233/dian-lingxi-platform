@@ -896,10 +896,10 @@ export default class DrawContent extends React.Component {
                 </div>
               </Dropdown>
               <div className={DrawerContentStyles.right}>
-              <p className={DrawerContentStyles.right__shareIndicator}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p>
+              {/* <p className={DrawerContentStyles.right__shareIndicator}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p>
               <Dropdown overlay={shareMenu}>
               <span className={DrawerContentStyles.right__share}></span>
-              </Dropdown>
+              </Dropdown> */}
               <Dropdown overlay={topRightMenu}>
                   <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
               </Dropdown>
