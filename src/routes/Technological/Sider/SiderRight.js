@@ -351,16 +351,18 @@ class SiderRight extends React.Component {
       });
   };
   getCurrentSelectedProjectAndShouldMentionMember = () => {
-    const { projectTabCurrentSelectedProject } = this.props;
-    const hasSelectedProject = () => projectTabCurrentSelectedProject !== "0";
+    // const { projectTabCurrentSelectedProject } = this.props;
+    this.getVideoMeetingDefaultSuggesstions("currentOrgAllMembers");
+    // const hasSelectedProject = () => projectTabCurrentSelectedProject !== "0";
+
     //如果已经选择过具体的项目
-    if (hasSelectedProject()) {
-      this.getVideoMeetingDefaultSuggesstions(
-        "currentSelectedProjectMembersList"
-      );
-    } else {
-      this.getVideoMeetingDefaultSuggesstions("currentOrgAllMembers");
-    }
+    // if (hasSelectedProject()) {
+    //   this.getVideoMeetingDefaultSuggesstions(
+    //     "currentSelectedProjectMembersList"
+    //   );
+    // } else {
+    //   this.getVideoMeetingDefaultSuggesstions("currentOrgAllMembers");
+    // }
   };
   handleShowVideoMeeting = () => {
     this.getCurrentUserNameThenSetMeetingTitle();
