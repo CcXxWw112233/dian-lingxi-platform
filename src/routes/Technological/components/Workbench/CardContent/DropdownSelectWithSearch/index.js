@@ -81,36 +81,42 @@ class DropdownSelectWithSearch extends Component {
   };
   showModal = () => {
     const { dispatch } = this.props;
-    this.setState({
-      addNewProjectModalVisible: true
-    }, () => {
-      dispatch({
-      type: "project/getAppsList",
-      payload: {
-        type: '2'
+    this.setState(
+      {
+        addNewProjectModalVisible: true
+      },
+      () => {
+        dispatch({
+          type: "project/getAppsList",
+          payload: {
+            type: "2"
+          }
+        });
       }
-    });
-    });
+    );
   };
   handleSubmitNewProject = data => {
     const { dispatch } = this.props;
-    Promise.resolve(dispatch({
-      type: 'project/addNewProject',
-      payload: data
-    })).then(() => {
+    Promise.resolve(
       dispatch({
-        type: 'workbench/getProjectList',
-        payload: {}
+        type: "project/addNewProject",
+        payload: data
       })
-    })
-    .then(() => {
-      this.hideModal()
-    })
-  }
+    )
+      .then(() => {
+        dispatch({
+          type: "workbench/getProjectList",
+          payload: {}
+        });
+      })
+      .then(() => {
+        this.hideModal();
+      });
+  };
   hideModal = () => {
     this.setState({
-      addNewProjectModalVisible: false,
-    })
+      addNewProjectModalVisible: false
+    });
     // const { dispatch } = this.props;
     // dispatch({
     //   type: "modal/hideModal"
@@ -120,7 +126,7 @@ class DropdownSelectWithSearch extends Component {
     const { list, selectedItem } = this.props;
     const { filteredList, inputValue } = this.state;
     if (!list || !list.length) {
-    return <>{this.renderNoContent()}</>;
+      return <>{this.renderNoContent()}</>;
     }
     return (
       <div>
@@ -129,6 +135,7 @@ class DropdownSelectWithSearch extends Component {
           value={inputValue}
           onChange={this.handleInputValueChange}
         />
+        <div>{this.renderNoContent()}</div>
         <Menu
           defaultSelectedKeys={
             selectedItem && selectedItem.board_id ? [selectedItem.board_id] : []
@@ -158,7 +165,15 @@ class DropdownSelectWithSearch extends Component {
             <div className={titleClassName}>
               <p style={{ marginBottom: 0 }}>
                 <span />
-                <span>
+                <span
+                  style={{
+                    display: "inline-block",
+                    maxWidth: "200px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}
+                >
                   {selectedItem && selectedItem.board_name
                     ? selectedItem.board_name
                     : initSearchTitle}

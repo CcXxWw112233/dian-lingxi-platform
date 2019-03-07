@@ -1,4 +1,4 @@
-import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList} from '../../../services/technological/workbench'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList, getCurrentOrgAllMembers } from '../../../services/technological/workbench'
 import {addTask} from '../../../services/technological/task'
 import {getFolderList} from './../../../services/technological/file'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
@@ -16,7 +16,11 @@ import { postCommentToDynamics } from "../../../services/technological/library";
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
   namespace: 'workbench',
-  state: [],
+  state: {
+      datas: {
+        projectList: []
+      }
+    },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -47,6 +51,7 @@ export default modelExtend(technological, {
               currentSelectedProjectMembersList: [],
               currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
+              currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
             }
           })
           dispatch({
@@ -78,6 +83,17 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    * fetchCurrentOrgAllMembers(_, {call, put}) {
+        let res = yield call(getCurrentOrgAllMembers)
+        if(isApiResponseOk(res)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              currentOrgAllMembers: res.data.users
+            }
+          })
+        }
+    },
     * fetchCurrentSelectedProjectTemplateList({payload}, {call, put}) {
       const {board_id} = payload
       let res = yield call(getProgressTemplateList, {board_id})
@@ -246,7 +262,7 @@ export default modelExtend(technological, {
     },
 
     * getBoxList({ payload }, { select, call, put }) {
-      const { calback } = payload
+      const calback = payload && payload.calback
       let res = yield call(getBoxList, {})
       if(calback && typeof calback ==='function') {
         calback()

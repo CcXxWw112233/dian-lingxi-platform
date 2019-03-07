@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Menu, Dropdown, Input, message, Icon } from "antd";
 import styles from "./index.less";
-import chackImg from "./../../../../../../assets/check@2x.png";
-import personGroupImg from "./../../../../../../assets/person_group@2x.png";
+import chackImg from "./../../../../../../assets/workbench/check@2x.png";
+import personGroupImg from "./../../../../../../assets/workbench/person_group@2x.png";
 import Cookies from "js-cookie";
 
 /*eslint-disable*/
@@ -293,7 +293,7 @@ class DropdownMultipleSelectWithSearch extends Component {
       const currentUserFromCookie = this.getCurrentUserFromCookie('userInfo')
       if(currentUserFromCookie) {
         const currentUserId = currentUserFromCookie.id;
-          const currentUserInList = list.find(
+          const currentUserInList = nextProps.list.find(
             item => item.id === currentUserId
           );
           this.setState({

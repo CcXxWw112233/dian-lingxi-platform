@@ -145,12 +145,14 @@ export default class CardContent extends React.Component {
       itemKey
     });
   }
-  onVisibleChange(e, a) {
+  onVisibleChange(e) {
     this.setState({
       dropDonwVisible: e
     });
   }
-  handleMenuClick(e) {
+  handleMenuClick(e, e_truly) {
+    if(e_truly) e_truly.stopPropagation()
+    console.log(e_truly, 'eeeeeeeeeeeeee')
     const key = e.key;
     switch (key) {
       case "rename":
@@ -312,7 +314,7 @@ export default class CardContent extends React.Component {
           <p className={indexstyles.noContentImg} />
           <p className={indexstyles.noContentHint}>暂无数据</p>
         </div>
-        {this.noContentTooltip(prompt, type)}
+        {type !== 'EXAMINE_PROGRESS' && this.noContentTooltip(prompt, type)}
       </>
     );
   };
@@ -374,9 +376,9 @@ export default class CardContent extends React.Component {
               </div>
               {/* {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")} */}
             </div>
-          ) : (<></>
-            // <div style={{marginTop: 12}}>暂无数据</div>
-            // <>{this.noContent("发起流程", "EXAMINE_PROGRESS")}</>
+          ) : (<>
+            {/* <div style={{marginTop: 12}}>暂无数据</div> */}
+            {this.noContent("发起流程", "EXAMINE_PROGRESS")}</>
           );
           break;
         //我参与的会议
@@ -570,12 +572,11 @@ export default class CardContent extends React.Component {
       <div className={indexstyles.cardDetail}>
         <div
           className={indexstyles.contentTitle}
-          onClick={this.handleMenuClick.bind(this, { key: "rename" })}
         >
           {/*<div>{title}</div>*/}
 
           {!isInEditTitle ? (
-            <div className={indexstyles.titleDetail}>{localTitle}</div>
+            <div className={indexstyles.titleDetail} onClick={this.handleMenuClick.bind(this, { key: "rename" })}>{localTitle}</div>
           ) : (
             <Input
               value={localTitle}
@@ -586,6 +587,7 @@ export default class CardContent extends React.Component {
               onChange={this.localTitleChange.bind(this)}
               onPressEnter={this.editTitleComplete.bind(this)}
               onBlur={this.editTitleComplete.bind(this)}
+              onClick={() => {}}
             />
           )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}

@@ -17,19 +17,22 @@ class ProjectListBar extends Component {
   }
   handleClickProjectItem = id => {
     const { dispatch } = this.props;
-    const {dropDownMenuItemList} = this.state
+    const { dropDownMenuItemList } = this.state;
     //如果是在下拉菜单中的元素，需要将元素置于数组的首位
-    const isInDropDownMenuItemList = dropDownMenuItemList.find(item => item.board_id === id)
-    Promise.resolve(dispatch({
-      type: "workbench/handleCurrentSelectedProjectChange",
-      payload: {
-        board_id: id,
-        shouldResortPosition: isInDropDownMenuItemList ? true : false
-      }
-    })).then(() => {
+    const isInDropDownMenuItemList = dropDownMenuItemList.find(
+      item => item.board_id === id
+    );
+    Promise.resolve(
+      dispatch({
+        type: "workbench/handleCurrentSelectedProjectChange",
+        payload: {
+          board_id: id,
+          shouldResortPosition: isInDropDownMenuItemList ? true : false
+        }
+      })
+    ).then(() => {
       this.handleWinResize();
-    })
-
+    });
   };
   onClick = ({ key }) => {
     const { projectTabCurrentSelectedProject } = this.props;
@@ -83,7 +86,7 @@ class ProjectListBar extends Component {
         projectTabCurrentSelectedProject === "0" ? true : false
     });
     const dropDownMenu = (
-      <Menu onClick={this.onClick} style={{minWidth: '120px'}}>
+      <Menu onClick={this.onClick} style={{ minWidth: "120px" }}>
         {dropDownMenuItemList.map(item => (
           <Menu.Item key={item.board_id}>{item.board_name}</Menu.Item>
         ))}
@@ -91,12 +94,14 @@ class ProjectListBar extends Component {
     );
     return (
       <div className={styles.projectListBarWrapper}>
-        <p
-          className={projectListBarAllClass}
-          onClick={() => this.handleClickedCell("0")}
-        >
-          所有参与的项目
-        </p>
+        {projectList && projectList.length !== 0 && (
+          <p
+            className={projectListBarAllClass}
+            onClick={() => this.handleClickedCell("0")}
+          >
+            所有参与的项目
+          </p>
+        )}
         <ul className={styles.projectListBarItemWrapper} ref={this.listRef}>
           {projectList &&
             projectList.map(({ board_id, board_name }) => (
@@ -110,7 +115,7 @@ class ProjectListBar extends Component {
             ))}
         </ul>
         {dropDownMenuItemList.length === 0 ? null : (
-          <Dropdown overlay={dropDownMenu} style={{zIndex: '9999'}}>
+          <Dropdown overlay={dropDownMenu} style={{ zIndex: "9999" }}>
             <div className={styles.projectListBarExpand}>
               <p className={styles.projectListBarExpandImg} />
             </div>
