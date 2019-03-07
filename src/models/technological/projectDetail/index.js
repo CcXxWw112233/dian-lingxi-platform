@@ -153,12 +153,23 @@ export default {
             appsSelectKeyIsAreadyClickArray: [appsSelectKey || 1], //[result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
           }
         })
-        yield put({
-          type: 'appsSelectKeyIsAreadyClickArray',
-          payload: {
-            appsSelectKey
-          }
-        })
+        if(!appsSelectKey) {
+          console.log(window.location.href)
+          yield put({
+            type: 'routingJump',
+            payload: {
+              route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${result.data.app_data[0].key}`
+            }
+          })
+        } else {
+          yield put({
+            type: 'appsSelectKeyIsAreadyClickArray',
+            payload: {
+              appsSelectKey
+            }
+          })
+
+        }
         //缓存下来当前项目的权限
         localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
       }else{
