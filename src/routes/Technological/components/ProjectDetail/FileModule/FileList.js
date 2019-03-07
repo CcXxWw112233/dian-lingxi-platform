@@ -247,7 +247,7 @@ export default class FileList extends React.Component {
   openFile(data) {
     const { file_id, version_id, file_resource_id, file_name } = data
     if(getSubfixName(file_name) == '.pdf') {
-      openPDF({id: file_resource_id})
+      openPDF({id: file_id})
       return false
     }
     this.open(data, '2')
