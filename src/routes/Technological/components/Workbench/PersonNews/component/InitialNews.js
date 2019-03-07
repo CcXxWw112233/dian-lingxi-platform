@@ -148,7 +148,7 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
-              <div className={NewsListStyle.news_3_text}>执行人指派给 {messageValue.map.full_name}</div>
+              <div className={NewsListStyle.news_3_text}>执行人指派给 {messageValue.full_name}</div>
               <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
               <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>

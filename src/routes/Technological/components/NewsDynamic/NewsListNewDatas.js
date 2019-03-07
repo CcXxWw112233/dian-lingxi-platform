@@ -414,7 +414,7 @@ export default class NewsListNewDatas extends React.Component {
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
               {value.map((val, key) => {
-                const { creator, created } = val
+                const { creator, created, content } = val
                 const { avatar } = creator
                 return (
                   <div className={NewsListStyle.news_4_top} key={key}>
@@ -434,7 +434,7 @@ export default class NewsListNewDatas extends React.Component {
                         <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
                       </div>
                       <div className={NewsListStyle.r_b}>
-                        {'评论内容未返回'}
+                        {content.card_comment.text}
                       </div>
                     </div>
                   </div>
@@ -445,7 +445,7 @@ export default class NewsListNewDatas extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.news_4_bottom}>
-                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} card_id={card_id} />
+                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} valueItem={value[0]} card_id={card_id} />
               </div>
             </div>
           </div>
@@ -539,10 +539,11 @@ export default class NewsListNewDatas extends React.Component {
       return containner
     }
 
+    console.log('newsDynamicList', newsDynamicList)
+
     return (
       <div style={{paddingBottom: 100, transform: 'none', display: 'inline'}} >
         {newsDynamicList.map((value, parentkey)=> {
-         console.log('newDataList_item', value)
           const { date, dataList = [], newDataList = []} = value
           return (
             <div className={NewsListStyle.itemOut} key={parentkey}>

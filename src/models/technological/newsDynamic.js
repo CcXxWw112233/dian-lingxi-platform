@@ -168,7 +168,7 @@ export default {
       let newsDynamicListOriginal = yield select(selectNewsDynamicListOriginal)
       if(isApiResponseOk(res)) {
         //将所得到的数据进行日期分类
-        newsDynamicListOriginal = [].concat(newsDynamicListOriginal, res.data)
+        newsDynamicListOriginal = [].concat(newsDynamicListOriginal, res.data.activity || [])
         // console.log('res_0', JSON.stringify(res.data[0]))
         const data = [...newsDynamicListOriginal]//res.data.list
         let dateArray = []
@@ -260,25 +260,33 @@ export default {
             newsDynamicList: newsDynamicListTransform, //: newsDynamicList,
             newsDynamicListOriginal,
             next_id: res.data.next_id,
-            isHasMore: res.data.length ? true: false
+            isHasMore: res.data.activity && res.data.activity.length ? true: false
           }
         })
       }else{
       }
     },
 
-
     * addCardNewComment({ payload }, { select, call, put }) { //
-      const { card_id, comment, parentKey, childrenKey } = payload
+      const { card_id, comment, parentKey, childrenKey, valueItem } = payload
       let res = yield call(addCardNewComment, { card_id, comment })
       if(isApiResponseOk(res)) {
         // 将评论的内容添加到前面
         const newsDynamicList = yield select(selectNewsDynamicList)
         let newItem = JSON.parse(JSON.stringify(newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'][0]))
-        const { user_name, full_name, mobile, email, avatar } = JSON.parse(Cookies.get('userInfo'))
-        newItem['user_name'] = full_name || mobile || email
-        newItem['avatar'] = avatar
-        newItem['cardComment']['text'] = comment
+        const { user_name, user_id, full_name, name, mobile, email, avatar } = JSON.parse(Cookies.get('userInfo'))
+        const obj = {
+          name,
+          mobile,
+          email,
+          avatar,
+          id: user_id
+        }
+        newItem.creator = obj
+        newItem.content.card_comment = {
+          id: res.data.id,
+          text: comment
+        }
         newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'].unshift(newItem)
         // console.log(res)
         yield put({
