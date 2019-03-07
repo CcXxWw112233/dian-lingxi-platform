@@ -136,6 +136,7 @@ class DropdownSelectWithSearch extends Component {
           onChange={this.handleInputValueChange}
         />
         <div>{this.renderNoContent()}</div>
+        <div className={styles.menuWrapper}>
         <Menu
           defaultSelectedKeys={
             selectedItem && selectedItem.board_id ? [selectedItem.board_id] : []
@@ -143,6 +144,7 @@ class DropdownSelectWithSearch extends Component {
         >
           {this.renderMenuItem(filteredList)}
         </Menu>
+        </div>
       </div>
     );
   };
