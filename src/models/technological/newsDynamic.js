@@ -267,6 +267,106 @@ export default {
       }
     },
 
+    * handleWs({ payload }, { select, call, put }) { //获取评论列表
+      const { newsItem } = payload
+      let newsDynamicList = []//yield select(selectNewsDynamicList)
+      let newsDynamicListOriginal = yield select(selectNewsDynamicListOriginal) || []
+      //将所得到的数据进行日期分类
+      const data = [...newsDynamicListOriginal]
+      data.unshift(newsItem)
+      let dateArray = []
+      let newDataArray = []
+      for(let i = 0; i < data.length; i++) {
+        dateArray.push(timestampToTime(data[i]['created']))
+      }
+      dateArray = Array.from(new Set(dateArray))
+      for (let i = 0; i < dateArray.length; i++) {
+        const obj = {
+          date: dateArray[i],
+          dataList: [],
+        }
+        for(let j = 0; j < data.length ; j++) {
+          if(dateArray[i] === timestampToTime(data[j]['created'])) {
+            obj['dataList'].push(data[j])
+          }
+        }
+        newDataArray.push(obj)
+      }
+      newsDynamicList.push(...newDataArray)
+      // console.log('eeee', 2, newsDynamicList)
+      //-------------2018.10.18修改合并相邻相近任务
+      let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
+      //将相邻且activity_type_id相同而且type等于固定类型的归为一条
+      const removeEmptyArrayEle = (arr) => {
+        for(var i = 0; i < arr.length; i++) {
+          if(arr[i] == undefined) {
+            arr.splice(i, 1);
+            i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+            // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+          }
+        }
+        return arr;
+      };
+      // debugger
+      for(let i = 0; i < newsDynamicListTransform.length; i++){
+        const dataList = newsDynamicListTransform[i]['dataList']
+        newsDynamicListTransform[i]['newDataList'] = []
+        let isNearKeyTypeTwo = [] //与key相近的值是否有 activity_type_id相同而且type等于固定类型的归为一条,任务
+        let isNearKeyTypeThree = []//与key相近的值是否有 activity_type_id相同而且type等于固定类型的归为一条,评论
+        dataList.map((value, key) => {
+          if(isNearKeyTypeTwo.indexOf(key) !== -1) {
+            return false
+          }
+          if(value['rela_type'] === '11') { //处理任务
+            let TypeArrayList = []
+            for (let j = key; j < dataList.length - 1; j++) {
+              if(dataList[j]['rela_type'] === '11' && value['rela_id'] === dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j + 1]['rela_id'] || ( dataList[j]['rela_type'] === '11' && j > 0 && value['rela_id'] === dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j - 1]['rela_id'])) {
+                isNearKeyTypeTwo.push(j)
+                TypeArrayList.push(dataList[j])
+              }else {
+                break
+              }
+            }
+            newsDynamicListTransform[i]['newDataList'][key] = { rela_type: '11', TypeArrayList }
+          }else if(value['rela_type'] === '14'){ //处理评论
+            let TypeArrayList = []
+            for (let j = key; j < dataList.length - 1; j++) {
+              if(dataList[j]['rela_type'] === '14'&& value['rela_id'] ===dataList[j]['rela_id'] && dataList[j]['rela_id'] === dataList[j + 1]['rela_id'] || ( dataList[j]['rela_type'] === '14'&& value['rela_id'] ===dataList[j]['rela_id'] && j > 0 && dataList[j]['rela_id'] === dataList[j - 1]['rela_id'])) {
+                isNearKeyTypeTwo.push(j)
+                TypeArrayList.push(dataList[j])
+              }else {
+                break
+              }
+            }
+            newsDynamicListTransform[i]['newDataList'][key] = { rela_type: '14', TypeArrayList }
+          }else {
+            newsDynamicListTransform[i]['newDataList'][key] = { rela_type: value['rela_type'], TypeArrayList: [dataList[key]] }
+          }
+        })
+        //已经合并的任务存在了，但是未合并的单条任务没有存进来，需要手动添加
+        for(let k = 0; k < newsDynamicListTransform[i]['newDataList'].length; k++) {
+          const newDataList = newsDynamicListTransform[i]['newDataList'][k]
+          if(newDataList && newDataList['rela_type'] === '11' && !newDataList['TypeArrayList'].length) {
+            newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
+          }else if(newDataList && newDataList['rela_type'] === '14' && !newDataList['TypeArrayList'].length){
+            newDataList['TypeArrayList'] = [newsDynamicListTransform[i]['dataList'][k]]
+          }
+        }
+        newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
+      }
+      // debugger
+      //-------------2018.10.18修改合并相邻相近任务结束
+      // console.log(2, newsDynamicListTransform)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          newsDynamicList: newsDynamicListTransform, //: newsDynamicList,
+          newsDynamicListOriginal: data,
+        }
+      })
+    },
+
+
     * addCardNewComment({ payload }, { select, call, put }) { //
       const { card_id, comment, parentKey, childrenKey, valueItem } = payload
       let res = yield call(addCardNewComment, { card_id, comment })
