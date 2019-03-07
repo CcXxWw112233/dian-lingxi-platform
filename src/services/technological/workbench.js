@@ -3,7 +3,7 @@ import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST
 import Cookies from 'js-cookie'
 
 export async function createMeeting(payload) {
-  const {board_id, flag, topic, user_for} = payload
+  const {board_id, flag, topic, user_for = null, user_ids = null } = payload
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
@@ -12,7 +12,7 @@ export async function createMeeting(payload) {
       flag,
       topic,
       user_for,
-      rela_id: board_id
+      user_ids
     }
   })
 

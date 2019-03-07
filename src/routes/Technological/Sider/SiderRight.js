@@ -77,7 +77,6 @@ class SiderRight extends React.Component {
   };
 
   handleVideoMeetingMemberChange = value => {
-    console.log(value, "video meetind members.");
     const { videoMeetingDefaultSuggesstions } = this.state;
     const searchValue = value.toLowerCase();
     const filtered = videoMeetingDefaultSuggesstions.filter(item =>
@@ -119,10 +118,6 @@ class SiderRight extends React.Component {
         const getUserByFull_name = currentOrgAllMembers.find(
           item => item.full_name === curr
         );
-        console.log(
-          getUserByFull_name,
-          "get userrrrrrrrrrrrrrrrrrr.................."
-        );
         const isUserHasMoblie = getUserByFull_name.mobile;
         const isUserHasEmail = getUserByFull_name.email;
         const mobileOrEmail = isUserHasMoblie
@@ -161,6 +156,14 @@ class SiderRight extends React.Component {
       }, "");
     }
   };
+  openWinNiNewTabWithATag = url => {
+    const aTag = document.createElement('a')
+    aTag.href = url
+    aTag.target = '_blank'
+    document.querySelector('body').appendChild(aTag)
+    aTag.click()
+    aTag.parentNode.removeChild(aTag)
+  }
   handleVideoMeetingSubmit = () => {
     const { dispatch } = this.props;
     const { meetingTitle, saveToProject } = this.state;
@@ -196,9 +199,9 @@ class SiderRight extends React.Component {
       })
     ).then(res => {
       if (res.code === "0") {
-        const { start_url, topic } = res.data;
+        const { start_url } = res.data;
         message.success("发起会议成功");
-        window.open(start_url, topic);
+        this.openWinNiNewTabWithATag(start_url)
         this.setState(
           {
             videoMeetingPopoverVisible: false
@@ -364,7 +367,6 @@ class SiderRight extends React.Component {
     this.getCurrentSelectedProjectAndShouldMentionMember();
   };
   handleVideoMeetingMemberSelect = (suggestion, data) => {
-    console.log("onSelect", suggestion, data);
     const { mentionSelectedMember } = this.state;
     const isSuggestionInMentionSelectedMemeber = () =>
       mentionSelectedMember.find(item => item === suggestion);
@@ -376,10 +378,10 @@ class SiderRight extends React.Component {
           };
         },
         () => {
-          console.log(
-            this.state.mentionSelectedMember,
-            "mmmmmmmmmmmmmmmmmmmmmmm"
-          );
+          // console.log(
+          //   this.state.mentionSelectedMember,
+          //   "mmmmmmmmmmmmmmmmmmmmmmm"
+          // );
         }
       );
     }
@@ -398,14 +400,12 @@ class SiderRight extends React.Component {
     }
   };
   handleVideoMeetingValueChange = value => {
-    console.log(toString(value), "select value0000000000000000000");
     this.filterHasDeletedMentionSelectedMember(toString(value));
     this.setState({
       suggestionValue: value
     });
   };
   handleValidVideoMeetingMembers = value => {
-    console.log(value, "vavvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
     return value;
   };
   selectedMemberTextAreaValueChange = e => {

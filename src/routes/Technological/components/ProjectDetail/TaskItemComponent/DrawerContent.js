@@ -31,6 +31,7 @@ import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
 import ContentRaletion from './components/ContentRaletion'
+import {createMeeting} from './../../../../../services/technological/workbench'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -651,7 +652,37 @@ export default class DrawContent extends React.Component {
       contentDropVisible: bool
     })
   }
-
+  openWinNiNewTabWithATag = url => {
+    const aTag = document.createElement('a')
+    aTag.href = url
+    aTag.target = '_blank'
+    document.querySelector('body').appendChild(aTag)
+    aTag.click()
+    aTag.parentNode.removeChild(aTag)
+  }
+  handleCreateVideoMeeting = (title, id, users = [], e) => {
+    if(e) e.stopPropagation()
+    const body = {
+      flag: '1',
+      board_id: id,
+      topic: title,
+      user_ids: users.reduce((acc, curr) => {
+        if(!curr || !curr.user_id) return acc
+        return acc ? acc + ',' + curr.user_id : curr.user_id
+      } ,'')
+    }
+    createMeeting(body).then(res => {
+      if (res.code === "0") {
+        const { start_url } = res.data;
+        message.success("发起会议成功");
+        this.openWinNiNewTabWithATag(start_url)
+      } else if (res.code === "1") {
+        message.error(res.message);
+      } else {
+        message.error("发起会议失败");
+      }
+    })
+  }
   render() {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible} = this.state
@@ -1040,9 +1071,9 @@ export default class DrawContent extends React.Component {
               )}
               {type === '0'?('') :(
                 <div>
-                  <Dropdown overlay={meetingMenu}>
-                    <span>发起远程会议</span>
-                  </Dropdown>
+                  {/* <Dropdown overlay={meetingMenu}> */}
+                    <span onClick={(e) => this.handleCreateVideoMeeting(card_name, card_id, executors, e)}>发起远程会议</span>
+                  {/* </Dropdown> */}
                 </div>
               )}
               <div style={{display: 'none'}}>
