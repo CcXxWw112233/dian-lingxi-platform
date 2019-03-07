@@ -1,5 +1,14 @@
 import React from "react";
-import { Layout, Popover, Select, Input, Mention, Button, message } from "antd";
+import {
+  Layout,
+  Popover,
+  Select,
+  Input,
+  Mention,
+  Button,
+  message,
+  Modal
+} from "antd";
 import indexStyles from "./index.less";
 import glabalStyles from "../../../globalset/css/globalClassName.less";
 import { connect } from "dva";
@@ -40,7 +49,8 @@ class SiderRight extends React.Component {
     selectedSuggestions: [], //自定义的mention选择列表
     suggestionValue: toContentState(""), //mention的值
     mentionSelectedMember: [], //已经选择的 item,
-    selectedMemberTextAreaValue: ""
+    selectedMemberTextAreaValue: "",
+    videoMeetingPopoverVisible: false
   };
   onCollapse(bool) {
     this.setState({
@@ -152,7 +162,7 @@ class SiderRight extends React.Component {
     }
   };
   handleVideoMeetingSubmit = () => {
-    const {dispatch} = this.props
+    const { dispatch } = this.props;
     const { meetingTitle, saveToProject } = this.state;
     const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
     const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
@@ -177,38 +187,52 @@ class SiderRight extends React.Component {
       rela_id: saveToProject,
       topic: meetingTitle,
       user_for: mergedMeetingMemberStr
-    }
-
-
-    console.log(data, 'createMeeting post data')
+    };
 
     Promise.resolve(
       dispatch({
-        type: 'technological/initiateVideoMeeting',
-        payload: data,
+        type: "technological/initiateVideoMeeting",
+        payload: data
       })
     ).then(res => {
-      if(res.code === '0'){
-        message.success('发起会议成功')
-        window.open(res.message)
+      if (res.code === "0") {
+        const { start_url, topic } = res.data;
+        message.success("发起会议成功");
+        window.open(start_url, topic);
+        this.setState(
+          {
+            videoMeetingPopoverVisible: false
+          },
+          () => {
+            this.initVideoMeetingPopover();
+          }
+        );
+      } else if (res.code === "1") {
+        message.error(res.message);
+        this.setState(
+          {
+            videoMeetingPopoverVisible: false
+          },
+          () => {
+            this.initVideoMeetingPopover();
+          }
+        );
       } else {
-        message.error('发起会议失败')
+        message.error("发起会议失败");
       }
-    })
-
-    console.log(
-      mentionSelectedMembersMobileOrEmailString,
-      mentionSelectedOtherMembersMobileString,
-      mergedMeetingMemberStr,
-      "submitttttttttttttttttttt....."
-    );
+    });
   };
   handleVideoMeetingPopoverVisibleChange = flag => {
-    if (flag === false) {
-      this.initVideoMeetingPopover();
-    }else {
-      this.forceUpdate()
-    }
+    this.setState(
+      {
+        videoMeetingPopoverVisible: flag
+      },
+      () => {
+        if (flag === false) {
+          this.initVideoMeetingPopover();
+        }
+      }
+    );
   };
   initVideoMeetingPopover = () => {
     this.setState({
@@ -389,6 +413,15 @@ class SiderRight extends React.Component {
       selectedMemberTextAreaValue: e.target.value
     });
   };
+  handleToggleVideoMeetingPopover = e => {
+    if (e) e.stopPropagation();
+    this.setState(state => {
+      const { videoMeetingPopoverVisible } = state;
+      return {
+        videoMeetingPopoverVisible: !videoMeetingPopoverVisible
+      };
+    });
+  };
   render() {
     const {
       collapsed,
@@ -396,7 +429,8 @@ class SiderRight extends React.Component {
       meetingTitle,
       selectedSuggestions,
       suggestionValue,
-      selectedMemberTextAreaValue
+      selectedMemberTextAreaValue,
+      videoMeetingPopoverVisible
     } = this.state;
     const { projectList } = this.props;
 
@@ -521,6 +555,7 @@ class SiderRight extends React.Component {
               /> */}
             </div>
             <Popover
+              visible={videoMeetingPopoverVisible}
               placement="leftBottom"
               content={videoMeetingPopoverContent}
               onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
@@ -529,6 +564,7 @@ class SiderRight extends React.Component {
               <div
                 className={indexStyles.videoMeeting__icon}
                 onMouseEnter={this.handleShowVideoMeeting}
+                onClick={this.handleToggleVideoMeetingPopover}
               />
             </Popover>
             {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}

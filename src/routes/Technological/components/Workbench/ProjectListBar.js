@@ -86,11 +86,13 @@ class ProjectListBar extends Component {
         projectTabCurrentSelectedProject === "0" ? true : false
     });
     const dropDownMenu = (
+      <div className={styles.dropDownMenuWrapper}>
       <Menu onClick={this.onClick} style={{ minWidth: "120px" }}>
         {dropDownMenuItemList.map(item => (
           <Menu.Item key={item.board_id}>{item.board_name}</Menu.Item>
         ))}
       </Menu>
+      </div>
     );
     return (
       <div className={styles.projectListBarWrapper}>

@@ -53,6 +53,7 @@ export default class DrawContent extends React.Component {
     isUsable: true, //任务附件是否可预览
     isInEditContentRelation: false, //内容关联状态是否在编辑中
     contentDropVisible: false, //内容关联点击drop
+    onlyReadingShareModalVisible: false, //只读分享modal
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
@@ -103,6 +104,40 @@ export default class DrawContent extends React.Component {
       taskGroupListIndex_index: 0
     }
     this.props.changeTaskType({requestObj, indexObj})
+  }
+  handleConfirmOnlyReadingShare = (e) => {
+    if(e) e.stopPropagation()
+    message.success('复制成功')
+    this.shutOnlyReadingShareModal()
+  }
+  handleCancelOnlyReadingShare = (e) => {
+    if(e) e.stopPropagation()
+    message.info('分享已停止')
+    this.shutOnlyReadingShareModal()
+  }
+  shutOnlyReadingShareModal = () => {
+    this.setState({
+      onlyReadingShareModalVisible: false,
+    })
+  }
+  handleOnlyReadingShareCopyLinkAndPwd = () => {
+    this.shutOnlyReadingShareModal()
+  }
+  handleOnlyReadingShareStopShare = () => {
+    this.shutOnlyReadingShareModal()
+  }
+  handleOnlyReadingShareEXPMenuClick = ({item, key}) => {
+    console.log(key, 'selected day')
+  }
+  handleShareMenuClick = ({item, key}) => {
+    const shareMenuMap = new Map([
+                        ['onlyReadingShare', () => this.setState({
+                          onlyReadingShareModalVisible: true,
+                        })],
+                      ])
+    const action = shareMenuMap.get(key)
+    if(action) action.call(this)
+    console.log(key, 'clicke key')
   }
   topRightMenuClick({key}) {
     const { datas: { drawContent = {} } } = this.props.model
@@ -619,7 +654,7 @@ export default class DrawContent extends React.Component {
 
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [] } } = this.props.model
@@ -709,6 +744,22 @@ export default class DrawContent extends React.Component {
         })}
       </Menu>
     )
+
+    const shareMenu = (
+      <Menu onClick={this.handleShareMenuClick}>
+      <Menu.Item key='onlyReadingShare'><span>只读分享</span></Menu.Item>
+      <Menu.Item key='inviteNewMember'><span>邀请新成员</span></Menu.Item>
+      </Menu>
+    )
+
+      const onlyReadingShareEXPMenu = (
+        <Menu defaultSelectedKeys={['forever']} onClick={this.handleOnlyReadingShareEXPMenuClick}>
+          <Menu.Item key='1day'>1天</Menu.Item>
+          <Menu.Item key='3day'>3天</Menu.Item>
+          <Menu.Item key='7day'>7天</Menu.Item>
+          <Menu.Item key='forever'>永久</Menu.Item>
+        </Menu>
+      )
 
     const topRightMenu = (
       <Menu onClick={this.topRightMenuClick.bind(this)}>
@@ -844,11 +895,15 @@ export default class DrawContent extends React.Component {
                   <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
                 </div>
               </Dropdown>
-              <Dropdown overlay={topRightMenu}>
-                <div className={DrawerContentStyles.right}>
-                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2}} />
-                </div>
+              <div className={DrawerContentStyles.right}>
+              <p className={DrawerContentStyles.right__shareIndicator}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p>
+              <Dropdown overlay={shareMenu}>
+              <span className={DrawerContentStyles.right__share}></span>
               </Dropdown>
+              <Dropdown overlay={topRightMenu}>
+                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
+              </Dropdown>
+              </div>
             </div>
           </div>
 
@@ -1122,6 +1177,38 @@ export default class DrawContent extends React.Component {
           <Comment {...this.props} leftSpaceDivWH={26}></Comment>
         </div>
         <div style={{height: 100}}></div>
+        <Modal
+            zIndex={1007}
+            width={626}
+            title="只读分享"
+            visible={onlyReadingShareModalVisible}
+            onOk={this.handleConfirmOnlyReadingShare}
+            onCancel={this.handleCancelOnlyReadingShare}
+        >
+            <p className={DrawerContentStyles.onlyReadingShareModal__spec} >无需加入团队，每次通过密码查看，适合分享给客户、合作方等外部人员</p>
+          <p className={DrawerContentStyles.onlyReadingShareModal__linkAndPasswordWrapper}>
+          <span className={DrawerContentStyles.onlyReadingShareModal__linkWrapper}>
+            <span className={DrawerContentStyles.onlyReadingShareModal__link_title}>链接</span><span className={DrawerContentStyles.onlyReadingShareModal__link_input}><Input disabled /></span>
+          </span>
+          <span className={DrawerContentStyles.onlyReadingShareModal__passwordWrapper}>
+          <span className={DrawerContentStyles.onlyReadingShareModal__password_title}>密码</span>
+            <span className={DrawerContentStyles.onlyReadingShareModal__password_input}><Input disabled /></span>
+          </span>
+          </p>
+          <div className={DrawerContentStyles.onlyReadingShareModal__operatorWrapper}>
+          <p className={DrawerContentStyles.onlyReadingShareModal__operatorEXPWrapper}>
+          <span className={DrawerContentStyles.onlyReadingShareModal__operatorEXP_title}>有效期</span>
+          <span className={DrawerContentStyles.onlyReadingShareModal__operatorEXP_selected}>永久</span>
+          <Dropdown overlay={onlyReadingShareEXPMenu}>
+          <span className={DrawerContentStyles.onlyReadingShareModal__operatorEXP_select}>更改</span>
+          </Dropdown>
+          </p>
+          <p className={DrawerContentStyles.onlyReadingShareModal__operatorShareWrapper}>
+            <span className={DrawerContentStyles.onlyReadingShareModal__operatorShareStopShare} onClick={this.handleOnlyReadingShareStopShare} >停止分享</span>
+            <Button onClick={this.handleOnlyReadingShareCopyLinkAndPwd}>复制链接和密码</Button>
+          </p>
+          </div>
+        </Modal>
       </div>
     )
   }

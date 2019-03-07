@@ -368,6 +368,17 @@ class AddTaskModal extends Component {
       }
     };
 
+    const taskTypeToName = {
+      RESPONSIBLE_TASK: 'Tasks',
+      EXAMINE_PROGRESS: 'Flows',
+      MEETIMG_ARRANGEMENT: 'Tasks',
+      MY_DOCUMENT: 'Files'
+    }
+
+    const filteredNoThatTypeProject = projectList.filter(item => {
+      return item.apps && item.apps.find(i => i.code === taskTypeToName[taskType])
+    })
+
     return (
       <Modal
         visible={addTaskModalVisible}
@@ -384,7 +395,7 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <DropdownSelectWithSearch
-              list={projectList}
+              list={filteredNoThatTypeProject}
               initSearchTitle="选择项目"
               selectedItem={currentSelectedProject}
               handleSelectedItem={this.handleSelectedItem}

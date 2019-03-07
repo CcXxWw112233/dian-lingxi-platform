@@ -108,7 +108,7 @@ export async function getCurrentSelectedProjectMembersList({projectId}) {
 //获取项目列表
 export async function getProjectList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/list`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/app_list`,
     method: 'GET',
   });
 }
