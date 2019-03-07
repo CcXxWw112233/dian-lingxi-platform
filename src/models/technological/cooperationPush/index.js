@@ -131,7 +131,7 @@ export default {
     * handleWsData_board_detail({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
-      console.log('eee', data)
+      // console.log('eee', data)
 
       const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
@@ -141,7 +141,7 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      console.log('eee', coperateData)
+      // console.log('eee', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
@@ -548,12 +548,12 @@ export default {
       const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
       let coperate = data[0] //协作
-      let news = data[1] //消息
+      let news = data[1] || {} //消息
       //获取消息协作类型
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      console.log('eee', coperateData)
+      // console.log('eee', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
@@ -879,6 +879,13 @@ export default {
         default:
           break
       }
+
+      dispathes({
+        type: model_newsDynamic('handleWs'),
+        payload: {
+          newsItem: JSON.parse(news['d'] || '{}')
+        }
+      })
 
     },
 

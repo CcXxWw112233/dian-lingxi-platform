@@ -289,7 +289,7 @@ const Workbench = (props) => {
     },
     getNewsDynamicList(next_id) {
       dispatch({
-        type: getEffectOrReducerByName_3('getNewsDynamicList'),
+        type: getEffectOrReducerByName_3('getNewsDynamicListActivity'),
         payload: {next_id}
       })
     },
