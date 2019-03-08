@@ -21,7 +21,7 @@ import {
 } from "../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
-  currentNounPlanFilterName
+  currentNounPlanFilterName, openPDF, getSubfixName
 } from "../../../../../utils/businessFunction";
 import { deleteTaskFile } from '../../../../../services/technological/task'
 import { filePreview } from '../../../../../services/technological/file'
@@ -819,8 +819,14 @@ export default class DrawContent extends React.Component {
         })
       },
       onPreview(e, a) {
+        const file_name = e.name
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
+
+        if(getSubfixName(file_name) == '.pdf') {
+          openPDF({id: file_id})
+          return false
+        }
 
         that.setState({
           previewFileType: 'attachment',
