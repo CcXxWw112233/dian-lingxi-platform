@@ -10,6 +10,7 @@ import OpinionModal from './OpinionModal'
 import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
 import PreviewFileModal from './component/PreviewFileModal'
 import {filePreview} from "../../../../../../services/technological/file";
+import {getSubfixName, openPDF} from "../../../../../../utils/businessFunction";
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
@@ -33,10 +34,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
     this.propsChangeSetIsShowBottDetail(this.props)
+    // console.log('fileList', 2, this.props)
+
     this.initSetFileList(this.props)
   }
   componentWillReceiveProps (nextProps) {
     this.propsChangeSetIsShowBottDetail(nextProps)
+    // console.log('fileList', 3, nextProps)
+
     this.initSetFileList(nextProps)
   }
   //初始化设置fileList
@@ -44,6 +49,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { itemKey } = props
     const { datas: { processEditDatas } } = this.props.model
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
+    // console.log('fileList', 1, fileDataList)
     let fileList = []
     for(let i = 0; i < fileDataList.length; i++) {
       if(fileDataList[i]) {
@@ -221,6 +227,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
   render() {
     const that = this
     const { due_time, isShowBottDetail, fileList } = this.state
+    // console.log('fileList', fileList)
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
@@ -527,6 +534,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
       },
       onPreview(e) {
         const id = e.file_resource_id || (e.response.data? e.response.data.file_resource_id: '')
+        const file_name = e.name || e.file_name
+        const file_id = e.file_id || e.response.data.file_id
+
+        if(getSubfixName(file_name) == '.pdf') {
+          openPDF({id: file_id})
+          return false
+        }
+
         that.setPreviewFileModalVisibile()
         that.setState({
           current_file_resource_id: id

@@ -4,6 +4,7 @@ import { Icon } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
+import {getSubfixName, openPDF} from "../../../../../utils/businessFunction";
 
 export default class FileItem extends React.Component {
   judgeFileType(fileName) {
@@ -55,7 +56,10 @@ export default class FileItem extends React.Component {
   }
   previewFile(data, e) {
     const { board_id, board_name, file_name, create_time, file_resource_id, file_id, id, folder_id } = data
-
+    if(getSubfixName(file_name) == '.pdf') {
+      openPDF({id: id})
+      return false
+    }
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
       seeFileInput: 'file',
