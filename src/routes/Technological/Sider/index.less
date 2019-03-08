@@ -98,6 +98,7 @@
     display: flex;
     align-items: center;
     .left {
+      cursor: pointer;
       color: #bfbfbf;
       font-size: 24px;
       margin: 0 16px 0 4px;
@@ -436,4 +437,19 @@
   .videoMeeting__submitBtn {
     text-align: right;
   }
+}
+
+.ImMaskCollapsed {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-color: transparent;
+}
+
+.ImMaskExpand {
+  position: absolute;
+  width: 0;
+  height: 0;
 }

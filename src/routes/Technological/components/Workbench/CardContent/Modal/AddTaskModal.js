@@ -10,8 +10,15 @@ import { deleteUploadFile } from "./../../../../../../services/technological/wor
 import DropdownSelectWithSearch from "./../DropdownSelectWithSearch/index";
 import DropdownMultipleSelectWithSearch from "./../DropdownMultipleSelectWithSearch/index";
 import DateRangePicker from "./../DateRangePicker/index";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
+
+const taskTypeToName = {
+  RESPONSIBLE_TASK: "Tasks",
+  EXAMINE_PROGRESS: "Flows",
+  MEETIMG_ARRANGEMENT: "Tasks",
+  MY_DOCUMENT: "Files"
+};
 /* eslint-disable */
 @connect(({ workbench }) => ({ workbench }))
 class AddTaskModal extends Component {
@@ -21,17 +28,13 @@ class AddTaskModal extends Component {
       projectList,
       workbench: {
         datas: { projectTabCurrentSelectedProject }
-      }
+      },
+      taskType
     } = this.props;
+    const findAndCheckCurrentSelectedProject = projectList.find(item => item.board_id === projectTabCurrentSelectedProject && item.apps && item.apps.find(i => i.code === taskTypeToName[taskType]))
     this.state = {
       addTaskTitle: "",
-      currentSelectedProject: projectList.find(
-        item => item.board_id === projectTabCurrentSelectedProject
-      )
-        ? projectList.find(
-            item => item.board_id === projectTabCurrentSelectedProject
-          )
-        : {},
+      currentSelectedProject: findAndCheckCurrentSelectedProject ? findAndCheckCurrentSelectedProject : {},
       currentSelectedProjectMember: [],
       start_time: "",
       due_time: "",
@@ -79,7 +82,7 @@ class AddTaskModal extends Component {
             projectId: item.board_id
           }
         });
-        if(taskType === 'MY_DOCUMENT') {
+        if (taskType === "MY_DOCUMENT") {
           dispatch({
             type: "workbench/fetchCurrentSelectedProjectFileFolderList",
             payload: {
@@ -183,7 +186,6 @@ class AddTaskModal extends Component {
     });
   };
   handleSelectedItemChange = list => {
-    // console.log(list, 'listttttttttttttttttttt-------------------')
     this.setState({
       currentSelectedProjectMember: list
     });
@@ -201,7 +203,7 @@ class AddTaskModal extends Component {
     if (!orgArr.child_data.length) {
       return {
         label: orgArr.folder_name,
-        value: orgArr.folder_id,
+        value: orgArr.folder_id
         // children: []
       };
     }
@@ -230,7 +232,7 @@ class AddTaskModal extends Component {
         projectTabCurrentSelectedProject !== "0"
       ) {
         this.setState({
-          currentSelectedProject: isProjectListExistCurrentSelectedProject,
+          currentSelectedProject: isProjectListExistCurrentSelectedProject
         });
       }
     }
@@ -243,7 +245,7 @@ class AddTaskModal extends Component {
       start_time,
       due_time,
       attachment_fileList,
-      currentSelectedFileFolder,
+      currentSelectedFileFolder
     } = this.state;
     const {
       projectList,
@@ -264,14 +266,10 @@ class AddTaskModal extends Component {
     const isHasSelectedProjectMember = () =>
       currentSelectedProjectMember && currentSelectedProjectMember.length;
     let isShouldNotDisableSubmitBtn = () =>
-      isHasTaskTitle() &&
-      isHasSelectedProject()
+      isHasTaskTitle() && isHasSelectedProject();
     if (taskType === "MEETIMG_ARRANGEMENT") {
       isShouldNotDisableSubmitBtn = () =>
-        isHasTaskTitle() &&
-        isHasSelectedProject() &&
-        start_time &&
-        due_time;
+        isHasTaskTitle() && isHasSelectedProject() && start_time && due_time;
     }
 
     if (taskType === "MY_DOCUMENT") {
@@ -368,16 +366,11 @@ class AddTaskModal extends Component {
       }
     };
 
-    const taskTypeToName = {
-      RESPONSIBLE_TASK: 'Tasks',
-      EXAMINE_PROGRESS: 'Flows',
-      MEETIMG_ARRANGEMENT: 'Tasks',
-      MY_DOCUMENT: 'Files'
-    }
-
     const filteredNoThatTypeProject = projectList.filter(item => {
-      return item.apps && item.apps.find(i => i.code === taskTypeToName[taskType])
-    })
+      return (
+        item.apps && item.apps.find(i => i.code === taskTypeToName[taskType])
+      );
+    });
 
     return (
       <Modal
@@ -457,8 +450,10 @@ class AddTaskModal extends Component {
             <div className={styles.addTaskModalFooter}>
               <div className={styles.addTaskModalOperator}>
                 <DropdownMultipleSelectWithSearch
-                  itemTitle={taskType === "RESPONSIBLE_TASK" ? '执行人' : '参与人'}
-                  list={currentSelectedProjectMembersList}
+                  itemTitle={
+                    taskType === "RESPONSIBLE_TASK" ? "执行人" : "参与人"
+                  }
+                  list={currentSelectedProject.board_id ? currentSelectedProjectMembersList : []}
                   handleSelectedItemChange={this.handleSelectedItemChange}
                   currentSelectedProjectMember={currentSelectedProjectMember}
                 />

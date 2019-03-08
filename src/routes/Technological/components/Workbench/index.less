@@ -694,3 +694,43 @@
   border-radius: 8px;
   background: #e8e8e8;
 }
+
+.taskItem__workbench {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  .taskItem__workbench_taskTitle {
+    display: flex;
+    flex: 1;
+    .taskItem__workbench_taskTitle_title {
+      cursor: pointer;
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 5px;
+    }
+    .taskItem__workbench_taskTitle_projecthier {
+      max-width: 100px;
+      margin-right: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .taskItem__workbench_taskTitle_projectname {
+      max-width: 150px;
+      margin-right: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .taskItem__workbench_time {
+    flex: 2;
+    z-index: 1;
+    max-width: 100px;
+    text-align: right;
+  }
+}
