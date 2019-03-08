@@ -125,7 +125,7 @@ export default {
         // })
 
       } else {
-g
+
       }
       yield put({
         type: handleType,
