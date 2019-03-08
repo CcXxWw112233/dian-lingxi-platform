@@ -117,22 +117,22 @@ export default {
         handleType = 'handleWsData_workbench'
       } else if(locationPath.indexOf('technological/projectDetail') != -1) {
         handleType = 'handleWsData_board_detail'
-        yield put({
-          type: handleType,
-          payload: {
-            res: data
-          }
-        })
+        // yield put({
+        //   type: handleType,
+        //   payload: {
+        //     res: data
+        //   }
+        // })
 
       } else {
-
+g
       }
-      // yield put({
-      //   type: handleType,
-      //   payload: {
-      //     res: data
-      //   }
-      // })
+      yield put({
+        type: handleType,
+        payload: {
+          res: data
+        }
+      })
     },
 
     * handleWsData_board_detail({ payload }, { call, put, select }) {
