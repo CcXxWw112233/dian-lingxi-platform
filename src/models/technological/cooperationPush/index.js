@@ -223,26 +223,31 @@ export default {
           let id_arr_ = getAfterNameId(coperateName).split('/')
           let board_id_ = id_arr_[0]
           let list_id = id_arr_[1]
+          let parent_card_id = id_arr_[2] //如果有则是添加子任务
           let { is_archived, is_deleted } = coperateData
           if(is_archived=='1' || is_deleted == '1') {
 
           }
           if(board_id_ == currentProjectBoardId) { //当前查看的项目
-            for(let i = 0; i < taskGroupList.length; i++ ) {
-              if(list_id === taskGroupList[i]['list_id']){ //匹配到list_id
-                //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
-                let is_has_realize = false
-                for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
-                  if(taskGroupList[i]['card_data'][j]['is_realize'] == '1') {
-                    is_has_realize = true
-                    taskGroupList[i]['card_data'].splice(j, 0, coperateData)
-                    break
+            if(parent_card_id) { //二级任务
+
+            } else { //一级任务
+              for(let i = 0; i < taskGroupList.length; i++ ) {
+                if(list_id === taskGroupList[i]['list_id']){ //匹配到list_id
+                  //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+                  let is_has_realize = false
+                  for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                    if(taskGroupList[i]['card_data'][j]['is_realize'] == '1') {
+                      is_has_realize = true
+                      taskGroupList[i]['card_data'].splice(j, 0, coperateData)
+                      break
+                    }
                   }
+                  if(!is_has_realize) {
+                    taskGroupList[i]['card_data'].push(coperateData)
+                  }
+                  break
                 }
-                if(!is_has_realize) {
-                  taskGroupList[i]['card_data'].push(coperateData)
-                }
-                break
               }
             }
           }

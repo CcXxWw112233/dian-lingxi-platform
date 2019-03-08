@@ -42,9 +42,9 @@ export default class Projectlist extends React.Component {
         <Collapse onChange={this.collapseOnchange.bind(this)} bordered={false} style={{backgroundColor: '#f5f5f5', marginTop: 30}} activeKey	= {collapseActiveKeyArray} >
           <Panel header={`我收藏的${currentNounPlanFilterName(PROJECTS)}`} key="1" style={customPanelStyle}>
             {star.map((value, key) =>{
-              const { is_star } = value
+              const { is_star, board_id } = value
               return (
-                <ElseProject {...this.props} itemDetailInfo={value} key={`${key}_${is_star}`}/>
+                <ElseProject {...this.props} itemDetailInfo={value} key={`${board_id}_${is_star}`}/>
               )}
               )}
             {/*{addItem}*/}
@@ -52,9 +52,9 @@ export default class Projectlist extends React.Component {
           {identity_type == '1'? (
             <Panel header={`我管理的${currentNounPlanFilterName(PROJECTS)}`} key="2" style={customPanelStyle}>
               {create.map((value, key) => {
-                const { is_star } = value
+                const { is_star, board_id } = value
                 return (
-                  <ElseProject {...this.props} itemDetailInfo={value} key={`${key}_${is_star}`}/>
+                  <ElseProject {...this.props} itemDetailInfo={value} key={`${board_id}_${is_star}`}/>
                 )}
               )}
               {addItem}
@@ -63,9 +63,9 @@ export default class Projectlist extends React.Component {
 
           <Panel header={`我参与的${currentNounPlanFilterName(PROJECTS)}`} key="3" style={customPanelStyle}>
             {participate.map((value, key) => {
-              const { is_star } = value
+              const { is_star, board_id } = value
               return (
-                <ElseProject {...this.props} itemDetailInfo={value} key={`${key}_${is_star}`}/>
+                <ElseProject {...this.props} itemDetailInfo={value} key={`${board_id}_${is_star}`}/>
               )
             })}
             {/*{addItem}*/}
