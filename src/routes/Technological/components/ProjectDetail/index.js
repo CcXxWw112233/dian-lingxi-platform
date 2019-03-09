@@ -158,6 +158,37 @@ const ProjectDetail = (props) => {
     modal,
     model,
     match,
+    getRelations(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelations'),
+        payload: data,
+      })
+    },
+    JoinRelation(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('JoinRelation'),
+        payload: data,
+      })
+    },
+    cancelRelation(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('cancelRelation'),
+        payload: data,
+      })
+    },
+    getRelationsSelectionPre(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelationsSelectionPre'),
+        payload: data,
+      })
+    },
+    getRelationsSelectionSub(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelationsSelectionSub'),
+        payload: data,
+      })
+    },
+
     cardItemClickEffect(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('cardItemClickEffect'),

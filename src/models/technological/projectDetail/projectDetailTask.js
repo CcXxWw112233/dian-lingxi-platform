@@ -13,7 +13,7 @@ import {
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
   updateBoardTag, updateTask,
-  updateTaskGroup
+  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub
 } from "../../../services/technological/task";
 import {
   selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
@@ -663,6 +663,88 @@ export default modelExtend(projectDetail, {
 
     * deleteBoardTag({ payload }, { select, call, put }) { //
       let res = yield call(deleteBoardTag, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    //内容关联
+    * getRelations({ payload }, { select, call, put }) { //
+      let res = yield call(getRelations, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * JoinRelation({ payload }, { select, call, put }) { //
+      let res = yield call(JoinRelation, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * cancelRelation({ payload }, { select, call, put }) { //
+      let res = yield call(cancelRelation, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getRelationsSelectionPre({ payload }, { select, call, put }) { //
+      let res = yield call(getRelationsSelectionPre, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getRelationsSelectionSub({ payload }, { select, call, put }) { //
+      let res = yield call(getRelationsSelectionSub, payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',

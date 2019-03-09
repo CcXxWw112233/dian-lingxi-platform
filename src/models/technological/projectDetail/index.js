@@ -9,7 +9,12 @@ import {
   quitProject, getAppsList, addProjectApp
 } from "../../../services/technological/project";
 import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
-import { removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers, getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
+import {
+  removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup,
+  addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask,
+  changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers,
+  getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment, getRelationsSelectionPre
+} from "../../../services/technological/task";
 import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData, selectGetTaskGroupListArrangeType, selectCurrentProcessInstanceId, selectDrawerVisible, selectBreadcrumbList, selectCurrentParrentDirectoryId, selectAppsSelectKeyIsAreadyClickArray, selectAppsSelectKey, selectTaskGroupListIndex, selectTaskGroupList, selectTaskGroupListIndexIndex, selectDrawContent } from '../select'
 import Cookies from "js-cookie";
 import { fillFormComplete, getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList, createProcess, completeProcessTask, getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../../services/technological/process'
@@ -84,6 +89,7 @@ export default {
               //项目详情和任务
               projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
               isInitEntry: false, //是否初次进来项目详情
+              relations_Prefix: [], //内容关联前部分
             }
           })
         }
@@ -116,6 +122,12 @@ export default {
               type: 'getAppsList',
               payload: {
                 type: '2'
+              }
+            })
+            dispatch({
+              type: 'getRelationsSelectionPre',
+              payload: {
+
               }
             })
           } else {
@@ -221,6 +233,21 @@ export default {
       }
     },
 
+    //获取内容关联前半部分
+    * getRelationsSelectionPre({ payload }, { select, call, put }) { //
+      let res = yield call(getRelationsSelectionPre, payload)
+      // debugger
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            relations_Prefix: res.data || []
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
 
     * appsSelectKeyIsAreadyClickArray({ payload }, { select, call, put }) {
       const { appsSelectKey } = payload

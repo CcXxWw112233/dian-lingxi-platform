@@ -233,3 +233,44 @@ export async function getCardDetail(params) {
     params
   });
 }
+
+//查看关联者下面关联的内容
+export async function getRelations(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link`,
+    method: 'GET',
+    params
+  });
+}
+//加入关联
+export async function JoinRelation(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link`,
+    method: 'POST',
+    data
+  });
+}
+//取消关联
+export async function cancelRelation(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
+//加载关联内容（前）
+export async function getRelationsSelectionPre(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link/prefix`,
+    method: 'GET',
+    params
+  }, {isNotLoading: true});
+}
+//加载关联内容（后）
+export async function getRelationsSelectionSub(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link/subfix`,
+    method: 'GET',
+    params
+  }, {isNotLoading: true});
+}

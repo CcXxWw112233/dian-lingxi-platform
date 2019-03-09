@@ -31,6 +31,7 @@ import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
 import ContentRaletion from './components/ContentRaletion'
+import RaletionList from './components/ContentRaletion/RaletionList'
 import {createMeeting} from './../../../../../services/technological/workbench'
 
 const TextArea = Input.TextArea
@@ -1129,9 +1130,10 @@ export default class DrawContent extends React.Component {
               </div>
             ) : (
               <div className={DrawerContentStyles.contain_6} >
-                <ContentRaletion {...this.props} />
+                <ContentRaletion {...this.props} setIsInEditContentRelation={this.setIsInEditContentRelation.bind(this)} />
               </div>
             ) }
+            <RaletionList {...this.props}/>
 
           </div>
 
