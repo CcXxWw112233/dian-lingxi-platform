@@ -6,6 +6,9 @@ import {stopPropagation} from "../../../../../../utils/util";
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
+import ContentRaletion from '../../../../../../components/ContentRaletion'
+import { getRelations, JoinRelation } from "../../../../../../services/technological/task";
+import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 export default class FileDetailContent extends React.Component {
 
@@ -39,6 +42,7 @@ export default class FileDetailContent extends React.Component {
     mentionFocus: false,
     imgLoaded: false,
     editMode: true,
+    relations: [], //关联的内容
   }
   constructor() {
     super();
@@ -53,6 +57,38 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       rects: filePreviewCommitPoints
     })
+  }
+
+  componentDidMount() {
+
+    this.getRelations()
+  }
+
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { projectDetailInfoData, filePreviewCurrentFileId, } }= this.props.model
+    const { board_id } = projectDetailInfoData
+    const res = await getRelations({
+      board_id,
+      link_id: filePreviewCurrentFileId,
+      link_local: '4'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      })
+    }else{
+
+    }
+  }
+
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+     this.getRelations()
+    }else{
+
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -306,11 +342,12 @@ export default class FileDetailContent extends React.Component {
 
   render() {
 
-    const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { seeFileInput,filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { projectDetailInfoData={}, filePreviewCurrentFileId, seeFileInput,filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { board_id } = projectDetailInfoData
     const  getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -389,16 +426,27 @@ export default class FileDetailContent extends React.Component {
         {/*width: isExpandFrame?0:420*/}
 
         <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
-          {seeFileInput === 'fileModule'? (
+
             <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-              <div>版本信息</div>
-              <div className={indexStyles.versionInfoList}>
-                {filePreviewCurrentVersionList.map((value, key ) => {
-                  return (<div key={key}>{getVersionItem(value, key )}</div>)
-                })}
-              </div>
+              <ContentRaletion
+                {...this.props}
+                board_id ={board_id}
+                link_id={filePreviewCurrentFileId}
+                link_local={'4'}
+                addRelation = {this.addRelation.bind(this)}
+                relations={relations}
+              />
+              {seeFileInput === 'fileModule'? (
+               <div className={indexStyles.versionOut}>
+                <div>版本信息</div>
+                <div className={indexStyles.versionInfoList}>
+                  {filePreviewCurrentVersionList.map((value, key ) => {
+                    return (<div key={key}>{getVersionItem(value, key )}</div>)
+                  })}
+                </div>
+               </div>
+              ) : ('')}
             </div>
-          ) : ('')}
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             <CommentListItem2 {...this.props}  commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />

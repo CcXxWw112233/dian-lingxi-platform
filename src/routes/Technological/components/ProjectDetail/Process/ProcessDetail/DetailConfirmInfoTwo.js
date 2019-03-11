@@ -11,6 +11,9 @@ import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalse
 import PreviewFileModal from './component/PreviewFileModal'
 import {filePreview} from "../../../../../../services/technological/file";
 import {getSubfixName, openPDF} from "../../../../../../utils/businessFunction";
+import ContentRaletion from '../../../../../../components/ContentRaletion'
+import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
+import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
@@ -37,6 +40,41 @@ export default class DetailConfirmInfoTwo extends React.Component {
     // console.log('fileList', 2, this.props)
 
     this.initSetFileList(this.props)
+  }
+  componentDidMount() {
+
+    this.getRelations()
+  }
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey } = this.props
+    const { board_id } = projectDetailInfoData
+    const { id } = processEditDatas[itemKey]
+    const res = await getRelations({
+      board_id,
+      link_id: id,
+      link_local: '21'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      }, () => {
+        const { ConfirmInfoOut_1_bott_Id } = this.state
+        const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
+        this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
   }
   componentWillReceiveProps (nextProps) {
     this.propsChangeSetIsShowBottDetail(nextProps)
@@ -226,14 +264,16 @@ export default class DetailConfirmInfoTwo extends React.Component {
 
   render() {
     const that = this
-    const { due_time, isShowBottDetail, fileList } = this.state
+    const { due_time, isShowBottDetail, fileList, relations = [] } = this.state
     // console.log('fileList', fileList)
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
+    const { board_id } = projectDetailInfoData
+
     const { curr_node_sort, status } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data={} } = processEditDatas[itemKey]
+    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data={} } = processEditDatas[itemKey]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
     const fileTypeArray = limit_file_type.split(',') //文档类型
@@ -576,6 +616,16 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
+              <div>
+                <ContentRaletion
+                  {...this.props}
+                  board_id ={board_id}
+                  link_id={id}
+                  link_local={'21'}
+                  addRelation = {this.addRelation.bind(this)}
+                  relations={relations}
+                />
+              </div>
               {filterUploadContain()}
 
               {assignees.map((value, key)=>{

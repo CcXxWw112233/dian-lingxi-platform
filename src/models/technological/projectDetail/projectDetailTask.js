@@ -107,6 +107,7 @@ export default modelExtend(projectDetail, {
                 // taskGroupList: [], //任务列表
                 // boardTagList: [], //项目标签列表
                 // getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+                relationTaskList: [], //关联内容列表,任务
               }
             })
           }
@@ -119,9 +120,17 @@ export default modelExtend(projectDetail, {
 
     //获取任务详情信息， 通过url
     * getCardDetail({ payload }, { select, call, put }) { //查看项目详情信息
-      const { id, board_id } = payload
+      const { id } = payload
       let res = yield call(getCardDetail, { id})
       if(isApiResponseOk(res)) {
+        yield put({ //获取关联内容
+          type: 'getRelations',
+          payload: {
+            board_id,
+            link_id: card_id,
+            link_local: '3'
+          }
+        })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -683,12 +692,9 @@ export default modelExtend(projectDetail, {
       let res = yield call(getRelations, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getBoardTagList',
+          type: 'updateDatas',
           payload: {
-            board_id,
-            calback: function () {
-              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
-            }
+            relationTaskList: res.data || [],
           }
         })
       }else {
@@ -699,12 +705,11 @@ export default modelExtend(projectDetail, {
       let res = yield call(JoinRelation, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getBoardTagList',
+          type: 'getRelations',
           payload: {
             board_id,
-            calback: function () {
-              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
-            }
+            link_id: card_id,
+            link_local: '3'
           }
         })
       }else {
