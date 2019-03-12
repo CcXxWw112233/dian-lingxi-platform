@@ -127,13 +127,19 @@ export default class RaletionDrop extends React.Component {
   onPopupVisibleChange = (bool) => {
     const that = this
     const { link_id, link_local, board_id } = this.props
+    const { selected } = that.state
+    const selectedLength = selected.length
+
     setTimeout(function () {
       if(!bool) {
-        const { selected } = that.state
+        if(typeof selected != 'object' || !selectedLength) {
+          that.props.setIsInEditContentRelation && that.props.setIsInEditContentRelation(bool)
+          return false
+        }
+
         const selectedLast = selected[selected.length - 1]
         const linked_board_id = selected[0]['board_id']
         const linked_app_key = selected[1] && selected[1] ['app_key']
-        const selectedLength = selected.length
         let content_type = ''
         let parent_content_id = ''
         let parent_or_content_id = ''
@@ -157,7 +163,7 @@ export default class RaletionDrop extends React.Component {
         if(selectedLength == 1) {
           obj.linked_name = selected[0]['board_name']
         } else if(selectedLength == 2){
-          obj.linked_name = selected[0]['board_name']
+          obj.linked_name = `${selected[0]['board_name']}~${selected[1]['app_name']}`
           obj.linked_app_key = linked_app_key
         } else {
           obj = {
@@ -177,14 +183,13 @@ export default class RaletionDrop extends React.Component {
     }, 200)
 
   }
+
   render() {
     const {
       popupVisible,
       options,
-      selected
     } = this.state
-    const { datas: { relations_Prefix = [] } } = this.props.model
-    console.log('selected', selected)
+
     return(
       <div>
         <Cascader options={options}
@@ -192,9 +197,7 @@ export default class RaletionDrop extends React.Component {
                   loadData={this.loadData.bind(this)}
                   autoFocus
                   popupVisible={popupVisible}
-                  size={'small'}
                   changeOnSelect
-                  showSearch
                   style={{width: 300}}
                   placeholder={'请选择'}
                   onPopupVisibleChange={this.onPopupVisibleChange.bind(this)}

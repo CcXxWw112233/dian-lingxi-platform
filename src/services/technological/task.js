@@ -250,6 +250,14 @@ export async function JoinRelation(data) {
     data
   });
 }
+//输入连接获取连接相关列表
+export async function getLinkList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link/url_load`,
+    method: 'GET',
+    params
+  }, {isNotLoading: true});
+}
 //取消关联
 export async function cancelRelation(data) {
   return request({
