@@ -154,6 +154,11 @@ export default {
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
 
+      // 03.13
+      //  'change:cards',增加子任务
+      // delete:cards， 删除子任务
+      // change:card 改变任务
+
       let board_id_
       switch (coperateType) {
         case 'change:board':
@@ -178,7 +183,9 @@ export default {
         case 'change:card': //监听到修改任务
           const drawContent = yield select(selectDrawContent)
           const card_id = yield select(selectCardId)
-          const operate_card_id = coperateName.substring(coperateName.indexOf('/') + 1)
+          id_arr_ = getAfterNameId(coperateName).split('/')
+          parent_card_id = id_arr_[0]
+          const child_card_id = id_arr_[1]
           let taskGroupList_ = yield select(selectTaskGroupList)
 
           let is_archived_ = coperateData['is_archived']
@@ -186,7 +193,7 @@ export default {
           if(is_archived_ == '1') { //归档
             for (let i = 0; i < taskGroupList_.length; i++ ){
               for (let j = 0; j < taskGroupList_[i]['card_data'].length; j++) {
-                if(operate_card_id == taskGroupList_[i]['card_data'][j]['card_id']) {
+                if(parent_card_id == taskGroupList_[i]['card_data'][j]['card_id']) {
                   taskGroupList_[i]['card_data'].splice(j, 1)
                   break
                 }
@@ -194,7 +201,7 @@ export default {
             }
           }
           //如果当前查看的任务和推送的任务id一样，会发生更新
-          if(card_id == operate_card_id) {
+          if(card_id == parent_card_id) {
             if(is_archived_ == '1') {
               dispathes({
                 type: model_projectDetailTask('updateDatas'),
@@ -204,13 +211,46 @@ export default {
               })
             }
 
-            dispathes({
-              type: model_projectDetailTask('updateDatas'),
-              payload: {
-                drawContent: {...drawContent, ...coperateData}
+            if(!child_card_id) { //父任务
+              dispathes({
+                type: model_projectDetailTask('updateDatas'),
+                payload: {
+                  drawContent: {...drawContent, ...coperateData}
+                }
+              })
+
+            } else { //子任务
+
+              for(let i = 0; i < drawContent['child_data'].length; i++) {
+                if(drawContent['child_data'][i]['card_id'] == child_card_id) {
+                  drawContent['child_data'][i] = {... drawContent['child_data'][i], ...coperateData['child_data'][0]}
+                  break
+                }
               }
-            })
-          }
+
+              dispathes({
+                type: model_projectDetailTask('updateDatas'),
+                payload: {
+                  drawContent: drawContent
+                }
+              })
+              // for(let i = 0; i < taskGroupList.length; i++ ) {
+              //   if(list_id === taskGroupList[i]['list_id']){ //匹配到list_id
+              //     //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+              //     let is_has_realize = false
+              //     for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+              //       if(taskGroupList[i]['card_data'][j]['card_id'] == parent_card_id) {
+              //         taskGroupList[i]['card_data'][j]['child_data'].push(coperateData['child_data'][0])
+              //         break
+              //       }
+              //     }
+              //
+              //     break
+              //   }
+              // }
+
+            }
+            }
           dispathes({
             type: model_projectDetailTask('updateDatas'),
             payload: {
@@ -220,6 +260,8 @@ export default {
           break
         case 'change:cards':
           let taskGroupList = yield select(selectTaskGroupList)
+          let drawContent_ = yield select(selectDrawContent)
+          let card_id_ = yield select(selectCardId)
           let id_arr_ = getAfterNameId(coperateName).split('/')
           let board_id_ = id_arr_[0]
           let list_id = id_arr_[1]
@@ -230,6 +272,23 @@ export default {
           }
           if(board_id_ == currentProjectBoardId) { //当前查看的项目
             if(parent_card_id) { //二级任务
+              if (parent_card_id == card_id_) {
+                drawContent_['child_data'].push(coperateData['child_data'][0])
+              }
+              for(let i = 0; i < taskGroupList.length; i++ ) {
+                if(list_id === taskGroupList[i]['list_id']){ //匹配到list_id
+                  //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+                  let is_has_realize = false
+                  for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                    if(taskGroupList[i]['card_data'][j]['card_id'] == parent_card_id) {
+                      taskGroupList[i]['card_data'][j]['child_data'].push(coperateData['child_data'][0])
+                      break
+                    }
+                  }
+
+                  break
+                }
+              }
 
             } else { //一级任务
               for(let i = 0; i < taskGroupList.length; i++ ) {
@@ -255,33 +314,63 @@ export default {
           dispathes({
             type: model_projectDetailTask('updateDatas'),
             payload: {
-              taskGroupList
+              taskGroupList,
+              drawContent: drawContent_
             }
           })
           break
         case 'delete:cards':
            id_arr_ = getAfterNameId(coperateName).split('/')
            taskGroupList = yield select(selectTaskGroupList)
+           drawContent_ = yield select(selectDrawContent)
            board_id_ = id_arr_[0]
            list_id = id_arr_[1]
+           parent_card_id = id_arr_[2]
           let op_card_id = coperateData['card_id']
           if(board_id_ == currentProjectBoardId) { //当前查看的项目
-            for(let i = 0; i< taskGroupList.length; i++) {
-              if(list_id == taskGroupList[i]['list_id']) {
-                for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
-                  if(op_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
-                    taskGroupList[i]['card_data'].splice(j, 1)
-                    break
+            if(!parent_card_id) { //删除父类任务
+              for(let i = 0; i< taskGroupList.length; i++) {
+                if(list_id == taskGroupList[i]['list_id']) {
+                  for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                    if(op_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
+                      taskGroupList[i]['card_data'].splice(j, 1)
+                      break
+                    }
                   }
+                  break
                 }
-                break
+              }
+            }else { //删除子类任务
+              for(let i = 0; i< taskGroupList.length; i++) {
+                if(list_id == taskGroupList[i]['list_id']) {
+                  for(let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                    if(parent_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
+                      for(let k = 0; k < taskGroupList[i]['card_data'][j]['child_data'].length; k++) {
+                        if(op_card_id == taskGroupList[i]['card_data'][j]['child_data'][k]['card_id']) {
+                          taskGroupList[i]['card_data'][j]['child_data'].splice(k, 1)
+                          break
+                        }
+                      }
+                      break
+                    }
+                  }
+                  break
+                }
+              }
+
+              for(let i = 0; i< drawContent_['child_data'].length; i++) {
+                if(op_card_id == drawContent_['child_data'][i]['card_id']) {
+                  drawContent_['child_data'].splice(i, 1)
+                  break
+                }
               }
             }
           }
           dispathes({
             type: model_projectDetailTask('updateDatas'),
             payload: {
-              taskGroupList
+              taskGroupList,
+              drawContent: drawContent_
             }
           })
           break

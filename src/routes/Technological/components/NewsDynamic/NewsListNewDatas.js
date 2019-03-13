@@ -34,9 +34,9 @@ export default class NewsListNewDatas extends React.Component {
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (<div>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
           break
-        case 'updBoard':
+        case 'board.update.name':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
-          messageContain = (<div>{messageValue.user_name} 更新了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}信息。</div>)
+          messageContain = (<div>{messageValue.user_name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>)
           break
         case 'board.update.archived':
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
@@ -337,7 +337,8 @@ export default class NewsListNewDatas extends React.Component {
               </div>
             </div>
             <div className={NewsListStyle.right}>
-              <Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />
+              {/*打钩*/}
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
             </div>
           </div>
           <div className={NewsListStyle.bott}>
@@ -369,7 +370,7 @@ export default class NewsListNewDatas extends React.Component {
               </div>
             </div>
             <div className={NewsListStyle.right}>
-              <Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
             </div>
           </div>
           <div className={NewsListStyle.bott}>
@@ -407,14 +408,16 @@ export default class NewsListNewDatas extends React.Component {
               </div>
             </div>
             <div className={NewsListStyle.right}>
-              <Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
             </div>
           </div>
           <div className={NewsListStyle.bott}>
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
               {value.map((val, key) => {
-                const { creator, created, content } = val
+                const { creator, created, content = {} } = val
+                const { card_comment= {}} = content
+                const { text } = card_comment
                 const { avatar } = creator
                 return (
                   <div className={NewsListStyle.news_4_top} key={key}>
@@ -434,7 +437,7 @@ export default class NewsListNewDatas extends React.Component {
                         <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
                       </div>
                       <div className={NewsListStyle.r_b}>
-                        {content.card_comment.text}
+                        {text}
                       </div>
                     </div>
                   </div>
@@ -472,7 +475,7 @@ export default class NewsListNewDatas extends React.Component {
               </div>
             </div>
             <div className={NewsListStyle.right}>
-              <Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
             </div>
           </div>
           <div className={NewsListStyle.bott}>
@@ -501,7 +504,7 @@ export default class NewsListNewDatas extends React.Component {
               </div>
             </div>
             <div className={NewsListStyle.right}>
-              <Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
             </div>
           </div>
           <div className={NewsListStyle.bott}>
@@ -538,8 +541,6 @@ export default class NewsListNewDatas extends React.Component {
       }
       return containner
     }
-
-    console.log('newsDynamicList', newsDynamicList)
 
     return (
       <div style={{paddingBottom: 100, transform: 'none', display: 'inline'}} >

@@ -34,9 +34,9 @@ export default class InitialNews extends React.Component {
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (<div>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
-        case 'updBoard':
+        case 'board.update.name':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
-          messageContain = (<div>{messageValue.creator.name} 更新了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}信息</div>)
+          messageContain = (<div>{messageValue.creator.name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称</div>)
           break
         case 'board.update.archived':
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
