@@ -21,7 +21,7 @@ import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
   currentNounPlanFilterName, openPDF, getSubfixName
 } from "../../../../../../../utils/businessFunction";
-import { deleteTaskFile } from '../../../../../../../services/technological/task'
+import {deleteTaskFile, getRelations, JoinRelation} from '../../../../../../../services/technological/task'
 import { filePreview } from '../../../../../../../services/technological/file'
 import {getProcessList} from "../../../../../../../services/technological/process";
 import globalStyle from '../../../../../../../globalset/css/globalClassName.less'
@@ -29,6 +29,8 @@ import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
 import {createMeeting} from './../../../../../../../services/technological/workbench'
+import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
+import ContentRaletion from '../../../../../../../components/ContentRaletion'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -65,6 +67,12 @@ export default class DrawContent extends React.Component {
     })
 
   }
+
+  componentDidMount() {
+
+    this.getRelations()
+  }
+
   componentWillReceiveProps(nextProps) {
     const { datas: { drawContent = {}} } = nextProps.model
     let { description, attachment_data = [] } = drawContent
@@ -87,6 +95,32 @@ export default class DrawContent extends React.Component {
       })
     }
   }
+
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { board_id, card_id, } }= this.props.model
+    const res = await getRelations({
+      board_id,
+      link_id: card_id,
+      link_local: '3'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
+  }
+
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
@@ -625,7 +659,7 @@ export default class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, relations = []} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
@@ -1040,11 +1074,19 @@ export default class DrawContent extends React.Component {
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_6}>
-              <div className={DrawerContentStyles.contain_6_add}>
-                <Icon type="plus" style={{marginRight: 4}}/>关联内容
-              </div>
-            </div>
+            <ContentRaletion
+              {...this.props}
+              board_id ={board_id}
+              link_id={card_id}
+              link_local={'3'}
+              addRelation = {this.addRelation.bind(this)}
+              relations={relations}
+            />
+            {/*<div className={DrawerContentStyles.contain_6}>*/}
+              {/*<div className={DrawerContentStyles.contain_6_add}>*/}
+                {/*<Icon type="plus" style={{marginRight: 4}}/>关联内容*/}
+              {/*</div>*/}
+            {/*</div>*/}
           </div>
 
           {/*标签*/}

@@ -30,7 +30,7 @@ import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
-import ContentRaletion from './components/ContentRaletion'
+import ContentRaletion from '../../../../../components/ContentRaletion'
 import {createMeeting} from './../../../../../services/technological/workbench'
 
 const TextArea = Input.TextArea
@@ -52,8 +52,6 @@ export default class DrawContent extends React.Component {
     previewFileModalVisibile: false, //文件预览是否打开状态
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
-    isInEditContentRelation: false, //内容关联状态是否在编辑中
-    contentDropVisible: false, //内容关联点击drop
     onlyReadingShareModalVisible: false, //只读分享modal
   }
   componentWillMount() {
@@ -645,13 +643,6 @@ export default class DrawContent extends React.Component {
     }
   }
 
-  // 内容关联
-  setIsInEditContentRelation(bool) {
-    this.setState({
-      isInEditContentRelation: bool,
-      contentDropVisible: bool
-    })
-  }
   openWinNiNewTabWithATag = url => {
     const aTag = document.createElement('a')
     aTag.href = url
@@ -685,12 +676,12 @@ export default class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, contentDropVisible, onlyReadingShareModalVisible} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [] } } = this.props.model
+    const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [] } } = this.props.model
 
-    const { data = [], board_name } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
     let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
@@ -1121,18 +1112,14 @@ export default class DrawContent extends React.Component {
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
-            {!isInEditContentRelation ? (
-              <div className={DrawerContentStyles.contain_6} >
-                <div className={DrawerContentStyles.contain_6_add} onClick={this.setIsInEditContentRelation.bind(this, true)}>
-                  <Icon type="plus" style={{marginRight: 4}}/>关联内容
-                </div>
-              </div>
-            ) : (
-              <div className={DrawerContentStyles.contain_6} >
-                <ContentRaletion {...this.props} />
-              </div>
-            ) }
-
+            <ContentRaletion
+              {...this.props}
+              board_id ={board_id}
+              link_id={card_id}
+              link_local={'3'}
+              addRelation = {this.props.JoinRelation.bind(this)}
+              relations={relationTaskList}
+            />
           </div>
 
           {/*标签*/}
