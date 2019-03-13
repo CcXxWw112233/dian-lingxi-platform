@@ -1,6 +1,6 @@
 import React from "react";
 import indexstyles from "../index.less";
-import { Icon,  Tooltip} from "antd";
+import { Icon, Tooltip} from "antd";
 import Cookies from "js-cookie";
 import {timestampToTimeNormal2} from './../../../../../utils/util'
 
@@ -61,13 +61,15 @@ export default class TaskItem extends React.Component {
     const DateNoTimeStr = transItemValueTimestampToDate ? transItemValueTimestampToDate.split(' ')[0] : null
 
     const renderInWorkbench = (
-      <div className={indexstyles.taskItem__workbench}>
-        <div className={indexstyles.taskItem__workbench_taskTitle}>
-        <div
+      <div className={indexstyles.taskItem__workbench_wrapper}>
+        <span
           className={
-            is_realize === "1"
-              ? indexstyles.nomalCheckBoxActive
-              : indexstyles.nomalCheckBox
+            `
+            ${indexstyles.taskItem__workbench_check}
+            ${is_realize === "1"
+            ? indexstyles.nomalCheckBoxActive
+            : indexstyles.nomalCheckBox}
+            `
           }
           onClick={this.itemOneClick.bind(this)}
         >
@@ -75,11 +77,13 @@ export default class TaskItem extends React.Component {
             type="check"
             style={{ color: "#FFFFFF", fontSize: 12, fontWeight: "bold" }}
           />
-        </div>
-        <div style={{display: 'flex'}}>
+        </span>
+        <div
+          className={indexstyles.taskItem__workbench_content}
+        >
           <Tooltip title={name}>
           <div
-            className={indexstyles.taskItem__workbench_taskTitle_title}
+            className={indexstyles.taskItem__workbench_content_title}
             style={{
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
@@ -88,7 +92,7 @@ export default class TaskItem extends React.Component {
             {name}
           </div>
           </Tooltip>
-          <div className={indexstyles.taskItem__workbench_taskTitle_projecthier}>
+          <div className={indexstyles.taskItem__workbench_content_hier}>
           {parentCards.map((value, key) => {
             const { name, id, board_id } = value;
             return (
@@ -102,7 +106,7 @@ export default class TaskItem extends React.Component {
           </div>
           <Tooltip title={board_name}>
           <div
-          className={indexstyles.taskItem__workbench_taskTitle_projectname}
+          className={indexstyles.taskItem__workbench_content_projectname}
             style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
             onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
           >
@@ -110,10 +114,9 @@ export default class TaskItem extends React.Component {
           </div>
           </Tooltip>
         </div>
-        </div>
-        <div className={indexstyles.taskItem__workbench_time}>
-          <span>{DateNoTimeStr}</span>
-        </div>
+        <span className={indexstyles.taskItem__workbench_time}>
+          {DateNoTimeStr}
+        </span>
       </div>
     );
     if (isUsedInWorkbench) {

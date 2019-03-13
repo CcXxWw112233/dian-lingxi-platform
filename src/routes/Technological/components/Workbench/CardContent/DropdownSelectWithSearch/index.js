@@ -122,6 +122,16 @@ class DropdownSelectWithSearch extends Component {
     //   type: "modal/hideModal"
     // });
   };
+  componentWillReceiveProps(nextProps) {
+    const {list} = nextProps
+    const {filteredList} = this.state
+    const isTwoArrHaveSameLen = (arr1, arr2) => arr1.length === arr2.length
+    if(!isTwoArrHaveSameLen(filteredList, list)) {
+      this.setState({
+        filteredList: [...list]
+      })
+    }
+  }
   content = () => {
     const { list, selectedItem } = this.props;
     const { filteredList, inputValue } = this.state;
@@ -170,7 +180,7 @@ class DropdownSelectWithSearch extends Component {
                 <span
                   style={{
                     display: "inline-block",
-                    maxWidth: "200px",
+                    maxWidth: "180px",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap"

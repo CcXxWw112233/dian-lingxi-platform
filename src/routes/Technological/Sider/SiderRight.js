@@ -274,7 +274,7 @@ class SiderRight extends React.Component {
   getCurrentUserNameThenSetMeetingTitle = () => {
     const currentUser = this.getInfoFromCookie("userInfo");
     if (currentUser) {
-      const meetingTitle = `${currentUser.full_name}发起的会议`;
+      const meetingTitle = `${currentUser.name}发起的会议`;
       this.setState({
         meetingTitle
       });
@@ -456,7 +456,6 @@ class SiderRight extends React.Component {
       [indexStyles.ImMaskCollapsed]: collapsed,
       [indexStyles.ImMaskExpand]: !collapsed
     });
-
 
     const videoMeetingPopoverContent = (
       <div>

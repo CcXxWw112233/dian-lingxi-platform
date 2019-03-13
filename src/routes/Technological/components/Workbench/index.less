@@ -695,42 +695,42 @@
   background: #e8e8e8;
 }
 
-.taskItem__workbench {
+.taskItem__workbench_wrapper {
+  margin-bottom: 20px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  .taskItem__workbench_taskTitle {
+  .taskItem__workbench_check {
+    white-space: nowrap;
+        margin-right: 20px;
+  }
+  .taskItem__workbench_content {
     display: flex;
-    flex: 1;
-    .taskItem__workbench_taskTitle_title {
+        flex: 10;
+        overflow: hidden;
+    .taskItem__workbench_content_title {
       cursor: pointer;
-      max-width: 250px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-right: 5px;
+      .ellipsis();
+      flex: 5 0 1;
     }
-    .taskItem__workbench_taskTitle_projecthier {
-      max-width: 100px;
-      margin-right: 5px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .taskItem__workbench_content_hier {
+      cursor: pointer;
+      .ellipsis();
+      flex: 2 2 1;
     }
-    .taskItem__workbench_taskTitle_projectname {
-      max-width: 150px;
-      margin-right: 5px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .taskItem__workbench_content_projectname {
+      .ellipsis();
+      flex: 3 3 1;
     }
   }
   .taskItem__workbench_time {
-    flex: 2;
-    z-index: 1;
-    max-width: 100px;
-    text-align: right;
+    display: inline-block;
+        white-space: nowrap;
+        justify-self: end;
   }
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

@@ -372,6 +372,8 @@ class AddTaskModal extends Component {
       );
     });
 
+    console.log(filteredNoThatTypeProject, 'getNewProjectList')
+
     return (
       <Modal
         visible={addTaskModalVisible}

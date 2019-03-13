@@ -2,6 +2,47 @@ import request from '../../utils/requestAxios'
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+
+export async function associateUser(associate_param = '') {
+  const params = {
+    associate_param
+  }
+  return request({
+    url: `${REQUEST_DOMAIN}/user/associate`,
+    method: 'GET',
+    params
+  })
+}
+
+export async function createShareLink(payload = {}) {
+// board_id*	string 项目ID
+// rela_id*	string 当前对象ID,比如是任务就是任务ID，文件就是当前文件的ID
+// rela_type*	string 当前对象type,4=任务 2=流程 3=文件
+  const { board_id = '', rela_id = '', rela_type = ''} = payload
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/share_link`,
+    method: 'POST',
+    data: {
+      board_id,
+      rela_id,
+      rela_type,
+    }
+  })
+}
+
+export async function modifOrStopShareLink(payload = {}) {
+  const {expiretime = '', id = '', status = ''} = payload
+  const putData = {id}
+  expiretime ? putData['expiretime'] = expiretime : ''
+  status ? putData['status'] = status : ''
+
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/share_link`,
+    method: 'PUT',
+    data: putData
+  })
+}
+
 export async function createMeeting(payload) {
   const {board_id, flag, topic, user_for = null, user_ids = null } = payload
   return request({
