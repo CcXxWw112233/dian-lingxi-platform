@@ -15,8 +15,8 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
   return appType === '1'? '1029567653519429632' : '1029565930193162240'
 }
 
-export const WEBSOCKET_URL = 'ws://192.168.1.14:9326' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-export const WEBSOCKET_PATH = '192.168.1.14' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_URL = 'ws://192.168.1.11:9326' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_PATH = '192.168.1.11' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间

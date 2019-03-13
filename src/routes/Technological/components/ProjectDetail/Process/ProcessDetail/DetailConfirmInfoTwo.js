@@ -8,7 +8,7 @@ import { deleteProcessFile, getProcessList } from '../../../../../../services/te
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
-import PreviewFileModal from './component/PreviewFileModal'
+import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
 import {filePreview} from "../../../../../../services/technological/file";
 import {getSubfixName, openPDF} from "../../../../../../utils/businessFunction";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
@@ -80,7 +80,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     this.propsChangeSetIsShowBottDetail(nextProps)
     // console.log('fileList', 3, nextProps)
 
-    this.initSetFileList(nextProps)
+    // this.initSetFileList(nextProps)
   }
   //初始化设置fileList
   initSetFileList(props) {
@@ -248,18 +248,23 @@ export default class DetailConfirmInfoTwo extends React.Component {
     })
   }
   onPreview(e) {
-    const that = this
-    const id = e.file_resource_id || (e.response.data? e.response.data.file_resource_id: '')
-    that.setPreviewFileModalVisibile()
-    that.setState({
-      current_file_resource_id: id
+    const file_name = e.name || e.file_name
+    const file_id = e.file_id || e.response.data.file_id || e.response.data.id
+    const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
+
+    if(getSubfixName(file_name) == '.pdf') {
+      openPDF({id: file_id})
+      return false
+    }
+
+    this.props.updateDatasFile({
+      seeFileInput: 'taskModule',
+      isInOpenFile: true,
+      filePreviewCurrentId: file_resource_id,
+      filePreviewCurrentFileId: file_id,
     })
-    filePreview({id: id}).then((value) => {
-      that.setState({
-        filePreviewIsUsable: value.data.isUsable,
-        filePreviewUrl: value.data.url
-      })
-    })
+    this.props.filePreview({id: file_resource_id, file_id: file_id})
+
   }
 
   render() {
@@ -268,7 +273,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     // console.log('fileList', fileList)
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
-    const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
+    const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, isInOpenFile } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
 
@@ -435,7 +440,9 @@ export default class DetailConfirmInfoTwo extends React.Component {
         <div></div>
       )
       if(currentUserCanOperate || assignee_type === '1') {
+        // console.log('sss', itemKey, 'all')
         if (Number(sort) < Number(curr_node_sort)) {
+          // console.log('sss', itemKey, 2)
           contianner = (
             <div className={indexStyles.fileList}>
               {fileDataList.map((value, key) => {
@@ -452,6 +459,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
             </div>
           )
         } else if (Number(sort) === Number(curr_node_sort)) {
+          // console.log('sss', itemKey, 3)
           contianner = (
             <div className={indexStyles.uploadAreaOut}>
               <Upload {...dragProps} style={{width: '748px'}}>
@@ -466,11 +474,30 @@ export default class DetailConfirmInfoTwo extends React.Component {
             </div>
           )
         } else if (Number(sort) > Number(curr_node_sort)) {
+          // console.log('sss', itemKey, 4)
           contianner = (
             <div></div>
           )
         } else {
+          // console.log('sss', itemKey, 5)
         }
+      } else {
+        contianner = (
+          <div className={indexStyles.fileList}>
+            {fileDataList.map((value, key) => {
+              if(value) {
+                return (
+                  <div style={{cursor: 'pointer', lineHeight: '33px', marginRight: 40}} key={key} onClick={this.onPreview.bind(this, value)}><i
+                    className={globalStyles.authTheme}
+                    style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer'}}
+                    dangerouslySetInnerHTML={{__html: this.judgeFileType(value.file_name)}}></i>{value.file_name}</div>
+                )
+              }
+
+            })}
+          </div>
+        )
+        // console.log('sss', itemKey, 'no')
       }
       return contianner
     }
@@ -575,23 +602,22 @@ export default class DetailConfirmInfoTwo extends React.Component {
       onPreview(e) {
         const id = e.file_resource_id || (e.response.data? e.response.data.file_resource_id: '')
         const file_name = e.name || e.file_name
-        const file_id = e.file_id || e.response.data.file_id
+        const file_id = e.file_id || e.response.data.file_id || e.response.data.id
+        const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
 
         if(getSubfixName(file_name) == '.pdf') {
           openPDF({id: file_id})
           return false
         }
 
-        that.setPreviewFileModalVisibile()
-        that.setState({
-          current_file_resource_id: id
+        that.props.updateDatasFile({
+          seeFileInput: 'taskModule',
+          isInOpenFile: true,
+          filePreviewCurrentId: file_resource_id,
+          filePreviewCurrentFileId: file_id,
         })
-        filePreview({id: id}).then((value) => {
-          that.setState({
-            filePreviewIsUsable: value.data.isUsable,
-            filePreviewUrl: value.data.url
-          })
-        })
+        that.props.filePreview({id: file_resource_id, file_id: file_id})
+
       }
     }
 
@@ -640,7 +666,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
           </div>
         </Card>
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
-        <PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+        {/*<PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />*/}
+        <PreviewFileModal {...this.props} modalVisible={isInOpenFile} />
       </div>
     )
   }

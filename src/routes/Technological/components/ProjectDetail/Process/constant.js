@@ -68,21 +68,21 @@ export const processEditDatasRecordsConstant = [
             "default_value": "", //默认值 默认值
             "verification_rule": "", //校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
             "val_length": "20", //长度
-            "is_required": "1"//是否必须 1=必须 0=不是必须
+            "is_required": "0"//是否必须 1=必须 0=不是必须
           },
           {
             "field_type": "2", //字段类型 2=日期选择
             "property_name": "", //属性名称(标题)日期选择
             "default_value": "", //默认值 默认值
             "verification_rule": "SINGLE_DATE_TIME", //校验规则 单个+日期+时分 = SINGLE_DATE_TIME ,单个+日期 = SINGLE_DATE,多个+日期+时分 = MULTI_DATE_TIME ,多个+日期 = MULTI_DATE
-            "is_required": "1"//是否必须 1=必须 0=不是必须
+            "is_required": "0"//是否必须 1=必须 0=不是必须
           },
           {
             "field_type": "3", //字段类型 3=下拉框
             "property_name": "", //属性名称(标题) 下拉框
             "default_value": "", //默认值(预设值)默认值
             "verification_rule": "redio", //校验规则 redio = 单选， multiple = 多选 ，province = 省市区
-            "is_required": "1", //是否必须 1=必须 0=不是必须
+            "is_required": "0", //是否必须 1=必须 0=不是必须
             "options_data": []
           }
         ]
@@ -180,7 +180,7 @@ export const processEditDatasRecordsItemOneConstant = {
       "assignees": "", //审批人(id) 多个逗号隔开
       "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
       "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+      "enable_opinion": "0", //是否填写意见  1=填写 0=不填写
       "form_data": [
         {
           "field_type": "1", //字段类型 1=输入框
@@ -188,7 +188,7 @@ export const processEditDatasRecordsItemOneConstant = {
           "default_value": "", //默认值 默认值
           "verification_rule": "", //校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
           "val_length": "20", //长度
-          "is_required": "1"//是否必须 1=必须 0=不是必须
+          "is_required": "0"//是否必须 1=必须 0=不是必须
         },
         {
           "field_type": "2", //字段类型 2=日期选择
@@ -202,7 +202,7 @@ export const processEditDatasRecordsItemOneConstant = {
           "property_name": "", //属性名称(标题) 下拉框
           "default_value": "", //默认值(预设值)默认值
           "verification_rule": "redio", //校验规则 redio = 单选， multiple = 多选 ，province = 省市区
-          "is_required": "1", //是否必须 1=必须 0=不是必须
+          "is_required": "0", //是否必须 1=必须 0=不是必须
           "options_data": []
         }
       ]
