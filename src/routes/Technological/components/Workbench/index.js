@@ -12,7 +12,7 @@ import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
 
-import InviteOthers from './../InviteOthers/index'
+// import InviteOthers from './../InviteOthers/index'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`

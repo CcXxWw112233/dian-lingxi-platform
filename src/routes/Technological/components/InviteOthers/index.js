@@ -28,9 +28,14 @@ class InviteOthers extends Component {
       inputRet: [],
       fetching: false,
       selectedMember: [], //已经选择的成员或平台外人员
-      membersListToSelect: Array.isArray(currentOrgAllMembersList) ? currentOrgAllMembersList : [], //人员选择列表
-      isSyncWithOrg: false,
-
+      membersListToSelect: Array.isArray(currentOrgAllMembersList)
+        ? currentOrgAllMembersList
+        : [], //人员选择列表
+      isSyncWithOrg: false, //如果同步了组织,则不能不同和选择其他人。
+      currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
+      currentMemberListSet: "org", //当前显示的集合 org || group-id || project-id
+      isInSelectedList: false, //是否仅显示列表的
+      step: "home" //当前的步进 home || group-list || group-id || project-list ||project-id
     };
   }
   handleSearchUser = user => {
@@ -51,10 +56,10 @@ class InviteOthers extends Component {
   };
   genUserToDefinedMember = user => {
     if (!user || !user.id) return;
-    const { avatar = "default", nickname = "default", mobile, email } = user;
+    const { avatar = "default", full_name = "default", mobile, email } = user;
     const mobileOrEmail = mobile ? mobile : email;
     return this.parseUserValueStr(
-      this.genUserValueStr(avatar, nickname, mobileOrEmail, true)
+      this.genUserValueStr(avatar, full_name, mobileOrEmail, true)
     );
   };
   parseUserValueStr = userValueStr => {
@@ -118,12 +123,33 @@ class InviteOthers extends Component {
       }
     );
   };
+  isMemberInSyncSetsMemberList = selectedUser => {
+    const { currentSyncSetsMemberList } = this.state;
+    function flattenDeep(arr1) {
+      return arr1.reduce(
+        (acc, val) =>
+          Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val),
+        []
+      );
+    }
+    const flatMemberListFromCurrentSyncSets = flattenDeep(
+      Object.values(currentSyncSetsMemberList)
+    );
+    return flatMemberListFromCurrentSyncSets.find(
+      item =>
+        item.mobile === selectedUser.user || item.email === selectedUser.user
+    );
+  };
   handleInputSelected = value => {
     const { selectedMember } = this.state;
     const selectedUser = this.parseUserValueStr(value.key);
     const isHasSameMemberInSelectedMember = () =>
       selectedMember.find(item => item.user === selectedUser.user);
-    if (isHasSameMemberInSelectedMember()) return;
+    const isInSyncSet = this.isMemberInSyncSetsMemberList(selectedUser);
+    if (isInSyncSet) {
+      message.error("当前人员已经存在于要同步的集合中了");
+    }
+    if (isHasSameMemberInSelectedMember() || isInSyncSet) return;
     this.setState({
       selectedMember: [...selectedMember, selectedUser],
       inputValue: [],
@@ -169,9 +195,6 @@ class InviteOthers extends Component {
       </p>
     );
   };
-  renderWhenNoData = () => {
-    return null;
-  };
   delFromSelectedMember = item => {
     this.setState(state => {
       const { selectedMember } = state;
@@ -191,11 +214,23 @@ class InviteOthers extends Component {
   };
   handleClickedResultListIcon = (item, e) => {
     if (e) e.stopPropagation();
+    this.handleWhenSync(item);
     this.delFromSelectedMember(item);
+  };
+  handleWhenSync = item => {
+    const condition = new Map([["org", this.removeSyncOrg()]]);
+    const callback = condition.get(item.user);
+    if (callback) callback();
+  };
+  removeSyncOrg = () => {
+    this.setState({
+      isSyncWithOrg: false
+    });
   };
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation();
-    const { selectedMember } = this.state;
+    const { selectedMember, isSyncWithOrg } = this.state;
+    if (isSyncWithOrg) return;
     const member = this.genUserToDefinedMember(item);
     const isMemberHasInSelectedMember = () =>
       selectedMember.find(each => each.user === member.user);
@@ -215,19 +250,269 @@ class InviteOthers extends Component {
     );
   };
   sortMemberListByCapital = (arr = []) => {
+    if (!arr.length) return [];
     return arr.sort((a, b) => {
       const getName = ele =>
-       ele.full_name
-      ? ele.full_name
-      : ele.nickname
-      ? ele.nickname
-      : ele.mobile
-      ? ele.mobile
-      : ele.email;
-      const aNameCapital = getPinyin(getName(a), "").toUpperCase()[0]
-      const bNameCapital = getPinyin(getName(b), "").toUpperCase()[0]
-      return aNameCapital.localeCompare(bNameCapital)
-    })
+        ele.full_name
+          ? ele.full_name
+          : ele.nickname
+          ? ele.nickname
+          : ele.mobile
+          ? ele.mobile
+          : ele.email
+          ? ele.email
+          : ele.name
+          ? ele.name
+          : "garbage data";
+      const aNameCapital = getPinyin(getName(a), "").toUpperCase()[0];
+      const bNameCapital = getPinyin(getName(b), "").toUpperCase()[0];
+      return aNameCapital.localeCompare(bNameCapital);
+    });
+  };
+  syncWithOrg = () => {
+    const { isSyncWithOrg } = this.state;
+    const { currentOrgAllMembersList, currentOrg } = this.props;
+    //如果是要与组织同步，那么先移除已选列表的组织内成员，然后将组织添加到列表
+    if (!isSyncWithOrg) {
+      Promise.resolve(
+        //删除已经在被同步的组织中的已添加成员
+        this.delMultiFromSelectedMember(currentOrgAllMembersList)
+      )
+        .then(() =>
+          this.addOrgMemberToCurrentSyncSetsMemberList(currentOrgAllMembersList)
+        )
+        .then(() => this.setOrgToSelectedMember(currentOrg));
+    } else {
+      Promise.resolve(this.delOrgFromSelectedMember(currentOrg)).then(() =>
+        this.removeOrgMemberFromCurrentSyncSetMemberList()
+      );
+    }
+    this.setState({
+      isSyncWithOrg: !isSyncWithOrg
+    });
+  };
+  removeOrgMemberFromCurrentSyncSetMemberList = () => {
+    const { currentSyncSetsMemberList } = this.state;
+    this.setState({
+      currentSyncSetsMemberList: { ...currentSyncSetsMemberList, org: [] }
+    });
+  };
+  addOrgMemberToCurrentSyncSetsMemberList = currentOrgAllMembersList => {
+    const { currentSyncSetsMemberList } = this.state;
+    this.setState({
+      currentSyncSetsMemberList: {
+        ...currentSyncSetsMemberList,
+        org: [...currentOrgAllMembersList]
+      }
+    });
+  };
+  setOrgToSelectedMember = org => {
+    const { selectedMember } = this.state;
+    const item = {
+      type: "org", //org||project||group
+      icon: org.logo,
+      name: org.name,
+      user: org.id
+    };
+    this.setState({
+      selectedMember: [item, ...selectedMember]
+    });
+  };
+  delOrgFromSelectedMember = org => {
+    const { selectedMember } = this.state;
+    this.setState({
+      selectedMember: selectedMember.filter(each => each.user !== org.id)
+    });
+  };
+  delMultiFromSelectedMember = arr => {
+    const { selectedMember } = this.state;
+    console.log(arr, selectedMember);
+    console.log(
+      selectedMember.filter(
+        each =>
+          !arr.find(
+            item => item.mobile === each.user || item.email === each.user
+          )
+      ),
+      "filter selected member"
+    );
+    this.setState({
+      selectedMember: selectedMember.filter(
+        each =>
+          !arr.find(
+            item => item.mobile === each.user || item.email === each.user
+          )
+      )
+    });
+  };
+  toggleSync = () => {
+    const { currentMemberListSet } = this.state;
+    const condition = new Map([["org", () => this.syncWithOrg()]]);
+    const callback = condition.get(currentMemberListSet);
+    if (callback) callback();
+  };
+  handleClickedInviteFromGroup = () => {
+    this.setState({
+      isInSelectedList: true,
+      step: "group-list"
+    });
+  };
+  handleClickedInviteFromGroupList = id => {
+    const { groupList } = this.props;
+    this.setState({
+      isInSelectedList: false,
+      step: `group-${id}`,
+      membersListToSelect: groupList.find(item => item.id === id).members
+    });
+  };
+  handleBack = () => {
+    const { currentOrgAllMembersList, groupList } = this.props;
+    const { step } = this.state;
+    const [type, id] = step.split("-");
+    //step: 当前的步进 home || group-list || group-id || project-list ||project-id
+    const conditionMap = new Map([
+      [
+        `group-${id}`,
+        () =>
+          this.setState({
+            isInSelectedList: true,
+            step: "group-list",
+            membersListToSelect: groupList.find(item => item.id === id).members
+          })
+      ],
+      [
+        "group-list",
+        () =>
+          this.setState({
+            isInSelectedList: false,
+            step: "home",
+            membersListToSelect: Array.isArray(currentOrgAllMembersList)
+              ? currentOrgAllMembersList
+              : [] //人员选择列表
+          })
+      ]
+    ]);
+    const callback = conditionMap.get(step);
+    if (callback) callback();
+  };
+  getGroupList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: "organizationMember/getGroupList",
+      payload: {}
+    });
+  };
+  componentDidMount() {
+    this.getGroupList();
+  }
+  renderWhenNoData = () => {
+    return null;
+  };
+  renderCurrentSetSync = () => {
+    const { step, isSyncWithOrg } = this.state;
+    const { currentOrg } = this.props;
+
+    return (
+      <div className={styles.invite__select_member_all}>
+        <span className={styles.invite__select_member_all_info}>
+          <img
+            className={styles.invite__select_member_all_avatar}
+            width="20"
+            height="20"
+            src={currentOrg.logo}
+            alt=""
+          />
+          <span className={styles.invite__select_member_all_title}>
+            {currentOrg.name}
+          </span>
+        </span>
+        <span className={styles.invite__select_member_all_operator}>
+          {!isSyncWithOrg && (
+            <span
+              className={styles.invite__select_member_all_operator_sync}
+              onClick={this.toggleSync}
+            >
+              同步
+            </span>
+          )}
+          {isSyncWithOrg && (
+            <span
+              className={styles.invite__select_member_all_operator_cancel}
+              onClick={this.toggleSync}
+            >
+              取消同步
+            </span>
+          )}
+          <Tooltip title="全选所有人参与，同步人员变动">
+            <span
+              className={styles.invite__select_member_all_operator_prompt}
+            />
+          </Tooltip>
+        </span>
+      </div>
+    );
+  };
+  renderSelectList = () => {
+    const { step } = this.state;
+    const { groupList, projectList } = this.props;
+    const selectHome = (
+      <div className={styles.invite__select_list_wrapper}>
+        <div
+          className={styles.invite__select_list_item}
+          onClick={this.handleClickedInviteFromGroup}
+        >
+          <span className={styles.invite__select_list_item_text}>
+            从分组邀请
+          </span>
+          <span className={styles.invite__select_list_item_icon} />
+        </div>
+        <div className={styles.invite__select_list_item}>
+          <span className={styles.invite__select_list_item_text}>
+            从项目邀请
+          </span>
+          <span className={styles.invite__select_list_item_icon} />
+        </div>
+      </div>
+    );
+    const selectGroupList = (
+      <div className={styles.invite__select_list_wrapper}>
+        {groupList.map(item => (
+          <div
+            key={item.id}
+            className={styles.invite__select_list_item}
+            onClick={() => this.handleClickedInviteFromGroupList(item.id)}
+          >
+            <span className={styles.invite__select_list_item_text}>
+              {item.name}
+            </span>
+            <span className={styles.invite__select_list_item_icon} />
+          </div>
+        ))}
+      </div>
+    );
+    const selectProjectList = (
+      <div className={styles.invite__select_list_wrapper}>
+        {projectList.map(item => (
+          <div
+            key={item.board_id}
+            className={styles.invite__select_list_item}
+            onClick={this.handleClickedInviteFromGroup}
+          >
+            <span className={styles.invite__select_list_item_text}>
+              {item.board_name}
+            </span>
+            <span className={styles.invite__select_list_item_icon} />
+          </div>
+        ))}
+      </div>
+    );
+    //step: "home" //当前的步进 home || group-list || group-id || project-list ||project-id
+    const condition = new Map([
+      ["home", selectHome],
+      ["group-list", selectGroupList],
+      ["project-list", selectProjectList]
+    ]);
+    return condition.get(step) ? condition.get(step) : null;
   };
   render() {
     const {
@@ -242,7 +527,9 @@ class InviteOthers extends Component {
       inputValue,
       selectedMember,
       isSyncWithOrg,
-      membersListToSelect
+      membersListToSelect,
+      isInSelectedList,
+      step
     } = this.state;
     const isGetData = () => currentOrg && currentOrgAllMembersList;
     if (!isGetData()) {
@@ -251,7 +538,6 @@ class InviteOthers extends Component {
     const sortedMembersListToSelect = this.sortMemberListByCapital(
       membersListToSelect
     );
-
     return (
       <div className={styles.wrapper}>
         <h3 className={styles.title}>{title}</h3>
@@ -275,100 +561,76 @@ class InviteOthers extends Component {
           </Select>
         </div>
         <div className={styles.invite__select_wrapper}>
-          <div className={styles.invite__select_list_wrapper}>
-            <div className={styles.invite__select_list_item}>
-              <span className={styles.invite__select_list_item_text}>
-                从分组邀请
-              </span>
-              <span className={styles.invite__select_list_item_icon} />
-            </div>
-            <div className={styles.invite__select_list_item}>
-              <span className={styles.invite__select_list_item_text}>
-                从项目邀请
-              </span>
-              <span className={styles.invite__select_list_item_icon} />
-            </div>
-          </div>
-          <div className={styles.invite__select_member_wrapper}>
-            <div className={styles.invite__select_member_all}>
-              <span className={styles.invite__select_member_all_info}>
-                <img
-                  className={styles.invite__select_member_all_avatar}
-                  width="20"
-                  height="20"
-                  src={currentOrg.logo}
-                  alt=""
-                />
-                <span className={styles.invite__select_member_all_title}>
-                  {currentOrg.name}
-                </span>
-              </span>
-              <span className={styles.invite__select_member_all_operator}>
-                <span
-                  className={styles.invite__select_member_all_operator_sync}
-                >
-                  同步
-                </span>
-                {false && (
-                  <span
-                    className={styles.invite__select_member_all_operator_cancel}
-                  >
-                    取消同步
-                  </span>
-                )}
-                <Tooltip title="全选所有人参与，同步人员变动">
-                  <span
-                    className={styles.invite__select_member_all_operator_prompt}
-                  />
-                </Tooltip>
+          {step !== "home" && (
+            <div
+              className={styles.invite__select_back_wrapper}
+              onClick={this.handleBack}
+            >
+              <span className={styles.invite__select_back_icon} />
+              <span className={styles.invite__select_back_text}>
+                返回上一级
               </span>
             </div>
-            {sortedMembersListToSelect.map(item => (
-              <div
-                key={item.id}
-                className={styles.invite__select_member_item}
-                onClick={e => this.handleToggleMemberInSelectedMember(item, e)}
-              >
-                <span className={styles.invite__select_member_item_info}>
-                  <img
-                    className={styles.invite__select_member_item_avatar}
-                    width="20"
-                    height="20"
-                    src={
-                      this.isAvatarValid(item.avatar)
-                        ? item.avatar
-                        : defaultUserAvatar
+          )}
+          <div className={styles.invite__select_content_wrapper}>
+            {this.renderSelectList()}
+            {this.renderCurrentSetSync()}
+            {!isInSelectedList && (
+              <div className={styles.invite__select_member_wrapper}>
+                {sortedMembersListToSelect.map(item => (
+                  <div
+                    key={item.id}
+                    className={styles.invite__select_member_item}
+                    onClick={e =>
+                      this.handleToggleMemberInSelectedMember(item, e)
                     }
-                    alt=""
-                  />
-                  <span className={styles.invite__select_member_item_title}>
-                    {item.full_name}
-                  </span>
-                </span>
-                <span className={styles.invite__select_member_item_operator}>
-                  {this.checkMemberInSelectedMember(item) ? (
+                  >
+                    <span className={styles.invite__select_member_item_info}>
+                      <img
+                        className={styles.invite__select_member_item_avatar}
+                        width="20"
+                        height="20"
+                        src={
+                          this.isAvatarValid(item.avatar)
+                            ? item.avatar
+                            : defaultUserAvatar
+                        }
+                        alt=""
+                      />
+                      <span className={styles.invite__select_member_item_title}>
+                        {item.full_name}
+                      </span>
+                    </span>
                     <span
-                      className={
-                        styles.invite__select_member_item_operator_selected
-                      }
-                    />
-                  ) : (
-                    <span
-                      className={
-                        styles.invite__select_member_item_operator_unselected
-                      }
-                    />
-                  )}
-                  {isSyncWithOrg && (
-                    <span
-                      className={
-                        styles.invite__select_member_item_operator_disabled
-                      }
-                    />
-                  )}
-                </span>
+                      className={styles.invite__select_member_item_operator}
+                    >
+                      {isSyncWithOrg ? null : this.checkMemberInSelectedMember(
+                          item
+                        ) ? (
+                        <span
+                          className={
+                            styles.invite__select_member_item_operator_selected
+                          }
+                        />
+                      ) : (
+                        <span
+                          className={
+                            styles.invite__select_member_item_operator_unselected
+                          }
+                        />
+                      )}
+                      {isSyncWithOrg && (
+                        <span
+                          className={
+                            styles.invite__select_member_item_operator_disabled
+                          }
+                        />
+                      )}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
         <div className={styles.invite__result_wrapper}>
