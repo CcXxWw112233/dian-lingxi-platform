@@ -33,7 +33,7 @@ class CustormModal extends React.Component {
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         that.setState({
-          siderRightWidth: document.getElementById('siderRight').clientWidth === 56 ? 300: 56
+          siderRightWidth: RegExp(/videoMeeting__icon/).test(mutation.target.className) ? document.getElementById('siderRight').clientWidth : (document.getElementById('siderRight').clientWidth === 56 ? 300: 56)
         })
       });
     });
