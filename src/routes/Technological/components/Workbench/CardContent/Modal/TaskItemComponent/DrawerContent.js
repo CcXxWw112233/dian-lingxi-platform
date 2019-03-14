@@ -907,7 +907,7 @@ class DrawContent extends React.Component {
           {/*项目挪动*/}
           <div style={{display: 'flex', justifyContent: 'space-between', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>
           <span></span>
-          <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+          {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
             {/*<div className={DrawerContentStyles.contain_1}>*/}
               {/*<Dropdown overlay={projectGroupMenu}>*/}
                 {/*<div className={DrawerContentStyles.left}>*/}
