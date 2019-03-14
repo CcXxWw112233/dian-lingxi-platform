@@ -111,19 +111,25 @@ export default {
       if(data=="pong"){
         return;
       }
+      //当前操作人, 跨组织不推送
       data = JSON.parse(data)
+      const news = data['data'][1] || {}
+      const news_d = JSON.parse(news['d'] || '{}')
+      const { creator = {}, org_id } = news_d
+      const creator_id = creator['id']
+      const userInfo = JSON.parse(Cookies.get('userInfo')) || {}
+      const user_id = userInfo['id']
+      const { current_org = {}} = userInfo
+      const current_org_id = current_org['id']
+      if(creator_id == user_id || current_org_id != org_id) {
+        return false
+      }
+
       let handleType = 'handleWsData_board_detail'
       if(locationPath.indexOf('technological/workbench') != -1) {
         handleType = 'handleWsData_workbench'
       } else if(locationPath.indexOf('technological/projectDetail') != -1) {
         handleType = 'handleWsData_board_detail'
-        // yield put({
-        //   type: handleType,
-        //   payload: {
-        //     res: data
-        //   }
-        // })
-
       } else {
 
       }
@@ -692,36 +698,56 @@ export default {
         case 'change:card': //监听到修改任务
           const drawContent = yield select(workbench_selectDrawContent)
           const card_id = yield select(workbench_selectCard_id)
-          const operate_card_id = coperateName.substring(coperateName.indexOf('/') + 1)
+          id_arr_ = getAfterNameId(coperateName).split('/')
+          let parent_card_id = id_arr_[0]
+          const child_card_id = id_arr_[1]
           const task_list = yield select(workbench_selectrResponsibleTaskList) || []
           let is_archived_ = coperateData['is_archived']
 
           if(is_archived_ == '1') { //归档
             for(let i = 0; i < task_list.length; i++) {
-              if(operate_card_id == task_list[i]['id']) {
+              if(parent_card_id == task_list[i]['id']) {
                 task_list.splice(i, 1)
                 break
               }
             }
           }
           //如果当前查看的任务和推送的任务id一样，会发生更新
-          if(card_id == operate_card_id) {
-            if(is_archived_ == '1') {
+
+          if(card_id == parent_card_id) {
+            if(!child_card_id) { //父任务
+              //归档
+              if(is_archived_ == '1') {
+                dispathes({
+                  type: model_workbenchTaskDetail('updateDatas'),
+                  payload: {
+                    drawerVisible: false
+                  }
+                })
+              }
               dispathes({
                 type: model_workbenchTaskDetail('updateDatas'),
                 payload: {
-                  drawerVisible: false
+                  drawContent: {...drawContent, ...coperateData}
                 }
               })
-            }
-
-            dispathes({
-              type: model_workbenchTaskDetail('updateDatas'),
-              payload: {
-                drawContent: {...drawContent, ...coperateData}
+            } else { //子任务
+              for(let i = 0; i < drawContent['child_data'].length; i++) {
+                if(drawContent['child_data'][i]['card_id'] == child_card_id) {
+                  drawContent['child_data'][i] = {... drawContent['child_data'][i], ...coperateData['child_data'][0]}
+                  break
+                }
               }
-            })
+              dispathes({
+                type: model_projectDetailTask('updateDatas'),
+                payload: {
+                  drawContent: drawContent
+                }
+              })
+
+            }
           }
+
           dispathes({
             type: model_projectDetailTask('updateDatas'),
             payload: {
@@ -732,67 +758,92 @@ export default {
         case 'change:cards':
           let task_list_ = yield select(workbench_selectrResponsibleTaskList) || []
           let meetingList = yield select(workbench_selectrMeetingLsit) || []
+          let selectDrawContent = yield select(workbench_selectDrawContent)
           let id_arr_ = getAfterNameId(coperateName).split('/')
           let board_id_ = id_arr_[0]
           let list_id = id_arr_[1]
+          let work_parent_card_id_ = id_arr_[2] //如果有则是添加子任务
+          let selectCard_id = yield select(workbench_selectCard_id)
           let { is_archived, is_deleted } = coperateData
           let card_type = coperateData['type']
           let is_has_realize = false //插入还是push标志
           let cObj = {...coperateData, name: coperateData['card_name'], id: coperateData['card_id'], board_id: board_id_}
 
-          if(card_type == '0') { //任务
-            for(let i = 0; i < task_list_.length; i++ ) {
-              //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
-              if(task_list_[i]['is_realize'] == '1') {
-                is_has_realize = true
-                task_list_.splice(i, 0, cObj)
-                break
+          if(!work_parent_card_id_) { //新增父任务
+            if(card_type == '0') { //任务
+              for(let i = 0; i < task_list_.length; i++ ) {
+                //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+                if(task_list_[i]['is_realize'] == '1') {
+                  is_has_realize = true
+                  task_list_.splice(i, 0, cObj)
+                  break
+                }
+
               }
+            }else if(card_type == '1') { //会议
+              meetingList.push(cObj)
+            } else {
 
             }
-          }else if(card_type == '1') { //会议
-            meetingList.push(cObj)
-          } else {
-
-          }
-          if(!is_has_realize) {
-            if(card_type == '0') {
-              task_list_.push(cObj)
+            if(!is_has_realize) {
+              if(card_type == '0') {
+                task_list_.push(cObj)
+              }
+            }
+          } else { //新增子任务
+            if(selectCard_id == work_parent_card_id_) { //当前查看的card_id是父类任务id
+              selectDrawContent['child_data'].push(coperateData['child_data'][0])
             }
           }
+
           dispathes({
             type: model_workbenchTaskDetail('updateDatas'),
             payload: {
               responsibleTaskList: task_list_,
-              meetingLsit: meetingList
+              meetingLsit: meetingList,
+              drawContent: selectDrawContent
             }
           })
           break
         case 'delete:cards':
           id_arr_ = getAfterNameId(coperateName).split('/')
+          selectDrawContent = yield select(workbench_selectDrawContent)
+          selectCard_id = yield select(workbench_selectCard_id)
           task_list_ = yield select(workbench_selectrResponsibleTaskList)
           meetingList = yield select(workbench_selectrMeetingLsit) || []
           board_id_ = id_arr_[0]
           list_id = id_arr_[1]
+          parent_card_id = id_arr_[2]
           let op_card_id = coperateData['card_id']
-          for(let i = 0; i < task_list_.length; i++) {
-            if(op_card_id == task_list_[i]['id']) {
-              task_list_.splice(i, 1)
-              break
+          if(!parent_card_id) { //删除父类任务
+            for(let i = 0; i < task_list_.length; i++) {
+              if(op_card_id == task_list_[i]['id']) {
+                task_list_.splice(i, 1)
+                break
+              }
+            }
+            for(let i = 0; i < meetingList.length; i++) {
+              if(op_card_id == meetingList[i]['id']) {
+                meetingList.splice(i, 1)
+                break
+              }
+            }
+          } else { //删除子任务
+            if(selectCard_id == parent_card_id) {
+              for(let i = 0; i < selectDrawContent['child_data'].length; i++) {
+                if(selectDrawContent['child_data'][i]['card_id'] == op_card_id) {
+                  selectDrawContent['child_data'].splice(i, 1)
+                  break
+                }
+              }
             }
           }
-          for(let i = 0; i < meetingList.length; i++) {
-            if(op_card_id == meetingList[i]['id']) {
-              meetingList.splice(i, 1)
-              break
-            }
-          }
-
           dispathes({
             type: model_workbenchTaskDetail('updateDatas'),
             payload: {
               responsibleTaskList: task_list_,
-              meetingLsit: meetingList
+              meetingLsit: meetingList,
+              drawContent: selectDrawContent
             }
           })
           break
@@ -989,7 +1040,6 @@ export default {
       })
 
     },
-
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
