@@ -284,6 +284,7 @@ export default class DetailConfirmInfoThree extends React.Component {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+                                                     filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>
@@ -355,7 +356,7 @@ export default class DetailConfirmInfoThree extends React.Component {
 
     //设置完成按钮在表单验证无误才可点击
     const setCompleteButtonDisabled = () => {
-      let valiResult
+      let valiResult = true
       for(let i = 0;i < form_data.length; i++) {
         if(form_data[i]['is_required'] == '1') { //必填的情况下
           const verification_rule = form_data[i]['verification_rule']
@@ -405,6 +406,7 @@ export default class DetailConfirmInfoThree extends React.Component {
           }
         }
       }
+      debugger
       return valiResult
     }
 

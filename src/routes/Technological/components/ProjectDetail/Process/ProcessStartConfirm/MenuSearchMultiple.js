@@ -61,14 +61,22 @@ export default class MenuSearchMultiple extends React.Component{
     })
   }
    render(){
-    const { usersArray = [], noMutiple } = this.props
+    // filterUserArray过滤的人
+    const { usersArray = [], noMutiple, filterUserArray = [] } = this.props
     const { selectedKeys, keyWord, resultArr } = this.state
     return (
     <Menu multiple={!noMutiple} style={{padding: 8}} selectedKeys={selectedKeys} onDeselect={this.menuDeselect.bind(this)} onSelect={this.menuSelect.bind(this)}>
       <Input value={keyWord} onChange={this.onChange.bind(this)}/>
       {
         resultArr.map((val, key) => {
-          return (
+          let flag = true
+          for(let userVal of filterUserArray) {
+            if(userVal['name'] == val) {
+              flag = false
+              break
+            }
+          }
+          return flag && (
             <Menu.Item style={{height: 32, lineHeight: '32px'}} key={key}>
               {val}
             </Menu.Item>
