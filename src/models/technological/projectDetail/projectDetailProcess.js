@@ -222,7 +222,7 @@ export default modelExtend(projectDetail, {
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics, {payload})
+        const res2 = yield call(getProessDynamics, {currentProcessInstanceId})
         if(isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
@@ -265,7 +265,7 @@ export default modelExtend(projectDetail, {
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics, {flow_instance_id: id})
+        const res2 = yield call(getProessDynamics, {currentProcessInstanceId: id})
         if(isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
@@ -308,8 +308,8 @@ export default modelExtend(projectDetail, {
       }
     },
     * completeProcessTask({ payload }, { select, call, put }) {
-      let res = yield call(completeProcessTask, payload)
       const { instance_id } = payload
+      let res = yield call(completeProcessTask, payload)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
