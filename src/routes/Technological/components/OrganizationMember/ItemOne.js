@@ -195,11 +195,11 @@ export default class ItemOne extends React.Component {
               </div>
             </Menu.Item>
            ) : ('')}
-          <Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectDangerMenu}>
-              停用
-            </div>
-          </Menu.Item>
+          {/*<Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>*/}
+            {/*<div className={CreateTaskStyle.elseProjectDangerMenu}>*/}
+              {/*停用*/}
+            {/*</div>*/}
+          {/*</Menu.Item>*/}
         </Menu>
       );
     }

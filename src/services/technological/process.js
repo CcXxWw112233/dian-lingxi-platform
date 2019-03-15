@@ -110,7 +110,7 @@ export async function processFileUpload(data) {
 export async function getProessDynamics(params) {
   console.log('this is service: ', params)
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/dynamic/${params.payload.currentProcessInstanceId}`,
+    url: `${REQUEST_DOMAIN_FLOWS}/dynamic/${params['currentProcessInstanceId']}`,
     method: 'GET',
     params,
   });
