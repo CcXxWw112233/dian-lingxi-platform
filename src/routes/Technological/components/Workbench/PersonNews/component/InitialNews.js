@@ -46,13 +46,16 @@ export default class InitialNews extends React.Component {
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (<div>{messageValue.creator.name} 退出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
+        case 'board.flow.task.attach.upload':
+          messageContain = (<div>{messageValue.creator.name} 在流程【{messageValue.content.flow_instance.name}】上传了文件【{messageValue.content.rela_data}】#{messageValue.content.board.name} #{messageValue.content.flow_instance.name} #{messageValue.content.flow_node_instance.name}</div>)
+          break
         case 'board.delete':
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (<div>{messageValue.creator.name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'board.update.user.add':
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.content.rela_users}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'board.update.user.remove':
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
@@ -157,27 +160,36 @@ export default class InitialNews extends React.Component {
           contain = `添加任${currentNounPlanFilterName(TASKS)}执行人`
           break
         case 'board.card.update.label.add':
+        if(messageValue.content.rela_data !==undefined) {
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了标签「{messageValue.label_name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了标签「{messageValue.content.rela_data.name}」</div>
               <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
               <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
               <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
+        } else {
+          messageContain = (<div></div>)
+        }
+          
           contain = `添加${currentNounPlanFilterName(TASKS)}标签`
           break
         case 'board.card.update.label.remove':
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.label_name}」</div>
-              <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
-            </div>
-          )
+          if(messageValue.content.rela_data !==undefined) {
+            messageContain = (
+              <div className={NewsListStyle.news_3}>
+                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.content.rela_data.name}」</div>
+                <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
+                <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
+                <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
+                <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+              </div>
+            )
+            } else {
+              messageContain = (<div></div>)
+            }
           contain = `移除${currentNounPlanFilterName(TASKS)}标签`
           break
         case 'createLabel':
