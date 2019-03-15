@@ -406,7 +406,6 @@ export default class DetailConfirmInfoThree extends React.Component {
           }
         }
       }
-      debugger
       return valiResult
     }
 

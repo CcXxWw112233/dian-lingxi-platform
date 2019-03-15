@@ -111,7 +111,7 @@ export default {
       if(data=="pong"){
         return;
       }
-      //当前操作人, 跨组织不推送
+      //当前操作人, 跨组织不推送-1s
       data = JSON.parse(data)
       const news = data['data'][1] || {}
       const news_d = JSON.parse(news['d'] || '{}')
