@@ -723,7 +723,7 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
+    const { relations, titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
