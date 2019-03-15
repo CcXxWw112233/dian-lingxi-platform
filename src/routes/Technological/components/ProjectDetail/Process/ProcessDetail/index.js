@@ -106,55 +106,70 @@ export default class ProcessDetail extends React.Component {
   render() {
     const { isShowAll } = this.state
     const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
+    console.log({processInfo})
     const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
     // console.log('processDynamics', processDynamics)
     // const
     //过滤消息内容
     const filterTitleContain = (messageValue) => {
-      const { activity_type } = messageValue
+      console.log({messageValue})
+      const { action } = messageValue
       let contain = ''
       let messageContain = (<div></div>)
-      switch (activity_type) {
-        case 'createWrokflowTpl':
+      let pin = action.split('.')
+      let nodeName = `${pin[1]}_${pin[2]}`
+      switch (action) {
+        case 'board.flow.tpl.add.or.delete':
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
-        case 'startWorkflow':
-          contain = `启动${currentNounPlanFilterName(FLOWS)}`
+        case 'board.flow.instance.initiate':
           messageContain=(
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
-                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」。</div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
               </div>
-              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
-        case 'recallWorkflowTask':
+        case 'board.flow.task.reject':
+          contain = `拒绝${currentNounPlanFilterName(FLOWS)}任务`
+          messageContain=(
+            <div className={indexStyles.newsItem}>
+              <div className={indexStyles.newsItem_left}>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
+              </div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.flow.task.recall':
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           messageContain=(
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
-                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」。</div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
-        case 'reassignAssignee':
+        case 'board.flow.task.reassign':
           contain = '重新指派审批人'
           messageContain=(
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
-                <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」节点「{messageValue.flow_node_name}」中重新指定审批人 {messageValue.assignee}。</div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
               </div>
-              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
-        case 'uploadWorkflowFile':
+        case 'board.flow.instance.discontinue':
           contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
           messageContain=(
             <div className={indexStyles.newsItem}>
@@ -166,14 +181,14 @@ export default class ProcessDetail extends React.Component {
             </div>
           )
           break
-        case 'completeWorkflowTask':
+        case 'board.flow.task.pass':
           messageContain=(
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                   <div className={indexStyles.newsItem_left_l}></div>
-                  <div className={indexStyles.newsItem_left_r}>{messageValue.user_name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 中完成了任务「{messageValue.flow_node_name}」。</div>
+                  <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
                 </div>
-              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.create_time)}</div>
+              <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
@@ -230,9 +245,9 @@ export default class ProcessDetail extends React.Component {
             <div></div>
             <div>{name}</div>
           </div>
-          {/*<div className={indexStyles.topTitle_right}>*/}
-           {/*<Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>*/}
-          {/*</div>*/}
+          <div className={indexStyles.topTitle_right}>
+           <Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>
+          </div>
         </div>
           {/*参与人*/}
           <div>

@@ -32,6 +32,7 @@ export default modelExtend(projectDetail, {
       history.listen((location) => {
 
         const param = QueryString.parse(location.search.replace('?', ''))
+        console.log('this is param', param)
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         flow_id = param.flow_id
@@ -198,7 +199,9 @@ export default modelExtend(projectDetail, {
           currentProcessInstanceId
         }
       })
+      console.log('打桩开始!!!', payload)
       let res = yield call(getProcessInfo, currentProcessInstanceId)
+      console.log('rrrrrrr', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -219,7 +222,7 @@ export default modelExtend(projectDetail, {
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics, {flow_instance_id: currentProcessInstanceId})
+        const res2 = yield call(getProessDynamics, {payload})
         if(isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
@@ -237,10 +240,9 @@ export default modelExtend(projectDetail, {
     * getProcessInfo({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
-        payload: {
-          currentProcessInstanceId: payload
-        }
+        payload
       })
+      console.log('啊啊啊啊', payload)
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
       if(isApiResponseOk(res)) {
