@@ -881,7 +881,7 @@ export default {
           //     }
           //   })
           // }
-
+          //
           break
         case 'change:file':
           //增减filelist
