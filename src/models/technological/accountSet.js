@@ -34,7 +34,7 @@ export default modelExtend(technological, {
     },
   },
   effects: {
-    * getUserInfo({ payload }, { select, call, put }) {
+    * getUserInfo({ payload = {} }, { select, call, put }) {
       let res = yield call(getUserInfo, {})
       const { calback } = payload
       if(calback && typeof calback === 'function') {

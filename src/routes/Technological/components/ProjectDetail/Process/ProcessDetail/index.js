@@ -230,9 +230,9 @@ export default class ProcessDetail extends React.Component {
             <div></div>
             <div>{name}</div>
           </div>
-          <div className={indexStyles.topTitle_right}>
-           <Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>
-          </div>
+          {/*<div className={indexStyles.topTitle_right}>*/}
+           {/*<Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>*/}
+          {/*</div>*/}
         </div>
           {/*参与人*/}
           <div>

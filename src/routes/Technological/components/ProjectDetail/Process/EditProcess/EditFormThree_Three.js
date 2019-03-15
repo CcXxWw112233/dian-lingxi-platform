@@ -48,7 +48,7 @@ export default class EditFormThree_One extends React.Component {
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
     form_data.splice(itemKey, 1)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
   }

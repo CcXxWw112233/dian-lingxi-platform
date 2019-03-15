@@ -10,7 +10,8 @@ import {
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../utils/businessFunction";
+import {currentNounPlanFilterName, openPDF, getSubfixName} from "../../../../../utils/businessFunction";
+import { getFilePDFInfo, } from '../../../../../services/technological/file'
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -27,7 +28,7 @@ export default class FileList extends React.Component {
   }
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys) => {
-    this.props.updateDatas({ selectedRowKeys });
+    this.props.updateDatasFile({ selectedRowKeys });
     console.log(selectedRowKeys)
   }
 
@@ -52,7 +53,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatas({
+        this.props.updateDatasFile({
           copyOrMove: '0',
           openMoveDirectoryType: '2',
           moveToDirectoryVisiblie: true,
@@ -64,7 +65,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatas({
+        this.props.updateDatasFile({
           copyOrMove: '1',
           openMoveDirectoryType: '2',
           moveToDirectoryVisiblie: true,
@@ -103,7 +104,7 @@ export default class FileList extends React.Component {
         return b[key].localeCompare(a[key]);
       }
     });
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       fileList: [...filedata_1, ...filedata_2]
     })
   }
@@ -140,7 +141,7 @@ export default class FileList extends React.Component {
         return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
       }
     });
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       fileList: [...filedata_1, ...filedata_2]
     })
   }
@@ -173,7 +174,7 @@ export default class FileList extends React.Component {
         break
     }
     //排序的时候清空掉所选项
-    this.props.updateDatas({selectedRowKeys: []})
+    this.props.updateDatasFile({selectedRowKeys: []})
 
   }
 
@@ -233,7 +234,7 @@ export default class FileList extends React.Component {
       breadcrumbList[breadcrumbList.length - 1] = data
     }
     //顺便将isInAddDirectory设置为不在添加文件夹状态
-    this.props.updateDatas({breadcrumbList, currentParrentDirectoryId: type === '1' ?file_id : currentParrentDirectoryId, isInAddDirectory: false})
+    this.props.updateDatasFile({breadcrumbList, currentParrentDirectoryId: type === '1' ?file_id : currentParrentDirectoryId, isInAddDirectory: false})
   }
   openDirectory(data) {
     this.open(data, '1')
@@ -244,12 +245,18 @@ export default class FileList extends React.Component {
     })
   }
   openFile(data) {
+    const { file_id, version_id, file_resource_id, file_name } = data
+    if(getSubfixName(file_name) == '.pdf') {
+      openPDF({id: file_id})
+      return false
+    }
     this.open(data, '2')
-    const { file_id, version_id, file_resource_id } = data
+
     //接下来打开文件
-    this.props.updateDatas({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_resource_id, file_id})
-    this.props.fileVersionist({version_id: version_id})
+    // this.props.updateDatasFile({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
+    // this.props.filePreview({id: file_resource_id, file_id})
+    // this.props.fileVersionist({version_id: version_id})
+    this.props.openFileInUrl({file_id})
   }
 
   render() {
@@ -328,7 +335,6 @@ export default class FileList extends React.Component {
 
       },
     ];
-
 
     return (
       <div className={indexStyles.tableOut} style={{minHeight: (bodyOffsetHeight)}}>

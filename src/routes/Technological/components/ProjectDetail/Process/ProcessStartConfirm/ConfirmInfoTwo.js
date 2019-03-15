@@ -4,6 +4,9 @@ import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Toolt
 import MenuSearchMultiple from './MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {timeToTimestamp} from "../../../../../../utils/util";
+import ContentRaletion from '../../../../../../components/ContentRaletion'
+import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
+import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 const { RangePicker } = DatePicker;
 const Dragger = Upload.Dragger;
@@ -39,7 +42,7 @@ export default class ConfirmInfoTwo extends React.Component {
       const { datas: { processEditDatas = [] } } = this.props.model
       const str = assigneesArray.join(',')
       processEditDatas[itemKey]['assignees'] = str
-      this.props.updateDatas({
+      this.props.updateDatasProcess({
         processEditDatas
       })
     }
@@ -48,6 +51,42 @@ export default class ConfirmInfoTwo extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
   }
+  componentDidMount() {
+
+    this.getRelations()
+  }
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey } = this.props
+    const { board_id } = projectDetailInfoData
+    const { id } = processEditDatas[itemKey]
+    const res = await getRelations({
+      board_id,
+      link_id: id,
+      link_local: '22'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      }, () => {
+        const { ConfirmInfoOut_1_bott_Id } = this.state
+        const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
+        this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
+  }
+
   tooltipFilterName({ users=[], user_id}) {
     let name = '佚名'
     for (let val of users) {
@@ -69,7 +108,7 @@ export default class ConfirmInfoTwo extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
 
@@ -90,7 +129,7 @@ export default class ConfirmInfoTwo extends React.Component {
     }
     const str = willSetAssigneesArray.join(',')
     processEditDatas[itemKey]['assignees'] = str
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
   }
@@ -161,11 +200,12 @@ export default class ConfirmInfoTwo extends React.Component {
   }
 
   render() {
-    const { due_time, isShowBottDetail, ConfirmInfoOut_1_bott_Id } = this.state
+    const { due_time, isShowBottDetail, ConfirmInfoOut_1_bott_Id, relations = [] } = this.state
 
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
-    const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday } = processEditDatas[itemKey]
+    const { board_id } = projectDetailInfoData
+    const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -309,6 +349,16 @@ export default class ConfirmInfoTwo extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
+              <div>
+                <ContentRaletion
+                  {...this.props}
+                  board_id ={board_id}
+                  link_id={id}
+                  link_local={'22'}
+                  addRelation = {this.addRelation.bind(this)}
+                  relations={relations}
+                />
+              </div>
             </div>
           </div>
         </Card>

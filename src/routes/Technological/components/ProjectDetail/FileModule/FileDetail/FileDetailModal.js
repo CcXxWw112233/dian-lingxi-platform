@@ -15,7 +15,7 @@ class FileDetailModal extends React.Component {
   componentWillReceiveProps(nextProps) {}
 
   onCancel(){
-    this.props.updateDatas({
+    this.props.updateDatasFile({
       isInOpenFile: false
     })
   }

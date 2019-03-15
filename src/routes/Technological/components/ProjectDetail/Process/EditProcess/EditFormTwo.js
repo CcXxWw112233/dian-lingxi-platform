@@ -36,7 +36,7 @@ export default class EditFormTwo extends React.Component {
     ///更新processEditDatasRecords操作解构赋值避免操作污染
     // console.log(2, processEditDatasRecords[processCurrentEditStep+1])
 
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas,
       processEditDatasRecords
     })
@@ -101,7 +101,7 @@ export default class EditFormTwo extends React.Component {
     if(processEditDatas.length) {
       processEditDatas.splice(processCurrentEditStep, 1)
     }
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatasRecords,
       processEditDatas,
       processCurrentEditStep: processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0

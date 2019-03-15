@@ -9,6 +9,14 @@ export async function getNewsDynamicList(next_id) {
     method: 'GET',
   });
 }
+//获取动态列表
+export async function getNewsDynamicListActivity(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/activity/${params.next_id}`,
+    method: 'GET',
+    params
+  });
+}
 // 评论列表
 export async function getCardCommentList(id) {
   return request({

@@ -1,11 +1,114 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN,REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+
+export async function createMeeting(payload) {
+  const {board_id, flag, topic, user_for = null, user_ids = null } = payload
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
+    method: 'POST',
+    data: {
+      board_id,
+      flag,
+      topic,
+      user_for,
+      user_ids
+    }
+  })
+
+  // const body = {
+  //   "board_id": 0,  //null | string
+  //   "flag": 0,    //会议类型 2
+  //   "org_id": 0,  //不用传
+  //   "password": "string", //不用传
+  //   "rela_id": 0,   //如果有bord_id ,board_id | null
+  //   "topic": "string", //title
+  //   "user_for": "string" //','
+  // }
+  //flag: 2 //会议类型，全局调用时，值为：2
+}
+
+//获取当前组织的所有成员信息
+export async function getCurrentOrgAllMembers() {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/userlist`,
+    method: 'GET'
+  })
+}
+
+//获取项目流程模板
+export async function getProgressTemplateList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/template`,
+    method: 'GET',
+    params
+  })
+}
+
+//删除文件
+export async function deleteUploadFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/file/remove`,
+    method: 'DELETE',
+    data
+  })
+}
+
+//每次点击选区project的时候， 发送 board_id (project id) 给后台， -_- ..
+export async function setCurrentProjectIdToServer({payload: {id}}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/set`,
+    method: 'PUT',
+    data: {
+      id
+    }
+  })
+}
+
+//获取当前项目我的文档
+export async function getcurrentOrgFileUploads() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我参与的会议
+export async function getCurrentMeetingList() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我审核的流程
+export async function getCurrentBackLogProcessList() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/backlog`,
+    method: 'GET'
+  })
+}
+
+//获取当前项目我负责的任务
+export async function getCurrentResponsibleTask() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible`,
+    method: 'GET'
+  })
+}
+
+//获取当前选择的项目的成员列表
+export async function getCurrentSelectedProjectMembersList({projectId}) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,
+    method: 'GET'
+  })
+}
 
 //获取项目列表
 export async function getProjectList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/list`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/app_list`,
     method: 'GET',
   });
 }
@@ -169,7 +272,7 @@ export async function getArticleDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/article/${params.id}`,
     method: 'GET',
-    params:{
+    params: {
       ...params,
       openid: '0',
     },

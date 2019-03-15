@@ -1,43 +1,18 @@
-import React from 'react'
-import indexStyles from './index.less'
-import WelcomProcess from './WelcomProcess'
-import EditProcess from './EditProcess'
-import ProcessStartConfirm from './ProcessStartConfirm'
-import ProcessDetail from './ProcessDetail'
+import React from 'react';
+import {connect} from "dva/index";
+import Process from './Process'
+import { Route, Router, Switch, Link } from 'dva/router'
+import { Drawer } from 'antd'
 
-export default class ProcessIndex extends React.Component {
-  state = {}
-  render() {
-    const { datas: { processPageFlagStep } } = this.props.model
-    const filterPage = (processPageFlagStep) => {
-      let containner = (<div></div>)
-      switch (processPageFlagStep) {
-        case '1':
-          containner = (<WelcomProcess {...this.props}/>)
-          break
-        case '2':
-          containner = (<EditProcess {...this.props}/>)
-          break
-        case '3':
-          containner = (<ProcessStartConfirm {...this.props}></ProcessStartConfirm>)
-          break
-        case '4':
-          containner = (<ProcessDetail {...this.props}/>)
-          break
-        default:
-          containner = (<WelcomProcess {...this.props}/>)
-          break
-      }
-      return containner
-    }
-    return (
-      <div className={indexStyles.processOut}>
-        {filterPage(processPageFlagStep)}
-        {/*<WelcomProcess {...this.props}/>*/}
-        {/*<EditProcess {...this.props}/>*/}
-        {/*<ProcessStartConfirm {...this.props}></ProcessStartConfirm>*/}
-        {/*<ProcessDetail {...this.props}/>*/}
-      </div>
-    )
-  }
-}
+const ProcessIndex = (props) => {
+
+  return(
+   <div>
+     <Process {...props} />
+   </div>
+  )
+};
+
+export default ProcessIndex
+
+

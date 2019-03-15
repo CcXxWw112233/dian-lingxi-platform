@@ -37,7 +37,7 @@ export default class EditProcess extends React.Component {
       }
     }
 
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas,
       processEditDatasRecords,
       node_type,
@@ -74,13 +74,13 @@ export default class EditProcess extends React.Component {
     processEditDatasRecords.push(recordItemobjs)
     processEditDatas.push(nodeObj)
     new Promise((resolve) => {
-      this.props.updateDatas({ //为了适应mention组件defaultValue在切换的时候不变
+      this.props.updateDatasProcess({ //为了适应mention组件defaultValue在切换的时候不变
         node_type: '6'
       })
       resolve()
     }).then(res => {
       //正常操作
-      this.props.updateDatas({
+      this.props.updateDatasProcess({
         processEditDatasRecords,
         processEditDatas,
         processCurrentEditStep: processEditDatasRecords.length - 1,
@@ -99,18 +99,18 @@ export default class EditProcess extends React.Component {
     }
 
     new Promise((resolve) => {
-      this.props.updateDatas({ //为了适应mention组件defaultValue在切换的时候不变
+      this.props.updateDatasProcess({ //为了适应mention组件defaultValue在切换的时候不变
         node_type: '6'
       })
       resolve()
     }).then(res => {
       //正常操作
-      this.props.updateDatas({
+      this.props.updateDatasProcess({
         processCurrentEditStep: key,
         node_type
       })
     })
-    // this.props.updateDatas({
+    // this.props.updateDatasProcess({
     //   processCurrentEditStep: key,
     //   node_type
     // })
@@ -165,7 +165,7 @@ export default class EditProcess extends React.Component {
     })
   }
   quitEdit() {
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processPageFlagStep: '1',
       node_type: '1', //节点类型
       processCurrentEditStep: 0, //编辑第几步，默认 0
@@ -193,10 +193,10 @@ export default class EditProcess extends React.Component {
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
       newProcessEditDatas.splice(processCurrentEditStep, 1)
     }
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
     })
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatasRecords: newProcessEditDatasRecords,
       processEditDatas: newProcessEditDatas,
       node_type: processEditDatas[processCurrentEditStep > 1 ? processCurrentEditStep - 1 : 0]['node_type'],

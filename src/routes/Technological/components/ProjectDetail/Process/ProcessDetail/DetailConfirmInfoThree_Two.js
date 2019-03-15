@@ -17,7 +17,7 @@ export default class DetailConfirmInfoThreeTwo extends React.Component {
     const { datas: { processEditDatas = [], } } = this.props.model
     const { form_data=[] } = processEditDatas[parentItemKey]
     form_data[itemKey][key] = data.value
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
   }

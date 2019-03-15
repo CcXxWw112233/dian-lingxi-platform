@@ -25,13 +25,13 @@ export default class CreatDirector extends React.Component {
       folder_name:  this.state.file_name,
       parent_id: currentParrentDirectoryId
     })
-    this.props.updateDatas({fileList, filedata_1, isInAddDirectory: false})
+    this.props.updateDatasFile({fileList, filedata_1, isInAddDirectory: false})
   }
   onCancel() {
     const { datas: { fileList = [], filedata_1 = [] } } = this.props.model
     fileList.shift()
     filedata_1.shift()
-    this.props.updateDatas({fileList, filedata_1, isInAddDirectory: false})
+    this.props.updateDatasFile({fileList, filedata_1, isInAddDirectory: false})
   }
   render () {
     return (

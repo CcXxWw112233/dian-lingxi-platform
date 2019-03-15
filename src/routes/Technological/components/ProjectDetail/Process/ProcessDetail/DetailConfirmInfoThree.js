@@ -9,6 +9,9 @@ import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/ut
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../../utils/verify'
+import ContentRaletion from '../../../../../../components/ContentRaletion'
+import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
+import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 const { RangePicker } = DatePicker;
 
@@ -26,6 +29,41 @@ export default class DetailConfirmInfoThree extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
     this.propsChangeSetIsShowBottDetail(this.props)
+  }
+  componentDidMount() {
+
+    this.getRelations()
+  }
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { itemKey } = this.props
+    const { board_id } = projectDetailInfoData
+    const { id } = processEditDatas[itemKey]
+    const res = await getRelations({
+      board_id,
+      link_id: id,
+      link_local: '21'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      }, () => {
+        const { ConfirmInfoOut_1_bott_Id } = this.state
+        const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
+        this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
   }
   componentWillReceiveProps (nextProps) {
     this.propsChangeSetIsShowBottDetail(nextProps)
@@ -53,7 +91,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
 
@@ -76,7 +114,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     }
 
     processEditDatas[itemKey]['assignees'] = assignees
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
     //重新指派推进人接口
@@ -115,13 +153,15 @@ export default class DetailConfirmInfoThree extends React.Component {
   }
 
   render() {
-    const { due_time, isShowBottDetail } = this.state
+    const { due_time, isShowBottDetail, relations = [] } = this.state
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
+    const { board_id } = projectDetailInfoData
+
     const { itemKey, itemValue } = this.props //所属列表位置
     const { curr_node_sort, status } = processInfo //当前节点
-    const { name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, form_data=[], form_id } = processEditDatas[itemKey]
+    const { name, id, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, form_data=[], form_id } = processEditDatas[itemKey]
     //推进人来源
     let usersArray = []
     const users = projectDetailInfoData.data
@@ -391,6 +431,16 @@ export default class DetailConfirmInfoThree extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
             <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
+              <div>
+                <ContentRaletion
+                  {...this.props}
+                  board_id ={board_id}
+                  link_id={id}
+                  link_local={'21'}
+                  addRelation = {this.addRelation.bind(this)}
+                  relations={relations}
+                />
+              </div>
               <div className={indexStyles.fill}>
                 {/*<ConfirmInfoThreeOne {...this.props}/>*/}
                 {/*<ConfirmInfoThreeTwo  {...this.props} />*/}

@@ -15,10 +15,10 @@ tio.ws = {}
  * @param {*} reconnInterval 重连间隔时间 单位：毫秒
  * @param {*} binaryType 'blob' or 'arraybuffer';//arraybuffer是字节
  */
-tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTimeout, reconnInterval, binaryType) {
+tio.ws = function (ws_url, ip, port, paramStr, param, handler, heartbeatTimeout, reconnInterval, binaryType, calback) {
   this.ip = ip
   this.port = port
-  this.url = ws_protocol + '://' + ip + ':' + port
+  this.url = ws_url//ws_protocol + '://' + ip + ':' + port
   this.binaryType = binaryType || 'arraybuffer'
 
   if (paramStr) {
@@ -48,7 +48,9 @@ tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTim
     if (isReconnect) {
       const Authorization = Cookies.get('Authorization')
       const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
-      _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+      // _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+      _url = `${ws_url}?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
+
     }
     let ws = new WebSocket(_url)
     this.ws = ws
@@ -66,6 +68,7 @@ tio.ws = function (ws_protocol, ip, port, paramStr, param, handler, heartbeatTim
     ws.onmessage = function (event) {
       self.handler.onmessage.call(self.handler, event, ws)
       self.lastInteractionTime(new Date().getTime())
+      calback(event)
     }
     ws.onclose = function (event) {
       clearInterval(self.pingIntervalId) // clear send heartbeat task

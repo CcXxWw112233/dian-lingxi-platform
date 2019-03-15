@@ -1,21 +1,22 @@
 import React from 'react';
 import {connect} from "dva/index";
 import Header from './Header'
-import DetailInfo from './DetailInfo/DetailInfo'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
-import DetailInfoModal from './DetailInfo/DetailInfoModal'
-
+import { Route, Router, Switch, Link } from 'dva/router'
 import { Drawer } from 'antd'
-import DrawDetailInfo from './DetailInfo/DrawDetailInfo'
-
+import dynamic from "dva/dynamic";
 const getEffectOrReducerByName = name => `projectDetail/${name}`
+const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
+const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
+const getEffectOrReducerByNameProcess = name => `projectDetailProcess/${name}`
 
 const ProjectDetail = (props) => {
-  const { dispatch, model, modal } = props
-  const { datas: { projectInfoDisplay, taskGroupList, appsSelectKey } } = model
+  const { dispatch, model, modal, match } = props
+  const { datas = { } } = model
+  const { projectInfoDisplay, appsSelectKey } = datas
   const HeaderListProps = {
     modal,
     model,
@@ -27,7 +28,7 @@ const ProjectDetail = (props) => {
     },
     getTaskGroupList(data){
       dispatch({
-        type: getEffectOrReducerByName('getTaskGroupList'),
+        type: getEffectOrReducerByNameTask('getTaskGroupList'),
         payload: data
       })
     },
@@ -82,7 +83,13 @@ const ProjectDetail = (props) => {
     },
     getProcessInfo(data){
       dispatch({
-        type: getEffectOrReducerByName('getProcessInfo'),
+        type: getEffectOrReducerByNameProcess('getProcessInfo'),
+        payload: data
+      })
+    },
+    changeFlowIdToUrl(data) {
+      dispatch({
+        type: getEffectOrReducerByNameProcess('changeFlowIdToUrl'),
         payload: data
       })
     },
@@ -146,60 +153,99 @@ const ProjectDetail = (props) => {
       })
     }
   }
+
   const CreateTaskProps = {
     modal,
     model,
+    match,
+    getRelations(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelations'),
+        payload: data,
+      })
+    },
+    JoinRelation(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('JoinRelation'),
+        payload: data,
+      })
+    },
+    cancelRelation(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('cancelRelation'),
+        payload: data,
+      })
+    },
+    getRelationsSelectionPre(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelationsSelectionPre'),
+        payload: data,
+      })
+    },
+    getRelationsSelectionSub(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getRelationsSelectionSub'),
+        payload: data,
+      })
+    },
+
+    cardItemClickEffect(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('cardItemClickEffect'),
+        payload: data,
+      })
+    },
     postCommentToDynamics(data) {
       dispatch({
-        type: getEffectOrReducerByName('postCommentToDynamics'),
+        type: getEffectOrReducerByNameTask('postCommentToDynamics'),
         payload: data,
       })
     },
     deleteTaskFile(data) {
       dispatch({
-        type: getEffectOrReducerByName('deleteTaskFile'),
+        type: getEffectOrReducerByNameTask('deleteTaskFile'),
         payload: data,
       })
     },
     addTaskGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('addTaskGroup'),
+        type: getEffectOrReducerByNameTask('addTaskGroup'),
         payload: data,
       })
     },
     deleteTaskGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('deleteTaskGroup'),
+        type: getEffectOrReducerByNameTask('deleteTaskGroup'),
         payload: data,
       })
     },
     updateTaskGroup(data) {
       dispatch({
-        type: getEffectOrReducerByName('updateTaskGroup'),
+        type: getEffectOrReducerByNameTask('updateTaskGroup'),
         payload: data,
       })
     },
     getTaskGroupList(data){
       dispatch({
-        type: getEffectOrReducerByName('getTaskGroupList'),
+        type: getEffectOrReducerByNameTask('getTaskGroupList'),
         payload: data
       })
     },
     addTask(data){
       dispatch({
-        type: getEffectOrReducerByName('addTask'),
+        type: getEffectOrReducerByNameTask('addTask'),
         payload: data
       })
     },
     updateTask(data){
       dispatch({
-        type: getEffectOrReducerByName('updateTask'),
+        type: getEffectOrReducerByNameTask('updateTask'),
         payload: data
       })
     },
     deleteTask(id){
       dispatch({
-        type: getEffectOrReducerByName('deleteTask'),
+        type: getEffectOrReducerByNameTask('deleteTask'),
         payload: {
           id
         }
@@ -207,74 +253,73 @@ const ProjectDetail = (props) => {
     },
     updateChirldTask(data){
       dispatch({
-        type: getEffectOrReducerByName('updateChirldTask'),
+        type: getEffectOrReducerByNameTask('updateChirldTask'),
         payload: data
       })
     },
     deleteChirldTask(data){
       dispatch({
-        type: getEffectOrReducerByName('deleteChirldTask'),
+        type: getEffectOrReducerByNameTask('deleteChirldTask'),
         payload: data
       })
     },
-
     archivedTask(data){
       dispatch({
-        type: getEffectOrReducerByName('archivedTask'),
+        type: getEffectOrReducerByNameTask('archivedTask'),
         payload: data
       })
     },
     changeTaskType(data){
       dispatch({
-        type: getEffectOrReducerByName('changeTaskType'),
+        type: getEffectOrReducerByNameTask('changeTaskType'),
         payload: data
       })
     },
     addChirldTask(data){
       dispatch({
-        type: getEffectOrReducerByName('addChirldTask'),
+        type: getEffectOrReducerByNameTask('addChirldTask'),
         payload: data
       })
     },
     addTaskExecutor(data){
       dispatch({
-        type: getEffectOrReducerByName('addTaskExecutor'),
+        type: getEffectOrReducerByNameTask('addTaskExecutor'),
         payload: data
       })
     },
     removeTaskExecutor(data){
       dispatch({
-        type: getEffectOrReducerByName('removeTaskExecutor'),
+        type: getEffectOrReducerByNameTask('removeTaskExecutor'),
         payload: data
       })
     },
     completeTask(data){
       dispatch({
-        type: getEffectOrReducerByName('completeTask'),
+        type: getEffectOrReducerByNameTask('completeTask'),
         payload: data
       })
     },
     addTaskTag(data){
       dispatch({
-        type: getEffectOrReducerByName('addTaskTag'),
+        type: getEffectOrReducerByNameTask('addTaskTag'),
         payload: data
       })
     },
     removeTaskTag(data){
       dispatch({
-        type: getEffectOrReducerByName('removeTaskTag'),
+        type: getEffectOrReducerByNameTask('removeTaskTag'),
         payload: data
       })
     },
     removeProjectMenbers(data){
       dispatch({
-        type: getEffectOrReducerByName('removeProjectMenbers'),
+        type: getEffectOrReducerByNameTask('removeProjectMenbers'),
         payload: data
       })
     },
     getCardCommentList(id) {
       dispatch({
-        type: getEffectOrReducerByName('getCardCommentList'),
+        type: getEffectOrReducerByNameTask('getCardCommentList'),
         payload: {
           id
         }
@@ -282,37 +327,37 @@ const ProjectDetail = (props) => {
     },
     addCardNewComment(data) {
       dispatch({
-        type: getEffectOrReducerByName('addCardNewComment'),
+        type: getEffectOrReducerByNameTask('addCardNewComment'),
         payload: data
       })
     },
     deleteCardNewComment(data) {
       dispatch({
-        type: getEffectOrReducerByName('deleteCardNewComment'),
+        type: getEffectOrReducerByNameTask('deleteCardNewComment'),
         payload: data
       })
     },
     getBoardTagList(data) {
       dispatch({
-        type: getEffectOrReducerByName('getBoardTagList'),
+        type: getEffectOrReducerByNameTask('getBoardTagList'),
         payload: data
       })
     },
     updateBoardTag(data) {
       dispatch({
-        type: getEffectOrReducerByName('updateBoardTag'),
+        type: getEffectOrReducerByNameTask('updateBoardTag'),
         payload: data
       })
     },
     toTopBoardTag(data) {
       dispatch({
-        type: getEffectOrReducerByName('toTopBoardTag'),
+        type: getEffectOrReducerByNameTask('toTopBoardTag'),
         payload: data
       })
     },
     deleteBoardTag(data) {
       dispatch({
-        type: getEffectOrReducerByName('deleteBoardTag'),
+        type: getEffectOrReducerByNameTask('deleteBoardTag'),
         payload: data
       })
     }
@@ -320,111 +365,117 @@ const ProjectDetail = (props) => {
   const FileModuleProps = {
     modal,
     model,
+    openFileInUrl(data) {
+      dispatch({
+        type: getEffectOrReducerByNameFile('openFileInUrl'),
+        payload: data,
+      })
+    },
     postCommentToDynamics(data) {
       dispatch({
-        type: getEffectOrReducerByName('postCommentToDynamics'),
+        type: getEffectOrReducerByNameFile('postCommentToDynamics'),
         payload: data,
       })
     },
     getFileList(params){
       dispatch({
-        type: getEffectOrReducerByName('getFileList'),
+        type: getEffectOrReducerByNameFile('getFileList'),
         payload: params
       })
     },
     fileCopy(data){
       dispatch({
-        type: getEffectOrReducerByName('fileCopy'),
+        type: getEffectOrReducerByNameFile('fileCopy'),
         payload: data
       })
     },
     fileDownload(params){
       dispatch({
-        type: getEffectOrReducerByName('fileDownload'),
+        type: getEffectOrReducerByNameFile('fileDownload'),
         payload: params
       })
     },
     fileRemove(data){
       dispatch({
-        type: getEffectOrReducerByName('fileRemove'),
+        type: getEffectOrReducerByNameFile('fileRemove'),
         payload: data
       })
     },
     fileMove(data){
       dispatch({
-        type: getEffectOrReducerByName('fileMove'),
+        type: getEffectOrReducerByNameFile('fileMove'),
         payload: data
       })
     },
     fileUpload(data){
       dispatch({
-        type: getEffectOrReducerByName('fileUpload'),
+        type: getEffectOrReducerByNameFile('fileUpload'),
         payload: data
       })
     },
     fileVersionist(params){
       dispatch({
-        type: getEffectOrReducerByName('fileVersionist'),
+        type: getEffectOrReducerByNameFile('fileVersionist'),
         payload: params
       })
     },
     recycleBinList(params){
       dispatch({
-        type: getEffectOrReducerByName('recycleBinList'),
+        type: getEffectOrReducerByNameFile('recycleBinList'),
         payload: params
       })
     },
     deleteFile(data){
       dispatch({
-        type: getEffectOrReducerByName('deleteFile'),
+        type: getEffectOrReducerByNameFile('deleteFile'),
         payload: data
       })
     },
     restoreFile(data){
       dispatch({
-        type: getEffectOrReducerByName('restoreFile'),
+        type: getEffectOrReducerByNameFile('restoreFile'),
         payload: data
       })
     },
     getFolderList(params){
       dispatch({
-        type: getEffectOrReducerByName('getFolderList'),
+        type: getEffectOrReducerByNameFile('getFolderList'),
         payload: params
       })
     },
     addNewFolder(data){
       dispatch({
-        type: getEffectOrReducerByName('addNewFolder'),
+        type: getEffectOrReducerByNameFile('addNewFolder'),
         payload: data
       })
     },
     updateFolder(data){
       dispatch({
-        type: getEffectOrReducerByName('updateFolder'),
+        type: getEffectOrReducerByNameFile('updateFolder'),
         payload: data
       })
     },
     filePreview(params) {
       dispatch({
-        type: getEffectOrReducerByName('filePreview'),
+        type: getEffectOrReducerByNameFile('filePreview'),
         payload: params
       })
     },
     getPreviewFileCommits(params) {
       dispatch({
-        type: getEffectOrReducerByName('getPreviewFileCommits'),
+        type: getEffectOrReducerByNameFile('getPreviewFileCommits'),
         payload: params
       })
     },
     addFileCommit(params) {
       dispatch({
-        type: getEffectOrReducerByName('addFileCommit'),
+        type: getEffectOrReducerByNameFile('addFileCommit'),
         payload: params
       })
     },
     deleteCommit(params) {
       dispatch({
-        type: getEffectOrReducerByName('deleteCommit'),
+        type: getEffectOrReducerByNameFile('deleteCommit'),
         payload: params
       })
     },
@@ -434,92 +485,88 @@ const ProjectDetail = (props) => {
     model,
     postCommentToDynamics(data) {
       dispatch({
-        type: getEffectOrReducerByName('postCommentToDynamics'),
+        type: getEffectOrReducerByNameProcess('postCommentToDynamics'),
         payload: data,
       })
     },
     getProcessTemplateList(data){
       dispatch({
-        type: getEffectOrReducerByName('saveProcessTemplate'),
+        type: getEffectOrReducerByNameProcess('saveProcessTemplate'),
         payload: data
       })
     },
     saveProcessTemplate(data){
       dispatch({
-        type: getEffectOrReducerByName('saveProcessTemplate'),
+        type: getEffectOrReducerByNameProcess('saveProcessTemplate'),
         payload: data
       })
     },
     getTemplateInfo(id) {
       dispatch({
-        type: getEffectOrReducerByName('getTemplateInfo'),
+        type: getEffectOrReducerByNameProcess('getTemplateInfo'),
         payload: id
       })
     },
     directStartSaveTemplate(id) {
       dispatch({
-        type: getEffectOrReducerByName('directStartSaveTemplate'),
+        type: getEffectOrReducerByNameProcess('directStartSaveTemplate'),
         payload: id
       })
     },
     getProcessList(data){
       dispatch({
-        type: getEffectOrReducerByName('getProcessList'),
+        type: getEffectOrReducerByNameProcess('getProcessList'),
         payload: data
       })
     },
     createProcess(data){
       dispatch({
-        type: getEffectOrReducerByName('createProcess'),
+        type: getEffectOrReducerByNameProcess('createProcess'),
         payload: data
       })
     },
     completeProcessTask(data){
       dispatch({
-        type: getEffectOrReducerByName('completeProcessTask'),
+        type: getEffectOrReducerByNameProcess('completeProcessTask'),
         payload: data
       })
     },
     fillFormComplete(data) {
       dispatch({
-        type: getEffectOrReducerByName('fillFormComplete'),
+        type: getEffectOrReducerByNameProcess('fillFormComplete'),
         payload: data
       })
     },
     rebackProcessTask(data){
       dispatch({
-        type: getEffectOrReducerByName('rebackProcessTask'),
+        type: getEffectOrReducerByNameProcess('rebackProcessTask'),
         payload: data
       })
     },
     rejectProcessTask(data) {
       dispatch({
-        type: getEffectOrReducerByName('rejectProcessTask'),
+        type: getEffectOrReducerByNameProcess('rejectProcessTask'),
         payload: data
       })
     },
     resetAsignees(data) {
       dispatch({
-        type: getEffectOrReducerByName('resetAsignees'),
+        type: getEffectOrReducerByNameProcess('resetAsignees'),
         payload: data
       })
     },
     getProcessInfo(data){
       dispatch({
-        type: getEffectOrReducerByName('getProcessInfo'),
+        type: getEffectOrReducerByNameProcess('getProcessInfo'),
         payload: data
       })
     },
     getProessDynamics(params) {
       dispatch({
-        type: getEffectOrReducerByName('getProessDynamics'),
+        type: getEffectOrReducerByNameProcess('getProessDynamics'),
         payload: params
       })
     }
-  }
-  const EditTeamShowProps = {
-    modal,
-    model,
   }
 
   const routingJump = (path) => {
@@ -536,18 +583,36 @@ const ProjectDetail = (props) => {
       payload: payload
     })
   }
+  const updateDatasTask = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByNameTask('updateDatas'),
+      payload: payload
+    })
+  }
+  const updateDatasFile = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByNameFile('updateDatas'),
+      payload: payload
+    })
+  }
+  const updateDatasProcess = (payload) => {
+    dispatch({
+      type: getEffectOrReducerByNameProcess('updateDatas'),
+      payload: payload
+    })
+  }
 
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} />)
+        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '3':
-        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas}/>)
+        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '4':
-        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} />)
+        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       default:
         // appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)
@@ -559,21 +624,9 @@ const ProjectDetail = (props) => {
     // minHeight: '100%',
     <div style={{ height: 'auto', position: 'relative', width: '100%', overflow: 'hidden', minHeight: '100vh', margin: '0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
-      <Header {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} />
-      {/*<DetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
-      {/*左边抽屉*/}
-      {/*<Drawer*/}
-        {/*placement="left"*/}
-        {/*closable={false}*/}
-        {/*visible={projectInfoDisplay}*/}
-        {/*width={376}*/}
-        {/*top={172}*/}
-        {/*zIndex={0}*/}
-        {/*maskStyle={{top: 0, }}*/}
-      {/*>*/}
-        {/*<DrawDetailInfo {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} projectInfoDisplay={projectInfoDisplay}/>*/}
-      {/*</Drawer>*/}
-      <DetailInfoModal {...DetailInfoProps} routingJump={routingJump} updateDatas={updateDatas} modalVisible={projectInfoDisplay} />
+      <Header {...DetailInfoProps} {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask}
+              updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />
+
       {/*应用界面*/}
       <div style={{padding: '0 20px'}}>
         {filterAppsModule(appsSelectKey)}
@@ -583,8 +636,11 @@ const ProjectDetail = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, projectDetail, loading }) {
-  return { modal, model: projectDetail, loading }
+function mapStateToProps({ modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading }) {
+  const modelObj = {
+    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
+  }
+  return { modal, model: modelObj, loading }
 }
 export default connect(mapStateToProps)(ProjectDetail)
 

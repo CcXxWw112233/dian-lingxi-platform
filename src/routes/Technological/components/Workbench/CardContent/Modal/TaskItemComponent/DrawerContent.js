@@ -19,15 +19,18 @@ import {
 } from "../../../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
-  currentNounPlanFilterName
+  currentNounPlanFilterName, openPDF, getSubfixName
 } from "../../../../../../../utils/businessFunction";
-import { deleteTaskFile } from '../../../../../../../services/technological/task'
+import {deleteTaskFile, getRelations, JoinRelation} from '../../../../../../../services/technological/task'
 import { filePreview } from '../../../../../../../services/technological/file'
 import {getProcessList} from "../../../../../../../services/technological/process";
 import globalStyle from '../../../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
+import {createMeeting} from './../../../../../../../services/technological/workbench'
+import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
+import ContentRaletion from '../../../../../../../components/ContentRaletion'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -64,6 +67,12 @@ export default class DrawContent extends React.Component {
     })
 
   }
+
+  componentDidMount() {
+
+    this.getRelations()
+  }
+
   componentWillReceiveProps(nextProps) {
     const { datas: { drawContent = {}} } = nextProps.model
     let { description, attachment_data = [] } = drawContent
@@ -86,6 +95,32 @@ export default class DrawContent extends React.Component {
       })
     }
   }
+
+  //获取关联内容
+  async getRelations(data) {
+    const { datas: { board_id, card_id, } }= this.props.model
+    const res = await getRelations({
+      board_id,
+      link_id: card_id,
+      link_local: '3'
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
+  }
+
   //firstLine -------start
   //分组状态选择
   projectGroupMenuClick(e) {
@@ -591,10 +626,40 @@ export default class DrawContent extends React.Component {
       window.open('https://zoom.us/start/sharemeeting')
     }
   }
-
+  openWinNiNewTabWithATag = url => {
+    const aTag = document.createElement('a')
+    aTag.href = url
+    aTag.target = '_blank'
+    document.querySelector('body').appendChild(aTag)
+    aTag.click()
+    aTag.parentNode.removeChild(aTag)
+  }
+  handleCreateVideoMeeting = (title, id, users = [], e) => {
+    if(e) e.stopPropagation()
+    const body = {
+      flag: '1',
+      board_id: id,
+      topic: title,
+      user_ids: users.reduce((acc, curr) => {
+        if(!curr || !curr.user_id) return acc
+        return acc ? acc + ',' + curr.user_id : curr.user_id
+      } ,'')
+    }
+    createMeeting(body).then(res => {
+      if (res.code === "0") {
+        const { start_url } = res.data;
+        message.success("发起会议成功");
+        this.openWinNiNewTabWithATag(start_url)
+      } else if (res.code === "1") {
+        message.error(res.message);
+      } else {
+        message.error("发起会议失败");
+      }
+    })
+  }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, relations = []} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
@@ -740,8 +805,14 @@ export default class DrawContent extends React.Component {
         })
       },
       onPreview(e, a) {
+        const file_name = e.name
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
+
+        if(getSubfixName(file_name) == '.pdf') {
+          openPDF({id: file_id})
+          return false
+        }
         // that.setState({
         //   previewFileType : 'attachment',
         // })
@@ -958,9 +1029,9 @@ export default class DrawContent extends React.Component {
               )}
               {type === '0'?('') :(
                 <div>
-                  <Dropdown overlay={meetingMenu}>
-                    <span>发起远程会议</span>
-                  </Dropdown>
+                  {/* <Dropdown overlay={meetingMenu}> */}
+                    <span onClick={(e) => this.handleCreateVideoMeeting(card_name, card_id, executors, e)}>发起远程会议</span>
+                  {/* </Dropdown> */}
                 </div>
               )}
 
@@ -1003,11 +1074,19 @@ export default class DrawContent extends React.Component {
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_6}>
-              <div className={DrawerContentStyles.contain_6_add}>
-                <Icon type="plus" style={{marginRight: 4}}/>关联内容
-              </div>
-            </div>
+            <ContentRaletion
+              {...this.props}
+              board_id ={board_id}
+              link_id={card_id}
+              link_local={'3'}
+              addRelation = {this.addRelation.bind(this)}
+              relations={relations}
+            />
+            {/*<div className={DrawerContentStyles.contain_6}>*/}
+              {/*<div className={DrawerContentStyles.contain_6_add}>*/}
+                {/*<Icon type="plus" style={{marginRight: 4}}/>关联内容*/}
+              {/*</div>*/}
+            {/*</div>*/}
           </div>
 
           {/*标签*/}

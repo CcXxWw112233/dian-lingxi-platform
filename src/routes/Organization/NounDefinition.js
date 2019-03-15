@@ -1,6 +1,8 @@
 import React from 'react'
 import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal, Button, Tree, message, Input } from 'antd';
 import indexStyles from './index.less'
+import {ORG_UPMS_ORGANIZATION_ROLE_EDIT} from "../../globalset/js/constant";
+import {checkIsHasPermission} from "../../utils/businessFunction";
 
 export default class NounDefinition extends React.Component {
   state = {
@@ -107,13 +109,20 @@ export default class NounDefinition extends React.Component {
             )
           })}
         </div>
-        <div className={indexStyles.contain1}>
-          当前使用：<span >{current_scheme}</span>
-        </div>
 
-        <div className={indexStyles.contain2}>
-          <Button disabled={saveDisabled} type={'primary'} onClick={this.saveNoun.bind(this)}>保存</Button>
-        </div>
+        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)?(
+          <div className={indexStyles.contain1}>
+            当前使用：<span >{current_scheme}</span>
+          </div>
+        ) : ('')}
+
+        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)?(
+          <div className={indexStyles.contain2}>
+            <Button disabled={saveDisabled} type={'primary'} onClick={this.saveNoun.bind(this)}>保存</Button>
+          </div>
+        ) : ('')}
+
+
       </div>
     )
   }

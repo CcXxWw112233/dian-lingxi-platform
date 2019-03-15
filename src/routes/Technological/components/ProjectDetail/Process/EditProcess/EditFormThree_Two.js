@@ -1,8 +1,9 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Input, Checkbox, Select, Button, DatePicker } from 'antd'
+import { Input, Checkbox, Select, Button, DatePicker, message } from 'antd'
 import moment from 'moment';
 import EditFormThreeTwoModal from './EditFormThree_Two_Modal'
+import {MESSAGE_DURATION_TIME} from "../../../../../../globalset/js/constant";
 
 const Option = Select.Option;
 
@@ -27,6 +28,16 @@ export default class EditFormThree_One extends React.Component {
     this.updateEdit({value: e.target.value}, 'property_name')
   }
   isRequiredCheck (e) {
+    if(e.target.checked) {
+      const { datas: { processEditDatas = [], processCurrentEditStep = 0, } } = this.props.model
+      const { form_data=[] } = processEditDatas[processCurrentEditStep]
+      const { itemKey } = this.props
+      const { options_data = [], } = form_data[itemKey]
+      if(!options_data.length) {
+        message.warn('您尚未编辑选项！', MESSAGE_DURATION_TIME)
+        return false
+      }
+    }
     this.updateEdit({value: e.target.checked? '1':'0'}, 'is_required')
   }
   verificationRuleChange(value) {
@@ -47,7 +58,7 @@ export default class EditFormThree_One extends React.Component {
     const { form_data=[] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
     form_data.splice(itemKey, 1)
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processEditDatas
     })
   }
