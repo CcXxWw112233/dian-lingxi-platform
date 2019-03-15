@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Menu, Dropdown, Input } from "antd";
+import { Menu, Dropdown, Input, Tooltip } from "antd";
 import classNames from "classnames/bind";
 import styles from "./index.less";
 import MenuItem from "antd/lib/menu/MenuItem";
 import AddModalFormWithExplicitProps from "./../../../Project/AddModalFormWithExplicitProps";
 import { connect } from "dva/index";
+import Cookies from "js-cookie";
 
 let cx = classNames.bind(styles);
 
@@ -63,20 +64,26 @@ class DropdownSelectWithSearch extends Component {
     ));
   };
   renderNoContent = () => {
+    const { current_org: { identity_type } = {} } = this.getUerInfoFromCookie();
+    const isVisitor = this.isVisitor(identity_type);
     return (
-      <div className={styles.addNewProject__wrapper}>
-        <div className={styles.addNewProject__content}>
-          <p
-            className={styles.addNewProject__content_item}
-            onClick={this.handleClickedNewProjectItem}
-          >
-            <span className={styles.addNewProject__content_item_icon} />
-            <span className={styles.addNewProject__content_item_title}>
-              新建项目
-            </span>
-          </p>
-        </div>
-      </div>
+      <>
+        {!isVisitor && (
+          <div className={styles.addNewProject__wrapper}>
+            <div className={styles.addNewProject__content}>
+              <p
+                className={styles.addNewProject__content_item}
+                onClick={this.handleClickedNewProjectItem}
+              >
+                <span className={styles.addNewProject__content_item_icon} />
+                <span className={styles.addNewProject__content_item_title}>
+                  新建项目
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+      </>
     );
   };
   showModal = () => {
@@ -122,6 +129,16 @@ class DropdownSelectWithSearch extends Component {
     //   type: "modal/hideModal"
     // });
   };
+  componentWillReceiveProps(nextProps) {
+    const { list } = nextProps;
+    const { filteredList } = this.state;
+    const isTwoArrHaveSameLen = (arr1, arr2) => arr1.length === arr2.length;
+    if (!isTwoArrHaveSameLen(filteredList, list)) {
+      this.setState({
+        filteredList: [...list]
+      });
+    }
+  }
   content = () => {
     const { list, selectedItem } = this.props;
     const { filteredList, inputValue } = this.state;
@@ -137,16 +154,31 @@ class DropdownSelectWithSearch extends Component {
         />
         <div>{this.renderNoContent()}</div>
         <div className={styles.menuWrapper}>
-        <Menu
-          defaultSelectedKeys={
-            selectedItem && selectedItem.board_id ? [selectedItem.board_id] : []
-          }
-        >
-          {this.renderMenuItem(filteredList)}
-        </Menu>
+          <Menu
+            defaultSelectedKeys={
+              selectedItem && selectedItem.board_id
+                ? [selectedItem.board_id]
+                : []
+            }
+          >
+            {this.renderMenuItem(filteredList)}
+          </Menu>
         </div>
       </div>
     );
+  };
+  getUerInfoFromCookie = () => {
+    try {
+      return JSON.parse(Cookies.get("userInfo"));
+    } catch (err) {
+      return {};
+    }
+  };
+  isVisitor = param => {
+    //是否访客 1不是 0是
+    const condMap = new Map([["0", true], ["1", false]]);
+    if (typeof condMap.get(param) === "undefined") return false;
+    return condMap.get(param);
   };
   render() {
     const { initSearchTitle, selectedItem, project } = this.props;
@@ -167,19 +199,27 @@ class DropdownSelectWithSearch extends Component {
             <div className={titleClassName}>
               <p style={{ marginBottom: 0 }}>
                 <span />
-                <span
-                  style={{
-                    display: "inline-block",
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}
+                <Tooltip
+                  title={
+                    selectedItem && selectedItem.board_name
+                      ? selectedItem.board_name
+                      : null
+                  }
                 >
-                  {selectedItem && selectedItem.board_name
-                    ? selectedItem.board_name
-                    : initSearchTitle}
-                </span>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      maxWidth: "180px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    {selectedItem && selectedItem.board_name
+                      ? selectedItem.board_name
+                      : initSearchTitle}
+                  </span>
+                </Tooltip>
                 <span />
               </p>
             </div>

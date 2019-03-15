@@ -28,16 +28,17 @@ import globalStyle from '../../../../../../../globalset/css/globalClassName.less
 import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
-import {createMeeting} from './../../../../../../../services/technological/workbench'
 import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
+import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../../../services/technological/workbench'
+import ShareAndInvite from './../../../../ShareAndInvite/index'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 let that
-export default class DrawContent extends React.Component {
+class DrawContent extends React.Component {
   state = {
     title: '',
     titleIsEdit: false,
@@ -51,6 +52,9 @@ export default class DrawContent extends React.Component {
     previewFileModalVisibile: false, //文件预览是否打开状态
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
+
+    onlyReadingShareModalVisible: false, //只读分享modal
+    onlyReadingShareData: {}
   }
 
   constructor() {
@@ -657,9 +661,69 @@ export default class DrawContent extends React.Component {
       }
     })
   }
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const {onlyReadingShareModalVisible} = this.state
+    //打开之前确保获取到数据
+    if(!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(err => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+  createOnlyReadingShareLink = () => {
+
+    const { datas: { drawContent = {} } } = this.props.model
+    const {board_id, card_id} = drawContent
+
+    const payload = {
+      board_id,
+      rela_id: card_id,
+      rela_type: '3'
+    }
+    return createShareLink(payload).then(({code, data}) => {
+      if(code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      }else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if(res && res.code === '0') {
+        if(isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    }).catch(err => {
+      message.error('操作失败')
+    })
+  }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, relations = []} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
@@ -667,7 +731,7 @@ export default class DrawContent extends React.Component {
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { board_name, list_name, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[] } = drawContent
+    let { board_name, list_name, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
@@ -881,7 +945,9 @@ export default class DrawContent extends React.Component {
             {/*<div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>*/}
           {/*)}*/}
           {/*项目挪动*/}
-          {/*<div className={DrawerContentStyles.divContent_1}>*/}
+          <div style={{display: 'flex', justifyContent: 'space-between', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>
+          <span></span>
+          {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
             {/*<div className={DrawerContentStyles.contain_1}>*/}
               {/*<Dropdown overlay={projectGroupMenu}>*/}
                 {/*<div className={DrawerContentStyles.left}>*/}
@@ -893,8 +959,8 @@ export default class DrawContent extends React.Component {
                   {/*<Icon type="ellipsis" style={{fontSize: 20,marginTop:2}} />*/}
                 {/*</div>*/}
               {/*</Dropdown>*/}
-            {/*</div>*/}
-          {/*</div>*/}
+            {/* </div> */}
+          </div>
 
           {/*标题*/}
           <div className={DrawerContentStyles.divContent_2}>
@@ -1170,3 +1236,4 @@ export default class DrawContent extends React.Component {
 
 }
 
+export default DrawContent

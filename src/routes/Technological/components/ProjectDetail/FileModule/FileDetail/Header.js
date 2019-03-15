@@ -11,10 +11,15 @@ import {
 } from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
+import {withRouter} from 'react-router-dom'
+import ShareAndInvite from './../../../ShareAndInvite/index'
+import {createShareLink, modifOrStopShareLink} from './../../../../../../services/technological/workbench'
 
-
-export default class Header extends React.Component {
-  state = {}
+class Header extends React.Component {
+  state = {
+    onlyReadingShareModalVisible: false, //只读分享modal
+    onlyReadingShareData: {},
+  }
   closeFile() {
     const { datas: { breadcrumbList = [] } }= this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
@@ -88,11 +93,80 @@ export default class Header extends React.Component {
     }
   }
 
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const {onlyReadingShareModalVisible} = this.state
+    //打开之前确保获取到数据
+    if(!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(err => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+  getSearchFromLocation = location => {
+    if(!location.search) {
+      return {}
+    }
+    return location.search.substring(1).split('&').reduce((acc, curr) => {
+      const [key, value] = curr.split('=')
+      return Object.assign({}, acc, {[key]: value})
+    }, {})
+  }
+  createOnlyReadingShareLink = () => {
+    const {location} = this.props
+    //获取参数
+    const {board_id = '', appsSelectKey = '', file_id = ''} = this.getSearchFromLocation(location)
 
+    const payload = {
+      board_id,
+      rela_id: file_id,
+      rela_type: appsSelectKey
+    }
+    return createShareLink(payload).then(({code, data}) => {
+      if(code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      }else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if(res && res.code === '0') {
+        if(isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    }).catch(err => {
+      message.error('操作失败')
+    })
+  }
   render() {
     const that = this
     const { datas: { seeFileInput,isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
-    const { board_id, } = projectDetailInfoData
+    const { board_id, is_shared} = projectDetailInfoData
+    const {onlyReadingShareModalVisible, onlyReadingShareData} = this.state
     //文件版本更新
     const uploadProps = {
       name: 'file',
@@ -171,6 +245,9 @@ export default class Header extends React.Component {
           <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
             <Icon type="download" />下载
           </Button>
+          <span style={{marginLeft: '10px'}}>
+          {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
+          </span>
           {/*<Button style={{height: 24, marginLeft:14}} >*/}
             {/*<Icon type="star" />收藏*/}
           {/*</Button>*/}
@@ -190,3 +267,5 @@ export default class Header extends React.Component {
     )
   }
 }
+
+export default withRouter(Header)

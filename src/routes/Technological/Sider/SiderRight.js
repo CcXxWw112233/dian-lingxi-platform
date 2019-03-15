@@ -14,8 +14,11 @@ import glabalStyles from "../../../globalset/css/globalClassName.less";
 import { connect } from "dva";
 import Cookies from "js-cookie";
 import { validateTel } from "./../../../utils/verify";
+import classNames from "classnames/bind";
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
+
+let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;
 const Option = Select.Option;
@@ -157,13 +160,13 @@ class SiderRight extends React.Component {
     }
   };
   openWinNiNewTabWithATag = url => {
-    const aTag = document.createElement('a')
-    aTag.href = url
-    aTag.target = '_blank'
-    document.querySelector('body').appendChild(aTag)
-    aTag.click()
-    aTag.parentNode.removeChild(aTag)
-  }
+    const aTag = document.createElement("a");
+    aTag.href = url;
+    aTag.target = "_blank";
+    document.querySelector("body").appendChild(aTag);
+    aTag.click();
+    aTag.parentNode.removeChild(aTag);
+  };
   handleVideoMeetingSubmit = () => {
     const { dispatch } = this.props;
     const { meetingTitle, saveToProject } = this.state;
@@ -201,7 +204,7 @@ class SiderRight extends React.Component {
       if (res.code === "0") {
         const { start_url } = res.data;
         message.success("发起会议成功");
-        this.openWinNiNewTabWithATag(start_url)
+        this.openWinNiNewTabWithATag(start_url);
         this.setState(
           {
             videoMeetingPopoverVisible: false
@@ -234,6 +237,18 @@ class SiderRight extends React.Component {
         if (flag === false) {
           this.initVideoMeetingPopover();
         }
+        const {
+          projectList,
+          projectTabCurrentSelectedProject,
+          currentSelectedProjectMembersList,
+          currentOrgAllMembers
+        } = this.props;
+        console.log({
+          projectList,
+          projectTabCurrentSelectedProject,
+          currentSelectedProjectMembersList,
+          currentOrgAllMembers
+        });
       }
     );
   };
@@ -259,7 +274,7 @@ class SiderRight extends React.Component {
   getCurrentUserNameThenSetMeetingTitle = () => {
     const currentUser = this.getInfoFromCookie("userInfo");
     if (currentUser) {
-      const meetingTitle = `${currentUser.full_name}发起的会议`;
+      const meetingTitle = `${currentUser.name}发起的会议`;
       this.setState({
         meetingTitle
       });
@@ -416,6 +431,7 @@ class SiderRight extends React.Component {
     });
   };
   handleToggleVideoMeetingPopover = e => {
+    //需要重置项目标题
     if (e) e.stopPropagation();
     this.setState(state => {
       const { videoMeetingPopoverVisible } = state;
@@ -436,74 +452,87 @@ class SiderRight extends React.Component {
     } = this.state;
     const { projectList } = this.props;
 
+    const ImMaskWhencollapsed = cx({
+      [indexStyles.ImMaskCollapsed]: collapsed,
+      [indexStyles.ImMaskExpand]: !collapsed
+    });
+
     const videoMeetingPopoverContent = (
-      <div className={indexStyles.videoMeeting__wrapper}>
-        <div className={indexStyles.videoMeeting__topic}>
-          <p className={indexStyles.videoMeeting__topic_title}>会议主题:</p>
-          <div className={indexStyles.videoMeeting__topic_content}>
-            <span className={indexStyles.videoMeeting__topic_content_save}>
-              <Select
-                defaultValue={saveToProject}
-                onChange={this.handleVideoMeetingSaveSelectChange}
-                style={{ width: "140px" }}
-              >
-                <Option value={null}>不存入项目</Option>
-                {projectList.length !== 0 &&
-                  projectList.map(project => (
-                    <Option value={project.board_id} key={project.board_id}>
-                      {project.board_name}
-                    </Option>
-                  ))}
-              </Select>
-            </span>
-            <span className={indexStyles.videoMeeting__topic_content_title}>
-              <Input
-                value={meetingTitle}
-                onChange={this.handleVideoMeetingTopicChange}
-              />
-            </span>
-          </div>
-        </div>
-        <div className={indexStyles.videoMeeting__memberNote}>
-          <p className={indexStyles.videoMeeting__memberNote_title}>
-            通知参会人：
-          </p>
-          <div className={indexStyles.videoMeeting__memberNote_content}>
-            <div
-              className={indexStyles.videoMeeting__memberNote_content_mention}
-            >
-              <Mention
-                style={{ width: "100%", height: "56px" }}
-                placeholder="使用@符号查找加入同一组织内的成员"
-                suggestions={selectedSuggestions}
-                multiLines
-                onSearchChange={this.handleVideoMeetingMemberChange}
-                placement="top"
-                onSelect={this.handleVideoMeetingMemberSelect}
-                value={suggestionValue}
-                onChange={this.handleVideoMeetingValueChange}
-              />
+      <div>
+        {videoMeetingPopoverVisible && (
+          <div className={indexStyles.videoMeeting__wrapper}>
+            <div className={indexStyles.videoMeeting__topic}>
+              <p className={indexStyles.videoMeeting__topic_title}>会议主题:</p>
+              <div className={indexStyles.videoMeeting__topic_content}>
+                <span className={indexStyles.videoMeeting__topic_content_save}>
+                  <Select
+                    defaultValue={saveToProject}
+                    onChange={this.handleVideoMeetingSaveSelectChange}
+                    style={{ width: "140px" }}
+                  >
+                    <Option value={null}>不存入项目</Option>
+                    {projectList.length !== 0 &&
+                      projectList.map(project => (
+                        <Option value={project.board_id} key={project.board_id}>
+                          {project.board_name}
+                        </Option>
+                      ))}
+                  </Select>
+                </span>
+                <span className={indexStyles.videoMeeting__topic_content_title}>
+                  <Input
+                    value={meetingTitle}
+                    onChange={this.handleVideoMeetingTopicChange}
+                  />
+                </span>
+              </div>
             </div>
-            <div
-              className={indexStyles.videoMeeting__memberNote_content_textarea}
-            >
-              <TextArea
-                placeholder="直接列举外部参会人的手机号，多号码请用“;”区分"
-                autosize={{ minRows: 2, maxRows: 4 }}
-                value={selectedMemberTextAreaValue}
-                onChange={this.selectedMemberTextAreaValueChange}
-              />
+            <div className={indexStyles.videoMeeting__memberNote}>
+              <p className={indexStyles.videoMeeting__memberNote_title}>
+                通知参会人：
+              </p>
+              <div className={indexStyles.videoMeeting__memberNote_content}>
+                <div
+                  className={
+                    indexStyles.videoMeeting__memberNote_content_mention
+                  }
+                >
+                  <Mention
+                    style={{ width: "100%", height: "56px" }}
+                    placeholder="使用@符号查找加入同一组织内的成员"
+                    suggestions={selectedSuggestions}
+                    multiLines
+                    onSearchChange={this.handleVideoMeetingMemberChange}
+                    placement="top"
+                    onSelect={this.handleVideoMeetingMemberSelect}
+                    value={suggestionValue}
+                    onChange={this.handleVideoMeetingValueChange}
+                  />
+                </div>
+                <div
+                  className={
+                    indexStyles.videoMeeting__memberNote_content_textarea
+                  }
+                >
+                  <TextArea
+                    placeholder="直接列举外部参会人的手机号，多号码请用“;”区分"
+                    autosize={{ minRows: 2, maxRows: 4 }}
+                    value={selectedMemberTextAreaValue}
+                    onChange={this.selectedMemberTextAreaValueChange}
+                  />
+                </div>
+              </div>
+            </div>
+            <p className={indexStyles.videoMeeting__prompt}>
+              点击发起会议后即自动发送通知
+            </p>
+            <div className={indexStyles.videoMeeting__submitBtn}>
+              <Button type="primary" onClick={this.handleVideoMeetingSubmit}>
+                发起会议
+              </Button>
             </div>
           </div>
-        </div>
-        <p className={indexStyles.videoMeeting__prompt}>
-          点击发起会议后即自动发送通知
-        </p>
-        <div className={indexStyles.videoMeeting__submitBtn}>
-          <Button type="primary" onClick={this.handleVideoMeetingSubmit}>
-            发起会议
-          </Button>
-        </div>
+        )}
       </div>
     );
 
@@ -543,18 +572,23 @@ class SiderRight extends React.Component {
               style={{
                 height: document.documentElement.clientHeight - 58,
                 padding: "20px 12px",
-                paddingBottom: "40px"
+                paddingBottom: "40px",
+                position: "relative"
               }}
               onClick={this.setCollapsed.bind(this)}
             >
-              {/* <iframe
+              <div
+                style={{ height: document.documentElement.clientHeight - 108 }}
+                className={ImMaskWhencollapsed}
+              />
+              <iframe
                 title="im"
                 src={`http://www.new-di.com/im`}
                 frameBorder="0"
                 width="100%"
                 height="100%"
                 id={"iframImCircle"}
-              /> */}
+              />
             </div>
             <Popover
               visible={videoMeetingPopoverVisible}
