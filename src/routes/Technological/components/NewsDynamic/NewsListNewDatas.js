@@ -22,8 +22,8 @@ export default class NewsListNewDatas extends React.Component {
     this.props.getNewsDynamicList('0')
   }
   render() {
+    console.log('this is Yao', this.props.model)
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic, newsList = [] }} = this.props.model
-
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
@@ -33,6 +33,10 @@ export default class NewsListNewDatas extends React.Component {
         case 'board.create':
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (<div>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          break
+        case 'board.card.update.file.add':
+          contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
+          messageContain = (<div>{messageValue.user_name} 在流程{[]}中上传了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>)
           break
         case 'board.update.name':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
@@ -52,7 +56,7 @@ export default class NewsListNewDatas extends React.Component {
           break
         case 'board.update.user.add':
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.member || '新成员'}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.content.relaUsers || `新成员「${messageValue.content.rela_users}」`}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
           break
         case 'board.update.user.remove':
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
@@ -104,6 +108,15 @@ export default class NewsListNewDatas extends React.Component {
           )
           contain = `完成${currentNounPlanFilterName(TASKS)}`
           break
+        case 'board.flow.task.attach.upload':
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程【{messageValue.content.flow_instance.name}】上传了文件【{messageValue.content.rela_data}】#{messageValue.content.board.name} #{messageValue.content.flow_instance.name} #{messageValue.content.flow_node_instance.name}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
+          // contain 
         case 'board.card.update.cancel.finish':
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -125,7 +138,7 @@ export default class NewsListNewDatas extends React.Component {
         case 'board.card.update.executor.add':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}「{messageValue.content.card.name}」指派了任务执行人。</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}「{messageValue.content.card.name}」指派给了任务执行人。</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -140,24 +153,34 @@ export default class NewsListNewDatas extends React.Component {
           )
           contain = `添加任${currentNounPlanFilterName(TASKS)}执行人`
           break
-
         case 'board.card.update.label.add':
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了标签「{messageValue.label_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
-            </div>
-          )
-          contain = `添加${currentNounPlanFilterName(TASKS)}标签`
+          // console.log('增加标签：', messageValue)
+          if(messageValue.content.rela_data !==undefined) {
+            messageContain = (
+              <div className={NewsListStyle.news_3}>
+                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了标签「{messageValue.content.rela_data.name}」。</div>
+                <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+              </div>
+            )
+            contain = `添加${currentNounPlanFilterName(TASKS)}标签`
+          } else {
+            messageContain = (<div></div>)
+          }
+          
           break
         case 'board.card.update.label.remove':
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.label_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
-            </div>
-          )
-          contain = `移除${currentNounPlanFilterName(TASKS)}标签`
+          if(messageValue.content.rela_data !==undefined) {
+            messageContain = (
+              <div className={NewsListStyle.news_3}>
+                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移除了标签「{messageValue.content.rela_data.name}」。</div>
+                <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+              </div>
+            )
+            contain = `删除${currentNounPlanFilterName(TASKS)}标签`
+          } else {
+            messageContain = (<div></div>)
+          }
+          
           break
         case 'createLabel':
           contain = '添加标签'
@@ -332,7 +355,7 @@ export default class NewsListNewDatas extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
-                <div>{filterTitleContain(action, value).contain}</div>
+                <div>{filterTitleContain(action, value).contain} </div>
                 <div>{timestampToTime(created)}</div>
               </div>
             </div>
@@ -342,7 +365,7 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain} </div>
           </div>
         </div>
       )
@@ -374,10 +397,11 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            {value.map((val, key) => {
+            {
+              value.map((val, key) => {
               const { action } = val
               return(
-                <div className={NewsListStyle.news_1} key={key}>{filterTitleContain(action, val).messageContain}</div>
+                <div className={NewsListStyle.news_1} key={key}>{filterTitleContain(action, val).messageContain} </div>
               )
             })}
           </div>
@@ -479,7 +503,7 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain} </div>
           </div>
         </div>
       )
@@ -499,7 +523,7 @@ export default class NewsListNewDatas extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
-                <div>{filterTitleContain(action, value).contain}</div>
+                <div>{filterTitleContain(action, value).contain} </div>
                 <div>{currentNounPlanFilterName(PROJECTS)}： {board_name}</div>
               </div>
             </div>
@@ -508,7 +532,7 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           </div>
           <div className={NewsListStyle.bott}>
-            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain}</div>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain } </div>
           </div>
         </div>
       )
