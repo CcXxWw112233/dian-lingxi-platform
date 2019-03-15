@@ -694,3 +694,43 @@
   border-radius: 8px;
   background: #e8e8e8;
 }
+
+.taskItem__workbench_wrapper {
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  .taskItem__workbench_check {
+    white-space: nowrap;
+        margin-right: 20px;
+  }
+  .taskItem__workbench_content {
+    display: flex;
+        flex: 10;
+        overflow: hidden;
+    .taskItem__workbench_content_title {
+      cursor: pointer;
+      .ellipsis();
+      flex: 5 0 1;
+    }
+    .taskItem__workbench_content_hier {
+      cursor: pointer;
+      .ellipsis();
+      flex: 2 2 1;
+    }
+    .taskItem__workbench_content_projectname {
+      .ellipsis();
+      flex: 3 3 1;
+    }
+  }
+  .taskItem__workbench_time {
+    display: inline-block;
+        white-space: nowrap;
+        justify-self: end;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

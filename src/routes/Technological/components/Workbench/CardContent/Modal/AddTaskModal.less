@@ -8,10 +8,12 @@
       margin-top: -5px;
       margin-left: 10px;
       span {
+        display: inline-block;
         input {
+          display: inline-block;
           border: none !important;
-        box-shadow: none !important;
-        outline: none !important;
+          box-shadow: none !important;
+          outline: none !important;
         }
         input::-webkit-input-placeholder {
           color: #595959;
@@ -28,9 +30,16 @@
           width: 26px;
           height: 16px;
           right: 36px;
-          transform: scaleX(1.5) scaleY(1.5) translateY(2px);
-
+          transform: scaleX(1.7) scaleY(1.2) translateY(2px) translateX(25px);
         }
+      }
+      span:hover i {
+        display: inline-block;
+          color: #595959;
+          width: 26px;
+          height: 16px;
+          right: 36px;
+          transform: scaleX(1.5) scaleY(1.5) translateY(2px) translateX(25px);
       }
       .ant-input:hover {
         border: none !important;
@@ -48,11 +57,9 @@
       max-width: 80%;
     }
     .confirmBtn {
-
     }
     .confirmBtnRight {
       margin-left: auto;
     }
   }
 }
-

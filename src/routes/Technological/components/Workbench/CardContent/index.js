@@ -31,12 +31,16 @@ import TaskDetailModal from "./Modal/TaskDetailModal";
 import FileDetailModal from "./Modal/FileDetailModal";
 import AddTaskModal from "./Modal/AddTaskModal";
 import AddProgressModal from './Modal/AddProgressModal'
+import {connect} from 'dva'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-export default class CardContent extends React.Component {
+@connect(({workbench}) => ({
+  workbench
+}))
+class CardContent extends React.Component {
   state = {
     dropDonwVisible: false, //下拉菜单是否可见
     previewFileModalVisibile: false,
@@ -152,7 +156,6 @@ export default class CardContent extends React.Component {
   }
   handleMenuClick(e, e_truly) {
     if(e_truly) e_truly.stopPropagation()
-    console.log(e_truly, 'eeeeeeeeeeeeee')
     const key = e.key;
     switch (key) {
       case "rename":
@@ -322,7 +325,7 @@ export default class CardContent extends React.Component {
     const { datas = {} } = this.props.model;
     const {
       projectStarList = [],
-      responsibleTaskList = [],
+      // responsibleTaskList = [],
       uploadedFileList = [],
       joinedProcessList = [],
       backLogProcessList = [],
@@ -333,7 +336,8 @@ export default class CardContent extends React.Component {
       todoList = [],
       projectTabCurrentSelectedProject
     } = datas;
-    const { title, CardContentType, itemValue = {} } = this.props;
+    // const {workbench: {datas: {responsibleTaskList}}} = this.props
+    const { title, CardContentType, itemValue = {}, workbench: {datas: {responsibleTaskList = []}} } = this.props;
     const { selected_board_data = [] } = itemValue; //已选board id
 
     const { localTitle, isInEditTitle, addTaskModalVisible, addMeetingModalVisible, uploadFileModalVisible, addProcessModalVisible } = this.state;
@@ -355,6 +359,7 @@ export default class CardContent extends React.Component {
                     setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
                       this
                     )}
+                    isUsedInWorkbench={true}
                   />
                 ))}
               </div>
@@ -622,38 +627,38 @@ export default class CardContent extends React.Component {
             this
           )}
         />
-        <AddTaskModal
+        {addTaskModalVisible &&<AddTaskModal
           modalTitle='添加任务'
           taskType='RESPONSIBLE_TASK'
           projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
           projectList={projectList}
           addTaskModalVisible={addTaskModalVisible}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange}
-        />
-        <AddTaskModal
+        />}
+        {addMeetingModalVisible&&<AddTaskModal
           modalTitle='添加日程'
           taskType='MEETIMG_ARRANGEMENT'
           projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
           projectList={projectList}
           addTaskModalVisible={addMeetingModalVisible}
           addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
-        />
-        <AddTaskModal
+        />}
+        {uploadFileModalVisible && <AddTaskModal
           modalTitle='上传文档'
           taskType='MY_DOCUMENT'
           projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
           projectList={projectList}
           addTaskModalVisible={uploadFileModalVisible}
           addTaskModalVisibleChange={this.uploadFileModalVisibleChange}
-        />
-        <AddProgressModal
+        />}
+        {addProcessModalVisible && <AddProgressModal
           modalTitle='发起流程'
           taskType='EXAMINE_PROGRESS'
           projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
           projectList={projectList}
           addProcessModalVisible={addProcessModalVisible}
           addProcessModalVisibleChange={this.addProcessModalVisibleChange}
-        />
+        />}
         {/*{('MY_DOCUMENT' === CardContentType || 'RESPONSIBLE_TASK' === CardContentType || 'TO_DO' === CardContentType )? (*/}
         {/*<FileDetailModal  {...this.props}  modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}   />*/}
         {/*) : ('')}*/}
@@ -664,3 +669,6 @@ export default class CardContent extends React.Component {
     );
   }
 }
+
+
+export default CardContent
