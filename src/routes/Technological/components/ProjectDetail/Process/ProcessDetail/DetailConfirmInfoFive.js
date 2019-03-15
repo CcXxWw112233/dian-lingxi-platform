@@ -280,6 +280,7 @@ export default class DetailConfirmInfoFive extends React.Component {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+                                                     filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>转办该审批</div>) : (<div></div>)}
               </Dropdown>
