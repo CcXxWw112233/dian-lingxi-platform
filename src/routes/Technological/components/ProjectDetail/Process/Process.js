@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
-import WelcomProcess from './WelcomProcess'
+import ProcessDefault from './ProcessDefault'
 import EditProcess from './EditProcess'
 import ProcessStartConfirm from './ProcessStartConfirm'
 import ProcessDetail from './ProcessDetail'
@@ -13,7 +13,7 @@ export default class ProcessIndex extends React.Component {
       let containner = (<div></div>)
       switch (processPageFlagStep) {
         case '1':
-          containner = (<WelcomProcess {...this.props}/>)
+          containner = (<ProcessDefault {...this.props}/>)
           break
         case '2':
           containner = (<EditProcess {...this.props}/>)
@@ -25,7 +25,7 @@ export default class ProcessIndex extends React.Component {
           containner = (<ProcessDetail {...this.props}/>)
           break
         default:
-          containner = (<WelcomProcess {...this.props}/>)
+          containner = (<ProcessDefault {...this.props}/>)
           break
       }
       return containner
