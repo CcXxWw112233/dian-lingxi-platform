@@ -51,56 +51,90 @@
 }
 
 .processDefautOut{
-  margin: 24px;
+  margin: 8px 8px 24px 24px;
   display: flex;
   .processDefautOut_left{
-    width: 272px;
+    margin-top: 16px;
+    width: 288px;
     .title{
       font-size: 16px;
       color: #595959;
     }
     .content{
-      margin-top: 2px;
+      margin-top: 16px;
       .tem_item, .add{
         width:272px;
         background:rgba(255,255,255,1);
         box-shadow:0px 1px 2px 0px rgba(0,0,0,0.15);
         border-radius:4px;
-        margin-top: 14px;
+        margin-bottom: 14px;
         cursor: pointer;
       }
       .tem_item{
         padding: 12px;
-        display: flex;
-        .tem_item_l{
-           width: 16px;
-          font-size: 16px;
-        }
-        .tem_item_m{
-          flex: 1;
-          margin: 0 8px;
-          color: #595959;
-          .title{
-            font-family:PingFangSC-Semibold;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 2px;
+        .tem_item_top {
+          display: flex;
+          .tem_item_l{
+            width: 16px;
+            font-size: 16px;
           }
+          .tem_item_m{
+            margin-left: 8px;
+            flex: 1;
+            color: #595959;
+            .title{
+              font-size: 14px;
+              width: 100%;
+              max-width: 210px;
+              margin-top: 2px;
+              overflow: hidden;
+              text-overflow:ellipsis;
+              white-space: nowrap;
+            }
+          }
+          .tem_item_r{
+            width: 16px;
+            margin-left: 8px;
+            font-size: 16px;
+          }
+          .itemOperate{
+            color: #8c8c8c;
+            display: none;
+          }
+        }
+        .tem_item_bott{
           .tem_item_flow {
             font-size: 12px;
+            padding: 0 10px 0 24px;
             display: flex;
-            margin-top: 4px;
             flex-wrap: wrap;
+            margin-top: 4px;
             .tem_item_flow_item{
               span {
                 margin: 0 4px;
               }
             }
           }
+          .tem_item_flow_hasMore{position: relative; line-height: 20px; max-height: 40px;overflow: hidden;}
+          .tem_item_flow_hasMore::after{content: "..."; position: absolute; bottom: 0; right: 12px;padding-left: 10px;
+            background: -webkit-linear-gradient(left, transparent, #fff 55%);
+            background: -o-linear-gradient(right, transparent, #fff 55%);
+            background: -moz-linear-gradient(right, transparent, #fff 55%);
+            background: linear-gradient(to right, transparent, #fff 55%);
+          }
         }
-        .tem_item_r{
-          width: 16px;
+        .tem_item_bott_down {
+          text-align: center;
           font-size: 16px;
+          height: 28px;
+          width: 28px;
+          margin: 0 auto;
+        }
+        .tem_item_bott_down_down {
+          transform: rotate(90deg);
+        }
+        .tem_item_bott_down_up {
+          transform: rotate(270deg);
         }
       }
       .add{
@@ -108,9 +142,23 @@
         line-height: 30px;
         text-align: center;
       }
-      .add:hover, .tem_item:hover{
+      .add:hover{
         background-color: #e5e5e5;
       }
+      .tem_item:hover {
+        .itemOperate:hover{
+          color: #262626;
+        }
+        .itemOperate {
+          display: block;
+        }
+        .tem_item_m {
+          .title{
+            max-width: 176px;
+          }
+        }
+      }
+
     }
   }
   .processDefautOut_right {
@@ -143,6 +191,7 @@
         flex: 1;
         .panelHead_m_l{
           margin: 0 6px;
+          color: #595959;
         }
         .panelHead_m_r{
           color: #8c8c8c;
@@ -172,7 +221,6 @@
 
 }
 .paginationContent{
-  overflow-y: scroll;
   overflow-x: hidden;
   height: auto;
 }
@@ -199,3 +247,24 @@
   background: #E8E8E8;
 }
 
+.Loading {
+  font-size: 12px;
+  color: #8c8c8c;
+  text-align: center;
+  line-height: 20px;
+}
+.nodata {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #8c8c8c;
+  .nodata_inner{
+    margin: 0 auto;
+  }
+  img{
+    width: 160px;
+    height: 100px;
+  }
+  text-align: center;
+  margin-top: 12px;
+}

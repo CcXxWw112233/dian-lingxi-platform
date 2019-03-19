@@ -10,10 +10,17 @@ import {
   rebackProcessTask,
   rejectProcessTask,
   resetAsignees,
-  saveProcessTemplate
+  saveProcessTemplate,
+  getProcessListByType,
+  deleteProcessTemplate
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
-import {selectCurrentProcessInstanceId} from "../select";
+import {
+  selectCurrentProcessInstanceId,
+  selectProcessDoingList,
+  selectProcessStopedList,
+  selectProcessComepletedList
+} from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
   processEditDatasConstant,
@@ -26,7 +33,25 @@ let appsSelectKey = null
 let flow_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailProcess',
-  state: [],
+  state: {
+    datas: {
+      processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+      node_type: '1', //节点类型， 默认1
+      processCurrentEditStep: 0, //编辑第几步，默认 0
+      processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+      processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+      processTemplateList: [], //流程模板列表
+      templateInfo: {}, //所选择的流程模板的信息数据
+      processInfo: {}, //所选中的流程的信息
+      processList: [], //流程列表
+      processDynamics: [], //流程动态列表,
+      currentProcessInstanceId: '', //当前查看的流程实例id
+      processDoingList: [], //正在进行流程的列表
+      processStopedList: [], //已终止的流程列表
+      processComepletedList: [], //已完成的流程列表
+      processTemplateList: [], //流程模板列表
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -47,19 +72,15 @@ export default modelExtend(projectDetail, {
               processCurrentEditStep: 0, //编辑第几步，默认 0
               processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
               processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
-              processTemplateList: [], //流程模板列表
               templateInfo: {}, //所选择的流程模板的信息数据
               processInfo: {}, //所选中的流程的信息
-              processList: [], //流程列表
-              processDynamics: [], //流程动态列表,
-              currentProcessInstanceId: '', //当前查看的流程实例id
             }
           })
 
           dispatch({
             type: 'getProcessTemplateList',
             payload: {
-              board_id: board_id
+              id: board_id
             }
           })
 
@@ -87,8 +108,8 @@ export default modelExtend(projectDetail, {
   effects: {
     //流程
     * getProcessTemplateList({ payload }, { select, call, put }) {
-      const { board_id, calback } = payload
-      let res = yield call(getProcessTemplateList, {board_id})
+      const { id, calback } = payload
+      let res = yield call(getProcessTemplateList, {id})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -110,7 +131,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getProcessTemplateList',
           payload: {
-            board_id: board_id,
+            id: board_id,
             calback: function () {
               message.success('保存模板成功', MESSAGE_DURATION_TIME)
             }
@@ -120,6 +141,23 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    * deleteProcessTemplate({ payload }, { select, call, put }) {
+      let res = yield call(deleteProcessTemplate, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessTemplateList',
+          payload: {
+            id: board_id,
+            calback: function () {
+              message.success('已成功删除模板', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     // 直接启动时保存模板但不保留，查询该模板，将数据保留用于启动流程
     * directStartSaveTemplate({ payload }, { select, call, put }) {
       let res = yield call(saveProcessTemplate, payload)
@@ -393,6 +431,41 @@ export default modelExtend(projectDetail, {
 
       }
     },
+    //获取流程列表，类型进行中 已终止 已完成
+    * getProcessListByType({ payload }, { select, call, put }) {
+      const { status = '1' } = payload
+      const res = yield call(getProcessListByType, payload)
+      let listName
+      let selectList = []
+      switch (status ) {
+        case '1':
+          listName = 'processDoingList'
+          selectList = yield select(selectProcessDoingList)
+          break
+        case '2':
+          listName = 'processStopedList'
+          selectList = yield select(selectProcessStopedList)
+          break
+        case '3':
+          listName = 'processComepletedList'
+          selectList = yield select(selectProcessComepletedList)
+          break
+        default:
+          listName = 'processDoingList'
+          selectList = yield select(selectProcessDoingList)
+          break
+      }
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            [listName]: [].concat(selectList, res.data),
+          }
+        })
+      }else{
+      }
+    },
+
   },
 
   reducers: {

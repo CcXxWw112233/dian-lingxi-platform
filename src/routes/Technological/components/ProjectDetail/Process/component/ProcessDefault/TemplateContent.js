@@ -1,44 +1,55 @@
 import React from 'react'
 import indexStyles from '../../index.less'
-import { Avatar } from 'antd'
+import { Avatar, Modal } from 'antd'
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
+import TemplateItem from './TemplateItem'
 const Panel = Collapse.Panel;
 
 export default class TemplateContent extends React.Component {
   state = {
 
   }
+  templateStartClick({id}) {
+    this.props.getTemplateInfo && this.props.getTemplateInfo(id)
+  }
+  deleteTemplate({id}) {
+    const that = this
+    Modal.confirm({
+      title: `确认删除该模板？`,
+      zIndex: 2000,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        that.props.deleteProcessTemplate && that.props.deleteProcessTemplate({id})
+      }
+    });
+
+
+  }
+  startEdit() {
+    this.props.updateDatasProcess({
+      processPageFlagStep: '2'
+    })
+  }
 
   render() {
-    const data = [1, 2, 3, 41, 2, 31, 2, 3, 41, 2, 31, 2, 3, 41, 2, 31, 2, 3, 41, 2, 31, 2, 3, 41, 2, 3]
+    const { datas: { processTemplateList = [] }} = this.props.model
     const { clientHeight } = this.props
     const maxContentHeight = clientHeight - 108 - 160
     return (
-      <div className={indexStyles.content} >
+      <div className={indexStyles.content}>
         <div className={indexStyles.paginationContent} style={{maxHeight: maxContentHeight}}>
-          {data.map((value, key) => {
+          {processTemplateList.map((value, key) => {
+            const { id } = value
             return (
-              <div className={indexStyles.tem_item}>
-                <div className={`${indexStyles.tem_item_l} ${globalStyles.authTheme}`}>&#xe605;</div>
-                <div className={indexStyles.tem_item_m}>
-                  <div className={indexStyles.title}>流程模板名称埃里克记得哈快乐圣诞节</div>
-                  <div className={indexStyles.tem_item_flow}>
-                    {[1, 2, 3, 4].map((value, key) => {
-                      return (
-                        <div className={indexStyles.tem_item_flow_item}>流程步骤<span className={globalStyles.authTheme}>&#xe7eb;</span></div>
-                      )
-                    })}
-                  </div>
-                </div>
-                <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme}`}>&#xe7eb;</div>
-              </div>
+             <TemplateItem {...this.props} key={id} itemValue={value} />
             )
           })}
         </div>
-        <div className={indexStyles.add}>新增模板</div>
+        <div className={indexStyles.add} onClick={this.startEdit.bind(this)}>新增模板</div>
       </div>
     )
   }

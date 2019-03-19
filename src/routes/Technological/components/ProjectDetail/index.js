@@ -483,6 +483,24 @@ const ProjectDetail = (props) => {
   const ProcessProps = {
     modal,
     model,
+    deleteProcessTemplate(data) {
+      dispatch({
+        type: getEffectOrReducerByNameProcess('deleteProcessTemplate'),
+        payload: data
+      })
+    },
+    changeFlowIdToUrl(data) {
+      dispatch({
+        type: getEffectOrReducerByNameProcess('changeFlowIdToUrl'),
+        payload: data
+      })
+    },
+    getProcessListByType(data) {
+      dispatch({
+        type: getEffectOrReducerByNameProcess('getProcessListByType'),
+        payload: data,
+      })
+    },
     postCommentToDynamics(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('postCommentToDynamics'),
