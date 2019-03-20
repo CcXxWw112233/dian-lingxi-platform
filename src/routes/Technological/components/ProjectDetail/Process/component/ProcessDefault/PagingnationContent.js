@@ -23,6 +23,27 @@ export default class PagingnationContent extends React.Component {
   componentDidMount() {
     this.getProcessListByType()
   }
+  componentWillUnmount() {
+    const { status } = this.props
+    let listName
+    switch (status ) {
+      case '1':
+        listName = 'processDoingList'
+        break
+      case '2':
+        listName = 'processStopedList'
+        break
+      case '3':
+        listName = 'processComepletedList'
+        break
+      default:
+        listName = 'processDoingList'
+        break
+    }
+    this.props.updateDatasProcess({
+      [listName]: [],
+    })
+  }
     //分页逻辑
   async getProcessListByType() {
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
