@@ -640,7 +640,8 @@ const ProjectDetail = (props) => {
   }
   return(
     // minHeight: '100%',
-    <div style={{ height: 'auto', position: 'relative', width: '100%', overflow: 'hidden', minHeight: '100vh', margin: '0 auto'}}>
+    //overflow: 'hidden', 03/20
+    <div style={{ height: 'auto', position: 'relative', width: '100%', minHeight: '100vh', margin: '0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
       <Header {...DetailInfoProps} {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask}
               updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />

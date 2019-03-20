@@ -251,7 +251,7 @@ export default {
           }
         })
       }else{
-        message.warn('删除角色失败', MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * copyRole({ payload }, { select, call, put }) {
