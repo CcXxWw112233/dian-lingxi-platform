@@ -95,6 +95,7 @@ export default class DetailConfirmInfoOne extends React.Component {
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
+    
     const { itemKey } = this.props
     const { assignees = [] } = processEditDatas[itemKey]
     const userInfo = JSON.parse(Cookies.get('userInfo'))
@@ -109,11 +110,11 @@ export default class DetailConfirmInfoOne extends React.Component {
         break;
       }
     }
-
     processEditDatas[itemKey]['assignees'] = assignees
     this.props.updateDatasProcess({
       processEditDatas
     })
+    debugger
     //重新指派推进人接口
     this.props.resetAsignees({
       assignee: willSetAssignee,
@@ -152,16 +153,17 @@ export default class DetailConfirmInfoOne extends React.Component {
   render() {
     const { due_time, isShowBottDetail, relations = [] } = this.state
     const { ConfirmInfoOut_1_bott_Id } = this.state
-
-    const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
+    const { datas: { processEditDatas, projectDetailInfoData = {}, processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
     const { curr_node_sort, status } = processInfo //当前节点
+    // debugger
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
-    // console.log( processEditDatas[itemKey])
+    // debugger
     //推进人来源
     let usersArray = []
-    const users = projectDetailInfoData.data
+
+    const users = projectDetailInfoData.data || []
     for(let i = 0; i < users.length; i++) {
       usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
     }
@@ -177,7 +179,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         break
       }
     }
-
+    
     const imgOrAvatar = (img) => {
       return img ? (
         <div>
@@ -318,7 +320,6 @@ export default class DetailConfirmInfoOne extends React.Component {
         </div>
       )
     }
-
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
@@ -350,10 +351,12 @@ export default class DetailConfirmInfoOne extends React.Component {
                   relations={relations}
                 />
               </div>
-              {assignees.map((value, key)=>{
-                const { comment } = value
-                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
-              })}
+              {
+                assignees?assignees.map((value, key)=>{
+                  const { comment } = value
+                  return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+                }):null
+              }
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}

@@ -25,7 +25,7 @@ export default class ProcessItem extends React.Component {
     }
     return (
       <div className={indexstyles.processItem}>
-        <div>{flow_node_name || name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, {flow_instance_id, board_id})}>#{board_name}</span></div>
+        <div><span style={{cursor: 'pointer'}} onClick={this.props.click}>{flow_node_name || name}</span><span onClick={this.gotoBoardDetail.bind(this, {flow_instance_id, board_id})} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{board_name}</span></div>
         <div>
           <div style={{backgroundColor: filterColor(status)}}></div>
         </div>

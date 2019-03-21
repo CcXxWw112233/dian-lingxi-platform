@@ -29,6 +29,7 @@ import CollectionProjectItem from "./CollectionProjectItem";
 import MyCircleItem from "./MyCircleItem";
 import TaskDetailModal from "./Modal/TaskDetailModal";
 import FileDetailModal from "./Modal/FileDetailModal";
+import ProccessDetailModal from './Modal/ProccessDetailModal'
 import AddTaskModal from "./Modal/AddTaskModal";
 import AddProgressModal from './Modal/AddProgressModal'
 import {connect} from 'dva'
@@ -44,7 +45,7 @@ class CardContent extends React.Component {
   state = {
     dropDonwVisible: false, //下拉菜单是否可见
     previewFileModalVisibile: false,
-
+    previewProccessVisibile: false,
     //修改项目名称所需state
     localTitle: "",
     isInEditTitle: false,
@@ -175,6 +176,20 @@ class CardContent extends React.Component {
     this.setState({
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     });
+  }
+  async setPreviewProccessModalVisibile() {
+    //workbench/backLogProcessList 对应的操作
+    const flow_instance_id = this.props.workbench.datas.backLogProcessList[0].flow_instance_id
+    const board_id = this.props.workbench.datas.backLogProcessList[0].board_id
+    await this.props.getProcessInfo({id:flow_instance_id})
+    await this.props.dispatch({
+      type: 'workbenchTaskDetail/projectDetailInfo',
+      payload: {id: board_id}
+    })
+    await this.setState({
+      previewProccessModalVisibile: !this.state.previewProccessModalVisibile
+    });
+    
   }
   setTaskDetailModalVisibile() {
     this.setState({
@@ -322,6 +337,7 @@ class CardContent extends React.Component {
     );
   };
   render() {
+    // console.log('hello world!!!', this.props)
     const { datas = {} } = this.props.model;
     const {
       projectStarList = [],
@@ -376,7 +392,7 @@ class CardContent extends React.Component {
             <div>
               <div>
                 {backLogProcessList.map((value, key) => (
-                  <ProcessItem {...this.props} key={key} itemValue={value} />
+                  <ProcessItem {...this.props} key={key} click = {this.setPreviewProccessModalVisibile.bind(this)} itemValue={value} />
                 ))}
               </div>
               {/* {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")} */}
@@ -614,6 +630,14 @@ class CardContent extends React.Component {
           {...this.props}
           modalVisible={this.state.previewFileModalVisibile}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
+            this
+          )}
+        />
+        {/* 我的流程 */}
+        <ProccessDetailModal
+          {...this.props}
+          modalVisible={this.state.previewProccessModalVisibile}
+          setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
             this
           )}
         />

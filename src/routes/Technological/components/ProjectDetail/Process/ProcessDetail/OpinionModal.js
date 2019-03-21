@@ -10,15 +10,22 @@ class OpinionModal extends React.Component {
   state = {
     stepContinueDisabled: true,
   }
+  // nextStep() {
+  //   console.log('hello world')
+  // }
   descriptionChange(e) {
     const value = e.target.value
     let flag = true
     if(value) {
       flag = false
     }
+    
     this.setState({
       stepContinueDisabled: flag
     })
+  }
+  nextStep() {
+    console.log('lalala')
   }
   onCancel = () => {
     this.setState({
@@ -40,6 +47,7 @@ class OpinionModal extends React.Component {
         this.onCancel()
         //发送请求
         if(operateType === '1') {
+          debugger
           if(isFillForm) { //填写
             const obj = {
               form_id,
@@ -51,12 +59,16 @@ class OpinionModal extends React.Component {
             }
             this.props.fillFormComplete ? this.props.fillFormComplete(obj): false
           }else {
+            console.log('completeProcessTask', this.props)
+            debugger
             this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
           }
         }else if(operateType === '0') {
           this.props.rebackProcessTask ?this.props.rebackProcessTask(values) : false
+          debugger
         } else if(operateType === '2') {
           this.props.rejectProcessTask ?this.props.rejectProcessTask(values) : false
+          debugger
         }
       }
     });

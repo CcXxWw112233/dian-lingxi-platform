@@ -2,11 +2,16 @@ import { message } from 'antd'
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
-import projectDetail from './index'
+import workbench from './index'
 import {
   completeProcessTask,
   createProcess,
-  fillFormComplete, getProcessInfo, getProcessList, getProcessTemplateList, getProessDynamics, getTemplateInfo,
+  fillFormComplete,
+  getProcessInfo,
+  getProcessList,
+  getProcessTemplateList,
+  getProessDynamics,
+  getTemplateInfo,
   rebackProcessTask,
   rejectProcessTask,
   resetAsignees,
@@ -24,8 +29,8 @@ import QueryString from 'querystring'
 let board_id = null
 let appsSelectKey = null
 let flow_id = null
-export default modelExtend(projectDetail, {
-  namespace: 'projectDetailProcess',
+export default modelExtend(workbench, {
+  namespace: 'workbenchDetailProcess',
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
@@ -36,7 +41,7 @@ export default modelExtend(projectDetail, {
         appsSelectKey = param.appsSelectKey
         flow_id = param.flow_id
 
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '2') {
+        if (location.pathname.indexOf('technological/workbench') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {
@@ -198,9 +203,7 @@ export default modelExtend(projectDetail, {
           currentProcessInstanceId
         }
       })
-      console.log('打桩开始!!!', payload)
       let res = yield call(getProcessInfo, currentProcessInstanceId)
-      console.log('rrrrrrr', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -241,11 +244,12 @@ export default modelExtend(projectDetail, {
         type: 'updateDatas',
         payload
       })
-      console.log('啊啊啊啊', payload)
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
+      console.log('res is :', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
+        
         const curr_node_id = res.data.curr_node_id
         let curr_node_sort
         for (let i=0; i<res.data.nodes.length; i++ ) {
@@ -254,11 +258,12 @@ export default modelExtend(projectDetail, {
             break
           }
         }
+        
         curr_node_sort = curr_node_sort || res.data.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
         yield put({
           type: 'updateDatas',
           payload: {
-            processInfo: {...res.data, curr_node_sort},
+            processInfo: { ...res.data, curr_node_sort },
             processEditDatas: res.data.nodes || [],
             processPageFlagStep: '4'
           }
@@ -309,6 +314,7 @@ export default modelExtend(projectDetail, {
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
+      console.log('completeProcessTask has running:', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
@@ -324,7 +330,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * fillFormComplete({ payload }, { select, call, put }) {
-      console.log('fillFormComplete has running!!!')
+      console.log('logloglog!')
       let res = yield call(fillFormComplete, payload)
       const { instance_id } = payload
       if(isApiResponseOk(res)) {

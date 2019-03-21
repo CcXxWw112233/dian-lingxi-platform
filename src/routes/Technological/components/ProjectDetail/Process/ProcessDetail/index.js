@@ -81,32 +81,11 @@ export default class ProcessDetail extends React.Component {
       circle.restore()
       circle.closePath()
     }
-
-    //文字描述 --------
-    // circle.beginPath();//开始一个新的路径
-    // circle.save()
-    // circle.font = '14px Arial'
-    // circle.fillStyle='#8c8c8c'
-    // circle.textAlign = 'center'
-    // circle.fillText(`逾期1天`,105,90);
-    // circle.restore()
-    // circle.closePath()
-    //
-    // circle.beginPath();//开始一个新的路径
-    // circle.save()
-    // circle.font = '20px Arial'
-    // circle.fillStyle='#595959'
-    // circle.textAlign = 'center'
-    // circle.fillText(`2/4`,105,114);
-    // circle.restore()
-    // circle.closePath()
-
   }
 
   render() {
     const { isShowAll } = this.state
     const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
-    console.log({processInfo})
     const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
     // console.log('processDynamics', processDynamics)
     // const
@@ -245,33 +224,9 @@ export default class ProcessDetail extends React.Component {
             <div></div>
             <div>{name}</div>
           </div>
-          {/*<div className={indexStyles.topTitle_right}>*/}
-           {/*<Icon type={'ellipsis'} style={{fontSize: 14, color: '#8c8c8c'}}/>*/}
-          {/*</div>*/}
         </div>
           {/*参与人*/}
           <div>
-        {/*<div className={indexStyles.userJoin}>*/}
-          {/*{data.map((value, key) => {*/}
-            {/*const { avatar, email, full_name, mobile, user_id, user_name } = value*/}
-            {/*if(key < 7) {*/}
-              {/*return (*/}
-                {/*avatar? (*/}
-                  {/*<img src={avatar} key={key} className={indexStyles.taskManImag}></img>*/}
-                {/*):(*/}
-                  {/*<div className={indexStyles.taskManImag} key={key}>*/}
-                    {/*<Icon type={'user'} style={{color: '#8c8c8c'}}/>*/}
-                  {/*</div>*/}
-                {/*)*/}
-              {/*)*/}
-            {/*}*/}
-          {/*})}*/}
-          {/*{data.length > 7? (*/}
-            {/*<div style={{display: 'flex',fontSize: 12}}>*/}
-              {/*<div className={indexStyles.manwrap} ><Icon type="ellipsis" style={{fontSize:18, marginTop: 2}}/></div>{data.length}位任务执行人*/}
-            {/*</div>*/}
-          {/*) : ('')}*/}
-        {/*</div>*/}
         </div>
           {/*描述*/}
         <div className={indexStyles.description} dangerouslySetInnerHTML = {{ __html: description }}></div>

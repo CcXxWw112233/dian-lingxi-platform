@@ -117,20 +117,23 @@ const Routers = function ({ history, app }) {
       path: '/technological',
       models: () => [import('./models/technological'),
         import('./models/technological/cooperationPush'),
-
+        
         import('./models/technological/accountSet'),
         import('./models/technological/project'),
         import('./models/technological/projectDetail/index'),
         import('./models/technological/projectDetail/projectDetailTask'),
         import('./models/technological/projectDetail/projectDetailFile'),
         import('./models/technological/projectDetail/projectDetailProcess'),
-
+        import('./models/technological/projectDetail/projectDetailProcess'),
+        
         import('./models/technological/newsDynamic'),
         import('./models/technological/workbench/index'),
         import('./models/technological/workbench/workbenchTaskDetail'),
         import('./models/technological/workbench/workbenchPublicDatas'),
         import('./models/technological/workbench/workbenchFileDetail'),
         import('./models/technological/workbench/workbenchEditTeamShow'),
+        import('./models/technological/workbench/workbenchProccessDetail'),
+        
         import('./models/technological/organizationMember'),
         import('./models/modal'),
         import('./models/teamShow'),
