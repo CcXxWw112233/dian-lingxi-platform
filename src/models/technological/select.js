@@ -18,6 +18,9 @@ export const selectCardId = state => state[(`projectDetailTask`)].datas.card_id
 export const selectCurrentProcessInstanceId = state => state[(`projectDetailProcess`)].datas.currentProcessInstanceId //当前查看的流程实例id
 export const selectCurrentProcessTemplateList = state => state[(`projectDetailProcess`)].datas.processTemplateList
 export const selectCurrentProcessList = state => state[(`projectDetailProcess`)].datas.processList
+export const selectProcessDoingList = state => state[(`projectDetailProcess`)].datas.processDoingList
+export const selectProcessStopedList = state => state[(`projectDetailProcess`)].datas.processStopedList
+export const selectProcessComepletedList = state => state[(`projectDetailProcess`)].datas.processComepletedList
 
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id
