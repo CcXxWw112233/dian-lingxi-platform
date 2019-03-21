@@ -6,6 +6,7 @@ import {validateEmail, validateTel} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
 import CustormModal from '../../../../components/CustormModal'
 
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 class ShowAddMenberModal extends React.Component {
@@ -29,7 +30,6 @@ class ShowAddMenberModal extends React.Component {
   }
   handleInviteTextAreaPressEnter = (e) => {
     if(e) e.stopPropagation()
-    console.log(e.target.value, 'press enter.')
   }
   onCancel = () => {
     this.props.setShowAddMenberModalVisibile()

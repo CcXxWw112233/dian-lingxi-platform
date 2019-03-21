@@ -149,10 +149,16 @@ class InviteOthers extends Component {
                 })
               }
             } else {
+              this.setState({
+                fetching: false
+              })
               message.error('获取联想用户失败')
             }
           })
           .catch(err => {
+            this.setState({
+              fetching: false
+            })
             message.error('获取联想用户失败')
           })
       }
@@ -192,11 +198,11 @@ class InviteOthers extends Component {
   }
   handleInputChange = value => {
     //这个函数根本就不会执行？？？
-    this.setState({
-      inputValue: value,
-      inputRet: [],
-      fetching: false
-    })
+    // this.setState({
+    //   inputValue: value,
+    //   inputRet: [],
+    //   fetching: false
+    // })
   }
   genOptionLabel = item => {
     const { avatar, user, name } = item
@@ -215,7 +221,7 @@ class InviteOthers extends Component {
           <img src={avatar} width="24" height="24" alt="" />
         </span>
         <span className={styles.input__select_user}>{user}</span>
-        <span className={styles.input__select_name}>({name})</span>
+        <span className={styles.input__select_name}>({name ? name : '匿名用户'})</span>
       </p>
     )
   }
@@ -346,7 +352,7 @@ class InviteOthers extends Component {
     if (e) e.stopPropagation()
     const getGroupMembers = () => {
       const { groupList } = this.props
-      const findGroup = groupList.find(item => item.id)
+      const findGroup = groupList.find(item => item.id === id)
       const isGroupWithMembers = findGroup
         ? findGroup.members && Array.isArray(findGroup.members)
         : false
@@ -463,7 +469,7 @@ class InviteOthers extends Component {
     return null
   }
   renderSelectList = () => {
-    const { step, projectList } = this.state
+    const { step, projectList, isInSelectedList } = this.state
     const { groupList } = this.props
     const selectHome = () => (
       <>
@@ -491,9 +497,9 @@ class InviteOthers extends Component {
     )
     const selectGroupList = () => (
       <>
-        {groupList.map(item => (
+        {groupList.map((item, index) => (
           <div
-            key={item.id}
+            key={item.id ? item.id : index}
             className={styles.invite__select_list_item}
             onClick={e => this.handleClickedInviteFromGroupList(item.id, e)}
           >
@@ -528,9 +534,13 @@ class InviteOthers extends Component {
       'group-list': selectGroupList,
       'project-list': selectProjectList
     }
+    let selectListWrapper = cx({
+      invite__select_list_wrapper: true,
+      invite__select_list_wrapper_with_out_border_bottom: isInSelectedList
+    })
     const mapCallback = condition[step]
     const wrapper = (
-      <div className={styles.invite__select_list_wrapper}>
+      <div className={selectListWrapper}>
         {mapCallback ? mapCallback() : null}
       </div>
     )
@@ -544,7 +554,8 @@ class InviteOthers extends Component {
       currentOrgAllMembersList,
       isShowTitle,
       isShowSubmitBtn,
-      children
+      children,
+      isDisableSubmitWhenNoSelectItem
     } = this.props
     const {
       fetching,
@@ -564,6 +575,8 @@ class InviteOthers extends Component {
       membersListToSelect
     )
 
+    const isHasSelectedItem = !!selectedMember.length
+
     let inviteSelectWrapper = cx({
       invite__select_content_wrapper: true,
       invite__select_wrapper_change_height: step !== 'home'
@@ -577,6 +590,7 @@ class InviteOthers extends Component {
             mode="multiple"
             value={inputValue}
             labelInValue
+            maxTagCount={1}
             placeholder="请输入被邀请人的手机号或邮箱"
             notFoundContent={fetching ? <Spin size="small" /> : null}
             filterOption={false}
@@ -706,7 +720,7 @@ class InviteOthers extends Component {
         </div>
         {isShowSubmitBtn && (
           <div className={styles.invite__submit_wrapper}>
-            <Button onClick={this.handleSubmitSeletedMember} type="primary">
+            <Button disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem} onClick={this.handleSubmitSeletedMember} type="primary">
               {submitText}
             </Button>
           </div>
@@ -721,6 +735,7 @@ InviteOthers.defaultProps = {
   isShowTitle: true,
   title: '步骤三: 邀请他人一起参与项目', //标题
   submitText: '完成创建', //提交按钮文字
+  isDisableSubmitWhenNoSelectItem: false, //如果没有选择 item 就禁用提交
   isShowSubmitBtn: true, //是否显示提交按钮
   handleInviteMemberReturnResult: function() {
     message.info('邀请他人组件， 需要被提供一个回调函数')
