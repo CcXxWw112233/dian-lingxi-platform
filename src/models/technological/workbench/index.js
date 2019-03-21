@@ -26,7 +26,8 @@ export default modelExtend(technological, {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/technological/workbench') {
-          dispatch({
+          const initData = async () => {
+         await Promise.all([dispatch({
             type: 'updateDatas',
             payload: {
               cardGroupKey: 0,
@@ -53,13 +54,13 @@ export default modelExtend(technological, {
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
               currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
             }
-          })
+          }),
           dispatch({
             type: 'getCurrentOrgFileUploads',
             payload: {
 
             }
-          })
+          }),
           // dispatch({
           //   type: 'getUserImToken',
           //   payload: {
@@ -69,16 +70,25 @@ export default modelExtend(technological, {
           dispatch({
             type: 'getBoxList',
             payload: {}
-          })
+          }),
           dispatch({
             type: 'getProjectList',
             payload: {}
-          })
+          }),
           dispatch({
             type: 'getBoxUsableList',
             payload: {}
           })
+        ])
+        await dispatch({
+          type: 'handleCurrentSelectedProjectChange',
+          payload: {
+            board_id: '0'
+          }
+        })
         }
+        initData()
+      }
       })
     },
   },
