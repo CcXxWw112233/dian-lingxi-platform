@@ -114,20 +114,9 @@ export default class ConfirmInfoThree extends React.Component {
 
   }
   setAssignees(data) {
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+    const { datas: { processEditDatas = [] } } = this.props.model
     const { itemKey } = this.props
-    //从项目详情拿到推进人
-    let assigneesArray = []
-    const users = projectDetailInfoData.data
-    for(let i = 0; i < users.length; i++) {
-      assigneesArray.push(users[i].user_id)
-    }
-    //设置推进人
-    let willSetAssigneesArray = []
-    for(let i=0; i < data.length; i++) {
-      willSetAssigneesArray.push(assigneesArray[data[i]])
-    }
-    const str = willSetAssigneesArray.join(',')
+    const str = data.join(',')
     processEditDatas[itemKey]['assignees'] = str
     this.props.updateDatasProcess({
       processEditDatas
@@ -163,14 +152,18 @@ export default class ConfirmInfoThree extends React.Component {
     const { board_id } = projectDetailInfoData
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
     //推进人来源
-    let usersArray = []
     const users = projectDetailInfoData.data
-    for(let i = 0; i < users.length; i++) {
-      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
-    }
+
     //推进人
     const assigneesArray = assignees ? assignees.split(',') : []
-    const imgOrAvatar = (img) => {
+    const imgOrAvatar = ({users, user_id}) => {
+      let img = ''
+      for(let val of users) {
+        if(val['user_id'] == user_id) {
+          img = val['avatar']
+          break
+        }
+      }
       return img ? (
         <div>
           <img src={img} style={{width: 18, height: 18, marginRight: 8, borderRadius: 16, margin: '0 8px'}} />
@@ -190,14 +183,14 @@ export default class ConfirmInfoThree extends React.Component {
         case '2':
           container = (
             <div>
-              <Dropdown overlay={<MenuSearchMultiple usersArray={usersArray} setAssignees={this.setAssignees.bind(this)} />}>
+              <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}>
                 {assigneesArray.length? (
                   <div style={{display: 'flex'}}>
                     {assigneesArray.map((value, key)=>{
                       if (key < 6)
                         return(
                           <Tooltip key={key} placement="top" title={this.tooltipFilterName.bind(this, {users: users, user_id: value})}>
-                            <div>{imgOrAvatar()}</div>
+                            <div>{imgOrAvatar({users: users, user_id: value})}</div>
                           </Tooltip>
                         )
                     })}
@@ -218,7 +211,7 @@ export default class ConfirmInfoThree extends React.Component {
                 if (key < 6)
                   return(
                     <Tooltip key={key} placement="top" title={this.tooltipFilterName.bind(this, {users: users, user_id: value})}>
-                      <div>{imgOrAvatar()}</div>
+                      <div>{imgOrAvatar({users: users, user_id: value})}</div>
                     </Tooltip>
                   )
               })}

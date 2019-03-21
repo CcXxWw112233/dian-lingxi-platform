@@ -149,12 +149,7 @@ export default class ConfirmInfoOne extends React.Component {
     const { board_id } = projectDetailInfoData
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
     //推进人来源
-    let usersArray = []
     const users = projectDetailInfoData.data
-    // for(let i = 0; i < users.length; i++) {
-    //   usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
-    // }
-    usersArray = users
     //推进人
     const assigneesArray = assignees ? assignees.split(',') : []
     const imgOrAvatar = ({users, user_id}) => {
@@ -184,7 +179,7 @@ export default class ConfirmInfoOne extends React.Component {
         case '2':
           container = (
             <div>
-              <Dropdown overlay={<MenuSearchMultiple usersArray={usersArray} setAssignees={this.setAssignees.bind(this)} />}>
+              <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}>
                 {assigneesArray.length? (
                   <div style={{display: 'flex'}}>
                     {assigneesArray.map((value, key)=>{
@@ -212,7 +207,7 @@ export default class ConfirmInfoOne extends React.Component {
                 if (key < 6)
                   return(
                     <Tooltip key={key} placement="top" title={this.tooltipFilterName.bind(this, {users: users, user_id: value})}>
-                      <div>{imgOrAvatar()}</div>
+                      <div>{imgOrAvatar({users: users, user_id: value})}</div>
                     </Tooltip>
                   )
               })}

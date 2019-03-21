@@ -104,8 +104,8 @@ export default class DetailConfirmInfoOne extends React.Component {
     let willSetAssignee = ''
     for(let i = 0; i < assignees.length; i++) {
       if(assignees[i].user_id === currentUserId) {
-        assignees[i] = users[data[0]]
-        willSetAssignee = users[data[0]].user_id
+        assignees[i] = data[0]
+        willSetAssignee = data[0]
         break;
       }
     }
@@ -160,11 +160,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
     // console.log( processEditDatas[itemKey])
     //推进人来源
-    let usersArray = []
     const users = projectDetailInfoData.data
-    for(let i = 0; i < users.length; i++) {
-      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
-    }
     //推进人
     const assigneesArray = assignees || []
     //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
@@ -280,7 +276,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
                                                      filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>重新指派推进人</div>) : (<div></div>)}

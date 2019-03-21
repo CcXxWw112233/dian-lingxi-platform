@@ -73,12 +73,12 @@ export default class MenuSearchMultiple extends React.Component{
         resultArr.map((val, key) => {
           const { user_id } = val
           let flag = true
-          // for(let userVal of filterUserArray) {
-          //   if(userVal['name'] == val) {
-          //     flag = false
-          //     break
-          //   }
-          // }
+          for(let userVal of filterUserArray) {
+            if(userVal['user_id'] == user_id) {
+              flag = false
+              break
+            }
+          }
           return flag && (
             <Menu.Item style={{height: 32, lineHeight: '32px'}} key={ user_id }>
               {val['name']}
