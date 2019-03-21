@@ -122,13 +122,31 @@ export default class PagingnationContent extends React.Component {
     for(let i = 0; i < 20; i ++) {
       allStep.push(i)
     }
+    const filterProgress = (status, completed_node_num, total_node_num) => {
+      let ele = `（${completed_node_num}/${total_node_num}）`
+      switch (status) {
+        case '1':
+          ele = `（${completed_node_num}/${total_node_num}）`
+          break
+        case '2':
+          ele = `已终止`
+          break
+        case '3':
+          ele = ``
+          break
+        default:
+          ele = `（${completed_node_num}/${total_node_num}）`
+          break
+      }
+      return ele
+    }
     const PanelHeader = (value) => {
       const { name, curr_node_name, id, percentage = '100%', completed_node_num, total_node_num } = value
       return (
         <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, id)}>
           <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>&#xe605;</div>
           <div className={indexStyles.panelHead_m}>
-            <div className={indexStyles.panelHead_m_l}>{name}{`（${completed_node_num}/${total_node_num}）`}</div>
+            <div className={indexStyles.panelHead_m_l}>{name}{filterProgress(status, completed_node_num, total_node_num)}</div>
             <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
           </div>
           {/*<div className={indexStyles.panelHead_r}>*/}

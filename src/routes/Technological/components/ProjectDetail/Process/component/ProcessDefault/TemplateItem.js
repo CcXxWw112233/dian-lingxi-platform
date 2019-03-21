@@ -1,6 +1,6 @@
 import React from 'react'
 import indexStyles from '../../index.less'
-import { Avatar, Modal } from 'antd'
+import { Avatar, Modal, Tooltip } from 'antd'
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
@@ -68,8 +68,12 @@ export default class TemplateItem extends React.Component {
           <div className={indexStyles.tem_item_m}>
             <div className={indexStyles.title}>{name}</div>
           </div>
-          <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme} ${indexStyles.itemOperate}`} onClick={this.deleteTemplate.bind(this, { id })}>&#xe623;</div>
-          <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme}  ${indexStyles.itemOperate}`} onClick={this.templateStartClick.bind(this, { id })}>&#xe61f;</div>
+          <Tooltip title="删除模板">
+            <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme} ${indexStyles.itemOperate}`} onClick={this.deleteTemplate.bind(this, { id })}>&#xe623;</div>
+          </Tooltip>
+          <Tooltip title="启动流程">
+            <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme}  ${indexStyles.itemOperate}`} onClick={this.templateStartClick.bind(this, { id })}>&#xe61f;</div>
+          </Tooltip>
         </div>
         <div className={indexStyles.tem_item_bott} ref={'tempItemBott'}>
           <div className={`${indexStyles.tem_item_flow} ${globalStyles.authTheme} ${hasMore && !showBott ?indexStyles.tem_item_flow_hasMore: ''}`}>

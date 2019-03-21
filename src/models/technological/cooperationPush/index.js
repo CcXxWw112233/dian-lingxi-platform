@@ -433,16 +433,12 @@ export default {
           break
         case 'change:flow:instance':
           board_id_ = coperateData['board_id']
-          debugger
           if(board_id_ == currentProjectBoardId) {
-            const processList = yield select(selectCurrentProcessList)
             const processDoingList = yield select(selectProcessDoingList)
-            processList.push(coperateData)
-            processDoingList.push(coperateData)
+            processDoingList.unshift(coperateData)
             dispathes({
               type: model_projectDetailProcess('updateDatas'),
               payload: {
-                processList,
                 processDoingList
               }
             })
