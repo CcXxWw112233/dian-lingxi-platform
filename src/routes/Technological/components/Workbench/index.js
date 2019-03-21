@@ -12,8 +12,6 @@ import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
 
-// import InviteOthers from './../InviteOthers/index'
-
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
 const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
@@ -602,7 +600,6 @@ const Workbench = (props) => {
     <div>
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
-      {/* <InviteOthers /> */}
       <ProjectListBar />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        <GroupContent {...props} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} FileModuleProps={FileModuleProps}/>

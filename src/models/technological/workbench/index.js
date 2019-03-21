@@ -123,6 +123,12 @@ export default modelExtend(technological, {
       yield put({type: 'setProjectTabCurrentSelectedProject', payload: {
         projectId: board_id
       }})
+      yield put({
+        type: 'workbenchPublicDatas/updateDatas',
+        payload: {
+          board_id: board_id
+        }
+      })
       //除了'所有参与的项目', 使选中的项目排在第一个
       if(board_id !== '0' && shouldResortPosition) {
         yield put({type: 'reSortProjectList', payload: {board_id}})
@@ -289,6 +295,12 @@ export default modelExtend(technological, {
           type: 'setProjectTabCurrentSelectedProject',
           payload: {
             projectId: projectId
+          }
+        })
+        yield put({
+          type: 'workbenchPublicDatas/updateDatas',
+          payload: {
+            board_id: projectId
           }
         })
       }else{
