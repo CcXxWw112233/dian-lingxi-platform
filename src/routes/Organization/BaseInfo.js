@@ -148,14 +148,12 @@ export default class BaseInfo extends React.Component {
             uploading: false
           })
         }
-        if (file.response && file.response.code === 0) {
-          // const { accountSet = {} } = that.props
-          // const { datas = {} } = accountSet
-          // const { userInfo = {} } = datas
-          // userInfo['avatar'] = file.response.data.avatar
-          // that.props.updateDatas({
-          //   userInfo
-          // })
+        if (file.response && file.response.code == '0') {
+          const obj = {...currentOrganizationInfo}
+          obj.logo = file.response.data.url
+          that.props.updateDatas({
+            currentOrganizationInfo: obj
+          })
         }
       },
     };
