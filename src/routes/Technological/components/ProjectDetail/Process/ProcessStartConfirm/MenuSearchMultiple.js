@@ -44,15 +44,17 @@ export default class MenuSearchMultiple extends React.Component{
   //模糊查询
   fuzzyQuery = (list, keyWord) => {
     var arr = [];
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].indexOf(keyWord) !== -1) {
+    for (let i = 0; i < list.length; i++) {
+      if ((list[i]['name'] && list[i]['name'].indexOf(keyWord) !== -1) ||
+        (list[i]['mobile'] && list[i]['mobile'].indexOf(keyWord) !== -1) ||
+        (list[i]['email'] && list[i]['email'].indexOf(keyWord) !== -1)) {
         arr.push(list[i]);
       }
     }
     return arr;
   }
   onChange = (e) => {
-    const { usersArray } = this.props
+    const { usersArray = [] } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(usersArray, keyWord)
     this.setState({
@@ -69,16 +71,17 @@ export default class MenuSearchMultiple extends React.Component{
       <Input value={keyWord} onChange={this.onChange.bind(this)}/>
       {
         resultArr.map((val, key) => {
+          const { user_id } = val
           let flag = true
-          for(let userVal of filterUserArray) {
-            if(userVal['name'] == val) {
-              flag = false
-              break
-            }
-          }
+          // for(let userVal of filterUserArray) {
+          //   if(userVal['name'] == val) {
+          //     flag = false
+          //     break
+          //   }
+          // }
           return flag && (
-            <Menu.Item style={{height: 32, lineHeight: '32px'}} key={key}>
-              {val}
+            <Menu.Item style={{height: 32, lineHeight: '32px'}} key={ user_id }>
+              {val['name']}
             </Menu.Item>
           )
         })
