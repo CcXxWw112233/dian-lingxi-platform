@@ -581,14 +581,14 @@ class SiderRight extends React.Component {
                 style={{ height: document.documentElement.clientHeight - 108 }}
                 className={ImMaskWhencollapsed}
               />
-              <iframe
+              {/* <iframe
                 title="im"
                 src={`http://www.new-di.com/im`}
                 frameBorder="0"
                 width="100%"
                 height="100%"
                 id={"iframImCircle"}
-              />
+              /> */}
             </div>
             <Popover
               visible={videoMeetingPopoverVisible}
