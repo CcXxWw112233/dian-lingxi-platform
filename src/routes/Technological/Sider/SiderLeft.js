@@ -141,7 +141,7 @@ export default class SiderLeft extends React.Component {
 
     const { datas = {} } = this.props.model
     const { naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org={}, } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { current_org={}, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize

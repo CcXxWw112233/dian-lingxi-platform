@@ -170,8 +170,8 @@ export default class PersonNews extends React.Component {
 
     const { datas = {} } = this.props.model;
     const { currentUserOrganizes = [], currentSelectOrganize = {} } = datas; //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org = {}, name, avatar } = Cookies.get("userInfo")
-      ? JSON.parse(Cookies.get("userInfo"))
+    const { current_org = {}, name, avatar } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
       : {};
     const { identity_type } = current_org; //是否访客 1不是 0是
     const orgnizationName =

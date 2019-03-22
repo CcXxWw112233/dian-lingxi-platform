@@ -140,7 +140,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey } = this.props
     const { assignees = [] } = processEditDatas[itemKey]
-    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
     const users = projectDetailInfoData.data //项目参与人
     //将当前用户替换成所选用户
@@ -302,7 +302,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const assigneesArray = assignees || []
     //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
     let currentUserCanOperate = false
-    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const currentUserId= userInfo.id //当前用户id, 用于替换
     for(let i = 0; i <assignees.length; i++) {
       if(assignees[i].user_id === currentUserId) {

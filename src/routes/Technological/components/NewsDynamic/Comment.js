@@ -46,7 +46,7 @@ export default class Comment extends React.Component {
         suggestions.push(val['full_name'])
       }
     }
-    const { avatar } = JSON.parse(Cookies.get('userInfo'))
+    const { avatar } = JSON.parse(localStorage.getItem('userInfo'))
 
     const { leftSpaceDivWH = 40 } = this.props
     const props = {

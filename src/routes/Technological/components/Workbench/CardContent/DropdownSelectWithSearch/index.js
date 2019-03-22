@@ -169,7 +169,7 @@ class DropdownSelectWithSearch extends Component {
   };
   getUerInfoFromCookie = () => {
     try {
-      return JSON.parse(Cookies.get("userInfo"));
+      return JSON.parse(localStorage.getItem('userInfo'));
     } catch (err) {
       return {};
     }

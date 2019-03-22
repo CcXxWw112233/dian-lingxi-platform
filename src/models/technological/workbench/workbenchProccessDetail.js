@@ -294,7 +294,7 @@ export default modelExtend(workbench, {
       const { newsData } = payload
       const id = newsData.rela_id
       const newsUserId = newsData.userId
-      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const currentUserId = JSON.parse(localStorage.getItem('userInfo')).id
       const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
       console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
 

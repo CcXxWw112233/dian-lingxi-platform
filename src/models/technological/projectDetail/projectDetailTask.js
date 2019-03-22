@@ -829,7 +829,7 @@ export default modelExtend(projectDetail, {
       const { newsData } = payload
       const id = newsData.activityTypeId
       const newsUserId = newsData.userId
-      const currentUserId = JSON.parse(Cookies.get('userInfo')).id
+      const currentUserId = JSON.parse(localStorage.getItem('userInfo')).id
       const drawContent = yield select(selectDrawContent)
       const drawerVisible = yield select(selectDrawerVisible)
       const { card_id } = drawContent

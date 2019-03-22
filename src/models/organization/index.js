@@ -107,7 +107,7 @@ export default {
           localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
         }
         //存储
-        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
       }else{
       }
     },

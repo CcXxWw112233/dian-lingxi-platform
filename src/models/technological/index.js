@@ -48,13 +48,13 @@ export default {
             type: 'getUSerInfo',
             payload: {}
           })
-          // if(!Cookies.get('userInfo')) {
+          // if(!localStorage.getItem('userInfo')) {
           //   dispatch({
           //     type:'getUSerInfo',
           //     payload: {}
           //   })
           // }else {
-          //   const { current_org } = JSON.parse(Cookies.get('userInfo'))
+          //   const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
           //   if(current_org) {
           //     dispatch({
           //       type:'setcurrentSelectOrganizeByCookiesUSerInfo',
@@ -181,7 +181,7 @@ export default {
           }
         })
         //存储
-        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -206,7 +206,7 @@ export default {
              payload: {}
            })
         }
-        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
 
         //组织切换重新加载
         const { operateType } = payload
@@ -226,7 +226,7 @@ export default {
       }
     },
     * setcurrentSelectOrganizeByCookiesUSerInfo({ payload }, { select, call, put }) { //c从cookie中拿到当前组织
-      const { current_org } = JSON.parse(Cookies.get('userInfo'))
+      const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
       localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
       yield put({
         type: 'updateDatas',
