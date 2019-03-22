@@ -187,7 +187,6 @@ class CardContent extends React.Component {
       type: 'workbenchTaskDetail/projectDetailInfo',
       payload: {id: board_id}
     })
-    debugger
     await this.props.dispatch({
       type: 'workbenchDetailProcess/getWorkFlowComment',
       payload: {flow_instance_id: flowID}
