@@ -528,7 +528,7 @@ export default class FileDetailContent extends React.Component {
 
     return (
       <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-        <div className={indexStyles.fileDetailContentLeft}>
+        <div className={indexStyles.fileDetailContentLeft} style={{overflowY: 'scroll'}}>
             <ProcessDetail {...this.props} />
             {/* <h1> hello world </h1> */}
         </div>
