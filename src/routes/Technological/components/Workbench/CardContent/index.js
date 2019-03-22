@@ -179,7 +179,7 @@ class CardContent extends React.Component {
   }
   async setPreviewProccessModalVisibile() {
     //workbench/backLogProcessList 对应的操作
-    console.log('this is model!!!~~~~', this.props.model.datas.totalId)
+    console.log('this is model!!!~~~~', this.props.model.datas)
     let flowID = this.props.model.datas.totalId.flow
     let board_id = this.props.model.datas.totalId.board
     await this.props.getProcessInfo({id: flowID})

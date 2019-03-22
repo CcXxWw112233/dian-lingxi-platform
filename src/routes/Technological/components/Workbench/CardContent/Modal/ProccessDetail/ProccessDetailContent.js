@@ -549,7 +549,6 @@ export default class FileDetailContent extends React.Component {
             </div>
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            {/* <h1> Hello!!! </h1> */}
             <div style={{fontSize: '12px', color: '#595959'}}>
               {
                 //processDynamics
