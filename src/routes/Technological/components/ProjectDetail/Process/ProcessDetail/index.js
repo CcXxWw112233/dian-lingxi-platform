@@ -91,7 +91,6 @@ export default class ProcessDetail extends React.Component {
     // const
     //过滤消息内容
     const filterTitleContain = (messageValue) => {
-      console.log({messageValue})
       const { action } = messageValue
       let contain = ''
       let messageContain = (<div></div>)
@@ -191,6 +190,7 @@ export default class ProcessDetail extends React.Component {
     }
 
     const filterForm = (value, key) => {
+      console.log('wtf is this', processEditDatas)
       const { node_type } = value
       let container = (<div></div>)
       switch (node_type) {

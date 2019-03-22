@@ -123,3 +123,21 @@ export async function deleteProcessFile(data) {
     data,
   });
 }
+
+//工作台 流程modal 评论提交
+export async function addWorkFlowComment(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
+    method: 'POST',
+    data
+  })
+}
+
+export async function getWorkFlowComment(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
+    method: 'GET',
+    params
+  })
+}
+

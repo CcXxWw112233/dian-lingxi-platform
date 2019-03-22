@@ -15,7 +15,9 @@ import {
   rebackProcessTask,
   rejectProcessTask,
   resetAsignees,
-  saveProcessTemplate
+  saveProcessTemplate,
+  addWorkFlowComment,
+  getWorkFlowComment
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {selectCurrentProcessInstanceId} from "../select";
@@ -399,6 +401,23 @@ export default modelExtend(workbench, {
 
       }
     },
+
+    * addWorkFlowComment({payload}, {select, call, put}) {
+      let res = yield call(addWorkFlowComment, payload)
+      console.log('this is addWorkFlowComment', res)
+    },
+
+    * getWorkFlowComment({payload}, {select, call, put}) {
+      let res = yield call(getWorkFlowComment, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: res.data
+        }
+      })
+
+
+    }
   },
 
   reducers: {

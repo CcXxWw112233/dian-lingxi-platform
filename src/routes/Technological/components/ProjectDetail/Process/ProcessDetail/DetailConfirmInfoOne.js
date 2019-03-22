@@ -114,7 +114,6 @@ export default class DetailConfirmInfoOne extends React.Component {
     this.props.updateDatasProcess({
       processEditDatas
     })
-    debugger
     //重新指派推进人接口
     this.props.resetAsignees({
       assignee: willSetAssignee,

@@ -507,7 +507,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       return (
         <div className={indexStyles.commentListItem}>
           <div className={indexStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
+            {/* <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar> */}
           </div>
           <div className={indexStyles.right}>
             <div className={indexStyles.top}>

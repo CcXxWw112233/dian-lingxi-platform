@@ -179,12 +179,17 @@ class CardContent extends React.Component {
   }
   async setPreviewProccessModalVisibile() {
     //workbench/backLogProcessList 对应的操作
-    const flow_instance_id = this.props.workbench.datas.backLogProcessList[0].flow_instance_id
-    const board_id = this.props.workbench.datas.backLogProcessList[0].board_id
-    await this.props.getProcessInfo({id:flow_instance_id})
+    console.log('this is model!!!~~~~', this.props.model.datas.totalId)
+    let flowID = this.props.model.datas.totalId.flow
+    let board_id = this.props.model.datas.totalId.board
+    await this.props.getProcessInfo({id: flowID})
     await this.props.dispatch({
       type: 'workbenchTaskDetail/projectDetailInfo',
       payload: {id: board_id}
+    })
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/getWorkFlowComment',
+      payload: {flow_instance_id: flowID}
     })
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile

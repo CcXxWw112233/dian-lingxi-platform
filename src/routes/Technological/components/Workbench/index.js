@@ -844,6 +844,21 @@ const Workbench = (props) => {
       payload: payload
     })
   }
+  const workflowComments = {
+    addWorkFlowComment(payload) {
+      console.log('test')
+      dispatch({
+        type: 'workbenchDetailProcess/addWorkFlowComment',
+        payload
+      })
+    },
+    getWorkFlowComment(params) {
+      dispatch({
+        type: 'workbenchDetailProcess/getWorkFlowComment',
+        payload: params
+      })
+    }
+  }
 
   return(
     <div>
@@ -852,7 +867,7 @@ const Workbench = (props) => {
       {/* <InviteOthers /> */}
       <ProjectListBar />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...props} {...ProcessProps} {...HeaderListProps}  updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess}  updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
+       <GroupContent {...workflowComments} {...props} {...ProcessProps} {...HeaderListProps}  updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess}  updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
     </div>
   )
 };

@@ -350,7 +350,6 @@ export default class FileDetailContent extends React.Component {
     })
   }
   render() {
-    console.log('hahaha', this.props.model)
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 
@@ -383,73 +382,99 @@ export default class FileDetailContent extends React.Component {
         case 'board.flow.tpl.add.or.delete':
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
+        case 'board.flow.comment.add':
+          messageContain = (
+            <div>
+              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '20px'}}>
+                <div>
+                  <img style={{width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left'}} src={messageValue.creator.avatar}></img>
+                  <div style={{
+                    height:'30px',
+                    fontSize:'12px',
+                    fontFamily:'PingFangSC-Regular',
+                    fontWeight: 400,
+                    color:'rgba(140,140,140,1)',
+                    display: 'flex',
+                    justifyContent:'center',
+                    alignItems: 'center',
+                    marginLeft: '12px',
+                    lineHeight: '17px', }}>{messageValue.creator.name}</div>
+                </div>
+                <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              </div>
+              <div style={{margin: '15px 0 15px 55px' ,color: '#595959', fontSize: '14px',fontFamily:'PingFangSC-Regular'}}>
+                {messageValue.text}
+              </div>
+            </div>
+          )
+          break
         case 'board.flow.instance.initiate':
           messageContain=(
-            <div >
-              <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+              <div>
                 <div ></div>
-                <div >{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
+                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
               </div>
-              <div >{timestampToHM(messageValue.created)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.reject':
           contain = `拒绝${currentNounPlanFilterName(FLOWS)}任务`
           messageContain=(
-            <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div >
                 <div ></div>
-                <div >{messageValue.creator.name} 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
+                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div >{timestampToHM(messageValue.created)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.recall':
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           messageContain=(
-            <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div >
                 <div ></div>
-                <div >{messageValue.creator.name} 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
+                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div >{timestampToHM(messageValue.created)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.reassign':
           contain = '重新指派审批人'
           messageContain=(
-            <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div >
                 <div ></div>
-                <div >{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
+                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
               </div>
-              <div >{timestampToHM(messageValue.created)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.instance.discontinue':
           contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
           messageContain=(
-            <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div >
                 <div ></div>
-                <div >{messageValue.user_name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
+                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
               </div>
-              <div >{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.pass':
           messageContain=(
-            <div >
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div >
                   <div ></div>
-                  <div >{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
+                  <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
                 </div>
-              <div >{timestampToHM(messageValue.created)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
             </div>
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
@@ -525,10 +550,11 @@ export default class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             {/* <h1> Hello!!! </h1> */}
-            <div>
+            <div style={{fontSize: '12px', color: '#595959'}}>
               {
-                this.props.model.datas.processDynamics.map((item, i) => {
-                  if(true) {
+                //processDynamics
+                this.props.model.datas.workFlowComments?this.props.model.datas.workFlowComments.map((item, i) => {
+                  if(this.state.isShowAll) {
                     return (
                       <div key={i} value={item}>
                         {
@@ -545,11 +571,11 @@ export default class FileDetailContent extends React.Component {
                       )
                     }
                   }
-                })
+                }):null
               }
               <div>
                 <div></div>
-                <div onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
+                <div style={{fontSize: '14px', cursor: 'pointer', marginLeft: '10px', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
                 <div></div>
               </div>
             </div>
