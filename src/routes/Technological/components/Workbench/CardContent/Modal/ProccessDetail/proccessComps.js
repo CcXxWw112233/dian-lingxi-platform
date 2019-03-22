@@ -87,95 +87,26 @@ export default class ProccessContent extends React.Component {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
-   // console.log('processDynamics', processDynamics)
-   // const
-   //过滤消息内容
-  //  const filterTitleContain = (messageValue) => {
-  //    const { action } = messageValue
-  //    let contain = ''
-  //    let messageContain = (<div></div>)
-  //    let pin = action.split('.')
-  //    let nodeName = `${pin[1]}_${pin[2]}`
-  //    switch (action) {
-  //      case 'board.flow.tpl.add.or.delete':
-  //        contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
-  //        break
-  //      case 'board.flow.instance.initiate':
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //              <div ></div>
-  //              <div >{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
-  //            </div>
-  //            <div >{timestampToHM(messageValue.created)}</div>
-  //          </div>
-  //        )
-  //        break
-  //      case 'board.flow.task.reject':
-  //        contain = `拒绝${currentNounPlanFilterName(FLOWS)}任务`
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //              <div ></div>
-  //              <div >{messageValue.creator.name} 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
-  //            </div>
-  //            <div >{timestampToHM(messageValue.created)}</div>
-  //          </div>
-  //        )
-  //        break
-  //      case 'board.flow.task.recall':
-  //        contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //              <div ></div>
-  //              <div >{messageValue.creator.name} 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
-  //            </div>
-  //            <div >{timestampToHM(messageValue.created)}</div>
-  //          </div>
-  //        )
-  //        break
-  //      case 'board.flow.task.reassign':
-  //        contain = '重新指派审批人'
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //              <div ></div>
-  //              <div >{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
-  //            </div>
-  //            <div >{timestampToHM(messageValue.created)}</div>
-  //          </div>
-  //        )
-  //        break
-  //      case 'board.flow.instance.discontinue':
-  //        contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //              <div ></div>
-  //              <div >{messageValue.user_name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
-  //            </div>
-  //            <div >{timestampToHM(messageValue.create_time)}</div>
-  //          </div>
-  //        )
-  //        break
-  //      case 'board.flow.task.pass':
-  //        messageContain=(
-  //          <div >
-  //            <div >
-  //                <div ></div>
-  //                <div >{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
-  //              </div>
-  //            <div >{timestampToHM(messageValue.created)}</div>
-  //          </div>
-  //        )
-  //        contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
-  //        break
-  //      default:
-  //        break
-  //    }
-  //    return messageContain
-  //  }
+   
+   const { data } = this.props.model.datas.projectDetailInfoData
+   
+   const fillAvatar = (data) => {
+      let num = data.length
+      let res = data.reduce((r, c, i) => {
+        return [
+          ...r,
+          c.avatar?<img key={i} style={{width: '18px', height: '18px', borderRadius: '9px'}} src={c.avatar}/>:<img key={`div${i}`} style={{width: '18px', height: '18px', borderRadius: '9px', backgroundColor: 'gray'}} />
+        ]
+      }, [])
+      let container = (
+        <div style={{fontSize:'12px',
+        fontFamily:'PingFangSC-Regular',
+        fontWeight:'400',
+        color:'rgba(89,89,89,1)'}}> {res}  「{num}」位流程参与人</div>
+      )
+
+      return container
+   }
 
    const filterForm = (value, key) => {
      const { node_type } = value
@@ -209,10 +140,7 @@ export default class ProccessContent extends React.Component {
       <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, top: 236, left: 120}}/>
       <div style={{height: '210px', padding: '32px 34px 32px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
-        <div style={{fontSize:'12px',
-        fontFamily:'PingFangSC-Regular',
-        fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}>xxxxxxxxxxx 8位流程参与人</div>
+        {fillAvatar(data)}
         <div style={{fontSize:'12px',
         fontFamily: 'PingFangSC-Regular',
         fontWeight:'400',
@@ -230,74 +158,4 @@ export default class ProccessContent extends React.Component {
     </div>
    )
  }
-
 }
-
-// <div >
-// <div >
-// <div >
-//   <div >
-//     <div></div>
-//     <div>{name}</div>
-//   </div>
-// </div>
-//   {/*描述*/}
-// <div  dangerouslySetInnerHTML = {{ __html: description }}></div>
-
-// <div >
-//   <div >
-//     <div >
-//       <div style={{ width: 210, height: 210}}>
-//         <canvas id="time_graph_canvas" width={210} height={210}></canvas>
-//       </div>
-//       <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, bottom: 0, left: 95}}/>
-//     </div>
-//   </div>
-//   <div >
-//     <div >
-//       <div >最新动态</div>
-//       <div  >
-//         {processDynamics.map((value, key) => {
-//           if(isShowAll) { //全部
-//             return(
-//               <div key={key} value={value}>
-//                 {filterTitleContain(value)}
-//               </div>
-//             )
-//           }else{ //
-//             if(key < 5) { //展示5条
-//               // console.log(key, value)
-//               return(
-//                 <div key={key} value={value}>
-//                   {filterTitleContain(value)}
-//                 </div>
-//               )
-//             }
-//           }
-
-//         })}
-//         <div >
-//           <div></div>
-//           <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div>
-//           <div></div>
-//         </div>
-//       </div>
-//     </div>
-//     <div >
-//       <div >
-//          步骤详情
-//       </div>
-      // {processEditDatas.map((value, key) => {
-      //   return (
-      //     <div key={key}>
-      //       {filterForm(value, key)}
-      //     </div>
-      //   )
-      // })}
-//     </div>
-//   </div>
-// </div>
-
-// </div>
-
-// </div>
