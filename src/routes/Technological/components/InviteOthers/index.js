@@ -116,9 +116,9 @@ class InviteOthers extends Component {
             if (res.code && res.code === '0') {
               //如果查到了用户
               if (res.data && res.data.id) {
-                const { avatar_icon, nickname, id } = res.data
+                const { avatar, nickname, id } = res.data
                 const value = this.genUserValueStr(
-                  avatar_icon,
+                  avatar,
                   nickname,
                   user,
                   true,
@@ -126,7 +126,7 @@ class InviteOthers extends Component {
                 )
                 this.setState({
                   inputRet: [
-                    { value, avatar: avatar_icon, user, name: nickname }
+                    { value, avatar, user, name: nickname }
                   ],
                   fetching: false
                 })
@@ -169,7 +169,17 @@ class InviteOthers extends Component {
     const selectedUser = this.parseUserValueStr(value.key)
     const isHasSameMemberInSelectedMember = () =>
       selectedMember.find(item => item.user === selectedUser.user)
-    if (isHasSameMemberInSelectedMember()) return
+      //如果该用户已经在被选择的列表中了
+    if (isHasSameMemberInSelectedMember()) {
+      message.destroy()
+      message.info('已选择该用户')
+      this.setState({
+        inputValue: [],
+        inputRet: [],
+        fetching: false
+      })
+      return
+    }
     this.setState({
       selectedMember: [...selectedMember, selectedUser],
       inputValue: [],
@@ -210,15 +220,15 @@ class InviteOthers extends Component {
     if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
-          <span className={styles.input__select_default_avatar} />
+          {/* <span className={styles.input__select_default_avatar} /> */}
           <span className={styles.input__select_user}>{user}</span>
         </p>
       )
     }
     return (
       <p className={styles.input__select_wrapper}>
-        <span className={styles.input__select_avatar}>
-          <img src={avatar} width="24" height="24" alt="" />
+        <span className={styles.input__select_avatar_img}>
+          <img src={this.isAvatarValid(avatar) ? avatar : defaultUserAvatar} style={{borderRadius: '50%'}} width="24" height="24" alt="" />
         </span>
         <span className={styles.input__select_user}>{user}</span>
         <span className={styles.input__select_name}>({name ? name : '匿名用户'})</span>
