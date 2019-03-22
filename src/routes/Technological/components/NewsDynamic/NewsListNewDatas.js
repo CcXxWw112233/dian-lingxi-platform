@@ -32,35 +32,75 @@ export default class NewsListNewDatas extends React.Component {
         //项目
         case 'board.create':
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.card.update.file.add':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
-          messageContain = (<div>{messageValue.user_name} 在流程{[]}中上传了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div>{messageValue.user_name} 在流程{[messageValue.content.board.name]}中上传了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.update.name':
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
-          messageContain = (<div>{messageValue.user_name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.update.archived':
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
-          messageContain = (<div>{messageValue.creator.name} 归档了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.update.user.quit':
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.creator.name} 退出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 退出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.delete':
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
-          messageContain = (<div>{messageValue.creator.name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.update.user.add':
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.content.relaUsers || `新成员「${messageValue.content.rela_users}」`}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 邀请{messageValue.content.relaUsers || `新成员「${messageValue.content.rela_users}」`}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.update.user.remove':
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.creator.name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
         //任务
         case 'board.card.create':

@@ -864,7 +864,7 @@ const Workbench = (props) => {
       {/* <Header {...cardContentListProps} /> */}
       <ProjectListBar />
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...workflowComments} {...props} {...ProcessProps} {...HeaderListProps}  updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess}  updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
+       <GroupContent {...workflowComments} {...FileModuleProps} {...props} {...ProcessProps} {...HeaderListProps}  updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess}  updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
     </div>
   )
 };

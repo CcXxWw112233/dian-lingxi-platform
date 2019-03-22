@@ -6,7 +6,7 @@ import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetai
 import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoThree'
 import DetailConfirmInfoFour from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFour'
 import DetailConfirmInfoFive from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFive'
-
+import user from '../../../../../../../assets/workbench/person_group@2x.png'
 import sssimg from '../../../../../../../assets/yay.jpg'
 import { timestampToHM } from '../../../../../../../utils/util'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
@@ -95,14 +95,14 @@ export default class ProccessContent extends React.Component {
       let res = data.reduce((r, c, i) => {
         return [
           ...r,
-          c.avatar?<img key={i} style={{width: '18px', height: '18px', borderRadius: '9px'}} src={c.avatar}/>:<img key={`div${i}`} style={{width: '18px', height: '18px', borderRadius: '9px', backgroundColor: 'gray'}} />
+          c.avatar?<img key={i} title={c.name} style={{width: '18px', height: '18px', borderRadius: '9px', marginLeft: '5px'}}  src={c.avatar}/>:<img src={user} title={c.name}  key={`div${i}`} style={{width: '18px', height: '18px', borderRadius: '9px', backgroundColor: 'gray', marginLeft: '5px'}} />
         ]
       }, [])
       let container = (
         <div style={{fontSize:'12px',
         fontFamily:'PingFangSC-Regular',
         fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}> {res}  「{num}」位流程参与人</div>
+        color:'rgba(89,89,89,1)'}}> {res} 「{num}」位流程参与人</div>
       )
 
       return container
