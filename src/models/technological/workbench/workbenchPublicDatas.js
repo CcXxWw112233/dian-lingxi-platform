@@ -36,7 +36,6 @@ export default modelExtend(technological, {
     //获取内容关联前半部分
     * getRelationsSelectionPre({ payload }, { select, call, put }) { //
       let res = yield call(getRelationsSelectionPre, payload)
-      // debugger
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

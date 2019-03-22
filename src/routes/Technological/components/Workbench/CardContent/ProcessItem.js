@@ -4,12 +4,40 @@ import { Icon } from 'antd'
 import Cookies from 'js-cookie'
 
 export default class ProcessItem extends React.Component {
-  gotoBoardDetail({flow_instance_id, board_id}) {
-    this.props.routingJump(`/technological/projectDetail?board_id=${board_id}&appsSelectKey=2&flow_id=${flow_instance_id}`)
+  state = {
+    totalId: {},
+    value: {}
   }
-  render() {
+  componentDidMount() {
     const { itemValue = {} } = this.props
     const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
+    this.setState({
+      value: { flow_node_name, name, board_name, board_id, status, flow_instance_id }
+    })
+  }
+  gotoBoardDetail(obj) {
+    this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
+  }
+  async click(obj) {
+    await this.setState({
+      totalId: {
+        flow: obj.flow,
+        board: obj.board
+      }
+    })
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/updateDatas',
+      payload: this.state
+    })
+    await this.props.click()
+  }
+  render() {
+    // const { itemValue = {} } = this.props
+    // const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
+    const obj = {
+      flow: this.state.value.flow_instance_id,
+      board: this.state.value.board_id
+    }
     const filterColor = (status)=> {
       let color = '#f2f2f2'
       if('1' ===status){
@@ -23,11 +51,12 @@ export default class ProcessItem extends React.Component {
       }
       return color
     }
+    
     return (
       <div className={indexstyles.processItem}>
-        <div>{flow_node_name || name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}} onClick={this.gotoBoardDetail.bind(this, {flow_instance_id, board_id})}>#{board_name}</span></div>
+        <div><span style={{cursor: 'pointer'}} onClick={this.click.bind(this, obj)}>{this.state.value.flow_node_name || this.state.value.name}</span><span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{this.state.value.board_name}</span></div>
         <div>
-          <div style={{backgroundColor: filterColor(status)}}></div>
+          <div style={{backgroundColor: filterColor(this.state.value.status)}}></div>
         </div>
       </div>
     )

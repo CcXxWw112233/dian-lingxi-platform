@@ -544,6 +544,7 @@ const ProjectDetail = (props) => {
       })
     },
     completeProcessTask(data){
+      console.log('const fn has running!!!')
       dispatch({
         type: getEffectOrReducerByNameProcess('completeProcessTask'),
         payload: data
@@ -551,7 +552,7 @@ const ProjectDetail = (props) => {
     },
     fillFormComplete(data) {
       dispatch({
-        type: getEffectOrReducerByNameProcess('fillFormComplete'),
+        type: 'projectDetailProcess/fillFormComplete',
         payload: data
       })
     },
@@ -595,6 +596,8 @@ const ProjectDetail = (props) => {
       },
     })
   }
+
+
   const updateDatas = (payload) => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),

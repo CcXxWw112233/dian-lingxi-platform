@@ -130,13 +130,3 @@ export async function deleteProcessFile(data) {
     data,
   });
 }
-
-//获取流程列表 进行中 已终止 已完成
-export async function getProcessListByType(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow/list`,
-    method: 'GET',
-    params,
-  }, {isNotLoading: true});
-}
-

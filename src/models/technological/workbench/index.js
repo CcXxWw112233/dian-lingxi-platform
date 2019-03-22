@@ -18,6 +18,8 @@ export default modelExtend(technological, {
   namespace: 'workbench',
   state: {
       datas: {
+
+        
         projectList: []
       }
     },
@@ -43,11 +45,10 @@ export default modelExtend(technological, {
               boxUsableList: [], //用户当前可用盒子列表
               boxCheckDisabled: false,
               imData: {}, //用户信息
-
               filePreviewIsUsable: true, //文档是否可见
               filePreviewUrl: '', //预览文档src
               current_file_resource_id: '', //当前操作文档id
-
+              processInfo: {}, //所选中的流程的信息
               currentOrgFileUploads: [], //当前组织下我上传的文档列表
               currentSelectedProjectMembersList: [],
               currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩

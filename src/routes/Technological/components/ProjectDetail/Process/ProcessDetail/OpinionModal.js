@@ -10,15 +10,22 @@ class OpinionModal extends React.Component {
   state = {
     stepContinueDisabled: true,
   }
+  // nextStep() {
+  //   console.log('hello world')
+  // }
   descriptionChange(e) {
     const value = e.target.value
     let flag = true
     if(value) {
       flag = false
     }
+    
     this.setState({
       stepContinueDisabled: flag
     })
+  }
+  nextStep() {
+    console.log('lalala')
   }
   onCancel = () => {
     this.setState({
@@ -51,6 +58,7 @@ class OpinionModal extends React.Component {
             }
             this.props.fillFormComplete ? this.props.fillFormComplete(obj): false
           }else {
+            console.log('completeProcessTask', this.props)
             this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
           }
         }else if(operateType === '0') {

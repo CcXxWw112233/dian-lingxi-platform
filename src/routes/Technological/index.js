@@ -18,7 +18,6 @@ import SiderRight from './Sider/SiderRight'
 
 const { Header, Sider, Content } = Layout;
 
-
 const getEffectOrReducerByName = name => `technological/${name}`
 @connect(mapStateToProps)
 export default class Technological extends React.Component{

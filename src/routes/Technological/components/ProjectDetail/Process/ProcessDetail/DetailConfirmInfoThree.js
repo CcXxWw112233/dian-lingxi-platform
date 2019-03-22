@@ -337,6 +337,7 @@ export default class DetailConfirmInfoThree extends React.Component {
     }
     const AnnotationListItem = (value) => {
       const { name, avatar, comment, time, id } = value
+
       return (
         <div className={indexStyles.commentListItem}>
           <div className={indexStyles.left}>
@@ -410,8 +411,6 @@ export default class DetailConfirmInfoThree extends React.Component {
       return valiResult
     }
 
-    console.log(setCompleteButtonDisabled())
-
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
@@ -452,10 +451,10 @@ export default class DetailConfirmInfoThree extends React.Component {
                 })}
               </div>
 
-              {assignees.map((value, key)=>{
+              {assignees?assignees.map((value, key)=>{
                 const { comment } = value
                 return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
-              })}
+              }):null}
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}

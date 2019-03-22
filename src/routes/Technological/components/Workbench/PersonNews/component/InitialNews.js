@@ -55,7 +55,7 @@ export default class InitialNews extends React.Component {
           break
         case 'board.update.user.add':
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
-          messageContain = (<div>{messageValue.creator.name} 邀请{messageValue.content.rela_users}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
+          messageContain = (<div>{messageValue.creator.name} 邀请「{messageValue.content.rela_users}」加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>)
           break
         case 'board.update.user.remove':
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`

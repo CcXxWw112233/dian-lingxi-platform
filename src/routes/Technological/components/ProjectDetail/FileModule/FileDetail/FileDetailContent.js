@@ -425,7 +425,7 @@ export default class FileDetailContent extends React.Component {
 
         {/*width: isExpandFrame?0:420*/}
 
-        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
+        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420, height: '100vh'}}>
 
             <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               <ContentRaletion

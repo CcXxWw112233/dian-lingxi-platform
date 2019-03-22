@@ -56,7 +56,6 @@ export default modelExtend(projectDetail, {
       history.listen((location) => {
 
         const param = QueryString.parse(location.search.replace('?', ''))
-        console.log('this is param', param)
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         flow_id = param.flow_id
@@ -362,6 +361,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * fillFormComplete({ payload }, { select, call, put }) {
+      console.log('fillFormComplete has running!!!')
       let res = yield call(fillFormComplete, payload)
       const { instance_id } = payload
       if(isApiResponseOk(res)) {
