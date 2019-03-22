@@ -15,6 +15,7 @@ import { connect } from "dva";
 import Cookies from "js-cookie";
 import { validateTel } from "./../../../utils/verify";
 import classNames from "classnames/bind";
+import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 
@@ -535,7 +536,6 @@ class SiderRight extends React.Component {
         )}
       </div>
     );
-
     return (
       <div id={"siderRight"} className={indexStyles.siderRight}>
         <Sider
@@ -581,14 +581,16 @@ class SiderRight extends React.Component {
                 style={{ height: document.documentElement.clientHeight - 108 }}
                 className={ImMaskWhencollapsed}
               />
-              <iframe
+              {NODE_ENV != 'development' && (
+                <iframe
                 title="im"
-                src={`http://www.new-di.com/im`}
+                src={IM_HTTP_PATH}
                 frameBorder="0"
                 width="100%"
                 height="100%"
-                id={"iframImCircle"}
-              />
+                id={"iframImCircle"}/>
+              ) }
+
             </div>
             <Popover
               visible={videoMeetingPopoverVisible}

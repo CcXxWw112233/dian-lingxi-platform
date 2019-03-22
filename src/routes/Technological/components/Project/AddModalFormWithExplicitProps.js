@@ -7,6 +7,7 @@ import { validateTel, validateEmail } from '../../../../utils/verify'
 import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import CustormModal from '../../../../components/CustormModal'
+import InviteOthers from './../InviteOthers/index'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -20,6 +21,7 @@ class AddModalForm extends React.Component {
     stepTwoContinueDisabled: true,
     stepThreeContinueDisabled: true,
     completeValidation: false, //完成滑块验证
+    users: [],
   }
   //表单输入时记录值
   boardNameChange(e){
@@ -109,27 +111,51 @@ class AddModalForm extends React.Component {
         values['apps'] = appsString
 
         //参与人
-        if(this.state.users) {
-          let users = this.state.users.replace(/\n/gim, ',') //替代换行符
-          let usersArr = users.split(',') //转成数组
-          let usersNewArr = []
-          for(let val of usersArr) {
-            if(val) {
-              usersNewArr.push(val)
-            }
-          }
-          users = usersNewArr.join(',')
-          for(let val of usersNewArr ) {
-            if(!validateTel(val) && !validateEmail(val)) {
-              message.warn('请正确输入被邀请人的手机号或者邮箱。', MESSAGE_DURATION_TIME)
-              return false
-            }
-          }
-          values['users'] = users
-        }
+        // if(this.state.users) {
+        //   let users = this.state.users.replace(/\n/gim, ',') //替代换行符
+        //   let usersArr = users.split(',') //转成数组
+        //   let usersNewArr = []
+        //   for(let val of usersArr) {
+        //     if(val) {
+        //       usersNewArr.push(val)
+        //     }
+        //   }
+        //   users = usersNewArr.join(',')
+        //   for(let val of usersNewArr ) {
+        //     if(!validateTel(val) && !validateEmail(val)) {
+        //       message.warn('请正确输入被邀请人的手机号或者邮箱。', MESSAGE_DURATION_TIME)
+        //       return false
+        //     }
+        //   }
+        //   values['users'] = users
+        // }
+
+        const {users} = this.state
+        values['users'] = this.handleUsersToUsersStr(users)
         handleSubmitNewProject(values)
       }
     });
+  }
+  handleUsersToUsersStr = (users = []) => {
+    return users.reduce((acc, curr) => {
+    const isCurrentUserFromPlatform = () => curr.type === 'platform' && curr.id
+    if(isCurrentUserFromPlatform()) {
+      if(acc) {
+        return acc + "," + curr.id
+      }
+      return curr.id
+    } else {
+      if(acc) {
+        return acc + ',' + curr.user
+      }
+      return curr.user
+    }
+    }, '')
+  }
+  handleInviteMemberReturnResult = selectedMember => {
+    this.setState({
+      users: selectedMember
+    })
   }
   render() {
     const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled } = this.state
@@ -190,7 +216,7 @@ class AddModalForm extends React.Component {
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
 
         {/* 他人信息 */}
-        <FormItem style={{width: 336}}>
+        {/* <FormItem style={{width: 336}}>
           {getFieldDecorator('users', {
             // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
@@ -202,16 +228,18 @@ class AddModalForm extends React.Component {
           <div style={{marginTop: -10}}>
             <DragValidation listenCompleteValidation={this.listenCompleteValidation.bind(this)}/>
           </div>
-        ):('')}
-
+        ):('')} */}
+        <InviteOthers isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}>
         {/* 确认 */}
         <FormItem
         >
           <div style={{marginTop: 20, marginBottom: 40, }}>
             <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
-            <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
+            {/* <Button type="primary" htmlType={'submit'} disabled={stepThreeContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button> */}
+            <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
           </div>
         </FormItem>
+        </InviteOthers>
       </Form>
     )
 
@@ -225,7 +253,7 @@ class AddModalForm extends React.Component {
           destroyOnClose
           style={{textAlign: 'center'}}
           onCancel={this.onCancel}
-          overInner={( <div style={{height: step=== 2 ? 'auto':440}}>
+          overInner={( <div style={{height: step=== 2 ? 440: step === 3 ? 520 : 'auto' }}>
             <div style={{display: step === 1?'block': 'none'}}>
               {step_1}
             </div>

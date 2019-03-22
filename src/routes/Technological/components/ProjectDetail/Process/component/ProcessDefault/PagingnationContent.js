@@ -1,0 +1,207 @@
+import React from 'react'
+import indexStyles from '../../index.less'
+import { Avatar } from 'antd'
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
+import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
+import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
+import { Collapse } from 'antd';
+import {getProcessListByType} from "../../../../../../../services/technological/process";
+import {
+  selectProcessComepletedList, selectProcessDoingList,
+  selectProcessStopedList
+} from "../../../../../../../models/technological/select";
+import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
+const Panel = Collapse.Panel;
+
+export default class PagingnationContent extends React.Component {
+  state = {
+    page_number: 1,
+    page_size: 20,
+    loadMoreDisplay: 'none',
+    scrollBlock: true, //滚动加载锁，true可以加载，false不执行滚动操作
+  }
+  componentDidMount() {
+    this.getProcessListByType()
+  }
+  componentWillUnmount() {
+    const { status } = this.props
+    let listName
+    switch (status ) {
+      case '1':
+        listName = 'processDoingList'
+        break
+      case '2':
+        listName = 'processStopedList'
+        break
+      case '3':
+        listName = 'processComepletedList'
+        break
+      default:
+        listName = 'processDoingList'
+        break
+    }
+    this.props.updateDatasProcess({
+      [listName]: [],
+    })
+  }
+    //分页逻辑
+  async getProcessListByType() {
+    const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
+    const { page_number, page_size, } = this.state
+    const { listData = [], status, } = this.props
+
+    const obj = {
+      page_number,
+      page_size,
+      status,
+      board_id
+    }
+    this.setState({
+      loadMoreText: '加载中...'
+    })
+    const res = await getProcessListByType(obj)
+    if(res.code === '0') {
+      const data = res.data
+      let listName
+      let selectList = []
+      switch (status ) {
+        case '1':
+          listName = 'processDoingList'
+          selectList = processDoingList
+          break
+        case '2':
+          listName = 'processStopedList'
+          selectList = processStopedList
+          break
+        case '3':
+          listName = 'processComepletedList'
+          selectList =processComepletedList
+          break
+        default:
+          listName = 'processDoingList'
+          selectList = processDoingList
+          break
+      }
+      this.props.updateDatasProcess({
+        [listName]: selectList.concat(...data)
+      })
+      this.setState({
+        scrollBlock: !(data.length < page_size),
+        loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
+      }, () => {
+        this.setState({
+          loadMoreDisplay: listData.length ? 'block' : 'none',
+        })
+      })
+    }
+  }
+
+  contentBodyScroll(e) {
+    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+      const { scrollBlock } = this.state
+      if(!scrollBlock) {
+        return false
+      }
+      this.setState({
+        page_number: ++this.state.page_number,
+        scrollBlock: false
+      }, () => {
+        this.getProcessListByType()
+      })
+    }
+  }
+
+  processItemClick(id, e) {
+    this.props.changeFlowIdToUrl && this.props.changeFlowIdToUrl({id, currentProcessInstanceId: id})
+  }
+  render() {
+    const { clientHeight, listData = [], status } = this.props
+    const { loadMoreDisplay, loadMoreText } = this.state
+    const maxContentHeight = clientHeight - 108 - 150
+    const allStep = []
+    for(let i = 0; i < 20; i ++) {
+      allStep.push(i)
+    }
+    const filterProgress = (status, completed_node_num, total_node_num) => {
+      let ele = `（${completed_node_num}/${total_node_num}）`
+      switch (status) {
+        case '1':
+          ele = `（${completed_node_num}/${total_node_num}）`
+          break
+        case '2':
+          ele = `已终止`
+          break
+        case '3':
+          ele = ``
+          break
+        default:
+          ele = `（${completed_node_num}/${total_node_num}）`
+          break
+      }
+      return ele
+    }
+    const PanelHeader = (value) => {
+      const { name, curr_node_name, id, percentage = '100%', completed_node_num, total_node_num } = value
+      return (
+        <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, id)}>
+          <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>&#xe605;</div>
+          <div className={indexStyles.panelHead_m}>
+            <div className={indexStyles.panelHead_m_l}>{name}{filterProgress(status, completed_node_num, total_node_num)}</div>
+            <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
+          </div>
+          {/*<div className={indexStyles.panelHead_r}>*/}
+            {/*<div className={indexStyles.panelHead_r_l}>*/}
+              {/*{status == '2'?(*/}
+                {/*<span style={{color: '#8c8c8c'}}>已终止</span>*/}
+              {/*) : (*/}
+                {/*allStep.map((value, key) => (*/}
+                    {/*<span key={key} style={{color: key < areadyStep? '#262626': '#8c8c8c'}}>|</span>*/}
+                  {/*)*/}
+                {/*)*/}
+              {/*)}*/}
+
+            {/*</div>*/}
+            {/*<div className={indexStyles.panelHead_r_m}>{status != '2' && percentage}</div>*/}
+            {/*/!*<div className={indexStyles.panelHead_r_r}>*!/*/}
+              {/*/!*<Avatar size="small" icon="user" />*!/*/}
+            {/*/!*</div>*!/*/}
+          {/*</div>*/}
+        </div>
+      )
+    }
+
+    return (
+      <div
+        className={indexStyles.paginationContent}
+        style={{maxHeight: maxContentHeight}}
+        onScroll={this.contentBodyScroll.bind(this)}>
+        <Collapse
+            bordered={false}
+            style={{backgroundColor: '#f5f5f5', marginTop: 4}}>
+            {listData.map((value, key) => {
+              return (
+                <Panel header={PanelHeader(value)} key={key} style={customPanelStyle} />
+              )
+            })}
+          </Collapse>
+        {!listData.length || !listData?(
+          <div className={indexStyles.nodata} style={{height: maxContentHeight - 30}} >
+            <div className={indexStyles.nodata_inner}>
+              <img src={nodataImg} />
+              <div>暂无数据</div>
+            </div>
+          </div>
+        ): ('')}
+        <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
+      </div>
+    )
+  }
+}
+const customPanelStyle = {
+  background: '#f5f5f5',
+  borderRadius: 4,
+  fontSize: 16,
+  border: 0,
+  marginLeft: 10,
+  overflow: 'hidden',
+};

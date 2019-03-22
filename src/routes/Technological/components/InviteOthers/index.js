@@ -1,18 +1,23 @@
-import React, { Component } from "react";
-import { Button, Select, Spin, message, Tooltip } from "antd";
-import styles from "./index.less";
-import { connect } from "dva";
-import { debounce } from "./../../../../utils/util";
-import { associateUser } from "./../../../../services/technological/workbench";
-import defaultUserAvatar from "./../../../../assets/invite/user_default_avatar@2x.png";
-import { getPinyin } from "./../../../../utils/pinyin";
+import React, { Component } from 'react'
+import { Button, Select, Spin, message, Tooltip } from 'antd'
+import styles from './index.less'
+import { connect } from 'dva'
+import { debounce } from './../../../../utils/util'
+import { validateTel, validateEmail } from './../../../../utils/verify'
+import { associateUser } from './../../../../services/technological/workbench'
+import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png'
+import defaultOrgAvatar from './../../../../assets/invite/org_default_avatar@2x.png'
+import { getPinyin } from './../../../../utils/pinyin'
+import classNames from 'classnames/bind'
 
-const Option = Select.Option;
+let cx = classNames.bind(styles)
 
-@connect(({ technological, organizationMember }) => ({
+const Option = Select.Option
+
+@connect(({ technological, organizationMember, workbench }) => ({
   currentOrg: technological.datas.currentSelectOrganize,
   currentOrgAllMembersList: technological.datas.currentOrgAllMembersList,
-  projectList: technological.datas.currentOrgProjectList,
+  projectListWithUsers: workbench.datas.projectUserList,
   groupList:
     organizationMember.datas && organizationMember.datas.groupList
       ? organizationMember.datas.groupList
@@ -20,9 +25,9 @@ const Option = Select.Option;
 }))
 class InviteOthers extends Component {
   constructor(props) {
-    super(props);
-    const { currentOrgAllMembersList } = props;
-    this.fetchUsers = debounce(this.fetchUsers, 300);
+    super(props)
+    const { currentOrgAllMembersList } = props
+    this.fetchUsers = debounce(this.fetchUsers, 300)
     this.state = {
       inputValue: [],
       inputRet: [],
@@ -31,14 +36,18 @@ class InviteOthers extends Component {
       membersListToSelect: Array.isArray(currentOrgAllMembersList)
         ? currentOrgAllMembersList
         : [], //人员选择列表
-      isSyncWithOrg: false, //如果同步了组织,则不能不同和选择其他人。
+      projectList: [], //我参与的项目列表
       currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
-      currentMemberListSet: "org", //当前显示的集合 org || group-id || project-id
+      currentMemberListSet: 'org', //当前显示的集合 org || group-id || project-id
       isInSelectedList: false, //是否仅显示列表的
-      step: "home" //当前的步进 home || group-list || group-id || project-list ||project-id
-    };
+      step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
+    }
+  }
+  isValidMobileOrValidEmail = user => {
+    return validateEmail(user) || validateTel(user)
   }
   handleSearchUser = user => {
+    const isValidUser = this.isValidMobileOrValidEmail(user)
     this.setState(
       {
         inputValue: [],
@@ -46,36 +55,55 @@ class InviteOthers extends Component {
         fetching: false
       },
       () => {
-        this.fetchUsers(user);
+        if (isValidUser) {
+          this.fetchUsers(user)
+        }
       }
-    );
-  };
-  genSplitSymbol = () => "$%$";
-  genUserValueStr = (icon, name, user, isFromPlatForm) => {
-    return `${icon}${this.genSplitSymbol()}${name}${this.genSplitSymbol()}${user}${this.genSplitSymbol()}${isFromPlatForm}`;
-  };
+    )
+  }
+  genSplitSymbol = () => '$%$'
+  genUserValueStr = (icon, name, user, isFromPlatForm, id) => {
+    const splitSymbol = this.genSplitSymbol()
+    return `${icon}${splitSymbol}${name}${splitSymbol}${user}${splitSymbol}${isFromPlatForm}${
+      id ? `${splitSymbol}${id}` : ''
+    }`
+  }
   genUserToDefinedMember = user => {
-    if (!user || !user.id) return;
-    const { avatar = "default", full_name = "default", mobile, email } = user;
-    const mobileOrEmail = mobile ? mobile : email;
+    if (!user || !(user.id || user.user_id)) return
+    const {
+      avatar = 'default',
+      full_name = 'default',
+      mobile,
+      email,
+      id,
+      user_id
+    } = user
+    const mobileOrEmail = mobile ? mobile : email
     return this.parseUserValueStr(
-      this.genUserValueStr(avatar, full_name, mobileOrEmail, true)
-    );
-  };
+      this.genUserValueStr(
+        avatar,
+        full_name,
+        mobileOrEmail,
+        true,
+        id ? id : user_id
+      )
+    )
+  }
   parseUserValueStr = userValueStr => {
-    if (!userValueStr) return;
-    const [icon, name, user, isFromPlatForm] = userValueStr.split(
+    if (!userValueStr) return
+    const [icon, name, user, isFromPlatForm, id] = userValueStr.split(
       this.genSplitSymbol()
-    );
+    )
     return {
-      type: isFromPlatForm === "true" ? "platform" : "other",
+      type: isFromPlatForm === 'true' ? 'platform' : 'other',
       icon,
       name,
-      user
-    };
-  };
+      user,
+      id: id ? id : ''
+    }
+  }
   fetchUsers = user => {
-    if (!user) return;
+    if (!user) return
     this.setState(
       {
         inputRet: [],
@@ -85,105 +113,107 @@ class InviteOthers extends Component {
         //发起请求
         associateUser(user)
           .then(res => {
-            if (res.code && res.code === "0") {
+            if (res.code && res.code === '0') {
               //如果查到了用户
               if (res.data && res.data.id) {
-                const { avatar_icon, nickname } = res.data;
+                const { avatar_icon, nickname, id } = res.data
                 const value = this.genUserValueStr(
                   avatar_icon,
                   nickname,
                   user,
-                  true
-                );
+                  true,
+                  id
+                )
                 this.setState({
                   inputRet: [
                     { value, avatar: avatar_icon, user, name: nickname }
                   ],
                   fetching: false
-                });
+                })
               } else {
                 const value = this.genUserValueStr(
-                  "default",
-                  "default",
+                  'default',
+                  'default',
                   user,
                   false
-                );
+                )
+                const item = {
+                  value,
+                  avatar: 'default',
+                  user,
+                  name: null
+                }
                 this.setState({
-                  inputRet: [{ value, avatar: "default", user, name: null }],
+                  inputRet: [item],
                   fetching: false
-                });
+                })
               }
             } else {
-              message.error("获取联想用户失败");
+              this.setState({
+                fetching: false
+              })
+              message.error('获取联想用户失败')
             }
           })
           .catch(err => {
-            message.error("获取联想用户失败");
-          });
+            this.setState({
+              fetching: false
+            })
+            message.error('获取联想用户失败')
+          })
       }
-    );
-  };
-  isMemberInSyncSetsMemberList = selectedUser => {
-    const { currentSyncSetsMemberList } = this.state;
-    function flattenDeep(arr1) {
-      return arr1.reduce(
-        (acc, val) =>
-          Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val),
-        []
-      );
-    }
-    const flatMemberListFromCurrentSyncSets = flattenDeep(
-      Object.values(currentSyncSetsMemberList)
-    );
-    return flatMemberListFromCurrentSyncSets.find(
-      item =>
-        item.mobile === selectedUser.user || item.email === selectedUser.user
-    );
-  };
+    )
+  }
   handleInputSelected = value => {
-    const { selectedMember } = this.state;
-    const selectedUser = this.parseUserValueStr(value.key);
+    const { selectedMember } = this.state
+    const selectedUser = this.parseUserValueStr(value.key)
     const isHasSameMemberInSelectedMember = () =>
-      selectedMember.find(item => item.user === selectedUser.user);
-    const isInSyncSet = this.isMemberInSyncSetsMemberList(selectedUser);
-    if (isInSyncSet) {
-      message.error("当前人员已经存在于要同步的集合中了");
-    }
-    if (isHasSameMemberInSelectedMember() || isInSyncSet) return;
+      selectedMember.find(item => item.user === selectedUser.user)
+    if (isHasSameMemberInSelectedMember()) return
     this.setState({
       selectedMember: [...selectedMember, selectedUser],
       inputValue: [],
       inputRet: [],
       fetching: false
-    });
-  };
+    }, () => {
+      this.handleReturnResultWhenNotShowSubmitBtn()
+    })
+  }
+  handleReturnResultWhenNotShowSubmitBtn = () => {
+    const {handleInviteMemberReturnResult, isShowSubmitBtn} = this.props
+      if(isShowSubmitBtn) return
+      const {selectedMember} = this.state
+      handleInviteMemberReturnResult(selectedMember)
+  }
   handleInputDeselected = value => {
-    const selectedUser = this.parseUserValueStr(value.key);
-    const { selectedMember } = this.state;
+    const selectedUser = this.parseUserValueStr(value.key)
+    const { selectedMember } = this.state
     this.setState({
       selectedMember: selectedMember.filter(
         item => item.user !== selectedUser.user
       )
-    });
-  };
+    }, () => {
+      this.handleReturnResultWhenNotShowSubmitBtn()
+    })
+  }
   handleInputChange = value => {
     //这个函数根本就不会执行？？？
-    this.setState({
-      inputValue: value,
-      inputRet: [],
-      fetching: false
-    });
-  };
+    // this.setState({
+    //   inputValue: value,
+    //   inputRet: [],
+    //   fetching: false
+    // })
+  }
   genOptionLabel = item => {
-    const { avatar, user, name } = item;
+    const { avatar, user, name } = item
     //默认
-    if (avatar === "default") {
+    if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
           <span className={styles.input__select_default_avatar} />
           <span className={styles.input__select_user}>{user}</span>
         </p>
-      );
+      )
     }
     return (
       <p className={styles.input__select_wrapper}>
@@ -191,66 +221,61 @@ class InviteOthers extends Component {
           <img src={avatar} width="24" height="24" alt="" />
         </span>
         <span className={styles.input__select_user}>{user}</span>
-        <span className={styles.input__select_name}>({name})</span>
+        <span className={styles.input__select_name}>({name ? name : '匿名用户'})</span>
       </p>
-    );
-  };
+    )
+  }
   delFromSelectedMember = item => {
     this.setState(state => {
-      const { selectedMember } = state;
+      const { selectedMember } = state
       return {
         selectedMember: selectedMember.filter(i => i.user !== item.user)
-      };
-    });
-  };
+      }
+    }, () => {
+      this.handleReturnResultWhenNotShowSubmitBtn()
+    })
+  }
   addMemberToSelectedMember = item => {
-    const { selectedMember } = this.state;
+    const { selectedMember } = this.state
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === item.user);
-    if (isMemberHasInSelectedMember()) return;
+      selectedMember.find(each => each.user === item.user)
+    if (isMemberHasInSelectedMember()) return
+
     this.setState({
       selectedMember: [item, ...selectedMember]
-    });
-  };
+    }, () => {
+      this.handleReturnResultWhenNotShowSubmitBtn()
+    })
+  }
   handleClickedResultListIcon = (item, e) => {
-    if (e) e.stopPropagation();
-    this.handleWhenSync(item);
-    this.delFromSelectedMember(item);
-  };
-  handleWhenSync = item => {
-    const condition = new Map([["org", this.removeSyncOrg()]]);
-    const callback = condition.get(item.user);
-    if (callback) callback();
-  };
-  removeSyncOrg = () => {
-    this.setState({
-      isSyncWithOrg: false
-    });
-  };
+    if (e) e.stopPropagation()
+    this.delFromSelectedMember(item)
+  }
   handleToggleMemberInSelectedMember = (item, e) => {
-    if (e) e.stopPropagation();
-    const { selectedMember, isSyncWithOrg } = this.state;
-    if (isSyncWithOrg) return;
-    const member = this.genUserToDefinedMember(item);
+    if (e) e.stopPropagation()
+    const { selectedMember } = this.state
+
+    const member = this.genUserToDefinedMember(item)
+
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === member.user);
+      selectedMember.find(each => each.user === member.user)
     if (isMemberHasInSelectedMember()) {
-      return this.delFromSelectedMember(member);
+      return this.delFromSelectedMember(member)
     }
-    return this.addMemberToSelectedMember(member);
-  };
+    return this.addMemberToSelectedMember(member)
+  }
   isAvatarValid = avatar => {
-    return avatar && typeof avatar === "string" && avatar.startsWith("http");
-  };
+    return avatar && typeof avatar === 'string' && avatar.startsWith('http')
+  }
   checkMemberInSelectedMember = item => {
-    const { selectedMember } = this.state;
-    const mobileOrEmail = item.mobile ? item.mobile : item.email;
+    const { selectedMember } = this.state
+    const mobileOrEmail = item.mobile ? item.mobile : item.email
     return selectedMember.find(
-      each => each.type === "platform" && each.user === mobileOrEmail
-    );
-  };
+      each => each.type === 'platform' && each.user === mobileOrEmail
+    )
+  }
   sortMemberListByCapital = (arr = []) => {
-    if (!arr.length) return [];
+    if (!arr.length) return []
     return arr.sort((a, b) => {
       const getName = ele =>
         ele.full_name
@@ -263,112 +288,85 @@ class InviteOthers extends Component {
           ? ele.email
           : ele.name
           ? ele.name
-          : "garbage data";
-      const aNameCapital = getPinyin(getName(a), "").toUpperCase()[0];
-      const bNameCapital = getPinyin(getName(b), "").toUpperCase()[0];
-      return aNameCapital.localeCompare(bNameCapital);
-    });
-  };
-  syncWithOrg = () => {
-    const { isSyncWithOrg } = this.state;
-    const { currentOrgAllMembersList, currentOrg } = this.props;
-    //如果是要与组织同步，那么先移除已选列表的组织内成员，然后将组织添加到列表
-    if (!isSyncWithOrg) {
-      Promise.resolve(
-        //删除已经在被同步的组织中的已添加成员
-        this.delMultiFromSelectedMember(currentOrgAllMembersList)
-      )
-        .then(() =>
-          this.addOrgMemberToCurrentSyncSetsMemberList(currentOrgAllMembersList)
-        )
-        .then(() => this.setOrgToSelectedMember(currentOrg));
-    } else {
-      Promise.resolve(this.delOrgFromSelectedMember(currentOrg)).then(() =>
-        this.removeOrgMemberFromCurrentSyncSetMemberList()
-      );
-    }
-    this.setState({
-      isSyncWithOrg: !isSyncWithOrg
-    });
-  };
-  removeOrgMemberFromCurrentSyncSetMemberList = () => {
-    const { currentSyncSetsMemberList } = this.state;
-    this.setState({
-      currentSyncSetsMemberList: { ...currentSyncSetsMemberList, org: [] }
-    });
-  };
-  addOrgMemberToCurrentSyncSetsMemberList = currentOrgAllMembersList => {
-    const { currentSyncSetsMemberList } = this.state;
-    this.setState({
-      currentSyncSetsMemberList: {
-        ...currentSyncSetsMemberList,
-        org: [...currentOrgAllMembersList]
-      }
-    });
-  };
-  setOrgToSelectedMember = org => {
-    const { selectedMember } = this.state;
-    const item = {
-      type: "org", //org||project||group
-      icon: org.logo,
-      name: org.name,
-      user: org.id
-    };
-    this.setState({
-      selectedMember: [item, ...selectedMember]
-    });
-  };
-  delOrgFromSelectedMember = org => {
-    const { selectedMember } = this.state;
-    this.setState({
-      selectedMember: selectedMember.filter(each => each.user !== org.id)
-    });
-  };
-  delMultiFromSelectedMember = arr => {
-    const { selectedMember } = this.state;
-    console.log(arr, selectedMember);
-    console.log(
-      selectedMember.filter(
-        each =>
-          !arr.find(
-            item => item.mobile === each.user || item.email === each.user
-          )
-      ),
-      "filter selected member"
-    );
-    this.setState({
-      selectedMember: selectedMember.filter(
-        each =>
-          !arr.find(
-            item => item.mobile === each.user || item.email === each.user
-          )
-      )
-    });
-  };
-  toggleSync = () => {
-    const { currentMemberListSet } = this.state;
-    const condition = new Map([["org", () => this.syncWithOrg()]]);
-    const callback = condition.get(currentMemberListSet);
-    if (callback) callback();
-  };
+          : 'garbage data'
+      const aNameCapital = getPinyin(getName(a), '').toUpperCase()[0]
+      const bNameCapital = getPinyin(getName(b), '').toUpperCase()[0]
+      return aNameCapital.localeCompare(bNameCapital)
+    })
+  }
   handleClickedInviteFromGroup = () => {
     this.setState({
       isInSelectedList: true,
-      step: "group-list"
-    });
-  };
-  handleClickedInviteFromGroupList = id => {
-    const { groupList } = this.props;
+      step: 'group-list'
+    })
+  }
+  handleClickedInviteFromProject = () => {
+    const { dispatch } = this.props
+    const initProjectList = () => {
+      const { projectListWithUsers } = this.props
+      if (!projectListWithUsers.length) {
+        message.destroy()
+        message.info('当前没有创建任何项目')
+        return
+      }
+      this.setState({
+        isInSelectedList: true,
+        step: 'project-list',
+        projectList: projectListWithUsers.map(({ board_id, board_name }) => ({
+          board_id,
+          board_name
+        }))
+      })
+    }
+    const fetchProjectList = async () => {
+      await dispatch({
+        type: 'workbench/getProjectUserList',
+        payload: {}
+      })
+      return initProjectList()
+    }
+    fetchProjectList()
+  }
+  handleClickedInviteFromProjectList = (id, e) => {
+    if (e) e.stopPropagation()
+    const getProjectMembers = () => {
+      const { projectListWithUsers } = this.props
+      const findProject = projectListWithUsers.find(
+        item => item.board_id === id
+      )
+      const isProjectWithUsers = findProject
+        ? findProject.users && Array.isArray(findProject.users)
+        : false
+      return isProjectWithUsers ? findProject.users : []
+    }
+    this.setPageStep(false, `project-${id}`, getProjectMembers())
+  }
+  setPageStep = (isInSelectedList, step, membersListToSelect = []) => {
     this.setState({
-      isInSelectedList: false,
-      step: `group-${id}`,
-      membersListToSelect: groupList.find(item => item.id === id).members
-    });
-  };
+      isInSelectedList,
+      step,
+      membersListToSelect
+    })
+  }
+  handleClickedInviteFromGroupList = (id, e) => {
+    if (e) e.stopPropagation()
+    const getGroupMembers = () => {
+      const { groupList } = this.props
+      const findGroup = groupList.find(item => item.id === id)
+      const isGroupWithMembers = findGroup
+        ? findGroup.members && Array.isArray(findGroup.members)
+        : false
+      return isGroupWithMembers ? findGroup.members : []
+    }
+    const nameToFullname = getGroupMembers().map(item =>
+      Object.assign({}, item, { full_name: item.name })
+    )
+    this.setPageStep(false, `group-${id}`, nameToFullname)
+  }
   handleBack = () => {
-    const { currentOrgAllMembersList, groupList } = this.props;
-    const { step } = this.state;
-    const [type, id] = step.split("-");
+    const { currentOrgAllMembersList, groupList } = this.props
+    const { step } = this.state
+    const [type, id] = step.split('-')
     //step: 当前的步进 home || group-list || group-id || project-list ||project-id
     const conditionMap = new Map([
       [
@@ -376,88 +374,107 @@ class InviteOthers extends Component {
         () =>
           this.setState({
             isInSelectedList: true,
-            step: "group-list",
-            membersListToSelect: groupList.find(item => item.id === id).members
+            step: 'group-list',
+            membersListToSelect: []
           })
       ],
       [
-        "group-list",
+        'group-list',
         () =>
           this.setState({
             isInSelectedList: false,
-            step: "home",
+            step: 'home',
+            membersListToSelect: Array.isArray(currentOrgAllMembersList)
+              ? currentOrgAllMembersList
+              : [] //人员选择列表
+          })
+      ],
+      [
+        `project-${id}`,
+        () =>
+          this.setState({
+            isInSelectedList: true,
+            step: 'project-list',
+            membersListToSelect: []
+          })
+      ],
+      [
+        'project-list',
+        () =>
+          this.setState({
+            isInSelectedList: false,
+            step: 'home',
             membersListToSelect: Array.isArray(currentOrgAllMembersList)
               ? currentOrgAllMembersList
               : [] //人员选择列表
           })
       ]
-    ]);
-    const callback = conditionMap.get(step);
-    if (callback) callback();
-  };
+    ])
+    const callback = conditionMap.get(step)
+    if (callback) callback()
+  }
+  isSelectedAll = () => {
+    const { membersListToSelect } = this.state
+    return membersListToSelect.every(item =>
+      this.checkMemberInSelectedMember(item)
+    )
+  }
+  handleToggleSelectCurrentListAll = () => {
+    const { membersListToSelect, selectedMember } = this.state
+    //如果是全选状态，那么就全不选, 否则就全选
+    // const isSelectedAll = () => membersListToSelect.every(item => this.checkMemberInSelectedMember(item))
+    if (this.isSelectedAll()) {
+      membersListToSelect.map(item =>
+        this.handleToggleMemberInSelectedMember(item)
+      )
+    } else {
+      const findItemNotInSelectedList = membersListToSelect
+        .filter(item => {
+          const member = this.genUserToDefinedMember(item)
+          const isMemberHasInSelectedMember = () =>
+            selectedMember.find(each => each.user === member.user)
+          return !isMemberHasInSelectedMember()
+        })
+        .map(item => this.genUserToDefinedMember(item))
+      this.setState(state => {
+        const { selectedMember } = state
+        return {
+          selectedMember: [...selectedMember, ...findItemNotInSelectedList]
+        }
+      }, () => {
+      this.handleReturnResultWhenNotShowSubmitBtn()
+      })
+    }
+  }
   getGroupList = () => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
-      type: "organizationMember/getGroupList",
+      type: 'organizationMember/getGroupList',
       payload: {}
-    });
-  };
+    })
+  }
+  isValidImgSrc = (srcStr = '') => {
+    const srcRegExp = /^http[s]?:.+\.(png|jpg|jpeg|gif)$/
+    return srcRegExp.test(srcStr)
+  }
+  handleSubmitSeletedMember = () => {
+    const { handleInviteMemberReturnResult } = this.props
+    const { selectedMember } = this.state
+    handleInviteMemberReturnResult(selectedMember)
+  }
   componentDidMount() {
-    this.getGroupList();
+    this.getGroupList()
   }
   renderWhenNoData = () => {
-    return null;
-  };
-  renderCurrentSetSync = () => {
-    const { step, isSyncWithOrg } = this.state;
-    const { currentOrg } = this.props;
-
-    return (
-      <div className={styles.invite__select_member_all}>
-        <span className={styles.invite__select_member_all_info}>
-          <img
-            className={styles.invite__select_member_all_avatar}
-            width="20"
-            height="20"
-            src={currentOrg.logo}
-            alt=""
-          />
-          <span className={styles.invite__select_member_all_title}>
-            {currentOrg.name}
-          </span>
-        </span>
-        <span className={styles.invite__select_member_all_operator}>
-          {!isSyncWithOrg && (
-            <span
-              className={styles.invite__select_member_all_operator_sync}
-              onClick={this.toggleSync}
-            >
-              同步
-            </span>
-          )}
-          {isSyncWithOrg && (
-            <span
-              className={styles.invite__select_member_all_operator_cancel}
-              onClick={this.toggleSync}
-            >
-              取消同步
-            </span>
-          )}
-          <Tooltip title="全选所有人参与，同步人员变动">
-            <span
-              className={styles.invite__select_member_all_operator_prompt}
-            />
-          </Tooltip>
-        </span>
-      </div>
-    );
-  };
+    return null
+  }
   renderSelectList = () => {
-    const { step } = this.state;
-    const { groupList, projectList } = this.props;
-    const selectHome = (
-      <div className={styles.invite__select_list_wrapper}>
+    const { step, projectList, isInSelectedList } = this.state
+    const { groupList } = this.props
+    const selectHome = () => (
+      <>
         <div
+          key="group"
           className={styles.invite__select_list_item}
           onClick={this.handleClickedInviteFromGroup}
         >
@@ -466,21 +483,25 @@ class InviteOthers extends Component {
           </span>
           <span className={styles.invite__select_list_item_icon} />
         </div>
-        <div className={styles.invite__select_list_item}>
+        <div
+          key="project"
+          className={styles.invite__select_list_item}
+          onClick={this.handleClickedInviteFromProject}
+        >
           <span className={styles.invite__select_list_item_text}>
             从项目邀请
           </span>
           <span className={styles.invite__select_list_item_icon} />
         </div>
-      </div>
-    );
-    const selectGroupList = (
-      <div className={styles.invite__select_list_wrapper}>
-        {groupList.map(item => (
+      </>
+    )
+    const selectGroupList = () => (
+      <>
+        {groupList.map((item, index) => (
           <div
-            key={item.id}
+            key={item.id ? item.id : index}
             className={styles.invite__select_list_item}
-            onClick={() => this.handleClickedInviteFromGroupList(item.id)}
+            onClick={e => this.handleClickedInviteFromGroupList(item.id, e)}
           >
             <span className={styles.invite__select_list_item_text}>
               {item.name}
@@ -488,15 +509,17 @@ class InviteOthers extends Component {
             <span className={styles.invite__select_list_item_icon} />
           </div>
         ))}
-      </div>
-    );
-    const selectProjectList = (
-      <div className={styles.invite__select_list_wrapper}>
+      </>
+    )
+    const selectProjectList = () => (
+      <>
         {projectList.map(item => (
           <div
             key={item.board_id}
             className={styles.invite__select_list_item}
-            onClick={this.handleClickedInviteFromGroup}
+            onClick={e =>
+              this.handleClickedInviteFromProjectList(item.board_id, e)
+            }
           >
             <span className={styles.invite__select_list_item_text}>
               {item.board_name}
@@ -504,48 +527,70 @@ class InviteOthers extends Component {
             <span className={styles.invite__select_list_item_icon} />
           </div>
         ))}
+      </>
+    )
+    const condition = {
+      home: selectHome,
+      'group-list': selectGroupList,
+      'project-list': selectProjectList
+    }
+    let selectListWrapper = cx({
+      invite__select_list_wrapper: true,
+      invite__select_list_wrapper_with_out_border_bottom: isInSelectedList
+    })
+    const mapCallback = condition[step]
+    const wrapper = (
+      <div className={selectListWrapper}>
+        {mapCallback ? mapCallback() : null}
       </div>
-    );
-    //step: "home" //当前的步进 home || group-list || group-id || project-list ||project-id
-    const condition = new Map([
-      ["home", selectHome],
-      ["group-list", selectGroupList],
-      ["project-list", selectProjectList]
-    ]);
-    return condition.get(step) ? condition.get(step) : null;
-  };
+    )
+    return wrapper
+  }
   render() {
     const {
       title,
       submitText,
       currentOrg,
-      currentOrgAllMembersList
-    } = this.props;
+      currentOrgAllMembersList,
+      isShowTitle,
+      isShowSubmitBtn,
+      children,
+      isDisableSubmitWhenNoSelectItem
+    } = this.props
     const {
       fetching,
       inputRet,
       inputValue,
       selectedMember,
-      isSyncWithOrg,
       membersListToSelect,
       isInSelectedList,
       step
-    } = this.state;
-    const isGetData = () => currentOrg && currentOrgAllMembersList;
+    } = this.state
+
+    const isGetData = () => currentOrg && currentOrgAllMembersList
     if (!isGetData()) {
-      return this.renderWhenNoData();
+      return this.renderWhenNoData()
     }
     const sortedMembersListToSelect = this.sortMemberListByCapital(
       membersListToSelect
-    );
+    )
+
+    const isHasSelectedItem = !!selectedMember.length
+
+    let inviteSelectWrapper = cx({
+      invite__select_content_wrapper: true,
+      invite__select_wrapper_change_height: step !== 'home'
+    })
+
     return (
       <div className={styles.wrapper}>
-        <h3 className={styles.title}>{title}</h3>
+        {isShowTitle && <h3 className={styles.title}>{title}</h3>}
         <div className={styles.invite__input}>
           <Select
             mode="multiple"
             value={inputValue}
             labelInValue
+            maxTagCount={1}
             placeholder="请输入被邀请人的手机号或邮箱"
             notFoundContent={fetching ? <Spin size="small" /> : null}
             filterOption={false}
@@ -553,7 +598,7 @@ class InviteOthers extends Component {
             onChange={this.handleInputChange}
             onSelect={this.handleInputSelected}
             onDeselect={this.handleInputDeselected}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
           >
             {inputRet.map(item => (
               <Option key={item.value}>{this.genOptionLabel(item)}</Option>
@@ -561,7 +606,7 @@ class InviteOthers extends Component {
           </Select>
         </div>
         <div className={styles.invite__select_wrapper}>
-          {step !== "home" && (
+          {step !== 'home' && (
             <div
               className={styles.invite__select_back_wrapper}
               onClick={this.handleBack}
@@ -572,11 +617,31 @@ class InviteOthers extends Component {
               </span>
             </div>
           )}
-          <div className={styles.invite__select_content_wrapper}>
+          <div className={inviteSelectWrapper} >
             {this.renderSelectList()}
-            {this.renderCurrentSetSync()}
             {!isInSelectedList && (
               <div className={styles.invite__select_member_wrapper}>
+                <div
+                  className={styles.invite__select_member_All}
+                  onClick={this.handleToggleSelectCurrentListAll}
+                >
+                  <span className={styles.invite__select_member_All_text}>
+                    全选
+                  </span>
+                  {this.isSelectedAll() ? (
+                    <span
+                      className={
+                        styles.invite__select_member_item_operator_selected
+                      }
+                    />
+                  ) : (
+                    <span
+                      className={
+                        styles.invite__select_member_item_operator_unselected
+                      }
+                    />
+                  )}
+                </div>
                 {sortedMembersListToSelect.map(item => (
                   <div
                     key={item.id}
@@ -604,9 +669,7 @@ class InviteOthers extends Component {
                     <span
                       className={styles.invite__select_member_item_operator}
                     >
-                      {isSyncWithOrg ? null : this.checkMemberInSelectedMember(
-                          item
-                        ) ? (
+                      {this.checkMemberInSelectedMember(item) ? (
                         <span
                           className={
                             styles.invite__select_member_item_operator_selected
@@ -616,13 +679,6 @@ class InviteOthers extends Component {
                         <span
                           className={
                             styles.invite__select_member_item_operator_unselected
-                          }
-                        />
-                      )}
-                      {isSyncWithOrg && (
-                        <span
-                          className={
-                            styles.invite__select_member_item_operator_disabled
                           }
                         />
                       )}
@@ -636,12 +692,12 @@ class InviteOthers extends Component {
         <div className={styles.invite__result_wrapper}>
           <div className={styles.invite__result_list}>
             {selectedMember.map(item => (
-              <div className={styles.invite__result_list_item} key={item.user}>
-                <Tooltip title={item.type === "other" ? item.user : item.name}>
+              <div key={item.user} className={styles.invite__result_list_item}>
+                <Tooltip title={item.type === 'other' ? item.user : item.name}>
                   <div className={styles.invite__result_list_item_img_wrapper}>
                     <img
                       src={
-                        item.type === "other"
+                        item.type === 'other'
                           ? defaultUserAvatar
                           : this.isAvatarValid(item.icon)
                           ? item.icon
@@ -662,17 +718,28 @@ class InviteOthers extends Component {
             ))}
           </div>
         </div>
-        <div className={styles.invite__submit_wrapper}>
-          <Button type="primary">{submitText}</Button>
-        </div>
+        {isShowSubmitBtn && (
+          <div className={styles.invite__submit_wrapper}>
+            <Button disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem} onClick={this.handleSubmitSeletedMember} type="primary">
+              {submitText}
+            </Button>
+          </div>
+        )}
+        {children && children}
       </div>
-    );
+    )
   }
 }
 
 InviteOthers.defaultProps = {
-  title: "步骤三: 邀请他人一起参与项目",
-  submitText: "完成创建"
-};
+  isShowTitle: true,
+  title: '步骤三: 邀请他人一起参与项目', //标题
+  submitText: '完成创建', //提交按钮文字
+  isDisableSubmitWhenNoSelectItem: false, //如果没有选择 item 就禁用提交
+  isShowSubmitBtn: true, //是否显示提交按钮
+  handleInviteMemberReturnResult: function() {
+    message.info('邀请他人组件， 需要被提供一个回调函数')
+  }
+}
 
-export default InviteOthers;
+export default InviteOthers

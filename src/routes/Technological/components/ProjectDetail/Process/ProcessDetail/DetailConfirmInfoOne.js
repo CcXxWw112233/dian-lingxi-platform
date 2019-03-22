@@ -95,7 +95,7 @@ export default class DetailConfirmInfoOne extends React.Component {
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
-    
+
     const { itemKey } = this.props
     const { assignees = [] } = processEditDatas[itemKey]
     const userInfo = JSON.parse(Cookies.get('userInfo'))
@@ -105,8 +105,8 @@ export default class DetailConfirmInfoOne extends React.Component {
     let willSetAssignee = ''
     for(let i = 0; i < assignees.length; i++) {
       if(assignees[i].user_id === currentUserId) {
-        assignees[i] = users[data[0]]
-        willSetAssignee = users[data[0]].user_id
+        assignees[i] = data[0]
+        willSetAssignee = data[0]
         break;
       }
     }
@@ -152,20 +152,15 @@ export default class DetailConfirmInfoOne extends React.Component {
   render() {
     const { due_time, isShowBottDetail, relations = [] } = this.state
     const { ConfirmInfoOut_1_bott_Id } = this.state
-    const { datas: { processEditDatas, projectDetailInfoData = {}, processInfo = {} } } = this.props.model
+
+    const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {} } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
     const { curr_node_sort, status } = processInfo //当前节点
-    // debugger
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
-    // debugger
+    // console.log( processEditDatas[itemKey])
     //推进人来源
-    let usersArray = []
-
-    const users = projectDetailInfoData.data || []
-    for(let i = 0; i < users.length; i++) {
-      usersArray.push(users[i].full_name || users[i].email || users[i].mobile)
-    }
+    const users = projectDetailInfoData.data
     //推进人
     const assigneesArray = assignees || []
     //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
@@ -178,7 +173,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         break
       }
     }
-    
+
     const imgOrAvatar = (img) => {
       return img ? (
         <div>
@@ -281,7 +276,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={usersArray}
+              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
                                                      filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
                 {assignee_type !== '1'? (<div>重新指派推进人</div>) : (<div></div>)}
@@ -319,6 +314,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         </div>
       )
     }
+
     return (
       <div className={indexStyles.ConfirmInfoOut_1}>
         <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
@@ -350,12 +346,10 @@ export default class DetailConfirmInfoOne extends React.Component {
                   relations={relations}
                 />
               </div>
-              {
-                assignees?assignees.map((value, key)=>{
-                  const { comment } = value
-                  return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
-                }):null
-              }
+              {assignees.map((value, key)=>{
+                const { comment } = value
+                return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
+              })}
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}

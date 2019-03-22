@@ -23,6 +23,7 @@ import {
   filePreviewCommitPoints,
   selectFilePreviewCommitPoints,
   selectProjectDetailInfoData,
+  selectProcessDoingList
 } from './../select'
 import {
   workbench_selectProjectList,
@@ -111,7 +112,7 @@ export default {
       if(data=="pong"){
         return;
       }
-      //当前操作人, 跨组织不推送-1s
+      //当前操作人
       data = JSON.parse(data)
       const news = data['data'][1] || {}
       const news_d = JSON.parse(news['d'] || '{}')
@@ -121,7 +122,10 @@ export default {
       const user_id = userInfo['id']
       const { current_org = {}} = userInfo
       const current_org_id = current_org['id']
-      if(creator_id == user_id || current_org_id != org_id) {
+      // if(creator_id == user_id || current_org_id != org_id) {
+      //   return false
+      // }
+      if(creator_id == user_id) {
         return false
       }
 
@@ -418,27 +422,49 @@ export default {
           })
 
           break
-        case 'change:flow:template':
+        case 'change:flow:template': //新增流程模板
           board_id_ = getAfterNameId(coperateName)
           if(board_id_ == currentProjectBoardId) {
-            const { flow_template_list = [] } = coperateData
+            const processTemplateList = yield select(selectCurrentProcessTemplateList)
+            processTemplateList.push(coperateData)
             dispathes({
               type: model_projectDetailProcess('updateDatas'),
               payload: {
-                processTemplateList: flow_template_list
+                processTemplateList
               }
             })
           }
           break
-        case 'change:flow:instance':
-          board_id_
+        case 'delete:flow:template': //删除流程模板
+          board_id_ = getAfterNameId(coperateName)
           if(board_id_ == currentProjectBoardId) {
-            const processList = yield select(selectCurrentProcessList)
-            processList.push(coperateData)
+            const processTemplateList = yield select(selectCurrentProcessTemplateList)
+            const processTemplateList_New = [...processTemplateList]
+            let template_id = coperateData['id']
+            for(let i = 0; i < processTemplateList_New.length; i ++ ) {
+              if(template_id == processTemplateList_New[i]['id']) {
+                processTemplateList_New.splice(i, 1)
+                break
+              }
+            }
             dispathes({
               type: model_projectDetailProcess('updateDatas'),
               payload: {
-                processList
+                processTemplateList: processTemplateList_New
+              }
+            })
+          }
+          break
+
+        case 'change:flow:instance':
+          board_id_ = coperateData['board_id']
+          if(board_id_ == currentProjectBoardId) {
+            const processDoingList = yield select(selectProcessDoingList)
+            processDoingList.unshift(coperateData)
+            dispathes({
+              type: model_projectDetailProcess('updateDatas'),
+              payload: {
+                processDoingList
               }
             })
           }
@@ -1032,6 +1058,15 @@ export default {
           break
       }
 
+      //跨组织不推送消息
+      const news_d = JSON.parse(news['d'] || '{}')
+      const { org_id } = news_d
+      const userInfo = JSON.parse(Cookies.get('userInfo')) || {}
+      const { current_org = {}} = userInfo
+      const current_org_id = current_org['id']
+      if(current_org_id != org_id) {
+        return false
+      }
       dispathes({
         type: model_newsDynamic('handleWs'),
         payload: {

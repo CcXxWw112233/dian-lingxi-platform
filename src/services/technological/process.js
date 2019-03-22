@@ -5,7 +5,7 @@ import request from "../../utils/requestAxios";
 //获取流程模板列表
 export async function getProcessTemplateList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/template`,
+    url: `${REQUEST_DOMAIN_FLOWS}/template/list/${params.id}`,
     method: 'GET',
     params,
   });
@@ -18,7 +18,14 @@ export async function saveProcessTemplate(data) {
     data,
   });
 }
-
+//删除模板
+export async function deleteProcessTemplate(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/template/${data.id}`,
+    method: 'DELETE',
+    data,
+  });
+}
 
 //根据模板id查询模板信息
 export async function getTemplateInfo(id) {
@@ -123,7 +130,14 @@ export async function deleteProcessFile(data) {
     data,
   });
 }
-
+//获取流程列表 进行中 已终止 已完成
+export async function getProcessListByType(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/list`,
+    method: 'GET',
+    params,
+  }, {isNotLoading: true});
+}
 //工作台 流程modal 评论提交
 export async function addWorkFlowComment(data) {
   return request({
@@ -140,4 +154,3 @@ export async function getWorkFlowComment(params) {
     params
   })
 }
-

@@ -14,7 +14,7 @@ class ShowAddMenberModal extends React.Component {
   state = {
     stepThreeContinueDisabled: true,
     completeValidation: false, //完成滑块验证
-    users: ''
+    users: '',
   }
   //监听是否完成验证
   listenCompleteValidation = (e) => {
@@ -27,6 +27,9 @@ class ShowAddMenberModal extends React.Component {
     this.setState({
       users: e.target.value
     })
+  }
+  handleInviteTextAreaPressEnter = (e) => {
+    if(e) e.stopPropagation()
   }
   onCancel = () => {
     this.props.setShowAddMenberModalVisibile()
@@ -76,6 +79,7 @@ class ShowAddMenberModal extends React.Component {
           })(
             <TextArea style={{height: 208, resize: 'none'}}
                       onChange={this.usersChange.bind(this)}
+                      onPressEnter={this.handleInviteTextAreaPressEnter}
                       placeholder="请输入被邀请人的手机号或邮箱，批量发送请使用换行间隔。（选填）"/>
           )}
         </FormItem>

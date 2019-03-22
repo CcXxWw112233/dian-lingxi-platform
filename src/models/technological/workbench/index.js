@@ -28,7 +28,8 @@ export default modelExtend(technological, {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/technological/workbench') {
-          dispatch({
+          const initData = async () => {
+         await Promise.all([dispatch({
             type: 'updateDatas',
             payload: {
               cardGroupKey: 0,
@@ -54,13 +55,13 @@ export default modelExtend(technological, {
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
               currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
             }
-          })
+          }),
           dispatch({
             type: 'getCurrentOrgFileUploads',
             payload: {
 
             }
-          })
+          }),
           // dispatch({
           //   type: 'getUserImToken',
           //   payload: {
@@ -70,16 +71,25 @@ export default modelExtend(technological, {
           dispatch({
             type: 'getBoxList',
             payload: {}
-          })
+          }),
           dispatch({
             type: 'getProjectList',
             payload: {}
-          })
+          }),
           dispatch({
             type: 'getBoxUsableList',
             payload: {}
           })
+        ])
+        await dispatch({
+          type: 'handleCurrentSelectedProjectChange',
+          payload: {
+            board_id: '0'
+          }
+        })
         }
+        initData()
+      }
       })
     },
   },
@@ -124,6 +134,12 @@ export default modelExtend(technological, {
       yield put({type: 'setProjectTabCurrentSelectedProject', payload: {
         projectId: board_id
       }})
+      yield put({
+        type: 'workbenchPublicDatas/updateDatas',
+        payload: {
+          board_id: board_id
+        }
+      })
       //除了'所有参与的项目', 使选中的项目排在第一个
       if(board_id !== '0' && shouldResortPosition) {
         yield put({type: 'reSortProjectList', payload: {board_id}})
@@ -290,6 +306,12 @@ export default modelExtend(technological, {
           type: 'setProjectTabCurrentSelectedProject',
           payload: {
             projectId: projectId
+          }
+        })
+        yield put({
+          type: 'workbenchPublicDatas/updateDatas',
+          payload: {
+            board_id: projectId
           }
         })
       }else{

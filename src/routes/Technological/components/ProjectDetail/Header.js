@@ -550,11 +550,11 @@ export default class Header extends React.Component {
         case '2':
           operatorConent = (
             <div style={{color: '#595959'}}>
-              <Dropdown overlay={<MenuSearch {...this.props}/>}>
-                 <span>{processName || `请选择${currentNounPlanFilterName(FLOWS)}`}<Icon type="down" style={{fontSize: 14, color: '#595959'}}/></span>
-              </Dropdown>
-              {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:18,marginLeft:16}}/>*/}
-              <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16}}/>
+              {/*<Dropdown overlay={<MenuSearch {...this.props}/>}>*/}
+                 {/*<span>{processName || `请选择${currentNounPlanFilterName(FLOWS)}`}<Icon type="down" style={{fontSize: 14, color: '#595959'}}/></span>*/}
+              {/*</Dropdown>*/}
+              <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16, color: '#ffffff'}}/>
+              {/*<Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16}}/>*/}
             </div>
           )
           break
