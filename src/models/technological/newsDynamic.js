@@ -374,7 +374,7 @@ export default {
         // 将评论的内容添加到前面
         const newsDynamicList = yield select(selectNewsDynamicList)
         let newItem = JSON.parse(JSON.stringify(newsDynamicList[parentKey]['newDataList'][childrenKey]['TypeArrayList'][0]))
-        const { user_name, user_id, full_name, name, mobile, email, avatar } = JSON.parse(Cookies.get('userInfo'))
+        const { user_name, user_id, full_name, name, mobile, email, avatar } = JSON.parse(localStorage.getItem('userInfo'))
         const obj = {
           name,
           mobile,

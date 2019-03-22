@@ -63,8 +63,8 @@ export default class Header extends React.Component {
     const {
       datas: { cardGroupKey = 0 }
     } = this.props.model;
-    const userInfo = Cookies.get("userInfo")
-      ? JSON.parse(Cookies.get("userInfo"))
+    const userInfo = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
       : {};
     const { current_org = {} } = userInfo;
     const { role_name } = current_org;

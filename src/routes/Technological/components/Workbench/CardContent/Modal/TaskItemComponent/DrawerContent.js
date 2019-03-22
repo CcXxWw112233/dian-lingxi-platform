@@ -274,7 +274,7 @@ class DrawContent extends React.Component {
   setChargeManIsSelf() {
     const { datas: { drawContent = {} } } = this.props.model
     const { card_id, executors=[] } = drawContent
-    const userInfo = JSON.parse(Cookies.get('userInfo'))
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const { id, full_name, fullName, email, mobile, avatar } = userInfo
     executors[0] = {
       user_id: id,

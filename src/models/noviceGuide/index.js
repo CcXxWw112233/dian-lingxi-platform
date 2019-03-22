@@ -27,7 +27,7 @@ export default {
     * getUSerInfo({ payload }, { select, call, put }) { //提交表单
       let res = yield call(getUSerInfo, payload)
       if(isApiResponseOk(res)) {
-        Cookies.set('userInfo', res.data, {expires: 30, path: ''})
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
         yield put({
           type: 'routingJump',
           payload: {

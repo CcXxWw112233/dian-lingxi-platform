@@ -14,7 +14,7 @@ let handler = new Handler()
 
 let tiows
 const Authorization = Cookies.get('Authorization')
-const { id } = Cookies.get('userInfo')?JSON.parse(Cookies.get('userInfo')): ''
+const { id } = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
 const initWsFun = (calback) => {
   let queryString = `uid=${id}&token=${Authorization}`
   let param = null

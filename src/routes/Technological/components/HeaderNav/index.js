@@ -180,7 +180,7 @@ export default class HeaderNav extends React.Component{
   render() {
     const { datas = {} } = this.props.model
     const { userInfo = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, current_org={}, phone, qq, status, updateTime, username, wechat, } = Cookies.get('userInfo')? JSON.parse(Cookies.get('userInfo')): {}
+    const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, current_org={}, phone, qq, status, updateTime, username, wechat, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize

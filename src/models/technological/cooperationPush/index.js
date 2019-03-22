@@ -118,7 +118,7 @@ export default {
       const news_d = JSON.parse(news['d'] || '{}')
       const { creator = {}, org_id } = news_d
       const creator_id = creator['id']
-      const userInfo = JSON.parse(Cookies.get('userInfo')) || {}
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
       const user_id = userInfo['id']
       const { current_org = {}} = userInfo
       const current_org_id = current_org['id']
@@ -1061,7 +1061,7 @@ export default {
       //跨组织不推送消息
       const news_d = JSON.parse(news['d'] || '{}')
       const { org_id } = news_d
-      const userInfo = JSON.parse(Cookies.get('userInfo')) || {}
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
       const { current_org = {}} = userInfo
       const current_org_id = current_org['id']
       if(current_org_id != org_id) {
