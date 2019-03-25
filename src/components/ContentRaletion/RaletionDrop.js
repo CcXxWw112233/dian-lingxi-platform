@@ -127,10 +127,11 @@ export default class RaletionDrop extends React.Component {
   onPopupVisibleChange = (bool) => {
     const that = this
     const { link_id, link_local, board_id } = this.props
-    const { selected } = that.state
-    const selectedLength = selected.length
 
     setTimeout(function () {
+      const { selected } = that.state
+      const selectedLength = selected.length
+
       if(!bool) {
         if(typeof selected != 'object' || !selectedLength) {
           that.props.setIsInEditContentRelation && that.props.setIsInEditContentRelation(bool)
@@ -175,6 +176,7 @@ export default class RaletionDrop extends React.Component {
             [parent_or_content_id]: parent_content_id,
             linked_name,
           }
+          // debugger
         }
         that.props.setIsInEditContentRelation && that.props.setIsInEditContentRelation(bool)
         that.props.addRelation && that.props.addRelation({...obj})

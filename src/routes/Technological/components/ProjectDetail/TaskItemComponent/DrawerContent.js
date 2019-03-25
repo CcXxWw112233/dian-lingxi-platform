@@ -1146,8 +1146,7 @@ class DrawContent extends React.Component {
               board_id ={board_id}
               link_id={card_id}
               link_local={'3'}
-              addRelation = {this.props.JoinRelation.bind(this)}
-              relations={relationTaskList}
+
             />
           </div>
 

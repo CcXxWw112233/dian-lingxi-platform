@@ -21,7 +21,7 @@ import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
   currentNounPlanFilterName, openPDF, getSubfixName
 } from "../../../../../../../utils/businessFunction";
-import {deleteTaskFile, getRelations, JoinRelation} from '../../../../../../../services/technological/task'
+import {deleteTaskFile, } from '../../../../../../../services/technological/task'
 import { filePreview } from '../../../../../../../services/technological/file'
 import {getProcessList} from "../../../../../../../services/technological/process";
 import globalStyle from '../../../../../../../globalset/css/globalClassName.less'
@@ -72,11 +72,6 @@ class DrawContent extends React.Component {
 
   }
 
-  componentDidMount() {
-
-    this.getRelations()
-  }
-
   componentWillReceiveProps(nextProps) {
     const { datas: { drawContent = {}} } = nextProps.model
     let { description, attachment_data = [] } = drawContent
@@ -97,31 +92,6 @@ class DrawContent extends React.Component {
       this.setState({
         attachment_fileList
       })
-    }
-  }
-
-  //获取关联内容
-  async getRelations(data) {
-    const { datas: { board_id, card_id, } }= this.props.model
-    const res = await getRelations({
-      board_id,
-      link_id: card_id,
-      link_local: '3'
-    })
-    if(isApiResponseOk(res)) {
-      this.setState({
-        relations: res.data || []
-      })
-    }else{
-
-    }
-  }
-  async addRelation(data) {
-    const res = await JoinRelation(data)
-    if(isApiResponseOk(res)) {
-      this.getRelations()
-    }else{
-
     }
   }
 
@@ -723,15 +693,16 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { relations, titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
+    const { datas: { card_id, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
 
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { board_name, list_name, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
+    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
+
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
@@ -1145,8 +1116,6 @@ class DrawContent extends React.Component {
               board_id ={board_id}
               link_id={card_id}
               link_local={'3'}
-              addRelation = {this.addRelation.bind(this)}
-              relations={relations}
             />
             {/*<div className={DrawerContentStyles.contain_6}>*/}
               {/*<div className={DrawerContentStyles.contain_6_add}>*/}

@@ -5,14 +5,44 @@ import RaletionList from './RaletionList'
 import indexStyles from './index.less'
 import SearchUrlRelation from './SearchUrlRelation'
 import globalStyles from '../../globalset/css/globalClassName.less'
+import {isApiResponseOk} from "../../utils/handleResponseData";
+import {getRelations, JoinRelation} from "../../services/technological/task";
 
 //内容关联相关
 export default class ContentRaletion extends React.Component {
   state = {
     isInEditContentRelation: false,
     isInChoose: false,
-    isInSearCh: false
+    isInSearCh: false,
+    relations: []
   }
+  componentDidMount() {
+    this.getRelations()
+  }
+  async getRelations(data) {
+    const { board_id, link_id, link_local } = this.props
+    const res = await getRelations({
+      board_id,
+      link_id,
+      link_local,
+    })
+    if(isApiResponseOk(res)) {
+      this.setState({
+        relations: res.data || []
+      })
+    }else{
+
+    }
+  }
+  async addRelation(data) {
+    const res = await JoinRelation(data)
+    if(isApiResponseOk(res)) {
+      this.getRelations()
+    }else{
+
+    }
+  }
+
   setIsInEditContentRelation(bool) {
     this.setState({
       isInEditContentRelation: bool,
@@ -27,12 +57,9 @@ export default class ContentRaletion extends React.Component {
       isInChoose: !bool
     })
   }
-  addRelation(data) {
-    this.props.addRelation && this.props.addRelation(data)
-  }
   render() {
-    const { isInEditContentRelation, isInChoose, isInSearCh } = this.state
-    const { board_id, link_id, link_local, relations = [] } = this.props
+    const { isInEditContentRelation, isInChoose, isInSearCh, relations = [] } = this.state
+    const { board_id, link_id, link_local, } = this.props
 
     return(
       <div style={{width: 'auto'}}>

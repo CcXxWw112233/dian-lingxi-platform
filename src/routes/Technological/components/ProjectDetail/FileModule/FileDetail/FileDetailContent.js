@@ -7,8 +7,6 @@ import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
-import { getRelations, JoinRelation } from "../../../../../../services/technological/task";
-import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 export default class FileDetailContent extends React.Component {
 
@@ -57,38 +55,6 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       rects: filePreviewCommitPoints
     })
-  }
-
-  componentDidMount() {
-
-    this.getRelations()
-  }
-
-  //获取关联内容
-  async getRelations(data) {
-    const { datas: { projectDetailInfoData, filePreviewCurrentFileId, } }= this.props.model
-    const { board_id } = projectDetailInfoData
-    const res = await getRelations({
-      board_id,
-      link_id: filePreviewCurrentFileId,
-      link_local: '4'
-    })
-    if(isApiResponseOk(res)) {
-      this.setState({
-        relations: res.data || []
-      })
-    }else{
-
-    }
-  }
-
-  async addRelation(data) {
-    const res = await JoinRelation(data)
-    if(isApiResponseOk(res)) {
-     this.getRelations()
-    }else{
-
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -433,8 +399,6 @@ export default class FileDetailContent extends React.Component {
                 board_id ={board_id}
                 link_id={filePreviewCurrentFileId}
                 link_local={'4'}
-                addRelation = {this.addRelation.bind(this)}
-                relations={relations}
               />
               {seeFileInput === 'fileModule'? (
                <div className={indexStyles.versionOut}>

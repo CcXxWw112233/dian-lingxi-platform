@@ -6,8 +6,6 @@ import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
-import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
-import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
 const { RangePicker } = DatePicker;
 
@@ -25,41 +23,6 @@ export default class DetailConfirmInfoFive extends React.Component {
       ConfirmInfoOut_1_bott_Id: `ConfirmInfoOut_1_bott_Id__${itemKey * 100 + 1}`
     })
     this.propsChangeSetIsShowBottDetail(this.props)
-  }
-  componentDidMount() {
-
-    this.getRelations()
-  }
-  //获取关联内容
-  async getRelations(data) {
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey } = this.props
-    const { board_id } = projectDetailInfoData
-    const { id } = processEditDatas[itemKey]
-    const res = await getRelations({
-      board_id,
-      link_id: id,
-      link_local: '21'
-    })
-    if(isApiResponseOk(res)) {
-      this.setState({
-        relations: res.data || []
-      }, () => {
-        const { ConfirmInfoOut_1_bott_Id } = this.state
-        const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
-        this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
-      })
-    }else{
-
-    }
-  }
-  async addRelation(data) {
-    const res = await JoinRelation(data)
-    if(isApiResponseOk(res)) {
-      this.getRelations()
-    }else{
-
-    }
   }
   componentWillReceiveProps (nextProps) {
     this.propsChangeSetIsShowBottDetail(nextProps)
@@ -442,8 +405,6 @@ export default class DetailConfirmInfoFive extends React.Component {
                   board_id ={board_id}
                   link_id={id}
                   link_local={'21'}
-                  addRelation = {this.addRelation.bind(this)}
-                  relations={relations}
                 />
               </div>
               <div className={indexStyles.copy}>

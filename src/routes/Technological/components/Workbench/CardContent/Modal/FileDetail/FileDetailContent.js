@@ -58,37 +58,6 @@ export default class FileDetailContent extends React.Component {
     })
   }
 
-  componentDidMount() {
-
-    this.getRelations()
-  }
-
-  //获取关联内容
-  async getRelations(data) {
-    const { datas: { board_id, filePreviewCurrentFileId } }= this.props.model
-    const res = await getRelations({
-      board_id,
-      link_id: filePreviewCurrentFileId,
-      link_local: '4'
-    })
-    if(isApiResponseOk(res)) {
-      this.setState({
-        relations: res.data || []
-      })
-    }else{
-
-    }
-  }
-
-  async addRelation(data) {
-    const res = await JoinRelation(data)
-    if(isApiResponseOk(res)) {
-      this.getRelations()
-    }else{
-
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     const rects = []
     const { datas: { filePreviewCommitPoints=[]} }= nextProps.model
@@ -433,8 +402,6 @@ export default class FileDetailContent extends React.Component {
                 board_id ={board_id}
                 link_id={filePreviewCurrentFileId}
                 link_local={'4'}
-                addRelation = {this.addRelation.bind(this)}
-                relations={relations}
               />
               {/*{seeFileInput === 'file'? (*/}
                 {/*<div>*/}
