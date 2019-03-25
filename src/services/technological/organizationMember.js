@@ -29,6 +29,23 @@ export async function removeMembersWithGroup(data) {
   });
 }
 
+//将访客加入组织
+export async function joinOrganization(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/visitor/invite`,
+    method: 'PUT',
+    data
+  });
+}
+//将访客移除
+export async function removeUserVisitor(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/visitor/remove/${data.id}`,
+    method: 'DELETE',
+    data
+  });
+}
+
 //给成员设置分组
 export async function setMemberWitchGroup(data) {
   return request({

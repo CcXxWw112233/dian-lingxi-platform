@@ -59,6 +59,12 @@ export default class ItemOne extends React.Component {
           TreeGroupModalVisiblie: true,
         })
         break
+      case 'joinORG':
+        this.joinOrganization({member_id})
+        break
+      case 'removeUser':
+        this.removeUserConfirm({member_id})
+        break
       default:
         //设置角色
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
@@ -75,8 +81,33 @@ export default class ItemOne extends React.Component {
         break
     }
   }
+  //加入组织
+  joinOrganization({member_id}) {
+    this.props.joinOrganization({id: member_id})
+  }
 
-  //移出
+  //移除访客用户
+  removeUserConfirm({member_id}) {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const that = this
+    Modal.confirm({
+      title: `确认要移除这个用户吗？`,
+      content: '同时在本组织中将此用户移出所有项目',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        that.removeUserVisitor({member_id})
+      }
+    });
+  }
+  removeUserVisitor({member_id}) {
+    this.props.removeUserVisitor({ id: member_id})
+  }
+
+  //移出分组
   removeConfirm(member_id) {
     if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -195,6 +226,21 @@ export default class ItemOne extends React.Component {
               </div>
             </Menu.Item>
            ) : ('')}
+
+          {is_default == '2' && is_visitor == '1' ? (
+            <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={CreateTaskStyle.elseProjectMemu}>
+                加入组织
+              </div>
+            </Menu.Item>
+          ) : ('')}
+          {is_default == '2' && is_visitor == '1' ? (
+            <Menu.Item key={'removeUser'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
+                移出用户
+              </div>
+            </Menu.Item>
+          ) : ('')}
           {/*<Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>*/}
             {/*<div className={CreateTaskStyle.elseProjectDangerMenu}>*/}
               {/*停用*/}

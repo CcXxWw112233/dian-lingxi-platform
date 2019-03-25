@@ -18,6 +18,18 @@ const OrganizationMember = (props) => {
         payload: data,
       })
     },
+    joinOrganization(data) {
+      dispatch({
+        type: getEffectOrReducerByName('joinOrganization'),
+        payload: data,
+      })
+    },
+    removeUserVisitor(data) {
+      dispatch({
+        type: getEffectOrReducerByName('removeUserVisitor'),
+        payload: data,
+      })
+    },
     removeMembersWithGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('removeMembersWithGroup'),

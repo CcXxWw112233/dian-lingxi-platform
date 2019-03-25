@@ -28,6 +28,9 @@ export default class PersonNews extends React.Component {
     this.listenSiderRightresize();
   }
   resizeTTY(type) {
+    if(!document.getElementById("technologicalOut")) {
+      return
+    }
     const width = document.getElementById("technologicalOut").clientWidth; //获取页面可见高度
     const clientHeight = document.documentElement.clientHeight; //获取页面可见高度
     const clientWidth = document.documentElement.clientWidth + 16; //获取页面可见高度

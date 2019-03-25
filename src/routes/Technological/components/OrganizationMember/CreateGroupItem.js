@@ -132,11 +132,11 @@ export default class TaskItem extends React.Component {
   render() {
     const { isInEditAdd, inputValue } = this.state
     const { itemValue = {}, itemKey } = this.props
-    const { name, is_default, members = [], editable, leader_id='', leader_avatar='', leader_members = []} = itemValue //is_default ==='1' 默认分组不可操作
-
+    const { name, is_default, members = [], leader_id='', leader_avatar='', leader_members = []} = itemValue //is_default ==='1' 默认分组不可操作
+    //is_default 0 1 2 普通分组/未分组/访客分组
     const { datas: { menuSearchSingleSpinning }} = this.props.model
 
-    const operateMenu = () => {
+    const operateMenu = (is_default) => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
           <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
@@ -144,11 +144,14 @@ export default class TaskItem extends React.Component {
               重命名
             </div>
           </Menu.Item>
-          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={CreateTaskStyle.elseProjectDangerMenu}>
-              删除
-            </div>
-          </Menu.Item>
+          {is_default === '0' && (
+            <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={CreateTaskStyle.elseProjectDangerMenu}>
+                删除
+              </div>
+            </Menu.Item>
+          )}
+
         </Menu>
       );
     }
@@ -175,8 +178,8 @@ export default class TaskItem extends React.Component {
               <div className={CreateTaskStyle.title_l_name}>{name}</div>
               <div style={{marginRight: 4, marginLeft: 4}}>·</div>
               <div>{members.length}</div>
-              {is_default === '0' && editable == '1'?(
-                <Dropdown overlay={operateMenu()}>
+              {is_default === '0' || is_default === '2'?(
+                <Dropdown overlay={operateMenu(is_default)}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>
@@ -218,7 +221,7 @@ export default class TaskItem extends React.Component {
             }
             return contain
           })}
-          {is_default === '0' && editable === '1'? (
+          {is_default === '0' ? (
             <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
             </div>

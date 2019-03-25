@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import {
   setGroupLeader, getMembersInOneGroup, getMemberInfo, setMemberRole, getCurrentOrgRole, inviteMemberToGroup,
   getGroupTreeList, discontinueMember, approvalMember, setMemberWitchGroup, removeMembersWithGroup, CreateGroup,
-  getGroupList, updateGroup, deleteGroup, getGroupPartialInfo, inviteJoinOrganization
+  getGroupList, updateGroup, deleteGroup, getGroupPartialInfo, inviteJoinOrganization, joinOrganization, removeUserVisitor
 } from "../../services/technological/organizationMember";
 import modelExtend from 'dva-model-extend'
 import technological from './index'
@@ -155,6 +155,37 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    * joinOrganization({ payload }, { select, call, put }) {
+      let res = yield call(joinOrganization, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload: {
+            calback: function () {
+              message.success(`已将${currentNounPlanFilterName(MEMBERS)}加入组织`, MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * removeUserVisitor({ payload }, { select, call, put }) {
+      let res = yield call(removeUserVisitor, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getGroupList',
+          payload: {
+            calback: function () {
+              message.success(`已将${currentNounPlanFilterName(MEMBERS)}移除`, MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * removeMembersWithGroup({ payload }, { select, call, put }) {
       let res = yield call(removeMembersWithGroup, payload)
       if(isApiResponseOk(res)) {

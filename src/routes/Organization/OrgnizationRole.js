@@ -195,27 +195,30 @@ export default class OrgnizationRole extends React.Component {
     const { datas: { orgnization_role_data }} = this.props.model
     const { collapseStatus } = this.state
     const operateMenu = ({parentKey, value}) => {
-      const { is_default } = value
+      const { is_default, is_visitor } = value
       return (
         <Menu onClick={this.handleMenuClick.bind(this, {parentKey, value})}>
-          {is_default !== '1'?(
+          {is_default !== '1' && is_visitor != '1'?(
             <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectMemu}>
                 设为默认
               </div>
             </Menu.Item>
           ):('')}
-          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyles.elseProjectMemu}>
-              复制
-            </div>
-          </Menu.Item>
+          {is_visitor != '1' && (
+            <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={indexStyles.elseProjectMemu}>
+                复制
+              </div>
+            </Menu.Item>
+          )}
           <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyles.elseProjectMemu}>
               重命名
             </div>
           </Menu.Item>
-          {is_default !== '1'?(
+
+          {is_default !== '1' && is_visitor != '1' ?(
             <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectDangerMenu}>
                 删除
@@ -254,11 +257,13 @@ export default class OrgnizationRole extends React.Component {
                     {system_role === '1'? (
                       <div>系统角色</div>
                     ):(
-                      is_default === '1' ? (<div>默认角色</div>) : ('')
+                      is_default === '1' ? (<div>默认角色</div>) : (
+                        is_visitor === '1'? (<div>外部角色</div>) : ('')
+                      )
                     )}
                   </div>
                   <div className={indexStyles.parrentPanaelHeader_r} style={{display: 'block'}}>
-                    {system_role !== '1' && is_visitor !== '1'?(
+                    {system_role !== '1'?(
                       <Dropdown overlay={operateMenu({parentKey, value})}>
                         <Icon type="ellipsis" theme="outlined" />
                       </Dropdown>
