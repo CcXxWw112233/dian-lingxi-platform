@@ -3,7 +3,7 @@ import { Icon } from 'antd'
 export default class Header extends React.Component {
 
   close() {
-    this.props.setPreviewProccessModalVisibile()
+    this.props.close()
   }
   render() {
     return (

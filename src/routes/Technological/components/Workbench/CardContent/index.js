@@ -177,8 +177,12 @@ class CardContent extends React.Component {
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     });
   }
+  close() {
+    this.setState({
+      previewProccessModalVisibile: false
+    })
+  }
   async setPreviewProccessModalVisibile() {
-    //workbench/backLogProcessList 对应的操作
     console.log('this is model!!!~~~~', this.props.model.datas)
     let flowID = this.props.model.datas.totalId.flow
     let board_id = this.props.model.datas.totalId.board
@@ -641,6 +645,7 @@ class CardContent extends React.Component {
         {/* 我的流程 */}
         <ProccessDetailModal
           {...this.props}
+          close = {this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
           setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
             this
