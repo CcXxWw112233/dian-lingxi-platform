@@ -17,7 +17,7 @@ const Panel = Collapse.Panel;
 
 export default class PagingnationContent extends React.Component {
   state = {
-    previewProccessModalVisibile: false,
+    previewProccessModalVisibile: this.props.model.datas.processDetailModalVisible,
     page_number: 1,
     page_size: 20,
     loadMoreDisplay: 'none',
@@ -118,6 +118,9 @@ export default class PagingnationContent extends React.Component {
     this.setState({
       previewProccessModalVisibile: false
     })
+    this.props.updateDatas({
+      processDetailModalVisible: false
+    })
   }
   async processItemClick(obj) {
     console.log('this is dog wangwangwang ---', this.props.model.datas)
@@ -190,6 +193,7 @@ export default class PagingnationContent extends React.Component {
         </div>
       )
     }
+    const { processDetailModalVisible } = this.props.model.datas
 
     return (
       <div

@@ -6,7 +6,12 @@ import projectDetail from './index'
 import {
   completeProcessTask,
   createProcess,
-  fillFormComplete, getProcessInfo, getProcessList, getProcessTemplateList, getProessDynamics, getTemplateInfo,
+  fillFormComplete, 
+  getProcessInfo, 
+  getProcessList, 
+  getProcessTemplateList, 
+  getProessDynamics, 
+  getTemplateInfo,
   rebackProcessTask,
   rejectProcessTask,
   resetAsignees,
@@ -94,6 +99,19 @@ export default modelExtend(projectDetail, {
               type: 'getProcessInfoByUrl',
               payload: {
                 currentProcessInstanceId: flow_id
+              }
+            })
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                processDetailModalVisible: true
+              }
+            })
+          } else {
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                processDetailModalVisible: false
               }
             })
           }
