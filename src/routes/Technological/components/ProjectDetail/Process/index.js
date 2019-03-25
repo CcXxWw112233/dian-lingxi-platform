@@ -11,8 +11,6 @@ const ProcessIndex = (props) => {
      <Process {...props} />
    </div>
   )
-};
+}
 
 export default ProcessIndex
-
-

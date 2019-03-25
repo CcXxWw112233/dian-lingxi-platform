@@ -54,7 +54,6 @@ export default modelExtend(projectDetail, {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
@@ -235,9 +234,7 @@ export default modelExtend(projectDetail, {
           currentProcessInstanceId
         }
       })
-      console.log('打桩开始!!!', payload)
       let res = yield call(getProcessInfo, currentProcessInstanceId)
-      console.log('rrrrrrr', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -278,7 +275,6 @@ export default modelExtend(projectDetail, {
         type: 'updateDatas',
         payload
       })
-      console.log('啊啊啊啊', payload)
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
       if(isApiResponseOk(res)) {

@@ -55,7 +55,7 @@ export default class ProcessDefault extends React.Component {
     const flowTabs = () => {
       return (
         <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16}}>
-          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>进行中 {processDoingList.length}</div>} key="1">{<PagingnationContent {...this.props}listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>进行中 {processDoingList.length}</div>} key="1">{<PagingnationContent {...this.props} listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
           <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已终止 {processStopedList.length}</div>} key="2">{<PagingnationContent {...this.props} listData={processStopedList} status={'2'} clientHeight={clientHeight}/>}</TabPane>
           <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已完成 {processComepletedList.length}</div>} key="3">{<PagingnationContent {...this.props} listData={processComepletedList} status={'3'} clientHeight={clientHeight}/>}</TabPane>
         </Tabs>

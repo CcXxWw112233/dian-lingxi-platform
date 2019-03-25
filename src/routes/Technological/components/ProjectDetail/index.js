@@ -81,12 +81,6 @@ const ProjectDetail = (props) => {
         payload: data
       })
     },
-    getProcessInfo(data){
-      dispatch({
-        type: getEffectOrReducerByNameProcess('getProcessInfo'),
-        payload: data
-      })
-    },
     changeFlowIdToUrl(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('changeFlowIdToUrl'),
@@ -544,7 +538,6 @@ const ProjectDetail = (props) => {
       })
     },
     completeProcessTask(data){
-      console.log('const fn has running!!!')
       dispatch({
         type: getEffectOrReducerByNameProcess('completeProcessTask'),
         payload: data
@@ -622,12 +615,41 @@ const ProjectDetail = (props) => {
       payload: payload
     })
   }
-
+  const getProjectDetailInfo = (payload) => {
+    dispatch({
+      type: 'workbenchTaskDetail/projectDetailInfo',
+      payload: payload
+    })
+  }
+  const workflowComments = {
+    addWorkFlowComment(payload) {
+      console.log('test')
+      dispatch({
+        type: 'workbenchDetailProcess/addWorkFlowComment',
+        payload
+      })
+    },
+    getWorkFlowComment(params) {
+      dispatch({
+        type: 'workbenchDetailProcess/getWorkFlowComment',
+        payload: params
+      })
+    }
+  }
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
+        appFace = (<ProcessIndex 
+          {...this.props} 
+          getProjectDetailInfo={getProjectDetailInfo} 
+          {...workflowComments}
+          {...FileModuleProps} 
+          {...ProcessProps} 
+          updateDatas={updateDatas} 
+          updateDatasTask={updateDatasTask} 
+          updateDatasFile={updateDatasFile} 
+          updateDatasProcess={updateDatasProcess} />)
         break
       case '3':
         appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
@@ -658,9 +680,9 @@ const ProjectDetail = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading }) {
+function mapStateToProps({ modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading, workbenchDetailProcess }) {
   const modelObj = {
-    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
+    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...workbenchDetailProcess['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
   }
   return { modal, model: modelObj, loading }
 }

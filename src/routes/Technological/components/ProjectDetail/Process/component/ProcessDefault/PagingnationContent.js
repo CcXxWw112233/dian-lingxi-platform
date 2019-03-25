@@ -11,15 +11,19 @@ import {
   selectProcessStopedList
 } from "../../../../../../../models/technological/select";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
+import ProccessDetailModal from '../../../../Workbench/CardContent/Modal/ProccessDetailModal'
+
 const Panel = Collapse.Panel;
 
 export default class PagingnationContent extends React.Component {
   state = {
+    previewProccessModalVisibile: false,
     page_number: 1,
     page_size: 20,
     loadMoreDisplay: 'none',
     scrollBlock: true, //滚动加载锁，true可以加载，false不执行滚动操作
   }
+  
   componentDidMount() {
     this.getProcessListByType()
   }
@@ -110,9 +114,22 @@ export default class PagingnationContent extends React.Component {
       })
     }
   }
-
-  processItemClick(id, e) {
-    this.props.changeFlowIdToUrl && this.props.changeFlowIdToUrl({id, currentProcessInstanceId: id})
+  close() {
+    this.setState({
+      previewProccessModalVisibile: false
+    })
+  }
+  async processItemClick(obj) {
+    console.log('this is dog wangwangwang ---', this.props.model.datas)
+    await this.props.updateDatas({
+      totalId: obj
+    })
+    await this.props.getProcessInfo({id: obj.flow})
+    await this.props.getProjectDetailInfo({id: obj.board})
+    await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
+    await this.setState({
+      previewProccessModalVisibile: !this.state.previewProccessModalVisibile
+    });
   }
   render() {
     const { clientHeight, listData = [], status } = this.props
@@ -141,9 +158,13 @@ export default class PagingnationContent extends React.Component {
       return ele
     }
     const PanelHeader = (value) => {
-      const { name, curr_node_name, id, percentage = '100%', completed_node_num, total_node_num } = value
+      const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num } = value
+      let obj = {
+        flow: id,
+        board: board_id
+      }
       return (
-        <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, id)}>
+        <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, obj)}>
           <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>&#xe605;</div>
           <div className={indexStyles.panelHead_m}>
             <div className={indexStyles.panelHead_m_l}>{name}{filterProgress(status, completed_node_num, total_node_num)}</div>
@@ -193,6 +214,11 @@ export default class PagingnationContent extends React.Component {
           </div>
         ): ('')}
         <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
+        <ProccessDetailModal 
+          {...this.props}
+          close = {this.close.bind(this)}
+          modalVisible={this.state.previewProccessModalVisibile}
+        />
       </div>
     )
   }

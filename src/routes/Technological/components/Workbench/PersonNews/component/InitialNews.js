@@ -278,7 +278,6 @@ export default class InitialNews extends React.Component {
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           break
         case 'board.flow.task.reassign':
-            debugger
           contain = '重新指派审批人'
           messageContain = (
             <div className={NewsListStyle.news_3}>
