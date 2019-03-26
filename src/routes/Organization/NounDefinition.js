@@ -125,7 +125,7 @@ export default class NounDefinition extends React.Component {
           </div>
         ) : ('')}
 
-        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)?(
+        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)?(
           <div className={indexStyles.contain2}>
             <Button disabled={saveDisabled} type={'primary'} onClick={this.saveNoun.bind(this)}>保存</Button>
           </div>

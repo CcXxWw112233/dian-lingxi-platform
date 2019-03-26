@@ -3,8 +3,12 @@ import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip } from 'antd'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import {
+  ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, NOT_HAS_PERMISION_COMFIRN, MEMBERS, CATCH_UP, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
+  ORG_TEAM_BOARD_QUERY, MESSAGE_DURATION_TIME
+} from "../../../../globalset/js/constant";
+import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import {message} from "antd/lib/index";
 
 export default class Header extends React.Component {
   state = {
@@ -18,6 +22,10 @@ export default class Header extends React.Component {
     })
   }
   setShowAddMenberModalVisibile() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
@@ -75,10 +83,12 @@ export default class Header extends React.Component {
         </div>
 
         <div className={indexStyle.right}>
-          <div style={{marginRight: 12}} onClick={this.setShowAddMenberModalVisibile.bind(this)}>添加{currentNounPlanFilterName(MEMBERS)}</div>
-          <Tooltip title={'该功能尚未上线，敬请期待！'}>
-            <div>批量导入{currentNounPlanFilterName(MEMBERS)}</div>
-          </Tooltip>
+          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
+            <div style={{marginRight: 12}} onClick={this.setShowAddMenberModalVisibile.bind(this)}>添加{currentNounPlanFilterName(MEMBERS)}</div>
+          )}
+          {/*<Tooltip title={'该功能尚未上线，敬请期待！'}>*/}
+            {/*<div>批量导入{currentNounPlanFilterName(MEMBERS)}</div>*/}
+          {/*</Tooltip>*/}
           <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16, color: '#e5e5e5'}}/>
         </div>
       </div>

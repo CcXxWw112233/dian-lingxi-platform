@@ -4,6 +4,8 @@ import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
 import Header from './Header'
 import CreateGroup from './CreateGroup'
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
+import { ORG_UPMS_ORGANIZATION_MEMBER_QUERY } from "../../../../globalset/js/constant";
 
 const getEffectOrReducerByName = name => `organizationMember/${name}`
 
@@ -138,8 +140,13 @@ const OrganizationMember = (props) => {
   }
   return(
     <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto', position: 'relative', width: '100%', overflow: 'hidden'}}>
-      <Header {...CreateGroupProps} model={model}/>
-      <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
+      {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && (
+        <Header {...CreateGroupProps} model={model}/>
+      )}
+      {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && (
+        <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
+      )}
+
     </div>
   )
 };

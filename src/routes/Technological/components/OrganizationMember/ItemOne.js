@@ -199,7 +199,7 @@ export default class ItemOne extends React.Component {
     const operateMenu = () => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          {is_visitor !== '1' ? (
+          {is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)? (
             <Menu.SubMenu title="设置角色" key={'role'}>
               {roleList.map((value, key) => {
                 return(
@@ -212,14 +212,14 @@ export default class ItemOne extends React.Component {
               })}
             </Menu.SubMenu>
           ) :('')}
-          {is_visitor !== '1' ? (
+          {is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
             <Menu.Item key={'setGroup'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 设置分组
               </div>
             </Menu.Item>
           ) :('')}
-          {is_default !== '1' && is_visitor !== '1' ? (
+          {is_default !== '1' && is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)? (
             <Menu.Item key={'remove'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 移出分组
@@ -227,14 +227,14 @@ export default class ItemOne extends React.Component {
             </Menu.Item>
            ) : ('')}
 
-          {is_default == '2' && is_visitor == '1' ? (
+          {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
             <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
                 加入组织
               </div>
             </Menu.Item>
           ) : ('')}
-          {is_default == '2' && is_visitor == '1' ? (
+          {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE)? (
             <Menu.Item key={'removeUser'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
                 移出用户

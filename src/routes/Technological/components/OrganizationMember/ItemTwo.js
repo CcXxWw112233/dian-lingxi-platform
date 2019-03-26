@@ -5,7 +5,7 @@ import { Icon, Checkbox, Collapse, Avatar, Button, Menu, Dropdown, message } fro
 import QueueAnim from 'rc-queue-anim'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_UPMS_ORGANIZATION_MEMBER_EDIT, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE
+  ORG_UPMS_ORGANIZATION_MEMBER_EDIT, ORG_UPMS_ORGANIZATION_MEMBER_ADD
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
 
@@ -32,7 +32,7 @@ export default class ItemTwo extends React.Component {
   }
   //通过
   passMember (data) {
-    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -61,9 +61,12 @@ export default class ItemTwo extends React.Component {
           </div>
         </div>
         <div className={CreateTaskStyle.item_2_right}>
-          <Dropdown overlay={operateMenu()}>
-             <Button onClick={this.passMember.bind(this, {member_id, status: '2'})} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
-          </Dropdown>
+          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
+            <Dropdown overlay={operateMenu()}>
+              <Button onClick={this.passMember.bind(this, {member_id, status: '2'})} type={'primary'} size={'small'}><Icon type="file" theme="outlined" style={{fontSize: 12}} />批准<Icon type="down" theme="outlined" style={{fontSize: 12}}/></Button>
+            </Dropdown>
+          )}
+
         </div>
       </div>
     )

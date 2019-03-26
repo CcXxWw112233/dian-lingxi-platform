@@ -57,7 +57,7 @@ export default class Projectlist extends React.Component {
                   <ElseProject {...this.props} itemDetailInfo={value} key={`${board_id}_${is_star}`}/>
                 )}
               )}
-              {addItem}
+              {checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && addItem}
             </Panel>
           ):('')}
 

@@ -178,7 +178,7 @@ export default class TaskItem extends React.Component {
               <div className={CreateTaskStyle.title_l_name}>{name}</div>
               <div style={{marginRight: 4, marginLeft: 4}}>·</div>
               <div>{members.length}</div>
-              {is_default === '0' || is_default === '2'?(
+              {is_default === '0' || is_default === '2' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)?(
                 <Dropdown overlay={operateMenu(is_default)}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
@@ -221,7 +221,7 @@ export default class TaskItem extends React.Component {
             }
             return contain
           })}
-          {is_default === '0' ? (
+          {is_default === '0' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)? (
             <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
             </div>

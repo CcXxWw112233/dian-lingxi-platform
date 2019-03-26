@@ -198,24 +198,28 @@ export default class ProjectRole extends React.Component {
       const { is_default } = value
       return (
         <Menu onClick={this.handleMenuClick.bind(this, {parentKey, value})}>
-          {is_default !== '1'?(
+          {is_default !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)?(
             <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectMemu}>
                 设为默认
               </div>
             </Menu.Item>
           ): ('') }
-          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyles.elseProjectMemu}>
-              复制
-            </div>
-          </Menu.Item>
-          <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyles.elseProjectMemu}>
-              重命名
-            </div>
-          </Menu.Item>
-          {is_default !== '1'?(
+          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) && (
+            <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={indexStyles.elseProjectMemu}>
+                复制
+              </div>
+            </Menu.Item>
+          )}
+          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) && (
+            <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={indexStyles.elseProjectMemu}>
+                重命名
+              </div>
+            </Menu.Item>
+          )}
+          {is_default !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)?(
             <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectDangerMenu}>
                 删除
@@ -339,9 +343,11 @@ export default class ProjectRole extends React.Component {
             )
           })}
         </Collapse>
-        <div className={indexStyles.addParrentPanel} onClick={this.addPanel.bind(this)}>
-          <Icon type="plus-circle" theme="outlined" />
-        </div>
+        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) && (
+          <div className={indexStyles.addParrentPanel} onClick={this.addPanel.bind(this)}>
+            <Icon type="plus-circle" theme="outlined" />
+          </div>
+        )}
         {/*重命名,添加*/}
         <RenameModal reName_Add_type={this.state.reName_Add_type} copy={this.copy.bind(this)} renameModalVisable={this.state.renameModalVisable} reNamePanelItem={this.reNamePanelItem.bind(this)} addPanelItem={this.addPanelItem.bind(this)} setRenameModalVisable={this.setRenameModalVisable.bind(this)}/>
       </div>
