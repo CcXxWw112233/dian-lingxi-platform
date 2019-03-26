@@ -54,7 +54,7 @@ export default {
             }
           })
 
-          if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){ //如果有权限才去查
+          if(true){ //如果有权限才去查 //checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)
             dispatch({
               type: 'getRolePermissions',
               payload: {

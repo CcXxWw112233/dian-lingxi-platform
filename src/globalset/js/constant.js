@@ -18,8 +18,8 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 //export const WEBSOCKET_URL = 'wss://lingxi.di-an.com/websocket' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
 export const NODE_ENV = process.env.NODE_ENV
-export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.11:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-export const WEBSOCKET_PATH = '192.168.1.11' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.60:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_PATH = '192.168.1.60' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
 
@@ -34,7 +34,6 @@ export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
 export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 
 export const PAGINATION_PAGE_SIZE = 12 //分页每页条数
-
 
 //权限列表
 export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
@@ -51,6 +50,7 @@ export const ORG_UPMS_ORGANIZATION_ROLE_DELETE = 'org:upms:organization:role:del
 export const ORG_TEAM_BOARD_QUERY = 'org:team:board:query' //查看项目 permission_type=1
 export const ORG_TEAM_BOARD_EDIT = 'org:team:board:edit' //编辑项目 permission_type=1
 export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看成员 permission_type=1
+export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //成员管理 permission_type=2
 export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
 export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2
 export const PROJECT_TEAM_BOARD_DELETE = 'project:team:board:delete' //删除项目 permission_type=2
@@ -58,6 +58,8 @@ export const PROJECT_FLOWS_FLOW_TEMPLATE = 'project:flows:flow:template' //管�
 export const PROJECT_FLOWS_FLOW_CREATE = 'project:flows:flow:create' //新增流程 permission_type=2
 export const PROJECT_FLOWS_FLOW_DELETE = 'project:flows:flow:delete' //删除流程 permission_type=2
 export const PROJECT_FLOWS_FLOW_ABORT = 'project:flows:flow:abort' //中止流程 permission_type=2
+export const PROJECT_FLOW_FLOW_ACCESS = 'project:flows:flow:access' //访问流程 permission_type=2
+export const PROJECT_FLOWS_FLOW_COMMENT = 'project:flows:flow:comment' //发表评论 //
 export const PROJECT_TEAM_CARD_INTERVIEW = 'project:team:card:interview' //访问任务 permission_type=2
 export const PROJECT_TEAM_CARD_CREATE = 'project:team:card:create' //创建任务 permission_type=2
 export const PROJECT_TEAM_CARD_EDIT = 'project:team:card:edit' //编辑任务 permission_type=2
@@ -74,7 +76,6 @@ export const PROJECT_FILES_FILE_EDIT = 'project:files:file:edit' //编辑文件 
 export const PROJECT_FILES_FOLDER = 'project:files:folder' //管理文件夹 permission_type=2
 export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //发表评论 permission_type=2
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
-
 
 //名词定义
 export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态"}

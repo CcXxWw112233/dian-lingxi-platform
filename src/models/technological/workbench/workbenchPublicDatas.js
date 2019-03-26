@@ -55,6 +55,11 @@ export default modelExtend(technological, {
 
   reducers: {
     updateDatas(state, action) {
+      const { payload = {} } = action
+      const { board_id } = payload
+      if(board_id) { //用于做权限控制
+        localStorage.setItem('board_id', board_id)
+      }
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },

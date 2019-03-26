@@ -121,19 +121,19 @@ class DrawContent extends React.Component {
     const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     if(key === '1') {
-      // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
-      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      //   return false
-      // }
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.props.archivedTask({
         card_id,
         is_archived: '1'
       })
     }else if(key === '2') {
-      // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
-      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      //   return false
-      // }
+      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.confirm(card_id)
     }
   }
@@ -154,10 +154,10 @@ class DrawContent extends React.Component {
 
   //标题-------start
   setIsCheck() {
-    // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
     const { is_realize = '0', card_id } = drawContent
     const obj = {
@@ -912,9 +912,9 @@ class DrawContent extends React.Component {
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
-          {/*{checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (*/}
-            {/*<div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>*/}
-          {/*)}*/}
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
+            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>
+          )}
           {/*项目挪动*/}
           <div style={{display: 'flex', justifyContent: 'space-between', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>
           <span></span>

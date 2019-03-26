@@ -63,7 +63,6 @@ export default {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
-
         dispatch({
           type: 'updateDatas',
           payload: {
@@ -96,6 +95,9 @@ export default {
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           const appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
+
+          //存储当前项目id,用于左权县控制
+          localStorage.setItem('board_id', board_id)
 
           //全局变化应用key
           dispatch({
@@ -183,10 +185,10 @@ export default {
 
         }
         //缓存下来当前项目的权限
-        localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
+        // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
       }else{
         //权限缓存空数组
-        localStorage.setItem('currentBoardPermission', JSON.stringify([]))
+        // localStorage.setItem('currentBoardPermission', JSON.stringify([]))
       }
     },
 

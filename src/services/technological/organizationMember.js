@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //创建分组
@@ -220,7 +220,7 @@ export async function getMembersInOneGroup(params) {
     url: `${REQUEST_DOMAIN}/group/members`,
     method: 'GET',
     params
-  },{isNotLoading:true});
+  },{isNotLoading: true});
 }
 //获取某个分组的成员 => 用于设置分组负责人
 export async function setGroupLeader(data) {
@@ -231,10 +231,27 @@ export async function setGroupLeader(data) {
   });
 }
 
-//组织成员获取权限列表 =>获取自己在组织中的权限
+//组织成员获取权限列表 =>获取自己在组织中的权限--已废弃
 export async function getOrganizationMemberPermissions(params) {
   return request({
     url: `${REQUEST_DOMAIN}/permissions/member`,
+    method: 'GET',
+    params
+  });
+}
+
+//获取用户所有组织所有权限
+export async function getUserOrgPermissions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/permissions/org`,
+    method: 'GET',
+    params
+  });
+}
+//获取用户所有项目所有权限
+export async function getUserBoardPermissions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/permissions/board`,
     method: 'GET',
     params
   });

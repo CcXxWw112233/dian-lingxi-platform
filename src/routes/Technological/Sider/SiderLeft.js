@@ -3,15 +3,17 @@ import { Icon, Layout, Menu, Dropdown} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { currentNounPlanFilterName } from "../../../utils/businessFunction";
+import {checkIsHasPermission, currentNounPlanFilterName} from "../../../utils/businessFunction";
 import {
-  DASHBOARD, MEMBERS,
-  ORGANIZATION, PROJECTS
+  DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE,
+  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY,
 } from "../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import {color_4} from "../../../globalset/js/styles";
+import {message} from "antd/lib/index";
 
 const { Sider } = Layout;
 
@@ -165,6 +167,25 @@ export default class SiderLeft extends React.Component {
       </Menu>
     )
 
+    //是否拥有管理后台入口
+    const isHasManagerBack = () => {
+      let flag = false
+      if(
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+      ) {
+        flag = true
+      }
+      return flag
+    }
+
+    //是否拥有查看成员入口
+    const isHasMemberView = () => {
+      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
+    }
+
     return (
       <Sider
         trigger={null}
@@ -181,8 +202,12 @@ export default class SiderLeft extends React.Component {
             <div className={indexStyles.middle_top}>{orgnizationName}</div>
             {identity_type == '1'? (
               <div className={indexStyles.middle_bott}>
-              <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
-              <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
+                {isHasMemberView() && (
+                  <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
+                )}
+                {isHasManagerBack() && (
+                  <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
+                )}
               <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>
             </div>
             ) : (

@@ -1,6 +1,9 @@
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
+import {
+  MEMBERS, MESSAGE_DURATION_TIME, ORG_TEAM_BOARD_QUERY, ORG_UPMS_ORGANIZATION_MEMBER_QUERY,
+  ORGANIZATION
+} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import {
@@ -12,7 +15,7 @@ import modelExtend from 'dva-model-extend'
 import technological from './index'
 import {getAppsList} from "../../services/technological/project";
 import { selectGroupList } from './select'
-import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import {checkIsHasPermission, currentNounPlanFilterName} from "../../utils/businessFunction";
 export default modelExtend(technological, {
   namespace: 'organizationMember',
   state: [],
@@ -32,24 +35,26 @@ export default modelExtend(technological, {
               menuSearchSingleSpinning: false, //获取分组负责人转转转
             }
           })
-          //获取分组列表
-          dispatch({
-            type: 'getGroupList',
-            payload: {
-            }
-          })
-          // 获取分组树状列表
-          dispatch({
-            type: 'getGroupTreeList',
-            payload: {}
-          })
-          //查询当前角色
-          dispatch({
-            type: 'getCurrentOrgRole',
-            payload: {
-              type: '1'
-            }
-          })
+          if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)){
+            //获取分组列表
+            dispatch({
+              type: 'getGroupList',
+              payload: {
+              }
+            })
+            // 获取分组树状列表
+            dispatch({
+              type: 'getGroupTreeList',
+              payload: {}
+            })
+            //查询当前角色
+            dispatch({
+              type: 'getCurrentOrgRole',
+              payload: {
+                type: '1'
+              }
+            })
+          }
         }
       })
     },

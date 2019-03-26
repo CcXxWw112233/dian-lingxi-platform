@@ -1,5 +1,16 @@
 import { getUSerInfo, logout } from '../../services/technological'
-import { getOrganizationMemberPermissions, changeCurrentOrg, getSearchOrganizationList, createOrganization, updateOrganization, applyJoinOrganization, inviteJoinOrganization, getCurrentUserOrganizes } from '../../services/technological/organizationMember'
+import {
+  getOrganizationMemberPermissions,
+  changeCurrentOrg,
+  getSearchOrganizationList,
+  createOrganization,
+  updateOrganization,
+  applyJoinOrganization,
+  inviteJoinOrganization,
+  getCurrentUserOrganizes,
+  getUserOrgPermissions,
+  getUserBoardPermissions,
+} from '../../services/technological/organizationMember'
 import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
 import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select";
 import { getCurrentNounPlan } from '../../services/organization'
@@ -8,11 +19,8 @@ import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
-import { initWs} from '../../components/WsNewsDynamic'
-import { selectNewMessageItem, selectImData } from './select'
 import QueryString from 'querystring'
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
-import {getUserImToken} from "../../services/technological/workbench";
 
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
@@ -78,28 +86,18 @@ export default {
           })
 
           //获取工作台当前选中的项目诗句
-          dispatch({
-            type: 'workbench/getBoxList',
-          })
-          dispatch({
-            type: 'fetchBoxAll',
-            payload: {}
-          })
+          // dispatch({
+          //   type: 'workbench/getBoxList',
+          // })
+          // dispatch({
+          //   type: 'fetchBoxAll',
+          //   payload: {}
+          // })
           //查询所在组织列表
           dispatch({
             type: 'getCurrentUserOrganizes',
             payload: {}
           })
-
-          // //websocket连接判定
-          // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
-          //   // initWs()
-          // }
-          // //页面移出时对socket和socket缓存的内容清除
-          // window.onbeforeunload = function () {
-          //   Cookies.set('wsLinking', false, {expires: 30, path: ''})
-          //   localStorage.removeItem(`newMessage`)
-          // }
 
           //当前名词定义的方案
           const currentNounPlan = localStorage.getItem('currentNounPlan')
@@ -111,10 +109,6 @@ export default {
             })
           }
 
-          // dispatch({
-          //   type: 'getUserImToken',
-          //   payload: {}
-          // })
         }
 
         //切换组织时需要重新加载
@@ -201,10 +195,16 @@ export default {
         //当前选中的组织
         if(res.data.current_org ) {
           localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
-           yield put({ //  获取当前成员在组织中的权限列表
-             type: 'getOrganizationMemberPermissions',
+          yield put({ //  获取当前成员在组织中的权限列表
+             type: 'getUserOrgPermissions',
              payload: {}
            })
+          yield put({
+            type: 'getUserBoardPermissions',
+            payload: {
+
+            }
+          })
         }
         localStorage.setItem('userInfo', JSON.stringify(res.data))
 
@@ -378,6 +378,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+      //废弃
     * getOrganizationMemberPermissions({ payload }, { select, call, put }) {
       let res = yield call(getOrganizationMemberPermissions, payload)
       if(isApiResponseOk(res)) {
@@ -393,6 +394,35 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    //获取用户的全部组织和全部项目权限
+    * getUserOrgPermissions({ payload }, { select, call, put }) {
+      let res = yield call(getUserOrgPermissions, payload)
+      if(isApiResponseOk(res)) {
+        const userInfo = localStorage.getItem('userInfo') || '{}'
+        const { current_org = {} } = JSON.parse(userInfo)
+        const current_org_id = current_org['id']
+        //返回的全部数据遍历和当前的org_id一致，则赋值权限
+        for(let val of res.data) {
+          if(val['org_id'] == current_org_id) {
+            localStorage.setItem('userOrgPermissions', JSON.stringify(val['permissions'] || []))
+            break
+          }
+        }
+      }else{
+        localStorage.setItem('userOrgPermissions', JSON.stringify([]))
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getUserBoardPermissions({ payload }, { select, call, put }) {
+      let res = yield call(getUserBoardPermissions, payload)
+      if(isApiResponseOk(res)) {
+        localStorage.setItem('userBoardPermissions', JSON.stringify(res.data || []))
+      }else{
+        localStorage.setItem('userBoardPermissions', JSON.stringify([]))
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     //组织 -----------
 
     //名词定义------start
@@ -404,26 +434,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
     //名词定义------end
-    * getUserImToken({ payload }, { select, call, put }) {
-      const imData = yield select(selectImData)
-      if(imData) {
-        return
-      }
-      const res = yield call(getUserImToken, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            imData: res.data
-          }
-        })
-      }else{
-
-      }
-    },
-
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

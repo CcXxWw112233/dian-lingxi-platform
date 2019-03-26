@@ -2,6 +2,12 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon } from 'antd'
 import Cookies from 'js-cookie'
+import {checkIsHasPermission, checkIsHasPermissionInBoard, setStorage} from "../../../../../utils/businessFunction";
+import {message} from "antd/lib/index";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
+  PROJECT_TEAM_CARD_INTERVIEW
+} from "../../../../../globalset/js/constant";
 
 export default class ProcessItem extends React.Component {
   state = {
@@ -16,9 +22,22 @@ export default class ProcessItem extends React.Component {
     })
   }
   gotoBoardDetail(obj) {
+    setStorage('board_id', obj.board)
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
   }
   async click(obj) {
+    //用于缓存做权限调用
+    setStorage('board_id', this.state.value.board_id)
+    this.props.updatePublicDatas({ board_id: this.state.value.board_id })
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    //--change in 2019/3/26--end
     await this.setState({
       totalId: {
         flow: obj.flow,
@@ -51,7 +70,7 @@ export default class ProcessItem extends React.Component {
       }
       return color
     }
-    
+
     return (
       <div className={indexstyles.processItem}>
         <div><span style={{cursor: 'pointer'}} onClick={this.click.bind(this, obj)}>{this.state.value.flow_node_name || this.state.value.name}</span><span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{this.state.value.board_name}</span></div>

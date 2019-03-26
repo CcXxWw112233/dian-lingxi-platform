@@ -2,14 +2,14 @@ import React from "react";
 import indexstyles from "../index.less";
 import { Icon, Tooltip} from "antd";
 import Cookies from "js-cookie";
-import {timestampToTimeNormal2} from './../../../../../utils/util'
+import { timestampToTimeNormal2 } from './../../../../../utils/util'
+import { checkIsHasPermissionInBoard, setStorage, checkIsHasPermission } from './../../../../../utils/businessFunction'
+import {message} from "antd/lib/index";
+import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
 
 export default class TaskItem extends React.Component {
   itemOneClick(e) {
     e.stopPropagation();
-    // const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
-    // const {  datas:{ taskGroupList } } = this.props.model
-    // const { card_id, is_realize = '0' } = itemValue
     const {
       datas: { responsibleTaskList = [] }
     } = this.props.model;
@@ -19,20 +19,33 @@ export default class TaskItem extends React.Component {
       card_id: id,
       is_realize: is_realize === "1" ? "0" : "1"
     };
+    setStorage('board_id', board_id)
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     responsibleTaskList[itemKey]["is_realize"] = is_realize === "1" ? "0" : "1";
     this.props.updateDatas({ responsibleTaskList });
     this.props.completeTask(obj);
   }
   gotoBoardDetail({ id, board_id }, e) {
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
+    setStorage('board_id', board_id)
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.routingJump(
       `/technological/projectDetail?board_id=${board_id}&appsSelectKey=3&card_id=${id}`
     );
   }
   itemClick(data, e) {
     const { id, board_id } = data;
-    // this.props.updateTaskDatas({board_id})
-    // this.props.updateFileDatas({board_id})
+    setStorage('board_id', board_id)
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updatePublicDatas({ board_id });
     this.props.getCardDetail({ id, board_id });
     this.props.setTaskDetailModalVisibile();

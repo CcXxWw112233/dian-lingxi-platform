@@ -64,6 +64,10 @@ export default class OrgnizationRole extends React.Component {
         this.setDefaut({parentKey, value})
         break
       case '2':
+        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.copyPanelItem({parentKey, value})
         break
       case '3':

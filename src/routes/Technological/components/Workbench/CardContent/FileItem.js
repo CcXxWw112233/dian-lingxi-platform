@@ -4,7 +4,15 @@ import { Icon } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
-import {getSubfixName, openPDF} from "../../../../../utils/businessFunction";
+import {
+  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
+  setStorage
+} from "../../../../../utils/businessFunction";
+import {message} from "antd/lib/index";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY,
+  PROJECT_FILES_FILE_INTERVIEW
+} from "../../../../../globalset/js/constant";
 
 export default class FileItem extends React.Component {
   judgeFileType(fileName) {
@@ -52,14 +60,27 @@ export default class FileItem extends React.Component {
   }
   gotoBoardDetail({id, board_id }, e) {
     stopPropagation(e)
+    setStorage('board_id', board_id)
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.routingJump(`/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}`)
   }
   previewFile(data, e) {
     const { board_id, board_name, file_name, create_time, file_resource_id, file_id, id, folder_id } = data
+
+    setStorage('board_id', board_id)
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+
     if(getSubfixName(file_name) == '.pdf') {
       openPDF({id: id})
       return false
     }
+
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
       seeFileInput: 'file',

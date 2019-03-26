@@ -1,7 +1,12 @@
 import React from 'react'
 import { Collapse, Checkbox, Row, Col, TreeSelect, Icon, Dropdown, Menu, Modal, Button, Tree, message, Input } from 'antd';
 import indexStyles from './index.less'
-import {ORG_UPMS_ORGANIZATION_ROLE_EDIT} from "../../globalset/js/constant";
+import {
+  MESSAGE_DURATION_TIME, ORG_TEAM_BOARD_QUERY,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT,
+  ORG_UPMS_ORGANIZATION_EDIT,
+  NOT_HAS_PERMISION_COMFIRN
+} from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
 
 export default class NounDefinition extends React.Component {
@@ -19,6 +24,10 @@ export default class NounDefinition extends React.Component {
     })
   }
   saveNoun() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: {current_scheme_local, current_scheme_id}} = this.props.model
     let values = []
     const refs = this.refs

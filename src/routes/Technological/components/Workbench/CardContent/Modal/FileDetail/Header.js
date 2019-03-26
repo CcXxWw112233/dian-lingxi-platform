@@ -27,10 +27,10 @@ export default class Header extends React.Component {
     })
   }
   fileDownload(filePreviewCurrentId) {
-    // if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.fileDownload({ids: filePreviewCurrentId})
   }
   //item操作
