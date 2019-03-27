@@ -11,6 +11,11 @@ import DropdownSelectWithSearch from "./../DropdownSelectWithSearch/index";
 import DropdownMultipleSelectWithSearch from "./../DropdownMultipleSelectWithSearch/index";
 import DateRangePicker from "./../DateRangePicker/index";
 import Cookies from "js-cookie";
+import {checkIsHasPermissionInBoard, setStorage} from "../../../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPLOAD, PROJECT_FLOWS_FLOW_CREATE,
+  PROJECT_TEAM_CARD_CREATE
+} from "../../../../../../globalset/js/constant";
 
 const taskTypeToName = {
   RESPONSIBLE_TASK: "Tasks",
@@ -64,6 +69,10 @@ class AddTaskModal extends Component {
   };
   handleAddTaskModalOk = () => {};
   handleAddTaskModalCancel = () => {
+    //取消之后回归公共tab_bar board_id到缓存
+    const { datas: { projectTabCurrentSelectedProject }} = this.props.workbench
+    setStorage('board_id', projectTabCurrentSelectedProject)
+
     const { dispatch } = this.props;
     dispatch({
       type: "workbench/emptyCurrentSelectedProjectMembersList"
@@ -155,6 +164,30 @@ class AddTaskModal extends Component {
   };
   handleClickedSubmitBtn = e => {
     e.stopPropagation();
+    const { taskType } = this.props
+    //权限控制
+    let authCode = ''
+    switch (taskType) {
+      case 'RESPONSIBLE_TASK':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MEETIMG_ARRANGEMENT':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MY_DOCUMENT':
+        authCode = PROJECT_FILES_FILE_UPLOAD
+        break
+      case 'EXAMINE_PROGRESS':
+        authCode = PROJECT_FLOWS_FLOW_CREATE
+        break
+      default:
+        break
+    }
+    if(!checkIsHasPermissionInBoard(authCode)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+
     const paramObj = this.getNewTaskParams();
     this.addNewTask(paramObj);
     this.addNewMeeting(paramObj);
@@ -345,6 +378,10 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if (file.status === "done" && file.response.code === "0") {
         } else if (
           file.status === "error" ||

@@ -274,7 +274,7 @@ export default class TaskItem extends React.Component {
               <div className={CreateTaskStyle.title_l}>
                 <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
                 <div><Icon type="right" className={[CreateTaskStyle.nextIcon]}/></div>
-                {editable==='1'? (
+                {editable==='1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP)? (
                   <Dropdown overlay={operateMenu()}>
                     <div className={CreateTaskStyle.titleOperate}>
                       <Icon type="ellipsis" theme="outlined" />
@@ -302,15 +302,15 @@ export default class TaskItem extends React.Component {
           })}
         {/*</QueueAnim>*/}
         </div>
-        {/*<QueueAnim type={'bottom'} duration={200}>*/}
-          {!isAddEdit ? (
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE) && (
+          !isAddEdit? (
             <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
               <Icon type="plus-circle-o" />
             </div>
           ) : (
             <div key={'adds'} className={CreateTaskStyle.addNewTask} >
               <div className={CreateTaskStyle.addNewTask_top}>
-               <TextArea autoFocus={true} autosize={{ minRows: 2, maxRows: 2 }} style={{ resize: 'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
+                <TextArea autoFocus={true} autosize={{ minRows: 2, maxRows: 2 }} style={{ resize: 'none'}} onKeyDown={this.handlerMultiEnter.bind(this)} onChange={this.addNewTaskNameTextAreaChange.bind(this)} />
               </div>
               <div className={CreateTaskStyle.addNewTask_bott}>
                 <div className={CreateTaskStyle.addNewTask_bott_left}>
@@ -358,13 +358,14 @@ export default class TaskItem extends React.Component {
                   <Button type={'primary'} size={'small'} style={{fontSize: 12}} disabled={isCheckDisabled} onClick={this.checkAddNewTask.bind(this)}>确认</Button>
                 </div>
               </div>
-            {/*<div  key={'adds'} className={CreateTaskStyle.addItem} > //原来需求*/}
+              {/*<div  key={'adds'} className={CreateTaskStyle.addItem} > //原来需求*/}
               {/*<Input  onPressEnter={this.addItem.bind(this,{board_id, list_id})} onBlur={this.addItem.bind(this,{board_id, list_id})} autoFocus={true}/>*/}
-            {/*</div>*/}
+              {/*</div>*/}
 
             </div>
-          )}
-        {/*</QueueAnim>*/}
+          )
+        )}
+
       </div>
     )
   }

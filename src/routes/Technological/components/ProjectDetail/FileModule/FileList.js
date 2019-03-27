@@ -6,7 +6,7 @@ import CreatDirector from './CreatDirector'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
-  PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE
+  PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FOLDER
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
@@ -49,7 +49,7 @@ export default class FileList extends React.Component {
         this.props.fileDownload({ids: file_resource_id})
         break
       case '3':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -61,7 +61,7 @@ export default class FileList extends React.Component {
         })
         break
       case '4':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -269,16 +269,18 @@ export default class FileList extends React.Component {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {type !== '1'? (
+          {type !== '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
           <Menu.Item key="2">下载</Menu.Item>
             ):('')}
-          {type !== '1'? (
+          {type !== '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)? (
             <Menu.Item key="3">移动</Menu.Item>
           ):('')}
-          {type !== '1'? (
+          {type !== '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)? (
             <Menu.Item key="4">复制</Menu.Item>
           ):('')}
-          <Menu.Item key="5" >移到回收站</Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (
+            <Menu.Item key="5" >移到回收站</Menu.Item>
+          )}
         </Menu>
       )
     }

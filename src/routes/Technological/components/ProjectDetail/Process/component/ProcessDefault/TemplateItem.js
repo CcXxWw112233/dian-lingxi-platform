@@ -1,8 +1,11 @@
 import React from 'react'
 import indexStyles from '../../index.less'
-import { Avatar, Modal, Tooltip } from 'antd'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
+import { Avatar, Modal, Tooltip, message } from 'antd'
+import {
+  ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, PROJECT_FLOWS_FLOW_CREATE,
+  PROJECT_FLOW_FLOW_ACCESS, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME
+} from "../../../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
 const Panel = Collapse.Panel;
@@ -33,6 +36,10 @@ export default class TemplateItem extends React.Component {
     this.props.getTemplateInfo && this.props.getTemplateInfo(id)
   }
   deleteTemplate({id}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const that = this
     Modal.confirm({
       title: `确认删除该模板？`,
@@ -47,6 +54,10 @@ export default class TemplateItem extends React.Component {
 
   }
   startEdit() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatasProcess({
       processPageFlagStep: '2'
     })
@@ -68,12 +79,17 @@ export default class TemplateItem extends React.Component {
           <div className={indexStyles.tem_item_m}>
             <div className={indexStyles.title}>{name}</div>
           </div>
-          <Tooltip title="删除模板">
-            <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme} ${indexStyles.itemOperate}`} onClick={this.deleteTemplate.bind(this, { id })}>&#xe623;</div>
-          </Tooltip>
-          <Tooltip title="启动流程">
-            <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme}  ${indexStyles.itemOperate}`} onClick={this.templateStartClick.bind(this, { id })}>&#xe61f;</div>
-          </Tooltip>
+          {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE) && (
+            <Tooltip title="删除模板">
+              <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme} ${indexStyles.itemOperate}`} onClick={this.deleteTemplate.bind(this, { id })}>&#xe623;</div>
+            </Tooltip>
+          )}
+          {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE) && (
+            <Tooltip title="启动流程">
+              <div className={`${indexStyles.tem_item_r} ${globalStyles.authTheme}  ${indexStyles.itemOperate}`} onClick={this.templateStartClick.bind(this, { id })}>&#xe61f;</div>
+            </Tooltip>
+          )}
+
         </div>
         <div className={indexStyles.tem_item_bott} ref={'tempItemBott'}>
           <div className={`${indexStyles.tem_item_flow} ${globalStyles.authTheme} ${hasMore && !showBott ?indexStyles.tem_item_flow_hasMore: ''}`}>

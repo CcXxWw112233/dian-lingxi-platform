@@ -4,7 +4,7 @@ import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, 
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT
+  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 const TextArea = Input.TextArea
@@ -23,7 +23,7 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   handleSetRoleMenuClick(props, { key }) {
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -187,7 +187,7 @@ export default class DrawDetailInfo extends React.Component {
       const { is_visitor } = props
       return(
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
-          {is_visitor === '0'? (
+          {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
@@ -201,11 +201,13 @@ export default class DrawDetailInfo extends React.Component {
             </Menu.SubMenu>
           ):('')}
 
-          <Menu.Item key={'removeMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
-              移除成员
-            </div>
-          </Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+            <Menu.Item key={'removeMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
+                移除成员
+              </div>
+            </Menu.Item>
+          )}
         </Menu>
       )
     }

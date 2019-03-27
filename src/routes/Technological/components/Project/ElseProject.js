@@ -6,13 +6,13 @@ import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionReturn,
-  currentNounPlanFilterName
+  checkIsHasPermission, checkIsHasPermissionInBoard,
+  currentNounPlanFilterName, setStorage
 } from "../../../../utils/businessFunction";
 import {
   MEMBERS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_TEAM_BOARD_QUERY, PROJECTS, TASKS
+  ORG_TEAM_BOARD_QUERY, PROJECTS, TASKS, PROJECT_TEAM_BOARD_DELETE
 } from "../../../../globalset/js/constant";
 
 
@@ -56,6 +56,10 @@ export default class ElseProject extends React.Component{
     let defineNoun = '操作'
     switch (type){
       case '0':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         defineNoun='删除'
         break
       case '1':
@@ -177,6 +181,9 @@ export default class ElseProject extends React.Component{
     })
   }
   onDropdownVisibleChange(visible){
+    const { itemDetailInfo = {}} = this.props
+    const { board_id} = itemDetailInfo
+    setStorage('board_id', board_id)
     this.setState({
       dropdownVisibleChangeValue: visible,
     })
@@ -210,11 +217,13 @@ export default class ElseProject extends React.Component{
               {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
             {/*</div>*/}
           {/*</Menu.Item>*/}
-          <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyle.elseProjectMemu}>
-              删除{currentNounPlanFilterName(PROJECTS)}
-            </div>
-          </Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE) && (
+            <Menu.Item key={'3'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={indexStyle.elseProjectMemu}>
+                删除{currentNounPlanFilterName(PROJECTS)}
+              </div>
+            </Menu.Item>
+          )}
           {is_create !== '1'? (
             <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyle.elseProjectDangerMenu}>

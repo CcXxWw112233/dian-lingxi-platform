@@ -33,6 +33,12 @@ import ProccessDetailModal from './Modal/ProccessDetailModal'
 import AddTaskModal from "./Modal/AddTaskModal";
 import AddProgressModal from './Modal/AddProgressModal'
 import {connect} from 'dva'
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FILES_FILE_DELETE, PROJECT_TEAM_CARD_CREATE,PROJECT_FILES_FILE_UPLOAD, PROJECT_FLOWS_FLOW_CREATE
+} from "../../../../../globalset/js/constant";
+import {message} from "antd/lib/index";
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -194,7 +200,7 @@ class CardContent extends React.Component {
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
-    
+
   }
   setTaskDetailModalVisibile() {
     this.setState({
@@ -214,6 +220,28 @@ class CardContent extends React.Component {
     const visibleType = Object.keys(modalObj).find(item => item == type)
     if(!visibleType){
       return
+    }
+    //权限控制
+    let authCode = ''
+    switch (visibleType) {
+      case 'RESPONSIBLE_TASK':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MEETIMG_ARRANGEMENT':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MY_DOCUMENT':
+        authCode = PROJECT_FILES_FILE_UPLOAD
+        break
+      case 'EXAMINE_PROGRESS':
+        authCode = PROJECT_FLOWS_FLOW_CREATE
+        break
+      default:
+        break
+    }
+    if(!checkIsHasPermissionInBoard(authCode)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
     }
 
     const {
@@ -318,6 +346,26 @@ class CardContent extends React.Component {
 
   }
   noContentTooltip = (prompt = "添加任务", type = "RESPONSIBLE_TASK") => {
+    let authCode = ''
+    switch (type) {
+      case 'RESPONSIBLE_TASK':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MEETIMG_ARRANGEMENT':
+        authCode = PROJECT_TEAM_CARD_CREATE
+        break
+      case 'MY_DOCUMENT':
+        authCode = PROJECT_FILES_FILE_UPLOAD
+        break
+      case 'EXAMINE_PROGRESS':
+        authCode = PROJECT_FLOWS_FLOW_CREATE
+        break
+      default:
+        break
+    }
+    if (!checkIsHasPermissionInBoard(authCode)) {
+      return ''
+    }
     return (
       <>
         <div className={indexstyles.operatorBar}>

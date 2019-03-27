@@ -3,6 +3,8 @@ import CreateTaskStyle from './CreateTask.less'
 import CreateGroupItem from './CreateGroupItem'
 import CreateItem from './CreateItem'
 import TreeGroupModal from './TreeGroupModal'
+import {checkIsHasPermission} from "../../../../utils/businessFunction";
+import {ORG_UPMS_ORGANIZATION_GROUP} from "../../../../globalset/js/constant";
 const documentWidth = document.querySelector('body').offsetWidth
 
 export default class CreateGroup extends React.Component {
@@ -77,7 +79,10 @@ export default class CreateGroup extends React.Component {
                         {...this.props}></CreateGroupItem>
             )
           })}
+        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP) && (
           <CreateItem {...this.props} ></CreateItem>
+        ) }
+
         <TreeGroupModal {...this.props}/>
 
       </div>

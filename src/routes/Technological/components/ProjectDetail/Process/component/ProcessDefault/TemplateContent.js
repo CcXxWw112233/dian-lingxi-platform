@@ -1,11 +1,15 @@
 import React from 'react'
 import indexStyles from '../../index.less'
 import { Avatar, Modal } from 'antd'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
+import {
+  ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP,
+  PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME
+} from "../../../../../../../globalset/js/constant";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
 import TemplateItem from './TemplateItem'
+import {message} from "antd/lib/index";
 const Panel = Collapse.Panel;
 
 export default class TemplateContent extends React.Component {
@@ -30,6 +34,10 @@ export default class TemplateContent extends React.Component {
 
   }
   startEdit() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateDatasProcess({
       processPageFlagStep: '2'
     })
@@ -49,7 +57,9 @@ export default class TemplateContent extends React.Component {
             )
           })}
         </div>
-        <div className={indexStyles.add} onClick={this.startEdit.bind(this)}>新增模板</div>
+        {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE) && (
+          <div className={indexStyles.add} onClick={this.startEdit.bind(this)}>新增模板</div>
+        )}
       </div>
     )
   }

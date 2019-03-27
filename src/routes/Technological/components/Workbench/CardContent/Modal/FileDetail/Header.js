@@ -163,9 +163,12 @@ export default class Header extends React.Component {
             {/*</Upload>*/}
           {/*):('')}*/}
 
-          <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
-            <Icon type="download" />下载
-          </Button>
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+            <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
+              <Icon type="download" />下载
+            </Button>
+          )}
+
           {/*<Button style={{height: 24, marginLeft:14}} >*/}
             {/*<Icon type="star" />收藏*/}
           {/*</Button>*/}

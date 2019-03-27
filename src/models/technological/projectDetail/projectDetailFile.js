@@ -29,7 +29,37 @@ let appsSelectKey = null
 let file_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
-  state: [],
+  state: {
+    datas: {
+          // 文档
+          fileList: [], //文档列表
+          filedata_1: [], //文档列表--文件夹breadcrumbList
+          filedata_2: [], //文档列表--文件
+          selectedRowKeys: [], //选择的列表项
+          isInAddDirectory: false, //是否正在创建文件家判断标志
+          moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
+          openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
+          currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
+          breadcrumbList: [], //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
+          currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
+          isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
+          treeFolderData: {}, //文件夹树状结构
+          filePreviewIsUsable: true, //文件是否可以预览标记
+          filePreviewUrl: '', //预览文件url
+          filePreviewCurrentId: '', //当前预览的文件resource_id
+          filePreviewCurrentFileId: '', //当前预览的文件id
+          filePreviewCurrentVersionId: '', //当前预览文件版本id
+          filePreviewCurrentVersionList: [], //预览文件的版本列表
+          filePreviewCurrentVersionKey: 0, //预览文件选中的key
+          filePreviewCommits: [], //文件评论列表
+          filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
+          filePreviewCommitPoints: [], //文件图评点列表
+          filePreviewCommitType: '0', //新增评论 1 回复圈点评论
+          filePreviewCommitPointNumber: '', //评论当前的点
+          filePreviewIsRealImage: true, //当前预览的图片是否真正图片
+          seeFileInput: '', //查看文件详情入口
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -47,38 +77,6 @@ export default modelExtend(projectDetail, {
         })
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
-          // dispatch({
-          //   type: 'updateDatas',
-          //   payload: {
-          //     // 文档
-          //     fileList: [], //文档列表
-          //     filedata_1: [], //文档列表--文件夹breadcrumbList
-          //     filedata_2: [], //文档列表--文件
-          //     selectedRowKeys: [], //选择的列表项
-          //     isInAddDirectory: false, //是否正在创建文件家判断标志
-          //     moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
-          //     openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
-          //     currentFileListMenuOperatorId: '', //文件列表项点击菜单选项设置当前要操作的id
-          //     breadcrumbList: [], //文档路劲面包屑{id: '123456', name: '根目录', type: '1'},从项目详情里面初始化
-          //     currentParrentDirectoryId: '', //当前文件夹id，根据该id来判断点击文件或文件夹时是否打开下一级，从项目详情里面初始化
-          //     isInOpenFile: false, //当前是否再打开文件状态，用来判断文件详情是否显示
-          //     treeFolderData: {}, //文件夹树状结构
-          //     filePreviewIsUsable: true, //文件是否可以预览标记
-          //     filePreviewUrl: '', //预览文件url
-          //     filePreviewCurrentId: '', //当前预览的文件resource_id
-          //     filePreviewCurrentFileId: '', //当前预览的文件id
-          //     filePreviewCurrentVersionId: '', //当前预览文件版本id
-          //     filePreviewCurrentVersionList: [], //预览文件的版本列表
-          //     filePreviewCurrentVersionKey: 0, //预览文件选中的key
-          //     filePreviewCommits: [], //文件评论列表
-          //     filePreviewPointNumCommits: [], //文件评论列表某个点的评论列表
-          //     filePreviewCommitPoints: [], //文件图评点列表
-          //     filePreviewCommitType: '0', //新增评论 1 回复圈点评论
-          //     filePreviewCommitPointNumber: '', //评论当前的点
-          //     filePreviewIsRealImage: true, //当前预览的图片是否真正图片
-          //     seeFileInput: '', //查看文件详情入口
-          //   }
-          // })
           dispatch({
             type: 'initialget',
             payload: {
@@ -186,7 +184,7 @@ export default modelExtend(projectDetail, {
             filePreviewCurrentVersionId: res.data.version_list.length?res.data.version_list[0]['version_id']: ''
           }
         })
-        let breadcrumbList = yield select(selectBreadcrumbList)
+        let breadcrumbList = yield select(selectBreadcrumbList) || []
         let arr = []
         const target_path = res.data.target_path
         //递归添加路径

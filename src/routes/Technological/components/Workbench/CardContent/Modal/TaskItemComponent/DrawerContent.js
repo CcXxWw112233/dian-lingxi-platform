@@ -791,11 +791,13 @@ class DrawContent extends React.Component {
             归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
-        <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-          <div className={DrawerContentStyles.elseProjectDangerMenu}>
-            删除{currentNounPlanFilterName(TASKS)}
-          </div>
-        </Menu.Item>
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE) && (
+          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            <div className={DrawerContentStyles.elseProjectDangerMenu}>
+              删除{currentNounPlanFilterName(TASKS)}
+            </div>
+          </Menu.Item>
+        )}
       </Menu>
     );
 
@@ -913,7 +915,7 @@ class DrawContent extends React.Component {
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
           {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
-            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>
+            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20}} onClick={this.alarmNoEditPermission.bind(this)}></div>
           )}
           {/*项目挪动*/}
           <div style={{display: 'flex', justifyContent: 'space-between', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>

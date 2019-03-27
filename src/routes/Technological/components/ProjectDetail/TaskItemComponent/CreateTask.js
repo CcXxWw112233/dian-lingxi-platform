@@ -7,6 +7,8 @@ import { Drawer } from 'antd'
 import {stopPropagation} from "../../../../../utils/util";
 import DrawContentModal from './components/DrawContentModal'
 import QueryString from 'querystring'
+import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {PROJECT_TEAM_CARD_GROUP} from "../../../../../globalset/js/constant";
 
 const documentWidth = document.querySelector('body').offsetWidth
 let defaultScrollLeft = 0;
@@ -228,7 +230,7 @@ export default class CreateTask extends React.Component {
                   </div>
                 )
               })}
-            {getTaskGroupListArrangeType==='1'?(
+            {getTaskGroupListArrangeType==='1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP)?(
               <CreateItem {...this.props} ></CreateItem>
             ):('')}
           </div>

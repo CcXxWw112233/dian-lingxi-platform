@@ -6,7 +6,7 @@ import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FILE_EDIT,
-  REQUEST_DOMAIN_FILE,PROJECT_FILES_FILE_UPDATE,
+  REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD,
   UPLOAD_FILE_SIZE
 } from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
@@ -66,7 +66,7 @@ class Header extends React.Component {
         })
         break
       case '4':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -217,10 +217,16 @@ class Header extends React.Component {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          <Menu.Item key="2">下载</Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+            <Menu.Item key="2">下载</Menu.Item>
+          )}
           <Menu.Item key="3">移动</Menu.Item>
-          <Menu.Item key="4">复制</Menu.Item>
-          <Menu.Item key="5" >移到回收站</Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
+            <Menu.Item key="4">复制</Menu.Item>
+          )}
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (
+            <Menu.Item key="5" >移到回收站</Menu.Item>
+          )}
         </Menu>
       )
     }
@@ -241,10 +247,12 @@ class Header extends React.Component {
               </Button>
             </Upload>
           ):('')}
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+            <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
+              <Icon type="download" />下载
+            </Button>
+          )}
 
-          <Button style={{height: 24, marginLeft:14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
-            <Icon type="download" />下载
-          </Button>
           <span style={{marginLeft: '10px'}}>
           {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
           </span>

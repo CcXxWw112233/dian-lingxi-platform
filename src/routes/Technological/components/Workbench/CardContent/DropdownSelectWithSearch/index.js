@@ -6,6 +6,12 @@ import MenuItem from "antd/lib/menu/MenuItem";
 import AddModalFormWithExplicitProps from "./../../../Project/AddModalFormWithExplicitProps";
 import { connect } from "dva/index";
 import Cookies from "js-cookie";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  ORG_TEAM_BOARD_CREATE
+} from '../../../../../../globalset/js/constant'
+import {checkIsHasPermissionInBoard, checkIsHasPermission, setStorage} from "../../../../../../utils/businessFunction";
+import {message} from "antd/lib/index";
 
 let cx = classNames.bind(styles);
 
@@ -41,6 +47,8 @@ class DropdownSelectWithSearch extends Component {
     }
   };
   handleSeletedMenuItem = item => {
+    const { board_id } = item
+    setStorage('board_id', board_id)
     const { handleSelectedItem, list } = this.props;
     handleSelectedItem(item);
     this.setState({
@@ -51,6 +59,10 @@ class DropdownSelectWithSearch extends Component {
   };
   handleClickedNewProjectItem = e => {
     if (e) e.stopPropagation();
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE) ){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.showModal();
     console.log("clicked new project");
   };
@@ -68,7 +80,7 @@ class DropdownSelectWithSearch extends Component {
     const isVisitor = this.isVisitor(identity_type);
     return (
       <>
-        {!isVisitor && (
+        {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && (
           <div className={styles.addNewProject__wrapper}>
             <div className={styles.addNewProject__content}>
               <p

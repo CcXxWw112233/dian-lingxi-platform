@@ -5,8 +5,8 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
   PROJECT_TEAM_CARD_INTERVIEW,
-  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,
-  ORG_TEAM_BOARD_QUERY,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,PROJECT_TEAM_BOARD_MEMBER,
+  ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Upload, Button, message, Input } from 'antd'
@@ -159,7 +159,7 @@ export default class Header extends React.Component {
     const { key } = e
     switch (key) {
       case '1':
-        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -184,6 +184,10 @@ export default class Header extends React.Component {
         this.confirm(board_id )
         break
       case '5':
+        if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setAddModalFormVisibile()
         break
       default:
@@ -238,6 +242,10 @@ export default class Header extends React.Component {
   appClick(key) {
     if(key === '2') {
       //流程
+      if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
     }else if(key === '3') { // 任务
       if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -427,16 +435,20 @@ export default class Header extends React.Component {
     //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
-        <Menu.Item key={'5'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            编辑应用
-          </div>
-        </Menu.Item>
-        <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-          <div className={indexStyle.elseProjectMemu}>
-            邀请成员加入
-          </div>
-        </Menu.Item>
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT) && (
+          <Menu.Item key={'5'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              编辑应用
+            </div>
+          </Menu.Item>
+        )}
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+          <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              邀请成员加入
+            </div>
+          </Menu.Item>
+        )}
         {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
           {/*<div className={indexStyle.elseProjectMemu}>*/}
             {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
@@ -610,14 +622,20 @@ export default class Header extends React.Component {
           }else {
             operatorConent = (
               <div style={{display: 'flex', alignItems: 'center', }}>
-                <Upload {...uploadProps} showUploadList={false}>
-                  <Button style={{height: 24, marginTop: 16, }} type={'primary'}>
-                    <Icon type="upload" />上传
+                {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
+                  <Upload {...uploadProps} showUploadList={false}>
+                    <Button style={{height: 24, marginTop: 16, }} type={'primary'}>
+                      <Icon type="upload" />上传
+                    </Button>
+                  </Upload>
+                )}
+
+                {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER) && (
+                  <Button style={{height: 24, marginTop: 16, marginLeft: 14}} onClick={this.createDirectory.bind(this)}>
+                    <Icon type="plus" />创建文件夹
                   </Button>
-                </Upload>
-                <Button style={{height: 24, marginTop: 16, marginLeft: 14}} onClick={this.createDirectory.bind(this)}>
-                  <Icon type="plus" />创建文件夹
-                </Button>
+                )}
+
                 <div>
                   <Icon type="appstore-o" style={{fontSize: 14, marginTop: 20, marginLeft: 14}}/>
                   {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}

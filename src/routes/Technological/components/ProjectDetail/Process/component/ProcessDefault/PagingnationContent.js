@@ -1,8 +1,14 @@
 import React from 'react'
 import indexStyles from '../../index.less'
 import { Avatar } from 'antd'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
+import {
+  PROJECT_FLOW_FLOW_ACCESS, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP,
+  NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, MESSAGE_DURATION_TIME
+} from "../../../../../../../globalset/js/constant";
+import {
+  currentNounPlanFilterName, checkIsHasPermissionInBoard,
+  checkIsHasPermission, setStorage
+} from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
 import {getProcessListByType} from "../../../../../../../services/technological/process";
@@ -11,6 +17,7 @@ import {
   selectProcessStopedList
 } from "../../../../../../../models/technological/select";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
+import {message} from "antd/lib/index";
 const Panel = Collapse.Panel;
 
 export default class PagingnationContent extends React.Component {
@@ -112,6 +119,10 @@ export default class PagingnationContent extends React.Component {
   }
 
   processItemClick(id, e) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.changeFlowIdToUrl && this.props.changeFlowIdToUrl({id, currentProcessInstanceId: id})
   }
   render() {
