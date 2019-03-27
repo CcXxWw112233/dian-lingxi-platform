@@ -246,7 +246,7 @@ export async function getUserOrgPermissions(params) {
     url: `${REQUEST_DOMAIN}/permissions/org`,
     method: 'GET',
     params
-  });
+  }, {isNotLoading: true});
 }
 //获取用户所有项目所有权限
 export async function getUserBoardPermissions(params) {
@@ -254,5 +254,5 @@ export async function getUserBoardPermissions(params) {
     url: `${REQUEST_DOMAIN_BOARD}/permissions/board`,
     method: 'GET',
     params
-  });
+  }, {isNotLoading: true});
 }
