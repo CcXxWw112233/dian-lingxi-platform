@@ -703,7 +703,7 @@ class InviteOthers extends Component {
           <div className={styles.invite__result_list}>
             {selectedMember.map(item => (
               <div key={item.user} className={styles.invite__result_list_item}>
-                <Tooltip title={item.type === 'other' ? item.user : item.name}>
+                <Tooltip overlayStyle={{zIndex: '9999'}} title={item.type === 'other' ? item.user : item.name}>
                   <div className={styles.invite__result_list_item_img_wrapper}>
                     <img
                       src={

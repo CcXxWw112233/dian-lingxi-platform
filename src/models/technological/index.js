@@ -239,6 +239,9 @@ export default {
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
+        Cookies.remove('sdktoken')
+        Cookies.remove('uid')
+        Cookies.remove('Authorization')
         Cookies.remove('userInfo', { path: '' })
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
       }else{
