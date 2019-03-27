@@ -272,8 +272,16 @@ class SiderRight extends React.Component {
       message.error("从 Cookie 中获取用户信息失败, 当发起视频会议的时候");
     }
   };
+  getInfoFromLocalStorage = item => {
+    try{
+      const userInfo = localStorage.getItem(item)
+      return userInfo
+    }catch(e) {
+      message.error('从 Cookie 中获取用户信息失败, 当发起视频会议的时候')
+    }
+  }
   getCurrentUserNameThenSetMeetingTitle = () => {
-    const currentUser = this.getInfoFromCookie("userInfo");
+    const currentUser = this.getInfoFromLocalStorage("userInfo");
     if (currentUser) {
       const meetingTitle = `${currentUser.name}发起的会议`;
       this.setState({

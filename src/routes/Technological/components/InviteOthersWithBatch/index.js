@@ -190,6 +190,7 @@ class InviteOtherWithBatch extends Component {
     const { selectedMember, multipleMode } = this.state
     //如果是单选模式
     if (!multipleMode) {
+      //如果需要直接返回字符串
       if (directReturnStr) {
         const memeberListToStr = this.handleUsersToUsersStr(selectedMember)
         return handleInviteMemberReturnResult(memeberListToStr)
@@ -201,12 +202,16 @@ class InviteOtherWithBatch extends Component {
     }
   }
   handleReturnResultWhenNotShowSubmitBtn = () => {
-    const { handleInviteMemberReturnResult, isShowSubmitBtn } = this.props
-    //如果有提交按钮
+    const { handleInviteMemberReturnResult, isShowSubmitBtn, directReturnStr } = this.props
+    //如果有提交按钮, 则点击提交按钮的时候统一处理数据
     if (isShowSubmitBtn) return
     const { selectedMember, multipleMode } = this.state
     //如果是单选模式
     if (!multipleMode) {
+      if (directReturnStr) {
+        const memeberListToStr = this.handleUsersToUsersStr(selectedMember)
+        return handleInviteMemberReturnResult(memeberListToStr)
+      }
       handleInviteMemberReturnResult(selectedMember)
     } else {
       const memeberStr = this.handleTransMentionSelectedOtherMembersMobileString()

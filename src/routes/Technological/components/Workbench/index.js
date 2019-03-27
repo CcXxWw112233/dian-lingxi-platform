@@ -11,6 +11,7 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
+import VisitControl from './../VisitControl/index'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -858,6 +859,7 @@ const Workbench = (props) => {
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <ProjectListBar />
+      {/* <VisitControl /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        <GroupContent {...workflowComments} {...props} {...ProcessProps} {...HeaderListProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
     </div>

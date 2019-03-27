@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)
-    const currentUser = this.getCurrentUserFromCookie('userInfo')
+    const currentUser = this.getCurrentUserFromLocalStorage('userInfo')
     const { list, handleSelectedItemChange } = props;
     const findUserInList = list.find(item => item.id === currentUser.id)
     if(findUserInList) {
@@ -19,6 +19,17 @@ class DropdownMultipleSelectWithSearch extends Component {
       selectedList: findUserInList ? [findUserInList] : [],
       searchValue: "",
      dropdownOptionVisible: false
+    }
+  }
+  getCurrentUserFromLocalStorage = key => {
+    try {
+      const currentUserFromLocalStorage = localStorage.getItem(key)
+      if(currentUserFromLocalStorage) {
+        return currentUserFromLocalStorage
+      }
+      message.error(`从localStorage 获取 ${key} 失败`)
+    } catch (e) {
+      message.error(`从localStorage 获取 ${key} 失败`)
     }
   }
   getCurrentUserFromCookie = key => {
@@ -290,7 +301,7 @@ class DropdownMultipleSelectWithSearch extends Component {
       list
     );
     if (!isReceiveSameListFromProps) {
-      const currentUserFromCookie = this.getCurrentUserFromCookie('userInfo')
+      const currentUserFromCookie = this.getCurrentUserFromLocalStorage('userInfo')
       if(currentUserFromCookie) {
         const currentUserId = currentUserFromCookie.id;
           const currentUserInList = nextProps.list.find(
