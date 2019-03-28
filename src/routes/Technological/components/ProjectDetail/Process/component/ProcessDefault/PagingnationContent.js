@@ -134,7 +134,7 @@ export default class PagingnationContent extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-
+    
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
     
     await this.props.updateDatas({

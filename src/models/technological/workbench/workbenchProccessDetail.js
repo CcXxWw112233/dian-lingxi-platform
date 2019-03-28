@@ -453,7 +453,7 @@ export default modelExtend(workbench, {
 
     * getWorkFlowComment({payload}, {select, call, put}) {
       let res = yield call(getWorkFlowComment, payload)
-      console.log('this is getWorkFlowComment', res)
+      console.log('this is workbench_getWorkFlowComment', res)
       yield put({
         type: 'updateDatas',
         payload: {

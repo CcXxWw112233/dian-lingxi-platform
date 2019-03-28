@@ -3,6 +3,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
+import { projectDetailInfo } from '../../../services/technological/prjectDetail'
 import {
   completeProcessTask,
   createProcess,
@@ -109,6 +110,21 @@ export default modelExtend(projectDetail, {
                 currentProcessInstanceId: flow_id
               }
             })
+            
+            dispatch({
+              type: 'projectDetailInfo',
+              payload: {
+                id: board_id
+              }
+            })
+
+            dispatch({
+              type: 'getWorkFlowComment',
+              payload: {
+                flow_instance_id: flow_id
+              }
+            })
+
             dispatch({
               type: 'updateDatas',
               payload: {
@@ -369,6 +385,24 @@ export default modelExtend(projectDetail, {
         console.log('进入查询状态之后')
       }
     },
+    //获取项目信息
+    * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
+      const { id, calback } = payload
+      let res = yield call(projectDetailInfo, id)
+      console.log('projectDetailProcess:', res)
+      if(typeof calback === 'function') {
+        calback()
+      }
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectDetailInfoData: res.data,
+          }
+        })
+      }else{
+      }
+    },
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
@@ -529,9 +563,9 @@ export default modelExtend(projectDetail, {
       })
     },
 
-    * getWorkFlowComment({payload}, {select, call, put}) { 
+    * getWorkFlowComment({payload}, {select, call, put}) {
         let res = yield call(getWorkFlowComment, payload)
-        console.log('this is getWorkFlowComment', res)
+        console.log('this is project_getWorkFlowComment', res)
         yield put({
           type: 'updateDatas',
           payload: {

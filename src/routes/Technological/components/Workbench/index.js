@@ -838,6 +838,12 @@ const Workbench = (props) => {
       payload: payload
     })
   }
+  // const getProjectDetailInfo = (payload) => {
+  //   dispatch({
+  //     type: 'workbenchTaskDetail/projectDetailInfo',
+  //     payload
+  //   })
+  // }
   const workflowComments = {
     addWorkFlowComment(payload) {
       console.log('test')
@@ -850,6 +856,12 @@ const Workbench = (props) => {
       dispatch({
         type: 'workbenchDetailProcess/getWorkFlowComment',
         payload: params
+      })
+    },
+    getProjectDetailInfo(payload) {
+      dispatch({
+        type: 'workbenchTaskDetail/projectDetailInfo',
+        payload
       })
     }
   }
@@ -867,9 +879,9 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
+function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail,projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
   const modelObj = {
-    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
+    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'],...projectDetailProcess['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
   }
   return { modal, model: modelObj, loading }
 }

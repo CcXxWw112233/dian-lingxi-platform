@@ -8,6 +8,8 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_TEAM_CARD_INTERVIEW
 } from "../../../../../globalset/js/constant";
+import { func } from 'prop-types';
+import { resolve } from 'path';
 
 export default class ProcessItem extends React.Component {
   state = {
@@ -27,30 +29,17 @@ export default class ProcessItem extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    await this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/getWorkFlowComment',
+      payload: {flow_instance_id: obj.flow}
+    })
 
     await this.props.dispatch({
       type: 'workbenchDetailProcess/updateDatas',
       payload: this.state
     })
 
-    // await this.props.getProcessInfo({id: obj.flow})
-    await this.props.dispatch({
-      type: 'workbenchDetailProcess/getProcessInfo',
-      payload: {
-        id: obj.flow
-      }
-    })
-
-    await this.props.dispatch({
-      type: 'workbenchTaskDetail/projectDetailInfo',
-      payload: {id: obj.board}
-    })
-
-    await this.props.dispatch({
-      type: 'workbenchDetailProcess/getWorkFlowComment',
-      payload: {flow_instance_id: obj.flow}
-    })
+    await this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
   }
   async click(obj) {
     //用于缓存做权限调用
