@@ -69,7 +69,7 @@ export default {
         locationPath = location.pathname
         message.destroy()
         //头部table key
-        if (location.pathname.indexOf('/technological') !== -1) {
+        if (location.pathname.indexOf('/technological') !== -1 || true) {
           //websocket连接判定
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
@@ -678,27 +678,6 @@ export default {
           })
 
           break
-        case 'change:permission':
-          const permission_type = coperateData['type']
-          if(permission_type == '1') {
-            dispathes({
-              type: model_technological('getUserOrgPermissions'),
-              payload: {
-
-              }
-            })
-          }else if (permission_type == '2'){
-            dispathes({
-              type: model_technological('getUserBoardPermissions'),
-              payload: {
-
-              }
-            })
-          } else {
-
-          }
-          break
-
         default:
           break
       }
@@ -1084,26 +1063,6 @@ export default {
           //     fileList: fileList_
           //   }
           // })
-        case 'change:permission':
-          const permission_type = coperateData['type']
-          if(permission_type == '1') {
-            dispathes({
-              type: model_technological('getUserOrgPermissions'),
-              payload: {
-
-              }
-            })
-          }else if (permission_type == '2'){
-            dispathes({
-              type: model_technological('getUserBoardPermissions'),
-              payload: {
-
-              }
-            })
-          } else {
-
-          }
-          break
         default:
           break
       }
@@ -1160,6 +1119,26 @@ export default {
             })
           }
 
+          break
+        case 'change:permission':
+          const permission_type = coperateData['type']
+          if(permission_type == '1') {
+            dispathes({
+              type: model_technological('getUserOrgPermissions'),
+              payload: {
+
+              }
+            })
+          }else if (permission_type == '2'){
+            dispathes({
+              type: model_technological('getUserBoardPermissions'),
+              payload: {
+
+              }
+            })
+          } else {
+
+          }
           break
         default:
           break

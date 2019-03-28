@@ -120,8 +120,20 @@ export default modelExtend(projectDetail, {
     //获取任务详情信息， 通过url
     * getCardDetail({ payload }, { select, call, put }) { //查看项目详情信息
       const { id } = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentList: []
+        }
+      })
       let res = yield call(getCardDetail, { id})
       if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getCardCommentList',
+          payload: {
+            id
+          }
+        })
         yield put({
           type: 'updateDatas',
           payload: {
