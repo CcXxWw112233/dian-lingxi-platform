@@ -88,9 +88,11 @@ export default class ProccessContent extends React.Component {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
-   
-   const data  = this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
-   
+   console.log('ssss')
+   const data  = this.props.model.datas &&
+   this.props.model.datas.projectDetailInfoData &&
+   this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
+
    const fillAvatar = (data) => {
       let num = data.length
       let res = data.reduce((r, c, i) => {
