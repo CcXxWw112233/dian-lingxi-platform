@@ -137,6 +137,9 @@ export default class PagingnationContent extends React.Component {
     
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
     
+    this.props.updateDatasProcess && this.props.updateDatasProcess({
+      currentProcessInstanceId: obj.flow
+    })
     await this.props.updateDatas({
       totalId: obj
     })

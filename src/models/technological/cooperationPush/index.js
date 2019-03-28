@@ -40,7 +40,8 @@ import {
   workbench_selectFilePreviewCommits,
   workbench_selectFilePreviewPointNumCommits,
   workbench_selectFilePreviewCommitPoints,
-  workbench_selectFilePreviewCommitPointNumber
+  workbench_selectFilePreviewCommitPointNumber,
+  workbench_currentProcessInstanceId,
 } from '../workbench/selects'
 //定义model名称
 const model_projectDetail = name => `projectDetail/${name}`
@@ -53,6 +54,7 @@ const model_newsDynamic = name => `newsDynamic/${name}`
 const model_workbenchTaskDetail = name => `workbenchTaskDetail/${name}`
 const model_workbenchFileDetail = name => `workbenchFileDetail/${name}`
 const model_workbenchPublicDatas = name => `workbenchPublicDatas/${name}`
+const model_workbenchDetailProcess = name => `workbenchDetailProcess/${name}`
 
 //消息推送model
 let dispathes = null
@@ -67,7 +69,7 @@ export default {
         locationPath = location.pathname
         message.destroy()
         //头部table key
-        if (location.pathname.indexOf('/technological') !== -1) {
+        if (location.pathname.indexOf('/technological') !== -1 || true) {
           //websocket连接判定
           setTimeout(function () {
             console.log('1111', Cookies.get('wsLinking'))
@@ -140,6 +142,12 @@ export default {
       }
       yield put({
         type: handleType,
+        payload: {
+          res: data
+        }
+      })
+      yield put({
+        type: 'handleWsData_public',
         payload: {
           res: data
         }
@@ -473,6 +481,7 @@ export default {
           const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
           const processPageFlagStep = yield select(selectProcessPageFlagStep) //1为编辑界面，编辑界面不更新
           const flow_id = getAfterNameId(coperateName)
+          // debugger
           if(currentProcessInstanceId == flow_id && processPageFlagStep == '4') {
             const curr_node_id = coperateData.curr_node_id
             let curr_node_sort
@@ -669,27 +678,6 @@ export default {
           })
 
           break
-        case 'change:permission':
-          const permission_type = coperateData['type']
-          if(permission_type == '1') {
-            dispathes({
-              type: model_technological('getUserOrgPermissions'),
-              payload: {
-
-              }
-            })
-          }else if (permission_type == '2'){
-            dispathes({
-              type: model_technological('getUserBoardPermissions'),
-              payload: {
-
-              }
-            })
-          } else {
-
-          }
-          break
-
         default:
           break
       }
@@ -909,27 +897,28 @@ export default {
           // }
           break
         case 'change:flow':
-          // const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
-          // const flow_id = getAfterNameId(coperateName)
-          // if(currentProcessInstanceId == flow_id) {
-          //   const curr_node_id = coperateData.curr_node_id
-          //   let curr_node_sort
-          //   for (let i = 0; i < coperateData.nodes.length; i++ ) {
-          //     if(curr_node_id === coperateData.nodes[i].id) {
-          //       curr_node_sort = coperateData.nodes[i].sort
-          //       break
-          //     }
-          //   }
-          //   curr_node_sort = curr_node_sort || coperateData.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
-          //   dispathes({
-          //     type: model_projectDetailProcess('updateDatas'),
-          //     payload: {
-          //       processInfo: {...coperateData, curr_node_sort},
-          //       processEditDatas: coperateData.nodes || [],
-          //     }
-          //   })
-          // }
-          //
+          const currentProcessInstanceId = yield select(workbench_currentProcessInstanceId)
+          const flow_id = getAfterNameId(coperateName)
+          // debugger
+          if(currentProcessInstanceId == flow_id) {
+            const curr_node_id = coperateData.curr_node_id
+            let curr_node_sort
+            for (let i = 0; i < coperateData.nodes.length; i++ ) {
+              if(curr_node_id === coperateData.nodes[i].id) {
+                curr_node_sort = coperateData.nodes[i].sort
+                break
+              }
+            }
+            curr_node_sort = curr_node_sort || coperateData.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
+            dispathes({
+              type: model_workbenchDetailProcess('updateDatas'),
+              payload: {
+                processInfo: {...coperateData, curr_node_sort},
+                processEditDatas: coperateData.nodes || [],
+              }
+            })
+          }
+
           break
         case 'change:file':
           //增减filelist
@@ -1074,6 +1063,63 @@ export default {
           //     fileList: fileList_
           //   }
           // })
+        default:
+          break
+      }
+
+      //跨组织不推送消息
+      const news_d = JSON.parse(news['d'] || '{}')
+      const { org_id } = news_d
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+      const { current_org = {}} = userInfo
+      const current_org_id = current_org['id']
+      if(current_org_id != org_id) {
+        return false
+      }
+      dispathes({
+        type: model_newsDynamic('handleWs'),
+        payload: {
+          newsItem: JSON.parse(news['d'] || '{}')
+        }
+      })
+
+    },
+
+    * handleWsData_public({ payload }, { call, put, select }) {
+      const { res } = payload
+      const { data } = res
+      let coperate = data[0] //协作
+      let news = data[1] //消息
+      //获取消息协作类型
+      const coperateName = coperate.e
+      const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+      let coperateData = JSON.parse(coperate.d)
+      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+        return coperateName.substring(coperateName.indexOf('/') + 1)
+      }
+      switch (coperateType) {
+        case 'remove:visitor:member':
+          const remove_user_id = getAfterNameId(coperateName)
+          const remove_org_id = coperateData['org_id']
+          const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+          const user_id = userInfo['id']
+          const { current_org = {}} = userInfo
+          const current_org_id = current_org['id']
+          if(current_org_id == remove_org_id && remove_user_id == user_id) {
+            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
+            const delay = (ms) => new Promise(resolve => {
+              setTimeout(resolve, ms)
+            })
+            yield call(delay, MESSAGE_DURATION_TIME*1000)
+            yield put({
+              type: model_technological('logout'),
+              payload: {
+
+              }
+            })
+          }
+
+          break
         case 'change:permission':
           const permission_type = coperateData['type']
           if(permission_type == '1') {
@@ -1098,23 +1144,8 @@ export default {
           break
       }
 
-      //跨组织不推送消息
-      const news_d = JSON.parse(news['d'] || '{}')
-      const { org_id } = news_d
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
-      const { current_org = {}} = userInfo
-      const current_org_id = current_org['id']
-      if(current_org_id != org_id) {
-        return false
-      }
-      dispathes({
-        type: model_newsDynamic('handleWs'),
-        payload: {
-          newsItem: JSON.parse(news['d'] || '{}')
-        }
-      })
-
     },
+
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

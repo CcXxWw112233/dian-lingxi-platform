@@ -9,6 +9,7 @@ import {isApiResponseOk} from "../../utils/handleResponseData";
 import {getRelations, JoinRelation} from "../../services/technological/task";
 
 //内容关联相关
+//props link_local 3任务 2流程 21单个流程 22模板单个流程 4文件
 export default class ContentRaletion extends React.Component {
   state = {
     isInEditContentRelation: false,

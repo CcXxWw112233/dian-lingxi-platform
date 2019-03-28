@@ -49,12 +49,18 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          card_id: id
+          card_id: id,
+          cardCommentList: []
         }
       })
       let res = yield call(getCardDetail, { id})
-
       if(isApiResponseOk(res)) {
+        yield put({
+          type: 'getCardCommentList',
+          payload: {
+            id
+          }
+        })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -73,7 +79,6 @@ export default {
             board_id: board_id
           }
         })
-
       }else{
       }
     },
