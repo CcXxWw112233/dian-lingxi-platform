@@ -73,7 +73,7 @@ export default class ProcessItem extends React.Component {
     })
     await this.props.dispatch({
       type: 'workbenchDetailProcess/updateDatas',
-      payload: this.state
+      payload: {...this.state, currentProcessInstanceId: obj.flow}
     })
     await this.props.click()
   }

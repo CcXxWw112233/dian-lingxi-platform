@@ -26,4 +26,6 @@ export const workbench_selectFilePreviewCommitPoints = state => state[(`workbenc
 export const workbench_selectDrawContent = state => state[(`workbenchTaskDetail`)].datas.drawContent
 export const workbench_selectCard_id = state => state[(`workbenchTaskDetail`)].datas.card_id
 
+export const workbench_currentProcessInstanceId = state => state[(`workbenchDetailProcess`)].datas.currentProcessInstanceId
+
 
