@@ -343,7 +343,7 @@ export default class FileDetailContent extends React.Component {
       editMode: !this.state.editMode
     })
   }
-  
+
   setIsShowAll() {
     this.setState({
       isShowAll: !this.state.isShowAll
@@ -354,7 +354,7 @@ export default class FileDetailContent extends React.Component {
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { board_id, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -541,10 +541,8 @@ export default class FileDetailContent extends React.Component {
               <ContentRaletion
                 {...this.props}
                 board_id ={board_id}
-                link_id={filePreviewCurrentFileId}
-                link_local={'4'}
-                addRelation = {this.addRelation.bind(this)}
-                relations={relations}
+                link_id={currentProcessInstanceId}
+                link_local={'2'}
               />
             </div>
 

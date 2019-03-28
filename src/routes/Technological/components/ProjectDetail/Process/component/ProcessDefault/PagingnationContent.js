@@ -135,6 +135,9 @@ export default class PagingnationContent extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    this.props.updateDatasProcess && this.props.updateDatasProcess({
+      currentProcessInstanceId: obj.flow
+    })
     await this.props.updateDatas({
       totalId: obj
     })
