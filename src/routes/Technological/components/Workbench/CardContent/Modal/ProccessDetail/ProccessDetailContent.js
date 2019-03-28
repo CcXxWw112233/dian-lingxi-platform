@@ -59,6 +59,7 @@ export default class FileDetailContent extends React.Component {
 
   componentWillMount() {
     const { datas: { filePreviewCommitPoints=[]} }= this.props.model
+    
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -350,6 +351,7 @@ export default class FileDetailContent extends React.Component {
     })
   }
   render() {
+    console.log('------>>>>>>', this.props.model.datas)
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 
@@ -550,7 +552,7 @@ export default class FileDetailContent extends React.Component {
             <div style={{fontSize: '12px', color: '#595959'}}>
               {
                 //processDynamics
-                this.props.model.datas.workFlowComments?this.props.model.datas.workFlowComments.map((item, i) => {
+                this.props.model.datas.workFlowComments.map((item, i) => {
                   if(this.state.isShowAll) {
                     return (
                       <div key={i} value={item}>
@@ -568,7 +570,7 @@ export default class FileDetailContent extends React.Component {
                       )
                     }
                   }
-                }):null
+                })
               }
               <div>
                 <div></div>

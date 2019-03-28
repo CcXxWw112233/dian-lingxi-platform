@@ -189,7 +189,6 @@ class CardContent extends React.Component {
     })
   }
   async setPreviewProccessModalVisibile(id) {
-    console.log('this is model!!!~~~~', this.props.model.datas, id)
     let flowID = this.props.model.datas.totalId.flow
     let board_id = this.props.model.datas.totalId.board
     await this.props.getProcessInfo({id: flowID})

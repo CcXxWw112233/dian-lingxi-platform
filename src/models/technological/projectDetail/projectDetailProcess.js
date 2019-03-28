@@ -3,6 +3,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
+import { projectDetailInfo } from '../../../services/technological/prjectDetail'
 import {
   completeProcessTask,
   createProcess,
@@ -17,7 +18,11 @@ import {
   resetAsignees,
   saveProcessTemplate,
   getProcessListByType,
-  deleteProcessTemplate
+  deleteProcessTemplate,
+  addWorkFlowComment,
+  getWorkFlowComment,
+  workflowDelete,
+  workflowEnd
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {
@@ -27,7 +32,8 @@ import {
   selectProcessComepletedList,
   selectProcessTotalId,
   selectCurr_node_sort,
-  selectNode_amount
+  selectNode_amount,
+  selectProjectProcessCommentList
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -79,6 +85,7 @@ export default modelExtend(projectDetail, {
               processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
               templateInfo: {}, //所选择的流程模板的信息数据
               processInfo: {}, //所选中的流程的信息
+              workFlowComments: []
             }
           })
 
@@ -88,7 +95,6 @@ export default modelExtend(projectDetail, {
               id: board_id
             }
           })
-
           dispatch({
             type: 'getProcessList',
             payload: {
@@ -104,6 +110,21 @@ export default modelExtend(projectDetail, {
                 currentProcessInstanceId: flow_id
               }
             })
+            
+            dispatch({
+              type: 'projectDetailInfo',
+              payload: {
+                id: board_id
+              }
+            })
+
+            dispatch({
+              type: 'getWorkFlowComment',
+              payload: {
+                flow_instance_id: flow_id
+              }
+            })
+
             dispatch({
               type: 'updateDatas',
               payload: {
@@ -364,6 +385,24 @@ export default modelExtend(projectDetail, {
         console.log('进入查询状态之后')
       }
     },
+    //获取项目信息
+    * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
+      const { id, calback } = payload
+      let res = yield call(projectDetailInfo, id)
+      console.log('projectDetailProcess:', res)
+      if(typeof calback === 'function') {
+        calback()
+      }
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectDetailInfoData: res.data,
+          }
+        })
+      }else{
+      }
+    },
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
@@ -509,7 +548,53 @@ export default modelExtend(projectDetail, {
       }else{
       }
     },
+    * addWorkFlowComment({payload}, {select, call, put}) {
+      let res1 = yield select(selectProjectProcessCommentList)
+      let res2 = yield call(addWorkFlowComment, payload)
+      console.log('this is addWorkFlowComment', res1, res2)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: [
+            ...res1,
+            res2.data
+          ]
+        }
+      })
+    },
 
+    * getWorkFlowComment({payload}, {select, call, put}) {
+        let res = yield call(getWorkFlowComment, payload)
+        console.log('this is project_getWorkFlowComment', res)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            workFlowComments: res.data
+          }
+        })
+      },
+
+    * workflowDelete({payload}, {select, call, put}) {
+      let res = yield call(workflowDelete, payload)
+      console.log('this is workflowDelete:', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          isProcessEnd: ''
+        }
+      })
+    },
+
+    * workflowEnd({payload}, {select, call, put}) {
+      let res = yield call(workflowEnd, payload)
+      console.log('this is workflowEnd:', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          isProcessEnd: true
+        }
+      })
+    }, 
   },
 
   reducers: {

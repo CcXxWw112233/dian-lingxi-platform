@@ -412,8 +412,6 @@ export default modelExtend(technological, {
       }
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
-      // let res = yield call(getBackLogProcessList, payload)
-      // debugger
       let res = yield call(getCurrentBackLogProcessList)
       console.log('workbench/getBackLogProcessList', res)
       if(isApiResponseOk(res)) {

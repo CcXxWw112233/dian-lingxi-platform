@@ -50,7 +50,6 @@ export default class ProcessDefault extends React.Component {
   }
 
   render() {
-    console.log('------------>>>>>>>>', this.props.model)
     const { clientHeight } = this.state
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
     const flowTabs = () => {

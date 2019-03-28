@@ -26,6 +26,7 @@ export const selectCurr_node_sort = state => state[(`projectDetailProcess`)].dat
 export const selectNode_amount = state => state[(`projectDetailProcess`)].datas.processInfo.node_amount
 export const selectProcessPageFlagStep = state => state[(`projectDetailProcess`)].datas.processPageFlagStep
 
+
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id
 export const selectBreadcrumbList= state => state[(`projectDetailFile`)].datas.breadcrumbList //
@@ -56,6 +57,7 @@ export const selectKnowPolicyArticles = state => state[(`workbench`)].datas.know
 export const selectBoxList = state => state[(`workbench`)].datas.boxList
 export const selectBoxUsableList = state => state[(`workbench`)].datas.boxUsableList
 export const selectBackLogProcessList = state => state[(`workbench`)].datas.backLogProcessList
-
+export const selectProcessCommentList = state => state[(`workbenchDetailProcess`)].datas.workFlowComments
+export const selectProjectProcessCommentList = state => state[(`projectDetailProcess`)].datas.workFlowComments
 //im
 export const selectImData = state => state[(`technological`)].datas.imData

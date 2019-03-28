@@ -629,15 +629,14 @@ const ProjectDetail = (props) => {
   }
   const workflowComments = {
     addWorkFlowComment(payload) {
-      console.log('test')
       dispatch({
-        type: 'workbenchDetailProcess/addWorkFlowComment',
+        type: 'projectDetailProcess/addWorkFlowComment',
         payload
       })
     },
     getWorkFlowComment(params) {
       dispatch({
-        type: 'workbenchDetailProcess/getWorkFlowComment',
+        type: 'projectDetailProcess/getWorkFlowComment',
         payload: params
       })
     }
