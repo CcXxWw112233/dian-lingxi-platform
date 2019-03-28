@@ -8,6 +8,11 @@ import indexStyles from './index.less'
 import { Route, Router, Switch, Link } from 'dva/router'
 import { Drawer } from 'antd'
 import dynamic from "dva/dynamic";
+import {checkIsHasPermissionInBoard} from "../../../../utils/businessFunction";
+import {
+  PROJECT_FILES_FILE_INTERVIEW, PROJECT_FLOW_FLOW_ACCESS,
+  PROJECT_TEAM_CARD_INTERVIEW
+} from "../../../../globalset/js/constant";
 const getEffectOrReducerByName = name => `projectDetail/${name}`
 const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
 const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
@@ -627,13 +632,13 @@ const ProjectDetail = (props) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '3':
-        appFace = (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) && (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       case '4':
-        appFace = (<FileModule {...FileModuleProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (<FileModule {...FileModuleProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
         break
       default:
         // appFace = (<EditTeamShow {...EditTeamShowProps} updateDatas={updateDatas}/>)

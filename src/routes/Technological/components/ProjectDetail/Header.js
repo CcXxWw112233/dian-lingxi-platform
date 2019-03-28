@@ -560,7 +560,7 @@ export default class Header extends React.Component {
       let operatorConent = <div style={{ color: '#ffffff'}}>s</div>
       switch (appsSelectKey) {
         case '2':
-          operatorConent = (
+          operatorConent = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (
             <div style={{color: '#595959'}}>
               {/*<Dropdown overlay={<MenuSearch {...this.props}/>}>*/}
                  {/*<span>{processName || `请选择${currentNounPlanFilterName(FLOWS)}`}<Icon type="down" style={{fontSize: 14, color: '#595959'}}/></span>*/}
@@ -571,7 +571,7 @@ export default class Header extends React.Component {
           )
           break
         case '3':
-          operatorConent = (
+          operatorConent = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) && (
             <div>
               <Dropdown overlay={taskAppMenu}>
               <span style={{fontSize: 14, color: '#595959'}}>{filterGetTaskGroupListType(getTaskGroupListArrangeType)} <Icon type="down" /></span>
@@ -584,7 +584,7 @@ export default class Header extends React.Component {
           break
         case '4':
           if(selectedRowKeys.length) { //选择文件会改变
-            operatorConent = (
+            operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
               <div style={{display: 'flex', alignItems: 'center', color: '#595959' }} className={indexStyle.fileOperator}>
                 <div dangerouslySetInnerHTML={{__html: this.state.iframes}}></div>
                 <div style={{marginTop: 18}}>
@@ -620,7 +620,7 @@ export default class Header extends React.Component {
               </div>
             )
           }else {
-            operatorConent = (
+            operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
               <div style={{display: 'flex', alignItems: 'center', }}>
                 {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
                   <Upload {...uploadProps} showUploadList={false}>
@@ -708,7 +708,19 @@ export default class Header extends React.Component {
           <div className={indexStyle.right_top} >
             {app_data.map((value, itemkey) => {
               const { app_name, key, app_code } = value
-              return (
+              let flag = true
+              switch (key) {
+                case '2':
+                  flag = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)
+                  break
+                case '3':
+                  flag = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)
+                  break
+                case '4':
+                  flag = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)
+                  break
+              }
+              return flag && (
                 <div className={appsSelectKey === key?indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_code && currentNounPlanFilterName(app_code) ?currentNounPlanFilterName(app_code) : app_name}</div>
               )
             })}

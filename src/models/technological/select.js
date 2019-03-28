@@ -21,6 +21,7 @@ export const selectCurrentProcessList = state => state[(`projectDetailProcess`)]
 export const selectProcessDoingList = state => state[(`projectDetailProcess`)].datas.processDoingList
 export const selectProcessStopedList = state => state[(`projectDetailProcess`)].datas.processStopedList
 export const selectProcessComepletedList = state => state[(`projectDetailProcess`)].datas.processComepletedList
+export const selectProcessPageFlagStep = state => state[(`projectDetailProcess`)].datas.processPageFlagStep
 
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id

@@ -23,7 +23,8 @@ import {
   filePreviewCommitPoints,
   selectFilePreviewCommitPoints,
   selectProjectDetailInfoData,
-  selectProcessDoingList
+  selectProcessDoingList,
+  selectProcessPageFlagStep
 } from './../select'
 import {
   workbench_selectProjectList,
@@ -470,8 +471,9 @@ export default {
           break
         case 'change:flow':
           const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
+          const processPageFlagStep = yield select(selectProcessPageFlagStep) //1为编辑界面，编辑界面不更新
           const flow_id = getAfterNameId(coperateName)
-          if(currentProcessInstanceId == flow_id) {
+          if(currentProcessInstanceId == flow_id && processPageFlagStep == '4') {
             const curr_node_id = coperateData.curr_node_id
             let curr_node_sort
             for (let i = 0; i < coperateData.nodes.length; i++ ) {
@@ -669,7 +671,6 @@ export default {
           break
         case 'change:permission':
           const permission_type = coperateData['type']
-          debugger
           if(permission_type == '1') {
             dispathes({
               type: model_technological('getUserOrgPermissions'),
@@ -1075,7 +1076,6 @@ export default {
           // })
         case 'change:permission':
           const permission_type = coperateData['type']
-          debugger
           if(permission_type == '1') {
             dispathes({
               type: model_technological('getUserOrgPermissions'),
