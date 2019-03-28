@@ -190,7 +190,6 @@ export default class ProcessDetail extends React.Component {
     }
 
     const filterForm = (value, key) => {
-      console.log('wtf is this', processEditDatas)
       const { node_type } = value
       let container = (<div></div>)
       switch (node_type) {

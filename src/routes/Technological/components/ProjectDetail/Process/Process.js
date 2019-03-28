@@ -22,7 +22,7 @@ export default class ProcessIndex extends React.Component {
           containner = (<ProcessStartConfirm {...this.props}></ProcessStartConfirm>)
           break
         case '4':
-          containner = (<ProcessDetail {...this.props}/>)
+          containner = (<ProcessDefault {...this.props}/>)
           break
         default:
           containner = (<ProcessDefault {...this.props}/>)

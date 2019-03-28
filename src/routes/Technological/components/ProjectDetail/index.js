@@ -25,6 +25,7 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    dispatch,
     addProjectApp(data) {
       dispatch({
         type: getEffectOrReducerByName('addProjectApp'),
@@ -83,12 +84,6 @@ const ProjectDetail = (props) => {
     appsSelect(data) {
       dispatch({
         type: getEffectOrReducerByName('appsSelect'),
-        payload: data
-      })
-    },
-    getProcessInfo(data){
-      dispatch({
-        type: getEffectOrReducerByNameProcess('getProcessInfo'),
         payload: data
       })
     },
@@ -549,7 +544,6 @@ const ProjectDetail = (props) => {
       })
     },
     completeProcessTask(data){
-      console.log('const fn has running!!!')
       dispatch({
         type: getEffectOrReducerByNameProcess('completeProcessTask'),
         payload: data
@@ -627,12 +621,42 @@ const ProjectDetail = (props) => {
       payload: payload
     })
   }
-
+  const getProjectDetailInfo = (payload) => {
+    dispatch({
+      type: 'workbenchTaskDetail/projectDetailInfo',
+      payload: payload
+    })
+  }
+  const workflowComments = {
+    addWorkFlowComment(payload) {
+      console.log('test')
+      dispatch({
+        type: 'workbenchDetailProcess/addWorkFlowComment',
+        payload
+      })
+    },
+    getWorkFlowComment(params) {
+      dispatch({
+        type: 'workbenchDetailProcess/getWorkFlowComment',
+        payload: params
+      })
+    }
+  }
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (<ProcessIndex {...FileModuleProps} {...ProcessProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (<ProcessIndex
+          {...this.props}
+          {...HeaderListProps}
+          getProjectDetailInfo={getProjectDetailInfo}
+          {...workflowComments}
+          {...FileModuleProps}
+          {...ProcessProps}
+          updateDatas={updateDatas}
+          updateDatasTask={updateDatasTask}
+          updateDatasFile={updateDatasFile}
+          updateDatasProcess={updateDatasProcess} />)
         break
       case '3':
         appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) && (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)

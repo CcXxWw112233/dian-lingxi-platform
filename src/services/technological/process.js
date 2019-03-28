@@ -148,9 +148,26 @@ export async function addWorkFlowComment(data) {
 }
 
 export async function getWorkFlowComment(params) {
-  return request({
+  let res =  request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
     method: 'GET',
     params
   })
+  return res
 }
+//终止流程
+export async function workflowEnd(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/end/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
+//删除流程
+export async function workflowDelete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/${data.id}`,
+    method: 'DELETE',
+    data
+  })
+} 

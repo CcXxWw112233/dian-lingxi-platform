@@ -552,7 +552,7 @@ export default class FileDetailContent extends React.Component {
             <div style={{fontSize: '12px', color: '#595959'}}>
               {
                 //processDynamics
-                this.props.model.datas.workFlowComments?(this.props.model.datas.workFlowComments.reverse()).map((item, i) => {
+                this.props.model.datas.workFlowComments?this.props.model.datas.workFlowComments.map((item, i) => {
                   if(this.state.isShowAll) {
                     return (
                       <div key={i} value={item}>

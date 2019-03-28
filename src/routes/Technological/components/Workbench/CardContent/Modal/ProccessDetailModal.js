@@ -31,6 +31,7 @@ class FileDetailModal extends React.Component {
         width={'90%'}
         // height={400}
         // zIndex={1006}
+        close={this.props.close}
         closable={false}
         maskClosable={false}
         footer={null}

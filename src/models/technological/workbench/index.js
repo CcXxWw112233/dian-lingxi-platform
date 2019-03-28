@@ -19,7 +19,7 @@ export default modelExtend(technological, {
   state: {
       datas: {
 
-        
+
         projectList: []
       }
     },
@@ -413,7 +413,9 @@ export default modelExtend(technological, {
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
       // let res = yield call(getBackLogProcessList, payload)
+      // debugger
       let res = yield call(getCurrentBackLogProcessList)
+      console.log('workbench/getBackLogProcessList', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -421,9 +423,7 @@ export default modelExtend(technological, {
             backLogProcessList: res.data
           }
         })
-      }else{
-
-      }
+      }else{}
     },
     * getJoinedProcessList({ payload }, { select, call, put }) {
       let res = yield call(getJoinedProcessList, payload)

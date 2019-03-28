@@ -21,13 +21,36 @@ export default class ProcessItem extends React.Component {
       value: { flow_node_name, name, board_name, board_id, status, flow_instance_id }
     })
   }
-  gotoBoardDetail(obj) {
+  async gotoBoardDetail(obj) {
     setStorage('board_id', obj.board)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
+    await this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
+
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/updateDatas',
+      payload: this.state
+    })
+
+    // await this.props.getProcessInfo({id: obj.flow})
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/getProcessInfo',
+      payload: {
+        id: obj.flow
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'workbenchTaskDetail/projectDetailInfo',
+      payload: {id: obj.board}
+    })
+
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/getWorkFlowComment',
+      payload: {flow_instance_id: obj.flow}
+    })
   }
   async click(obj) {
     //用于缓存做权限调用
