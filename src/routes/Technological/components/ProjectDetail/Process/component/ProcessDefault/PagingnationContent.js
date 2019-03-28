@@ -143,6 +143,7 @@ export default class PagingnationContent extends React.Component {
     await this.props.updateDatas({
       totalId: obj
     })
+
     await this.props.getProcessInfo({id: obj.flow})
     await this.props.getProjectDetailInfo({id: obj.board})
 
