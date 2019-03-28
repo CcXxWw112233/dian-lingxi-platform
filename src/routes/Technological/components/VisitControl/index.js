@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { Popover, Tooltip, Switch, Menu, Dropdown, Button, Modal } from 'antd';
+import {
+  Popover,
+  Tooltip,
+  Switch,
+  Menu,
+  Dropdown,
+  Button,
+  Modal,
+  message
+} from 'antd';
 import styles from './index.less';
 import globalStyles from './../../../../globalset/css/globalClassName.less';
 import AvatarList from './AvatarList/index';
@@ -12,9 +21,9 @@ class VisitControl extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isVisitControl: false,
+      isVisitControl: props.isPropVisitControl,
       addMemberModalVisible: false,
-      visible: false,
+      visible: false
     };
   }
   togglePopoverVisible = e => {
@@ -42,9 +51,18 @@ class VisitControl extends Component {
     const { addMemberModalVisible } = this.state;
     //关闭页面中的其他 弹窗 会影响到 popover 的状态，这里以示区分。
     if (isClose && !addMemberModalVisible) {
-      this.setState({
-        visible: false
-      });
+      this.setState(
+        {
+          visible: false
+        },
+        () => {
+          const { isPropVisitControl, handleVisitControlChange } = this.props;
+          const { isVisitControl } = this.state;
+          if (isVisitControl !== isPropVisitControl) {
+            handleVisitControlChange(isVisitControl);
+          }
+        }
+      );
     }
   };
   handleClickedOtherPsersonListItem = item => {
@@ -116,6 +134,7 @@ class VisitControl extends Component {
     );
   };
   renderPopoverContent = () => {
+    const { principalList, principalInfo } = this.props;
     return (
       <div className={styles.content__wrapper}>
         <div className={styles.content__list_wrapper}>
@@ -129,7 +148,10 @@ class VisitControl extends Component {
                   backgroundColor: '#fde3cf'
                 }}
               >
-                <AvatarList.Item
+                {principalList.map(item => (
+                  <AvatarList.Item tips={item.name} src={item.avatar} />
+                ))}
+                {/* <AvatarList.Item
                   tips="Jake"
                   src="https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png"
                 />
@@ -152,11 +174,11 @@ class VisitControl extends Component {
                 <AvatarList.Item
                   tips="Niko"
                   src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                />
+                /> */}
               </AvatarList>
             </span>
             <span className={styles.content__principalList_info}>
-              12位任务负责人
+              { `${principalList.length}${principalInfo}`}
             </span>
           </div>
           <div className={styles.content__othersPersonList_wrapper}>
@@ -214,7 +236,11 @@ class VisitControl extends Component {
     );
   };
   render() {
-    const { tooltipUnClockText, tooltipClockText } = this.props;
+    const {
+      tooltipUnClockText,
+      tooltipClockText,
+      isPropVisitControl
+    } = this.props;
     const { isVisitControl, addMemberModalVisible, visible } = this.state;
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
@@ -249,7 +275,7 @@ class VisitControl extends Component {
             className={styles.trigger__wrapper}
             onClick={e => this.togglePopoverVisible(e)}
           >
-            {isVisitControl ? clockEle : unClockEle}
+            {isPropVisitControl ? clockEle : unClockEle}
           </span>
         </Popover>
         <Modal
@@ -273,7 +299,72 @@ class VisitControl extends Component {
 
 VisitControl.defaultProps = {
   tooltipUnClockText: '访问控制',
-  tooltipClockText: '关闭访问控制'
+  tooltipClockText: '关闭访问控制',
+  isPropVisitControl: true, //之所以要有这个变量，是因为在UI上，需要实现当 popover 关闭的时候，才将 visitControl 的状态传过去
+  handleVisitControlChange: function() {
+    message.error('handleVisitControlChange is required. ');
+  },
+  principalInfo: '位任务负责人', //已有权限人提示信息
+  principalList: [
+    {
+      name: 'Jake',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png'
+    },
+    {
+      name: 'Andy',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'
+    },
+    {
+      name: 'Niko',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
+    },
+    {
+      name: 'Niko',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
+    },
+    {
+      name: 'Jake',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png'
+    },
+    {
+      name: 'Andy',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'
+    },
+    {
+      name: 'Niko',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
+    },
+    {
+      name: 'Niko',
+      avatar:
+        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
+    }
+  ],
+  OtherPersonOperatorMenuItem: [
+    {
+      key: '可编辑',
+      value: 'editable',
+    },
+    {
+      key: '可评论',
+      value: 'commentable'
+    },
+    {
+      key: '仅查看',
+      value: 'readonly'
+    },
+    {
+      key: '移除',
+      value: 'remove'
+    }
+  ]
 };
 
 export default VisitControl;
