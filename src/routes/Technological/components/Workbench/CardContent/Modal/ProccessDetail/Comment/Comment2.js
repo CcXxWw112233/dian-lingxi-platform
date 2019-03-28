@@ -22,9 +22,9 @@ export default class Comment extends React.Component {
     submitButtonDisabled: true
   }
   componentDidMount() {
-    // this.props.getWorkFlowComment({
-    //   flow_instance_id: this.props.model.datas.totalId.flow
-    // })
+    this.props.getWorkFlowComment({
+      flow_instance_id: this.props.model.datas.totalId.flow
+    })
   }
   MentionSpacerClick() {
   }

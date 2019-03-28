@@ -308,10 +308,10 @@ export default class DetailConfirmInfoOne extends React.Component {
                   link_local={'21'}
                 />
               </div>
-              {assignees.map((value, key)=>{
+              {assignees?assignees.map((value, key)=>{
                 const { comment } = value
                 return !!comment && <div key={key}>{AnnotationListItem(value)}</div>
-              })}
+              }):null}
 
               <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                 {filterBottOperate()}

@@ -10,6 +10,7 @@ import globalStyles from '../../../../../../../globalset/css/globalClassName.les
 import { Collapse } from 'antd';
 import TemplateItem from './TemplateItem'
 import {message} from "antd/lib/index";
+import {processEditDatasConstant, processEditDatasRecordsConstant} from "../../constant";
 const Panel = Collapse.Panel;
 
 export default class TemplateContent extends React.Component {
@@ -39,7 +40,13 @@ export default class TemplateContent extends React.Component {
       return false
     }
     this.props.updateDatasProcess({
-      processPageFlagStep: '2'
+      processInfo: {},
+      processPageFlagStep: '2',
+      node_type: '1', //节点类型
+      processCurrentEditStep: 0, //编辑第几步，默认 0
+      processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+      processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+      currentProcessInstanceId: ''
     })
   }
 

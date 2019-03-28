@@ -6,7 +6,12 @@ import projectDetail from './index'
 import {
   completeProcessTask,
   createProcess,
-  fillFormComplete, getProcessInfo, getProcessList, getProcessTemplateList, getProessDynamics, getTemplateInfo,
+  fillFormComplete, 
+  getProcessInfo, 
+  getProcessList, 
+  getProcessTemplateList, 
+  getProessDynamics, 
+  getTemplateInfo,
   rebackProcessTask,
   rejectProcessTask,
   resetAsignees,
@@ -19,7 +24,10 @@ import {
   selectCurrentProcessInstanceId,
   selectProcessDoingList,
   selectProcessStopedList,
-  selectProcessComepletedList
+  selectProcessComepletedList,
+  selectProcessTotalId,
+  selectCurr_node_sort,
+  selectNode_amount
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -54,7 +62,6 @@ export default modelExtend(projectDetail, {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
@@ -95,6 +102,23 @@ export default modelExtend(projectDetail, {
               type: 'getProcessInfoByUrl',
               payload: {
                 currentProcessInstanceId: flow_id
+              }
+            })
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                processDetailModalVisible: true,
+                totalId: {
+                  flow: flow_id,
+                  board: board_id
+                }
+              }
+            })
+          } else {
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                processDetailModalVisible: false
               }
             })
           }
@@ -235,9 +259,7 @@ export default modelExtend(projectDetail, {
           currentProcessInstanceId
         }
       })
-      console.log('打桩开始!!!', payload)
       let res = yield call(getProcessInfo, currentProcessInstanceId)
-      console.log('rrrrrrr', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -278,7 +300,6 @@ export default modelExtend(projectDetail, {
         type: 'updateDatas',
         payload
       })
-      console.log('啊啊啊啊', payload)
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
       if(isApiResponseOk(res)) {
@@ -356,6 +377,30 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+        let node_amount = yield select(selectNode_amount)
+        let curr_node_sort = yield select(selectCurr_node_sort)
+        if(node_amount === curr_node_sort) {
+          let processDoingList = yield select(selectProcessDoingList),
+          processComepletedList = yield select(selectProcessComepletedList),
+          totalId = yield select(selectProcessTotalId),
+          processDoingLists = [],
+          processComepletedLists = []
+          processDoingList.forEach((c) => {
+            if(c.id === totalId.flow) {
+              processComepletedLists.push(c)
+            } else {
+              processDoingLists.push(c)
+            }
+          })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDoingList: processDoingLists,
+              processComepletedList: processComepletedList.concat(processComepletedLists)
+            }
+          })
+          
+        }
       }else{
         message.warn(res.message)
       }

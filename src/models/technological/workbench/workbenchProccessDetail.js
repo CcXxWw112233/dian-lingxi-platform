@@ -17,10 +17,18 @@ import {
   resetAsignees,
   saveProcessTemplate,
   addWorkFlowComment,
-  getWorkFlowComment
+  getWorkFlowComment,
+  workflowDelete,
+  workflowEnd
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
-import {selectCurrentProcessInstanceId} from "../select";
+import {
+  selectCurrentProcessInstanceId,
+  selectProcessTotalId,
+  selectCurr_node_sort,
+  selectNode_amount,
+  selectBackLogProcessList
+} from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
   processEditDatasConstant,
@@ -248,10 +256,8 @@ export default modelExtend(workbench, {
       })
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
-      console.log('res is :', res)
       if(isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
-        
         const curr_node_id = res.data.curr_node_id
         let curr_node_sort
         for (let i=0; i<res.data.nodes.length; i++ ) {
@@ -260,7 +266,6 @@ export default modelExtend(workbench, {
             break
           }
         }
-        
         curr_node_sort = curr_node_sort || res.data.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
         yield put({
           type: 'updateDatas',
@@ -270,6 +275,7 @@ export default modelExtend(workbench, {
             processPageFlagStep: '4'
           }
         })
+
         //查询流程动态
         const res2 = yield call(getProessDynamics, {currentProcessInstanceId: id})
         if(isApiResponseOk(res2)) {
@@ -316,6 +322,11 @@ export default modelExtend(workbench, {
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
+
+      let res2 = yield call(getProcessInfo, instance_id)
+      const curr_node_id = res2.data.completed_amount
+      const amount_node_id = res2.data.node_amount
+      // debugger
       console.log('completeProcessTask has running:', res)
       if(isApiResponseOk(res)) {
         yield put({
@@ -327,6 +338,26 @@ export default modelExtend(workbench, {
             }
           }
         })
+        let backLogProcessList = yield select(selectBackLogProcessList)
+
+        if(curr_node_id === amount_node_id) {
+          let r = backLogProcessList.reduce((r, c) => {
+            return [
+              ...r,
+              ...(c.flow_instance_id === instance_id?[]:[c])
+            ]
+          }, [])
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              backLogProcessList: r
+            }
+          })
+        }
+
+
+
+
       }else{
         message.warn(res.message)
       }
@@ -415,9 +446,29 @@ export default modelExtend(workbench, {
           workFlowComments: res.data
         }
       })
+    },
 
+    * workflowDelete({payload}, {select, call, put}) {
+      let res = yield call(workflowDelete, payload)
+      console.log('this is workflowDelete:', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          isProcessEnd: ''
+        }
+      })
+    },
 
-    }
+    * workflowEnd({payload}, {select, call, put}) {
+      let res = yield call(workflowEnd, payload)
+      console.log('this is workflowEnd:', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          isProcessEnd: true
+        }
+      })
+    },
   },
 
   reducers: {

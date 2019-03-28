@@ -104,6 +104,7 @@ export default class DetailConfirmInfoFive extends React.Component {
     element.style.height = type ? targetHeight : 0;
   };
 
+  //通过按钮
   setOpinionModalVisible(operateType) {
     this.setState({
       operateType, //1完成 0 撤回 2审批的拒绝
