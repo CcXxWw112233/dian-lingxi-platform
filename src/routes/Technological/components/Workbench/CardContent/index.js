@@ -182,8 +182,8 @@ class CardContent extends React.Component {
       previewProccessModalVisibile: false
     })
   }
-  async setPreviewProccessModalVisibile() {
-    console.log('this is model!!!~~~~', this.props.model.datas)
+  async setPreviewProccessModalVisibile(id) {
+    console.log('this is model!!!~~~~', this.props.model.datas, id)
     let flowID = this.props.model.datas.totalId.flow
     let board_id = this.props.model.datas.totalId.board
     await this.props.getProcessInfo({id: flowID})
@@ -401,6 +401,7 @@ class CardContent extends React.Component {
             <div>
               <div>
                 {backLogProcessList.map((value, key) => (
+                  // <div>Hello World</div>
                   <ProcessItem {...this.props} key={key} click = {this.setPreviewProccessModalVisibile.bind(this)} itemValue={value} />
                 ))}
               </div>

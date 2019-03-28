@@ -24,7 +24,10 @@ import {
   selectCurrentProcessInstanceId,
   selectProcessDoingList,
   selectProcessStopedList,
-  selectProcessComepletedList
+  selectProcessComepletedList,
+  selectProcessTotalId,
+  selectCurr_node_sort,
+  selectNode_amount
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -104,7 +107,11 @@ export default modelExtend(projectDetail, {
             dispatch({
               type: 'updateDatas',
               payload: {
-                processDetailModalVisible: true
+                processDetailModalVisible: true,
+                totalId: {
+                  flow: flow_id,
+                  board: board_id
+                }
               }
             })
           } else {
@@ -370,6 +377,30 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+        let node_amount = yield select(selectNode_amount)
+        let curr_node_sort = yield select(selectCurr_node_sort)
+        if(node_amount === curr_node_sort) {
+          let processDoingList = yield select(selectProcessDoingList),
+          processComepletedList = yield select(selectProcessComepletedList),
+          totalId = yield select(selectProcessTotalId),
+          processDoingLists = [],
+          processComepletedLists = []
+          processDoingList.forEach((c) => {
+            if(c.id === totalId.flow) {
+              processComepletedLists.push(c)
+            } else {
+              processDoingLists.push(c)
+            }
+          })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              processDoingList: processDoingLists,
+              processComepletedList: processComepletedList.concat(processComepletedLists)
+            }
+          })
+          
+        }
       }else{
         message.warn(res.message)
       }

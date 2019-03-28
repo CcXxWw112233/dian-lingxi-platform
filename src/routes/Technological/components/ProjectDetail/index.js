@@ -20,6 +20,7 @@ const ProjectDetail = (props) => {
   const HeaderListProps = {
     modal,
     model,
+    dispatch,
     addProjectApp(data) {
       dispatch({
         type: getEffectOrReducerByName('addProjectApp'),
@@ -642,10 +643,11 @@ const ProjectDetail = (props) => {
       case '2':
         appFace = (<ProcessIndex 
           {...this.props} 
+          {...HeaderListProps}
           getProjectDetailInfo={getProjectDetailInfo} 
           {...workflowComments}
           {...FileModuleProps} 
-          {...ProcessProps} 
+          {...ProcessProps}
           updateDatas={updateDatas} 
           updateDatasTask={updateDatasTask} 
           updateDatasFile={updateDatasFile} 

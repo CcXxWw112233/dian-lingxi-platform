@@ -852,7 +852,7 @@ const Workbench = (props) => {
       })
     }
   }
-
+  
   return(
     <div>
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>

@@ -49,55 +49,93 @@ export default class PagingnationContent extends React.Component {
     })
   }
     //分页逻辑
-  async getProcessListByType() {
+  getProcessListByType() {
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
     const { page_number, page_size, } = this.state
-    const { listData = [], status, } = this.props
+    const { listData = [] } = this.props
 
-    const obj = {
-      page_number,
-      page_size,
-      status,
-      board_id
-    }
+    // const obj = {
+    //   page_number,
+    //   page_size,
+    //   status,
+    //   board_id
+    // }
     this.setState({
       loadMoreText: '加载中...'
     })
-    const res = await getProcessListByType(obj)
-    if(res.code === '0') {
-      const data = res.data
-      let listName
-      let selectList = []
-      switch (status ) {
-        case '1':
+
+    let status = [1, 3, 4]
+    status.forEach(async (c) => {
+      let obj = {
+        page_number,
+        page_size,
+        status: c,
+        board_id
+      }
+      let res = await getProcessListByType(obj)
+      if(res.code === '0') {
+        const data = res.data
+        let listName
+        let selectList = []
+        if(c === 1) {
           listName = 'processDoingList'
           selectList = processDoingList
-          break
-        case '2':
+        } else if (c === 4) {
           listName = 'processStopedList'
           selectList = processStopedList
-          break
-        case '3':
+        } else {
           listName = 'processComepletedList'
           selectList =processComepletedList
-          break
-        default:
-          listName = 'processDoingList'
-          selectList = processDoingList
-          break
-      }
-      this.props.updateDatasProcess({
-        [listName]: selectList.concat(...data)
-      })
-      this.setState({
-        scrollBlock: !(data.length < page_size),
-        loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
-      }, () => {
-        this.setState({
-          loadMoreDisplay: listData.length ? 'block' : 'none',
+        }
+        this.props.updateDatasProcess({
+          [listName]: data
         })
-      })
-    }
+        this.setState({
+          scrollBlock: !(data.length < page_size),
+          loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
+        }, () => {
+          this.setState({
+            loadMoreDisplay: listData.length ? 'block' : 'none',
+          })
+        })
+      }
+    })
+    // const res = await getProcessListByType(obj)
+
+    // if(res.code === '0') {
+    //   const data = res.data
+    //   let listName
+    //   let selectList = []
+    //   switch (status ) {
+    //     case '1':
+    //       listName = 'processDoingList'
+    //       selectList = processDoingList
+    //       break
+    //     case '2':
+    //       listName = 'processStopedList'
+    //       selectList = processStopedList
+    //       break
+    //     case '3':
+    //       listName = 'processComepletedList'
+    //       selectList =processComepletedList
+    //       break
+    //     default:
+    //       listName = 'processDoingList'
+    //       selectList = processDoingList
+    //       break
+    //   }
+    //   this.props.updateDatasProcess({
+    //     [listName]: selectList.concat(...data)
+    //   })
+    //   this.setState({
+    //     scrollBlock: !(data.length < page_size),
+    //     loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
+    //   }, () => {
+    //     this.setState({
+    //       loadMoreDisplay: listData.length ? 'block' : 'none',
+    //     })
+    //   })
+    // }
   }
 
   contentBodyScroll(e) {
@@ -122,6 +160,7 @@ export default class PagingnationContent extends React.Component {
       processDetailModalVisible: false
     })
   }
+  //getProcessListByType
   async processItemClick(obj) {
     console.log('this is dog wangwangwang ---', this.props.model.datas)
     await this.props.updateDatas({
@@ -194,7 +233,7 @@ export default class PagingnationContent extends React.Component {
       )
     }
     const { processDetailModalVisible } = this.props.model.datas
-
+    
     return (
       <div
         className={indexStyles.paginationContent}
@@ -220,6 +259,7 @@ export default class PagingnationContent extends React.Component {
         <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
         <ProccessDetailModal 
           {...this.props}
+          getProcessListByType = {this.getProcessListByType.bind(this)} 
           close = {this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
         />
