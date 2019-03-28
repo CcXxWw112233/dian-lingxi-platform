@@ -21,12 +21,17 @@ export default class Comment extends React.Component {
     text: '',
     submitButtonDisabled: true
   }
+  componentDidMount() {
+    this.props.getWorkFlowComment({
+      flow_instance_id: this.props.model.datas.totalId.flow
+    })
+  }
   MentionSpacerClick() {
   }
   MentionEditorChange(editorState) {
     this.setState({
       editText: editorState
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!toString(this.state.editText)
       })
@@ -34,7 +39,7 @@ export default class Comment extends React.Component {
   }
   submitComment() {
 
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({
       card_id,
@@ -53,7 +58,7 @@ export default class Comment extends React.Component {
       text: e.target.value
     })
   }
-  handlerMultiEnter(e) {
+  async handlerMultiEnter(e) {
     let code = e.keyCode;
     let ctrl = e.ctrlKey;
     let shift = e.shiftKey;
@@ -67,20 +72,22 @@ export default class Comment extends React.Component {
       // return;
     }
     if(code == '13' && !ctrl && !shift && !alt) {
-      const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId  } } = this.props.model
-      const { board_id } = projectDetailInfoData
+      const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
       const { text } = this.state
+      const flow_instance_id = this.props.model.datas.totalId.flow
       if(!text) {
         return
       }
       //只按了enter
-      this.props.addFileCommit({
-        board_id,
+      await this.props.addWorkFlowComment({
+        flow_instance_id,
         comment: text,
-        file_id: filePreviewCurrentFileId,
-        type: '0',
-        coordinates: JSON.stringify(this.props.currentRect)
       })
+
+      await this.props.getWorkFlowComment({
+        flow_instance_id: this.props.model.datas.totalId.flow
+      })
+
       this.setState({
         text: ''
       })
@@ -90,7 +97,7 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas:{ drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { datas: { drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -118,7 +125,7 @@ export default class Comment extends React.Component {
       },
     };
     return (
-      <div className={CommentStyles.out}  tabIndex="0" hideFocus={true} style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out} tabIndex="0" hideFocus={true} style={{outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
@@ -131,7 +138,7 @@ export default class Comment extends React.Component {
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1}  className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}

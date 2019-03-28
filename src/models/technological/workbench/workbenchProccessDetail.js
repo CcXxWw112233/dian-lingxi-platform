@@ -27,7 +27,8 @@ import {
   selectProcessTotalId,
   selectCurr_node_sort,
   selectNode_amount,
-  selectBackLogProcessList
+  selectBackLogProcessList,
+  selectProcessCommentList
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -67,6 +68,7 @@ export default modelExtend(workbench, {
               processList: [], //流程列表
               processDynamics: [], //流程动态列表,
               currentProcessInstanceId: '', //当前查看的流程实例id
+              workFlowComments: []
             }
           })
 
@@ -326,7 +328,6 @@ export default modelExtend(workbench, {
       let res2 = yield call(getProcessInfo, instance_id)
       const curr_node_id = res2.data.completed_amount
       const amount_node_id = res2.data.node_amount
-      // debugger
       console.log('completeProcessTask has running:', res)
       if(isApiResponseOk(res)) {
         yield put({
@@ -434,12 +435,25 @@ export default modelExtend(workbench, {
     },
 
     * addWorkFlowComment({payload}, {select, call, put}) {
-      let res = yield call(addWorkFlowComment, payload)
-      console.log('this is addWorkFlowComment', res)
+      let res1 = yield select(selectProcessCommentList)
+      let res2 = yield call(addWorkFlowComment, payload)
+      console.log('this is addWorkFlowComment', res1, res2)
+      // debugger
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: [
+            ...res1,
+            res2.data
+          ]
+        }
+      })
+      
     },
 
     * getWorkFlowComment({payload}, {select, call, put}) {
       let res = yield call(getWorkFlowComment, payload)
+      console.log('this is getWorkFlowComment', res)
       yield put({
         type: 'updateDatas',
         payload: {

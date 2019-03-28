@@ -84,10 +84,9 @@ export default class Comment extends React.Component {
         comment: text,
       })
 
-      await this.props.getWorkFlowComment({
-        flow_instance_id: this.props.model.datas.totalId.flow
-      })
-
+      // await this.props.getWorkFlowComment({
+      //   flow_instance_id: this.props.model.datas.totalId.flow
+      // })
       this.setState({
         text: ''
       })

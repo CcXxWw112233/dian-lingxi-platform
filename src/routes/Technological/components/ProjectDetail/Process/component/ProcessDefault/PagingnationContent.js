@@ -130,17 +130,20 @@ export default class PagingnationContent extends React.Component {
   }
   //getProcessListByType
   async processItemClick(obj) {
-    console.log('this is dog wangwangwang ---', this.props.model.datas)
     if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+
+    await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
+    
     await this.props.updateDatas({
       totalId: obj
     })
     await this.props.getProcessInfo({id: obj.flow})
     await this.props.getProjectDetailInfo({id: obj.board})
-    await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
+    
+    
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
