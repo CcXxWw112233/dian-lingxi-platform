@@ -326,7 +326,7 @@ export default modelExtend(workbench, {
       let res2 = yield call(getProcessInfo, instance_id)
       const curr_node_id = res2.data.completed_amount
       const amount_node_id = res2.data.node_amount
-      debugger
+      // debugger
       console.log('completeProcessTask has running:', res)
       if(isApiResponseOk(res)) {
         yield put({
@@ -339,7 +339,7 @@ export default modelExtend(workbench, {
           }
         })
         let backLogProcessList = yield select(selectBackLogProcessList)
-        
+
         if(curr_node_id === amount_node_id) {
           let r = backLogProcessList.reduce((r, c) => {
             return [
