@@ -608,7 +608,8 @@ class InviteOthers extends Component {
             onChange={this.handleInputChange}
             onSelect={this.handleInputSelected}
             onDeselect={this.handleInputDeselected}
-            style={{ width: '100%' }}
+            style={{ width: '100%'}}
+            dropdownStyle={{zIndex: '9999'}}
           >
             {inputRet.map(item => (
               <Option key={item.value}>{this.genOptionLabel(item)}</Option>

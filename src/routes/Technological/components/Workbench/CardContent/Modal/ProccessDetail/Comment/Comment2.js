@@ -7,7 +7,7 @@ import CommentListItem from './CommentListItem2'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
-  PROJECT_FILES_FILE_EDIT
+  PROJECT_FILES_FILE_EDIT, PROJECT_FLOWS_FLOW_COMMENT
 } from "../../../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../../../utils/businessFunction";
 const { toString, toContentState } = Mention;
@@ -72,6 +72,10 @@ export default class Comment extends React.Component {
       // return;
     }
     if(code == '13' && !ctrl && !shift && !alt) {
+      if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT)){
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
       const { text } = this.state
       const flow_instance_id = this.props.model.datas.totalId.flow
@@ -83,11 +87,11 @@ export default class Comment extends React.Component {
         flow_instance_id,
         comment: text,
       })
-      
+
       await this.props.getWorkFlowComment({
         flow_instance_id: this.props.model.datas.totalId.flow
       })
-      
+
       this.setState({
         text: ''
       })

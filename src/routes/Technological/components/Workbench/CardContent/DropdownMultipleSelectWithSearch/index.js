@@ -25,7 +25,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     try {
       const currentUserFromLocalStorage = localStorage.getItem(key)
       if(currentUserFromLocalStorage) {
-        return currentUserFromLocalStorage
+        return JSON.parse(currentUserFromLocalStorage)
       }
       message.error(`从localStorage 获取 ${key} 失败`)
     } catch (e) {

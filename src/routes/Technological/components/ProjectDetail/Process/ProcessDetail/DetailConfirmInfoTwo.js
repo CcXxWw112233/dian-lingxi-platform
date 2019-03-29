@@ -7,10 +7,10 @@ import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/ut
 import { deleteProcessFile, getProcessList } from '../../../../../../services/technological/process'
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
-import {REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
+import {PROJECT_FILES_FILE_EDIT, REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
 import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
 import {filePreview} from "../../../../../../services/technological/file";
-import {getSubfixName, openPDF} from "../../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, getSubfixName, openPDF} from "../../../../../../utils/businessFunction";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
@@ -218,7 +218,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const file_id = e.file_id || e.response.data.file_id || e.response.data.id
     const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
 
-    if(getSubfixName(file_name) == '.pdf') {
+    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       openPDF({id: file_id})
       return false
     }
@@ -569,7 +569,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         const file_id = e.file_id || e.response.data.file_id || e.response.data.id
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
 
-        if(getSubfixName(file_name) == '.pdf') {
+        if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
           openPDF({id: file_id})
           return false
         }

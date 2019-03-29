@@ -44,6 +44,7 @@ import {
   workbench_currentProcessInstanceId,
 } from '../workbench/selects'
 //定义model名称
+const model_project = name => `project/${name}`
 const model_projectDetail = name => `projectDetail/${name}`
 const model_projectDetailTask = name => `projectDetailTask/${name}`
 const model_projectDetailFile = name => `projectDetailFile/${name}`
@@ -137,8 +138,8 @@ export default {
         handleType = 'handleWsData_workbench'
       } else if(locationPath.indexOf('technological/projectDetail') != -1) {
         handleType = 'handleWsData_board_detail'
-      } else {
-
+      } else if(locationPath.indexOf('technological/project') != -1) {
+        handleType = 'handleWsData_board_list'
       }
       yield put({
         type: handleType,
@@ -1134,6 +1135,39 @@ export default {
               type: model_technological('getUserBoardPermissions'),
               payload: {
 
+              }
+            })
+          } else {
+
+          }
+          break
+        default:
+          break
+      }
+
+    },
+
+    * handleWsData_board_list({ payload }, { call, put, select }) {
+      const { res } = payload
+      const { data } = res
+      let coperate = data[0] //协作
+      let news = data[1] //消息
+      //获取消息协作类型
+      const coperateName = coperate.e
+      const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+      let coperateData = JSON.parse(coperate.d)
+      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+        return coperateName.substring(coperateName.indexOf('/') + 1)
+      }
+      switch (coperateType) {
+        case 'change:permission':
+          const permission_type = coperateData['type']
+          if(permission_type == '1') {
+          }else if (permission_type == '2'){
+            dispathes({
+              type: model_project('getProjectList'),
+              payload: {
+                type: '1'
               }
             })
           } else {

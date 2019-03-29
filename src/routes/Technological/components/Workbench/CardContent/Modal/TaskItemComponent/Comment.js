@@ -34,10 +34,10 @@ export default class Comment extends React.Component {
     })
   }
   submitComment(editText) {
-    // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)){
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.addCardNewComment({

@@ -4,7 +4,7 @@ import {
   Button,
   message
 } from 'antd'
-import { PROJECT_FLOWS_FLOW_ABORT } from '../../globalset/js/constant'
+import { PROJECT_FLOWS_FLOW_ABORT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
 const confirm = Modal.confirm
 
@@ -39,7 +39,7 @@ const showDeleteConfirm = (processDelete) => {
     },
     onCancel() {
       console.log('Cancel');
-      
+
     },
   });
 }

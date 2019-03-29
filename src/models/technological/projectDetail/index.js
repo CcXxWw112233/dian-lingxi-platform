@@ -188,6 +188,17 @@ export default {
         // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
       }else{
         //权限缓存空数组
+        message.warn(result.message, MESSAGE_DURATION_TIME)
+        const delay = (ms) => new Promise((resolve => {
+          setTimeout(resolve, ms)
+        }))
+        yield call (delay, MESSAGE_DURATION_TIME * 1000)
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: '/technological/project'
+          }
+        })
         // localStorage.setItem('currentBoardPermission', JSON.stringify([]))
       }
     },

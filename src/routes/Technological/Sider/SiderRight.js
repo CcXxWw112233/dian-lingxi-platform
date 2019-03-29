@@ -275,7 +275,7 @@ class SiderRight extends React.Component {
   getInfoFromLocalStorage = item => {
     try{
       const userInfo = localStorage.getItem(item)
-      return userInfo
+      return JSON.parse(userInfo)
     }catch(e) {
       message.error('从 Cookie 中获取用户信息失败, 当发起视频会议的时候')
     }

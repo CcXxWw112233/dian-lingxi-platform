@@ -10,7 +10,7 @@ import {
 } from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FILES_FILE_EDIT,
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 
@@ -76,7 +76,7 @@ export default class FileItem extends React.Component {
       return false
     }
 
-    if(getSubfixName(file_name) == '.pdf') {
+    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       openPDF({id: id})
       return false
     }

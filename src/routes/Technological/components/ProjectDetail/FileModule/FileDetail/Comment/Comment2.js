@@ -74,23 +74,21 @@ export default class Comment extends React.Component {
     if(code == '13' && !ctrl && !shift && !alt) {
       const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
       const { text } = this.state
-      const flow_instance_id = this.props.model.datas.totalId.flow
       if(!text) {
         return
       }
       //只按了enter
-      await this.props.addWorkFlowComment({
-        flow_instance_id,
+      this.props.addFileCommit({
+        board_id,
         comment: text,
+        file_id: filePreviewCurrentFileId,
+        type: '0',
+        coordinates: JSON.stringify(this.props.currentRect)
       })
-
-      await this.props.getWorkFlowComment({
-        flow_instance_id: this.props.model.datas.totalId.flow
-      })
-
       this.setState({
         text: ''
       })
+
     }
   }
 

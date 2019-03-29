@@ -135,7 +135,7 @@ export default class PagingnationContent extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    
+
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
 
     this.props.updateDatasProcess && this.props.updateDatasProcess({
@@ -144,11 +144,11 @@ export default class PagingnationContent extends React.Component {
     await this.props.updateDatas({
       totalId: obj
     })
-    
+
     await this.props.getProcessInfo({id: obj.flow})
     await this.props.getProjectDetailInfo({id: obj.board})
-    
-    
+
+
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });

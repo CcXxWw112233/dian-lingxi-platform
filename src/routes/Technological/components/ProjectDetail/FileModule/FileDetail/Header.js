@@ -41,7 +41,7 @@ class Header extends React.Component {
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData= {},  breadcrumbList = [] } } = this.props.model
+    const { datas: { projectDetailInfoData= {}, breadcrumbList = [] } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
@@ -164,7 +164,7 @@ class Header extends React.Component {
   }
   render() {
     const that = this
-    const { datas: { seeFileInput,isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId , projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
+    const { datas: { seeFileInput, isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId, projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, is_shared} = projectDetailInfoData
     const {onlyReadingShareModalVisible, onlyReadingShareData} = this.state
     //文件版本更新
@@ -179,7 +179,7 @@ class Header extends React.Component {
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
@@ -204,12 +204,12 @@ class Header extends React.Component {
         if (file.status === 'done') {
           message.success(`上传成功。`);
           that.props.updateDatasFile({filePreviewCurrentVersionKey: 0})
-          that.props.fileVersionist({version_id : filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
           setTimeout(function () {
             message.destroy()
-          },2000)
+          }, 2000)
         }
       },
     };
@@ -241,8 +241,8 @@ class Header extends React.Component {
 
         <div className={indexStyles.fileDetailHeadRight}>
           {seeFileInput === 'fileModule'? (
-            <Upload {...uploadProps}  showUploadList={false}>
-              <Button style={{height: 24, marginLeft:14}}>
+            <Upload {...uploadProps} showUploadList={false}>
+              <Button style={{height: 24, marginLeft: 14}}>
                 <Icon type="upload" />更新版本
               </Button>
             </Upload>
@@ -261,13 +261,13 @@ class Header extends React.Component {
           {/*</Button>*/}
           <div style={{cursor: 'pointer'}}>
             {seeFileInput === 'fileModule'? (
-              <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id:filePreviewCurrentFileId, type: '2' } )}>
-                <Icon type="ellipsis"  style={{fontSize:20,marginLeft:14}}/>
+              <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
+                <Icon type="ellipsis" style={{fontSize: 20, marginLeft: 14}}/>
               </Dropdown>
             ):('')}
-            <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize:20,marginLeft:14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+            <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
             <Tooltip title={'关闭预览'} placement={'left'}>
-             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize:20,marginLeft:16}}/>
+             <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
             </Tooltip>
           </div>
         </div>

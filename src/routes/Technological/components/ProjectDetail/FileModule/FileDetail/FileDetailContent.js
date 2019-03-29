@@ -11,7 +11,8 @@ import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunct
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH,
-  PROJECT_FILES_FILE_EDIT
+  PROJECT_FILES_FILE_EDIT,
+  PROJECT_FILES_COMMENT_VIEW,
 } from "../../../../../../globalset/js/constant";
 import {message} from "antd/lib/index";
 
@@ -426,9 +427,13 @@ export default class FileDetailContent extends React.Component {
               ) : ('')}
             </div>
 
-          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
-          </div>
+
+          {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
+            <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
+              <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
+            </div>
+          )}
+
           {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
             <div className={indexStyles.fileDetailContentRight_bott}>
               <Comment2 {...this.props} ></Comment2>
