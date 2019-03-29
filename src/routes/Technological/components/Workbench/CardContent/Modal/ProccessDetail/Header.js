@@ -5,13 +5,24 @@ import {
   showConfirm,
   showDeleteConfirm
 } from '../../../../../../../components/headerOperateModal'
-
+import { PROJECT_FLOWS_FLOW_ABORT } from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction'
 export default class Header extends React.Component {
+  state = {
+    controller: 0
+  }
+  componentDidMount() {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
+      return false
+    }
+    this.setState({
+      controller: 1
+    })
+  }
   close() {
     this.props.close()
   }
   render() {
-    console.log('更新 啦啦啦', this.props)
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
     const { processDoingList, processStopedList, processComepletedList } = this.props.model.datas
@@ -80,9 +91,15 @@ export default class Header extends React.Component {
     }
 
     const dataSource = [
-      {content: '终止流程', click:  showConfirm.bind(this, processEnd.bind(this))},
-      {content: '移入回收站', click: showDeleteConfirm.bind(this, processDelete.bind(this))}
+      this.state.controller === 1? {content: '终止流程', click: showConfirm.bind(this, processEnd.bind(this))}:undefined,
+      {content: '移入回收站', click: this.state.controller === 1?showDeleteConfirm.bind(this, processDelete.bind(this)):console.log('没权限')}
     ]
+    let r = dataSource.reduce((r, c) => {
+      return [
+        ...r,
+        ...(c === undefined?[]:[c])
+      ]
+    } ,[])
     return (
       <div style = {{
         height:'52px',
@@ -105,7 +122,7 @@ export default class Header extends React.Component {
         
         <div style={{}}>
           <Icon type="close" onClick = {this.close.bind(this)} style={{float: 'right' ,marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
-          <Settings {...this.props} item={ellipsis} dataSource={dataSource} disabledEnd={(disabled === undefined || disabled === '')?false:true} disabledDel={(disabled === undefined || disabled === '')?true:false}/>
+          <Settings status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '')?false:true} disabledDel={(disabled === undefined || disabled === '')?true:false}/>
           <Icon type="download" onClick = {() => {console.log(1)}} style={{float: 'right' ,marginRight: '20px', fontSize: '16px', cursor: 'pointer'}}/>
         </div>
       </div>

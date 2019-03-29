@@ -70,6 +70,7 @@ export default class PagingnationContent extends React.Component {
       loadMoreText: '加载中...'
     })
     const res = await getProcessListByType(obj)
+    console.log('this is getProcessListByType s result:', res)
     if(res.code === '0') {
       const data = res.data
       let listName
@@ -136,7 +137,7 @@ export default class PagingnationContent extends React.Component {
     }
     
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
-    
+
     this.props.updateDatasProcess && this.props.updateDatasProcess({
       currentProcessInstanceId: obj.flow
     })

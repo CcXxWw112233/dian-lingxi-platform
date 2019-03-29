@@ -518,6 +518,8 @@ export default modelExtend(projectDetail, {
     * getProcessListByType({ payload }, { select, call, put }) {
       const { status = '1' } = payload
       const res = yield call(getProcessListByType, payload)
+      
+      
       let listName
       let selectList = []
       switch (status ) {

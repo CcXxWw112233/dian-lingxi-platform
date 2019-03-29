@@ -22,6 +22,7 @@ export default class InitialNews extends React.Component {
     this.props.getNewsDynamicList('0')
   }
   render() {
+    console.log('this is issues model ---->>>', this.props.model.datas.newsDynamicList)
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
 
     //过滤消息内容
@@ -43,7 +44,7 @@ export default class InitialNews extends React.Component {
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.user_name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}名称。</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -92,11 +93,12 @@ export default class InitialNews extends React.Component {
             </div>
           )
           break
-        case 'board.update.user.remove':
+        case 'board.card.update.executor.remove':
+          console.log({messageValue})
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data.name}」 移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -187,12 +189,12 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.executor.add':
-            console.log({messageValue})
+            
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
-              <div className={NewsListStyle.news_3_text}>执行人指派给 {messageValue.full_name}</div>
+              <div className={NewsListStyle.news_3_text}>指派给 {messageValue.content.rela_data.name}</div>
               <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
               <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>

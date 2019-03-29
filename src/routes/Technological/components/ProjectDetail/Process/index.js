@@ -5,7 +5,6 @@ import { Route, Router, Switch, Link } from 'dva/router'
 import { Drawer } from 'antd'
 
 const ProcessIndex = (props) => {
-  console.log('🐶', props)
   return(
    <div>
      <Process {...props} />

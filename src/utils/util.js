@@ -67,6 +67,24 @@ export const timestampToHM = (timestamp) => {
   return  h + m
 }
 
+//判断是否是当天
+export const judgeTimeDiffer = (time) => {
+  let start = timestampToTimeNormal2(time)
+  let end = timestampToTimeNormal2(Date.parse(new Date()));
+  let startTime =new Date(start.replace("//-/g", "//"));
+  let endTime = new Date(end.replace("//-/g", "//"));
+  // console.log(startTime, endTime)
+  let res = parseInt((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
+  if(res >= 12){
+    return (
+      start
+    )
+  } else {
+    return (
+      timestampToHM(time)
+    )
+  }
+}
 //动态消息列表时间处理
 export const newsDynamicHandleTime = (timeStamp) => {
   if(!timeStamp) {
