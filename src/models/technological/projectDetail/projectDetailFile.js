@@ -116,6 +116,7 @@ export default modelExtend(projectDetail, {
             currentParrentDirectoryId: result.data.folder_id,
           }
         })
+
         yield put({
           type: 'getFileList',
           payload: {
@@ -176,6 +177,7 @@ export default modelExtend(projectDetail, {
     * fileInfoByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, {id: file_id})
+
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -199,18 +201,19 @@ export default modelExtend(projectDetail, {
         digui('parent_folder', target_path)
         const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
         newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2'})
+
         yield put({
           type: 'updateDatas',
           payload: {
             breadcrumbList: newbreadcrumbList
           }
         })
-        yield put({
-          type: 'getFileList',
-          payload: {
-            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id
-          }
-        })
+        // yield put({
+        //   type: 'getFileList',
+        //   payload: {
+        //     folder_id: newbreadcrumbList[newbreadcrumbList.length - 1].file_id // -2
+        //   }
+        // })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
