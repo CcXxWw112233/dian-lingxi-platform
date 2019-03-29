@@ -9,21 +9,34 @@ import {
   Modal,
   message
 } from 'antd';
+import { connect } from 'dva';
 import styles from './index.less';
 import globalStyles from './../../../../globalset/css/globalClassName.less';
 import AvatarList from './AvatarList/index';
-import classNames from 'classnames/bind';
 import InviteOthers from './../InviteOthers/index';
+import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png';
 
-let cx = classNames.bind(styles);
-
+@connect(({ technological }) => ({
+  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList
+}))
 class VisitControl extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isVisitControl: props.isPropVisitControl,
+      isVisitControl: props.isPropVisitControl, //之所以要有这个变量，是因为在UI上，需要实现当 popover 关闭的时候，才将 visitControl 的状态传过去
+      loadingIsVisitControl: false, //可能需要一些异步的东西，所以有loading状态
       addMemberModalVisible: false,
-      visible: false
+      visible: false,
+      selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
+      othersPersonList: [] //外部邀请人员的list
+      // 格式
+      // {
+      //   id: '0',
+      //   name: 'zhangshan',
+      //   avatar:
+      //     'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png',
+      //   privilege: 'edit'
+      // },
     };
   }
   togglePopoverVisible = e => {
@@ -35,16 +48,45 @@ class VisitControl extends Component {
       };
     });
   };
+  isValidAvatar = (avatarUrl = '') =>
+    avatarUrl.includes('http://') || avatarUrl.includes('https://');
+  async testAsync(ms) {
+    return await new Promise(resolve => {
+      return setTimeout(resolve, ms);
+    });
+  }
+  handleGetAddNewMember = members => {
+    this.testAsync(3000).then(() => {
+      console.log(members, 'members');
+    });
+  };
   handleInviteMemberReturnResult = members => {
-    console.log(members, 'members');
+    this.handleGetAddNewMember(members);
+    this.setState({
+      addMemberModalVisible: false
+    });
   };
   handleToggleVisitControl = checked => {
-    this.setState(state => {
-      const { isVisitControl } = state;
-      return {
-        isVisitControl: !isVisitControl
-      };
-    });
+    if(checked) {
+      this.setState({
+        loadingIsVisitControl: true,
+      }, () => {
+        setTimeout(() => {
+          this.setState(state => {
+            return {
+              loadingIsVisitControl: false,
+              isVisitControl: true
+            };
+          });
+        }, 3000)
+      })
+    } else {
+      this.setState({
+        isVisitControl: false
+      })
+    }
+
+
   };
   onPopoverVisibleChange = visible => {
     const isClose = visible === false;
@@ -65,8 +107,19 @@ class VisitControl extends Component {
       );
     }
   };
-  handleClickedOtherPsersonListItem = item => {
-    console.log('clicked item :' + item);
+  handleClickedOtherPersonListItem = item => {
+    this.setState({
+      selectedOtherPersonId: item
+    });
+  };
+  handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
+    const operatorType = key;
+    const { handleClickedOtherPersonListOperatorItem } = this.props;
+    const { selectedOtherPersonId } = this.state;
+    handleClickedOtherPersonListOperatorItem(
+      selectedOtherPersonId,
+      operatorType
+    );
   };
   handleCloseAddMemberModal = e => {
     if (e) e.stopPropagation();
@@ -79,8 +132,74 @@ class VisitControl extends Component {
       addMemberModalVisible: true
     });
   };
+  parseOtherPrivileges = otherPrivilege => {
+    const { currentOrgAllMembersList } = this.props;
+    const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = Object.keys(
+      otherPrivilege
+    ).every(item => currentOrgAllMembersList.find(each => each.id === item));
+    if (!isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList) {
+      message.error('访问控制中有非该组织成员的人');
+      console.log('runnnnnnnnnnnnnnnherer');
+      return;
+    }
+    const othersPersonList = Object.entries(otherPrivilege).reduce(
+      (acc, curr) => {
+        const [id, privilageType] = curr;
+        const currPerson = currentOrgAllMembersList.find(
+          item => item.id === id
+        );
+        const obj = {
+          id: currPerson.id,
+          name: currPerson.full_name,
+          avatar:
+            currPerson.avatar && this.isValidAvatar(currPerson.avatar)
+              ? currPerson.avatar
+              : defaultUserAvatar,
+          privilege: privilageType
+        };
+        return [...acc, obj];
+      },
+      []
+    );
+    this.setState({
+      othersPersonList
+    });
+  };
+  compareOtherPrivilegeInPropsAndUpdateIfNecessary = nextProps => {
+    const { otherPrivilege: nextOtherPrivilege } = nextProps;
+    const { otherPrivilege } = this.props;
+    const isTheSameOtherPrivilege = (otherPrivilege1, otherPrivilege2) => {
+      const objToEntries = obj => Object.entries(obj);
+      const isTheSameLength = (arr1 = [], arr2 = []) =>
+        arr1.length === arr2.length;
+      const isEntriesSubset = (arr1 = [], arr2 = []) =>
+        arr1.every(([key1, value1]) =>
+          arr2.find(([key2, value2]) => key1 === key2 && value1 === value2)
+        );
+      const otherPrivilege1Entries = objToEntries(otherPrivilege1);
+      const otherPrivilege2Entries = objToEntries(otherPrivilege2);
+      if (
+        isTheSameLength(otherPrivilege1Entries, otherPrivilege2Entries) &&
+        isEntriesSubset(otherPrivilege1Entries, otherPrivilege2Entries)
+      ) {
+        return true;
+      }
+      return false;
+    };
+    if (!isTheSameOtherPrivilege(otherPrivilege, nextOtherPrivilege)) {
+      this.parseOtherPrivileges(nextOtherPrivilege);
+    }
+  };
+  componentDidMount() {
+    //将[id]:privilageType 对象转化为数组
+    const { otherPrivilege } = this.props;
+    this.parseOtherPrivileges(otherPrivilege);
+  }
+  componentDidUpdate(nextProps) {
+    this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps);
+  }
   renderPopoverTitle = () => {
-    const { isVisitControl } = this.state;
+    const { isVisitControl, loadingIsVisitControl } = this.state;
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86b;
@@ -100,6 +219,7 @@ class VisitControl extends Component {
         <span className={styles.title__operator}>
           <Switch
             checked={isVisitControl}
+            loading={loadingIsVisitControl}
             onChange={this.handleToggleVisitControl}
           />
         </span>
@@ -107,131 +227,145 @@ class VisitControl extends Component {
     );
   };
   renderOtherPersonOperatorMenu = () => {
+    const { otherPersonOperatorMenuItem } = this.props;
     const { Item } = Menu;
-    const operators = new Map([
-      ['editable', '可编辑'],
-      ['commentable', '可评论'],
-      ['readonly', '仅查看'],
-      ['remove', '移除']
-    ]);
-
-    const menuItemClass = item =>
-      cx({
-        [styles.content__othersPersonList_Item_operator_dropdown_menu_item]: true,
-        [styles.red_color]: item === 'remove' ? true : false
-      });
 
     return (
-      <Menu>
-        {[...operators].map(([key, value]) => (
-          <Item key={key}>
-            <div className={menuItemClass(key)}>
-              <span>{value}</span>
+      <Menu onClick={this.handleSelectedOtherPersonListOperatorItem}>
+        {otherPersonOperatorMenuItem.map(({ key, value, style }) => (
+          <Item key={value}>
+            <div
+              className={
+                styles.content__othersPersonList_Item_operator_dropdown_menu_item
+              }
+              style={style ? style : {}}
+            >
+              <span>{key}</span>
             </div>
           </Item>
         ))}
       </Menu>
     );
   };
-  renderPopoverContent = () => {
+  renderPopoverContentPrincipalList = () => {
     const { principalList, principalInfo } = this.props;
+    return (
+      <div className={styles.content__principalList_wrapper}>
+        <span className={styles.content__principalList_icon}>
+          <AvatarList
+            size="mini"
+            maxLength={10}
+            excessItemsStyle={{
+              color: '#f56a00',
+              backgroundColor: '#fde3cf'
+            }}
+          >
+            {principalList.map(({ name, avatar }, index) => (
+              <AvatarList.Item
+                key={index}
+                tips={name}
+                src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+              />
+            ))}
+          </AvatarList>
+        </span>
+        <span className={styles.content__principalList_info}>
+          {`${principalList.length}${principalInfo}`}
+        </span>
+      </div>
+    );
+  };
+  renderPopoverContentOthersPersonList = () => {
+    const { otherPersonOperatorMenuItem } = this.props;
+    const { othersPersonList } = this.state;
+    return (
+      <div className={styles.content__othersPersonList_wrapper}>
+        {othersPersonList.map(({ id, name, avatar, privilege }) => (
+          <div
+            key={id}
+            className={styles.content__othersPersonList_Item_wrapper}
+          >
+            <span className={styles.content__othersPersonList_Item_info}>
+              <img
+                width="20"
+                height="20"
+                src={avatar}
+                alt=""
+                className={styles.content__othersPersonList_Item_avatar}
+              />
+              <span className={styles.content__othersPersonList_Item_name}>
+                {name}
+              </span>
+            </span>
+            <Dropdown
+              trigger={['click']}
+              overlay={this.renderOtherPersonOperatorMenu()}
+            >
+              <span
+                onClick={() => this.handleClickedOtherPersonListItem(id)}
+                className={styles.content__othersPersonList_Item_operator}
+              >
+                <span
+                  className={
+                    styles.content__othersPersonList_Item_operator_text
+                  }
+                >
+                  {
+                    otherPersonOperatorMenuItem.find(
+                      item => item.value === privilege
+                    ).key
+                  }
+                </span>
+                <span
+                  className={`${globalStyles.authTheme} ${
+                    styles.content__othersPersonList_Item_operator_icon
+                  }`}
+                >
+                  &#xe7ee;
+                </span>
+              </span>
+            </Dropdown>
+          </div>
+        ))}
+      </div>
+    );
+  };
+  renderPopoverContentAddMemberBtn = () => {
+    return (
+      <div className={styles.content__addMemberBtn_wrapper}>
+        <Button type="primary" block onClick={this.handleAddNewMember}>
+          添加成员
+        </Button>
+      </div>
+    );
+  };
+  renderPopoverContentNoContent = () => {
+    return (
+      <div className={styles.content__noConten_wrapper}>
+        <div className={styles.content__noConten_img} />
+        <div className={styles.content__noConten_text}>暂无人员</div>
+      </div>
+    );
+  };
+  isCurrentHasNoMember = () => {
+    const { principalList } = this.props;
+    const { othersPersonList } = this.state;
+    return principalList.length === 0 && othersPersonList.length === 0;
+  };
+  renderPopoverContent = () => {
     return (
       <div className={styles.content__wrapper}>
         <div className={styles.content__list_wrapper}>
-          <div className={styles.content__principalList_wrapper}>
-            <span className={styles.content__principalList_icon}>
-              <AvatarList
-                size="mini"
-                maxLength={10}
-                excessItemsStyle={{
-                  color: '#f56a00',
-                  backgroundColor: '#fde3cf'
-                }}
-              >
-                {principalList.map(item => (
-                  <AvatarList.Item tips={item.name} src={item.avatar} />
-                ))}
-                {/* <AvatarList.Item
-                  tips="Jake"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png"
-                />
-                <AvatarList.Item
-                  tips="Andy"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png"
-                />
-                <AvatarList.Item
-                  tips="Niko"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                />
-                <AvatarList.Item
-                  tips="Niko"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                />
-                <AvatarList.Item
-                  tips="Niko"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                />
-                <AvatarList.Item
-                  tips="Niko"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                /> */}
-              </AvatarList>
-            </span>
-            <span className={styles.content__principalList_info}>
-              { `${principalList.length}${principalInfo}`}
-            </span>
-          </div>
-          <div className={styles.content__othersPersonList_wrapper}>
-            {Array.from({ length: 8 }, (_, index) => index).map(item => (
-              <div
-                key={item}
-                className={styles.content__othersPersonList_Item_wrapper}
-              >
-                <span className={styles.content__othersPersonList_Item_info}>
-                  <img
-                    width="20"
-                    height="20"
-                    src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                    alt=""
-                    className={styles.content__othersPersonList_Item_avatar}
-                  />
-                  <span className={styles.content__othersPersonList_Item_name}>
-                    nameeeeeeeeee
-                  </span>
-                </span>
-                <Dropdown
-                  trigger={['click']}
-                  overlay={this.renderOtherPersonOperatorMenu()}
-                >
-                  <span
-                    onClick={() => this.handleClickedOtherPsersonListItem(item)}
-                    className={styles.content__othersPersonList_Item_operator}
-                  >
-                    <span
-                      className={
-                        styles.content__othersPersonList_Item_operator_text
-                      }
-                    >
-                      仅查看
-                    </span>
-                    <span
-                      className={`${globalStyles.authTheme} ${
-                        styles.content__othersPersonList_Item_operator_icon
-                      }`}
-                    >
-                      &#xe7ee;
-                    </span>
-                  </span>
-                </Dropdown>
-              </div>
-            ))}
-          </div>
+          {this.isCurrentHasNoMember() ? (
+            <>{this.renderPopoverContentNoContent()}</>
+          ) : (
+            <>
+              {this.renderPopoverContentPrincipalList()}
+              {this.renderPopoverContentOthersPersonList()}
+            </>
+          )}
         </div>
-        <div className={styles.content__addMemberBtn_wrapper}>
-          <Button type="primary" block onClick={this.handleAddNewMember}>
-            添加成员
-          </Button>
-        </div>
+        {this.renderPopoverContentAddMemberBtn()}
       </div>
     );
   };
@@ -241,7 +375,7 @@ class VisitControl extends Component {
       tooltipClockText,
       isPropVisitControl
     } = this.props;
-    const { isVisitControl, addMemberModalVisible, visible } = this.state;
+    const { addMemberModalVisible, visible } = this.state;
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
         <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`}>
@@ -280,6 +414,7 @@ class VisitControl extends Component {
         </Popover>
         <Modal
           visible={addMemberModalVisible}
+          destroyOnClose={true}
           footer={null}
           zIndex={1099}
           onCancel={this.handleCloseAddMemberModal}
@@ -287,7 +422,7 @@ class VisitControl extends Component {
           <InviteOthers
             title="邀请他人一起参与"
             isShowTitle={true}
-            submitText="    确定    "
+            submitText="确定"
             handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
             isDisableSubmitWhenNoSelectItem={true}
           />
@@ -300,71 +435,44 @@ class VisitControl extends Component {
 VisitControl.defaultProps = {
   tooltipUnClockText: '访问控制',
   tooltipClockText: '关闭访问控制',
-  isPropVisitControl: true, //之所以要有这个变量，是因为在UI上，需要实现当 popover 关闭的时候，才将 visitControl 的状态传过去
+  isPropVisitControl: true,
   handleVisitControlChange: function() {
     message.error('handleVisitControlChange is required. ');
   },
   principalInfo: '位任务负责人', //已有权限人提示信息
   principalList: [
-    {
-      name: 'Jake',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png'
-    },
-    {
-      name: 'Andy',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'
-    },
-    {
-      name: 'Niko',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
-    },
-    {
-      name: 'Niko',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
-    },
-    {
-      name: 'Jake',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png'
-    },
-    {
-      name: 'Andy',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png'
-    },
-    {
-      name: 'Niko',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
-    },
-    {
-      name: 'Niko',
-      avatar:
-        'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png'
-    }
+    //负责人列表
+    // {
+    //   name: 'Jake',
+    //   avatar:
+    //     'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png'
+    // }
   ],
-  OtherPersonOperatorMenuItem: [
+  otherPersonOperatorMenuItem: [
     {
       key: '可编辑',
-      value: 'editable',
+      value: 'edit'
     },
     {
       key: '可评论',
-      value: 'commentable'
+      value: 'comment'
     },
     {
       key: '仅查看',
-      value: 'readonly'
+      value: 'read'
     },
     {
       key: '移除',
-      value: 'remove'
+      value: 'remove',
+      style: {
+        color: '#f73b45'
+      }
     }
-  ]
+  ],
+  otherPrivilege: {},
+  handleClickedOtherPersonListOperatorItem: function() {
+    //点击选中邀请进来的外部人员的下拉菜单项目的回调函数
+  }
 };
 
 export default VisitControl;

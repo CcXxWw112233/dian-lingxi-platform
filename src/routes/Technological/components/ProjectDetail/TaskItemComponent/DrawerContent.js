@@ -33,6 +33,7 @@ import ExcutorList from './components/ExcutorList'
 import ContentRaletion from '../../../../../components/ContentRaletion'
 import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../services/technological/workbench'
 import ShareAndInvite from './../../ShareAndInvite/index'
+import VisitControl from './../../VisitControl/index'
 import {withRouter} from 'react-router-dom'
 
 const TextArea = Input.TextArea
@@ -636,7 +637,7 @@ class DrawContent extends React.Component {
       user_ids: users.reduce((acc, curr) => {
         if(!curr || !curr.user_id) return acc
         return acc ? acc + ',' + curr.user_id : curr.user_id
-      } ,'')
+      }, '')
     }
     createMeeting(body).then(res => {
       if (res.code === "0") {
@@ -718,6 +719,12 @@ class DrawContent extends React.Component {
     }).catch(err => {
       message.error('操作失败')
     })
+  }
+  handleVisitControlChange = (flag) => {
+    console.log(flag, 'get visitcontrol change')
+  }
+  handleClickedOtherPersonListOperatorItem = (id, type) => {
+    console.log(id, type, 'get other person operator type from visitControl.')
   }
   render() {
     that = this
@@ -937,7 +944,7 @@ class DrawContent extends React.Component {
     //任务负责人显示 点点点
     const { excutorsOut_left = {}} = this.refs
     const excutorsOut_left_width_new = excutorsOut_left.clientWidth
-
+    console.log(drawContent, 'detailContent')
     return(
       //
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
@@ -959,6 +966,11 @@ class DrawContent extends React.Component {
               <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
+              {/* {drawContent.is_privilege && (
+                <span style={{marginRight: '50px'}}>
+              <VisitControl isPropVisitControl={drawContent.is_privilege === '0' ? false : true} handleVisitControlChange={this.handleVisitControlChange} principalList={drawContent.executors} otherPrivilege={drawContent.privileges} handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem} />
+              </span>
+              )} */}
               <Dropdown overlay={topRightMenu}>
                   <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
               </Dropdown>

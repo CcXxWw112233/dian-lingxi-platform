@@ -471,6 +471,7 @@ class AddTaskModal extends Component {
             {taskType === "MEETIMG_ARRANGEMENT" && (
               <DateRangePicker
                 handleDateRangeChange={this.handleDateRangeChange}
+                isSameYearNotShowYear={true}
               />
             )}
             {taskType === "MY_DOCUMENT" && currentSelectedProject.board_id && (
