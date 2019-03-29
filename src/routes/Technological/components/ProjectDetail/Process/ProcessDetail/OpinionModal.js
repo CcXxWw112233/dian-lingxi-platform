@@ -56,10 +56,8 @@ class OpinionModal extends React.Component {
               values: JSON.stringify(form_data),
               message: values['message']
             }
-            console.log('哈哈哈哈哈哈哈阿哈哈哈', this.props)
             this.props.fillFormComplete ? this.props.fillFormComplete(obj): false
           }else {
-            // console.log('completeProcessTask', this.props)
             this.props.completeProcessTask ? this.props.completeProcessTask(values) : false
             this.props.dispatch({
               type: 'workbench/getBackLogProcessList',

@@ -122,7 +122,7 @@ export default class Header extends React.Component {
         
         <div style={{}}>
           <Icon type="close" onClick = {this.close.bind(this)} style={{float: 'right' ,marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
-          <Settings status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '')?false:true} disabledDel={(disabled === undefined || disabled === '')?true:false}/>
+          <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '')?false:true} disabledDel={(disabled === undefined || disabled === '')?true:false}/>
           <Icon type="download" onClick = {() => {console.log(1)}} style={{float: 'right' ,marginRight: '20px', fontSize: '16px', cursor: 'pointer'}}/>
         </div>
       </div>
