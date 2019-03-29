@@ -876,7 +876,7 @@ class DrawContent extends React.Component {
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
 
-        if(getSubfixName(file_name) == '.pdf') {
+        if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
           openPDF({id: file_id})
           return false
         }
@@ -944,10 +944,13 @@ class DrawContent extends React.Component {
         <div style={{height: 'auto', width: '100%', position: 'relative'}}>
           {/*没有编辑项目时才有*/}
           {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
-            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20}} onClick={this.alarmNoEditPermission.bind(this)}></div>
+            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20}} onClick={this.alarmNoEditPermission.bind(this)}></div>
           )}
           {/*项目挪动*/}
-          <div className={DrawerContentStyles.divContent_1}>
+          <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative'}}>
+            {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
+              <div style={{height: '100%', width: '70%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>
+            )}
             <div className={DrawerContentStyles.contain_1}>
               <Dropdown overlay={projectGroupMenu}>
                 <div className={DrawerContentStyles.left}>
@@ -955,16 +958,17 @@ class DrawContent extends React.Component {
                 </div>
               </Dropdown>
               <div className={DrawerContentStyles.right}>
-              {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
-              <span style={{marginRight: '10px'}}>
+                {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
+                <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
-              <Dropdown overlay={topRightMenu}>
+                <Dropdown overlay={topRightMenu}>
                   <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
-              </Dropdown>
+                </Dropdown>
               </div>
             </div>
           </div>
+
 
           {/*标题*/}
           <div className={DrawerContentStyles.divContent_2}>

@@ -846,7 +846,7 @@ class DrawContent extends React.Component {
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
 
-        if(getSubfixName(file_name) == '.pdf') {
+        if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
           openPDF({id: file_id})
           return false
         }

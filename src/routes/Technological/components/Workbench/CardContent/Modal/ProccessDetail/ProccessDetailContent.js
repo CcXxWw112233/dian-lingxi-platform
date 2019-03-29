@@ -10,8 +10,8 @@ import {getRelations, JoinRelation} from "../../../../../../../services/technolo
 import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import { timestampToHM } from '../../../../../../../utils/util'
-import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
-import { FLOWS } from '../../../../../../../globalset/js/constant'
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from '../../../../../../../utils/businessFunction'
+import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT} from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
 
 export default class FileDetailContent extends React.Component {
@@ -59,7 +59,7 @@ export default class FileDetailContent extends React.Component {
 
   componentWillMount() {
     const { datas: { filePreviewCommitPoints=[]} }= this.props.model
-    
+
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -580,9 +580,12 @@ export default class FileDetailContent extends React.Component {
             </div>
             <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
           </div>
-          <div className={indexStyles.fileDetailContentRight_bott}>
-            <Comment2 {...this.props} ></Comment2>
-          </div>
+          {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT) && (
+            <div className={indexStyles.fileDetailContentRight_bott}>
+              <Comment2 {...this.props} ></Comment2>
+            </div>
+          )}
+
 
         </div>
 
