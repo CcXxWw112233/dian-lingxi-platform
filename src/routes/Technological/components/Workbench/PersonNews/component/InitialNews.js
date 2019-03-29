@@ -98,7 +98,7 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data.name}」 移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{ messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -189,12 +189,12 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.executor.add':
-            
+
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{messageValue.content.card.name}</div>
-              <div className={NewsListStyle.news_3_text}>指派给 {messageValue.content.rela_data.name}</div>
+              <div className={NewsListStyle.news_3_text}>指派给 {messageValue.content.rela_data && messageValue.content.rela_data.name}</div>
               <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {messageValue.content.board.name}</div>
               <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
@@ -216,7 +216,7 @@ export default class InitialNews extends React.Component {
         } else {
           messageContain = (<div></div>)
         }
-          
+
           contain = `添加${currentNounPlanFilterName(TASKS)}标签`
           break
         case 'board.card.update.label.remove':
