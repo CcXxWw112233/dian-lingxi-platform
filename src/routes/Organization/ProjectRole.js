@@ -89,7 +89,7 @@ export default class ProjectRole extends React.Component {
     })
   }
   copyPanelItem() {
-    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)){
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
