@@ -332,12 +332,12 @@ export default class FileDetailContent extends React.Component {
     }
 
     const getVersionItem = (value, key ) => {
-      const { file_name, creator, update_time, file_size } = value
+      const { file_name, creator, create_time, file_size } = value
       return (
         <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this,{value, key})}>
           <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
-          <div className={indexStyles.info}>上传于{update_time}</div>
+          <div className={indexStyles.info}>上传于{create_time}</div>
           <div className={indexStyles.size}>{file_size}</div>
         </div>
       )

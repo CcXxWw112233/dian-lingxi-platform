@@ -1,12 +1,18 @@
 import React from 'react'
 import {
   Modal,
-  Button
+  Button,
+  message
 } from 'antd'
-
+import { PROJECT_FLOWS_FLOW_ABORT } from '../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
 const confirm = Modal.confirm
 
 const showConfirm = (processEnd) => {
+  if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    return false
+  }
   confirm({
     title: '确认要中止这个流程吗？',
     content: '流程中止后支持重新发起，原流程将无法继续进行。',

@@ -9,7 +9,7 @@ import CommentListItem2 from './Comment/CommentListItem2'
 import {getRelations, JoinRelation} from "../../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
-import { timestampToHM } from '../../../../../../../utils/util'
+import { timestampToHM, judgeTimeDiffer } from '../../../../../../../utils/util'
 import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from '../../../../../../../utils/businessFunction'
 import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT} from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
@@ -402,7 +402,7 @@ export default class FileDetailContent extends React.Component {
                     marginLeft: '12px',
                     lineHeight: '17px', }}>{messageValue.creator.name}</div>
                 </div>
-                <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+                <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
               </div>
               <div style={{margin: '15px 0 15px 55px' ,color: '#595959', fontSize: '14px',fontFamily:'PingFangSC-Regular'}}>
                 {messageValue.text}
@@ -417,7 +417,7 @@ export default class FileDetailContent extends React.Component {
                 <div ></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
@@ -429,7 +429,7 @@ export default class FileDetailContent extends React.Component {
                 <div ></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
@@ -441,7 +441,7 @@ export default class FileDetailContent extends React.Component {
                 <div ></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
@@ -453,7 +453,7 @@ export default class FileDetailContent extends React.Component {
                 <div ></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
@@ -465,7 +465,7 @@ export default class FileDetailContent extends React.Component {
                 <div ></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
@@ -476,7 +476,7 @@ export default class FileDetailContent extends React.Component {
                   <div ></div>
                   <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
                 </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{timestampToHM(messageValue.create_time)}</div>
+              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`

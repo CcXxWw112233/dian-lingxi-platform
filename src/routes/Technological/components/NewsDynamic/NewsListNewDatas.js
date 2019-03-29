@@ -187,7 +187,7 @@ export default class NewsListNewDatas extends React.Component {
         case 'board.card.update.executor.remove':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}「{messageValue.content.card.name}」移除了任务执行人。</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 从{currentNounPlanFilterName(TASKS)}「{messageValue.content.card.name}」移除了任务执行人 「{messageValue.content.rela_data.name}」。</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
