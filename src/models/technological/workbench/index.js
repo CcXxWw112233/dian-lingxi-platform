@@ -18,9 +18,8 @@ export default modelExtend(technological, {
   namespace: 'workbench',
   state: {
       datas: {
-
-
-        projectList: []
+        projectList: [],
+        boxList: [],
       }
     },
   subscriptions: {
@@ -37,7 +36,7 @@ export default modelExtend(technological, {
               knowPolicyArticles: [], //政策法规文章列表
               previewAticle: {}, //预览的文章
               spinning: false, //文章加载中状态
-              boxList: [], //工作台盒子列表
+              // boxList: [], //工作台盒子列表
               projectList: [], //项目列表
               projectStarList: [],
               projectUserList: [], //项目列表（只返回用户信息）
@@ -54,6 +53,10 @@ export default modelExtend(technological, {
               currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
               projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
               currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
+              responsibleTaskList: [],
+              uploadedFileList: [],
+              backLogProcessList: [],
+              meetingLsit: [],
             }
           }),
           dispatch({
