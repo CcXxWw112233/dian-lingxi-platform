@@ -70,7 +70,7 @@ export default class PagingnationContent extends React.Component {
       loadMoreText: '加载中...'
     })
     const res = await getProcessListByType(obj)
-    console.log('this is getProcessListByType s result:', res)
+    // console.log('this is getProcessListByType s result:', res)
     if(res.code === '0') {
       const data = res.data
       let listName
@@ -80,7 +80,7 @@ export default class PagingnationContent extends React.Component {
           listName = 'processDoingList'
           selectList = processDoingList
           break
-        case '2':
+        case '4':
           listName = 'processStopedList'
           selectList = processStopedList
           break
@@ -239,6 +239,7 @@ export default class PagingnationContent extends React.Component {
         <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
         <ProccessDetailModal
           {...this.props}
+          status = {this.props.status}
           getProcessListByType = {this.getProcessListByType.bind(this)}
           close = {this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}

@@ -322,7 +322,7 @@ export default modelExtend(workbench, {
       }
     },
     * completeProcessTask({ payload }, { select, call, put }) {
-      const { instance_id } = payload
+      const { instance_id, flow_node_instance_id } = payload
       let res = yield call(completeProcessTask, payload)
 
       let res2 = yield call(getProcessInfo, instance_id)

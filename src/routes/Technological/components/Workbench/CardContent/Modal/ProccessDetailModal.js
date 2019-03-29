@@ -31,6 +31,7 @@ class FileDetailModal extends React.Component {
         width={'90%'}
         // height={400}
         // zIndex={1006}
+        
         close={this.props.close}
         closable={false}
         maskClosable={false}
@@ -39,7 +40,7 @@ class FileDetailModal extends React.Component {
         bodyStyle={{top: 0}}
         style={{top: modalTop}}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
+        overInner={<FileDetail {...this.props} status = {this.props.status} modalTop={modalTop}/>}
       />
     )
   }

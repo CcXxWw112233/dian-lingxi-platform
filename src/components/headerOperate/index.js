@@ -7,8 +7,34 @@ import {
 } from 'antd'
 
 
-export default ({dataSource, item, disabledEnd, disabledDel}) => {
-  let dis 
+export default ({dataSource, item, status}) => {
+  let getStatus = (s) => {
+    let disabledEnd,
+    disabledDel
+    switch(s){
+      case '1':
+        disabledEnd = false
+        disabledDel = true
+        break
+      case '3': 
+        disabledEnd = true
+        disabledDel = false
+        break
+      case '4':
+        disabledEnd = true
+        disabledDel = false
+        break
+      default:
+        disabledEnd = false
+        disabledDel = true
+        break
+    }
+    return {
+      disabledEnd,
+      disabledDel
+    }
+  }
+  const {disabledEnd, disabledDel} = getStatus(status)
   let menu = (
     <Menu>
       {
