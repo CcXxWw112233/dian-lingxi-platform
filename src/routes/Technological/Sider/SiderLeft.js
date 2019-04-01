@@ -14,6 +14,7 @@ import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationM
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
+import GlobalSearch from './../GlobalSearch'
 
 const { Sider } = Layout;
 
@@ -240,6 +241,8 @@ export default class SiderLeft extends React.Component {
         <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
 
         <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+
+        <GlobalSearch />
 
       </Sider>
 
