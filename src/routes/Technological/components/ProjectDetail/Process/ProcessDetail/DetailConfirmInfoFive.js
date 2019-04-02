@@ -7,6 +7,7 @@ import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
+import AvatarComps from '../../../../../../components/avatarMore'
 
 const { RangePicker } = DatePicker;
 
@@ -168,7 +169,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         case '3':
@@ -183,7 +184,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:
@@ -240,7 +241,7 @@ export default class DetailConfirmInfoFive extends React.Component {
           }
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
-            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+            <div style={{marginLeft: '450px'}} className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
                                                      filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
@@ -382,12 +383,18 @@ export default class DetailConfirmInfoFive extends React.Component {
     const { processCurrentCompleteStep } = this.props.model.datas
     let node_amount = this.props.model.datas.processInfo.node_amount
     let stylLine, stylCircle
-    if(processCurrentCompleteStep >= itemKey+1) {
+    if(processCurrentCompleteStep >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
       stylLine = styles.line
       stylCircle = styles.circle
-    } else {
+    }else if(processCurrentCompleteStep == itemKey){
+      stylLine = styles.doingLine
+      stylCircle = styles.doingCircle
+    }else {
       stylLine = styles.hasnotCompetedLine
       stylCircle = styles.hasnotCompetedCircle
+    }
+    let juge = {
+      bordered: false
     }
     return (
       <div className={indexStyles.ConfirmInfoOut_1} style={{display: 'flex', justifyContent: 'center'}}>
@@ -395,18 +402,18 @@ export default class DetailConfirmInfoFive extends React.Component {
       {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
       <div className={stylCircle}> {itemKey + 1}</div>
       <div className={styles.outDiv}>
-        <div className={styles.arrow}></div>
-        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
+        {/* <div className={styles.arrow}></div> */}
+        <Card {...juge} style={{width: '100%', backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               {/* <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div> */}
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div>审批</div>
+                <div style={{marginTop:'10px'}}><Icon type="user" /> 审批</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
-              {filterAssignee(assignee_type)}
+              {/* {filterAssignee(assignee_type)} */}
               {filterDueTime(deadline_type)}
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>

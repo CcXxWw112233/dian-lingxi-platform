@@ -15,6 +15,7 @@ import {checkIsHasPermissionInBoard, getSubfixName, openPDF} from "../../../../.
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
+import AvatarComps from '../../../../../../components/avatarMore'
 
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
@@ -300,14 +301,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name, mobile, email } = value
-                if (key <= 6)
+                if (key <= 2)
                   return(
                     <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+               {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         case '3':
@@ -315,14 +316,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
-                if (key <= 6)
+                if (key <= 2)
                   return(
                     <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:
@@ -379,7 +380,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           }
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
-            <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+            <div style={{marginLeft: '450px'}} className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
                                                      filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>
@@ -588,25 +589,31 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { processCurrentCompleteStep } = this.props.model.datas
     let node_amount = this.props.model.datas.processInfo.node_amount
     let stylLine, stylCircle
-    if(processCurrentCompleteStep >= itemKey+1) {
+    if(processCurrentCompleteStep >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
       stylLine = styles.line
       stylCircle = styles.circle
-    } else {
+    }else if(processCurrentCompleteStep == itemKey){
+      stylLine = styles.doingLine
+      stylCircle = styles.doingCircle
+    }else {
       stylLine = styles.hasnotCompetedLine
       stylCircle = styles.hasnotCompetedCircle
+    }
+    let juge = {
+      bordered: false
     }
     return (
       <div className={indexStyles.ConfirmInfoOut_1} style={{marginTop: '20px', display: 'flex', justifyContent: 'center'}}>
         {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
         <div className={stylCircle}> {itemKey + 1} </div>
         <div className={styles.outDiv}>
-          <div className={styles.arrow}></div>
-          <Card bordered='false' style={{backgroundColor: '#f5f5f5'}}>
+          {/* <div className={styles.arrow}></div> */}
+          <Card {...juge} bordered='false' style={{backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div>上传</div>
+                <div style={{marginTop:'10px'}} > <Icon type="upload" /> 上传</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>

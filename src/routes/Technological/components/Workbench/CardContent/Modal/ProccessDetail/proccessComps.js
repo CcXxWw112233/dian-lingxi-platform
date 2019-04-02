@@ -100,24 +100,6 @@ export default class ProccessContent extends React.Component {
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
 
-   const fillAvatar = (data) => {
-      let num = data.length
-      let res = data.reduce((r, c, i) => {
-        return [
-          ...r,
-          c.avatar?<img key={i} title={c.name} style={{width: '18px', height: '18px', borderRadius: '9px', marginLeft: '5px'}}  src={c.avatar}/>:<img src={user} title={c.name}  key={`div${i}`} style={{width: '18px', height: '18px', borderRadius: '9px', backgroundColor: 'gray', marginLeft: '5px'}} />
-        ]
-      }, [])
-      let container = (
-        <div style={{fontSize:'12px',
-        fontFamily:'PingFangSC-Regular',
-        fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}> {res} 「{num}」位流程参与人</div>
-      )
-
-      return container
-   }
-
    const filterForm = (value, key) => {
      const { node_type } = value
      let container = (<div></div>)
@@ -159,7 +141,7 @@ export default class ProccessContent extends React.Component {
           fontWeight:400,
           color:'rgba(140,140,140,1)',
           lineHeight: '17px'
-      }}>逾期 {1} 天</span> 
+      }}>逾期 * 天</span> 
       <span style={{
         position: 'relative', 
         top: '110px', 
@@ -172,9 +154,8 @@ export default class ProccessContent extends React.Component {
         color: 'rgba(89,89,89,1)',
         lineHeight: '30px'
       }}>{this.props.model.datas.processCurrentCompleteStep}/{this.props.model.datas.processInfo.node_amount}</span>
-      <div style={{height: '210px', padding: '32px 34px 32px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+      <div style={{height: '210px', padding: '32px 34px 70px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
-        {fillAvatar(data)}
         <div style={{fontSize:'12px',
         fontFamily: 'PingFangSC-Regular',
         fontWeight:'400',
@@ -188,23 +169,6 @@ export default class ProccessContent extends React.Component {
             </div>
           )
         })}
-      
-      {/* 2 */}
-      {/* <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-        <div className={styles.hasnotCompetedLine}></div>
-        <div className={styles.hasnotCompetedCircle}> 2 </div>
-        <div className={styles.outDiv} style={{height: '300px'}}>
-          <div className={styles.arrow}></div>
-          <span> Warning!!! </span>
-        </div>
-      </div> */}
-      {/* <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-        <div className={styles.hasnotCompetedCircle}> 3 </div>
-        <div className={styles.outDiv} style={{height: '200px'}}>
-          <div className={styles.arrow}></div>
-          <span> Warning!!! </span>
-        </div>
-      </div> */}
       </div>
     </div>
    )

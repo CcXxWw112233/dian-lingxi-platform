@@ -8,6 +8,7 @@ import OpinionModal from './OpinionModal'
 import {timeToTimestamp, timestampToTimeNormal} from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
+import AvatarComps from '../../../../../../components/avatarMore'
 
 const { RangePicker } = DatePicker;
 
@@ -143,7 +144,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     const imgOrAvatar = (img) => {
       return img ? (
         <div>
-          <img src={img} style={{width: 18, height: 18, marginRight: 8, borderRadius: 16, margin: '0 8px'}} />
+          <img src={img} style={{width: 18, height: 18, borderRadius: 16, margin: '0 4px'}} />
         </div>
       ):(
         <div style={{lineHeight: '18px', height: 18, width: 16, borderRadius: 18, backgroundColor: '#e8e8e8', marginRight: 8, textAlign: 'center', margin: '0 8px', marginTop: 2, }}>
@@ -162,14 +163,15 @@ export default class DetailConfirmInfoOne extends React.Component {
               <div style={{display: 'flex'}}>
                 {assigneesArray.map((value, key)=>{
                   const { avatar, name, mobile, email } = value
-                  if (key <= 6)
+                  if (key <= 2)
                     return(
                       <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                         <div>{imgOrAvatar(avatar)}</div>
                       </Tooltip>
                     )
                 })}
-                {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+                
+                {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
               </div>)
           break
         case '3':
@@ -177,14 +179,14 @@ export default class DetailConfirmInfoOne extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
-                if (key <= 6)
+                if (key <= 2)
                   return(
                     <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length >3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:
@@ -283,12 +285,18 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { processCurrentCompleteStep } = this.props.model.datas
     let node_amount = this.props.model.datas.processInfo.node_amount
     let stylLine, stylCircle
-    if(processCurrentCompleteStep >= itemKey+1) {
+    if(processCurrentCompleteStep >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
       stylLine = styles.line
       stylCircle = styles.circle
-    } else {
+    }else if(processCurrentCompleteStep == itemKey){
+      stylLine = styles.doingLine
+      stylCircle = styles.doingCircle
+    }else {
       stylLine = styles.hasnotCompetedLine
       stylCircle = styles.hasnotCompetedCircle
+    }
+    let juge = {
+      bordered: false
     }
     return (
       // <div className={indexStyles.ConfirmInfoOut_1}>
@@ -296,18 +304,18 @@ export default class DetailConfirmInfoOne extends React.Component {
         {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
         <div className={stylCircle}> {itemKey + 1}</div>
         <div className={styles.outDiv}>
-          <div className={styles.arrow}></div>
-          <Card bordered='false' style={{backgroundColor: '#f5f5f5'}}>
+          {/* <div className={styles.arrow}></div> */}
+          <Card {...juge} style={{backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               {/* <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div> */}
               
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div>里程碑</div>
+                <div style={{marginTop:'10px'}} > <Icon type="flag" /> 里程碑</div>
               </div>
             </div>
-            <div className={indexStyles.ConfirmInfoOut_1_top_right}>
+            <div className={indexStyles.ConfirmInfoOut_1_top_right} style={{display: 'flex'}}>
               {filterAssignee(assignee_type)}
               {filterDueTime(deadline_type)}
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
