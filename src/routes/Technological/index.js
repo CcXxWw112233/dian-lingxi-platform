@@ -15,6 +15,7 @@ import 'moment/locale/zh-cn';
 import ImChat from './ImChat.js'
 import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
+import GlobalSearch from './GlobalSearch'
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,6 +30,7 @@ export default class Technological extends React.Component{
     //导航栏props-------------
     const HeaderNavProps = {
       model,
+      dispatch,
       logout() {
         dispatch({
           type: getEffectOrReducerByName('logout'),
@@ -163,6 +165,7 @@ export default class Technological extends React.Component{
           </Content>
         </Layout>
         <SiderRight />
+        <GlobalSearch />
       </Layout>
 
     )

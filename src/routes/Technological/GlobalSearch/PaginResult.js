@@ -60,7 +60,7 @@ export default class PaginResult extends React.Component {
   }
 
   contentBodyScroll(e) {
-    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 2) {
       const { model: { page_number = 1, scrollBlock }, dispatch } = this.props
       let page_no = page_number
       if(!scrollBlock) {
@@ -79,7 +79,8 @@ export default class PaginResult extends React.Component {
   }
 
   render() {
-    const { sigleTypeResultList = [], loadMoreText, loadMoreDisplay } = this.props.model
+    const { sigleTypeResultList = [], loadMoreTextType, loadMoreDisplay, page_number } = this.props.model
+    const { dispatch } = this.props
     const sigleItem = sigleTypeResultList[0] || {}
     const { listType, lists=[] } = sigleItem
     const filterTitle = (listType, value) => {
@@ -88,28 +89,46 @@ export default class PaginResult extends React.Component {
       switch (listType) {
         case 'boards':
           title = '项目'
-          ele = <BoardItem itemValue={value}/>
+          ele = <BoardItem itemValue={value} dispatch={dispatch} />
           break
         case 'cards':
           title = '任务'
-          ele = <TaskItem itemValue={value}/>
+          ele = <TaskItem itemValue={value} dispatch={dispatch} />
           break
         case 'files':
           title = '文档'
-          ele = <FileItem itemValue={value}/>
+          ele = <FileItem itemValue={value} dispatch={dispatch} />
           break
         case 'flows':
           title = '流程'
-          ele = <FlowItem itemValue={value}/>
+          ele = <FlowItem itemValue={value} dispatch={dispatch} />
           break
         case 'schedules':
           title = '日程'
-          ele = <MeetingItem itemValue={value}/>
+          ele = <MeetingItem itemValue={value} dispatch={dispatch} />
           break
         default:
           break
       }
       return { title, ele }
+    }
+
+    const fiterLoadMoreTextType = (loadMoreTextType) => {
+      let text = ''
+      switch (loadMoreTextType) {
+        case '1':
+          text = '暂无更多数据'
+          break
+        case '2':
+          text = '加载中...'
+          break
+        case '3':
+          text = '加载更多...'
+          break
+        default:
+          break
+      }
+      return text
     }
 
     return(
@@ -124,13 +143,18 @@ export default class PaginResult extends React.Component {
             )
           })}
         </div>
-        <div className={indexstyles.lookMore} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
+
+        {/*如果是在第一页，必须完成请求结束没有更多数据*/}
+        {((page_number == 1 && loadMoreTextType == '1') || (page_number != 1)) && (
+          <div className={indexstyles.lookMore} >{fiterLoadMoreTextType(loadMoreTextType)}</div>
+        )}
+        {/*<div className={indexstyles.lookMore} style={{display: loadMoreDisplay }}>{fiterLoadMoreTextType(loadMoreTextType)}</div>*/}
       </div>
     )
   }
 }
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, loadMoreDisplay, scrollBlock, loadMoreText} } }) {
+function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, loadMoreDisplay, scrollBlock, loadMoreTextType} } }) {
   return {
-    model: { searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreText, loadMoreDisplay },
+    model: { searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreTextType, loadMoreDisplay },
   }
 }

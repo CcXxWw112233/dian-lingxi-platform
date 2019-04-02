@@ -33,38 +33,57 @@ export default class TypeResult extends React.Component {
 
   }
 
+  filterTitle = (listType, value) => {
+    const { dispatch } = this.props
+    let title = ''
+    let ele = <div></div>
+    let defaultSearchType = '1'
+    switch (listType) {
+      case 'boards':
+        title = '项目'
+        defaultSearchType = '2'
+        ele = <BoardItem itemValue={value} dispatch={dispatch}/>
+        break
+      case 'cards':
+        title = '任务'
+        defaultSearchType = '3'
+        ele = <TaskItem itemValue={value} dispatch={dispatch} />
+        break
+      case 'files':
+        title = '文档'
+        defaultSearchType = '6'
+        ele = <FileItem itemValue={value} dispatch={dispatch} />
+        break
+      case 'flows':
+        title = '流程'
+        defaultSearchType = '5'
+        ele = <FlowItem itemValue={value} dispatch={dispatch} />
+        break
+      case 'schedules':
+        title = '日程'
+        defaultSearchType = '4'
+        ele = <MeetingItem itemValue={value} dispatch={dispatch} />
+        break
+      default:
+        break
+    }
+    return { title, ele, defaultSearchType }
+  }
+
+  lookMore(defaultSearchType) {
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        defaultSearchType
+      }
+    })
+  }
+
   render() {
 
     const { allTypeResultList } = this.props.model
-    const filterTitle = (listType, value) => {
-      let title = ''
-      let ele = <div></div>
-      switch (listType) {
-        case 'boards':
-          title = '项目'
-          ele = <BoardItem itemValue={value}/>
-          break
-        case 'cards':
-          title = '任务'
-          ele = <TaskItem itemValue={value}/>
-          break
-        case 'files':
-          title = '文档'
-          ele = <FileItem itemValue={value}/>
-          break
-        case 'flows':
-          title = '流程'
-          ele = <FlowItem itemValue={value}/>
-          break
-        case 'schedules':
-          title = '日程'
-          ele = <MeetingItem itemValue={value}/>
-          break
-        default:
-          break
-      }
-      return { title, ele }
-    }
+    const { dispatch } = this.props
 
     return(
       <div>
@@ -72,15 +91,15 @@ export default class TypeResult extends React.Component {
           const { lists = [], listType } = value
           return (
             <div className={indexstyles.typeResult} key={key}>
-              <div className={indexstyles.contentTitle}>{filterTitle(listType).title}</div>
+              <div className={indexstyles.contentTitle}>{this.filterTitle(listType).title}</div>
               {lists.map((value, key) => {
                 return (
                   <div key={key}>
-                    {filterTitle(listType, value).ele}
+                    {this.filterTitle(listType, value).ele}
                   </div>
                 )
               })}
-              <div className={indexstyles.lookMore}>查看更多...</div>
+              <div className={indexstyles.lookMore} onClick={this.lookMore.bind(this, this.filterTitle(listType).defaultSearchType)}>查看更多...</div>
             </div>
           )
         })}

@@ -3,11 +3,14 @@ import { Modal, Form, Button, Input, message, Select, Icon, Avatar } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
+import {checkIsHasPermission, checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
+import { timestampToTimeNormal } from '../../../utils/util'
 import {
-  MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_CARD_COMPLETE
+  MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_COMPLETE, ORG_TEAM_BOARD_QUERY, APP_KEY
 } from "../../../globalset/js/constant";
+import Cookies from "js-cookie";
+import {connect} from "dva/index";
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
@@ -15,6 +18,7 @@ const InputGroup = Input.Group;
 const Option = Select.Option;
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
+@connect(mapStateToProps)
 export default class AnotherItem extends React.Component {
   state = {
 
@@ -30,33 +34,54 @@ export default class AnotherItem extends React.Component {
   itemClick(data, e) {
     const { id, board_id } = data;
     setStorage('board_id', board_id)
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY) || !checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    const { dispatch } = this.props
+    const { model = {} } = this.props
+    const projectDetailBoardId = model['board_id']
+    Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
+    dispatch({
+      type: 'globalSearch/updateDatas',
+      payload: {
+        globalSearchModalVisible: false
+      }
+    })
+    dispatch({
+      type: 'globalSearch/routingJump',
+      payload: {
+        route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${APP_KEY.FILE}&file_id=${id}`
+      }
+    })
   }
   itemOneClick(e) {
     e.stopPropagation();
   }
   render() {
     const { itemValue = {} } = this.props
-    const { is_realize, id, board_id, file_name, file_id } = itemValue
+    const { is_realize, id, board_id, file_name, file_id, create_time } = itemValue
 
     return(
       <div>
         <div className={indexstyles.taskItem}>
-          <div className={globalStyles.authTheme}>&#xe709;</div>
+          <div className={globalStyles.authTheme}>&#xe60b;</div>
           <div className={indexstyles.itemName}>
             <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
               {file_name}
             </div>
           </div>
-          <div className={indexstyles.time}>2018/08/08</div>
-          <div className={indexstyles.avatar}>
-            <Avatar size={16} style={{padding: 0}}/>
-          </div>
+          <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
+          {/*<div className={indexstyles.avatar}>*/}
+            {/*<Avatar size={16} style={{padding: 0}}/>*/}
+          {/*</div>*/}
         </div>
       </div>
     )
+  }
+}
+function mapStateToProps({ projectDetail: { datas: { board_id } } }) {
+  return {
+    model: { board_id },
   }
 }

@@ -35,6 +35,12 @@ export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 
 export const PAGINATION_PAGE_SIZE = 12 //分页每页条数
 
+export const APP_KEY = {
+  FLOW: '2',
+  CARD: '3',
+  FILE: '4',
+}
+
 //权限列表
 export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
 export const ORG_TEAM_BOARD_JOIN = 'org:team:board:join' //加入项目 permission_type=1

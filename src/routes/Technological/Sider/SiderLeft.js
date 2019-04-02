@@ -14,7 +14,6 @@ import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationM
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
-import GlobalSearch from './../GlobalSearch'
 
 const { Sider } = Layout;
 
@@ -112,7 +111,16 @@ export default class SiderLeft extends React.Component {
     }
   }
 
-
+  //设置全局搜索
+  setGlobalSearchModalVisible() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'globalSearch/updateDatas',
+      payload: {
+        globalSearchModalVisible: true
+      }
+    })
+  }
   render() {
     const { collapsed } = this.state
     const navArray = [
@@ -226,6 +234,14 @@ export default class SiderLeft extends React.Component {
           </div>
           </Dropdown>
         </div>
+
+        <div className={indexStyles.contain_2}>
+          <div className={`${indexStyles.navItem}`} onClick={this.setGlobalSearchModalVisible.bind(this)} >
+            <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`}>&#xe611;</div>
+            <div className={indexStyles.navItem_right}> 搜索</div>
+          </div>
+        </div>
+
         <div className={indexStyles.contain_2}>
           {navArray.map((value, key) => {
             const { theme, name } = value
@@ -242,7 +258,6 @@ export default class SiderLeft extends React.Component {
 
         <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
-        <GlobalSearch />
 
       </Sider>
 

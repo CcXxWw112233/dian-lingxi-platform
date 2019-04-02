@@ -17,8 +17,6 @@ const getEffectOrReducerByName = name => `globalSearch/${name}`
 @connect(mapStateToProps)
 export default class GlobalSearch extends React.Component {
   state = {
-    visible: true,
-    searchType: '0',
     searchTimer: null,
   }
 
@@ -42,8 +40,12 @@ export default class GlobalSearch extends React.Component {
   }
 
   onCancel() {
-    this.setState({
-      visible: !this.state.visible
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        globalSearchModalVisible: false
+      }
     })
   }
 
@@ -54,8 +56,8 @@ export default class GlobalSearch extends React.Component {
       payload: {
         defaultSearchType: value,
         page_number: 1,
-        allTypeResultList: [],
-        sigleTypeResultList: []
+        // allTypeResultList: [],
+        // sigleTypeResultList: []
       }
     })
     dispatch({
@@ -73,8 +75,8 @@ export default class GlobalSearch extends React.Component {
       payload: {
         searchInputValue: value,
         page_number: 1,
-        allTypeResultList: [],
-        sigleTypeResultList: []
+        // allTypeResultList: [],
+        // sigleTypeResultList: []
       }
     })
     const { searchTimer } = this.state
@@ -93,8 +95,7 @@ export default class GlobalSearch extends React.Component {
 
   render() {
 
-    const { visible, searchType = '0' } = this.state
-    const { searchTypeList = [], defaultSearchType, searchInputValue } = this.props.model
+    const { searchTypeList = [], defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number } = this.props.model
 
     const searchEle = () => {
       return (
@@ -119,20 +120,20 @@ export default class GlobalSearch extends React.Component {
 
     return(
       <Modal
-        visible={visible}
+        visible={globalSearchModalVisible}
         zIndex={1010}
         footer={false}
         destroyOnClose={true}
         onCancel={this.onCancel.bind(this)}>
         {searchEle()}
-        <SearchResult defaultSearchType={defaultSearchType}/>
+        <SearchResult defaultSearchType={defaultSearchType} spinning={spinning} page_number={page_number}/>
       </Modal>
     )
   }
 }
 
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue} } }) {
+function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number} } }) {
   return {
-    model: { searchTypeList, defaultSearchType, searchInputValue },
+    model: { searchTypeList, defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number },
   }
 }

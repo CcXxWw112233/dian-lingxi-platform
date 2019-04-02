@@ -3,12 +3,14 @@ import { selectSearchTypeList, selectDefaultSearchType, selectAllTypeResultList,
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";
+import { selectProjectDetailBoardId } from '../select'
 import { routerRedux } from "dva/router";
 
 export default {
   namespace: 'globalSearch',
   state: {
     datas: {
+      globalSearchModalVisible: false,
       searchTypeList: [], //查询类型列表
       defaultSearchType: '', //默认类型
       allTypeResultList: [], //全部类型列表
@@ -16,15 +18,36 @@ export default {
       searchInputValue: '', //输入框的值
       page_number: 1,
       page_size: 10,
-      scrollBlock: true,
+      scrollBlock: true, //滚动锁
       loadMoreDisplay: 'block',
-      loadMoreText: ''
+      loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
+      spinning: false,
     }
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname.indexOf('/technological') !== -1) {}
+        function onkeyDown(event) {
+          const e = event || window.event || arguments.callee.caller.arguments[0];
+          const target = e.target
+          let hash = window.location.hash
+          if (hash.indexOf('?') !== -1) {
+            hash = hash.split('?')[0]
+          }
+          if (e && e.keyCode == 83 && target.nodeName.toLowerCase() != 'input' && hash.indexOf('/technological') != -1) {
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                globalSearchModalVisible: true
+              }
+            })
+          }
+        }
+        if (location.pathname.indexOf('/technological') !== -1) {
+          window.addEventListener("keydown", onkeyDown, false);
+        }else {
+
+        }
       })
     },
   },
@@ -58,17 +81,24 @@ export default {
       const obj = {
         search_term: searchInputValue,
         search_type: defaultSearchType,
+        page_size: defaultSearchType == '1' ? 5 : page_size,
         page_number,
-        page_size,
         ...payload,
       }
       yield put({
         type: 'updateDatas',
         payload: {
-          loadMoreText: '加载中...'
+          loadMoreTextType: '2',
+          spinning: true
         }
       })
       const res = yield call(getGlobalSearchResultList, obj)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          spinning: false
+        }
+      })
       if(isApiResponseOk(res)) {
         const data = res.data
         if(defaultSearchType == '1') {
@@ -115,7 +145,7 @@ export default {
             payload: {
               sigleTypeResultList: arr,
               scrollBlock: !(list.length < page_size),
-              loadMoreText: (list.length < page_size)?'暂无更多数据': '加载更多',
+              loadMoreTextType: (list.length < page_size)?'1': '3',
             }
           })
         }
@@ -128,6 +158,7 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+
   },
 
   reducers: {

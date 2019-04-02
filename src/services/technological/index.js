@@ -38,5 +38,5 @@ export async function getGlobalSearchResultList(params) {
     url: `${REQUEST_DOMAIN_BOARD}/comm/search`,
     method: 'GET',
     params
-  });
+  }, {isNotLoading: true});
 }

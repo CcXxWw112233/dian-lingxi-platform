@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Icon, Spin } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
@@ -26,15 +26,17 @@ export default class SearchResult extends React.Component {
   }
 
   render() {
-    const { defaultSearchType = '1' } = this.props
+    const { defaultSearchType = '1', spinning, page_number } = this.props
     return(
-      <div>
-        {defaultSearchType == '1' ? (
-          <TypeResult />
-        ) : (
-          <PaginResult />
-        )}
-      </div>
+      <Spin tip="数据加载中" spinning={spinning && page_number == 1}>
+        <div style={{minHeight: 40}}>
+          {defaultSearchType == '1' ? (
+            <TypeResult />
+          ) : (
+            <PaginResult />
+          )}
+        </div>
+      </Spin>
     )
   }
 }
