@@ -52,7 +52,10 @@ export default class GlobalSearch extends React.Component {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        defaultSearchType: value
+        defaultSearchType: value,
+        page_number: 1,
+        allTypeResultList: [],
+        sigleTypeResultList: []
       }
     })
     dispatch({
@@ -68,7 +71,10 @@ export default class GlobalSearch extends React.Component {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        searchInputValue: value
+        searchInputValue: value,
+        page_number: 1,
+        allTypeResultList: [],
+        sigleTypeResultList: []
       }
     })
     const { searchTimer } = this.state

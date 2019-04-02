@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message, Select, Icon } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
+import { getGlobalSearchResultList } from '../../../services/technological'
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
 import {checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
@@ -21,7 +22,8 @@ const getEffectOrReducerByName = name => `globalSearch/${name}`
 @connect(mapStateToProps)
 export default class PaginResult extends React.Component {
   state = {
-
+    loadMoreDisplay: 'none',
+    scrollBlock: true, //滚动加载锁，true可以加载，false不执行滚动操作
   }
 
   componentDidMount() {
@@ -38,8 +40,46 @@ export default class PaginResult extends React.Component {
 
   }
 
+  //分页逻辑
+  async getGlobalSearchResultList() {
+    const { model: { page_number, page_size, searchInputValue, defaultSearchType, }, dispatch } = this.props
+    const { listData = [], status, } = this.props
+
+    const obj = {
+      page_number,
+      page_size,
+      search_type: defaultSearchType,
+      search_term: searchInputValue,
+    }
+    dispatch({
+      type: getEffectOrReducerByName('getGlobalSearchResultList'),
+      payload: {
+        obj
+      }
+    })
+  }
+
+  contentBodyScroll(e) {
+    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+      const { model: { page_number = 1, scrollBlock }, dispatch } = this.props
+      let page_no = page_number
+      if(!scrollBlock) {
+        return false
+      }
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: {
+          page_number: ++page_no,
+          scrollBlock: false,
+        }
+      })
+
+      this.getGlobalSearchResultList()
+    }
+  }
+
   render() {
-    const { sigleTypeResultList = [] } = this.props.model
+    const { sigleTypeResultList = [], loadMoreText, loadMoreDisplay } = this.props.model
     const sigleItem = sigleTypeResultList[0] || {}
     const { listType, lists=[] } = sigleItem
     const filterTitle = (listType, value) => {
@@ -73,7 +113,8 @@ export default class PaginResult extends React.Component {
     }
 
     return(
-      <div className={`${indexstyles.typeResult} ${indexstyles.paginResult}`}>
+      <div className={`${indexstyles.typeResult} ${indexstyles.paginResult}`}
+           onScroll={this.contentBodyScroll.bind(this)}>
         <div className={`${indexstyles.paginResultInner}`}>
           {lists.map((value, key) => {
             return (
@@ -83,13 +124,13 @@ export default class PaginResult extends React.Component {
             )
           })}
         </div>
-        <div className={indexstyles.lookMore}>加载更多...</div>
+        <div className={indexstyles.lookMore} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
       </div>
     )
   }
 }
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList} } }) {
+function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, loadMoreDisplay, scrollBlock, loadMoreText} } }) {
   return {
-    model: { searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList },
+    model: { searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreText, loadMoreDisplay },
   }
 }

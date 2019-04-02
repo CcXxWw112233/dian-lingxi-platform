@@ -1,5 +1,5 @@
 import { getUSerInfo, logout, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
-import { selectSearchTypeList, selectDefaultSearchType, selectAllTypeResultList, selectSigleTypeResultList, selectSearchInputValue } from './select'
+import { selectSearchTypeList, selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";
@@ -16,6 +16,9 @@ export default {
       searchInputValue: '', //输入框的值
       page_number: 1,
       page_size: 10,
+      scrollBlock: true,
+      loadMoreDisplay: 'block',
+      loadMoreText: ''
     }
   },
   subscriptions: {
@@ -46,14 +49,25 @@ export default {
     * getGlobalSearchResultList({ payload }, { call, put, select }) {
       const defaultSearchType = yield select(selectDefaultSearchType) || 1
       const searchInputValue = yield select(selectSearchInputValue)
+      const page_number = yield select(selectPageNumber)
+      const page_size = yield select(selectPageSize)
+
       if(!!!searchInputValue) {
         return false
       }
       const obj = {
-        ...payload,
         search_term: searchInputValue,
         search_type: defaultSearchType,
+        page_number,
+        page_size,
+        ...payload,
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          loadMoreText: '加载中...'
+        }
+      })
       const res = yield call(getGlobalSearchResultList, obj)
       if(isApiResponseOk(res)) {
         const data = res.data
@@ -74,20 +88,34 @@ export default {
           })
         } else {
           const sigleTypeResultList = yield select(selectSigleTypeResultList)
-          // const arr = [].concat(sigleTypeResultList, res.data)
-          // debugger
+          const page_number = yield select(selectPageNumber)
           let arr = []
-          for(let i in data) {
-            const obj = {
-              listType: i,
-              lists: data[i],
+          let list = []
+
+          if(page_number == 1) {
+            for(let i in data) {
+              const obj = {
+                listType: i,
+                lists: data[i],
+              }
+              arr.push(obj)
+              list = data[i]
             }
-            arr.push(obj)
+          } else {
+            arr = [...sigleTypeResultList]
+            for(let i in data) {
+              const arr_list = [].concat(arr[0]['lists'], data[i])
+              arr[0]['lists'] = arr_list
+              list = data[i]
+            }
           }
+
           yield put({
             type: 'updateDatas',
             payload: {
-              sigleTypeResultList: arr
+              sigleTypeResultList: arr,
+              scrollBlock: !(list.length < page_size),
+              loadMoreText: (list.length < page_size)?'暂无更多数据': '加载更多',
             }
           })
         }
