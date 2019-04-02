@@ -1,5 +1,6 @@
 import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
+import styles from './index.css'
 import { Icon  } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
@@ -7,7 +8,7 @@ import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDet
 import DetailConfirmInfoFour from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFour'
 import DetailConfirmInfoFive from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFive'
 import user from '../../../../../../../assets/workbench/person_group@2x.png'
-import sssimg from '../../../../../../../assets/yay.jpg'
+import sssimg from '../../../../../../../assets/workbench/processIcon.png'
 import { timestampToHM } from '../../../../../../../utils/util'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../../../globalset/js/constant'
@@ -23,6 +24,13 @@ export default class ProccessContent extends React.Component {
  }
  componentDidMount() {
    this.initCanvas()
+  //  console.log('噢噢哦哦哦哦哦哦 哦' ,this.props.model.datas)
+  //  getCurrentCompleteStep
+  
+  this.props.dispatch({ 
+    type: 'projectDetailProcess/getCurrentCompleteStep',
+    payload: {}
+  })
  }
  componentDidUpdate() {
    this.initCanvas()
@@ -86,8 +94,8 @@ export default class ProccessContent extends React.Component {
  render() {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
+   console.log('this is doing:' ,processEditDatas)
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
-   console.log('ssss')
    const data  = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
@@ -135,11 +143,35 @@ export default class ProccessContent extends React.Component {
      }
      return container
    }
-
+  //  80 158
    return (
     <div>
       <canvas style={{float: 'left'}} id="time_graph_canvas" width={210} height={210}></canvas>
-      <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, top: 236, left: 120}}/>
+      <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/>
+      <span style={{
+        position: 'relative',
+          top: '70px', 
+          right: '154px',
+          width:'41px',
+          height:17,
+          fontSize:12,
+          fontFamily: 'PingFangSC-Regular',
+          fontWeight:400,
+          color:'rgba(140,140,140,1)',
+          lineHeight: '17px'
+      }}>逾期 {1} 天</span> 
+      <span style={{
+        position: 'relative', 
+        top: '110px', 
+        right: '195px',
+        width: 38,
+        height: 30,
+        fontSize: 22,
+        fontFamily: 'PingFangSC-Regular',
+        fontWeight: 400,
+        color: 'rgba(89,89,89,1)',
+        lineHeight: '30px'
+      }}>{this.props.model.datas.processCurrentCompleteStep}/{this.props.model.datas.processInfo.node_amount}</span>
       <div style={{height: '210px', padding: '32px 34px 32px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
         {fillAvatar(data)}
@@ -156,6 +188,23 @@ export default class ProccessContent extends React.Component {
             </div>
           )
         })}
+      
+      {/* 2 */}
+      {/* <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+        <div className={styles.hasnotCompetedLine}></div>
+        <div className={styles.hasnotCompetedCircle}> 2 </div>
+        <div className={styles.outDiv} style={{height: '300px'}}>
+          <div className={styles.arrow}></div>
+          <span> Warning!!! </span>
+        </div>
+      </div> */}
+      {/* <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+        <div className={styles.hasnotCompetedCircle}> 3 </div>
+        <div className={styles.outDiv} style={{height: '200px'}}>
+          <div className={styles.arrow}></div>
+          <span> Warning!!! </span>
+        </div>
+      </div> */}
       </div>
     </div>
    )

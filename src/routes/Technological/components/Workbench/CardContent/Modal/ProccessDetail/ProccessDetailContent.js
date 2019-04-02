@@ -351,7 +351,6 @@ export default class FileDetailContent extends React.Component {
     })
   }
   render() {
-    console.log('------>>>>>>', this.props.model.datas)
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 

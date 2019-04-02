@@ -1,5 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
+import styles from './index.css'
 import { Card, Input, Icon, DatePicker, Dropdown, Button, Upload, message, Tooltip, Avatar } from 'antd'
 import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
@@ -15,8 +16,8 @@ import ContentRaletion from '../../../../../../components/ContentRaletion'
 import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 
-const { RangePicker } = DatePicker;
-const Dragger = Upload.Dragger;
+const { RangePicker } = DatePicker
+const Dragger = Upload.Dragger
 
 //里程碑确认信息
 export default class DetailConfirmInfoTwo extends React.Component {
@@ -584,13 +585,25 @@ export default class DetailConfirmInfoTwo extends React.Component {
 
       }
     }
-
+    const { processCurrentCompleteStep } = this.props.model.datas
+    let node_amount = this.props.model.datas.processInfo.node_amount
+    let stylLine, stylCircle
+    if(processCurrentCompleteStep >= itemKey+1) {
+      stylLine = styles.line
+      stylCircle = styles.circle
+    } else {
+      stylLine = styles.hasnotCompetedLine
+      stylCircle = styles.hasnotCompetedCircle
+    }
     return (
-      <div className={indexStyles.ConfirmInfoOut_1}>
-        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
+      <div className={indexStyles.ConfirmInfoOut_1} style={{marginTop: '20px', display: 'flex', justifyContent: 'center'}}>
+        {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
+        <div className={stylCircle}> {itemKey + 1} </div>
+        <div className={styles.outDiv}>
+          <div className={styles.arrow}></div>
+          <Card bordered='false' style={{backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
                 <div>上传</div>
@@ -630,6 +643,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
         {/*<PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />*/}
         <PreviewFileModal {...this.props} modalVisible={isInOpenFile} />
+        </div>
       </div>
     )
   }

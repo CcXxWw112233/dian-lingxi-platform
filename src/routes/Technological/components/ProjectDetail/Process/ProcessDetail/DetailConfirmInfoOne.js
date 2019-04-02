@@ -1,5 +1,7 @@
 import React from 'react'
+import DetailConfirmInfoBox from '../../../../../../components/DetailConfirmInfoBox'
 import indexStyles from './index.less'
+import styles from './index.css'
 import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip, Avatar } from 'antd'
 import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import OpinionModal from './OpinionModal'
@@ -278,13 +280,28 @@ export default class DetailConfirmInfoOne extends React.Component {
         </div>
       )
     }
-
+    const { processCurrentCompleteStep } = this.props.model.datas
+    let node_amount = this.props.model.datas.processInfo.node_amount
+    let stylLine, stylCircle
+    if(processCurrentCompleteStep >= itemKey+1) {
+      stylLine = styles.line
+      stylCircle = styles.circle
+    } else {
+      stylLine = styles.hasnotCompetedLine
+      stylCircle = styles.hasnotCompetedCircle
+    }
     return (
-      <div className={indexStyles.ConfirmInfoOut_1}>
-        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
+      // <div className={indexStyles.ConfirmInfoOut_1}>
+      <div className={indexStyles.ConfirmInfoOut_1} style={{display: 'flex', justifyContent: 'center'}}>
+        {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
+        <div className={stylCircle}> {itemKey + 1}</div>
+        <div className={styles.outDiv}>
+          <div className={styles.arrow}></div>
+          <Card bordered='false' style={{backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
+              {/* <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div> */}
+              
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
                 <div>里程碑</div>
@@ -321,7 +338,10 @@ export default class DetailConfirmInfoOne extends React.Component {
           </div>
         </Card>
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
+        </div>
       </div>
+        
+      // </div>
     )
   }
 }

@@ -138,14 +138,22 @@ export default class PagingnationContent extends React.Component {
 
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
 
+    await this.props.dispatch({ 
+      type: 'projectDetailProcess/getProcessInfo',
+      payload: {
+        id: obj.flow
+      }
+    })
+
     this.props.updateDatasProcess && this.props.updateDatasProcess({
       currentProcessInstanceId: obj.flow
     })
+    
     await this.props.updateDatas({
       totalId: obj
     })
 
-    await this.props.getProcessInfo({id: obj.flow})
+    
     await this.props.getProjectDetailInfo({id: obj.board})
 
 

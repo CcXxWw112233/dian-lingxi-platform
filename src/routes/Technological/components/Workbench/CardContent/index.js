@@ -200,6 +200,10 @@ class CardContent extends React.Component {
       type: 'workbenchDetailProcess/getWorkFlowComment',
       payload: {flow_instance_id: flowID}
     })
+    await this.props.dispatch({
+      type: 'workbenchDetailProcess/getCurrentCompleteStep',
+      payload: {}
+    })
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
