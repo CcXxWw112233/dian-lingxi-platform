@@ -542,6 +542,7 @@ export default class FileDetailContent extends React.Component {
               <ContentRaletion
                 {...this.props}
                 board_id ={board_id}
+                isShowAll = {this.state.isShowAll}
                 link_id={currentProcessInstanceId}
                 link_local={'2'}
               />
@@ -556,23 +557,13 @@ export default class FileDetailContent extends React.Component {
                   {
                     //processDynamics
                     this.props.model.datas.workFlowComments.map((item, i) => {
-                      if(this.state.isShowAll) {
-                        return (
-                          <div key={i} value={item}>
-                            {
-                              filterTitleContain(item)
-                            }
-                          </div>
-                        )
-                      } else {
-                        if(i < 5) { //展示5条
-                          return (
-                            <div key={i} value={item}>
-                              {filterTitleContain(item)}
-                            </div>
-                          )
-                        }
-                      }
+                      return (
+                        <div key={i} value={item}>
+                          {
+                            filterTitleContain(item)
+                          }
+                        </div>
+                      )
                     })
                   }
                 </div>

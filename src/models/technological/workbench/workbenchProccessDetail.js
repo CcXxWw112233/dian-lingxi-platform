@@ -472,7 +472,6 @@ export default modelExtend(workbench, {
     * addWorkFlowComment({payload}, {select, call, put}) {
       let res1 = yield select(selectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
-      console.log('this is addWorkFlowComment', res1, res2)
       // debugger
       yield put({
         type: 'updateDatas',

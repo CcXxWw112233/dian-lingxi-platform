@@ -244,23 +244,11 @@ export default class ProcessDetail extends React.Component {
               <div className={indexStyles.newsTitle}>最新动态</div>
               <div className={indexStyles.newsList} >
                 {processDynamics.map((value, key) => {
-                  if(isShowAll) { //全部
-                    return(
-                      <div key={key} value={value}>
-                        {filterTitleContain(value)}
-                      </div>
-                    )
-                  }else{ //
-                    if(key < 5) { //展示5条
-                      // console.log(key, value)
-                      return(
-                        <div key={key} value={value}>
-                          {filterTitleContain(value)}
-                        </div>
-                      )
-                    }
-                  }
-
+                  return(
+                    <div key={key} value={value}>
+                      {filterTitleContain(value)}
+                    </div>
+                  )
                 })}
                 <div className={indexStyles.seeAllList}>
                   <div></div>

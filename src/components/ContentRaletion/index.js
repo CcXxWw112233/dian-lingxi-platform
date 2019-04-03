@@ -61,7 +61,6 @@ export default class ContentRaletion extends React.Component {
   render() {
     const { isInEditContentRelation, isInChoose, isInSearCh, relations = [] } = this.state
     const { board_id, link_id, link_local, } = this.props
-
     return(
       <div style={{width: 'auto'}}>
         {!isInEditContentRelation ? (

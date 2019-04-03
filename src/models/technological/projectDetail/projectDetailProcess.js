@@ -606,8 +606,8 @@ export default modelExtend(projectDetail, {
         type: 'updateDatas',
         payload: {
           workFlowComments: [
-            res2.data,
-            ...res1
+            ...res1,
+            res2.data
           ]
         }
       })
@@ -619,7 +619,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            workFlowComments: res.data.reverse()
+            workFlowComments: res.data
           }
         })
       },

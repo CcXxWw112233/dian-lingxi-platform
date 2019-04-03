@@ -50,7 +50,7 @@ export default class RaletionList extends React.Component {
         themeCode = '&#xe6cb;'
         break
       default:
-        themeCode = ''
+        themeCode = '&#xe6cc;'
         break
     }
     return themeCode
@@ -58,19 +58,33 @@ export default class RaletionList extends React.Component {
 
 
   render() {
-   const { relations } = this.props
+   const { relations, isShowAll } = this.props
+   console.log('this is relations', relations)
     return(
       <div className={indexStyles.relaData}>
         {relations.map((value, key) => {
           const { id, linked_name, linked_url, linked_sign } = value
-          return (
-            <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
-              <div>
-                <span className={globalStyles.authTheme} style={{color: '#1890FF', fontSize: 20, marginRight: 4}} dangerouslySetInnerHTML={{__html: this.judgeType(linked_sign)}}></span>
-                <span>{linked_name}</span>
+          if(isShowAll){
+            return (
+              <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
+                <div>
+                  <span className={globalStyles.authTheme} style={{color: '#1890FF', fontSize: 20, marginRight: 4}} dangerouslySetInnerHTML={{__html: this.judgeType(linked_sign)}}></span>
+                  <span>{linked_name}</span>
+                </div>
               </div>
-            </div>
-          )
+            )
+          } else {
+            if(key < 2) {
+              return (
+                <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
+                  <div>
+                    <span className={globalStyles.authTheme} style={{color: '#1890FF', fontSize: 20, marginRight: 4}} dangerouslySetInnerHTML={{__html: this.judgeType(linked_sign)}}></span>
+                    <span>{linked_name}</span>
+                  </div>
+                </div>
+              )
+            }
+          }
         })}
       </div>
     )
