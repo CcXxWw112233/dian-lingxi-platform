@@ -32,8 +32,8 @@ const AvatarMore = ({datas}) => {
             ..._r,
             ...(
                 i === 3?
-                [<Tooltip key={`Tool${_c.name}`} title={_c.name || _c.mobile || _c_email || '佚名'}>{imgOrAvatar(_c.avatar)}</Tooltip>, <br key={`br${_c}`} />]:
-                [<Tooltip key={`Tool${_c.name}`} title={_c.name || _c.mobile || _c_email || '佚名'}>{imgOrAvatar(_c.avatar)}</Tooltip>]
+                [<Tooltip key={`Tool${_c.name}`} title={_c.name || _c.mobile || '佚名'}>{imgOrAvatar(_c.avatar)}</Tooltip>, <br key={`br${_c}`} />]:
+                [<Tooltip key={`Tool${_c.name}`} title={_c.name || _c.mobile || '佚名'}>{imgOrAvatar(_c.avatar)}</Tooltip>]
               )
           ]  
         }, []))
@@ -44,7 +44,7 @@ const AvatarMore = ({datas}) => {
   const leftDatas = datas.reduce((r, c, i) => {
     return [
       ...r,
-      ...(i <= 2? []: [c])
+      ...(i <= 1? []: [c])
     ]
   }, [])
   

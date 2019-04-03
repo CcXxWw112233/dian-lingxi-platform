@@ -163,7 +163,7 @@ export default class DetailConfirmInfoOne extends React.Component {
               <div style={{display: 'flex'}}>
                 {assigneesArray.map((value, key)=>{
                   const { avatar, name, mobile, email } = value
-                  if (key <= 2)
+                  if (key <= 1)
                     return(
                       <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                         <div>{imgOrAvatar(avatar)}</div>
@@ -171,7 +171,7 @@ export default class DetailConfirmInfoOne extends React.Component {
                     )
                 })}
                 
-                {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
+                {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
               </div>)
           break
         case '3':
@@ -179,14 +179,14 @@ export default class DetailConfirmInfoOne extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
-                if (key <= 2)
+                if (key <= 1)
                   return(
                     <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
+              {assigneesArray.length >2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:

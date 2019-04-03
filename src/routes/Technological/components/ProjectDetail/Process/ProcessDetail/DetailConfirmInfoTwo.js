@@ -301,14 +301,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name, mobile, email } = value
-                if (key <= 2)
+                if (key <= 1)
                   return(
                     <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-               {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
+               {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         case '3':
@@ -316,14 +316,14 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
-                if (key <= 2)
+                if (key <= 1)
                   return(
                     <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length > 3?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
+              {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:
@@ -380,7 +380,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           }
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
-            <div style={{marginLeft: '450px'}} className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
+            <div style={{marginRight: '120px'}} className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
                                                      filterUserArray={assigneesArray}
                                                      setAssignees={this.setAssignees.bind(this)}/>}>

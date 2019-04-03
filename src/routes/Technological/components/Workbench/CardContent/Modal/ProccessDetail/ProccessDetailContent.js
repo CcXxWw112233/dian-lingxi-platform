@@ -549,32 +549,33 @@ export default class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
             <div style={{fontSize: '12px', color: '#595959'}}>
-              {
-                //processDynamics
-                this.props.model.datas.workFlowComments.map((item, i) => {
-                  if(this.state.isShowAll) {
-                    return (
-                      <div key={i} value={item}>
-                        {
-                          filterTitleContain(item)
-                        }
-                      </div>
-                    )
-                  } else {
-                    if(i < 5) { //展示5条
-                      return (
-                        <div key={i} value={item}>
-                          {filterTitleContain(item)}
-                        </div>
-                      )
-                    }
-                  }
-                })
-              }
               <div>
                 <div></div>
-                <div style={{fontSize: '14px', cursor: 'pointer', marginLeft: '10px', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
-                <div></div>
+                <div style={{display: 'flex', justifyContent: 'center',marginTop: '12px' ,fontSize: '14px', cursor: 'pointer', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
+                <div>
+                  {
+                    //processDynamics
+                    this.props.model.datas.workFlowComments.map((item, i) => {
+                      if(this.state.isShowAll) {
+                        return (
+                          <div key={i} value={item}>
+                            {
+                              filterTitleContain(item)
+                            }
+                          </div>
+                        )
+                      } else {
+                        if(i < 5) { //展示5条
+                          return (
+                            <div key={i} value={item}>
+                              {filterTitleContain(item)}
+                            </div>
+                          )
+                        }
+                      }
+                    })
+                  }
+                </div>
               </div>
             </div>
             <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>

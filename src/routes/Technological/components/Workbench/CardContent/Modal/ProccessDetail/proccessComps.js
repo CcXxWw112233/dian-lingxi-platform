@@ -159,7 +159,7 @@ export default class ProccessContent extends React.Component {
         <div style={{fontSize:'12px',
         fontFamily: 'PingFangSC-Regular',
         fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}>这是一段示例简介：项目负责人一定是公司执行合伙人，如项目来源于公司员工需要与公司执行合伙人共同负责项目发起，项目负责人一定是公司执行合伙人方能进入公司的业务流程。项目来源已合伙人身份进入公司业务流程，执行合伙人可以指定公司业务人进行发起初审项目申请，申请表发至公司每位执行合伙人每周例会或者其他会议上进行投票表决是否初步立项。</div>
+        color:'rgba(89,89,89,1)'}}>{this.props.model.datas.processEditDatas.description?this.props.model.datas.processEditDatas.description:'暂无描述'}</div>
       </div>
       <div style={{padding: '36px 34px 0 36px'}}>
         {processEditDatas.map((value, key) => {
