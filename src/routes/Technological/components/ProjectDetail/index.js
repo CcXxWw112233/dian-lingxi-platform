@@ -26,6 +26,12 @@ const ProjectDetail = (props) => {
     modal,
     model,
     dispatch,
+    editProjectApp(data) {
+      dispatch({
+        type: getEffectOrReducerByName('editProjectApp'),
+        payload: data
+      })
+    },
     addProjectApp(data) {
       dispatch({
         type: getEffectOrReducerByName('addProjectApp'),

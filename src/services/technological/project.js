@@ -112,3 +112,11 @@ export async function addProjectApp(data) {
     data
   });
 }
+// 编辑项目app
+export async function editProjectApp(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/app/edit`,
+    method: 'PUT',
+    data
+  });
+}

@@ -6,7 +6,7 @@ import { routerRedux } from "dva/router";
 import { getUrlQueryString } from '../../../utils/util'
 import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
-  quitProject, getAppsList, addProjectApp
+  quitProject, getAppsList, addProjectApp, editProjectApp
 } from "../../../services/technological/project";
 import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
 import {
@@ -155,7 +155,7 @@ export default {
   effects: {
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
-      const { id } = payload
+      const { id, entry } = payload //input 调用该方法入口
       let result = yield call(projectDetailInfo, id)
       // const appsSelectKey = yield select(selectAppsSelectKey)
       if(isApiResponseOk(result)) {
@@ -168,7 +168,6 @@ export default {
           }
         })
         if(!appsSelectKey) {
-          console.log(window.location.href)
           yield put({
             type: 'routingJump',
             payload: {
@@ -176,6 +175,14 @@ export default {
             }
           })
         } else {
+          if(entry == 'editProjectApp') { //编辑app
+            yield put({
+              type: 'handleEditApp',
+              payload: {
+                data: result.data
+              }
+            })
+          }
           yield put({
             type: 'appsSelectKeyIsAreadyClickArray',
             payload: {
@@ -464,7 +471,40 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    * editProjectApp({ payload }, { select, call, put }) {
+      let res = yield call(editProjectApp, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'initProjectDetail',
+          payload: {
+            id: board_id,
+            entry: 'editProjectApp',
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * handleEditApp({ payload }, { select, call, put }) {
+      const { data = { } } = payload
+      const { app_data = [] } = data
+      let flag = false
+      for(let val of app_data) {
+        if(val['key'] == appsSelectKey) {
+          flag = true
+          break
+        }
+      }
+      if(!flag) {
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${app_data[0].key}`
+          }
+        })
+      }
 
+    },
     //项目增删改查--end
 
     * routingJump({ payload }, { call, put }) {
