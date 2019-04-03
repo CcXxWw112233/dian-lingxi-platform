@@ -34,7 +34,8 @@ export default {
           if (hash.indexOf('?') !== -1) {
             hash = hash.split('?')[0]
           }
-          if (e && e.keyCode == 83 && target.nodeName.toLowerCase() != 'input' && hash.indexOf('/technological') != -1) {
+          const fiterTargetArray = ['input', 'textarea']
+          if (e && e.keyCode == 83 && fiterTargetArray.indexOf(target.nodeName.toLowerCase()) == -1 && target.getAttribute('role') != 'textbox' && hash.indexOf('/technological') != -1) {
             dispatch({
               type: 'updateDatas',
               payload: {
