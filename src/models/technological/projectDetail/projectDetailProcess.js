@@ -463,7 +463,7 @@ export default modelExtend(projectDetail, {
             type: 'updateDatas',
             payload: {
               processDoingList: processDoingLists,
-              processComepletedList: processComepletedList.concat(processComepletedLists)
+              processComepletedList: processComepletedList
             }
           })
           
