@@ -107,7 +107,7 @@ export default class DrawDetailInfo extends React.Component {
 
   //点击添加成员操作
   setShowAddMenberModalVisibile() {
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)){
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -260,7 +260,7 @@ export default class DrawDetailInfo extends React.Component {
                     </div>
                   )
                 }else{
-                  return(
+                  return checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
                     <div className={DrawDetailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                       <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8}}/>
                     </div>

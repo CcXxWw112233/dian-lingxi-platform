@@ -10,7 +10,9 @@ export default class RaletionList extends React.Component {
   }
 
   relationClick(content_url) {
-    window.open(content_url)
+    const protocol = content_url.substring(0, 4)
+    const url = protocol == 'http'? content_url: `http://${content_url}`
+    window.open(url)
   }
 
   judgeType(linked_sign) {
