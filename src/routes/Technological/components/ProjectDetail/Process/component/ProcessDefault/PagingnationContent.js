@@ -80,7 +80,7 @@ export default class PagingnationContent extends React.Component {
           listName = 'processDoingList'
           selectList = processDoingList
           break
-        case '4':
+        case '2':
           listName = 'processStopedList'
           selectList = processStopedList
           break
@@ -138,7 +138,7 @@ export default class PagingnationContent extends React.Component {
 
     await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
 
-    await this.props.dispatch({ 
+    await this.props.dispatch({
       type: 'projectDetailProcess/getProcessInfo',
       payload: {
         id: obj.flow
@@ -148,12 +148,12 @@ export default class PagingnationContent extends React.Component {
     this.props.updateDatasProcess && this.props.updateDatasProcess({
       currentProcessInstanceId: obj.flow
     })
-    
+
     await this.props.updateDatas({
       totalId: obj
     })
 
-    
+
     await this.props.getProjectDetailInfo({id: obj.board})
 
 
