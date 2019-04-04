@@ -244,12 +244,12 @@ class SiderRight extends React.Component {
           currentSelectedProjectMembersList,
           currentOrgAllMembers
         } = this.props;
-        console.log({
-          projectList,
-          projectTabCurrentSelectedProject,
-          currentSelectedProjectMembersList,
-          currentOrgAllMembers
-        });
+        // console.log({
+        //   projectList,
+        //   projectTabCurrentSelectedProject,
+        //   currentSelectedProjectMembersList,
+        //   currentOrgAllMembers
+        // });
       }
     );
   };
@@ -425,6 +425,19 @@ class SiderRight extends React.Component {
       });
     }
   };
+  getProjectPermission = (permissionType, board_id) => {
+    const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
+    if(!userBoardPermissions || !userBoardPermissions.length) {
+      return false
+    }
+    const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
+    if(!isFindedBoard) return false
+    const {permissions = []} = isFindedBoard
+    return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
+  }
+  filterProjectWhichCurrentUserHasEditPermission = (projectList = []) => {
+    return projectList.filter(({board_id}) => this.getProjectPermission('project:team:board:edit', board_id))
+  }
   handleVideoMeetingValueChange = value => {
     this.filterHasDeletedMentionSelectedMember(toString(value));
     this.setState({
@@ -459,7 +472,9 @@ class SiderRight extends React.Component {
       selectedMemberTextAreaValue,
       videoMeetingPopoverVisible
     } = this.state;
-    const { projectList } = this.props;
+    let { projectList } = this.props;
+    //过滤出来当前用户有编辑权限的项目
+    projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 
     const ImMaskWhencollapsed = cx({
       [indexStyles.ImMaskCollapsed]: collapsed,
