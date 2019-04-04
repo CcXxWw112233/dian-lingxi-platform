@@ -71,9 +71,9 @@ export default class ProcessStartConfirm extends React.Component {
       placeholder: '输入流程描述',
       contentStyle: {minHeight: 150, height: 'auto'},
       initialContent: description,
-      onHTMLChange: (e) => {
+      onChange: (e) => {
         const { datas: { templateInfo = {} } } = this.props.model
-        templateInfo['description'] = e
+        templateInfo['description'] = e.toHTML()
         this.props.updateDatasProcess({templateInfo})
       },
       fontSizes: [14],

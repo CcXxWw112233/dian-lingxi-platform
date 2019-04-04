@@ -126,6 +126,9 @@ export default class ProccessContent extends React.Component {
      return container
    }
   //  80 158
+    const delHtmlTag = (str) =>{
+      return str.replace(/<[^>]+>/g,"")
+    }
    return (
     <div>
       <canvas style={{float: 'left'}} id="time_graph_canvas" width={210} height={210}></canvas>
@@ -159,7 +162,7 @@ export default class ProccessContent extends React.Component {
         <div style={{fontSize:'12px',
         fontFamily: 'PingFangSC-Regular',
         fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}>{this.props.model.datas.processEditDatas.description?this.props.model.datas.processEditDatas.description:'暂无描述'}</div>
+        color:'rgba(89,89,89,1)'}}>{this.props.model.datas.processInfo.description?delHtmlTag(this.props.model.datas.processInfo.description):'暂无描述'}</div>
       </div>
       <div style={{padding: '36px 34px 0 36px'}}>
         {processEditDatas.map((value, key) => {
