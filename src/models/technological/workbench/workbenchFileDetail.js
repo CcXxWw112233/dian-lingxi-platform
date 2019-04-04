@@ -2,7 +2,7 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
-import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
+import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, getCardCommentListAll} from '../../../services/technological/file'
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber } from './selects'
 //状态说明：
@@ -235,6 +235,21 @@ export default {
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
+    },
+    * getCardCommentListAll({payload} ,{select, call, put}) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: []
+        }
+      })
+      let res = yield call(getCardCommentListAll, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: res.data
+        }
+      })
     },
   },
 

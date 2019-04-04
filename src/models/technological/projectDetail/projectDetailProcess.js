@@ -576,6 +576,7 @@ export default modelExtend(projectDetail, {
           selectList = yield select(selectProcessDoingList)
           break
         case '2':
+          debugger
           listName = 'processStopedList'
           selectList = yield select(selectProcessStopedList)
           break

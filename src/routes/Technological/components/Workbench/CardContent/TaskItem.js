@@ -49,6 +49,13 @@ export default class TaskItem extends React.Component {
     this.props.updatePublicDatas({ board_id });
     this.props.getCardDetail({ id, board_id });
     this.props.setTaskDetailModalVisibile();
+    // debugger
+    this.props.dispatch({
+      type: 'workbenchTaskDetail/getCardCommentListAll',
+      payload: {
+        id: id
+      }
+    })
   }
   render() {
     const { itemValue = {}, isUsedInWorkbench } = this.props;

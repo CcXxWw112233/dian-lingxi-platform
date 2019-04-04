@@ -13,7 +13,7 @@ import {
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
   updateBoardTag, updateTask,
-  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub
+  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub,getCardCommentListAll
 } from "../../../services/technological/task";
 import {
   selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
@@ -33,7 +33,6 @@ export default modelExtend(projectDetail, {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
@@ -80,6 +79,12 @@ export default modelExtend(projectDetail, {
                 type: '2',
                 board_id: board_id,
                 arrange_type: '1'
+              }
+            })
+            dispatch({
+              type: 'getCardCommentListAll',
+              payload: {
+                id: card_id
               }
             })
             // dispatch({
@@ -852,7 +857,21 @@ export default modelExtend(projectDetail, {
     },
 
     //评论--end
-
+    * getCardCommentListAll({payload} ,{select, call, put}) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: []
+        }
+      })
+      let res = yield call(getCardCommentListAll, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: res.data
+        }
+      })
+    }
   },
 
   reducers: {

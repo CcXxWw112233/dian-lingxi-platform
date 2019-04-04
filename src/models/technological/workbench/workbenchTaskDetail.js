@@ -4,7 +4,35 @@ import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
-import { getCardDetail, removeTaskExecutor, deleteTaskFile, deleteTaskGroup, updateTaskGroup, getProjectGoupList, addTaskGroup, addCardNewComment, getCardCommentList, getTaskGroupList, addTask, updateTask, deleteTask, archivedTask, changeTaskType, addChirldTask, addTaskExecutor, completeTask, addTaskTag, removeTaskTag, removeProjectMenbers, getBoardTagList, updateBoardTag, toTopBoardTag, deleteBoardTag, deleteCardNewComment } from "../../../services/technological/task";
+import { 
+  getCardDetail, 
+  removeTaskExecutor, 
+  deleteTaskFile, 
+  deleteTaskGroup, 
+  updateTaskGroup, 
+  getProjectGoupList, 
+  addTaskGroup, 
+  addCardNewComment, 
+  getCardCommentList, 
+  getTaskGroupList, 
+  addTask, 
+  updateTask, 
+  deleteTask, 
+  archivedTask, 
+  changeTaskType, 
+  addChirldTask, 
+  addTaskExecutor, 
+  completeTask, 
+  addTaskTag, 
+  removeTaskTag, 
+  removeProjectMenbers, 
+  getBoardTagList, 
+  updateBoardTag, 
+  toTopBoardTag, 
+  deleteBoardTag, 
+  deleteCardNewComment, 
+  getCardCommentListAll
+} from "../../../services/technological/task";
 import Cookies from "js-cookie";
 import {currentNounPlanFilterName} from "../../../utils/businessFunction";
 import { workbench_selectDrawContent, workbench_selectBoardId } from './selects'
@@ -502,7 +530,21 @@ export default {
     },
 
     //评论--end
-
+    * getCardCommentListAll({payload} ,{select, call, put}) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: []
+        }
+      })
+      let res = yield call(getCardCommentListAll, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: res.data
+        }
+      })
+    },
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload

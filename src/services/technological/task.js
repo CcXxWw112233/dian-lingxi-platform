@@ -1,6 +1,7 @@
 //项目归档
 import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
+import { func } from "prop-types";
 
 //新增任务分组
 export async function addTaskGroup(data) {
@@ -153,6 +154,8 @@ export async function getCardCommentList(id) {
     method: 'GET',
   });
 }
+// 
+
 
 // 新增评论
 export async function addCardNewComment(data) {
@@ -281,4 +284,13 @@ export async function getRelationsSelectionSub(params) {
     method: 'GET',
     params
   }, {isNotLoading: true});
+}
+
+// 所有动态
+export async function getCardCommentListAll(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/comment`,
+    method: 'GET',
+    params
+  })
 }

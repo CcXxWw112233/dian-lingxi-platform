@@ -1,6 +1,7 @@
 //项目归档
 import {REQUEST_DOMAIN_FILE} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
+import { func } from "prop-types";
 
 //文件列表包括文件夹
 export async function getFileList(params) {
@@ -194,4 +195,22 @@ export async function getFilePDFInfo(params) {
     method: 'GET',
     params,
   });
+}
+
+//获取文件详情的动态
+export async function getFileDetailIssue(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment`,
+    method: 'GET',
+    params
+  })
+}
+
+// 所有动态
+export async function getCardCommentListAll(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/comment`,
+    method: 'GET',
+    params
+  })
 }

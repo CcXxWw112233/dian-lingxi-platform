@@ -80,7 +80,12 @@ export default class FileItem extends React.Component {
       openPDF({id: id})
       return false
     }
-
+    this.props.dispatch({
+      type: 'workbenchFileDetail/getCardCommentListAll',
+      payload: {
+        id: id
+      }
+    })
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
       seeFileInput: 'file',
@@ -97,6 +102,7 @@ export default class FileItem extends React.Component {
     })
     this.props.updatePublicDatas({ board_id })
     this.props.getBoardMembers({id: board_id})
+    
   }
   render() {
     const { itemValue = {} } = this.props

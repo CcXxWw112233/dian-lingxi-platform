@@ -145,11 +145,13 @@ export default class CreateTask extends React.Component {
     // this.setState({
     //   drawerVisible: true,
     // })
+    debugger
     this.props.updateDatas({
       drawerVisible: true,
     })
     const { drawContent:{ card_id }} = data
     this.props.getCardCommentList(card_id)
+    
     this.props.updateDatas(data)
   }
   setDrawerVisibleClose() {

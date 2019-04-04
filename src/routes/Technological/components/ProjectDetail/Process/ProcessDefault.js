@@ -45,6 +45,7 @@ export default class ProcessDefault extends React.Component {
       processPageFlagStep: '2'
     })
   }
+
   tabsChange() {
 
   }
@@ -52,14 +53,14 @@ export default class ProcessDefault extends React.Component {
   render() {
     const { clientHeight } = this.state
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
+    console.log('🐶', this.props.model)
     const flowTabs = () => {
       return (
         <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16}}>
           <TabPane tab={<div style={{padding: 0, fontSize: 16}}>进行中 </div>} key="1">{<PagingnationContent {...this.props} listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已终止 </div>} key="2">{<PagingnationContent {...this.props} listData={processStopedList} status={'4'} clientHeight={clientHeight}/>}</TabPane>
+          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已终止 </div>} key="2">{<PagingnationContent {...this.props} listData={processStopedList} status={'2'} clientHeight={clientHeight}/>}</TabPane>
           <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已完成 </div>} key="3">{<PagingnationContent {...this.props} listData={processComepletedList} status={'3'} clientHeight={clientHeight}/>}</TabPane>
         </Tabs>
-
       )
     }
 

@@ -80,13 +80,13 @@ export default class PagingnationContent extends React.Component {
           listName = 'processDoingList'
           selectList = processDoingList
           break
-        case '4':
+        case '2':
           listName = 'processStopedList'
           selectList = processStopedList
           break
         case '3':
           listName = 'processComepletedList'
-          selectList =processComepletedList
+          selectList = processComepletedList
           break
         default:
           listName = 'processDoingList'
@@ -94,7 +94,7 @@ export default class PagingnationContent extends React.Component {
           break
       }
       this.props.updateDatasProcess({
-        [listName]: selectList.concat(...data)
+        [listName]: data
       })
       this.setState({
         scrollBlock: !(data.length < page_size),

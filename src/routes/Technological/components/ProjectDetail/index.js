@@ -164,6 +164,7 @@ const ProjectDetail = (props) => {
     modal,
     model,
     match,
+    dispatch,
     getRelations(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('getRelations'),
