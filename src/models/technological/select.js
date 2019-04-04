@@ -25,7 +25,8 @@ export const selectProcessTotalId = state => state[(`projectDetail`)].datas.tota
 export const selectCurr_node_sort = state => state[(`projectDetailProcess`)].datas.processInfo.curr_node_sort
 export const selectNode_amount = state => state[(`projectDetailProcess`)].datas.processInfo.node_amount
 export const selectProcessPageFlagStep = state => state[(`projectDetailProcess`)].datas.processPageFlagStep
-
+export const selectProcessInfo = state => state[(`projectDetailProcess`)].datas.processInfo
+export const selectCurrentProcessCompletedStep = state => state[(`projectDetailProcess`)].datas.processCurrentCompleteStep
 
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id
@@ -58,6 +59,8 @@ export const selectBoxList = state => state[(`workbench`)].datas.boxList
 export const selectBoxUsableList = state => state[(`workbench`)].datas.boxUsableList
 export const selectBackLogProcessList = state => state[(`workbench`)].datas.backLogProcessList
 export const selectProcessCommentList = state => state[(`workbenchDetailProcess`)].datas.workFlowComments
+export const selectCurrentProcessCompletedStepWorkbench = state => state[(`workbenchDetailProcess`)].datas.processCurrentCompleteStep
 export const selectProjectProcessCommentList = state => state[(`projectDetailProcess`)].datas.workFlowComments
+export const selectProcessInfoWorkbench = state => state[(`workbenchDetailProcess`)].datas.processInfo
 //im
 export const selectImData = state => state[(`technological`)].datas.imData

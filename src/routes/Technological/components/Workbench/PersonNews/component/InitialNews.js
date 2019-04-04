@@ -22,9 +22,9 @@ export default class InitialNews extends React.Component {
     this.props.getNewsDynamicList('0')
   }
   render() {
-    console.log('this is issues model ---->>>', this.props.model.datas.newsDynamicList)
+    
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
-
+    console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
@@ -257,6 +257,15 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content.flow_instance.name}」</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.update.user.remove':
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users}」移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.content.board.name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )

@@ -1,5 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
+import styles from './index.css'
 import { Card, Input, Icon, DatePicker, Dropdown, Button, Select, Checkbox, Tooltip, Avatar } from 'antd'
 import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import ConfirmInfoThreeOne from './DetailConfirmInfoThree_One'
@@ -10,6 +11,7 @@ import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../../utils/verify'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
+import AvatarComps from '../../../../../../components/avatarMore'
 
 const { RangePicker } = DatePicker;
 
@@ -163,14 +165,14 @@ export default class DetailConfirmInfoThree extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name, mobile, email } = value
-                if (key <= 6)
+                if (key <= 1)
                   return(
                     <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         case '3':
@@ -178,14 +180,14 @@ export default class DetailConfirmInfoThree extends React.Component {
             <div style={{display: 'flex'}}>
               {assigneesArray.map((value, key)=>{
                 const { avatar, name } = value
-                if (key <= 6)
+                if (key <= 1)
                   return(
                     <Tooltip key={key} placement="top" title={name || '佚名'}>
                       <div>{imgOrAvatar(avatar)}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length >6?(<span style={{color: '#595959'}}>{`等${assigneesArray.length}人`}</span>): ('') }
+              {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
             </div>)
           break
         default:
@@ -370,16 +372,36 @@ export default class DetailConfirmInfoThree extends React.Component {
       }
       return valiResult
     }
-
+    const { processCurrentCompleteStep } = this.props.model.datas
+    let node_amount = this.props.model.datas.processInfo.node_amount
+    let stylLine, stylCircle
+    if(processCurrentCompleteStep >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
+      stylLine = styles.line
+      stylCircle = styles.circle
+    }else if(processCurrentCompleteStep == itemKey){
+      stylLine = styles.doingLine
+      stylCircle = styles.doingCircle
+    }else {
+      stylLine = styles.hasnotCompetedLine
+      stylCircle = styles.hasnotCompetedCircle
+    }
+    let juge = {
+      bordered: false
+    }
     return (
-      <div className={indexStyles.ConfirmInfoOut_1}>
-        <Card style={{width: '100%', backgroundColor: '#f5f5f5'}}>
+      // <div className={indexStyles.ConfirmInfoOut_1}>
+      <div className={indexStyles.ConfirmInfoOut_1} style={{display: 'flex', justifyContent: 'center'}}>
+        {node_amount <= itemKey+1?null:<div className={stylLine}></div>}
+        <div className={stylCircle}> {itemKey + 1} </div>
+        <div className={styles.outDiv}>
+          {/* <div className={styles.arrow}></div> */}
+        <Card {...juge} style={{width: '100%', backgroundColor: '#f5f5f5'}}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div>
+              {/* <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div> */}
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div>填写</div>
+                <div style={{marginTop:'10px'}} > <Icon type="edit" /> 填写</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
@@ -421,6 +443,7 @@ export default class DetailConfirmInfoThree extends React.Component {
           </div>
         </Card>
         <OpinionModal isFillForm={true} form_data={form_data} form_id={form_id} itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
+        </div>
       </div>
     )
   }

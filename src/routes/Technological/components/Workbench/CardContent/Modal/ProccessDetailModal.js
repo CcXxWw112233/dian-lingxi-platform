@@ -29,9 +29,6 @@ class FileDetailModal extends React.Component {
       <CustormModal
         visible={modalVisible}
         width={'90%'}
-        // height={400}
-        // zIndex={1006}
-        
         close={this.props.close}
         closable={false}
         maskClosable={false}

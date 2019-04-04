@@ -33,7 +33,9 @@ import {
   selectProcessTotalId,
   selectCurr_node_sort,
   selectNode_amount,
-  selectProjectProcessCommentList
+  selectProjectProcessCommentList,
+  selectProcessInfo,
+  selectCurrentProcessCompletedStep
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -45,6 +47,7 @@ import QueryString from 'querystring'
 let board_id = null
 let appsSelectKey = null
 let flow_id = null
+
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailProcess',
   state: {
@@ -63,16 +66,16 @@ export default modelExtend(projectDetail, {
       processStopedList: [], //已终止的流程列表
       processComepletedList: [], //已完成的流程列表
       processTemplateList: [], //流程模板列表
+      processCurrentCompleteStep: 0 //当前处于的操作步数
     }
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(async (location) => {
         const param = QueryString.parse(location.search.replace('?', ''))
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         flow_id = param.flow_id
-
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '2') {
           dispatch({
             type: 'updateDatas',
@@ -85,10 +88,10 @@ export default modelExtend(projectDetail, {
               processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
               templateInfo: {}, //所选择的流程模板的信息数据
               processInfo: {}, //所选中的流程的信息
-              workFlowComments: []
+              workFlowComments: [],
+              processCurrentCompleteStep: 0
             }
           })
-
           dispatch({
             type: 'getProcessTemplateList',
             payload: {
@@ -102,7 +105,12 @@ export default modelExtend(projectDetail, {
               type: '1'
             }
           })
-
+          dispatch({
+            type: 'getProcessInfoByUrl',
+            payload: {
+              currentProcessInstanceId: flow_id
+            }
+          })
           if(flow_id) {
             dispatch({
               type: 'getProcessInfoByUrl',
@@ -403,6 +411,19 @@ export default modelExtend(projectDetail, {
       }else{
       }
     },
+    * getCurrentCompleteStep({payload}, { select, call, put}) {
+      let processInfo = yield select(selectProcessInfo)
+      console.log('我是所有列表', processInfo)
+      if(processInfo) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: processInfo.completed_amount
+          }
+        })
+      }
+    },
+    
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
@@ -414,6 +435,13 @@ export default modelExtend(projectDetail, {
             calback: function () {
               message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        let currentStep = yield select(selectCurrentProcessCompletedStep)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)+1
           }
         })
         let node_amount = yield select(selectNode_amount)
@@ -435,7 +463,7 @@ export default modelExtend(projectDetail, {
             type: 'updateDatas',
             payload: {
               processDoingList: processDoingLists,
-              processComepletedList: processComepletedList.concat(processComepletedLists)
+              processComepletedList: processComepletedList
             }
           })
           
@@ -445,7 +473,6 @@ export default modelExtend(projectDetail, {
       }
     },
     * fillFormComplete({ payload }, { select, call, put }) {
-      console.log('fillFormComplete has running!!!')
       let res = yield call(fillFormComplete, payload)
       const { instance_id } = payload
       if(isApiResponseOk(res)) {
@@ -456,6 +483,13 @@ export default modelExtend(projectDetail, {
             calback: function () {
               message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        let currentStep = yield select(selectCurrentProcessCompletedStep)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)+1
           }
         })
       }else{
@@ -475,6 +509,13 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+        let currentStep = yield select(selectCurrentProcessCompletedStep)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)-1
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -492,6 +533,13 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+        // let currentStep = yield select(selectCurrentProcessCompletedStep)
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     processCurrentCompleteStep: parseInt(currentStep)-1
+        //   }
+        // })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

@@ -28,7 +28,9 @@ import {
   selectCurr_node_sort,
   selectNode_amount,
   selectBackLogProcessList,
-  selectProcessCommentList
+  selectProcessCommentList,
+  selectCurrentProcessCompletedStepWorkbench,
+  selectProcessInfoWorkbench
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -68,7 +70,8 @@ export default modelExtend(workbench, {
               processList: [], //流程列表
               processDynamics: [], //流程动态列表,
               currentProcessInstanceId: '', //当前查看的流程实例id
-              workFlowComments: []
+              workFlowComments: [], //当前流程评论
+              processCurrentCompleteStep: 0 //当前处于的操作步数
             }
           })
 
@@ -321,6 +324,18 @@ export default modelExtend(workbench, {
         console.log('进入查询状态之后')
       }
     },
+    * getCurrentCompleteStep({payload}, { select, call, put}) {
+      let processInfo = yield select(selectProcessInfoWorkbench)
+      console.log('我是所有列表', processInfo)
+      if(processInfo) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: processInfo.completed_amount
+          }
+        })
+      }
+    },
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id, flow_node_instance_id } = payload
       let res = yield call(completeProcessTask, payload)
@@ -340,7 +355,14 @@ export default modelExtend(workbench, {
           }
         })
         let backLogProcessList = yield select(selectBackLogProcessList)
-
+        let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
+        debugger
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)+1
+          }
+        })
         if(curr_node_id === amount_node_id) {
           let r = backLogProcessList.reduce((r, c) => {
             return [
@@ -355,10 +377,6 @@ export default modelExtend(workbench, {
             }
           })
         }
-
-
-
-
       }else{
         message.warn(res.message)
       }
@@ -377,6 +395,13 @@ export default modelExtend(workbench, {
             }
           }
         })
+        let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)+1
+          }
+        })
       }else{
         message.warn(res.message)
       }
@@ -392,6 +417,13 @@ export default modelExtend(workbench, {
             calback: function () {
               message.success('撤回成功', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            processCurrentCompleteStep: parseInt(currentStep)-1
           }
         })
       }else{
@@ -437,7 +469,6 @@ export default modelExtend(workbench, {
     * addWorkFlowComment({payload}, {select, call, put}) {
       let res1 = yield select(selectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
-      console.log('this is addWorkFlowComment', res1, res2)
       // debugger
       yield put({
         type: 'updateDatas',

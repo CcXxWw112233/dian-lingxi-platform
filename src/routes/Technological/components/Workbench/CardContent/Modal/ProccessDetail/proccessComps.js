@@ -1,5 +1,6 @@
 import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
+import styles from './index.css'
 import { Icon  } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
@@ -7,7 +8,7 @@ import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDet
 import DetailConfirmInfoFour from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFour'
 import DetailConfirmInfoFive from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFive'
 import user from '../../../../../../../assets/workbench/person_group@2x.png'
-import sssimg from '../../../../../../../assets/yay.jpg'
+import sssimg from '../../../../../../../assets/workbench/processIcon.png'
 import { timestampToHM } from '../../../../../../../utils/util'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../../../globalset/js/constant'
@@ -23,6 +24,13 @@ export default class ProccessContent extends React.Component {
  }
  componentDidMount() {
    this.initCanvas()
+  //  console.log('噢噢哦哦哦哦哦哦 哦' ,this.props.model.datas)
+  //  getCurrentCompleteStep
+  
+  this.props.dispatch({ 
+    type: 'projectDetailProcess/getCurrentCompleteStep',
+    payload: {}
+  })
  }
  componentDidUpdate() {
    this.initCanvas()
@@ -86,29 +94,11 @@ export default class ProccessContent extends React.Component {
  render() {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
+   console.log('this is doing:' ,processEditDatas)
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
-   console.log('ssss')
    const data  = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
-
-   const fillAvatar = (data) => {
-      let num = data.length
-      let res = data.reduce((r, c, i) => {
-        return [
-          ...r,
-          c.avatar?<img key={i} title={c.name} style={{width: '18px', height: '18px', borderRadius: '9px', marginLeft: '5px'}}  src={c.avatar}/>:<img src={user} title={c.name}  key={`div${i}`} style={{width: '18px', height: '18px', borderRadius: '9px', backgroundColor: 'gray', marginLeft: '5px'}} />
-        ]
-      }, [])
-      let container = (
-        <div style={{fontSize:'12px',
-        fontFamily:'PingFangSC-Regular',
-        fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}> {res} 「{num}」位流程参与人</div>
-      )
-
-      return container
-   }
 
    const filterForm = (value, key) => {
      const { node_type } = value
@@ -135,18 +125,44 @@ export default class ProccessContent extends React.Component {
      }
      return container
    }
-
+  //  80 158
+    const delHtmlTag = (str) =>{
+      return str.replace(/<[^>]+>/g,"")
+    }
    return (
     <div>
       <canvas style={{float: 'left'}} id="time_graph_canvas" width={210} height={210}></canvas>
-      <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, top: 236, left: 120}}/>
-      <div style={{height: '210px', padding: '32px 34px 32px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+      <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/>
+      <span style={{
+        position: 'relative',
+          top: '70px', 
+          right: '154px',
+          width:'41px',
+          height:17,
+          fontSize:12,
+          fontFamily: 'PingFangSC-Regular',
+          fontWeight:400,
+          color:'rgba(140,140,140,1)',
+          lineHeight: '17px'
+      }}>逾期 * 天</span> 
+      <span style={{
+        position: 'relative', 
+        top: '110px', 
+        right: '195px',
+        width: 38,
+        height: 30,
+        fontSize: 22,
+        fontFamily: 'PingFangSC-Regular',
+        fontWeight: 400,
+        color: 'rgba(89,89,89,1)',
+        lineHeight: '30px'
+      }}>{this.props.model.datas.processCurrentCompleteStep}/{this.props.model.datas.processInfo.node_amount}</span>
+      <div style={{height: '210px', padding: '32px 34px 70px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
-        {fillAvatar(data)}
         <div style={{fontSize:'12px',
         fontFamily: 'PingFangSC-Regular',
         fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}>这是一段示例简介：项目负责人一定是公司执行合伙人，如项目来源于公司员工需要与公司执行合伙人共同负责项目发起，项目负责人一定是公司执行合伙人方能进入公司的业务流程。项目来源已合伙人身份进入公司业务流程，执行合伙人可以指定公司业务人进行发起初审项目申请，申请表发至公司每位执行合伙人每周例会或者其他会议上进行投票表决是否初步立项。</div>
+        color:'rgba(89,89,89,1)'}}>{this.props.model.datas.processInfo.description?delHtmlTag(this.props.model.datas.processInfo.description):'暂无描述'}</div>
       </div>
       <div style={{padding: '36px 34px 0 36px'}}>
         {processEditDatas.map((value, key) => {
