@@ -35,10 +35,10 @@ export default class AnotherItem extends React.Component {
   itemClick(data, e) {
     const { id } = data;
     setStorage('board_id', id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { dispatch } = this.props
     const { model = {} } = this.props
     const projectDetailBoardId = model['board_id']

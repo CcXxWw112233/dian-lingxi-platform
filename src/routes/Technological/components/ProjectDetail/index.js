@@ -164,6 +164,12 @@ const ProjectDetail = (props) => {
     modal,
     model,
     match,
+    getCardDetail(data) {
+      dispatch({
+        type: getEffectOrReducerByNameTask('getCardDetail'),
+        payload: data,
+      })
+    },
     getRelations(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('getRelations'),

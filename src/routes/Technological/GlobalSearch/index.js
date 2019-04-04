@@ -123,7 +123,7 @@ export default class GlobalSearch extends React.Component {
         visible={globalSearchModalVisible}
         zIndex={1010}
         footer={false}
-        destroyOnClose={true}
+        destroyOnClose={false}
         onCancel={this.onCancel.bind(this)}>
         {searchEle()}
         <SearchResult defaultSearchType={defaultSearchType} spinning={spinning} page_number={page_number}/>

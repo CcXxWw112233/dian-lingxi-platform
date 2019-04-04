@@ -459,3 +459,60 @@
     }
   }
 }
+
+.attach_file_list_out {
+  position: relative;
+  .attach_file_list{
+    width: 100%;
+    padding-right: 40px;
+    font-size: 14px;
+    position: absolute;
+    top: 40px;
+    background: #FFFFFF;
+    .attach_file_item {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 9px;
+      cursor: pointer;
+      padding-right: 4px;
+      .link_pre {
+        color: #8c8c8c;
+        font-size: 8px;
+        margin: 0 10px 0 4px;
+        transform: scale(0.8, 1.1);
+        padding-top: 2px;
+      }
+      .attach_file_item_name{
+        flex: 1;
+      }
+      .attach_file_time{
+        font-size: 12px;
+        color: #8c8c8c;
+        margin-left: 8px;
+      }
+      .link_opera{
+        color: #595959;
+        margin-left: 8px;
+        display: none;
+        font-size: 14px;
+      }
+      .link_opera:hover{
+        color: #40A9FF;
+      }
+    }
+
+  }
+  .attach_file_item:hover{
+    background: rgba(230, 247, 255, 1);
+    .attach_file_item_name, .link_pre {
+      color: #40A9FF;
+    }
+    .link_opera{
+      display: block;
+    }
+    .attach_file_time {
+      display: none;
+    }
+  }
+}
+
