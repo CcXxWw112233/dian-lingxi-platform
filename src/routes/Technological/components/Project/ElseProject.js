@@ -4,7 +4,9 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal, Checkbox, Form, message } from 'antd'
 import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
+import SearchTreeModal from './components/SearchTreeModal'
 import Cookies from 'js-cookie'
+import {connect} from 'dva'
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard,
   currentNounPlanFilterName, setStorage
@@ -17,7 +19,9 @@ import {
 
 
 let is_starinit = null
-export default class ElseProject extends React.Component{
+
+@connect(({}) => ({}))
+class ElseProject extends React.Component{
   state = {
     ShowAddMenberModalVisibile: false,
     starOpacity: 0.6,
@@ -26,6 +30,7 @@ export default class ElseProject extends React.Component{
     isSoundsEvrybody: false,
     ellipsisShow: false, //是否出现...菜单
     dropdownVisibleChangeValue: false, //是否出现...菜单辅助判断标志
+    removePojectToGroupModalVisible: false,
   }
 
   //出现confirm-------------start
@@ -117,6 +122,9 @@ export default class ElseProject extends React.Component{
       case '4':
         this.confirm(board_id )
         break
+      case 'remove':
+        this.handleToggleRemoveProjectModalVisible(true)
+        break
       default:
         return
     }
@@ -144,7 +152,7 @@ export default class ElseProject extends React.Component{
   }
   starClick(id, e) {
     e.stopPropagation();
-    const { itemDetailInfo = {}} = this.props
+    const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo
     this.setState({
       isInitEntry: false,
@@ -197,9 +205,62 @@ export default class ElseProject extends React.Component{
     Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump(`${route}?board_id=${board_id}`)
   }
+  handleRemoveProjectToGroupModalCancel = () => {
+    this.shutRemoveProjectToGroupModal()
+  }
+  shutRemoveProjectToGroupModal = () => {
+    this.setState({
+      removePojectToGroupModalVisible: false
+    })
+  }
+  handleRemoveProjectToGroupModalOk = group_id => {
+    const { itemDetailInfo: {board_id = null} = {}} = this.props
+    if(!board_id) {
+      message.error('没有获取到当前项目的 id')
+      return
+    }
+    const {dispatch} = this.props
+    Promise.resolve(dispatch({
+      type: 'project/moveProjectToProjectGroup',
+      payload: {
+        board_id,
+        group_id
+      }
+    })).then(res => {
+      if(res === 'error') {
+        message.error('移动项目失败')
+        return
+      }
+      message.success('移动项目成功')
+      this.shutRemoveProjectToGroupModal()
+    })
+  }
+  handleOpenRemoveProjectModal = () => {
+    const {dispatch} = this.props
+    Promise.resolve(dispatch({
+      type: 'project/fetchProjectGroupSearchTree'
+    })).then(res => {
+      if(res === 'error') {
+        message.error('获取项目分组信息失败')
+        return
+      }
+      this.setState({
+        removePojectToGroupModalVisible: true,
+      })
+    })
+  }
+  handleToggleRemoveProjectModalVisible = (flag) => {
 
+    //如果是打开移动项目 modal
+    if(flag) {
+      return this.handleOpenRemoveProjectModal()
+    }
+    this.setState({
+      removePojectToGroupModalVisible: flag,
+    })
+  }
   render() {
-    const { starType, starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection } = this.state
+    const { starType, starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, removePojectToGroupModalVisible, ShowAddMenberModalVisibile } = this.state
     const { itemDetailInfo = {}} = this.props
     const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
 
@@ -210,6 +271,11 @@ export default class ElseProject extends React.Component{
           <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={indexStyle.elseProjectMemu}>
               邀请{currentNounPlanFilterName(MEMBERS)}加入
+            </div>
+          </Menu.Item>
+          <Menu.Item key={'remove'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+          <div className={indexStyle.elseProjectMemu}>
+              移动到
             </div>
           </Menu.Item>
           {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
@@ -316,7 +382,7 @@ export default class ElseProject extends React.Component{
                         {/*onClick={this.starClick.bind(this, board_id)}*/}
                         {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')} style={{margin: '0 0 0 8px',opacity: starOpacity,color: '#FAAD14 '}} />*/}
                     <Dropdown overlay={menu(board_id)} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
-                      <Icon type="ellipsis" style={{fontSize: 18, margin: '0 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
+                      <Icon type="ellipsis" style={{ padding: '2px', fontSize: 18, margin: '0 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'none'}} onClick={this.ellipsisClick}/>
                     </Dropdown>
                 </span>
               </div>
@@ -361,8 +427,17 @@ export default class ElseProject extends React.Component{
             </div>
           </div>
         </Card>
-        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        {ShowAddMenberModalVisibile && <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>}
+        {removePojectToGroupModalVisible && (
+          <SearchTreeModal
+            visible={removePojectToGroupModalVisible}
+            onOk={this.handleRemoveProjectToGroupModalOk}
+            onCancel={this.handleRemoveProjectToGroupModalCancel}
+          />
+        )}
       </div>
     )
   }
 }
+
+export default ElseProject
