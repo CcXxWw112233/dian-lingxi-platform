@@ -356,7 +356,6 @@ export default modelExtend(workbench, {
         })
         let backLogProcessList = yield select(selectBackLogProcessList)
         let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
-        debugger
         yield put({
           type: 'updateDatas',
           payload: {

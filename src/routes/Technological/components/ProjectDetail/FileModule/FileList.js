@@ -28,7 +28,6 @@ export default class FileList extends React.Component {
   }
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys) => {
-    debugger
     this.props.updateDatasFile({ selectedRowKeys });
     console.log(selectedRowKeys)
   }
@@ -253,6 +252,13 @@ export default class FileList extends React.Component {
     }
     this.open(data, '2')
 
+    // this.props.getCardCommentList({id: file_id})
+    this.props.dispatch({
+      type: 'projectDetailFile/getCardCommentListAll',
+      payload: {
+        id: file_id
+      }
+    })
     //接下来打开文件
     this.props.updateDatasFile({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
     this.props.filePreview({id: file_resource_id, file_id})

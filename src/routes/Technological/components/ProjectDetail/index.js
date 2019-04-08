@@ -164,12 +164,7 @@ const ProjectDetail = (props) => {
     modal,
     model,
     match,
-    getCardDetail(data) {
-      dispatch({
-        type: getEffectOrReducerByNameTask('getCardDetail'),
-        payload: data,
-      })
-    },
+    dispatch,
     getRelations(data) {
       dispatch({
         type: getEffectOrReducerByNameTask('getRelations'),
@@ -377,6 +372,7 @@ const ProjectDetail = (props) => {
   const FileModuleProps = {
     modal,
     model,
+    dispatch,
     openFileInUrl(data) {
       dispatch({
         type: getEffectOrReducerByNameFile('openFileInUrl'),

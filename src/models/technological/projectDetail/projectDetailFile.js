@@ -3,6 +3,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
+import { getSubfixName } from '../../../utils/businessFunction'
 import {
   filePreviewByUrl,
   fileInfoByUrl,
@@ -20,8 +21,11 @@ import {
   getCardCommentListAll
 } from "../../../services/technological/file";
 import {
-  selectAppsSelectKey, selectBreadcrumbList, selectCurrentParrentDirectoryId,
-  selectFilePreviewCommitPointNumber
+  selectAppsSelectKey, 
+  selectBreadcrumbList, 
+  selectCurrentParrentDirectoryId,
+  selectFilePreviewCommitPointNumber,
+  selectFilePreviewCurrentFileId
 } from "../select";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
@@ -89,25 +93,32 @@ export default modelExtend(projectDetail, {
             }
           })
           if(file_id) {
+            // dispatch({
+            //   type: 'getFileList',
+            //   payload: {
+            //     folder_id: file_id
+            //   }
+            // })
             dispatch({
               type: 'previewFileByUrl',
               payload: {
                 file_id,
               }
             })
+
             dispatch({
               type: 'getCardCommentListAll',
               payload: {
                 id: file_id
               }
             })
+
             dispatch({
               type: 'fileInfoByUrl',
               payload: {
                 file_id,
               }
             })
-
           }
         }
       })
@@ -230,11 +241,18 @@ export default modelExtend(projectDetail, {
       }
     },
     * openFileInUrl({ payload }, { select, call, put }) {
-      const { file_id } = payload
+      const { file_id, file_name } = payload
       yield put({
         type: 'routingJump',
         payload: {
           route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}&file_id=${file_id}`
+        }
+      })
+
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          fileName: file_name
         }
       })
     },
@@ -243,7 +261,6 @@ export default modelExtend(projectDetail, {
     * getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
       let res = yield call(getFileList, {folder_id})
-
       if(isApiResponseOk(res)) {
         const filedata_1 = res.data.folder_data;
         for(let val of filedata_1) {
@@ -256,6 +273,13 @@ export default modelExtend(projectDetail, {
           payload: {
             filedata_1,
             filedata_2,
+            fileList: [...filedata_1, ...filedata_2]
+          }
+        })
+        yield put({
+          type: 'getFileType',
+          payload: {
+            file_id: folder_id,
             fileList: [...filedata_1, ...filedata_2]
           }
         })
@@ -642,6 +666,32 @@ export default modelExtend(projectDetail, {
         }
       })
     },
+    
+    * getFileType({payload}, {select, call, put}) {
+      let { fileList } = payload
+      let file_id = yield select(selectFilePreviewCurrentFileId)
+      let res = fileList.reduce((r, c) => {
+        return [
+          ...r,
+          ...(c.file_id === file_id?[c]:[])
+        ]
+      }, [])
+      if(res.length === 0) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            fileType: ''
+          }
+        })
+      }else {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            fileType: res[0].file_name?getSubfixName(res[0].file_name): ''
+          }
+        })
+      }
+    }
     //文档----------end
   },
 

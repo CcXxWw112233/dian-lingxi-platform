@@ -145,7 +145,6 @@ export default class CreateTask extends React.Component {
     // this.setState({
     //   drawerVisible: true,
     // })
-    debugger
     this.props.updateDatas({
       drawerVisible: true,
     })

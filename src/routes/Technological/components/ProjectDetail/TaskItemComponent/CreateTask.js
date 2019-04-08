@@ -185,7 +185,13 @@ export default class CreateTask extends React.Component {
     this.props.updateDatasTask({
       drawerVisible: true,
     })
-    this.props.getCardDetail({id: card_id})
+    // this.props.getCardDetail({id: card_id})
+    this.props.dispatch({
+      type: 'projectDetailTask/getCardCommentListAll',
+      payload: {
+        id: card_id
+      }
+    })
 
     //添加url
     //  this.props.updateDatasTask(data)
