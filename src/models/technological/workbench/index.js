@@ -130,6 +130,14 @@ export default modelExtend(technological, {
     * addTask({payload}, {call, put}) {
       const {data} = payload
       const res = yield call(addTask, data)
+      if(!isApiResponseOk(res)) {
+        message.error('创建任务失败')
+        console.log('create task failed :' + res)
+        return
+      } else {
+        //创建任务成功的任务 id
+        return res.data
+      }
       // console.log(res, 'add task')
     },
     * handleCurrentSelectedProjectChange({payload}, {select, put, call}) {
