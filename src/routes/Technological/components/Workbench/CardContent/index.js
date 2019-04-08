@@ -135,10 +135,20 @@ class CardContent extends React.Component {
   }
   editTitleComplete(e) {
     this.setIsInEditTitle();
-    const { boxId } = this.props;
+    const { localTitle } = this.state
+    const { boxId, title } = this.props;
+    if(localTitle == title) {
+      return false
+    }
+    if(!localTitle) {
+      this.setState({
+        localTitle: title
+      })
+      return false
+    }
     this.props.updateBox({
       box_id: boxId,
-      name: this.state.localTitle
+      name: localTitle
     });
   }
 

@@ -163,21 +163,25 @@ export default class TaskItem extends React.Component {
     })
   }
   inputEditOk(e) {
+    const { inputValue } = this.state
+    const { taskItemValue, itemKey } = this.props
+    const { list_name, list_id } = taskItemValue
+
     this.setState({
       isInEditName: false,
-      inputValue: '',
     })
-    if(!this.state.inputValue) {
+
+    if(!inputValue || list_name == inputValue) {
       return false
     }
-    //  caozuo props
-    const { taskItemValue = {}, itemKey } = this.props
-    const { list_id } = taskItemValue
 
     this.props.updateTaskGroup({
       id: list_id,
-      name: this.state.inputValue,
+      name: inputValue,
       itemKey
+    })
+    this.setState({
+      inputValue: '',
     })
   }
   inputChange(e) {
@@ -286,7 +290,7 @@ export default class TaskItem extends React.Component {
               </div>
             </div>
           ) : (
-            <div>
+            <div style={{ marginBottom: 16}} >
               <Input autoFocus defaultValue={list_name} placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)}/>
             </div>
           )}
