@@ -252,11 +252,23 @@ export default class FileList extends React.Component {
     }
     this.open(data, '2')
 
-    // this.props.getCardCommentList({id: file_id})
     this.props.dispatch({
       type: 'projectDetailFile/getCardCommentListAll',
       payload: {
         id: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/getFileType',
+      payload: {
+        fileList: this.props.model.datas.fileList,
+        file_id
       }
     })
     //接下来打开文件

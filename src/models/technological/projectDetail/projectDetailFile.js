@@ -199,7 +199,6 @@ export default modelExtend(projectDetail, {
     * fileInfoByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, {id: file_id})
-
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -668,14 +667,25 @@ export default modelExtend(projectDetail, {
     },
     
     * getFileType({payload}, {select, call, put}) {
-      let { fileList } = payload
-      let file_id = yield select(selectFilePreviewCurrentFileId)
-      let res = fileList.reduce((r, c) => {
-        return [
-          ...r,
-          ...(c.file_id === file_id?[c]:[])
-        ]
-      }, [])
+      let { fileList,file_id } = payload
+      let fileId = yield select(selectFilePreviewCurrentFileId)
+      let res 
+      if(fileId) {
+        res = fileList.reduce((r, c) => {
+          return [
+            ...r,
+            ...(c.file_id === fileId?[c]:[])
+          ]
+        }, [])
+      } else {
+        res = fileList.reduce((r, c) => {
+          return [
+            ...r,
+            ...(c.file_id === file_id?[c]:[])
+          ]
+        }, [])
+      }
+      
       if(res.length === 0) {
         yield put({
           type: 'updateDatas',
