@@ -177,23 +177,19 @@ export default class CreateTask extends React.Component {
     this.scrollLeft = e.target.scrollLeft
   }
   // 右方抽屉弹窗---start
-  async setDrawerVisibleOpen(data) {
-    const { drawContent:{ card_id }} = data
-    // await this.props.getCardCommentListAll(card_id)
-    await this.props.dispatch({
-      type: 'projectDetailTask/getCardCommentListAll',
-      payload: {
-        id: card_id
-      }
+  setDrawerVisibleOpen(data) {
+    const that = this
+    const { drawContent: { card_id }} = data
+    this.props.updateDatasTask(data)
+    this.props.getCardCommentList(card_id)
+    this.props.updateDatasTask({
+      drawerVisible: true,
     })
-    // const that = this
-    // const { drawContent: { card_id }} = data
-    await this.props.updateDatasTask(data)
-    // this.props.getCardCommentList(card_id)
-    // this.props.updateDatasTask({
-    //   drawerVisible: true,
-    // })
-    await this.props.cardItemClickEffect(data)
+    this.props.getCardDetail({id: card_id})
+
+    //添加url
+    //  this.props.updateDatasTask(data)
+    // this.props.cardItemClickEffect(data)
 
   }
 

@@ -35,7 +35,7 @@ export default class AnotherItem extends React.Component {
   itemClick(data, e) {
     const { id, board_id } = data;
     setStorage('board_id', board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY) || !checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

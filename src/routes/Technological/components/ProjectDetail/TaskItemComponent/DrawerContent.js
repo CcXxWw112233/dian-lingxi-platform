@@ -9,7 +9,7 @@ import PreviewFileModalRichText from './PreviewFileModalRichText'
 
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
-import {Modal} from "antd/lib/index";
+import {Modal} from "antd";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
@@ -17,7 +17,7 @@ import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
-  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS
 } from "../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
@@ -56,7 +56,8 @@ class DrawContent extends React.Component {
     attachment_fileList: [], //任务附件列表
     isUsable: true, //任务附件是否可预览
     onlyReadingShareModalVisible: false, //只读分享modal
-    onlyReadingShareData: {}
+    onlyReadingShareData: {},
+    showUploadList: false, //是否显示filelist， 用于做上传时和上传完成不同列表的渲染
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
@@ -600,6 +601,73 @@ class DrawContent extends React.Component {
       ...data,
     })
   }
+  attachmentItemPreview(data) {
+    const file_name = data.name
+    const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
+    const file_id = data.file_id || data.response.data.file_id
+    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+      openPDF({id: file_id})
+      return false
+    }
+    this.props.updateDatasFile({
+      seeFileInput: 'taskModule',
+      isInOpenFile: true,
+      filePreviewCurrentId: file_resource_id,
+      filePreviewCurrentFileId: file_id,
+    })
+    this.props.filePreview({id: file_resource_id, file_id: file_id})
+  }
+  attachmentItemOpera({type, data}, e) {
+    e.stopPropagation()
+    const attachment_id = data.id || (data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
+    if(!attachment_id){
+      return
+    }
+    if(type == 'remove') {
+      this.deleteAttachmentFile(attachment_id)
+    }else if(type == 'download') {
+      this.props.fileDownload({ids: file_resource_id})
+    }
+  }
+  deleteAttachmentFile(attachment_id) {
+    const that = this
+    const { attachment_fileList } = this.state
+    const atta_arr = [...attachment_fileList]
+    Modal.confirm({
+      title: `确认要删除这个附件吗？`,
+      zIndex: 1007,
+      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
+        <span >删除后不可恢复</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          deleteTaskFile({attachment_id}).then((value) => {
+            if(value.code !=='0') {
+              message.warn('删除失败，请重新删除。1')
+              resolve()
+            }else {
+              for(let i = 0; i < atta_arr.length; i++) {
+                if (attachment_id == atta_arr[i]['id'] || (atta_arr[i].response && atta_arr[i].response.data && atta_arr[i].response.data.attachment_id == attachment_id)) {
+                  atta_arr.splice(i, 1)
+                }
+              }
+              that.setState({
+                attachment_fileList: atta_arr
+              })
+              resolve()
+            }
+          }).catch(err => {
+            message.warn('删除出了点问题，请重新删除。')
+            resolve()
+          })
+        })
+
+      }
+    });
+  }
 
   //发起会议按钮
   meetingMenuClick(e) {
@@ -728,7 +796,7 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [] } } = this.props.model
@@ -849,6 +917,7 @@ class DrawContent extends React.Component {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
       },
+      showUploadList: true, //showUploadList,
       beforeUpload(e) {
         if(e.size == 0) {
           message.error(`不能上传空文件`)
@@ -857,6 +926,9 @@ class DrawContent extends React.Component {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
+        that.setState({
+          showUploadList: true
+        })
       },
       onChange({ file, fileList, event }) {
         // console.log(1, file, fileList)
@@ -870,6 +942,13 @@ class DrawContent extends React.Component {
           }
           // fileList.pop()
         }
+
+        if(file.status === 'done' ) {
+          that.setState({
+            showUploadList: false
+          })
+        }
+
         that.setState({
           attachment_fileList: fileList
         })
@@ -944,7 +1023,7 @@ class DrawContent extends React.Component {
     //任务负责人显示 点点点
     const { excutorsOut_left = {}} = this.refs
     const excutorsOut_left_width_new = excutorsOut_left.clientWidth
-    console.log(drawContent, 'detailContent')
+
     return(
       //
       <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
@@ -1227,12 +1306,26 @@ class DrawContent extends React.Component {
           <DCAddChirdrenTask {...this.props}/>
 
           {/*上传任务附件*/}
-          <div className={DrawerContentStyles.divContent_1}>
+          <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
             <Upload {...uploadProps}>
               <Button size={'small'} style={{fontSize: 12, marginTop: 16, }} >
                 <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
               </Button>
             </Upload>
+            <div className={DrawerContentStyles.attach_file_list}>
+              {attachment_fileList.map((value, key) => {
+                const { name, lastModified, create_time, } = value
+                return(
+                  <div className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
+                    <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
+                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || lastModified, '/', true)}</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value})}>&#xe7f1;</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value})}>&#xe70f;</div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/*查看任务附件*/}

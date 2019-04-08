@@ -1,5 +1,88 @@
 import request from "../../utils/requestAxios";
-import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN} from "../../globalset/js/constant";
+
+//移动项目到指定分组
+export async function moveProjectToProjectGroup(data) {
+  const {board_id, group_id} = data
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/group/move/${board_id}`,
+    method: 'PUT',
+    data: {
+      group_id
+    }
+  })
+}
+
+//获取当前组织搜索树
+export async function getProjectGroupSearchTree() {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
+    method: 'GET',
+  })
+}
+
+//获取当前分组项目列表
+export async function getCurrentProjectGroupProjectList(params) {
+  const {group_id = '', keyword = '', org_id = ''} = params
+  //group_id  分组id
+  //keyword   (participate|star|archived)
+  //org_id  组织 id
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/list/by_param`,
+    method: 'GET',
+    params: {
+      group_id,
+      keyword,
+      org_id
+    }
+  })
+}
+
+//获取项目分组树
+export async function getProjectGroupTree() {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/group`,
+    method: 'GET'
+  })
+}
+
+//新增项目分组树节点
+export async function createProjectGroupTreeNode(data) {
+  const {group_name, parent_id} = data
+  //group_name 分组名称
+  //parent_id  父节点分组id
+
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/group`,
+    method: 'POST',
+    data: {
+      group_name,
+      parent_id
+    }
+  })
+}
+
+//更新项目分组名称
+export async function updateProjectGroupTreeNodeName(data) {
+  const {group_name, id} = data
+  //group_name 项目分组名称
+  //id 节点id
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/group/${id}`,
+    method: 'PUT',
+    data: {
+      group_name
+    }
+  })
+}
+
+//删除项目分组树节点
+export async function deleteProjectGroupTreeNode(id) {
+   return request({
+     url: `${REQUEST_DOMAIN_BOARD}/board/group/${id}`,
+     method: 'DELETE'
+   })
+}
 
 //获取项目列表
 export async function getProjectList(params) {
@@ -101,7 +184,7 @@ export async function collectionProject(id) {
     data: {
       id
     }
-  },{ isNotLoading: true });
+  }, { isNotLoading: true });
 }
 
 // 添加项目app
