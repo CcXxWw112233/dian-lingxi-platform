@@ -16,7 +16,7 @@ const TextArea = Input.TextArea
 class AddModalForm extends React.Component {
 
   onCancel = () => {
-    this.initialSet()
+    // this.initialSet()
     this.props.setAddModalFormVisibile()
   }
 

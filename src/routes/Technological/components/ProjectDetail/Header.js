@@ -89,8 +89,13 @@ export default class Header extends React.Component {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry: true })
   }
   gobackToProject(){
-    window.history.go(-1)
-    // this.props.routingJump('/technological/project')
+    // window.history.go(-1)
+    const defferBoardDetailRoute = localStorage.getItem('defferBoardDetailRoute')
+    if(defferBoardDetailRoute) {
+      this.props.routingJump(defferBoardDetailRoute)
+    } else {
+      this.props.routingJump('/technological/project')
+    }
   }
   //出现confirm-------------start
   setIsSoundsEvrybody(e){

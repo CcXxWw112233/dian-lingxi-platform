@@ -143,6 +143,7 @@ export default {
           window.addEventListener('setMessageItemEvent_2', evenListentNewMessage, false);
         }else{
           Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
+          localStorage.setItem('defferBoardDetailRoute', location.pathname) //项目详情头部返回路径
           initialData()
         }
         //刷新页面时去除掉appsSelectKeyIsAreadyClickArray
