@@ -8,8 +8,13 @@ const Dragger = Upload.Dragger
 export default class CommentListItem extends React.Component {
   state = {
     closeNormal: true,
+    isShowAll: false
   }
-
+  showAll() {
+    this.setState({
+      isShowAll: !this.state.isShowAll
+    })
+  }
   boxOnMouseOver() {
     this.setState({
       closeNormal: false
@@ -65,8 +70,81 @@ export default class CommentListItem extends React.Component {
         </div>
       )
     }
+    const filterIssues = (data) => {
+      const { action } = data
+      let container = ''
+      let messageContainer = (<div></div>)
+      switch (action) {
+        case 'board.file.upload':
+          messageContainer = (
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        case 'board.file.version.upload':
+          messageContainer=(
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        case 'board.file.remove.recycle':
+          messageContainer=(
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        case 'board.folder.remove.recycle':
+          messageContainer=(
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        case 'board.file.move.to.folder':
+          messageContainer=(
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        case 'board.file.copy.to.folder':
+            messageContainer=(
+              <div>
+                {`${data.creator.name} ${data.text}`}
+              </div>
+            )
+            break
+        case 'board.folder.add':
+          messageContainer=(
+            <div>
+              {`${data.creator.name} ${data.text}`}
+            </div>
+          )
+          break
+        default:
+          break
+      }
+      return messageContainer
+    }
     return (
       <div className={CommentStyles.commentListItemBox}  tabIndex="0" hideFocus="true" style={{outline: 0,maxHeight:126,overflowY: 'scroll'}}  onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+        <div>
+          {
+            this.props.model.datas.cardCommentAll.map((item, key) => {
+              if(!this.state.isShowAll) {
+                if(key < 4){
+                  return filterIssues(item)
+                }
+              } else {
+                return filterIssues(item)
+              }
+            })
+          }
+        </div>
+        <span style={{cursor: 'pointer', color: '#499BE6' }} onClick={this.showAll.bind(this)}>{!this.state.isShowAll?'查看全部':'收起部分'}</span>
         {filePreviewPointNumCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(

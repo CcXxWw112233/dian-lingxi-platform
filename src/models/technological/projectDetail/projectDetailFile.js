@@ -16,7 +16,8 @@ import {
   recycleBinList, 
   restoreFile,
   getFileDetailIssue,
-  updateFolder
+  updateFolder,
+  getCardCommentListAll
 } from "../../../services/technological/file";
 import {
   selectAppsSelectKey, selectBreadcrumbList, selectCurrentParrentDirectoryId,
@@ -61,7 +62,7 @@ export default modelExtend(projectDetail, {
           filePreviewCommitPointNumber: '', //评论当前的点
           filePreviewIsRealImage: true, //当前预览的图片是否真正图片
           seeFileInput: '', //查看文件详情入口
-          fileDetailIssues: [] //文件动态列表
+          cardCommentAll: [] //文件动态列表
     }
   },
   subscriptions: {
@@ -92,6 +93,12 @@ export default modelExtend(projectDetail, {
               type: 'previewFileByUrl',
               payload: {
                 file_id,
+              }
+            })
+            dispatch({
+              type: 'getCardCommentListAll',
+              payload: {
+                id: file_id
               }
             })
             dispatch({
@@ -620,10 +627,21 @@ export default modelExtend(projectDetail, {
       }
     },
     //获取文件详情的动态
-    * getFileDetailIssue({payload}, {select, call, put}) {
-      let res = yield call(getFileDetailIssue, payload)
-      console.log(res)
-    }
+    * getCardCommentListAll({payload} ,{select, call, put}) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: []
+        }
+      })
+      let res = yield call(getCardCommentListAll, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentAll: res.data
+        }
+      })
+    },
     //文档----------end
   },
 

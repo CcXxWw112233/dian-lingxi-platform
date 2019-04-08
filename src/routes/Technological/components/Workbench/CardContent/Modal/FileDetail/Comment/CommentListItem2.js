@@ -135,6 +135,7 @@ export default class CommentListItem extends React.Component {
     }
     return (
       <div className={CommentStyles.commentListItemBox}>
+        <h1> hello world </h1>
         <div>
           {
             this.props.model.datas.cardCommentAll.map((item, key) => {
