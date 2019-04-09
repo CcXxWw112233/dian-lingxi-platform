@@ -240,7 +240,7 @@ class FormList extends React.Component {
             checked={this.state.checkBoxChecked}
             onChange={this.checkBoxOnChange}
           />
-           <span style={{color: '#000', fontSize: 14}}>同意《<span style={{color: '#1890FF', cursor: 'pointer'}}>灵犀 服务协议</span>》</span>
+           <span style={{color: '#000', fontSize: 14}}>同意 灵犀《<a href='http://localhost/#/agreement/service' target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 服务协议</a> <a href='http://localhost/#/agreement/privacy' target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 隐私协议</a>》</span>
         </div>
         {/* 确认 */}
         <FormItem style={{marginTop: 24}}>
