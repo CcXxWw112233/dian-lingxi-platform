@@ -6,7 +6,8 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
 } from "../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "../../../../../utils/businessFunction";
+import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 const TextArea = Input.TextArea
 
 
@@ -126,6 +127,9 @@ export default class DrawDetailInfo extends React.Component {
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
+      if(!isHasOrgMemberQueryPermission()) {
+        return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
+      }
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>

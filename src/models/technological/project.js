@@ -216,6 +216,10 @@ export default {
             },
           }
         })
+
+        return yield put({
+          type: 'fetchProjectListAndUpdateProjectGroupTree'
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

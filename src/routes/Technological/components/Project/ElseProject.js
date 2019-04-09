@@ -5,11 +5,13 @@ import { Icon, Menu, Dropdown, Tooltip, Collapse, Card, Modal, Checkbox, Form, m
 import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import SearchTreeModal from './components/SearchTreeModal'
+import NoPermissionUserCard from './../../../../components/NoPermissionUserCard/index'
 import Cookies from 'js-cookie'
 import {connect} from 'dva'
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard,
-  currentNounPlanFilterName, setStorage
+  currentNounPlanFilterName, setStorage,
+  isHasOrgMemberQueryPermission
 } from "../../../../utils/businessFunction";
 import {
   MEMBERS,
@@ -260,6 +262,7 @@ class ElseProject extends React.Component{
     })
   }
   render() {
+
     const { starType, starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, removePojectToGroupModalVisible, ShowAddMenberModalVisibile } = this.state
     const { itemDetailInfo = {}} = this.props
     const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
@@ -302,11 +305,14 @@ class ElseProject extends React.Component{
     }
     const manImageDropdown = (props) =>{
       const { avatar, email, full_name, mobile, user_id, user_name, we_chat = '无' } = props
+      if(!isHasOrgMemberQueryPermission()) {
+        return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
+      }
       return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>
             <div className={detailInfoStyle.left}>
-              {avatar ? (<img src={avatar} />) : (
+              {avatar ? (<img src={avatar} alt='' />) : (
                 <div style={{backgroundColor: '#f2f2f2', textAlign: 'center', width: 32, height: 32, borderRadius: 32}}>
                   <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20, marginTop: 6}}/>
                 </div>
@@ -393,7 +399,7 @@ class ElseProject extends React.Component{
                     return (
                       <Dropdown overlay={manImageDropdown(value)} key={key}>
                         {avatar? (
-                          <img src={avatar} key={key} className={indexStyle.taskManImag}></img>
+                          <img src={avatar} alt='' key={key} className={indexStyle.taskManImag}></img>
                         ):(
                           <div className={indexStyle.taskManImag} style={{backgroundColor: '#f2f2f2', textAlign: 'center'}}>
                             <Icon type={'user'} style={{color: '#8c8c8c'}}/>
