@@ -194,7 +194,6 @@ export default class DrawDetailInfo extends React.Component {
           {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
-                if(!(value&&value.name)) return null
                 return(
                   <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
                     <div className={DrawDetailInfoStyle.elseProjectMemu}>
