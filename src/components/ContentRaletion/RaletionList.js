@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dropdown, Input, Icon, Cascader } from 'antd'
+import { Dropdown, Input, Icon, Cascader, Tooltip } from 'antd'
 import indexStyles from './index.less'
 import globalStyles from '../../globalset/css/globalClassName.less'
 //relations 关联内容的列表
@@ -7,6 +7,12 @@ export default class RaletionList extends React.Component {
 
   state = {
 
+  }
+
+  handleDeleteRelation = (e, id) => {
+    const {handleDeleteRelationItem} = this.props
+    if(e) e.stopPropagation()
+    handleDeleteRelationItem(id)
   }
 
   relationClick(content_url) {
@@ -73,6 +79,9 @@ export default class RaletionList extends React.Component {
                   <span className={globalStyles.authTheme} style={{color: '#1890FF', fontSize: 20, marginRight: 4}} dangerouslySetInnerHTML={{__html: this.judgeType(linked_sign)}}></span>
                   <span>{linked_name}</span>
                 </div>
+                <Tooltip title='删除'>
+                <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, id)}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                </Tooltip>
               </div>
             )
           } else {
@@ -83,6 +92,9 @@ export default class RaletionList extends React.Component {
                     <span className={globalStyles.authTheme} style={{color: '#1890FF', fontSize: 20, marginRight: 4}} dangerouslySetInnerHTML={{__html: this.judgeType(linked_sign)}}></span>
                     <span>{linked_name}</span>
                   </div>
+                  <Tooltip title='删除'>
+                  <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, id)}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                  </Tooltip>
                 </div>
               )
             }

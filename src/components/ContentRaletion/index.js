@@ -1,12 +1,12 @@
 import React from 'react'
-import { Dropdown, Input, Icon, Cascader, Menu } from 'antd'
+import { Dropdown, Input, Icon, Cascader, Menu, message } from 'antd'
 import RaletionDrop from './RaletionDrop'
 import RaletionList from './RaletionList'
 import indexStyles from './index.less'
 import SearchUrlRelation from './SearchUrlRelation'
 import globalStyles from '../../globalset/css/globalClassName.less'
 import {isApiResponseOk} from "../../utils/handleResponseData";
-import {getRelations, JoinRelation} from "../../services/technological/task";
+import {getRelations, JoinRelation, deleteRelation} from "../../services/technological/task";
 
 //内容关联相关
 //props link_local 3任务 2流程 21单个流程 22模板单个流程 4文件
@@ -40,16 +40,30 @@ export default class ContentRaletion extends React.Component {
     if(isApiResponseOk(res)) {
       this.getRelations()
     }else{
-
+      this.handleRelationContentRepeatError(res)
     }
   }
-
+  handleRelationContentRepeatError = res => {
+    const message = '关联内容已存在，请勿重复关联。'
+    const isSameMsg = (str1, str2) => str1 === str2
+    if(res && res.message && isSameMsg(res.message, message)) {
+      message.error(message)
+    }
+  }
   setIsInEditContentRelation(bool) {
     this.setState({
       isInEditContentRelation: bool,
       isInSearCh: !bool,
       isInChoose: bool
     })
+  }
+  async handleDeleteRelationItem(id){
+      const res = await deleteRelation(id)
+      if(isApiResponseOk(res)) {
+        message.success('取消关联成功')
+       return this.getRelations()
+      }
+      message.error('取消关联失败')
   }
   setSearch(bool) {
     this.setState({
@@ -100,7 +114,7 @@ export default class ContentRaletion extends React.Component {
            />
           )
         ) }
-        <RaletionList {...this.props} relations={relations} />
+        <RaletionList {...this.props} relations={relations} handleDeleteRelationItem={this.handleDeleteRelationItem.bind(this)} />
       </div>
     )
   }

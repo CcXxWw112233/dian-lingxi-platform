@@ -7,6 +7,7 @@
     width: auto;
     cursor: pointer;
     margin-top: 2px;
+    position: relative;
   }
   .relaData_item:hover {
     background-color: #e5e5e5;
@@ -110,4 +111,26 @@
       white-space: nowrap;
     }
   }
+}
+
+.relaData_item_delete_icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 0 3px;
+  display: none;
+  opacity: 0;
+  transition: all .5s;
+}
+
+.relaData_item_delete_icon:hover {
+  color: #3FA8FE;
+}
+
+.relaData_item:hover .relaData_item_delete_icon {
+  display: inline-block;
+  opacity: 1;
+  transition: all .5s;
 }

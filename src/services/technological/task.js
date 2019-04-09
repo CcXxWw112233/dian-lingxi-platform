@@ -234,6 +234,14 @@ export async function getCardDetail(params) {
   });
 }
 
+//取消关联
+export async function deleteRelation(id) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content_link/${id}`,
+    method: 'DELETE'
+  })
+}
+
 //查看关联者下面关联的内容
 export async function getRelations(params) {
   return request({

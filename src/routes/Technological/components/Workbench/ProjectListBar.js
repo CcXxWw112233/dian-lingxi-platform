@@ -162,9 +162,9 @@ class ProjectListBar extends Component {
       <div className={styles.dropDownMenuWrapper}>
         <Menu onClick={this.onClick} style={{ minWidth: '120px' }}>
           {dropDownMenuItemList.map(item => (
-            <Menu.Item key={item.board_id}>{item.board_name}</Menu.Item>
+            <Menu.Item key={item.board_id}><span style={{userSelect: 'none'}}>{item.board_name}</span></Menu.Item>
           ))}
-          {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'>新建项目</Menu.Item>}
+          {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}>新建项目</span></Menu.Item>}
         </Menu>
       </div>
     );
@@ -174,7 +174,7 @@ class ProjectListBar extends Component {
           className={styles.dropDownMenuItem__createProject}
           onClick={e => this.handleCreateNewProject(e)}
         >
-          新建任务
+          新建项目
         </p>
       </div>
     );
@@ -202,7 +202,7 @@ class ProjectListBar extends Component {
             ))}
         </ul>
         {dropDownMenuItemList.length === 0 ? (
-          !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) ? (
+         projectList.length && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) ? (
             <Dropdown
               overlay={dropDownMenuCreateProject}
               style={{ zIndex: '9999' }}
