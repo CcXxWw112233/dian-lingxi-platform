@@ -156,7 +156,7 @@ class ProjectListBar extends Component {
     });
     const {
       current_org: { identity_type } = {}
-    } = this.getUerInfoFromLocalStorage();
+    } = this.getUerInfoFromLocalStorage() ? this.getUerInfoFromLocalStorage() : {};
     const isVisitor = this.isVisitor(identity_type);
     const dropDownMenu = (
       <div className={styles.dropDownMenuWrapper}>
