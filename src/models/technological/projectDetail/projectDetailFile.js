@@ -14,15 +14,16 @@ import {
   getFileList,
   getFolderList,
   getPreviewFileCommits,
-  recycleBinList, 
+  recycleBinList,
   restoreFile,
   getFileDetailIssue,
   updateFolder,
-  getCardCommentListAll
+  getCardCommentListAll,
+  getFilePDFInfo
 } from "../../../services/technological/file";
 import {
-  selectAppsSelectKey, 
-  selectBreadcrumbList, 
+  selectAppsSelectKey,
+  selectBreadcrumbList,
   selectCurrentParrentDirectoryId,
   selectFilePreviewCommitPointNumber,
   selectFilePreviewCurrentFileId
@@ -66,7 +67,8 @@ export default modelExtend(projectDetail, {
           filePreviewCommitPointNumber: '', //评论当前的点
           filePreviewIsRealImage: true, //当前预览的图片是否真正图片
           seeFileInput: '', //查看文件详情入口
-          cardCommentAll: [] //文件动态列表
+          cardCommentAll: [], //文件动态列表
+          pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
     }
   },
   subscriptions: {
@@ -328,6 +330,37 @@ export default modelExtend(projectDetail, {
           type: 'getFileCommitPoints',
           payload: {
             id: file_id
+          }
+        })
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getFilePDFInfo({ payload }, { select, call, put }) {
+      //pdf做了特殊处理
+      let res = yield call(getFilePDFInfo, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewIsUsable: true,
+            filePreviewUrl: res.data.edit_url,
+            pdfDownLoadSrc: res.data.download_annotation_url,
+            filePreviewIsRealImage: false,
+          }
+        })
+        const { id } = payload // id = file_id
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: id
           }
         })
 
@@ -665,11 +698,11 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-    
+
     * getFileType({payload}, {select, call, put}) {
       let { fileList,file_id } = payload
       let fileId = yield select(selectFilePreviewCurrentFileId)
-      let res 
+      let res
       if(fileId) {
         res = fileList.reduce((r, c) => {
           return [
@@ -685,7 +718,7 @@ export default modelExtend(projectDetail, {
           ]
         }, [])
       }
-      
+
       if(res.length === 0) {
         yield put({
           type: 'updateDatas',
