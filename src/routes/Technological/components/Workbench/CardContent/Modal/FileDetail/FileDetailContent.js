@@ -1,5 +1,6 @@
 import React from 'react'
 import indexStyles from './index.less'
+import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../../utils/util";
@@ -387,7 +388,118 @@ export default class FileDetailContent extends React.Component {
       <div className={indexStyles.fileDetailContentLeft}
       dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
     )
-
+    const notSupport = (type) => {
+      let content
+      switch (type) {
+        case '.obj':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62f;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.3dm':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe626;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.iges':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62b;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.ma':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe630;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.mb':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe628;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.skp':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.dwg':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62a;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        case '.psd':
+          content = (
+            <div style={{textAlign: 'center'}}>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe629;</i>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe629;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+              </div>
+              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+            </div>
+          )
+          break;
+        default:
+          break;
+      }
+      return content
+    }
     return (
       <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
         {filePreviewIsUsable? (
@@ -399,7 +511,7 @@ export default class FileDetailContent extends React.Component {
         ):(
           <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
             <div>
-              当前文件不支持预览，您可点击下载再进行查看
+              {notSupport(this.props.model.datas.fileType)}
             </div>
           </div>
         )}

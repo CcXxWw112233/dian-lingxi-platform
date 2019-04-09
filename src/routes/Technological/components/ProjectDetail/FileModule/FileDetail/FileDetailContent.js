@@ -398,7 +398,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62f;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -411,7 +411,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe626;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -424,7 +424,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62b;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -437,7 +437,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe630;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -450,7 +450,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe628;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -463,7 +463,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -476,7 +476,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62a;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
@@ -489,7 +489,7 @@ export default class FileDetailContent extends React.Component {
               <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe629;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe629;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe7eb;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>
               <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>

@@ -1,8 +1,9 @@
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
+import { getSubfixName } from '../../../utils/businessFunction'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
-import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, getCardCommentListAll} from '../../../services/technological/file'
+import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl} from '../../../services/technological/file'
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber } from './selects'
 //状态说明：
@@ -251,6 +252,40 @@ export default {
         }
       })
     },
+    
+    * getFileType({payload}, {select, call, put}) {
+      let { file_id } = payload
+      let res = yield call(fileInfoByUrl, {id: file_id})
+      debugger
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          fileType: getSubfixName(res.data.base_info.file_name)
+        }
+      })
+      // let  res = fileList.reduce((r, c) => {
+      //     return [
+      //       ...r,
+      //       ...(c.file_id === file_id?[c]:[])
+      //     ]
+      //   }, [])
+      
+      // if(res.length === 0) {
+      //   yield put({
+      //     type: 'updateDatas',
+      //     payload: {
+      //       fileType: ''
+      //     }
+      //   })
+      // }else {
+      //   yield put({
+      //     type: 'updateDatas',
+      //     payload: {
+      //       fileType: res[0].file_name?getSubfixName(res[0].file_name): ''
+      //     }
+      //   })
+      // }
+    }
   },
 
   reducers: {

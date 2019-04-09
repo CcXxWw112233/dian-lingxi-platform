@@ -86,6 +86,12 @@ export default class FileItem extends React.Component {
         id: id
       }
     })
+    this.props.dispatch({
+      type: 'workbenchFileDetail/getFileType',
+      payload: {
+        file_id: id
+      }
+    })
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
       seeFileInput: 'file',
