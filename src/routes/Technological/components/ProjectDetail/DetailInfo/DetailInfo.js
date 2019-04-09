@@ -2,6 +2,8 @@ import React from 'react'
 import detailInfoStyle from './DetailInfo.less'
 import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button } from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
+import {isHasOrgMemberQueryPermission} from './../../../../../utils/businessFunction'
+import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 
 const TextArea = Input.TextArea
 
@@ -12,8 +14,8 @@ export default class DetailInfo extends React.Component {
 
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
-    isSoundsEvrybody_2: false,//edit是否通知项目所有人
-    editDetaiDescription :false ,//是否处于编辑状态
+    isSoundsEvrybody_2: false, //edit是否通知项目所有人
+    editDetaiDescription: false , //是否处于编辑状态
     detaiDescriptionValue: '',
     ShowAddMenberModalVisibile: false
   }
@@ -34,7 +36,7 @@ export default class DetailInfo extends React.Component {
     const that = this
     Modal.confirm({
       title: '确认将他移出项目吗？',
-      content: <div style={{color:'rgba(0,0,0, .8)',fontSize: 14}}>
+      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
         <span >退出后将无法获取该项目的相关动态</span>
         {/*<div style={{marginTop:20,}}>*/}
           {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
@@ -42,7 +44,7 @@ export default class DetailInfo extends React.Component {
       </div>,
       okText: '确认',
       cancelText: '取消',
-      onOk()  {
+      onOk() {
         that.props.removeMenbers(data)
       }
     });
@@ -65,7 +67,7 @@ export default class DetailInfo extends React.Component {
       detaiDescriptionValue: e.target.value
     })
   }
-  editSave(board_id,e) {
+  editSave(board_id, e) {
     const obj = {
       isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
       description: this.state.detaiDescriptionValue,
@@ -96,6 +98,9 @@ export default class DetailInfo extends React.Component {
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
       const { full_name, email, img, mobile, user_name, user_id, we_chat='无'} = props
+      if(!isHasOrgMemberQueryPermission()) {
+        return <NoPermissionUserCard avatar={img} full_name={full_name} />
+      }
       return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>
@@ -103,8 +108,8 @@ export default class DetailInfo extends React.Component {
               {img?(
                 <img src={img} />
               ):(
-                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                  <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
+                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                  <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
                 </div>
               )}
             </div>
@@ -152,9 +157,9 @@ export default class DetailInfo extends React.Component {
         <TextArea defaultValue={description || detaiDescriptionValue} autosize className={detailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
         <div style={{ textAlign: 'right'}}>
           <div>
-            <Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
+            <Checkbox style={{color: 'rgba(0,0,0, .8)', fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>
           </div>
-          <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this,board_id)}>保存</Button>
+          <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this, board_id)}>保存</Button>
         </div>
       </div>
     )
@@ -186,9 +191,9 @@ export default class DetailInfo extends React.Component {
                         <Icon type="close" />
                       </div>
                       <Dropdown overlay={manImageDropdown(value)}>
-                        {img?(<img src={img}  />): (
-                            <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2',textAlign:'center'}}>
-                              <Icon type={'user'} style={{fontSize: 20,color: '#8c8c8c',marginTop: 9}}/>
+                        {img?(<img src={img} />): (
+                            <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                              <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
                             </div>
                           )
                         }
@@ -198,7 +203,7 @@ export default class DetailInfo extends React.Component {
                 }else{
                   return(
                     <div className={detailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                      <Icon type="plus" style={{color:'#8c8c8c',fontSize:20,fontWeight: 'bold',marginTop: 8}}/>
+                      <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8}}/>
                     </div>
                   )
                 }

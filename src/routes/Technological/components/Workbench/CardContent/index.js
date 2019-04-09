@@ -784,6 +784,10 @@ class CardContent extends React.Component {
         )}
         {uploadFileModalVisible && (
           <AddTaskModal
+            {...this.props}
+            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
+              this
+            )}
             modalTitle="上传文档"
             taskType="MY_DOCUMENT"
             projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
