@@ -589,12 +589,14 @@
 
 .projectListBarCellWrapper {
   display: inline-block;
+  position: relative;
   user-select: none;
   max-width: 210px;
   // height: 28px;
   padding: 0 8px;
+  padding-right: 20px;
   border-radius:4px;
-  margin-left: 24px;
+  margin-left: 20px;
   font-size: 14px;
   font-weight: 400;
   color: rgba(89, 89, 89, 1);
@@ -620,14 +622,38 @@
 .projectListBarCellActive {
   background: rgba(232, 232, 232, 1);
 }
+.projectListBarCreateNewProject {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  right: 0;
+  width: 38px;
+  height: 28px;
+  background: #f5f5f5;
+  margin-left: 20px;
+  margin-top: 3px;
+  .projectListBarExpandImg {
+    margin: 0 auto;
+    width: 20px;
+    height: 8px;
+    background: url(./../../../../assets/workbench/ellipsis@2x.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+.projectListBarCreateNewProject:hover {
+  cursor: pointer;
+  border-radius: 5px;
+  background: rgba(232, 232, 232, 1);
+}
 .projectListBarExpand {
   position: absolute;
   display: flex;
   align-items: center;
   justify-items: center;
   right: 0;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 28px;
   background: #f5f5f5;
   .projectListBarExpandImg {
     margin: 0 auto;
@@ -640,13 +666,30 @@
 }
 .projectListBarExpand:hover {
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 5px;
   background: rgba(232, 232, 232, 1);
 }
 .projectListBarCellWrapper:hover {
   cursor: pointer;
   background: rgba(232, 232, 232, 1);
   border-radius: 4px;
+}
+
+.projectListBarCellInterProject {
+  position: absolute;
+  right: -15px;
+  top:0;
+  transition: all .3s;
+}
+
+.projectListBarCellWrapper:hover .projectListBarCellInterProject {
+  right: 3px;
+}
+
+.projectListBarCellInterProject:hover {
+  i {
+    color: #1890FF;
+  }
 }
 
 .noContentWrapper {
@@ -677,7 +720,10 @@
 
 .dropDownMenuWrapper {
   max-height: 400px;
+  border: 1px solid #DADADA;
+  border-radius: 3px;
   overflow: auto;
+  background: #fff;
 }
 
 .dropDownMenuWrapper::-webkit-scrollbar {
@@ -735,4 +781,14 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.dropDownMenuItem__createProject {
+  cursor: pointer;
+  margin: 10px 10px;
+  padding: 2px;
+}
+
+.dropDownMenuItem__createProject:hover {
+  color: #1890FF;
 }

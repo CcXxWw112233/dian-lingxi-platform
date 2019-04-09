@@ -177,8 +177,9 @@ export default class DCAddChirdrenTask extends React.Component{
     return(
       <div className={DrawerContentStyles.divContent_1}>
         {child_data.map((value, key) => {
+          const { card_id, card_name } = value
           return (
-            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={value.card_id} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={`${card_id}-${card_name}`} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>

@@ -1,27 +1,42 @@
-import React, { Component } from "react";
-import { Modal, Input, Button, message, Upload, Cascader, Tooltip } from "antd";
-import styles from "./AddTaskModal.less";
-import { connect } from "dva";
+import React, { Component } from 'react';
+import {
+  Modal,
+  Input,
+  Button,
+  message,
+  Upload,
+  Cascader,
+  Tooltip,
+  notification
+} from 'antd';
+import styles from './AddTaskModal.less';
+import { connect } from 'dva';
 import {
   REQUEST_DOMAIN_BOARD,
   UPLOAD_FILE_SIZE
-} from "./../../../../../../globalset/js/constant";
-import { deleteUploadFile } from "./../../../../../../services/technological/workbench";
-import DropdownSelectWithSearch from "./../DropdownSelectWithSearch/index";
-import DropdownMultipleSelectWithSearch from "./../DropdownMultipleSelectWithSearch/index";
-import DateRangePicker from "./../DateRangePicker/index";
-import Cookies from "js-cookie";
-import {checkIsHasPermissionInBoard, setStorage} from "../../../../../../utils/businessFunction";
+} from './../../../../../../globalset/js/constant';
+import { deleteUploadFile } from './../../../../../../services/technological/workbench';
+import DropdownSelectWithSearch from './../DropdownSelectWithSearch/index';
+import DropdownMultipleSelectWithSearch from './../DropdownMultipleSelectWithSearch/index';
+import DateRangePicker from './../DateRangePicker/index';
+import Cookies from 'js-cookie';
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPLOAD, PROJECT_FLOWS_FLOW_CREATE,
+  checkIsHasPermissionInBoard,
+  setStorage
+} from '../../../../../../utils/businessFunction';
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FILES_FILE_UPLOAD,
+  PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_TEAM_CARD_CREATE
-} from "../../../../../../globalset/js/constant";
+} from '../../../../../../globalset/js/constant';
 
 const taskTypeToName = {
-  RESPONSIBLE_TASK: "Tasks",
-  EXAMINE_PROGRESS: "Flows",
-  MEETIMG_ARRANGEMENT: "Tasks",
-  MY_DOCUMENT: "Files"
+  RESPONSIBLE_TASK: 'Tasks',
+  EXAMINE_PROGRESS: 'Flows',
+  MEETIMG_ARRANGEMENT: 'Tasks',
+  MY_DOCUMENT: 'Files'
 };
 /* eslint-disable */
 @connect(({ workbench }) => ({ workbench }))
@@ -40,7 +55,7 @@ class AddTaskModal extends Component {
     } = this.props;
     const rootFileFolder =
       currentSelectedProjectFileFolderList &&
-      currentSelectedProjectFileFolderList.parent_id === "0" &&
+      currentSelectedProjectFileFolderList.parent_id === '0' &&
       currentSelectedProjectFileFolderList.folder_id;
     const findAndCheckCurrentSelectedProject = projectList.find(
       item =>
@@ -49,15 +64,15 @@ class AddTaskModal extends Component {
         item.apps.find(i => i.code === taskTypeToName[taskType])
     );
     this.state = {
-      addTaskTitle: "",
+      addTaskTitle: '',
       currentSelectedProject: findAndCheckCurrentSelectedProject
         ? findAndCheckCurrentSelectedProject
         : {},
       currentSelectedProjectMember: [],
-      start_time: "",
-      due_time: "",
+      start_time: '',
+      due_time: '',
       attachment_fileList: [],
-      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [""]
+      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : ['']
     };
   }
   handleDateRangeChange = dateRange => {
@@ -70,23 +85,25 @@ class AddTaskModal extends Component {
   handleAddTaskModalOk = () => {};
   handleAddTaskModalCancel = () => {
     //取消之后回归公共tab_bar board_id到缓存
-    const { datas: { projectTabCurrentSelectedProject }} = this.props.workbench
-    setStorage('board_id', projectTabCurrentSelectedProject)
+    const {
+      datas: { projectTabCurrentSelectedProject }
+    } = this.props.workbench;
+    setStorage('board_id', projectTabCurrentSelectedProject);
 
     const { dispatch } = this.props;
     dispatch({
-      type: "workbench/emptyCurrentSelectedProjectMembersList"
+      type: 'workbench/emptyCurrentSelectedProjectMembersList'
     });
     dispatch({
-      type: "workbench/emptyCurrentSelectedProjectFileFolderList"
+      type: 'workbench/emptyCurrentSelectedProjectFileFolderList'
     });
     this.setState({
-      addTaskTitle: "",
+      addTaskTitle: '',
       currentSelectedProject: {},
-      start_time: "",
-      due_time: "",
+      start_time: '',
+      due_time: '',
       attachment_fileList: [],
-      currentSelectedFileFolder: [""]
+      currentSelectedFileFolder: ['']
     });
     const { addTaskModalVisibleChange } = this.props;
     addTaskModalVisibleChange(false);
@@ -99,15 +116,15 @@ class AddTaskModal extends Component {
       },
       () => {
         dispatch({
-          type: "workbench/fetchCurrentSelectedProjectMembersList",
+          type: 'workbench/fetchCurrentSelectedProjectMembersList',
           payload: {
             projectId: item.board_id
           }
         });
-        if (taskType === "MY_DOCUMENT") {
+        if (taskType === 'MY_DOCUMENT') {
           Promise.resolve(
             dispatch({
-              type: "workbench/fetchCurrentSelectedProjectFileFolderList",
+              type: 'workbench/fetchCurrentSelectedProjectFileFolderList',
               payload: {
                 board_id: item.board_id
               }
@@ -127,12 +144,12 @@ class AddTaskModal extends Component {
     } = this.props;
     const rootFileFolder =
       currentSelectedProjectFileFolderList &&
-      currentSelectedProjectFileFolderList.parent_id === "0" &&
+      currentSelectedProjectFileFolderList.parent_id === '0' &&
       currentSelectedProjectFileFolderList.folder_id;
     if (!rootFileFolder) {
-      message.error("当前项目没有根目录文件夹");
+      message.error('当前项目没有根目录文件夹');
       this.setState({
-        currentSelectedFileFolder: [""]
+        currentSelectedFileFolder: ['']
       });
     }
     this.setState({
@@ -154,38 +171,38 @@ class AddTaskModal extends Component {
       name: addTaskTitle,
       type: 0,
       users: currentSelectedProjectMember.reduce((acc, curr) => {
-        return acc ? acc + "," + curr.id : curr.id;
-      }, "")
+        return acc ? acc + ',' + curr.id : curr.id;
+      }, '')
     };
-    if (taskType === "MEETIMG_ARRANGEMENT") {
+    if (taskType === 'MEETIMG_ARRANGEMENT') {
       return Object.assign({}, taskObj, { start_time, due_time, type: 1 });
     }
     return taskObj;
   };
   handleClickedSubmitBtn = e => {
     e.stopPropagation();
-    const { taskType } = this.props
+    const { taskType } = this.props;
     //权限控制
-    let authCode = ''
+    let authCode = '';
     switch (taskType) {
       case 'RESPONSIBLE_TASK':
-        authCode = PROJECT_TEAM_CARD_CREATE
-        break
+        authCode = PROJECT_TEAM_CARD_CREATE;
+        break;
       case 'MEETIMG_ARRANGEMENT':
-        authCode = PROJECT_TEAM_CARD_CREATE
-        break
+        authCode = PROJECT_TEAM_CARD_CREATE;
+        break;
       case 'MY_DOCUMENT':
-        authCode = PROJECT_FILES_FILE_UPLOAD
-        break
+        authCode = PROJECT_FILES_FILE_UPLOAD;
+        break;
       case 'EXAMINE_PROGRESS':
-        authCode = PROJECT_FLOWS_FLOW_CREATE
-        break
+        authCode = PROJECT_FLOWS_FLOW_CREATE;
+        break;
       default:
-        break
+        break;
     }
-    if(!checkIsHasPermissionInBoard(authCode)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
+    if (!checkIsHasPermissionInBoard(authCode)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+      return false;
     }
 
     const paramObj = this.getNewTaskParams();
@@ -195,12 +212,12 @@ class AddTaskModal extends Component {
   };
   uploadNewFile = () => {
     const { taskType, dispatch } = this.props;
-    if (taskType !== "MY_DOCUMENT") {
+    if (taskType !== 'MY_DOCUMENT') {
       return;
     }
     Promise.resolve(
       dispatch({
-        type: "workbench/getUploadedFileList"
+        type: 'workbench/getUploadedFileList'
       })
     ).then(() => {
       this.handleAddTaskModalCancel();
@@ -208,20 +225,24 @@ class AddTaskModal extends Component {
   };
   addNewMeeting = paramObj => {
     const { taskType, dispatch, addTaskModalVisibleChange } = this.props;
-    if (taskType !== "MEETIMG_ARRANGEMENT") {
+    if (taskType !== 'MEETIMG_ARRANGEMENT') {
       return;
     }
     Promise.resolve(
       dispatch({
-        type: "workbench/addTask",
+        type: 'workbench/addTask',
         payload: {
           data: paramObj
         }
       })
-    )
+    ).then(taskId => {
+      if (!taskId) throw new Error('创建任务失败');
+      const { board_id, name } = paramObj;
+      this.showCreateTaskSuccessNote(board_id, taskId, name);
+    })
       .then(() =>
         dispatch({
-          type: "workbench/getMeetingList"
+          type: 'workbench/getMeetingList'
         })
       )
       .then(() => {
@@ -230,25 +251,60 @@ class AddTaskModal extends Component {
   };
   addNewTask = paramObj => {
     const { taskType, dispatch, addTaskModalVisibleChange } = this.props;
-    if (taskType !== "RESPONSIBLE_TASK") {
+    if (taskType !== 'RESPONSIBLE_TASK') {
       return;
     }
     Promise.resolve(
       dispatch({
-        type: "workbench/addTask",
+        type: 'workbench/addTask',
         payload: {
           data: paramObj
         }
       })
     )
+      .then(taskId => {
+        if (!taskId) throw new Error('创建任务失败');
+        const { board_id, name } = paramObj;
+        this.showCreateTaskSuccessNote(board_id, taskId, name);
+      })
       .then(() => {
         dispatch({
-          type: "workbench/getResponsibleTaskList"
+          type: 'workbench/getResponsibleTaskList'
         });
       })
       .then(() => {
         this.handleAddTaskModalCancel();
-      });
+      })
+      .catch(err => console.log(err));
+  };
+  getTaskTypeText = () => {
+    const {taskType} = this.props
+    const taskTypeObj = {
+      RESPONSIBLE_TASK: '任务',
+      MEETIMG_ARRANGEMENT: '日程',
+      MY_DOCUMENT: '文档'
+    }
+    return taskTypeObj[taskType]
+  }
+  showCreateTaskSuccessNote = (board_id, id, name) => {
+    const handleJump = e => {
+      if (e) e.stopPropagation();
+      notification.destroy()
+      this.props.updatePublicDatas({ board_id });
+      this.props.getCardDetail({ id, board_id });
+      this.props.setTaskDetailModalVisibile();
+    };
+    const descirptionEle = (
+      <div>
+        <p><span>新建{this.getTaskTypeText()}“<span style={{color: '#1D93FF'}}>{name}</span>”成功，可在“项目详情”中查看{this.getTaskTypeText()}</span></p>
+        <div style={{textAlign: 'right'}}><Button type="primary" size="small" onClick={e => handleJump(e)} >查看详情</Button></div>
+      </div>
+    );
+    notification.success({
+      message: '新建成功',
+      description: descirptionEle,
+      placement: 'bottomLeft'
+    });
   };
   handleAddTaskModalTaskTitleChange = e => {
     this.setState({
@@ -300,7 +356,7 @@ class AddTaskModal extends Component {
       );
       if (
         isProjectListExistCurrentSelectedProject &&
-        projectTabCurrentSelectedProject !== "0"
+        projectTabCurrentSelectedProject !== '0'
       ) {
         this.setState({
           currentSelectedProject: isProjectListExistCurrentSelectedProject
@@ -338,12 +394,12 @@ class AddTaskModal extends Component {
       currentSelectedProjectMember && currentSelectedProjectMember.length;
     let isShouldNotDisableSubmitBtn = () =>
       isHasTaskTitle() && isHasSelectedProject();
-    if (taskType === "MEETIMG_ARRANGEMENT") {
+    if (taskType === 'MEETIMG_ARRANGEMENT') {
       isShouldNotDisableSubmitBtn = () =>
         isHasTaskTitle() && isHasSelectedProject() && start_time && due_time;
     }
 
-    if (taskType === "MY_DOCUMENT") {
+    if (taskType === 'MY_DOCUMENT') {
       isShouldNotDisableSubmitBtn = () =>
         isHasSelectedProject() && currentSelectedFileFolder.length;
     }
@@ -355,18 +411,19 @@ class AddTaskModal extends Component {
     );
     const that = this;
     const uploadProps = {
-      name: "file",
+      name: 'file',
       fileList: attachment_fileList,
       withCredentials: true,
       action: `${REQUEST_DOMAIN_BOARD}/file/upload`,
       multiple: true,
       data: {
         board_id,
-        folder_id: currentSelectedFileFolder[currentSelectedFileFolder.length - 1]
+        folder_id:
+          currentSelectedFileFolder[currentSelectedFileFolder.length - 1]
       },
       headers: {
-        Authorization: Cookies.get("Authorization"),
-        refreshToken: Cookies.get("refreshToken")
+        Authorization: Cookies.get('Authorization'),
+        refreshToken: Cookies.get('refreshToken')
       },
       beforeUpload(e) {
         if (e.size == 0) {
@@ -378,14 +435,14 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+          return false;
         }
-        if (file.status === "done" && file.response.code === "0") {
+        if (file.status === 'done' && file.response.code === '0') {
         } else if (
-          file.status === "error" ||
-          (file.response && file.response.code !== "0")
+          file.status === 'error' ||
+          (file.response && file.response.code !== '0')
         ) {
           for (let i = 0; i < fileList.length; i++) {
             if (file.uid == fileList[i].uid) {
@@ -397,8 +454,7 @@ class AddTaskModal extends Component {
           {
             attachment_fileList: fileList
           },
-          () => {
-          }
+          () => {}
         );
         // drawContent["attachment_data"] = fileList;
         // that.props.updateDatasTask({
@@ -428,14 +484,14 @@ class AddTaskModal extends Component {
 
         deleteUploadFile({ id })
           .then(res => {
-            if (res.code === "0") {
-              message.success("删除成功");
+            if (res.code === '0') {
+              message.success('删除成功');
             } else {
-              message.error("删除失败，请稍后再试");
+              message.error('删除失败，请稍后再试');
             }
           })
           .catch(err => {
-            message.error("删除失败，请稍后再试");
+            message.error('删除失败，请稍后再试');
           });
       }
     };
@@ -446,14 +502,13 @@ class AddTaskModal extends Component {
       );
     });
 
-
     return (
       <Modal
         visible={addTaskModalVisible}
         // maskClosable={false}
         title={
           // <div style={{ textAlign: "center" }}>{"添加内容" + modalTitle}</div>
-          <div style={{ textAlign: "center" }}>{"添加内容"}</div>
+          <div style={{ textAlign: 'center' }}>{'添加内容'}</div>
         }
         onOk={this.handleAddTaskModalOk}
         onCancel={this.handleAddTaskModalCancel}
@@ -468,13 +523,13 @@ class AddTaskModal extends Component {
               selectedItem={currentSelectedProject}
               handleSelectedItem={this.handleSelectedItem}
             />
-            {taskType === "MEETIMG_ARRANGEMENT" && (
+            {taskType === 'MEETIMG_ARRANGEMENT' && (
               <DateRangePicker
                 handleDateRangeChange={this.handleDateRangeChange}
                 isSameYearNotShowYear={true}
               />
             )}
-            {taskType === "MY_DOCUMENT" && currentSelectedProject.board_id && (
+            {taskType === 'MY_DOCUMENT' && currentSelectedProject.board_id && (
               <div className={styles.addTaskModalSelectFileFolder}>
                 <Cascader
                   className={styles.addTaskModalSelectFileFolder__selectWrapper}
@@ -489,21 +544,21 @@ class AddTaskModal extends Component {
             )}
           </div>
           <div className={styles.addTaskModalTaskTitle}>
-            {taskType === "RESPONSIBLE_TASK" ||
-            taskType === "MEETIMG_ARRANGEMENT" ? (
+            {taskType === 'RESPONSIBLE_TASK' ||
+            taskType === 'MEETIMG_ARRANGEMENT' ? (
               <Input
                 value={addTaskTitle}
                 onChange={this.handleAddTaskModalTaskTitleChange}
               />
             ) : (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 {!isShouldNotDisableSubmitBtn() ? (
                   <Tooltip placement="bottom" title="请选择具体项目和文件夹">
                     <Button
                       block={true}
                       disabled={!isShouldNotDisableSubmitBtn()}
                     >
-                      <span style={{ width: "442px" }}>
+                      <span style={{ width: '442px' }}>
                         点击此处/拖拽文件到对话框
                       </span>
                     </Button>
@@ -514,7 +569,7 @@ class AddTaskModal extends Component {
                       block={true}
                       disabled={!isShouldNotDisableSubmitBtn()}
                     >
-                      <span style={{ width: "442px" }}>
+                      <span style={{ width: '442px' }}>
                         点击此处/拖拽文件到对话框
                       </span>
                     </Button>
@@ -523,13 +578,13 @@ class AddTaskModal extends Component {
               </div>
             )}
           </div>
-          {taskType === "RESPONSIBLE_TASK" ||
-          taskType === "MEETIMG_ARRANGEMENT" ? (
+          {taskType === 'RESPONSIBLE_TASK' ||
+          taskType === 'MEETIMG_ARRANGEMENT' ? (
             <div className={styles.addTaskModalFooter}>
               <div className={styles.addTaskModalOperator}>
                 <DropdownMultipleSelectWithSearch
                   itemTitle={
-                    taskType === "RESPONSIBLE_TASK" ? "执行人" : "参与人"
+                    taskType === 'RESPONSIBLE_TASK' ? '执行人' : '参与人'
                   }
                   list={
                     currentSelectedProject.board_id
