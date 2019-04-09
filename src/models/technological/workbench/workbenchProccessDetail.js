@@ -339,7 +339,6 @@ export default modelExtend(workbench, {
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id, flow_node_instance_id } = payload
       let res = yield call(completeProcessTask, payload)
-
       let res2 = yield call(getProcessInfo, instance_id)
       const curr_node_id = res2.data.completed_amount
       const amount_node_id = res2.data.node_amount
@@ -468,7 +467,6 @@ export default modelExtend(workbench, {
     * addWorkFlowComment({payload}, {select, call, put}) {
       let res1 = yield select(selectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
-      // debugger
       yield put({
         type: 'updateDatas',
         payload: {

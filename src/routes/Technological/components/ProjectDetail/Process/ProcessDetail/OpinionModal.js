@@ -76,7 +76,6 @@ class OpinionModal extends React.Component {
     const { opinionModalVisible, enableOpinion } = this.props; //enableOpinion为是否需要填写意见1是0否
     const { getFieldDecorator } = this.props.form;
     const { stepContinueDisabled } = this.state
-
     const step_3 = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>填写意见</div>

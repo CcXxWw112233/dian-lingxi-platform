@@ -1,5 +1,6 @@
 import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
+import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import styles from './index.css'
 import { Icon  } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
@@ -132,7 +133,8 @@ export default class ProccessContent extends React.Component {
    return (
     <div>
       <canvas style={{float: 'left'}} id="time_graph_canvas" width={210} height={210}></canvas>
-      <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/>
+      {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
+      {parseInt(this.props.model.datas.processCurrentCompleteStep) === parseInt(this.props.model.datas.processInfo.node_amount)?<span className={globalStyles.authTheme} style={{color: '#73D13C', position: 'relative', width: 20, height: 20, top: 155, right: 118}} >&#xe603;</span>:<span className={globalStyles.authTheme} style={{color: '#D9D9D9', position: 'relative', width: 20, height: 20, top: 155, right: 118}} >&#xe603;</span>}
       <span style={{
         position: 'relative',
           top: '70px', 
@@ -156,7 +158,7 @@ export default class ProccessContent extends React.Component {
         fontWeight: 400,
         color: 'rgba(89,89,89,1)',
         lineHeight: '30px'
-      }}>{this.props.model.datas.processCurrentCompleteStep}/{this.props.model.datas.processInfo.node_amount}</span>
+      }}>{this.props.model.datas.processCurrentCompleteStep?this.props.model.datas.processCurrentCompleteStep:1}/{this.props.model.datas.processInfo.node_amount}</span>
       <div style={{height: '210px', padding: '32px 34px 70px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
         <div style={{fontSize:'12px',

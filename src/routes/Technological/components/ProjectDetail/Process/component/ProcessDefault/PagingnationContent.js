@@ -153,7 +153,6 @@ export default class PagingnationContent extends React.Component {
       totalId: obj
     })
 
-
     await this.props.getProjectDetailInfo({id: obj.board})
 
 

@@ -53,7 +53,6 @@ export default class ProcessDefault extends React.Component {
   render() {
     const { clientHeight } = this.state
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
-    console.log('🐶', this.props.model)
     const flowTabs = () => {
       return (
         <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16}}>

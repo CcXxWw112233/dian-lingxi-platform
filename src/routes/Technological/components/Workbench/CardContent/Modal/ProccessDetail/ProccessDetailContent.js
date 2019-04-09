@@ -17,7 +17,9 @@ import ProcessDetail from './proccessComps'
 export default class FileDetailContent extends React.Component {
   state = {
     isShowAll: false, //是否查看全部
+    commentList: []
   }
+
   versionItemClick({value, key}){
     const { file_resource_id, file_id } = value
     this.setState({
@@ -101,6 +103,11 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       rects: filePreviewCommitPoints
     })
+    // if(this.state.commentList.length < nextProps.model.datas.workFlowComments)  {
+    this.setState({
+      commentList: nextProps.model.datas.workFlowComments
+    })
+    // }
   }
   //评图功能
   previewImgLoad(e) {
