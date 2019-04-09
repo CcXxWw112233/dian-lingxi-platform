@@ -2,6 +2,8 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message } from 'antd'
 import BraftEditor from 'braft-editor'
+import NameChangeInput from '../../../../../../../components/NameChangeInput'
+
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
 import PreviewFileModal from './PreviewFileModal'
@@ -1027,17 +1029,27 @@ class DrawContent extends React.Component {
                    <i className={globalStyle.authTheme} >&#xe709;</i>
                  </div>
                )}
-
+               {/*<TextArea defaultValue={card_name}*/}
+                         {/*autosize*/}
+                         {/*onBlur={this.titleTextAreaChangeBlur.bind(this)}*/}
+                         {/*onClick={this.setTitleIsEdit.bind(this, true)}*/}
+                         {/*autoFocus={true}*/}
+                         {/*maxLength={100}*/}
+                         {/*style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}/>*/}
                {!titleIsEdit ? (
                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
                ) : (
-                 <TextArea defaultValue={card_name}
-                           autosize
-                           onBlur={this.titleTextAreaChangeBlur.bind(this)}
-                           onClick={this.setTitleIsEdit.bind(this, true)}
-                           autoFocus={true}
-                           maxLength={100}
-                           style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}/>
+                 <NameChangeInput
+                   autosize
+                   onBlur={this.titleTextAreaChangeBlur.bind(this)}
+                   onClick={this.setTitleIsEdit.bind(this, true)}
+                   setIsEdit={this.setTitleIsEdit.bind(this, true)}
+                   autoFocus={true}
+                   goldName={card_name}
+                   maxLength={100}
+                   nodeName={'textarea'}
+                   style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}
+                 />
                )}
              </div>
           </div>

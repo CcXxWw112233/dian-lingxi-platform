@@ -94,17 +94,19 @@ export default class TaskItem extends React.Component {
   inputEditOk(e) {
     this.setState({
       isInEditAdd: false,
-      inputValue: '',
     })
-    if(!this.state.inputValue) {
+    const { inputValue } = this.state
+    const { itemValue = {} } = this.props
+    const { id, name } = itemValue
+    if(!this.state.inputValue || name == inputValue) {
       return false
     }
-  //  caozuo props
-    const { itemValue = {} } = this.props
-    const { id } = itemValue
+    this.setState({
+      inputValue: '',
+    })
     this.props.updateGroup({
       group_id: id,
-      name: this.state.inputValue
+      name: inputValue
     })
   }
   inputChange(e) {

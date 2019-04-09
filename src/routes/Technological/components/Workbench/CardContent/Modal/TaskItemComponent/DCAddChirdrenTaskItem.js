@@ -44,12 +44,22 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   editTaskNameComplete(e) {
     this.setIsInEditTaskName()
     const { chirldTaskItemValue } = this.props
-    chirldTaskItemValue['card_name'] = this.state.localChildTaskName
+    const { localChildTaskName } = this.state
+    if(chirldTaskItemValue['card_name'] == localChildTaskName) {
+      return false
+    }
+    if(!localChildTaskName) {
+      this.setState({
+        localChildTaskName: chirldTaskItemValue['card_name']
+      })
+      return false
+    }
+    chirldTaskItemValue['card_name'] = localChildTaskName
 
     const { card_id } = chirldTaskItemValue
     const updateObj = {
       card_id,
-      name: this.state.localChildTaskName
+      name: localChildTaskName
     }
     this.props.updateTask({updateObj})
   }

@@ -67,6 +67,17 @@ export default class Header extends React.Component {
     this.setIsInEditBoardName()
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData
+    const { board_name } = projectDetailInfoData
+    const { localBoardName } = this.state
+    if(localBoardName == board_name) {
+      return false
+    }
+    if(!localBoardName) {
+      this.setState({
+        localBoardName: board_name
+      })
+      return false
+    }
     this.props.updateProject({
       board_id: board_id,
       name: this.state.localBoardName
@@ -78,8 +89,13 @@ export default class Header extends React.Component {
     this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry: true })
   }
   gobackToProject(){
-    window.history.go(-1)
-    // this.props.routingJump('/technological/project')
+    // window.history.go(-1)
+    const defferBoardDetailRoute = localStorage.getItem('defferBoardDetailRoute')
+    if(defferBoardDetailRoute) {
+      this.props.routingJump(defferBoardDetailRoute)
+    } else {
+      this.props.routingJump('/technological/project')
+    }
   }
   //出现confirm-------------start
   setIsSoundsEvrybody(e){
@@ -676,7 +692,7 @@ export default class Header extends React.Component {
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
              {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
              {!isInEditBoardName?(
-               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName || '无'}</span>
              ) : (
                <Input value={localBoardName}
                       className={indexStyle.projectName}
