@@ -329,7 +329,7 @@ class ProjectMenu extends Component {
         [6, '66px']
       ])
       const titleWidthMap = new Map([
-        [0, '154px'],
+        [0, '150px'],
         [1, '140px'],
         [2, '128px'],
         [3, '100px'],
