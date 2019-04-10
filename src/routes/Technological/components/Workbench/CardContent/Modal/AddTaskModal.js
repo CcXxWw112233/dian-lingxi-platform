@@ -72,7 +72,8 @@ class AddTaskModal extends Component {
       start_time: '',
       due_time: '',
       attachment_fileList: [],
-      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : ['']
+      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [''],
+      currentSelectedProjectGroupListItem: {},
     };
   }
   handleDateRangeChange = dateRange => {
@@ -108,11 +109,17 @@ class AddTaskModal extends Component {
     const { addTaskModalVisibleChange } = this.props;
     addTaskModalVisibleChange(false);
   };
+  handleSelectedProjectGroupItem = item => {
+    this.setState({
+      currentSelectedProjectGroupListItem: item
+    })
+  }
   handleSelectedItem = item => {
     const { dispatch, taskType } = this.props;
     this.setState(
       {
-        currentSelectedProject: item
+        currentSelectedProject: item,
+        currentSelectedProjectGroupListItem: {}
       },
       () => {
         dispatch({
@@ -163,7 +170,8 @@ class AddTaskModal extends Component {
       currentSelectedProject,
       currentSelectedProjectMember,
       start_time,
-      due_time
+      due_time,
+      currentSelectedProjectGroupListItem,
     } = this.state;
     const taskObj = {
       add_type: 0,
@@ -172,7 +180,8 @@ class AddTaskModal extends Component {
       type: 0,
       users: currentSelectedProjectMember.reduce((acc, curr) => {
         return acc ? acc + ',' + curr.id : curr.id;
-      }, '')
+      }, ''),
+      list_id: currentSelectedProjectGroupListItem.board_id ? currentSelectedProjectGroupListItem.board_id : ''
     };
     if (taskType === 'MEETIMG_ARRANGEMENT') {
       return Object.assign({}, taskObj, { start_time, due_time, type: 1 });
@@ -372,7 +381,8 @@ class AddTaskModal extends Component {
       start_time,
       due_time,
       attachment_fileList,
-      currentSelectedFileFolder
+      currentSelectedFileFolder,
+      currentSelectedProjectGroupListItem
     } = this.state;
     const {
       projectList,
@@ -385,7 +395,8 @@ class AddTaskModal extends Component {
         }
       },
       modalTitle,
-      taskType
+      taskType,
+      projectGroupLists
     } = this.props;
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
     const isHasSelectedProject = () =>
@@ -405,7 +416,13 @@ class AddTaskModal extends Component {
     }
 
     const board_id = currentSelectedProject.board_id;
-
+    const findAndTransProjectGroupList = (projectGroupLists, board_id) => {
+      const isFinded = projectGroupLists.find(item => item.board_id === board_id)
+      if(!isFinded) return []
+      //映射数据，只是为了复用 DropdownSelectWithSearch 组件
+      return isFinded.list_data.map(item => ({board_id: item['list_id'], board_name: item['list_name']}))
+    }
+    const currentSelectedProjectGroupList = findAndTransProjectGroupList(projectGroupLists, board_id)
     const folderOptions = this.formatFolderTreeData(
       currentSelectedProjectFileFolderList
     );
@@ -517,12 +534,28 @@ class AddTaskModal extends Component {
       >
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
+            <div className={styles.addTaskModalSelectProject_and_groupList}>
             <DropdownSelectWithSearch
               list={filteredNoThatTypeProject}
               initSearchTitle="选择项目"
               selectedItem={currentSelectedProject}
               handleSelectedItem={this.handleSelectedItem}
             />
+            <div className={styles.groupList__wrapper}>
+            {(taskType === 'RESPONSIBLE_TASK' || taskType === 'MEETIMG_ARRANGEMENT') && (
+              <DropdownSelectWithSearch
+              list={currentSelectedProjectGroupList}
+              initSearchTitle="任务分组"
+              selectedItem={currentSelectedProjectGroupListItem}
+              handleSelectedItem={this.handleSelectedProjectGroupItem}
+              isShowIcon={false}
+              isSearch={false}
+              isCanCreateNew={false}
+              isProjectGroupMode={true}
+            />
+            )}
+            </div>
+            </div>
             {taskType === 'MEETIMG_ARRANGEMENT' && (
               <DateRangePicker
                 handleDateRangeChange={this.handleDateRangeChange}

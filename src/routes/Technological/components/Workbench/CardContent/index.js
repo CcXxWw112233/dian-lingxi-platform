@@ -34,6 +34,7 @@ import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
 import { connect } from 'dva';
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
+import {getProjectGoupList} from './../../../../../services/technological/task'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
@@ -63,7 +64,8 @@ class CardContent extends React.Component {
     addMeetingModalVisible: false,
     uploadFileModalVisible: false,
     addProcessModalVisible: false,
-    newTask: {}
+    newTask: {},
+    projectGroupLists:[]
   };
   componentWillMount() {
     const { CardContentType, boxId } = this.props;
@@ -207,6 +209,17 @@ class CardContent extends React.Component {
       previewProccessModalVisibile: false
     });
   }
+  async getProjectGoupLists() {
+    const res = await getProjectGoupList()
+    const isResOk = res => res && res.code === '0'
+    if(!isResOk(res)) {
+      message.error('获取项目分组信息失败')
+      return
+    }
+    return await this.setState({
+      projectGroupLists: res.data
+    })
+  }
   async setPreviewProccessModalVisibile(id) {
     let flowID = this.props.model.datas.totalId.flow;
     let board_id = this.props.model.datas.totalId.board;
@@ -336,15 +349,20 @@ class CardContent extends React.Component {
             projectId: projectTabCurrentSelectedProject
           }
         })
-      ).then(() =>
+      )
+      .then(() => this.getProjectGoupLists())
+      .then(() =>
         this.setState({
           [visibleValue]: true
         })
       );
     } else {
-      this.setState({
-        [visibleValue]: true
-      });
+      Promise.resolve(this.getProjectGoupLists()).then(() => {
+        this.setState({
+          [visibleValue]: true
+        });
+      })
+
     }
   };
   addTaskModalVisibleChange = flag => {
@@ -445,7 +463,8 @@ class CardContent extends React.Component {
       addTaskModalVisible,
       addMeetingModalVisible,
       uploadFileModalVisible,
-      addProcessModalVisible
+      addProcessModalVisible,
+      projectGroupLists
     } = this.state;
     const filterItem = CardContentType => {
       let contanner = <div />;
@@ -766,6 +785,7 @@ class CardContent extends React.Component {
             projectList={projectList}
             addTaskModalVisible={addTaskModalVisible}
             addTaskModalVisibleChange={this.addTaskModalVisibleChange}
+            projectGroupLists={projectGroupLists}
           />
         )}
         {addMeetingModalVisible && (
@@ -780,6 +800,7 @@ class CardContent extends React.Component {
             projectList={projectList}
             addTaskModalVisible={addMeetingModalVisible}
             addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
+            projectGroupLists={projectGroupLists}
           />
         )}
         {uploadFileModalVisible && (
