@@ -10,7 +10,7 @@ const TopContent = (props) => {
         <img src={logoImg}/>
       </div>
       <div className={indexStyles.productName}>{text}{productName?(<span style={{marginLeft: 10}}>{productName}</span>):('')}</div>
-      {!hidenDescription ? (<div className={indexStyles.description} >投资建设领域的全链条服务商</div>) : (
+      {!hidenDescription ? (<div className={indexStyles.description} >连接共生，协同共享</div>) : (
         <div style={{ marginBottom: 36}}></div>
       )}
     </div>

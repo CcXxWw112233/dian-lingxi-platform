@@ -43,6 +43,12 @@ const Routers = function ({ history, app }) {
       case '/registerSuccess':
         document.title = '灵犀-注册成功'
         break
+      case '/agreement/service':
+        document.title = '灵犀-服务协议'
+        break
+      case '/agreement/privacy':
+        document.title = '灵犀-隐私协议'
+        break
       case '/resetPassword':
         document.title = '灵犀-重置密码'
         break
@@ -94,6 +100,14 @@ const Routers = function ({ history, app }) {
       models: () => [import('./models/initRouteRedirect')],
       component: () => import('./routes/InitRouteRedirect/index'),
     }, {
+      path: '/agreement/service',
+      models: () => [import('./models/agreement')],
+      component: () => import('./routes/Agreement/service')
+    },{
+      path: '/agreement/privacy',
+      models: () => [import('./models/agreement')],
+      component: () => import('./routes/Agreement/privacy')
+    },{
       path: '/login',
       models: () => [import('./models/login')],
       component: () => import('./routes/Login/'),

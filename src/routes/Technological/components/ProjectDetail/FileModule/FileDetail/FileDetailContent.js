@@ -486,9 +486,9 @@ export default class FileDetailContent extends React.Component {
         case '.psd':
           content = (
             <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe629;</i>
+              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe629;</i>
+                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe627;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
               </div>

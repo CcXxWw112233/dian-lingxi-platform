@@ -20,7 +20,6 @@ export default class Header extends React.Component {
     })
   }
   close() {
-    this.props.getProcessListByType()
     this.props.close()
   }
   render() {
