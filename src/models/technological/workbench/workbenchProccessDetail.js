@@ -19,7 +19,8 @@ import {
   addWorkFlowComment,
   getWorkFlowComment,
   workflowDelete,
-  workflowEnd
+  workflowEnd,
+  deleteWorkFlowComment
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {
@@ -478,7 +479,23 @@ export default modelExtend(workbench, {
       })
       
     },
-
+    * deleteWorkFlowComment({payload}, {select, call, put}) {
+      const { id } = payload
+      let res = yield call(deleteWorkFlowComment, payload)
+      let commentList = yield select(selectProcessCommentList)
+      let r = commentList.reduce((r, c) => {
+        return [
+          ...r,
+          ...(c.id === id?[]:[c])
+        ]
+      },[])
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: r
+        }
+      })
+    },
     * getWorkFlowComment({payload}, {select, call, put}) {
       let res = yield call(getWorkFlowComment, payload)
       console.log('this is workbench_getWorkFlowComment', res)

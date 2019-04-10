@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment.less'
-import {timestampToTimeNormal} from "../../../../../../../../utils/util";
+import {timestampToTimeNormal, judgeTimeDiffer_ten} from "../../../../../../../../utils/util";
 
 const Dragger = Upload.Dragger
 
@@ -47,7 +47,9 @@ export default class CommentListItem extends React.Component {
 
     const { closeNormal } = this.state
     const listItem = (value) => {
-      const { full_name, avatar, text, create_time, id } = value
+      const { full_name, avatar, text, create_time } = value
+      const pId = value.user_id
+      const { id }  = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
@@ -62,9 +64,9 @@ export default class CommentListItem extends React.Component {
               <div className={CommentStyles.create_time}>
                 {create_time?timestampToTimeNormal(create_time,'', true):''}
               </div>
-              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
+              { pId === id &&  !judgeTimeDiffer_ten(create_time)?<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,value.id)}>
                  删除
-              </div>
+              </div>: ''}
             </div>
           </div>
         </div>

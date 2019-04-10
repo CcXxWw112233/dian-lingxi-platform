@@ -22,7 +22,8 @@ import {
   addWorkFlowComment,
   getWorkFlowComment,
   workflowDelete,
-  workflowEnd
+  workflowEnd,
+  deleteWorkFlowComment,
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {
@@ -35,7 +36,8 @@ import {
   selectNode_amount,
   selectProjectProcessCommentList,
   selectProcessInfo,
-  selectCurrentProcessCompletedStep
+  selectCurrentProcessCompletedStep,
+  selectProjectDetailProcessCommentList
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -623,7 +625,23 @@ export default modelExtend(projectDetail, {
           }
         })
       },
-
+    * deleteWorkFlowComment({payload}, {select, call, put}) {
+      const { id } = payload
+      let res = yield call(deleteWorkFlowComment, payload)
+      let commentList = yield select(selectProjectDetailProcessCommentList)
+      let r = commentList.reduce((r, c) => {
+        return [
+          ...r,
+          ...(c.id === id?[]:[c])
+        ]
+      },[])
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: r
+        }
+      })
+    },
     * workflowDelete({payload}, {select, call, put}) {
       let res = yield call(workflowDelete, payload)
       console.log('this is workflowDelete:', res)

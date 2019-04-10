@@ -9,7 +9,7 @@ import CommentListItem2 from './Comment/CommentListItem2'
 import {getRelations, JoinRelation} from "../../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
-import { timestampToHM, judgeTimeDiffer } from '../../../../../../../utils/util'
+import { timestampToHM, judgeTimeDiffer, judgeTimeDiffer_ten } from '../../../../../../../utils/util'
 import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from '../../../../../../../utils/businessFunction'
 import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT} from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
@@ -357,6 +357,24 @@ export default class FileDetailContent extends React.Component {
       isShowAll: !this.state.isShowAll
     })
   }
+  deleteComment(id, e) {
+    e.stopPropagation()
+    if(location.hash.indexOf('projectDetail')!=-1) {
+      this.props.dispatch({
+        type: 'projectDetailProcess/deleteWorkFlowComment',
+        payload: {
+          id
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'workbenchDetailProcess/deleteWorkFlowComment',
+        payload: {
+          id
+        }
+      })
+    }
+  }
   render() {
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
@@ -386,11 +404,13 @@ export default class FileDetailContent extends React.Component {
       let messageContain = (<div></div>)
       let pin = action.split('.')
       let nodeName = `${pin[1]}_${pin[2]}`
+      const { id } = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
       switch (action) {
         case 'board.flow.tpl.add.or.delete':
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
         case 'board.flow.comment.add':
+          let juge = judgeTimeDiffer_ten(messageValue.create_time)
           messageContain = (
             <div>
               <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '20px'}}>
@@ -399,6 +419,7 @@ export default class FileDetailContent extends React.Component {
                   <div style={{
                     height:'30px',
                     fontSize:'12px',
+
                     fontFamily:'PingFangSC-Regular',
                     fontWeight: 400,
                     color:'rgba(140,140,140,1)',
@@ -410,8 +431,9 @@ export default class FileDetailContent extends React.Component {
                 </div>
                 <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
               </div>
-              <div style={{margin: '15px 0 15px 55px' ,color: '#595959', fontSize: '14px',fontFamily:'PingFangSC-Regular'}}>
-                {messageValue.text}
+              <div style={{display: 'flex', justifyContent: 'space-between', margin: '15px 0 15px 55px' ,color: '#595959', fontSize: '14px',fontFamily:'PingFangSC-Regular'}}>
+                <div>{messageValue.text}</div>
+                {id === messageValue.creator.id && !juge?<div onClick={this.deleteComment.bind(this, messageValue.id)} style={{color: 'red', cursor: 'pointer'}}>删除</div>:''}
               </div>
             </div>
           )
@@ -420,7 +442,7 @@ export default class FileDetailContent extends React.Component {
           messageContain=(
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
               <div>
-                <div ></div>
+                <div></div>
                 <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
               </div>
               <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>

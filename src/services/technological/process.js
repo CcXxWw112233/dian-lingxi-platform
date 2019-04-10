@@ -1,6 +1,7 @@
 //文件列表包括文件夹
 import {REQUEST_DOMAIN_FLOWS} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
+import { func } from "prop-types";
 
 //获取流程模板列表
 export async function getProcessTemplateList(params) {
@@ -171,3 +172,11 @@ export async function workflowDelete(data) {
     data
   })
 } 
+//删除流程评论 
+export async function deleteWorkFlowComment(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment/${data.id}`,
+    method: 'DELETE',
+    data
+  })
+}

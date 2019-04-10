@@ -85,6 +85,24 @@ export const judgeTimeDiffer = (time) => {
     )
   }
 }
+//判断评论是否超过十分钟
+export const judgeTimeDiffer_ten = (time) => {
+  let start = timestampToTimeNormal2(time)
+  let end = timestampToTimeNormal2(Date.parse(new Date()));
+  let startTime =new Date(start.replace("//-/g", "//"));
+  let endTime = new Date(end.replace("//-/g", "//"));
+  // console.log(startTime, endTime)
+  let res = parseInt((endTime.getTime() - startTime.getTime()) / 1000 / 60);
+  if(res > 10){
+    return (
+      true
+    )
+  } else {
+    return (
+      false
+    )
+  }
+}
 //动态消息列表时间处理
 export const newsDynamicHandleTime = (timeStamp) => {
   if(!timeStamp) {
