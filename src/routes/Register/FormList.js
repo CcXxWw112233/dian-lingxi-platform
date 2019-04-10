@@ -2,6 +2,7 @@
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import React from 'react'
 import indexStyle from './index.less'
+import { NODE_ENV } from '../../globalset/js/constant'
 import VerificationCode from '../../components/VerificationCode'
 import { validateTel, validateEmail, validatePassword } from '../../utils/verify'
 import {message} from "antd";
@@ -164,7 +165,10 @@ class FormList extends React.Component {
     if(name && validateEmail(email) && validateTel(mobile) && verifycode && validatePassword(password) && checkBoxChecked) {
       submitButtonDisabledLocal = false
     }
-
+    // console.log(NODE_ENV)
+    // debugger
+    const hrefService = NODE_ENV == 'development'?'http://localhost/#/agreement/service':'http://www.new-di.com/#/agreement/service',
+    hrefPrivacy = NODE_ENV == 'development'?'http://localhost/#/agreement/privacy':'http://www.new-di.com/#/agreement/privacy'
     return (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 姓名 */}
@@ -240,7 +244,7 @@ class FormList extends React.Component {
             checked={this.state.checkBoxChecked}
             onChange={this.checkBoxOnChange}
           />
-           <span style={{color: '#000', fontSize: 14}}>同意 灵犀《<a href='http://localhost/#/agreement/service' target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 服务协议</a> <a href='http://localhost/#/agreement/privacy' target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 隐私协议</a>》</span>
+           <span style={{color: '#000', fontSize: 14}}>同意 灵犀《<a href={hrefService} target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 服务协议</a> <a href={hrefPrivacy} target='view_window' style={{color: '#1890FF', cursor: 'pointer'}}> 隐私协议</a>》</span>
         </div>
         {/* 确认 */}
         <FormItem style={{marginTop: 24}}>
