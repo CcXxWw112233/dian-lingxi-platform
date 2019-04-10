@@ -505,7 +505,8 @@ export default modelExtend(projectDetail, {
           yield put({
             type: 'filePreview',
             payload: {
-              id: res.data[0].file_resource_id
+              id: res.data[0].file_resource_id,
+              file_id: res.data[0].file_id
             }
           })
           yield put({

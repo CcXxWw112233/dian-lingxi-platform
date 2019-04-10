@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../utils/util";
 import Comment from './Comment/Comment'
@@ -28,12 +28,12 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       imgLoaded: false
     })
-    this.props.updateDatasFile({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+    this.props.updateDatasFile({filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
     this.props.filePreview({id: file_resource_id, file_id})
     this.setState({
       imgLoaded: false,
       editMode: true,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 },
+      currentRect: { x: 0, y: 0, width: 0, height: 0 },
       isInAdding: false,
       isInEdditOperate: false,
       mentionFocus: false,
@@ -327,7 +327,7 @@ export default class FileDetailContent extends React.Component {
   closeFile() {
     const { datas: { breadcrumbList = [] } }= this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', filePreviewCurrentVersionKey: 0})
+    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', })
   }
   zoomFrame() {
     const { datas: { isExpandFrame = false } }= this.props.model
@@ -406,29 +406,37 @@ export default class FileDetailContent extends React.Component {
         break
     }
   }
-  getVersionItemMenuClick(list, e) {
-    const file_id = e.key
-    let file_resource_id = ''
-    for(let val of list) {
-      if(file_id == val['file_id']) {
-        file_resource_id = val['file_resource_id']
+  getVersionItemMenuClick({list, file_id}, e) {
+    const key = e.key
+    switch (key) {
+      case '1':
+        let file_resource_id = ''
+        for(let val of list) {
+          if(file_id == val['file_id']) {
+            file_resource_id = val['file_resource_id']
+            break
+          }
+        }
+        this.setState({
+          imgLoaded: false
+        })
+        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+        this.props.filePreview({id: file_resource_id, file_id})
+        this.setState({
+          imgLoaded: false,
+          editMode: true,
+          currentRect: { x: 0, y: 0, width: 0, height: 0 },
+          isInAdding: false,
+          isInEdditOperate: false,
+          mentionFocus: false,
+        })
         break
-      }
+      case '2':
+        break
+      default:
+        break
     }
-    this.setState({
-      imgLoaded: false
-    })
-    this.props.updateDatasFile({filePreviewCurrentVersionKey: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
-    this.props.filePreview({id: file_resource_id, file_id})
-    this.setState({
-      imgLoaded: false,
-      editMode: true,
-      currentRect: { x: 0, y: 0, width: 0, height: 0 },
-      isInAdding: false,
-      isInEdditOperate: false,
-      mentionFocus: false,
-    })
-    debugger
+
   }
 
   handleChangeOnlyReadingShareModalVisible = () => {
@@ -506,7 +514,7 @@ export default class FileDetailContent extends React.Component {
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { projectDetailInfoData={},currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput,filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { projectDetailInfoData={}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewIsRealImage=false } }= this.props.model
     const { board_id } = projectDetailInfoData
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
@@ -712,12 +720,15 @@ export default class FileDetailContent extends React.Component {
         if (file.status === 'uploading') {
 
         }else{
-          // message.destroy()
+          message.destroy()
         }
         if (file.status === 'done') {
           message.success(`上传成功。`);
-          that.props.updateDatasFile({filePreviewCurrentVersionKey: 0})
-          that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          console.log('file', file)
+          if(file.response && file.response.code == '0') {
+            that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
+            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          }
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
           setTimeout(function () {
@@ -746,22 +757,45 @@ export default class FileDetailContent extends React.Component {
     //版本信息列表
     const getVersionItemMenu = (list) => {
       return (
-        <Menu selectable={true} style={{marginTop: -20}} onClick={this.getVersionItemMenuClick.bind(this, list)}>
+        // onClick={this.getVersionItemMenuClick.bind(this, list)}
+        <Menu selectable={true} style={{ width: 400}}>
           {list.map((value, key) => {
             const { file_name, creator, create_time, file_size, file_id } = value
             return (
               <Menu.Item key={file_id} >
-                <span style={{fontWeight: 400, fontSize: 14}}>版本{key + 1}</span>
-                {filePreviewCurrentVersionKey == file_id
-                && (<span style={{display: 'inline-block', color: '#8c8c8c', fontSize: 12, backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6}}>当前</span>)}
+                <div className={indexStyles.versionItemMenu}>
+                  <div style={{fontWeight: 400, fontSize: 14}} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
+                  <div>上传于</div>
+                  <div>{create_time}</div>
+                    {filePreviewCurrentFileId == file_id && (
+                      <div className={`${indexStyles.status}`}>当前</div>)}
+                   <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
+                    <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
+                      <Dropdown overlay={versionItemMenu(list, file_id)}>
+                        <span>&#xe7fd;</span>
+                      </Dropdown>
+                    </div>
+
+                </div>
               </Menu.Item>
             )
           })}
-          <Menu.Item key="10" >
-            <div className={indexStyles.itemDiv} style={{ color: color_4}}>
-              <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
-            </div>
+          <Menu.Item key="updateVersion" >
+            <Upload {...uploadProps} showUploadList={false}>
+              <div style={{ color: color_4, textAlign: 'center', width: 368,}}>
+                <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
+              </div>
+            </Upload>
           </Menu.Item>
+        </Menu>
+      )
+    }
+
+    const versionItemMenu = (list, file_id) => {
+      return (
+        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id})}>
+          <Menu.Item key="1">设为当前</Menu.Item>
+          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
         </Menu>
       )
     }
@@ -776,11 +810,14 @@ export default class FileDetailContent extends React.Component {
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>
-            <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
-              <Button style={{height: 24, marginLeft: 14}}>
-                <Icon type="upload" />版本信息
-              </Button>
-            </Dropdown>
+            {seeFileInput === 'fileModule' && (
+              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
+                <Button style={{height: 24, marginLeft: 14}}>
+                  <Icon type="upload" />版本信息
+                </Button>
+              </Dropdown>
+            )}
+
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
               <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
                 <Icon type="download" />下载
