@@ -12,6 +12,8 @@ import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
 import VisitControl from './../VisitControl/index'
+import UpdateLog from './UpdateLog/index'
+
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -868,7 +870,8 @@ const Workbench = (props) => {
   let isPropVisitControl = false
   const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
-    <div>
+    <div className={indexStyles.wrapper}>
+      <UpdateLog />
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <ProjectListBar />
@@ -880,9 +883,9 @@ const Workbench = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail,projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
+function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
   const modelObj = {
-    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'],...projectDetailProcess['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
+    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...projectDetailProcess['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
   }
   return { modal, model: modelObj, loading }
 }
