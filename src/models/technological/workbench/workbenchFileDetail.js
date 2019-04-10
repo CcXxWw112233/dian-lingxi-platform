@@ -256,7 +256,6 @@ export default {
     * getFileType({payload}, {select, call, put}) {
       let { file_id } = payload
       let res = yield call(fileInfoByUrl, {id: file_id})
-      debugger
       yield put({
         type: 'updateDatas',
         payload: {
