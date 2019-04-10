@@ -4,33 +4,33 @@ import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import {getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy, fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile, getFolderList, addNewFolder, updateFolder, } from '../../../services/technological/file'
-import { 
-  getCardDetail, 
-  removeTaskExecutor, 
-  deleteTaskFile, 
-  deleteTaskGroup, 
-  updateTaskGroup, 
-  getProjectGoupList, 
-  addTaskGroup, 
-  addCardNewComment, 
-  getCardCommentList, 
-  getTaskGroupList, 
-  addTask, 
-  updateTask, 
-  deleteTask, 
-  archivedTask, 
-  changeTaskType, 
-  addChirldTask, 
-  addTaskExecutor, 
-  completeTask, 
-  addTaskTag, 
-  removeTaskTag, 
-  removeProjectMenbers, 
-  getBoardTagList, 
-  updateBoardTag, 
-  toTopBoardTag, 
-  deleteBoardTag, 
-  deleteCardNewComment, 
+import {
+  getCardDetail,
+  removeTaskExecutor,
+  deleteTaskFile,
+  deleteTaskGroup,
+  updateTaskGroup,
+  getProjectGoupList,
+  addTaskGroup,
+  addCardNewComment,
+  getCardCommentList,
+  getTaskGroupList,
+  addTask,
+  updateTask,
+  deleteTask,
+  archivedTask,
+  changeTaskType,
+  addChirldTask,
+  addTaskExecutor,
+  completeTask,
+  addTaskTag,
+  removeTaskTag,
+  removeProjectMenbers,
+  getBoardTagList,
+  updateBoardTag,
+  toTopBoardTag,
+  deleteBoardTag,
+  deleteCardNewComment,
   getCardCommentListAll
 } from "../../../services/technological/task";
 import Cookies from "js-cookie";
@@ -307,12 +307,15 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * completeTask({ payload }, { select, call, put }) { //
+    * completeTask({ payload }, { select, call, put }) {
       const { is_realize } = payload
       const board_id = yield select(workbench_selectBoardId)
 
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
+          yield put({
+            type: 'workbench/getResponsibleTaskList'
+          })
           yield put({
             type: 'projectDetailInfo',
             payload: {
@@ -530,7 +533,7 @@ export default {
     },
 
     //评论--end
-    * getCardCommentListAll({payload} ,{select, call, put}) {
+    * getCardCommentListAll({payload}, {select, call, put}) {
       yield put({
         type: 'updateDatas',
         payload: {

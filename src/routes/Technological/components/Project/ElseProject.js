@@ -304,7 +304,7 @@ class ElseProject extends React.Component{
       );
     }
     const manImageDropdown = (props) =>{
-      const { avatar, email, full_name, mobile, user_id, user_name, we_chat = '无' } = props
+      const { avatar, email, name: full_name, mobile, role_name, user_id, user_name, we_chat = '无' } = props
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
       }
@@ -330,13 +330,13 @@ class ElseProject extends React.Component{
             </div>
           </div>
           <div className={detailInfoStyle.manImageDropdown_middle}>
-            <div className={detailInfoStyle.detailItem}>
+            {/* <div className={detailInfoStyle.detailItem}>
               <div>姓名：</div>
               <div>{full_name}</div>
-            </div>
+            </div> */}
             <div className={detailInfoStyle.detailItem}>
-              <div>组织：</div>
-              <div>无</div>
+              <div>职位：</div>
+              <div>{role_name ? role_name : '无'}</div>
             </div>
             <div className={detailInfoStyle.detailItem}>
               <div>邮箱：</div>

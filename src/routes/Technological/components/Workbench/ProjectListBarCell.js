@@ -49,7 +49,7 @@ const ProjectListBarCell = ({
       className={projectListBarCellClass}
       onClick={(e) => handleClickedCell_(e, board_id)}
     >
-      <Tooltip title={org_name ? board_name + " #" + org_name : board_name}>
+      <Tooltip title={org_name ? board_name + " #" + org_name : board_name} placement='topLeft'>
         <a className={styles.projectListBarCellContent}>
           <span>{board_name}</span>
           {org_name && `#${org_name}`}
