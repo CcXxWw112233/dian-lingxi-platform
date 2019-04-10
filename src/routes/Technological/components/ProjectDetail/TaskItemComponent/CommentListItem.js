@@ -34,7 +34,7 @@ export default class CommentListItem extends React.Component {
   }
   render() {
 
-    const { datas: { cardCommentList = [] } } = this.props.model
+    const { datas: { cardCommentList = [], cardCommentAll } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -215,7 +215,7 @@ export default class CommentListItem extends React.Component {
       <div style={{overflowY: 'auto'}} className={CommentStyles.commentListItemBox}>
         <div>
           {
-            this.props.model.datas.cardCommentAll.map((item, key) => {
+            cardCommentAll.map((item, key) => {
               if(!this.state.isShowAll) {
                 if(key < 4){
                   return filterIssues(item)

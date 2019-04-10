@@ -71,30 +71,36 @@ class DrawContent extends React.Component {
     this.setState({
       brafitEditHtml: description
     })
-
   }
 
   componentWillReceiveProps(nextProps) {
     const { datas: { drawContent = {}} } = nextProps.model
+    const { attachment_fileList = []} = this.state
     let { description, attachment_data = [] } = drawContent
     this.setState({
       brafitEditHtml: description
     })
-    // 任务附件
-    if(this.initSet) { //只可以设置一次
-      this.initSet = false
-      let attachment_fileList = []
-      for(let i = 0; i < attachment_data.length; i++) {
-        if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
-          attachment_fileList.push(attachment_data[i])
-          // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
-          attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
-        }
+
+    this.initSetAttachmentFileList(nextProps)
+
+  }
+  componentWillUnmount(){
+    this.initSet = true
+  }
+  initSetAttachmentFileList(props) {
+    const { datas: { drawContent = {}} } = props.model
+    let { attachment_data = [] } = drawContent
+    let attachment_fileList = []
+    for(let i = 0; i < attachment_data.length; i++) {
+      if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
+        attachment_fileList.push(attachment_data[i])
+        // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+        attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
       }
-      this.setState({
-        attachment_fileList
-      })
     }
+    this.setState({
+      attachment_fileList
+    })
   }
 
   //firstLine -------start
@@ -876,7 +882,6 @@ class DrawContent extends React.Component {
       name: 'file',
       fileList: attachment_fileList,
       withCredentials: true,
-      showUploadList: true,
       action: `${REQUEST_DOMAIN_BOARD}/card/attachment/upload`,
       multiple: true,
       data: {
@@ -886,6 +891,7 @@ class DrawContent extends React.Component {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
       },
+      showUploadList: true,
       beforeUpload(e) {
         if(e.size == 0) {
           message.error(`不能上传空文件`)
@@ -914,13 +920,16 @@ class DrawContent extends React.Component {
             showUploadList: false
           })
         }
-
         that.setState({
           attachment_fileList: fileList
         })
-        drawContent['attachment_data'] = fileList
-        that.props.updateDatas({
-          drawContent
+        const drawContentNew = {...drawContent}
+        drawContentNew['attachment_data'] = fileList
+        that.props.dispatch({
+          type: 'workbenchTaskDetail/updateDatas',
+          payload: {
+            drawContent: drawContentNew
+          }
         })
       },
       onPreview(e, a) {
@@ -932,28 +941,6 @@ class DrawContent extends React.Component {
           openPDF({id: file_id})
           return false
         }
-        // that.setState({
-        //   previewFileType : 'attachment',
-        // })
-        // filePreview({id: file_resource_id}).then((value) => {
-        //   let url = ''
-        //   let isUsable = true
-        //   if(value.code==='0') {
-        //     url = value.data.url
-        //     isUsable = value.data.isUsable
-        //   } else {
-        //     message.warn('文件预览失败')
-        //     return false
-        //   }
-        //   that.setState({
-        //     previewFileSrc: url,
-        //     isUsable: isUsable
-        //   })
-        // }).catch(err => {
-        //   message.warn('文件预览失败')
-        //   return false
-        // })
-        // that.setPreviewFileModalVisibile()
 
         that.props.setPreviewFileModalVisibile()
         that.props.updateFileDatas({

@@ -931,7 +931,7 @@ class DrawContent extends React.Component {
         })
       },
       onChange({ file, fileList, event }) {
-        // console.log(1, file, fileList)
+        console.log('event', file)
         if (file.status === 'done' && file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
