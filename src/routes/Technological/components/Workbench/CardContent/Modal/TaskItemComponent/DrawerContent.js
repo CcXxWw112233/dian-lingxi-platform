@@ -630,6 +630,7 @@ class DrawContent extends React.Component {
   deleteAttachmentFile(attachment_id) {
     const that = this
     const { attachment_fileList } = this.state
+    const { datas: { drawContent = {} }} = this.props.model
     const atta_arr = [...attachment_fileList]
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
@@ -653,6 +654,14 @@ class DrawContent extends React.Component {
               }
               that.setState({
                 attachment_fileList: atta_arr
+              })
+              const drawContentNew = {...drawContent}
+              drawContentNew['attachment_data'] = atta_arr
+              that.props.dispatch({
+                type: 'workbenchTaskDetail/updateDatas',
+                payload: {
+                  drawContent: drawContentNew
+                }
               })
               resolve()
             }
@@ -923,14 +932,16 @@ class DrawContent extends React.Component {
         that.setState({
           attachment_fileList: fileList
         })
-        const drawContentNew = {...drawContent}
-        drawContentNew['attachment_data'] = fileList
-        that.props.dispatch({
-          type: 'workbenchTaskDetail/updateDatas',
-          payload: {
-            drawContent: drawContentNew
-          }
-        })
+        setTimeout(function () {
+          const drawContentNew = {...drawContent}
+          drawContentNew['attachment_data'] = fileList
+          that.props.dispatch({
+            type: 'workbenchTaskDetail/updateDatas',
+            payload: {
+              drawContent: drawContentNew
+            }
+          })
+        }, 3000)
       },
       onPreview(e, a) {
         const file_name = e.name
