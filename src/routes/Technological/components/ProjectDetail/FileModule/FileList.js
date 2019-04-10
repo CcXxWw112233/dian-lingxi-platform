@@ -297,7 +297,7 @@ export default class FileList extends React.Component {
 
   render() {
     const { datas = {} } = this.props.model
-    const { selectedRowKeys, fileList } = datas
+    const { selectedRowKeys, fileList = [] } = datas
     const { nameSort, sizeSort, creatorSort, } = this.state;
 
     const operationMenu = (data) => {
