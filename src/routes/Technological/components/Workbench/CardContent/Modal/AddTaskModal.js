@@ -219,16 +219,40 @@ class AddTaskModal extends Component {
     this.addNewMeeting(paramObj);
     this.uploadNewFile();
   };
+
+  getNewUploadedFileIdList = () => {
+    const {attachment_fileList} = this.state
+    const {dispatch} = this.props
+    const collectFileId = (arr = []) => {
+              //筛选出上传成功的文件
+      return arr.filter(file => file.response && file.response.code === '0' && file.response.data.id).map(file => file.response.data.id)
+    }
+    dispatch({
+      type: 'workbench/updateUploadedFileNotificationIdList',
+      payload: {
+        idsList: collectFileId(attachment_fileList)
+      }
+    })
+    console.log(attachment_fileList, 'attachment_fileList')
+  }
+
   uploadNewFile = () => {
     const { taskType, dispatch } = this.props;
     if (taskType !== 'MY_DOCUMENT') {
       return;
     }
+
+    //更新文件列表
     Promise.resolve(
       dispatch({
         type: 'workbench/getUploadedFileList'
       })
-    ).then(() => {
+    )
+    .then(() => {
+      //获取刚才上传成功的文件的idList
+      this.getNewUploadedFileIdList()
+    })
+    .then(() => {
       this.handleAddTaskModalCancel();
     });
   };
@@ -416,7 +440,7 @@ class AddTaskModal extends Component {
     }
 
     const board_id = currentSelectedProject.board_id;
-    const findAndTransProjectGroupList = (projectGroupLists, board_id) => {
+    const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
       const isFinded = projectGroupLists.find(item => item.board_id === board_id)
       if(!isFinded) return []
       //映射数据，只是为了复用 DropdownSelectWithSearch 组件
@@ -457,6 +481,7 @@ class AddTaskModal extends Component {
           return false;
         }
         if (file.status === 'done' && file.response.code === '0') {
+
         } else if (
           file.status === 'error' ||
           (file.response && file.response.code !== '0')

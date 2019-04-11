@@ -710,7 +710,7 @@ class DrawContent extends React.Component {
       user_ids: users.reduce((acc, curr) => {
         if(!curr || !curr.user_id) return acc
         return acc ? acc + ',' + curr.user_id : curr.user_id
-      } ,'')
+      }, '')
     }
     createMeeting(body).then(res => {
       if (res.code === "0") {
@@ -1288,6 +1288,7 @@ class DrawContent extends React.Component {
             </Upload>
             <div className={DrawerContentStyles.attach_file_list}>
               {attachment_fileList.map((value, key) => {
+                if(!value) return null
                 const { name, lastModified, create_time, } = value
                 return(
                   <div className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>

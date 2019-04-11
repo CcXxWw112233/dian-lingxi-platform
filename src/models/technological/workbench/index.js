@@ -57,6 +57,7 @@ export default modelExtend(technological, {
               uploadedFileList: [],
               backLogProcessList: [],
               meetingLsit: [],
+              uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
             }
           }),
           dispatch({
@@ -728,5 +729,12 @@ export default modelExtend(technological, {
         datas: {...state.datas, projectList: [shouldPrepositionProject, ...othersProjects]}
       }
     },
+    updateUploadedFileNotificationIdList(state, action) {
+      const {idsList} = action.payload
+      return {
+        ...state,
+        datas: {...state.datas, uploadedFileNotificationIdList: idsList}
+      }
+    }
   },
 });

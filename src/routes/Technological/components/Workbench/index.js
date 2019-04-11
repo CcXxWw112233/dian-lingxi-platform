@@ -12,6 +12,8 @@ import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
 import VisitControl from './../VisitControl/index'
+import UpdateLog from './UpdateLog/index'
+
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -728,7 +730,8 @@ const Workbench = (props) => {
   let isPropVisitControl = false
   const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
-    <div>
+    <div className={indexStyles.wrapper}>
+      <UpdateLog />
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <ProjectListBar />
