@@ -76,10 +76,6 @@ export default class FileItem extends React.Component {
       return false
     }
 
-    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-      openPDF({id: id})
-      return false
-    }
     this.props.dispatch({
       type: 'workbenchFileDetail/getCardCommentListAll',
       payload: {
@@ -94,21 +90,32 @@ export default class FileItem extends React.Component {
     })
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
-      seeFileInput: 'file',
+      seeFileInput: 'fileModule',
       board_id,
       filePreviewCurrentId: file_resource_id,
       currentParrentDirectoryId: folder_id,
       filePreviewCurrentFileId: id,
-      filePreviewCurrentVersionId: file_id
+      filePreviewCurrentVersionId: file_id,
+      pdfDownLoadSrc: '',
     })
-    this.props.filePreview({id: file_resource_id, file_id: id})
+
+    if(getSubfixName(file_name) == '.pdf') {
+      this.props.dispatch({
+        type: 'workbenchFileDetail/getFilePDFInfo',
+        payload: {
+          id
+        }
+      })
+    } else {
+      this.props.filePreview({id: file_resource_id, file_id: id})
+    }
     this.props.fileVersionist({
       version_id: file_id,
       isNeedPreviewFile: false,
     })
     this.props.updatePublicDatas({ board_id })
     this.props.getBoardMembers({id: board_id})
-    
+
   }
   render() {
     const { itemValue = {} } = this.props

@@ -7,13 +7,14 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FILE_EDIT,
   REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD,
-  UPLOAD_FILE_SIZE
+  UPLOAD_FILE_SIZE, ORGANIZATION
 } from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
-import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 import {withRouter} from 'react-router-dom'
 import ShareAndInvite from './../../../ShareAndInvite/index'
 import {createShareLink, modifOrStopShareLink} from './../../../../../../services/technological/workbench'
+import {color_4} from "../../../../../../globalset/js/styles";
 
 class Header extends React.Component {
   state = {
@@ -31,17 +32,22 @@ class Header extends React.Component {
       isExpandFrame: !isExpandFrame,
     })
   }
-  fileDownload(filePreviewCurrentId) {
+  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.fileDownload({ids: filePreviewCurrentId})
+    //如果时pdf
+    if(pdfDownLoadSrc) {
+      window.open(pdfDownLoadSrc)
+    }else {
+      this.props.fileDownload({ids: filePreviewCurrentId})
+    }
   }
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData= {}, breadcrumbList = [] } } = this.props.model
+    const { datas: { projectDetailInfoData= {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
@@ -52,7 +58,12 @@ class Header extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_resource_id})
+        //如果时pdf
+        if(pdfDownLoadSrc) {
+          window.open(pdfDownLoadSrc)
+        }else {
+          this.props.fileDownload({ids: file_resource_id})
+        }
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
@@ -164,7 +175,7 @@ class Header extends React.Component {
   }
   render() {
     const that = this
-    const { datas: { seeFileInput, isExpandFrame = false, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId, projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
+    const { datas: { seeFileInput, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey, isExpandFrame = false, pdfDownLoadSrc, filePreviewCurrentId, filePreviewCurrentFileId, filePreviewCurrentVersionId, currentParrentDirectoryId, projectDetailInfoData = {}} }= this.props.model //isExpandFrame缩放iframe标志
     const { board_id, is_shared} = projectDetailInfoData
     const {onlyReadingShareModalVisible, onlyReadingShareData} = this.state
     //文件版本更新
@@ -230,6 +241,28 @@ class Header extends React.Component {
         </Menu>
       )
     }
+    //版本信息列表
+    const getVersionItemMenu = (list) => {
+      return (
+        <Menu selectable={true} style={{marginTop: -20}} >
+          {list.map((value, key) => {
+            const { file_name, creator, create_time, file_size, file_id } = value
+            return (
+              <Menu.Item key={file_id} >
+                {file_name}
+                {filePreviewCurrentVersionKey == key
+                && (<span style={{display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6}}>当前</span>)}
+              </Menu.Item>
+            )
+          })}
+          <Menu.Item key="10" >
+            <div className={indexStyles.itemDiv} style={{ color: color_4}}>
+              <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+            </div>
+          </Menu.Item>
+        </Menu>
+      )
+    }
 
     return (
       <div className={indexStyles.fileDetailHead}>
@@ -240,15 +273,20 @@ class Header extends React.Component {
           </div>
 
         <div className={indexStyles.fileDetailHeadRight}>
-          {seeFileInput === 'fileModule'? (
-            <Upload {...uploadProps} showUploadList={false}>
-              <Button style={{height: 24, marginLeft: 14}}>
-                <Icon type="upload" />更新版本
-              </Button>
-            </Upload>
-          ):('')}
+          <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
+            <Button style={{height: 24, marginLeft: 14}}>
+              <Icon type="upload" />版本信息
+            </Button>
+          </Dropdown>
+          {/*{seeFileInput === 'fileModule'? (*/}
+            {/*<Upload {...uploadProps} showUploadList={false}>*/}
+              {/*<Button style={{height: 24, marginLeft: 14}}>*/}
+                {/*<Icon type="upload" />更新版本*/}
+              {/*</Button>*/}
+            {/*</Upload>*/}
+          {/*):('')}*/}
           {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-            <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, filePreviewCurrentId)}>
+            <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
               <Icon type="download" />下载
             </Button>
           )}

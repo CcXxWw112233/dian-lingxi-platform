@@ -31,8 +31,7 @@ let appsSelectKey = null
 // appsSelectKey 项目详情里面应用的app标志
 export default {
   namespace: 'projectDetail',
-  state: [{
-  }],
+  state: {},
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {

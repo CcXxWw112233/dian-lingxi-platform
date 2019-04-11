@@ -19,10 +19,6 @@ const getEffectOrReducerByName_3 = name => `newsDynamic/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
-
-const getEffectOrReducerByName_7 = name => `projectDetail/${name}`
-const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
-const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
 const getEffectOrReducerByNameProcess = name => `workbenchDetailProcess/${name}`
 
 
@@ -596,142 +592,6 @@ const Workbench = (props) => {
       })
     },
   }
-  const HeaderListProps = {
-    modal,
-    model,
-    addProjectApp(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('addProjectApp'),
-        payload: data
-      })
-    },
-    getTaskGroupList(data){
-      dispatch({
-        type: getEffectOrReducerByNameTask('getTaskGroupList'),
-        payload: data
-      })
-    },
-    collectionProject(id) {
-      dispatch({
-        type: getEffectOrReducerByName_7('collectionProject'),
-        payload: {
-          id
-        }
-      })
-    },
-    cancelCollection(id) {
-      dispatch({
-        type: getEffectOrReducerByName_7('cancelCollection'),
-        payload: {
-          id
-        }
-      })
-    },
-    quitProject(data){
-      dispatch({
-        type: getEffectOrReducerByName_7('quitProject'),
-        payload: data
-      })
-    },
-    deleteProject(id) {
-      dispatch({
-        type: getEffectOrReducerByName_7('deleteProject'),
-        payload: {
-          id,
-          isJump: true
-        }
-      })
-    },
-    archivedProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('archivedProject'),
-        payload: data
-      })
-    },
-    addMenbersInProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName('addMenbersInProject'),
-        payload: data
-      })
-    },
-    appsSelect(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('appsSelect'),
-        payload: data
-      })
-    },
-    getProcessInfo(data){
-      dispatch({
-        type: getEffectOrReducerByNameProcess('getProcessInfo'),
-        payload: data
-      })
-    },
-    changeFlowIdToUrl(data) {
-      dispatch({
-        type: getEffectOrReducerByNameProcess('changeFlowIdToUrl'),
-        payload: data
-      })
-    },
-    setMemberRoleInProject(data){
-      dispatch({
-        type: getEffectOrReducerByName_7('setMemberRoleInProject'),
-        payload: data
-      })
-    },
-    getProjectRoles(data){
-      dispatch({
-        type: getEffectOrReducerByName_7('getProjectRoles'),
-        payload: data
-      })
-    },
-    updateProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('updateProject'),
-        payload: data
-      })
-    },
-  }
-  const DetailInfoProps = {
-    modal,
-    model,
-    showModal() {
-      dispatch({ type: 'modal/showModal' })
-    },
-    hideModal() {
-      dispatch({ type: 'modal/hideModal' })
-    },
-    removeMenbers(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('removeMenbers'),
-        payload: data
-      })
-    },
-    updateProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName_7('updateProject'),
-        payload: data
-      })
-    },
-    addMenbersInProject(data) {
-      dispatch({
-        type: getEffectOrReducerByName('addMenbersInProject'),
-        payload: data
-      })
-      this.hideModal()
-    },
-    setMemberRoleInProject(data){
-      dispatch({
-        type: getEffectOrReducerByName_7('setMemberRoleInProject'),
-        payload: data
-      })
-    },
-    getProjectRoles(data){
-      dispatch({
-        type: getEffectOrReducerByName_7('getProjectRoles'),
-        payload: data
-      })
-    }
-  }
   const ProcessProps = {
     modal,
     model,
@@ -822,13 +682,13 @@ const Workbench = (props) => {
   }
   const updateDatasTask = (payload) => {
     dispatch({
-      type: getEffectOrReducerByNameTask('updateDatas'),
+      type: getEffectOrReducerByName_4('updateDatas'),
       payload: payload
     })
   }
   const updateDatasFile = (payload) => {
     dispatch({
-      type: getEffectOrReducerByNameFile('updateDatas'),
+      type: getEffectOrReducerByName_5('updateDatas'),
       payload: payload
     })
   }
@@ -874,15 +734,15 @@ const Workbench = (props) => {
       <ProjectListBar />
       {/* <VisitControl isPropVisitControl={isPropVisitControl} handleVisitControlChange={handleVisitControlChange} /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...workflowComments} {...props} {...ProcessProps} {...HeaderListProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
+       <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
     </div>
   )
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail,projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
+function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
   const modelObj = {
-    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'],...projectDetailProcess['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
+    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
   }
   return { modal, model: modelObj, loading }
 }
