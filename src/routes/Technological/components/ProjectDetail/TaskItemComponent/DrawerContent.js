@@ -605,17 +605,24 @@ class DrawContent extends React.Component {
     const file_name = data.name
     const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
     const file_id = data.file_id || data.response.data.file_id
-    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-      openPDF({id: file_id})
-      return false
-    }
     this.props.updateDatasFile({
       seeFileInput: 'taskModule',
       isInOpenFile: true,
       filePreviewCurrentId: file_resource_id,
       filePreviewCurrentFileId: file_id,
+      pdfDownLoadSrc: '',
     })
-    this.props.filePreview({id: file_resource_id, file_id: file_id})
+
+    if(getSubfixName(file_name) == '.pdf') {
+      this.props.dispatch({
+        type: 'projectDetailFile/getFilePDFInfo',
+        payload: {
+          id: file_id
+        }
+      })
+    } else {
+      this.props.filePreview({id: file_resource_id, file_id})
+    }
   }
   attachmentItemOpera({type, data}, e) {
     e.stopPropagation()
@@ -962,40 +969,28 @@ class DrawContent extends React.Component {
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
 
-        if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-          openPDF({id: file_id})
-          return false
-        }
-
         that.setState({
           previewFileType: 'attachment',
         })
-        // filePreview({id: file_resource_id}).then((value) => {
-        //   let url = ''
-        //   let isUsable = true
-        //   if(value.code==='0') {
-        //     url = value.data.url
-        //     isUsable = value.data.isUsable
-        //   } else {
-        //     message.warn('文件预览失败')
-        //     return false
-        //   }
-        //   that.setState({
-        //     previewFileSrc: url,
-        //     isUsable: isUsable
-        //   })
-        // }).catch(err => {
-        //   message.warn('文件预览失败')
-        //   return false
-        // })
-        // that.setPreviewFileModalVisibile()
+
         that.props.updateDatasFile({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
           filePreviewCurrentFileId: file_id,
+          pdfDownLoadSrc: ''
         })
-        that.props.filePreview({id: file_resource_id, file_id: file_id})
+
+        if(getSubfixName(file_name) == '.pdf') {
+          this.props.dispatch({
+            type: 'projectDetailFile/getFilePDFInfo',
+            payload: {
+              id: file_id
+            }
+          })
+        } else {
+          this.props.filePreview({id: file_resource_id, file_id})
+        }
       },
       onRemove(e) {
         const attachment_id = e.id || (e.response.data && e.response.data.attachment_id)

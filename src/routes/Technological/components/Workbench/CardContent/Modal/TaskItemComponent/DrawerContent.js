@@ -601,18 +601,25 @@ class DrawContent extends React.Component {
     const file_name = data.name
     const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
     const file_id = data.file_id || data.response.data.file_id
-    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-      openPDF({id: file_id})
-      return false
-    }
+
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
-      seeFileInput: 'task',
+      seeFileInput: 'taskModule',
       board_id,
       filePreviewCurrentId: file_resource_id,
       filePreviewCurrentFileId: file_id,
+      pdfDownLoadSrc: '',
     })
-    this.props.filePreview({id: file_resource_id, file_id: file_id})
+    if(getSubfixName(file_name) == '.pdf') {
+      this.props.dispatch({
+        type: 'workbenchFileDetail/getFilePDFInfo',
+        payload: {
+          id: file_id
+        }
+      })
+    } else {
+      this.props.filePreview({id: file_resource_id, file_id})
+    }
   }
   attachmentItemOpera({type, data}, e) {
     e.stopPropagation()

@@ -36,6 +36,7 @@ import {projectDetailInfo} from "../../../services/technological/prjectDetail";
 let board_id = null
 let appsSelectKey = null
 let file_id = null
+let folder_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
   state: {
@@ -79,6 +80,7 @@ export default modelExtend(projectDetail, {
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         file_id = param.file_id
+        folder_id = param.folder_id
 
         dispatch({
           type: 'updateDatas',
@@ -88,12 +90,29 @@ export default modelExtend(projectDetail, {
         })
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
+
           dispatch({
-            type: 'initialget',
+            type: 'getFolderList',
             payload: {
-              id: board_id
+              board_id: board_id
             }
           })
+
+          if(folder_id) {
+            dispatch({
+              type: 'getfolderInfo',
+              payload: {
+                folder_id
+              }
+            })
+          }else {
+            dispatch({
+              type: 'initialget',
+              payload: {
+                id: board_id
+              }
+            })
+          }
           if(file_id) {
             dispatch({
               type: 'previewFileByUrl',
@@ -110,6 +129,7 @@ export default modelExtend(projectDetail, {
             })
 
           }
+
         }
       })
     },
@@ -129,12 +149,6 @@ export default modelExtend(projectDetail, {
           }
         })
 
-        yield put({
-          type: 'getFolderList',
-          payload: {
-            board_id: board_id
-          }
-        })
         if(file_id) {
           yield put({
             type: 'fileInfoByUrl',
@@ -253,7 +267,38 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-
+    * getfolderInfo({ payload }, { select, call, put }) {
+      const { folder_id } = payload
+      let res = yield call(fileInfoByUrl, {id: folder_id})
+      if(isApiResponseOk(res)) {
+        let breadcrumbList = yield select(selectBreadcrumbList) || []
+        let arr = []
+        const target_path = res.data.target_path
+        //递归添加路径
+        const digui = (name, data) => {
+          if(data[name] && data['parent_id'] != '0') {
+            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+            digui(name, data[name])
+          }
+        }
+        digui('parent_folder', target_path)
+        const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            breadcrumbList: newbreadcrumbList
+          }
+        })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
 
     * getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
