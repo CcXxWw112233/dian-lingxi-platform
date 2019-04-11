@@ -94,7 +94,7 @@ export default class FileItem extends React.Component {
     })
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
-      seeFileInput: 'file',
+      seeFileInput: 'fileModule',
       board_id,
       filePreviewCurrentId: file_resource_id,
       currentParrentDirectoryId: folder_id,
@@ -108,7 +108,7 @@ export default class FileItem extends React.Component {
     })
     this.props.updatePublicDatas({ board_id })
     this.props.getBoardMembers({id: board_id})
-    
+
   }
   render() {
     const { itemValue = {} } = this.props

@@ -95,12 +95,6 @@ export default modelExtend(projectDetail, {
             }
           })
           if(file_id) {
-            // dispatch({
-            //   type: 'getFileList',
-            //   payload: {
-            //     folder_id: file_id
-            //   }
-            // })
             dispatch({
               type: 'previewFileByUrl',
               payload: {
@@ -115,12 +109,6 @@ export default modelExtend(projectDetail, {
               }
             })
 
-            dispatch({
-              type: 'fileInfoByUrl',
-              payload: {
-                file_id,
-              }
-            })
           }
         }
       })
@@ -142,17 +130,26 @@ export default modelExtend(projectDetail, {
         })
 
         yield put({
-          type: 'getFileList',
-          payload: {
-            folder_id: result.data.folder_id
-          }
-        })
-        yield put({
           type: 'getFolderList',
           payload: {
             board_id: board_id
           }
         })
+        if(file_id) {
+          yield put({
+            type: 'fileInfoByUrl',
+            payload: {
+              file_id,
+            }
+          })
+        } else {
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: result.data.folder_id
+            }
+          })
+        }
       }else{
       }
     },
@@ -218,7 +215,6 @@ export default modelExtend(projectDetail, {
           if(data[name] && data['parent_id'] != '0') {
             arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
             digui(name, data[name])
-          }else {
           }
         }
         digui('parent_folder', target_path)
@@ -231,12 +227,12 @@ export default modelExtend(projectDetail, {
             breadcrumbList: newbreadcrumbList
           }
         })
-        // yield put({
-        //   type: 'getFileList',
-        //   payload: {
-        //     folder_id: newbreadcrumbList[newbreadcrumbList.length - 1].file_id // -2
-        //   }
-        // })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
