@@ -7,6 +7,7 @@
   height: 23px;
   background: #1890FF;
   text-align: center;
+  transition: all .3s ease-out;
   .text {
     cursor: pointer;
     user-select: none;
@@ -17,6 +18,9 @@
     line-height: 23px;
   }
 }
+.wrapper:hover {
+  height: 30px;
+}
 .wrapper::before,
 .wrapper::after {
   content: '';
@@ -24,7 +28,7 @@
   z-index: 1;
   height: 0;
   width: 0;
-  top: 23px;
+  top: 100%;
 }
 
 .wrapper::after {
