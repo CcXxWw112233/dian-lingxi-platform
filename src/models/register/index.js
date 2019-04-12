@@ -1,6 +1,7 @@
-import { formSubmit, requestVerifyCode, checkAccountRestered } from '../../services/register'
+import { formSubmit, requestVerifyCode, checkAccountRestered, wechatSignupBindLogin } from '../../services/register'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
+import Cookies from 'js-cookie'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
@@ -16,6 +17,8 @@ export default {
         message.destroy()
         if (location.pathname === '/register') {
 
+        } else {
+          localStorage.removeItem('wechat')
         }
       })
     },
@@ -58,6 +61,18 @@ export default {
         }
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * wechatSignupBindLogin({payload}, {select, call, put}) {
+      let res = yield call(wechatSignupBindLogin, payload)
+      debugger
+      if(isApiResponseOk(res)){
+        const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        Cookies.set('is401', false, {expires: 30, path: ''})
+        debugger
+        yield put(routerRedux.push('/noviceGuide'))
       }
     }
   },

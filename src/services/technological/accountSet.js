@@ -60,3 +60,11 @@ export async function changeEmail(data) {
     data
   });
 }
+
+//解绑微信
+export async function unBindWechat(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/wechat/un_bind`,
+    method: 'PUT'
+  })
+}

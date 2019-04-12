@@ -16,7 +16,7 @@ export default {
         message.destroy()
         if (location.pathname.indexOf('emailRedirect') !== -1) {
           const param = QueryString.parse(location.search.replace('?', ''))
-          const { operateType, token } = param
+          const { operateType, token, key, isBindWecaht } = param //key 标识
           if(operateType === 'changeEmail') {
             dispatch({
               type: 'confirmEmail',
@@ -33,8 +33,8 @@ export default {
                 org_id
               }
             })
-          } else {
-
+          } else if(operateType === 'wechat'){
+            window.top.postMessage({key, isBindWecaht, token}, '*')
           }
         }else {
         }

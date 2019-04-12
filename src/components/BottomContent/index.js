@@ -15,7 +15,7 @@ const BottomContent = (props) => {
            <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', }}>&#xe6be;</i>
         </Tooltip>
         <Tooltip placement="top" title={'即将上线'}>
-          <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', marginLeft: 6, marginTop: -6 }}>&#xe6c2;</i>
+          <i onClick={() => window.location.href=('http://localhost/#/register/wechat')} className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', marginLeft: 6, marginTop: -6 }}>&#xe6c2;</i>
         </Tooltip>
         <Tooltip placement="top" title={'即将上线'}>
           <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', marginLeft: 6, marginTop: -6 }}>&#xe6c1;</i>

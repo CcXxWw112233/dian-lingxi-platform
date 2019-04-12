@@ -3,13 +3,15 @@ import { connect } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import { Row, Col} from 'antd'
 import { Card } from 'antd'
+import FormListBind from './FormListBind'
 import FormList from './FormList'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 const getEffectOrReducerByName = name => `register/${name}`
-
+const juge = localStorage.getItem('wechat')?localStorage.getItem('wechat'): ''
+const bindKey = localStorage.getItem('wechatBindKey')?localStorage.getItem('wechatBindKey'): ''
 const Register = (options) => {
   const { dispatch } = options
   //传给表单
@@ -37,6 +39,15 @@ const Register = (options) => {
           ...data,
         }
       })
+    },
+    wechatSignupBindLogin(data){
+      dispatch({
+        type: getEffectOrReducerByName('wechatSignupBindLogin'),
+        payload: {
+          ...data,
+          key: bindKey
+        }
+      })
     }
   }
   //传给底部
@@ -50,22 +61,58 @@ const Register = (options) => {
       })
     }
   }
-  return (
-    <div className={globalClassNmae.page_style_2}>
-      <QueueAnim type="top">
-        <div key={'reigster'}>
-          <div style={{ maxWidth: 472, margin: '0 auto', width: '100%', background: '#FFFFFF',
-            border: '1px solid rgba(217,217,217,1)',
-            borderRadius: '4px'}}>
-            <TopContent text={'欢迎加入'} productName={'灵犀'}/>
-            <FormList {...formListProps} />
-            <BottomContent {...BottomContentProps} type={'register'}/>
+  const bindAccount = () => {
+    localStorage.setItem('bindType', 'wechat')
+    window.location.href=('http://localhost/#/login') 
+  }
+  if(juge === 'wechatRegister'){
+    return (
+      <div className={globalClassNmae.page_style_2}>
+        <QueueAnim type="top">
+          <div key={'reigster'}>
+            <div style={{ maxWidth: 472, margin: '0 auto', width: '100%', background: '#FFFFFF',
+              border: '1px solid rgba(217,217,217,1)',
+              borderRadius: '4px'}}>
+              <TopContent text={'欢迎加入'} productName={'灵犀'}/>
+              <FormListBind {...formListProps} />
+              {/* <BottomContent {...BottomContentProps} type={'register'}/> */}
+              <div style={{
+                  margin: '0 auto', 
+                  width: '271px', 
+                  height: '52px', 
+                  borderTop: '1px solid #E8E8E8',
+                  textAlign:'center',
+                  lineHeight: '56px',
+                  fontSize: '14px',
+                  fontFamily:'PingFangSC-Regular',
+                  fontWeight:400,
+                  marginBottom: '30px',
+                  color: '#1890FF'
+                }}><span style={{cursor: 'pointer'}} onClick={bindAccount}>已有账户,直接绑定</span></div>
+            </div>
+            <Copyright />
           </div>
-          <Copyright />
-        </div>
-      </QueueAnim>
-    </div>
-  );
+        </QueueAnim>
+      </div>
+    );
+  }else {
+    return (
+      <div className={globalClassNmae.page_style_2}>
+        <QueueAnim type="top">
+          <div key={'reigster'}>
+            <div style={{ maxWidth: 472, margin: '0 auto', width: '100%', background: '#FFFFFF',
+              border: '1px solid rgba(217,217,217,1)',
+              borderRadius: '4px'}}>
+              <TopContent text={'欢迎加入'} productName={'灵犀'}/>
+              <FormList {...formListProps} />
+              <BottomContent {...BottomContentProps} type={'register'}/>
+            </div>
+            <Copyright />
+          </div>
+        </QueueAnim>
+      </div>
+    );
+  }
 };
 
 // export default Products;

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Icon, Input } from 'antd'
+import { Card, Icon, Input, Tooltip } from 'antd'
 import NewsListStyle from './NewsList.less'
+import styles from './index.css'
 import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
@@ -22,7 +23,6 @@ export default class NewsListNewDatas extends React.Component {
     this.props.getNewsDynamicList('0')
   }
   render() {
-    console.log('this is Yao', this.props.model)
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic, newsList = [] }} = this.props.model
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
@@ -352,12 +352,35 @@ export default class NewsListNewDatas extends React.Component {
           )
           break
            //暂未联调完毕
+        // case 'board.file.move.to.folder':
+        //   contain = `移动${currentNounPlanFilterName(FILES)}到某个文件夹中`
+        //   messageContain = (
+        //     <div className={NewsListStyle.news_3}>
+        //       <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{messageValue.file_name}」到文件夹「{messageValue.folder_name}」。</div>
+        //       <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.create_time)}</div>
+        //     </div>
+        //   )
+        //   break
         case 'board.file.move.to.folder':
           contain = `移动${currentNounPlanFilterName(FILES)}到某个文件夹中`
+          let showList = []
+          let hideList = []
+          messageValue.content.board_file_list.forEach((item, i) => {
+            if(i>=1){
+              hideList.push([<span>{item.fileName}</span>,<br />])
+            } else {
+              showList.push(item.fileName)
+            }
+          })
+          if(messageValue.content.board_file_list.length > 1){
+            showList.push('...')
+          }
+
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{messageValue.file_name}」到文件夹「{messageValue.folder_name}」。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.create_time)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideList}</div>}>
+                <span className={styles.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
@@ -605,7 +628,6 @@ export default class NewsListNewDatas extends React.Component {
       }
       return containner
     }
-
     return (
       <div style={{paddingBottom: 100, transform: 'none', display: 'inline'}} >
         {newsDynamicList.map((value, parentkey)=> {

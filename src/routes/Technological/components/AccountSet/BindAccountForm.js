@@ -1,6 +1,6 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Alert, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
+import { Form,Popconfirm, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Alert, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import moment from 'moment';
 import indexStyle from './index.less'
 import VerificationCodeTwo from '../../../../components/VerificationCodeTwo'
@@ -22,6 +22,7 @@ class BindAccountForm extends React.Component {
     isMobile: false,
     isHasCode: false,
     isEmail: false,
+    isWechat: false
   }
   // 提交表单
   formButtonSubmit(type) {
@@ -35,6 +36,10 @@ class BindAccountForm extends React.Component {
           this.props.checkMobileIsRegisted({
             mobile: values['mobile'],
             code: values['code']
+          })
+        } else if(type === 'wechat') {
+          this.props.dispatch({
+            type: 'accountSet/unBindWechat'
           })
         }
       }
@@ -74,8 +79,17 @@ class BindAccountForm extends React.Component {
       isEmail
     })
   }
+  wechatChange(e) {
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { model = {} } = this.props
+    const { datas = {} } = model
+    const { userInfo = {} } = datas
+    const {
+      wechat,
+      is_bind
+    } = userInfo
     // 表单样式设置
     const formItemLayout = {
       labelCol: {
@@ -88,7 +102,7 @@ class BindAccountForm extends React.Component {
       },
     };
     const { email, mobile } = {}
-    const { isMobile, isHasCode, isEmail } = this.state
+    const { isMobile, isHasCode, isEmail, isWechat } = this.state
     return (
       <div>
         {/*修改邮箱*/}
@@ -166,6 +180,35 @@ class BindAccountForm extends React.Component {
           {/* 确认 */}
           <FormItem>
             <Button type="primary" htmlType="submit" onClick={this.formButtonSubmit.bind(this, 'mobile')} style={{height: 40, marginLeft: 12, }} disabled={!isMobile || !isHasCode}>修改</Button>
+          </FormItem>
+        </Form>
+        {/* 微信 */}
+        <Form layout="inline" onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600, display: 'flex'}}>
+          <FormItem
+            {...formItemLayout}
+            label={(
+              <span style={{fontSize: 16}}>
+                微信
+              </span>
+            )}
+          >
+            {getFieldDecorator('wechat', {
+              initialValue: is_bind==='1'?wechat: '' || undefined,
+              rules: [{ required: false, message: '请输入微信', whitespace: true }],
+            })(
+              <Input placeholder="" className={indexStyle.personInfoInput} onChange={this.wechatChange.bind(this)}/>
+            )}
+          </FormItem>
+          {/* 确认 */}
+          <FormItem
+          >
+            {
+              is_bind === '1'?
+                <Popconfirm onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
+                  <Button type="primary" style={{height: 40, marginLeft: 48}} disabled={isWechat}>解除绑定</Button>
+                </Popconfirm>:
+                <Button type="primary" onClick={() => location.href='http://localhost/#/login'} style={{height: 40, marginLeft: 48}} disabled={isWechat}>绑定</Button> 
+            }
           </FormItem>
         </Form>
       </div>

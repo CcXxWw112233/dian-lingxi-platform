@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Icon, Input } from 'antd'
+import { Card, Icon, Input, Tooltip } from 'antd'
 import NewsListStyle from './NewsList.less'
+import styles from './index.css'
 import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToTimeNormal2} from '../../../../../../utils/util'
 // import Comment from './Comment'
@@ -8,7 +9,6 @@ import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_U
 import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 
 export default class InitialNews extends React.Component {
-
   allSetReaded() { //全部标记为已读
 
   }
@@ -21,6 +21,7 @@ export default class InitialNews extends React.Component {
     })
     this.props.getNewsDynamicList('0')
   }
+
   render() {
     
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
@@ -29,6 +30,10 @@ export default class InitialNews extends React.Component {
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
+      let jump = (
+        <span>{messageValue.content.board.name}</span>
+      )
+
       switch (activity_type) {
         //项目
         case 'board.create':
@@ -189,7 +194,6 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.executor.add':
-
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}</div>
@@ -375,9 +379,23 @@ export default class InitialNews extends React.Component {
           break
         case 'board.file.move.to.folder':
           contain = `移动${currentNounPlanFilterName(FILES)}到某个文件夹中`
+          let showList = []
+          let hideList = []
+          messageValue.content.board_file_list.forEach((item, i) => {
+            if(i>=1){
+              hideList.push([<span>{item.fileName}</span>,<br />])
+            } else {
+              showList.push(item.fileName)
+            }
+          })
+          if(messageValue.content.board_file_list.length > 1){
+            showList.push('...')
+          }
+
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{messageValue.content.board_file.name}」到文件夹「{messageValue.content.board_folder.name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideList}</div>}>
+                <span className={styles.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )

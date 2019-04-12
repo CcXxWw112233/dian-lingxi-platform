@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode } from '../../services/login'
+import { formSubmit, requestVerifyCode,wechatAccountBind } from '../../services/login'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -18,15 +18,59 @@ export default {
         if (location.pathname === '/login') {
           Cookies.set('is401', false, {expires: 30, path: ''})
           redirectLocation = location.search.replace('?redirect=', '')
+        } else {
+          localStorage.removeItem('bindType')
         }
       })
     },
   },
   effects: {
+    * wechatAccountBind({payload}, {select, call, put}) {
+      let res = yield call(wechatAccountBind, payload)
+      if(isApiResponseOk(res)) {
+
+        const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        Cookies.set('is401', false, {expires: 30, path: ''})
+
+        const res2 = yield call(getUSerInfo, payload)
+        //如果有重定向路径或者存在组织
+        if(isApiResponseOk(res2)) {
+          if(!!res2.data['current_org']){
+            yield put(routerRedux.push(redirectLocation))
+          } else {
+            yield put(routerRedux.push('/noviceGuide'))
+          }
+        } else {
+          message.warn(res2.message, MESSAGE_DURATION_TIME)
+        }
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * wechatLogin({ payload }, { select, call, put }) { //微信扫码登陆
+        const tokenArray = payload.token.split('__')
+        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
+        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        Cookies.set('is401', false, {expires: 30, path: ''})
+        const res2 = yield call(getUSerInfo, payload)
+        //如果有重定向路径或者存在组织
+        if(isApiResponseOk(res2)) {
+          debugger
+          if(!!res2.data['current_org']){
+            yield put(routerRedux.push(redirectLocation))
+          } else {
+            yield put(routerRedux.push('/noviceGuide'))
+          }
+        } else {
+          message.warn(res2.message, MESSAGE_DURATION_TIME)
+        }
+
+    },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       let res = yield call(formSubmit, payload)
       if(isApiResponseOk(res)) {
-
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})

@@ -37,6 +37,9 @@ const Routers = function ({ history, app }) {
       case '/login':
         document.title = '灵犀-登录'
         break
+      case '/login/wechatBind':
+        document.title = '灵犀-微信绑定'
+        break
       case '/register':
         document.title = '灵犀-注册'
         break
@@ -115,7 +118,7 @@ const Routers = function ({ history, app }) {
       path: '/register',
       models: () => [import('./models/register')],
       component: () => import('./routes/Register/'),
-    }, {
+    },{
       path: '/registerSuccess',
       models: () => [import('./models/registerSuccess')],
       component: () => import('./routes/RegisterSuccess/'),

@@ -9,6 +9,7 @@ const AccountSet = (options) => {
   const { model, dispatch } =options
   const menuFormProps = {
     model,
+    dispatch,
     updateUserInfo(data) {
       dispatch({
         type: getEffectOrReducerByName('updateUserInfo'),
