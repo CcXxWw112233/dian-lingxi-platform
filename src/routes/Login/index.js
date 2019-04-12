@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import { Row, Col, Tooltip, Card} from 'antd'
+import { NODE_ENV } from '../../globalset/js/constant'
 import src from '../../assets/demo.html'
 import FormList from './FormList'
 import FormListBind from './FormListBind'
@@ -11,6 +12,7 @@ import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import indexStyles from './index.less'
 import sha256 from 'js-sha256'
+
 const juge = localStorage.getItem('bindType')?localStorage.getItem('bindType'): ''
 const getEffectOrReducerByName = name => `login/${name}`
 class Login extends React.Component {
@@ -74,7 +76,8 @@ class Login extends React.Component {
     })
   }
   bindRegister() {
-    window.location.href='http://localhost/#/register'
+    NODE_ENV != 'development'?window.location.href='http://www.new-di.com/#/register':window.location.href='http://localhost/#/register'
+    
     localStorage.setItem('wechat', 'wechatRegister')
   }
   render() {
