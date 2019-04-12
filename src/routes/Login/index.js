@@ -76,7 +76,7 @@ class Login extends React.Component {
     })
   }
   bindRegister() {
-    NODE_ENV != 'development'?window.location.href='http://www.new-di.com/#/register':window.location.href='http://localhost/#/register'
+    NODE_ENV != 'development'?window.location.href='http://localhost/#/register':window.location.host.indexOf('lingxi') !== -1?window.location.href='https://lingxi.di-an.com/#/register':window.location.href='http://www.new-di.com/#/register'
     
     localStorage.setItem('wechat', 'wechatRegister')
   }
