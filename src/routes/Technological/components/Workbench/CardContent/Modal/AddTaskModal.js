@@ -174,7 +174,7 @@ class AddTaskModal extends Component {
       currentSelectedProjectGroupListItem,
     } = this.state;
     const taskObj = {
-      add_type: 0,
+      add_type: 1,//默认0， 按分组1
       board_id: currentSelectedProject.board_id,
       name: addTaskTitle,
       type: 0,
