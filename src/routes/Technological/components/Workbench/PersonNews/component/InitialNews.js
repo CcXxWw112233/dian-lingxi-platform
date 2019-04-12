@@ -401,13 +401,26 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.file.copy.to.folder':
+          contain = `复制${currentNounPlanFilterName(FILES)}到某个文件夹中`
+          let showCopyList = []
+          let hideCopyList = []
+          messageValue.content.board_file_list.forEach((item, i) => {
+            if(i>=1){
+              hideCopyList.push([<span>{item.fileName}</span>,<br />])
+            } else {
+              showCopyList.push(item.fileName)
+            }
+          })
+          if(messageValue.content && messageValue.content.board_file_list.length > 1){
+            showCopyList.push('...')
+          }
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{messageValue.content.board_file.name}」到文件夹「{messageValue.content.board_folder.name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideCopyList}</div>}>
+                <span className={styles.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-          contain = `复制${currentNounPlanFilterName(FILES)}到某个文件夹中`
           break
         case 'restoreFile':
           contain = `还原${currentNounPlanFilterName(FILES)}`

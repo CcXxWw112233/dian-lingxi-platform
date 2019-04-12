@@ -1,21 +1,25 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../utils/util";
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
-import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT,
-  PROJECT_FILES_COMMENT_VIEW,
+  PROJECT_FILES_COMMENT_VIEW, ORGANIZATION, PROJECT_FILES_FILE_DOWNLOAD, UPLOAD_FILE_SIZE, PROJECT_FILES_FILE_UPLOAD,
+  PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPDATE, REQUEST_DOMAIN_FILE,
 } from "../../../../../../globalset/js/constant";
 import {message} from "antd/lib/index";
+import {color_4} from "../../../../../../globalset/js/styles";
+import {createShareLink, modifOrStopShareLink} from "../../../../../../services/technological/workbench";
+import Cookies from "js-cookie";
 
 export default class FileDetailContent extends React.Component {
 
@@ -24,12 +28,12 @@ export default class FileDetailContent extends React.Component {
     this.setState({
       imgLoaded: false
     })
-    this.props.updateDatasFile({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+    this.props.updateDatasFile({filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
     this.props.filePreview({id: file_resource_id, file_id})
     this.setState({
       imgLoaded: false,
       editMode: true,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 },
+      currentRect: { x: 0, y: 0, width: 0, height: 0 },
       isInAdding: false,
       isInEdditOperate: false,
       mentionFocus: false,
@@ -42,14 +46,16 @@ export default class FileDetailContent extends React.Component {
     imgHeight: 0,
     imgWidth: 0, //获取到的图片宽高
     punctuateArea: 48, //点击圈点的
-    maxImageWidth: 600,//设置imagload的最大值
-    currentRect: { x: 0 ,y: 0, width: 0, height: 0 }, //当前操作的矩形属性
+    maxImageWidth: 600, //设置imagload的最大值
+    currentRect: { x: 0, y: 0, width: 0, height: 0 }, //当前操作的矩形属性
     isInAdding: false, //用来判断是否显示评论下拉
     isInEdditOperate: false, //用来判断不是点击存在的圈
     mentionFocus: false,
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
     relations: [], //关联的内容
+    onlyReadingShareModalVisible: false, //只读分享modal
+    onlyReadingShareData: {},
   }
   constructor() {
     super();
@@ -83,14 +89,14 @@ export default class FileDetailContent extends React.Component {
       imgLoaded: true
     })
   }
-  commitReactArea(data,e) {
+  commitReactArea(data, e) {
     e.stopPropagation()
-    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
     this.setState({
       ...data,
       isInEdditOperate: false,
-      isInAdding:true
-    },() => {
+      isInAdding: true
+    }, () => {
       const { point_number } = data
       this.props.updateDatasFile({
         filePreviewCommitPointNumber: point_number
@@ -110,7 +116,7 @@ export default class FileDetailContent extends React.Component {
   }
   commitClicShowEdit(data) {
     const { flag, coordinates, } = data
-    const { datas:{ filePreviewCurrentFileId  } } = this.props.model
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
     this.setState({
       currentRect: JSON.parse(coordinates),
       isInAdding: true,
@@ -133,7 +139,7 @@ export default class FileDetailContent extends React.Component {
   }
   operateAreaClick(e) {
     const target = this.refs.operateArea//event.target || event.srcElement;
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
@@ -186,7 +192,7 @@ export default class FileDetailContent extends React.Component {
       }
       that.setState({
         isInAdding: false,
-        currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+        currentRect: { x: 0, y: 0, width: 0, height: 0 }
       })
       that.props.updateDatasFile({
         filePreviewPointNumCommits: []
@@ -211,7 +217,7 @@ export default class FileDetailContent extends React.Component {
     })
     // 取得target上被单击的点
     const target = this.refs.operateArea//event.target || event.srcElement;
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
@@ -249,7 +255,7 @@ export default class FileDetailContent extends React.Component {
     this.isDragging = true
 
     // 判断拖拽对象是否存在
-    const { clientWidth,modalTop = 20 } = this.props
+    const { clientWidth, modalTop = 20 } = this.props
     const offsetDe = clientWidth * 0.1
     if (this.isObj(this.SelectedRect)) {
       // 取得鼠标位置
@@ -260,15 +266,15 @@ export default class FileDetailContent extends React.Component {
       this.SelectedRect.x= x-this.x1;
       this.SelectedRect.y= y-this.y1;
 
-      const {  imgWidth, imgHeight, punctuateArea } = this.state
+      const { imgWidth, imgHeight, punctuateArea } = this.state
 
       // 更新拖拽的最新矩形
-      let px = x < this.x1 ? this.x1 -  Math.abs(this.SelectedRect.x) : x -  Math.abs(this.SelectedRect.x)
-      let py = y < this.y1 ? this.y1 -  Math.abs(this.SelectedRect.y) : y -  Math.abs(this.SelectedRect.y)
+      let px = x < this.x1 ? this.x1 - Math.abs(this.SelectedRect.x) : x - Math.abs(this.SelectedRect.x)
+      let py = y < this.y1 ? this.y1 - Math.abs(this.SelectedRect.y) : y - Math.abs(this.SelectedRect.y)
       let width = Math.abs(this.SelectedRect.x)
       let height = Math.abs(this.SelectedRect.y)
 
-      if(imgWidth - px  - width< 0) { //右边界
+      if(imgWidth - px - width< 0) { //右边界
         width = imgWidth - px
       } else if(x < punctuateArea/2) { //左边界
         width = 0
@@ -301,7 +307,6 @@ export default class FileDetailContent extends React.Component {
     })
     this.stopDragging()
   }
-
   setEditMode(){
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -311,50 +316,232 @@ export default class FileDetailContent extends React.Component {
       editMode: !this.state.editMode
     })
   }
-
   deleteCommitSet(e) {
     this.setState({
       isInAdding: false,
-      currentRect: { x: 0 ,y: 0, width: 0, height: 0 }
+      currentRect: { x: 0, y: 0, width: 0, height: 0 }
+    })
+  }
+
+  //header
+  closeFile() {
+    const { datas: { breadcrumbList = [] } }= this.props.model
+    breadcrumbList.splice(breadcrumbList.length - 1, 1)
+    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', })
+  }
+  zoomFrame() {
+    const { datas: { isExpandFrame = false } }= this.props.model
+    this.props.updateDatasFile({
+      isExpandFrame: !isExpandFrame,
+    })
+  }
+  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    //如果时pdf
+    if(pdfDownLoadSrc) {
+      window.open(pdfDownLoadSrc)
+    }else {
+      this.props.fileDownload({ids: filePreviewCurrentId})
+    }
+  }
+  //item操作
+  operationMenuClick(data, e) {
+    const { file_id, type, file_resource_id } = data
+    const { datas: { projectDetailInfoData= {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    const { key } = e
+    switch (key) {
+      case '1':
+        break
+      case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        //如果时pdf
+        if(pdfDownLoadSrc) {
+          window.open(pdfDownLoadSrc)
+        }else {
+          this.props.fileDownload({ids: file_resource_id})
+        }
+        break
+      case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.updateDatasFile({
+          copyOrMove: '0',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '4':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.updateDatasFile({
+          copyOrMove: '1',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '5':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.fileRemove({
+          board_id,
+          arrays: JSON.stringify([{type, id: file_id}])
+        })
+        breadcrumbList.splice(breadcrumbList.length - 1, 1)
+        this.props.updateDatasFile({isInOpenFile: false})
+        break
+      default:
+        break
+    }
+  }
+  getVersionItemMenuClick({list, file_id}, e) {
+    const key = e.key
+    switch (key) {
+      case '1':
+        let file_resource_id = ''
+        for(let val of list) {
+          if(file_id == val['file_id']) {
+            file_resource_id = val['file_resource_id']
+            break
+          }
+        }
+        this.setState({
+          imgLoaded: false
+        })
+        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+        this.props.filePreview({id: file_resource_id, file_id})
+        this.setState({
+          imgLoaded: false,
+          editMode: true,
+          currentRect: { x: 0, y: 0, width: 0, height: 0 },
+          isInAdding: false,
+          isInEdditOperate: false,
+          mentionFocus: false,
+        })
+        break
+      case '2':
+        break
+      default:
+        break
+    }
+
+  }
+
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const {onlyReadingShareModalVisible} = this.state
+    //打开之前确保获取到数据
+    if(!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(err => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+  getSearchFromLocation = location => {
+    if(!location.search) {
+      return {}
+    }
+    return location.search.substring(1).split('&').reduce((acc, curr) => {
+      const [key, value] = curr.split('=')
+      return Object.assign({}, acc, {[key]: value})
+    }, {})
+  }
+  createOnlyReadingShareLink = () => {
+    const {location} = this.props
+    //获取参数
+    const {board_id = '', appsSelectKey = '', file_id = ''} = this.getSearchFromLocation(location)
+
+    const payload = {
+      board_id,
+      rela_id: file_id,
+      rela_type: appsSelectKey
+    }
+    return createShareLink(payload).then(({code, data}) => {
+      if(code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      }else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if(res && res.code === '0') {
+        if(isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    }).catch(err => {
+      message.error('操作失败')
     })
   }
 
   render() {
-
-    const { rects, imgHeight = 0, imgWidth = 0,maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
+    const that = this
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
-
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { projectDetailInfoData={}, filePreviewCurrentFileId, seeFileInput,filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { projectDetailInfoData={}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewIsRealImage=false } }= this.props.model
     const { board_id } = projectDetailInfoData
-    const  getIframe = (src) => {
+    const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
     }
-
     const getVersionItem = (value, key ) => {
       const { file_name, creator, create_time, file_size } = value
       return (
-        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this,{value, key})}>
-          <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, {value, key})}>
+          {/*<div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>*/}
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{create_time}</div>
           <div className={indexStyles.size}>{file_size}</div>
         </div>
       )
     }
-
     const punctuateDom = (
       <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-        <div  style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }}  ref={'operateArea'}>
-          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)}  style={{ maxWidth: maxImageWidth}} />
+        <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
           {imgLoaded && editMode? (
-            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)}  onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)}  style={{height: imgHeight,top:-imgHeight, left:0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
               {rects.map((value, key) => {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this,{currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position:'absolute', left: x, top: y, width:width, height: height,border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this, {currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
@@ -363,12 +550,12 @@ export default class FileDetailContent extends React.Component {
               })}
               {isInEdditOperate?(
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position:'absolute', left: currentRect.x, top: currentRect.y, width:currentRect.width, height: currentRect.height,border:'1px solid rgba(24,144,255,.5)',backgroundColor:'rgba(24,144,255,.2)'}} />
+                     style={{position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}} />
               ):('')}
 
               {isInAdding? (
                 <div style={{position: 'absolute', left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
-                  <Comment {...this.props} currentRect={currentRect}  setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
+                  <Comment {...this.props} currentRect={currentRect} setMentionFocus={this.setMentionFocus.bind(this)}></Comment>
                 </div>
               ) : ('')}
 
@@ -388,7 +575,6 @@ export default class FileDetailContent extends React.Component {
       <div className={indexStyles.fileDetailContentLeft}
       dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
     )
-
     const notSupport = (type) => {
       let content
       switch (type) {
@@ -501,8 +687,160 @@ export default class FileDetailContent extends React.Component {
       }
       return content
     }
+
+    //header
+    const uploadProps = {
+      name: 'file',
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_FILE}/file/version_upload`,
+      data: {
+        board_id,
+        folder_id: currentParrentDirectoryId,
+        file_version_id: filePreviewCurrentVersionId,
+      },
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken: Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
+        let loading = message.loading('正在上传...', 0)
+      },
+      onChange({ file, fileList, event }) {
+        if (file.status === 'uploading') {
+
+        }else{
+          message.destroy()
+        }
+        if (file.status === 'done') {
+          message.success(`上传成功。`);
+          console.log('file', file)
+          if(file.response && file.response.code == '0') {
+            that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
+            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          }
+        } else if (file.status === 'error') {
+          message.error(`上传失败。`);
+          setTimeout(function () {
+            message.destroy()
+          }, 2000)
+        }
+      },
+    };
+    const operationMenu = (data) => {
+      return (
+        <Menu onClick={this.operationMenuClick.bind(this, data)}>
+          {/*<Menu.Item key="1">收藏</Menu.Item>*/}
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+            <Menu.Item key="2">下载</Menu.Item>
+          )}
+          <Menu.Item key="3">移动</Menu.Item>
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
+            <Menu.Item key="4">复制</Menu.Item>
+          )}
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (
+            <Menu.Item key="5" >移到回收站</Menu.Item>
+          )}
+        </Menu>
+      )
+    }
+    //版本信息列表
+    const getVersionItemMenu = (list) => {
+      return (
+        // onClick={this.getVersionItemMenuClick.bind(this, list)}
+        <Menu selectable={true} style={{ width: 400}}>
+          {list.map((value, key) => {
+            const { file_name, creator, create_time, file_size, file_id } = value
+            return (
+              <Menu.Item key={file_id} >
+                <div className={indexStyles.versionItemMenu}>
+                  <div style={{fontWeight: 400, fontSize: 14}} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
+                  <div>上传于</div>
+                  <div>{create_time}</div>
+                    {filePreviewCurrentFileId == file_id && (
+                      <div className={`${indexStyles.status}`}>当前</div>)}
+                   <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
+                    <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
+                      <Dropdown overlay={versionItemMenu(list, file_id)}>
+                        <span>&#xe7fd;</span>
+                      </Dropdown>
+                    </div>
+
+                </div>
+              </Menu.Item>
+            )
+          })}
+          <Menu.Item key="updateVersion" >
+            <Upload {...uploadProps} showUploadList={false}>
+              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
+                <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
+              </div>
+            </Upload>
+          </Menu.Item>
+        </Menu>
+      )
+    }
+
+    const versionItemMenu = (list, file_id) => {
+      return (
+        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id})}>
+          <Menu.Item key="1">设为当前</Menu.Item>
+          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
+        </Menu>
+      )
+    }
+
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
+      <div>
+        <div className={indexStyles.fileDetailHead}>
+          <div className={indexStyles.fileDetailHeadLeft}>
+            {seeFileInput === 'fileModule'? (
+              <FileDerailBreadCrumbFileNav {...this.props}/>
+            ):('')}
+          </div>
+
+          <div className={indexStyles.fileDetailHeadRight}>
+            {seeFileInput === 'fileModule' && (
+              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
+                <Button style={{height: 24, marginLeft: 14}}>
+                  <Icon type="upload" />版本信息
+                </Button>
+              </Dropdown>
+            )}
+
+            {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
+                <Icon type="download" />下载
+              </Button>
+            )}
+
+            <span style={{marginLeft: '10px'}}>
+          </span>
+            <div style={{cursor: 'pointer'}}>
+              {seeFileInput === 'fileModule'? (
+                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
+                  <Icon type="ellipsis" style={{fontSize: 20, marginLeft: 14}}/>
+                </Dropdown>
+              ):('')}
+              <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+              <Tooltip title={'关闭预览'} placement={'left'}>
+                <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
+        {/*文件详情*/}
+        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
         {filePreviewIsUsable? (
             filePreviewIsRealImage?(
               punctuateDom
@@ -510,7 +848,7 @@ export default class FileDetailContent extends React.Component {
               iframeDom
             )
         ):(
-          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex',justifyContent:'center', alignItems: 'center', fontSize: 16,color: '#595959'}}>
+          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
             <div>
               {notSupport(this.props.model.datas.fileType)}
             </div>
@@ -528,16 +866,16 @@ export default class FileDetailContent extends React.Component {
                 link_id={filePreviewCurrentFileId}
                 link_local={'4'}
               />
-              {seeFileInput === 'fileModule'? (
-               <div className={indexStyles.versionOut}>
-                <div>版本信息</div>
-                <div className={indexStyles.versionInfoList}>
-                  {filePreviewCurrentVersionList.map((value, key ) => {
-                    return (<div key={key}>{getVersionItem(value, key )}</div>)
-                  })}
-                </div>
-               </div>
-              ) : ('')}
+              {/*{seeFileInput === 'fileModule'? (*/}
+               {/*<div className={indexStyles.versionOut}>*/}
+                {/*<div>版本信息</div>*/}
+                {/*<div className={indexStyles.versionInfoList}>*/}
+                  {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
+                    {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
+                  {/*})}*/}
+                {/*</div>*/}
+               {/*</div>*/}
+              {/*) : ('')}*/}
             </div>
 
 
@@ -554,6 +892,7 @@ export default class FileDetailContent extends React.Component {
           )}
         </div>
 
+      </div>
       </div>
     )
   }

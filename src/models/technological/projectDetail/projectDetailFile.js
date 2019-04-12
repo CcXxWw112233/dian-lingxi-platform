@@ -14,15 +14,16 @@ import {
   getFileList,
   getFolderList,
   getPreviewFileCommits,
-  recycleBinList, 
+  recycleBinList,
   restoreFile,
   getFileDetailIssue,
   updateFolder,
-  getCardCommentListAll
+  getCardCommentListAll,
+  getFilePDFInfo
 } from "../../../services/technological/file";
 import {
-  selectAppsSelectKey, 
-  selectBreadcrumbList, 
+  selectAppsSelectKey,
+  selectBreadcrumbList,
   selectCurrentParrentDirectoryId,
   selectFilePreviewCommitPointNumber,
   selectFilePreviewCurrentFileId
@@ -35,6 +36,7 @@ import {projectDetailInfo} from "../../../services/technological/prjectDetail";
 let board_id = null
 let appsSelectKey = null
 let file_id = null
+let folder_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
   state: {
@@ -66,7 +68,8 @@ export default modelExtend(projectDetail, {
           filePreviewCommitPointNumber: '', //评论当前的点
           filePreviewIsRealImage: true, //当前预览的图片是否真正图片
           seeFileInput: '', //查看文件详情入口
-          cardCommentAll: [] //文件动态列表
+          cardCommentAll: [], //文件动态列表
+          pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
     }
   },
   subscriptions: {
@@ -77,6 +80,7 @@ export default modelExtend(projectDetail, {
         board_id = param.board_id
         appsSelectKey = param.appsSelectKey
         file_id = param.file_id
+        folder_id = param.folder_id
 
         dispatch({
           type: 'updateDatas',
@@ -86,19 +90,30 @@ export default modelExtend(projectDetail, {
         })
 
         if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
+
           dispatch({
-            type: 'initialget',
+            type: 'getFolderList',
             payload: {
-              id: board_id
+              board_id: board_id
             }
           })
+
+          if(folder_id) {
+            dispatch({
+              type: 'getfolderInfo',
+              payload: {
+                folder_id
+              }
+            })
+          }else {
+            dispatch({
+              type: 'initialget',
+              payload: {
+                id: board_id
+              }
+            })
+          }
           if(file_id) {
-            // dispatch({
-            //   type: 'getFileList',
-            //   payload: {
-            //     folder_id: file_id
-            //   }
-            // })
             dispatch({
               type: 'previewFileByUrl',
               payload: {
@@ -113,13 +128,8 @@ export default modelExtend(projectDetail, {
               }
             })
 
-            dispatch({
-              type: 'fileInfoByUrl',
-              payload: {
-                file_id,
-              }
-            })
           }
+
         }
       })
     },
@@ -139,18 +149,21 @@ export default modelExtend(projectDetail, {
           }
         })
 
-        yield put({
-          type: 'getFileList',
-          payload: {
-            folder_id: result.data.folder_id
-          }
-        })
-        yield put({
-          type: 'getFolderList',
-          payload: {
-            board_id: board_id
-          }
-        })
+        if(file_id) {
+          yield put({
+            type: 'fileInfoByUrl',
+            payload: {
+              file_id,
+            }
+          })
+        } else {
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: result.data.folder_id
+            }
+          })
+        }
       }else{
       }
     },
@@ -216,7 +229,6 @@ export default modelExtend(projectDetail, {
           if(data[name] && data['parent_id'] != '0') {
             arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
             digui(name, data[name])
-          }else {
           }
         }
         digui('parent_folder', target_path)
@@ -229,12 +241,12 @@ export default modelExtend(projectDetail, {
             breadcrumbList: newbreadcrumbList
           }
         })
-        // yield put({
-        //   type: 'getFileList',
-        //   payload: {
-        //     folder_id: newbreadcrumbList[newbreadcrumbList.length - 1].file_id // -2
-        //   }
-        // })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -255,7 +267,38 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-
+    * getfolderInfo({ payload }, { select, call, put }) {
+      const { folder_id } = payload
+      let res = yield call(fileInfoByUrl, {id: folder_id})
+      if(isApiResponseOk(res)) {
+        let breadcrumbList = yield select(selectBreadcrumbList) || []
+        let arr = []
+        const target_path = res.data.target_path
+        //递归添加路径
+        const digui = (name, data) => {
+          if(data[name] && data['parent_id'] != '0') {
+            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+            digui(name, data[name])
+          }
+        }
+        digui('parent_folder', target_path)
+        const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            breadcrumbList: newbreadcrumbList
+          }
+        })
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id
+          }
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
 
     * getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
@@ -328,6 +371,37 @@ export default modelExtend(projectDetail, {
           type: 'getFileCommitPoints',
           payload: {
             id: file_id
+          }
+        })
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * getFilePDFInfo({ payload }, { select, call, put }) {
+      //pdf做了特殊处理
+      let res = yield call(getFilePDFInfo, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewIsUsable: true,
+            filePreviewUrl: res.data.edit_url,
+            pdfDownLoadSrc: res.data.download_annotation_url,
+            filePreviewIsRealImage: false,
+          }
+        })
+        const { id } = payload // id = file_id
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: id
           }
         })
 
@@ -472,7 +546,8 @@ export default modelExtend(projectDetail, {
           yield put({
             type: 'filePreview',
             payload: {
-              id: res.data[0].file_resource_id
+              id: res.data[0].file_resource_id,
+              file_id: res.data[0].file_id
             }
           })
           yield put({
@@ -665,11 +740,11 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-    
+
     * getFileType({payload}, {select, call, put}) {
       let { fileList,file_id } = payload
       let fileId = yield select(selectFilePreviewCurrentFileId)
-      let res 
+      let res
       if(fileId) {
         res = fileList.reduce((r, c) => {
           return [
@@ -685,7 +760,7 @@ export default modelExtend(projectDetail, {
           ]
         }, [])
       }
-      
+
       if(res.length === 0) {
         yield put({
           type: 'updateDatas',

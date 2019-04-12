@@ -398,8 +398,9 @@ class ProjectMenu extends Component {
       currentSelectedProjectMenuItem,
       projectGroupTree
     } = this.props;
-    if (!projectList) return null;
-    if (!projectGroupTree.participate_count) return null;
+    const NoContent = <div className={styles.projectGather__wrapper} />;
+    if (!projectList) return NoContent;
+    if (!projectGroupTree.participate_count) return NoContent;
     const { participate_count, star_count } = projectGroupTree;
     let participateWrapperClass = cx({
       [styles.projectGather__participate_wrapper]: true,

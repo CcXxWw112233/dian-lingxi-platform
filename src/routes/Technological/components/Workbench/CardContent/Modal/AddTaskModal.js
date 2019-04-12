@@ -72,7 +72,8 @@ class AddTaskModal extends Component {
       start_time: '',
       due_time: '',
       attachment_fileList: [],
-      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : ['']
+      currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [''],
+      currentSelectedProjectGroupListItem: {},
     };
   }
   handleDateRangeChange = dateRange => {
@@ -108,11 +109,17 @@ class AddTaskModal extends Component {
     const { addTaskModalVisibleChange } = this.props;
     addTaskModalVisibleChange(false);
   };
+  handleSelectedProjectGroupItem = item => {
+    this.setState({
+      currentSelectedProjectGroupListItem: item
+    })
+  }
   handleSelectedItem = item => {
     const { dispatch, taskType } = this.props;
     this.setState(
       {
-        currentSelectedProject: item
+        currentSelectedProject: item,
+        currentSelectedProjectGroupListItem: {}
       },
       () => {
         dispatch({
@@ -163,16 +170,18 @@ class AddTaskModal extends Component {
       currentSelectedProject,
       currentSelectedProjectMember,
       start_time,
-      due_time
+      due_time,
+      currentSelectedProjectGroupListItem,
     } = this.state;
     const taskObj = {
-      add_type: 0,
+      add_type: 1,//默认0， 按分组1
       board_id: currentSelectedProject.board_id,
       name: addTaskTitle,
       type: 0,
       users: currentSelectedProjectMember.reduce((acc, curr) => {
         return acc ? acc + ',' + curr.id : curr.id;
-      }, '')
+      }, ''),
+      list_id: currentSelectedProjectGroupListItem.board_id ? currentSelectedProjectGroupListItem.board_id : ''
     };
     if (taskType === 'MEETIMG_ARRANGEMENT') {
       return Object.assign({}, taskObj, { start_time, due_time, type: 1 });
@@ -210,16 +219,40 @@ class AddTaskModal extends Component {
     this.addNewMeeting(paramObj);
     this.uploadNewFile();
   };
+
+  getNewUploadedFileIdList = () => {
+    const {attachment_fileList} = this.state
+    const {dispatch} = this.props
+    const collectFileId = (arr = []) => {
+              //筛选出上传成功的文件
+      return arr.filter(file => file.response && file.response.code === '0' && file.response.data.id).map(file => file.response.data.id)
+    }
+    dispatch({
+      type: 'workbench/updateUploadedFileNotificationIdList',
+      payload: {
+        idsList: collectFileId(attachment_fileList)
+      }
+    })
+    console.log(attachment_fileList, 'attachment_fileList')
+  }
+
   uploadNewFile = () => {
     const { taskType, dispatch } = this.props;
     if (taskType !== 'MY_DOCUMENT') {
       return;
     }
+
+    //更新文件列表
     Promise.resolve(
       dispatch({
         type: 'workbench/getUploadedFileList'
       })
-    ).then(() => {
+    )
+    .then(() => {
+      //获取刚才上传成功的文件的idList
+      this.getNewUploadedFileIdList()
+    })
+    .then(() => {
       this.handleAddTaskModalCancel();
     });
   };
@@ -372,7 +405,8 @@ class AddTaskModal extends Component {
       start_time,
       due_time,
       attachment_fileList,
-      currentSelectedFileFolder
+      currentSelectedFileFolder,
+      currentSelectedProjectGroupListItem
     } = this.state;
     const {
       projectList,
@@ -385,7 +419,8 @@ class AddTaskModal extends Component {
         }
       },
       modalTitle,
-      taskType
+      taskType,
+      projectGroupLists
     } = this.props;
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
     const isHasSelectedProject = () =>
@@ -405,7 +440,13 @@ class AddTaskModal extends Component {
     }
 
     const board_id = currentSelectedProject.board_id;
-
+    const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
+      const isFinded = projectGroupLists.find(item => item.board_id === board_id)
+      if(!isFinded) return []
+      //映射数据，只是为了复用 DropdownSelectWithSearch 组件
+      return isFinded.list_data.map(item => ({board_id: item['list_id'], board_name: item['list_name']}))
+    }
+    const currentSelectedProjectGroupList = findAndTransProjectGroupList(projectGroupLists, board_id)
     const folderOptions = this.formatFolderTreeData(
       currentSelectedProjectFileFolderList
     );
@@ -440,6 +481,7 @@ class AddTaskModal extends Component {
           return false;
         }
         if (file.status === 'done' && file.response.code === '0') {
+
         } else if (
           file.status === 'error' ||
           (file.response && file.response.code !== '0')
@@ -517,12 +559,28 @@ class AddTaskModal extends Component {
       >
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
+            <div className={styles.addTaskModalSelectProject_and_groupList}>
             <DropdownSelectWithSearch
               list={filteredNoThatTypeProject}
               initSearchTitle="选择项目"
               selectedItem={currentSelectedProject}
               handleSelectedItem={this.handleSelectedItem}
             />
+            <div className={styles.groupList__wrapper}>
+            {(taskType === 'RESPONSIBLE_TASK' || taskType === 'MEETIMG_ARRANGEMENT') && (
+              <DropdownSelectWithSearch
+              list={currentSelectedProjectGroupList}
+              initSearchTitle="任务分组"
+              selectedItem={currentSelectedProjectGroupListItem}
+              handleSelectedItem={this.handleSelectedProjectGroupItem}
+              isShowIcon={false}
+              isSearch={false}
+              isCanCreateNew={false}
+              isProjectGroupMode={true}
+            />
+            )}
+            </div>
+            </div>
             {taskType === 'MEETIMG_ARRANGEMENT' && (
               <DateRangePicker
                 handleDateRangeChange={this.handleDateRangeChange}

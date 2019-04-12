@@ -6,8 +6,8 @@ import linxiLogo from '../../../assets/library/lingxi_logo.png'
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../utils/businessFunction";
 import {
   DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
-  ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE,
-  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
+  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
@@ -73,6 +73,9 @@ export default class SiderLeft extends React.Component {
 
   //添加组织成员操作
   setShowAddMenberModalVisibile() {
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    }
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
@@ -217,7 +220,7 @@ export default class SiderLeft extends React.Component {
                 {isHasManagerBack() && (
                   <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
                 )}
-              <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>
+                {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>}
             </div>
             ) : (
               identity_type=='0'?(

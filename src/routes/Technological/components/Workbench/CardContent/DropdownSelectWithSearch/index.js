@@ -1,17 +1,22 @@
-import React, { Component } from "react";
-import { Menu, Dropdown, Input, Tooltip } from "antd";
-import classNames from "classnames/bind";
-import styles from "./index.less";
-import MenuItem from "antd/lib/menu/MenuItem";
-import AddModalFormWithExplicitProps from "./../../../Project/AddModalFormWithExplicitProps";
-import { connect } from "dva/index";
-import Cookies from "js-cookie";
+import React, { Component } from 'react';
+import { Menu, Dropdown, Input, Tooltip } from 'antd';
+import classNames from 'classnames/bind';
+import styles from './index.less';
+import MenuItem from 'antd/lib/menu/MenuItem';
+import AddModalFormWithExplicitProps from './../../../Project/AddModalFormWithExplicitProps';
+import { connect } from 'dva/index';
+import Cookies from 'js-cookie';
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
   ORG_TEAM_BOARD_CREATE
-} from '../../../../../../globalset/js/constant'
-import {checkIsHasPermissionInBoard, checkIsHasPermission, setStorage} from "../../../../../../utils/businessFunction";
-import {message} from "antd/lib/index";
+} from '../../../../../../globalset/js/constant';
+import {
+  checkIsHasPermissionInBoard,
+  checkIsHasPermission,
+  setStorage
+} from '../../../../../../utils/businessFunction';
+import { message } from 'antd/lib/index';
 
 let cx = classNames.bind(styles);
 
@@ -21,7 +26,7 @@ class DropdownSelectWithSearch extends Component {
     this.state = {
       visible: false,
       addNewProjectModalVisible: false,
-      inputValue: "",
+      inputValue: '',
       filteredList: this.props.list ? this.props.list : []
     };
   }
@@ -34,37 +39,43 @@ class DropdownSelectWithSearch extends Component {
     const { list } = this.props;
     if (!e.target.value) {
       this.setState({
-        inputValue: "",
+        inputValue: '',
         filteredList: Array.isArray(list) ? list : []
       });
     } else {
       this.setState({
         inputValue: e.target.value,
         filteredList: Array.isArray(list)
-          ? list.filter(item => item["board_name"].includes(e.target.value))
+          ? list.filter(item => item['board_name'].includes(e.target.value))
           : []
       });
     }
   };
   handleSeletedMenuItem = item => {
-    const { board_id } = item
-    setStorage('board_id', board_id)
-    const { handleSelectedItem, list } = this.props;
+    const { handleSelectedItem, list, isProjectGroupMode } = this.props;
+    if(isProjectGroupMode) {
+      handleSelectedItem(item)
+      this.setState({
+        visible: false
+      })
+      return
+    }
+    const { board_id } = item;
+    setStorage('board_id', board_id);
     handleSelectedItem(item);
     this.setState({
-      inputValue: "",
+      inputValue: '',
       visible: false,
       filteredList: Array.isArray(list) ? list : []
     });
   };
   handleClickedNewProjectItem = e => {
     if (e) e.stopPropagation();
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE) ){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
+    if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+      return false;
     }
     this.showModal();
-    console.log("clicked new project");
   };
   renderMenuItem = filteredList => {
     return filteredList.map((item, index) => (
@@ -76,6 +87,8 @@ class DropdownSelectWithSearch extends Component {
     ));
   };
   renderNoContent = () => {
+    const {isCanCreateNew} = this.props
+    if(!isCanCreateNew) return null
     const { current_org: { identity_type } = {} } = this.getUerInfoFromCookie();
     const isVisitor = this.isVisitor(identity_type);
     return (
@@ -106,9 +119,9 @@ class DropdownSelectWithSearch extends Component {
       },
       () => {
         dispatch({
-          type: "project/getAppsList",
+          type: 'project/getAppsList',
           payload: {
-            type: "2"
+            type: '2'
           }
         });
       }
@@ -118,13 +131,13 @@ class DropdownSelectWithSearch extends Component {
     const { dispatch } = this.props;
     Promise.resolve(
       dispatch({
-        type: "project/addNewProject",
+        type: 'project/addNewProject',
         payload: data
       })
     )
       .then(() => {
         dispatch({
-          type: "workbench/getProjectList",
+          type: 'workbench/getProjectList',
           payload: {}
         });
       })
@@ -152,22 +165,29 @@ class DropdownSelectWithSearch extends Component {
     }
   }
   content = () => {
-    const { list, selectedItem } = this.props;
+    const { list, selectedItem, isSearch } = this.props;
     const { filteredList, inputValue } = this.state;
     if (!list || !list.length) {
       return <>{this.renderNoContent()}</>;
     }
     return (
       <div>
-        <Input
-          placeholder="搜索"
-          value={inputValue}
-          onChange={this.handleInputValueChange}
-        />
+        {isSearch && (
+          <Input
+            placeholder="搜索"
+            value={inputValue}
+            onChange={this.handleInputValueChange}
+          />
+        )}
         <div>{this.renderNoContent()}</div>
         <div className={styles.menuWrapper}>
           <Menu
             defaultSelectedKeys={
+              selectedItem && selectedItem.board_id
+                ? [selectedItem.board_id]
+                : []
+            }
+            selectedKeys={
               selectedItem && selectedItem.board_id
                 ? [selectedItem.board_id]
                 : []
@@ -188,12 +208,12 @@ class DropdownSelectWithSearch extends Component {
   };
   isVisitor = param => {
     //是否访客 1不是 0是
-    const condMap = new Map([["0", true], ["1", false]]);
-    if (typeof condMap.get(param) === "undefined") return false;
+    const condMap = new Map([['0', true], ['1', false]]);
+    if (typeof condMap.get(param) === 'undefined') return false;
     return condMap.get(param);
   };
   render() {
-    const { initSearchTitle, selectedItem, project } = this.props;
+    const { initSearchTitle, selectedItem, project, isShowIcon } = this.props;
     const { visible, addNewProjectModalVisible } = this.state;
     let titleClassName = cx({
       title: true,
@@ -204,13 +224,13 @@ class DropdownSelectWithSearch extends Component {
         {!addNewProjectModalVisible && (
           <Dropdown
             overlay={this.content()}
-            trigger={["click"]}
+            trigger={['click']}
             visible={visible}
             onVisibleChange={this.handleVisibleChange}
           >
             <div className={titleClassName}>
               <p style={{ marginBottom: 0 }}>
-                <span />
+                {isShowIcon ? <span /> : <span style={{ display: 'none' }} />}
                 <Tooltip
                   title={
                     selectedItem && selectedItem.board_name
@@ -220,11 +240,11 @@ class DropdownSelectWithSearch extends Component {
                 >
                   <span
                     style={{
-                      display: "inline-block",
-                      maxWidth: "180px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap"
+                      display: 'inline-block',
+                      maxWidth: '180px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     {selectedItem && selectedItem.board_name
@@ -251,9 +271,13 @@ class DropdownSelectWithSearch extends Component {
 }
 
 DropdownSelectWithSearch.defaultProps = {
-  initSearchTitle: "default",
+  initSearchTitle: 'default',
   list: [],
-  selectedItem: []
+  selectedItem: [],
+  isShowIcon: true, //是否显示 icon
+  isSearch: true, //是否显示搜索input
+  isCanCreateNew: true, //是否显示新建
+  isProjectGroupMode: false, //如果是项目分组复用这个组件
 };
 
 function mapStateToProps({ modal, project, loading }) {

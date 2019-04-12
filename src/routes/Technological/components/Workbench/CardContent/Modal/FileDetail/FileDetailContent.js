@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
@@ -13,10 +13,13 @@ import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW,
-  PROJECT_FILES_FILE_EDIT
+  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW, PROJECT_FILES_FILE_DELETE,
+  PROJECT_FILES_FILE_DOWNLOAD,
+  PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE
 } from "../../../../../../../globalset/js/constant";
 import {message} from "antd/lib/index";
+import {color_4} from "../../../../../../../globalset/js/styles";
+import Cookies from "js-cookie";
 
 export default class FileDetailContent extends React.Component {
 
@@ -321,13 +324,132 @@ export default class FileDetailContent extends React.Component {
     })
   }
 
+
+  //header
+  closeFile() {
+    const { datas: { breadcrumbList = [] } }= this.props.model
+    breadcrumbList.splice(breadcrumbList.length - 1, 1)
+    this.props.setPreviewFileModalVisibile()
+    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
+  }
+  zoomFrame() {
+    const { datas: { isExpandFrame = false } }= this.props.model
+    this.props.updateDatasFile({
+      isExpandFrame: !isExpandFrame,
+    })
+  }
+  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    //如果时pdf
+    if(pdfDownLoadSrc) {
+      window.open(pdfDownLoadSrc)
+    }else {
+      this.props.fileDownload({ids: filePreviewCurrentId})
+    }
+  }
+  //item操作
+  operationMenuClick(data, e) {
+    const { file_id, type, file_resource_id } = data
+    const { datas: { projectDetailInfoData= {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
+    const { board_id } = projectDetailInfoData
+    const { key } = e
+    switch (key) {
+      case '1':
+        break
+      case '2':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        //如果时pdf
+        if(pdfDownLoadSrc) {
+          window.open(pdfDownLoadSrc)
+        }else {
+          this.props.fileDownload({ids: file_resource_id})
+        }
+        break
+      case '3':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.updateDatasFile({
+          copyOrMove: '0',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '4':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.updateDatasFile({
+          copyOrMove: '1',
+          openMoveDirectoryType: '3',
+          moveToDirectoryVisiblie: true,
+        })
+        break
+      case '5':
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.props.fileRemove({
+          board_id,
+          arrays: JSON.stringify([{type, id: file_id}])
+        })
+        breadcrumbList.splice(breadcrumbList.length - 1, 1)
+        this.props.updateDatasFile({isInOpenFile: false})
+        break
+      default:
+        break
+    }
+  }
+  getVersionItemMenuClick({list, file_id}, e) {
+    const key = e.key
+    switch (key) {
+      case '1':
+        let file_resource_id = ''
+        for(let val of list) {
+          if(file_id == val['file_id']) {
+            file_resource_id = val['file_resource_id']
+            break
+          }
+        }
+        this.setState({
+          imgLoaded: false
+        })
+        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+        this.props.filePreview({id: file_resource_id, file_id})
+        this.setState({
+          imgLoaded: false,
+          editMode: true,
+          currentRect: { x: 0, y: 0, width: 0, height: 0 },
+          isInAdding: false,
+          isInEdditOperate: false,
+          mentionFocus: false,
+        })
+        break
+      case '2':
+        break
+      default:
+        break
+    }
+
+  }
+
   render() {
 
+    const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { board_id, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -500,27 +622,176 @@ export default class FileDetailContent extends React.Component {
       }
       return content
     }
+
+    //header
+    const uploadProps = {
+      name: 'file',
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_FILE}/file/version_upload`,
+      data: {
+        board_id,
+        folder_id: currentParrentDirectoryId,
+        file_version_id: filePreviewCurrentVersionId,
+      },
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken: Cookies.get('refreshToken'),
+      },
+      beforeUpload(e) {
+        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        if(e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
+        let loading = message.loading('正在上传...', 0)
+      },
+      onChange({ file, fileList, event }) {
+        if (file.status === 'uploading') {
+
+        }else{
+          message.destroy()
+        }
+        if (file.status === 'done') {
+          message.success(`上传成功。`);
+          if(file.response && file.response.code == '0') {
+            that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
+            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
+          }
+        } else if (file.status === 'error') {
+          message.error(`上传失败。`);
+          setTimeout(function () {
+            message.destroy()
+          }, 2000)
+        }
+      },
+    };
+    const operationMenu = (data) => {
+      return (
+        <Menu onClick={this.operationMenuClick.bind(this, data)}>
+          {/*<Menu.Item key="1">收藏</Menu.Item>*/}
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+            <Menu.Item key="2">下载</Menu.Item>
+          )}
+          {/*<Menu.Item key="3">移动</Menu.Item>*/}
+          {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (*/}
+            {/*<Menu.Item key="4">复制</Menu.Item>*/}
+          {/*)}*/}
+          {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (*/}
+            {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
+          {/*)}*/}
+        </Menu>
+      )
+    }
+    //版本信息列表
+    const getVersionItemMenu = (list) => {
+      return (
+        // onClick={this.getVersionItemMenuClick.bind(this, list)}
+        <Menu selectable={true} style={{ width: 400}}>
+          {list.map((value, key) => {
+            const { file_name, creator, create_time, file_size, file_id } = value
+            return (
+              <Menu.Item key={file_id} >
+                <div className={indexStyles.versionItemMenu}>
+                  <div style={{fontWeight: 400, fontSize: 14}} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
+                  <div>上传于</div>
+                  <div>{create_time}</div>
+                  {filePreviewCurrentFileId == file_id && (
+                    <div className={`${indexStyles.status}`}>当前</div>)}
+                  <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
+                  <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
+                    <Dropdown overlay={versionItemMenu(list, file_id)}>
+                      <span>&#xe7fd;</span>
+                    </Dropdown>
+                  </div>
+
+                </div>
+              </Menu.Item>
+            )
+          })}
+          <Menu.Item key="updateVersion" >
+            <Upload {...uploadProps} showUploadList={false}>
+              <div style={{ color: color_4, textAlign: 'center', width: 368,}}>
+                <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
+              </div>
+            </Upload>
+          </Menu.Item>
+        </Menu>
+      )
+    }
+    const versionItemMenu = (list, file_id) => {
+      return (
+        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id})}>
+          <Menu.Item key="1">设为当前</Menu.Item>
+          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
+        </Menu>
+      )
+    }
+
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-        {filePreviewIsUsable? (
+      <div>
+        <div className={indexStyles.fileDetailHead}>
+          <div className={indexStyles.fileDetailHeadLeft}>
+            {seeFileInput === 'fileModule'? (
+              <FileDerailBreadCrumbFileNav {...this.props}/>
+            ):('')}
+          </div>
+
+          <div className={indexStyles.fileDetailHeadRight}>
+            {seeFileInput === 'fileModule' && (
+              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
+                <Button style={{height: 24, marginLeft: 14}}>
+                  <Icon type="upload" />版本信息
+                </Button>
+              </Dropdown>
+            )}
+
+            {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
+                <Icon type="download" />下载
+              </Button>
+            )}
+
+            <span style={{marginLeft: '10px'}}>
+          </span>
+            <div style={{cursor: 'pointer'}}>
+              {seeFileInput === 'fileModule'? (
+                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
+                  <Icon type="ellipsis" style={{fontSize: 20, marginLeft: 14}}/>
+                </Dropdown>
+              ):('')}
+              <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+              <Tooltip title={'关闭预览'} placement={'left'}>
+                <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
+        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
+          {filePreviewIsUsable? (
             filePreviewIsRealImage?(
               punctuateDom
             ) : (
               iframeDom
             )
-        ):(
-          <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
-            <div>
-              {notSupport(this.props.model.datas.fileType)}
+          ):(
+            <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
+              <div>
+                {notSupport(this.props.model.datas.fileType)}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
 
-        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
+          <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
 
-          {/*width: isExpandFrame?0:420*/}
-          {/*从文件卡片查看的时候才有*/}
+            {/*width: isExpandFrame?0:420*/}
+            {/*从文件卡片查看的时候才有*/}
             <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               <ContentRaletion
                 {...this.props}
@@ -529,30 +800,31 @@ export default class FileDetailContent extends React.Component {
                 link_local={'4'}
               />
               {/*{seeFileInput === 'file'? (*/}
-                {/*<div>*/}
-                {/*<div>版本信息</div>*/}
-                {/*<div className={indexStyles.versionInfoList}>*/}
-                  {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
-                    {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
-                  {/*})}*/}
-                {/*</div>*/}
+              {/*<div>*/}
+              {/*<div>版本信息</div>*/}
+              {/*<div className={indexStyles.versionInfoList}>*/}
+              {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
+              {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
+              {/*})}*/}
+              {/*</div>*/}
               {/*</div>*/}
               {/*): ('')}*/}
             </div>
-          {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
-            <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-              <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
-            </div>
-          )}
+            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
+              <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
+                <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
+              </div>
+            )}
 
-          {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
-            <div className={indexStyles.fileDetailContentRight_bott}>
-              <Comment2 {...this.props} ></Comment2>
-            </div>
-          )}
+            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
+              <div className={indexStyles.fileDetailContentRight_bott}>
+                <Comment2 {...this.props} ></Comment2>
+              </div>
+            )}
+
+          </div>
 
         </div>
-
       </div>
     )
   }

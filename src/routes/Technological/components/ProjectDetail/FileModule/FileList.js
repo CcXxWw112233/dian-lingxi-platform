@@ -11,7 +11,6 @@ import {
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../globalset/js/constant";
 import {currentNounPlanFilterName, openPDF, getSubfixName} from "../../../../../utils/businessFunction";
-import { getFilePDFInfo, } from '../../../../../services/technological/file'
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -246,10 +245,10 @@ export default class FileList extends React.Component {
   }
   openFile(data) {
     const { file_id, version_id, file_resource_id, file_name } = data
-    if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-      openPDF({id: file_id})
-      return false
-    }
+    // if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    //   openPDF({id: file_id})
+    //   return false
+    // }
     this.open(data, '2')
 
     this.props.dispatch({
@@ -272,8 +271,24 @@ export default class FileList extends React.Component {
       }
     })
     //接下来打开文件
-    this.props.updateDatasFile({isInOpenFile: true, seeFileInput: 'fileModule', filePreviewCurrentFileId: file_id, filePreviewCurrentId: file_resource_id, filePreviewCurrentVersionId: version_id})
-    this.props.filePreview({id: file_resource_id, file_id})
+    this.props.updateDatasFile({
+      isInOpenFile: true,
+      seeFileInput: 'fileModule',
+      filePreviewCurrentFileId: file_id,
+      filePreviewCurrentId: file_resource_id,
+      filePreviewCurrentVersionId: version_id,
+      pdfDownLoadSrc: '',
+    })
+    if(getSubfixName(file_name) == '.pdf') {
+      this.props.dispatch({
+        type: 'projectDetailFile/getFilePDFInfo',
+        payload: {
+          id: file_id
+        }
+      })
+    } else {
+      this.props.filePreview({id: file_resource_id, file_id})
+    }
     this.props.fileVersionist({version_id: version_id})
 
     //通过url
@@ -282,7 +297,7 @@ export default class FileList extends React.Component {
 
   render() {
     const { datas = {} } = this.props.model
-    const { selectedRowKeys, fileList } = datas
+    const { selectedRowKeys, fileList = [] } = datas
     const { nameSort, sizeSort, creatorSort, } = this.state;
 
     const operationMenu = (data) => {

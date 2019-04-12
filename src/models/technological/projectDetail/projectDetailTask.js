@@ -178,6 +178,7 @@ export default modelExtend(projectDetail, {
       const taskGroupList = yield select(selectTaskGroupList)
       if(isApiResponseOk(res)) {
         taskGroupList[length].list_id = res.data.id
+        taskGroupList[length].editable = res.data.editable || '1'
         yield put({
           type: 'updateDatas',
           payload: {

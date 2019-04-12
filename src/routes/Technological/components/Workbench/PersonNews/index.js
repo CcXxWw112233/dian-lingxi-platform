@@ -266,7 +266,6 @@ export default class PersonNews extends React.Component {
             ) : (
               <NewsListNewDatas {...this.props} />
             )}
-            {/*<InitialNews{...this.props} />*/}
           </div>
           <div
             className={indexStyles.spin_turn}

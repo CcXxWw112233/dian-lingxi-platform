@@ -2,6 +2,19 @@ import request from '../../utils/requestAxios'
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+export async function getUpdateLog() {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/annunciate/updatelog`,
+    method: 'GET'
+  })
+}
+
+export async function updateUpdateLogStatus(id) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/annunciate/updatelog/read/${id}`,
+    method: 'PUT'
+  })
+}
 
 export async function associateUser(associate_param = '') {
   const params = {
@@ -320,7 +333,7 @@ export async function getArticleDetail(params) {
     headers: {
       appid: WE_APP_ID(params['appType']),
     }
-  },{isNotLoading: true});
+  }, {isNotLoading: true});
 }
 //更新阅读量
 export async function updateViewCounter(data) {

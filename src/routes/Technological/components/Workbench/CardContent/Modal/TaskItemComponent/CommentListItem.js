@@ -27,14 +27,14 @@ export default class CommentListItem extends React.Component {
     })
   }
   deleteComment(id) {
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { card_id } = drawContent
     this.props.deleteCardNewComment({id, card_id})
   }
 
   render() {
 
-    const { datas:{ cardCommentList = [] } } = this.props.model
+    const { datas: { cardCommentList = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -44,7 +44,7 @@ export default class CommentListItem extends React.Component {
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={CommentStyles.right}>
             <div>
@@ -234,6 +234,7 @@ export default class CommentListItem extends React.Component {
       }
       return messageContainer
     }
+    if(!this.props.model.datas.cardCommentAll) return null
     return (
       <div style={{overflowY: 'auto'}} className={CommentStyles.commentListItemBox}>
         <div>
@@ -263,7 +264,7 @@ export default class CommentListItem extends React.Component {
             )}
           </div>
         ) : ('')}
-        <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
+        <div onMouseOver={this.boxOnMouseOver.bind(this)}>
           {cardCommentList.map((value, key) => {
             if(closeNormal && key > 19) {
               return false
