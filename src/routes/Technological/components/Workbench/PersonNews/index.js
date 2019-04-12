@@ -248,32 +248,32 @@ export default class PersonNews extends React.Component {
               退出
             </div>
           </div>
-          {/*<div*/}
-            {/*id={"dynamicsContainer"}*/}
-            {/*onScroll={this.newsOutScroll.bind(this)}*/}
-            {/*className={*/}
-              {/*isShowBottDetail*/}
-                {/*? indexStyles.contain2*/}
-                {/*: indexStyles.contain2_hide*/}
-            {/*}*/}
-            {/*style={{*/}
-              {/*maxHeight: clientHeight * 0.8,*/}
-              {/*overflow: !isShowBottDetail ? "hidden" : "auto"*/}
-            {/*}}*/}
-          {/*>*/}
-            {/*{!isShowBottDetail ? (*/}
-              {/*<InitialNews {...this.props} />*/}
-            {/*) : (*/}
-              {/*<NewsListNewDatas {...this.props} />*/}
-            {/*)}*/}
-          {/*</div>*/}
-          {/*<div*/}
-            {/*className={indexStyles.spin_turn}*/}
-            {/*onClick={this.setIsShowBottDetail.bind(this)}*/}
-          {/*>*/}
-            {/*<Icon type={!isShowBottDetail ? "down" : "up"} />*/}
-          {/*</div>*/}
-          {/*<div className={indexStyles.bott_opacity} />*/}
+          <div
+            id={"dynamicsContainer"}
+            onScroll={this.newsOutScroll.bind(this)}
+            className={
+              isShowBottDetail
+                ? indexStyles.contain2
+                : indexStyles.contain2_hide
+            }
+            style={{
+              maxHeight: clientHeight * 0.8,
+              overflow: !isShowBottDetail ? "hidden" : "auto"
+            }}
+          >
+            {!isShowBottDetail ? (
+              <InitialNews {...this.props} />
+            ) : (
+              <NewsListNewDatas {...this.props} />
+            )}
+          </div>
+          <div
+            className={indexStyles.spin_turn}
+            onClick={this.setIsShowBottDetail.bind(this)}
+          >
+            <Icon type={!isShowBottDetail ? "down" : "up"} />
+          </div>
+          <div className={indexStyles.bott_opacity} />
           <CreateOrganizationModal
             {...this.props}
             createOrganizationVisable={this.state.createOrganizationVisable}
