@@ -67,7 +67,7 @@ export const currentNounPlanFilterName = (code) => {
 
 //打开pdf文件名
 export const openPDF = (params) => {
-  const { protocol, hostname } = location
+  const { protocol, hostname } = window.location
   window.open(`${protocol}//${hostname}/#/iframeOut?operateType=openPDF&id=${params['id']}`)
 }
 //获取后缀名
