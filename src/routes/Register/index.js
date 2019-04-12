@@ -9,6 +9,7 @@ import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
+import { NODE_ENV } from '../../globalset/js/constant'
 const getEffectOrReducerByName = name => `register/${name}`
 const juge = localStorage.getItem('wechat')?localStorage.getItem('wechat'): ''
 const bindKey = localStorage.getItem('wechatBindKey')?localStorage.getItem('wechatBindKey'): ''
@@ -63,7 +64,7 @@ const Register = (options) => {
   }
   const bindAccount = () => {
     localStorage.setItem('bindType', 'wechat')
-    window.location.href=('http://localhost/#/login') 
+    NODE_ENV != 'development'?window.location.href='http://www.new-di.com/#/login':window.location.href=('http://localhost/#/login') 
   }
   if(juge === 'wechatRegister'){
     return (
