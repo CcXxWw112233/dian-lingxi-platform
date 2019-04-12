@@ -135,9 +135,6 @@ class FormList extends React.Component {
         })
       }
     }.bind(this), 1000)
-    
-    
-    
   }
   render() {
     const { getFieldDecorator } = this.props.form;
