@@ -359,7 +359,7 @@ export default class FileDetailContent extends React.Component {
   }
   deleteComment(id, e) {
     e.stopPropagation()
-    if(location.hash.indexOf('projectDetail')!=-1) {
+    if(window.location.hash.indexOf('projectDetail')!=-1) {
       this.props.dispatch({
         type: 'projectDetailProcess/deleteWorkFlowComment',
         payload: {
