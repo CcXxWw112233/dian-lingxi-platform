@@ -88,6 +88,7 @@ export default {
               projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
               isInitEntry: false, //是否初次进来项目详情
               relations_Prefix: [], //内容关联前部分
+              projectDetailInfoData: {},
             }
           })
         }
@@ -144,6 +145,10 @@ export default {
           Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
           localStorage.setItem('defferBoardDetailRoute', location.pathname) //项目详情头部返回路径
           initialData()
+          dispatch({//清空项目默认页面可见数据--（一进来就看到的）
+            type: 'removeAllProjectData',
+            payload: {}
+          })
         }
         //刷新页面时去除掉appsSelectKeyIsAreadyClickArray
         window.onbeforeunload = function () {
@@ -153,6 +158,32 @@ export default {
     },
   },
   effects: {
+
+    //清空项目默认页面可见数据--（一进来就看到的）
+    * removeAllProjectData({ payload }, { select, call, put }) {
+      yield put({
+        type: 'projectDetailFile/updateDatas',
+        payload: {
+          fileList: [], //文档列表
+          filedata_1: [], //文档列表--文件夹breadcrumbList
+          filedata_2: [], //文档列表--文件
+        }
+      })
+      yield put({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          taskGroupList: [], //任务列表
+        }
+      })
+      yield put({
+        type: 'projectDetailFile/updateDatas',
+        payload: {
+          processDoingList: [], //正在进行流程的列表
+          processTemplateList: [], //流程模板列表
+        }
+      })
+    },
+
     //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
     * initProjectDetail({ payload }, { select, call, put }) {
       const { id, entry } = payload //input 调用该方法入口

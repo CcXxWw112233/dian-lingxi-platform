@@ -522,8 +522,13 @@ export default class Header extends React.Component {
           // message.destroy()
         }
         if (file.status === 'done') {
-          message.success(`上传成功。`);
-          that.props.getFileList({folder_id: currentParrentDirectoryId})
+
+          if(file.response && file.response.code == '0') {
+            message.success(`上传成功。`);
+            that.props.getFileList({folder_id: currentParrentDirectoryId})
+          } else {
+            message.error(file.response && file.response.message || '上传失败');
+          }
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
           setTimeout(function () {
@@ -692,7 +697,7 @@ export default class Header extends React.Component {
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)}/>
              {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
              {!isInEditBoardName?(
-               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName || '无'}</span>
+               <span className={indexStyle.projectName} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
              ) : (
                <Input value={localBoardName}
                       className={indexStyle.projectName}

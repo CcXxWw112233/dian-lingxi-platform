@@ -268,14 +268,27 @@ class ElseProject extends React.Component{
     const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
 
     is_starinit = is_star
+
+    const userInfo = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const user_id = userInfo['id']
+    let cunrentUserIsInThisBoard = false //当前用户是否在当前项目里
+    for(let val of data) {
+      if(user_id == val['user_id']) {
+        cunrentUserIsInThisBoard = true
+        break
+      }
+    }
+
     const menu = (board_id) => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
-          <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyle.elseProjectMemu}>
-              邀请{currentNounPlanFilterName(MEMBERS)}加入
-            </div>
-          </Menu.Item>
+          {cunrentUserIsInThisBoard && (
+            <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+              <div className={indexStyle.elseProjectMemu}>
+                邀请{currentNounPlanFilterName(MEMBERS)}加入
+              </div>
+           </Menu.Item>)}
+
           <Menu.Item key={'remove'} style={{textAlign: 'center', padding: 0, margin: 0}}>
           <div className={indexStyle.elseProjectMemu}>
               移动到
@@ -293,7 +306,7 @@ class ElseProject extends React.Component{
               </div>
             </Menu.Item>
           )}
-          {is_create !== '1'? (
+          {is_create !== '1' && cunrentUserIsInThisBoard? (
             <Menu.Item key={'4'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyle.elseProjectDangerMenu}>
                 退出{currentNounPlanFilterName(PROJECTS)}
