@@ -206,8 +206,8 @@ class BindAccountForm extends React.Component {
               is_bind === '1'?
                 <Popconfirm onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
                   <Button type="primary" style={{height: 40, marginLeft: 48}} disabled={isWechat}>解除绑定</Button>
-                </Popconfirm>:
-                <Button type="primary" onClick={() => location.href='http://localhost/#/login'} style={{height: 40, marginLeft: 48}} disabled={isWechat}>绑定</Button> 
+                </Popconfirm>:<div></div>
+                // <Button type="primary" onClick={() => location.href='http://localhost/#/login'} style={{height: 40, marginLeft: 48}} disabled={isWechat}>绑定</Button> 
             }
           </FormItem>
         </Form>
