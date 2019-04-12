@@ -65,13 +65,13 @@ export default {
     },
     * wechatSignupBindLogin({payload}, {select, call, put}) {
       let res = yield call(wechatSignupBindLogin, payload)
-      debugger
+      // debugger
       if(isApiResponseOk(res)){
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         Cookies.set('is401', false, {expires: 30, path: ''})
-        debugger
+        // debugger
         yield put(routerRedux.push('/noviceGuide'))
       }
     }

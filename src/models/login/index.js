@@ -57,7 +57,7 @@ export default {
         const res2 = yield call(getUSerInfo, payload)
         //如果有重定向路径或者存在组织
         if(isApiResponseOk(res2)) {
-          debugger
+          // debugger
           if(!!res2.data['current_org']){
             yield put(routerRedux.push(redirectLocation))
           } else {
