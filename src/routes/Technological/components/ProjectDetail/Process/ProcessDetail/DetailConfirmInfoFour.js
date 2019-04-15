@@ -269,7 +269,7 @@ export default class DetailConfirmInfoFour extends React.Component {
             const { name, avatar, mobile, email } = value
             if (key <= 20)
               return(
-                <Tooltip key={key} placement="top" title={name|| avatar || mobile ||email || '佚名'}>
+                <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                   <div>{imgOrAvatar2()}</div>
                 </Tooltip>
               )
