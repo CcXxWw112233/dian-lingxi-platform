@@ -1,6 +1,7 @@
 import {
   saveNounList, getNounList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
-  updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan
+  updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan,getFnManagementList, 
+  setFnManagementStatus
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -417,6 +418,21 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+
+    * getFnManagementList({payload}, {call, put}) {
+      const res = yield call(getFnManagementList, payload)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          fnmanagement_list: res.data
+        }
+      })
+    },
+
+    * setFnManagement({payload}, {call, put}) {
+      let re = yield call(setFnManagementStatus, payload)
+    }
+
   },
 
   reducers: {

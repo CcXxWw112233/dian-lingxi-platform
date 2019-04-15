@@ -31,6 +31,13 @@ export default class Technological extends React.Component{
     const HeaderNavProps = {
       model,
       dispatch,
+      getMenuList(data) {
+        console.log('this is parents')
+        dispatch({
+          type: getEffectOrReducerByName('getMenuList'),
+          data
+        })
+      },
       logout() {
         dispatch({
           type: getEffectOrReducerByName('logout'),

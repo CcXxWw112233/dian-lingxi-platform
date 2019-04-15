@@ -23,6 +23,9 @@ export default class SiderLeft extends React.Component {
     createOrganizationVisable: false,
     ShowAddMenberModalVisibile: false,
   }
+  componentDidMount() {
+    this.props.getMenuList()
+  }
   setCollapsed(collapsed) {
     this.setState({
       collapsed: collapsed
@@ -125,6 +128,35 @@ export default class SiderLeft extends React.Component {
     })
   }
   render() {
+    let temp = []
+    this.props.model.datas.menuList && this.props.model.datas.menuList.forEach((item) => {
+      if(item.status === '1') {
+        temp.push(item)
+      } 
+    })
+    let res = temp.reduce((r, c) => {
+      let _c
+      switch(c.name) {
+        case '优秀案例':
+          _c = {...c, theme: '&#xe65a;'}
+          break
+        case '政策法规':
+          _c = { ...c, theme: '&#xe6c9;' }
+          break
+        case '我的展示':
+          _c = {...c, theme: '&#xe60b;'}
+          break
+        case '投资地图':
+          _c = { ...c,  theme: '&#xe676;'}
+        default: 
+          break
+      }
+      return [
+        ...r,
+        _c
+      ]
+    }, [])
+
     const { collapsed } = this.state
     const navArray = [
       {
@@ -135,22 +167,7 @@ export default class SiderLeft extends React.Component {
         theme: '&#xe60a;',
         name: currentNounPlanFilterName(PROJECTS)
       },
-      {
-        theme: '&#xe65a;',
-        name: '优秀案例'
-      },
-      {
-        theme: '&#xe6c9;',
-        name: '政策法规'
-      },
-      {
-        theme: '&#xe60b;',
-        name: '我的展示'
-      },
-      {
-        theme: '&#xe676;',
-        name: '投资地图'
-      },
+      ...res
     ]
 
     const { datas = {} } = this.props.model

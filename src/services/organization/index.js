@@ -119,3 +119,21 @@ export async function getCurrentNounPlan(params) {
     params
   });
 }
+
+//获取功能管理列表
+export async function getFnManagementList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app`,
+    method: 'GET',
+    params
+  })
+}
+
+//修改功能管理状态
+export async function setFnManagementStatus(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/set`,
+    method: 'PUT',
+    data
+  })
+}

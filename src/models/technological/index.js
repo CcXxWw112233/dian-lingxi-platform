@@ -11,6 +11,7 @@ import {
   getUserOrgPermissions,
   getUserBoardPermissions,
 } from '../../services/technological/organizationMember'
+import { getMenuList } from '../../services/technological/getMenuList'
 import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
 import { selectCurrentUserOrganizes, selectCurrentSelectOrganize} from "./select";
 import { getCurrentNounPlan } from '../../services/organization'
@@ -37,7 +38,7 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload: {
-
+              menuList: []
             }
           })
 
@@ -443,6 +444,17 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+    
+    * getMenuList({payload}, {call, put}) {
+      let res = yield call(getMenuList, payload)
+      // console.log('this is model', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          menuList: res.data
+        }
+      })
+    }
   },
 
   reducers: {
