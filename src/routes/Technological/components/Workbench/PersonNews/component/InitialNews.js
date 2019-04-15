@@ -23,9 +23,9 @@ export default class InitialNews extends React.Component {
   }
 
   render() {
-    
+
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
-    console.log('this is issues model ---->>>', this.props.model.datas  )
+    // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''

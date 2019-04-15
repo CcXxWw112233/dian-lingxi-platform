@@ -69,7 +69,7 @@ export default class ProcessItem extends React.Component {
   render() {
     // const { itemValue = {} } = this.props
     // const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
-    console.log('hhhaha', this.props.itemValue)
+    // console.log('hhhaha', this.props.itemValue)
     const obj = {
       flow: this.state.value.flow_instance_id,
       board: this.state.value.board_id
