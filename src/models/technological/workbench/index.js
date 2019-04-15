@@ -133,7 +133,7 @@ export default modelExtend(technological, {
       const res = yield call(addTask, data)
       if(!isApiResponseOk(res)) {
         message.error('创建任务失败')
-        console.log('create task failed :' + res)
+        // console.log('create task failed :' + res)
         return
       } else {
         //创建任务成功的任务 id
@@ -425,7 +425,7 @@ export default modelExtend(technological, {
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
       let res = yield call(getCurrentBackLogProcessList)
-      console.log('workbench/getBackLogProcessList', res)
+      // console.log('workbench/getBackLogProcessList', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
