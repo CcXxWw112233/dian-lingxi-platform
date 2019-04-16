@@ -1,0 +1,104 @@
+.cardDetail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid rgba(217, 217, 217, 1);
+  border-radius: 4px;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
+  border-top: 2px solid rgba(217, 217, 217, 1);
+  display: flex;
+  .cardDetail_left, .cardDetail_right{
+    height: 100%;
+    width: 20px;
+    background-color: #FFFFFF;
+  }
+  .cardDetail_middle{
+    flex: 1;
+    overflow-y: hidden;
+    overflow-x: scroll;
+  }
+}
+.dateArea{
+  display: flex;
+  width: auto;
+  height: 60px;
+  align-items: center;
+  .dateAreaItem {
+    width: auto;
+    line-height: 24px;
+    .dateTitle{
+      color: rgba(0,0,0,.45);
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .dateDetail{
+      display: flex;
+      .dateDetailItem{
+        width: 44px;
+        text-align: center;
+        color: rgba(0,0,0,.65);
+      }
+    }
+  }
+
+}
+
+.gantt_operate_top{
+  position: relative;
+  width: 100%;
+  .dasheRect{
+    position: absolute;
+    border: 2px dashed #E8E8E8;
+    background-color: #ffffff;
+  }
+}
+
+.ganttAreaOut{
+
+}
+.ganttArea{
+  display: flex;
+  width: auto;
+  align-items: center;
+  .ganttAreaItem {
+    width: auto;
+    line-height: 24px;
+    .ganttDetail{
+      display: flex;
+      height: auto;
+      .ganttDetailItem{
+        width: 44px;
+        height: 168px;
+        color: rgba(0,0,0,.65);
+        border-right: 1px solid rgba(0, 0, 0, .1);
+        border-top: 1px solid #E8E8E8;
+        box-sizing: border-box;
+      }
+    }
+  }
+
+}
+
+.panel{
+  height: auto;
+  width: auto;
+  position: relative;
+  .listHead{
+    position: fixed;
+    z-index: 1;
+    background-color: #FFFFFF;
+    margin-top: 1px;
+    .listHeadItem{
+      background-color: #0C68FF;
+      width: 132px;
+      height: 168px;
+      border-bottom: 1px solid #E8E8E8;
+      box-sizing: border-box;
+      padding: 10px 0;
+    }
+  }
+}

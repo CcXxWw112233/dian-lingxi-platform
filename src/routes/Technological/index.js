@@ -124,6 +124,9 @@ export default class Technological extends React.Component{
       }, {
         path: '/technological/teamShow',
         component: () => import('../TeamShow/index'),
+      }, {
+        path: '/technological/gantt',
+        component: () => import('./components/Gantt/index'),
       },
     ]
 
