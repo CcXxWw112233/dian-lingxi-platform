@@ -46,16 +46,19 @@ function setDateData() {
       dateData[lastYear][i].push(j)
     }
   }
+  // console.log('dateData1', dateData)
 	//获取截至今天（含）之前今年的月份的天数
-  for (let i = 1; i < currentMonth + 1; i++) {
-    dateData[currentYear][i] = []
-    let dayTotal
+  // for (let i = 1; i < currentMonth + 1; i++) {
+  //   dateData[currentYear][i] = []
+  //   let dayTotal
+  //
+  //   dayTotal = (i === currentMonth) ? currentDate : getDaysInOneMonth(currentYear, i)
+  //   for (let j = 1; j < dayTotal + 1; j++) {
+  //     dateData[currentYear][i].push(j)
+  //   }
+  // }
+  // console.log('dateData2', dateData)
 
-    dayTotal = (i === currentMonth) ? currentDate : getDaysInOneMonth(currentYear, i)
-    for (let j = 1; j < dayTotal + 1; j++) {
-      dateData[currentYear][i].push(j)
-    }
-  }
   for (let i in dateData) {
     for (let j in dateData[i]) {
       let obj = {

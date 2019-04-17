@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
+import DateList from './DateList'
+import getDate from './getDate'
 
 export default class Gantt extends Component {
 
@@ -47,34 +49,16 @@ export default class Gantt extends Component {
       <div className={indexStyles.cardDetail} id={'gantt_card_out'}>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle} id={'gantt_card_out_middle'}>
-          <div className={indexStyles.dateArea} >
-            {this.getDate().map((value, key) => {
-              const { dateTop, dateInner = [] } = value
-              return (
-                <div className={indexStyles.dateAreaItem} key={key}>
-                  <div className={indexStyles.dateTitle}>{dateTop}</div>
-                  <div className={indexStyles.dateDetail} >
-                    {dateInner.map((value2, key2) => {
-                      const { name, is_daily } = value2
-                      return (
-                        <div className={`${indexStyles.dateDetailItem}`} key={key2}>{name}</div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
+          <DateList />
           <div className={indexStyles.panel}>
-            <div className={indexStyles.listHead}>
-              {this.getListRow().map((value, key) =>{
-                const { name } = value
-                return (
-                  <div className={indexStyles.listHeadItem} key={key}>{name}</div>
-                )
-              })}
-            </div>
+            {/*<div className={indexStyles.listHead}>*/}
+              {/*{this.getListRow().map((value, key) =>{*/}
+                {/*const { name } = value*/}
+                {/*return (*/}
+                  {/*<div className={indexStyles.listHeadItem} key={key}>{name}</div>*/}
+                {/*)*/}
+              {/*})}*/}
+            {/*</div>*/}
             <GetRowGantt />
           </div>
         </div>
