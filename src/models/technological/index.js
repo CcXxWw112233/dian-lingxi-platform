@@ -162,6 +162,7 @@ export default {
             currentOrgAllMembersList: res.data.users
           }
         })
+        return res
       }
   },
     //查询用户基本信息，用在更新操作，modelExtend此model的地方调用

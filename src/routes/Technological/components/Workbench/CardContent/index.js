@@ -746,23 +746,23 @@ class CardContent extends React.Component {
           {/*<CollectionProjectItem />*/}
           {/*<MyCircleItem />*/}
         </div>
-        <FileDetailModal
+        {this.state.previewFileModalVisibile &&<FileDetailModal
           {...this.props}
           modalVisible={this.state.previewFileModalVisibile}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
             this
           )}
-        />
+        />}
         {/* 我的流程 */}
-        <ProccessDetailModal
+        {this.state.previewProccessModalVisibile && <ProccessDetailModal
           {...this.props}
           close={this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
           setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
             this
           )}
-        />
-        <TaskDetailModal
+        />}
+        {this.state.TaskDetailModalVisibile && <TaskDetailModal
           {...this.props}
           modalVisible={this.state.TaskDetailModalVisibile}
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
@@ -771,7 +771,7 @@ class CardContent extends React.Component {
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
             this
           )}
-        />
+        />}
         {addTaskModalVisible && (
           <AddTaskModal
             {...this.props}

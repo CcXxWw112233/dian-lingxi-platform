@@ -6,6 +6,7 @@ import detailInfoStyle from '../ProjectDetail/DetailInfo/DetailInfo.less'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import SearchTreeModal from './components/SearchTreeModal'
 import NoPermissionUserCard from './../../../../components/NoPermissionUserCard/index'
+import UserCard from './../../../../components/UserCard/index'
 import Cookies from 'js-cookie'
 import {connect} from 'dva'
 import {
@@ -317,58 +318,11 @@ class ElseProject extends React.Component{
       );
     }
     const manImageDropdown = (props) =>{
-      const { avatar, email, name: full_name, mobile, role_name, user_id, user_name, we_chat = '无' } = props
+      const { avatar, email, name, mobile, role_name, user_id, user_name, we_chat = '无' } = props
       if(!isHasOrgMemberQueryPermission()) {
-        return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
+        return <NoPermissionUserCard avatar={avatar} full_name={name} />
       }
-      return (
-        <div className={detailInfoStyle.manImageDropdown}>
-          <div className={detailInfoStyle.manImageDropdown_top}>
-            <div className={detailInfoStyle.left}>
-              {avatar ? (<img src={avatar} alt='' />) : (
-                <div style={{backgroundColor: '#f2f2f2', textAlign: 'center', width: 32, height: 32, borderRadius: 32}}>
-                  <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20, marginTop: 6}}/>
-                </div>
-              )}
-            </div>
-            <div className={detailInfoStyle.right}>
-              <div className={detailInfoStyle.name}>{full_name || '佚名'}</div>
-              <Tooltip title="该功能即将上线">
-                <div className={detailInfoStyle.percent}>
-                  <div style={{width: '0'}}></div>
-                  <div style={{width: '0'}}></div>
-                  <div style={{width: '100%'}}></div>
-                </div>
-              </Tooltip>
-            </div>
-          </div>
-          <div className={detailInfoStyle.manImageDropdown_middle}>
-            {/* <div className={detailInfoStyle.detailItem}>
-              <div>姓名：</div>
-              <div>{full_name}</div>
-            </div> */}
-            <div className={detailInfoStyle.detailItem}>
-              <div>职位：</div>
-              <div>{role_name ? role_name : '无'}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>邮箱：</div>
-              <div>{email}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>手机：</div>
-              <div>{mobile}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>微信：</div>
-              <div>{we_chat || '无'}</div>
-            </div>
-          </div>
-          {/*<div className={detailInfoStyle.manImageDropdown_bott}>*/}
-            {/*<img src="" />*/}
-          {/*</div>*/}
-        </div>
-      )
+      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={role_name} />)
     }
 
     const cancelStarProjet = (

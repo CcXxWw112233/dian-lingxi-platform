@@ -5,7 +5,7 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
   PROJECT_TEAM_CARD_INTERVIEW,
-  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,PROJECT_TEAM_BOARD_MEMBER,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE, PROJECT_TEAM_BOARD_MEMBER,
   ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
@@ -465,6 +465,11 @@ export default class Header extends React.Component {
             </div>
           </Menu.Item>
         )}
+        {<Menu.Item key={'99'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            <div className={indexStyle.elseProjectMemu}>
+              <p style={{marginBottom: '0'}}>访问控制&nbsp;&nbsp;<span style={{transform: 'rotate(45deg)'}} className={globalStyles.authTheme}> &#xe7eb;</span></p>
+            </div>
+          </Menu.Item>}
         {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
           {/*<div className={indexStyle.elseProjectMemu}>*/}
             {/*{currentNounPlanFilterName(PROJECTS)}归档*/}

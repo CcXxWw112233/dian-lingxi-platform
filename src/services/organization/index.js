@@ -2,6 +2,16 @@ import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+//根据用户id获取用户信息，支持获取多个用户
+export async function fetchUsersByIds({ids}){
+  //ids: 用户id, 多个用逗号隔开
+  return request({
+    url: `${REQUEST_DOMAIN}/user/info/list`,
+    method: 'GET',
+    params: {ids}
+  })
+}
+
 //更新组织
 export async function updateOrganization(data) {
   return request({
