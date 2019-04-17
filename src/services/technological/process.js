@@ -116,7 +116,7 @@ export async function processFileUpload(data) {
 
 //主动获取流程动态
 export async function getProessDynamics(params) {
-  console.log('this is service: ', params)
+  // console.log('this is service: ', params)
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/dynamic/${params['currentProcessInstanceId']}`,
     method: 'GET',

@@ -95,7 +95,6 @@ export default class ProccessContent extends React.Component {
  render() {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
-   console.log('this is doing:' ,processEditDatas)
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
    const data  = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&

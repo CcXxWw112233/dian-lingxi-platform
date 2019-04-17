@@ -33,7 +33,7 @@ const Register = (options) => {
       })
     },
     checkAccountRestered(data) {
-      console.log(data)
+      // console.log(data)
       dispatch({
         type: getEffectOrReducerByName('checkAccountRestered'),
         payload: {

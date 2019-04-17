@@ -49,7 +49,7 @@ class FormList extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
+      // console.log(values)
       if (!err) {
         if((!this.state.emailBlurCheck && !this.state.phoneBlurCheck) || !this.state.passwordBlurCheck ){
           return false

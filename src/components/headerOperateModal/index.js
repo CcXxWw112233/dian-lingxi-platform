@@ -21,7 +21,7 @@ const showConfirm = (processEnd) => {
       processEnd()
     },
     onCancel() {
-      console.log('Cancel');
+      // console.log('Cancel');
     },
   });
 }
@@ -38,7 +38,7 @@ const showDeleteConfirm = (processDelete) => {
       processDelete()
     },
     onCancel() {
-      console.log('Cancel');
+      // console.log('Cancel');
 
     },
   });

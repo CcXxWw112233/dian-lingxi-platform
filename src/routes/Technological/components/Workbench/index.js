@@ -708,7 +708,7 @@ const Workbench = (props) => {
   // }
   const workflowComments = {
     addWorkFlowComment(payload) {
-      console.log('test')
+      // console.log('test')
       dispatch({
         type: 'workbenchDetailProcess/addWorkFlowComment',
         payload

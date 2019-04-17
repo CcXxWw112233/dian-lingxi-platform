@@ -308,11 +308,11 @@ export default modelExtend(workbench, {
       const newsUserId = newsData.userId
       const currentUserId = JSON.parse(localStorage.getItem('userInfo')).id
       const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
-      console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
+      // console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
 
       // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
       if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
-        console.log('进入查询状态')
+        // console.log('进入查询状态')
         const res = yield call(getProessDynamics, {flow_instance_id: id})
         if(isApiResponseOk(res)) {
           yield put({
@@ -322,12 +322,12 @@ export default modelExtend(workbench, {
             }
           })
         }
-        console.log('进入查询状态之后')
+        // console.log('进入查询状态之后')
       }
     },
     * getCurrentCompleteStep({payload}, { select, call, put}) {
       let processInfo = yield select(selectProcessInfoWorkbench)
-      console.log('我是所有列表', processInfo)
+      // console.log('我是所有列表', processInfo)
       if(processInfo) {
         yield put({
           type: 'updateDatas',
@@ -343,7 +343,7 @@ export default modelExtend(workbench, {
       let res2 = yield call(getProcessInfo, instance_id)
       const curr_node_id = res2.data.completed_amount
       const amount_node_id = res2.data.node_amount
-      console.log('completeProcessTask has running:', res)
+      // console.log('completeProcessTask has running:', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
@@ -352,6 +352,13 @@ export default modelExtend(workbench, {
             calback: function () {
               message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
           }
         })
         let backLogProcessList = yield select(selectBackLogProcessList)
@@ -381,7 +388,7 @@ export default modelExtend(workbench, {
       }
     },
     * fillFormComplete({ payload }, { select, call, put }) {
-      console.log('logloglog!')
+      // console.log('logloglog!')
       let res = yield call(fillFormComplete, payload)
       const { instance_id } = payload
       if(isApiResponseOk(res)) {
@@ -392,6 +399,13 @@ export default modelExtend(workbench, {
             calback: function () {
               message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
+          }
+        })
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
           }
         })
         let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
@@ -418,6 +432,13 @@ export default modelExtend(workbench, {
             }
           }
         })
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
         let currentStep = yield select(selectCurrentProcessCompletedStepWorkbench)
         yield put({
           type: 'updateDatas',
@@ -442,6 +463,15 @@ export default modelExtend(workbench, {
             }
           }
         })
+
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
+        
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -498,7 +528,7 @@ export default modelExtend(workbench, {
     },
     * getWorkFlowComment({payload}, {select, call, put}) {
       let res = yield call(getWorkFlowComment, payload)
-      console.log('this is workbench_getWorkFlowComment', res)
+      // console.log('this is workbench_getWorkFlowComment', res)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -509,7 +539,7 @@ export default modelExtend(workbench, {
 
     * workflowDelete({payload}, {select, call, put}) {
       let res = yield call(workflowDelete, payload)
-      console.log('this is workflowDelete:', res)
+      // console.log('this is workflowDelete:', res)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -520,7 +550,7 @@ export default modelExtend(workbench, {
 
     * workflowEnd({payload}, {select, call, put}) {
       let res = yield call(workflowEnd, payload)
-      console.log('this is workflowEnd:', res)
+      // console.log('this is workflowEnd:', res)
       yield put({
         type: 'updateDatas',
         payload: {

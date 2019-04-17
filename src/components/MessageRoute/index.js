@@ -40,7 +40,7 @@ export default class MessageRoute extends React.Component{
         initTime = MESSAGE_DURATION_TIME
         clearInterval(interval)
       }
-      console.log(initTime)
+      // console.log(initTime)
     }, 1000)
   }
   render() {

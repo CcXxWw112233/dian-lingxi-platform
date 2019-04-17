@@ -67,7 +67,7 @@ export default class RaletionList extends React.Component {
 
   render() {
    const { relations, isShowAll } = this.props
-   console.log('this is relations', relations)
+  //  console.log('this is relations', relations)
     return(
       <div className={indexStyles.relaData}>
         {relations.map((value, key) => {

@@ -127,7 +127,7 @@ export default {
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
       const { id, calback } = payload
       let res = yield call(projectDetailInfo, id)
-      console.log('workbenchTaskDetail:', res)
+      // console.log('workbenchTaskDetail:', res)
       if(typeof calback === 'function') {
         calback()
       }

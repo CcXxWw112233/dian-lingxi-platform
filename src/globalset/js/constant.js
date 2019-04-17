@@ -18,8 +18,8 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 //export const WEBSOCKET_URL = 'wss://lingxi.di-an.com/websocket' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
 export const NODE_ENV = process.env.NODE_ENV
-export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.60:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-export const WEBSOCKET_PATH = '192.168.1.60' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
+export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
 

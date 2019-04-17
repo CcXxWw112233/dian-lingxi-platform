@@ -29,7 +29,7 @@ class PersonalInfoForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log(values)
+        // console.log(values)
         this.props.updateUserInfo ? this.props.updateUserInfo(values) : false
       }
     });

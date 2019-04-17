@@ -29,7 +29,7 @@ export default class FileList extends React.Component {
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys) => {
     this.props.updateDatas({ selectedRowKeys });
-    console.log(selectedRowKeys)
+    // console.log(selectedRowKeys)
   }
 
   //item操作

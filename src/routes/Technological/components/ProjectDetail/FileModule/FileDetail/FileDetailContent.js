@@ -724,7 +724,7 @@ export default class FileDetailContent extends React.Component {
         }
         if (file.status === 'done') {
           message.success(`上传成功。`);
-          console.log('file', file)
+          // console.log('file', file)
           if(file.response && file.response.code == '0') {
             that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
             that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
