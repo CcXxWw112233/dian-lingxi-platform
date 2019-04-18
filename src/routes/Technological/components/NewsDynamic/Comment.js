@@ -12,7 +12,7 @@ const Dragger = Upload.Dragger
 
 export default class Comment extends React.Component {
   state = {
-    editText: '',
+    editText: toContentState(''),
     submitButtonDisabled: false,
   }
 
@@ -21,8 +21,7 @@ export default class Comment extends React.Component {
   async MentionEditorChange(e) {
 
     await this.setState({
-      editText: toString(e),
-      mention: e
+      editText: e,
     })
     await this.setState({
       submitButtonDisabled: !!!this.state.editText
@@ -33,15 +32,17 @@ export default class Comment extends React.Component {
     const { card_id, parentKey, childrenKey } = this.props
     this.props.addCardNewComment({
       card_id,
-      comment: this.state.editText,
+      comment: toString(this.state.editText),
       parentKey,
       childrenKey,
+    })
+    this.setState({
+      editText: toContentState('')
     })
   }
 
 
   render() {
-    console.log('nmsl', this.state)
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
@@ -96,6 +97,7 @@ export default class Comment extends React.Component {
                   className={CommentStyles.mention}
                   style={{ width: '100%', border: ' none', outline: 'none', height: 48}}
                   suggestions={suggestions}
+                  value={this.state.editText}
                 />
               <div className={CommentStyles.functionBar}>
                   <div className={CommentStyles.functionBar_left}>

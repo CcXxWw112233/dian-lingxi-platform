@@ -57,7 +57,6 @@ export default {
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          // 就是你卡的吧!!!nmsl 狗贼!!!
           await dispatch({
             type: 'getUSerInfo',
             payload: {}
@@ -82,7 +81,6 @@ export default {
           // }
 
           //获取当前的用户当前组织的项目列表,
-          // 就是你卡的吧!!!nmsl 狗贼!!!
           await dispatch({
             type: 'getCurrentOrgProjectList',
             payload: {}

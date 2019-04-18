@@ -180,7 +180,8 @@ export default class FileList extends React.Component {
   //文件名类型
   judgeFileType(fileName) {
     let themeCode = ''
-    const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase()
+    const type = getSubfixName(fileName)
+    debugger
     switch (type) {
       case '.xls':
         themeCode = '&#xe6d5;'
@@ -206,7 +207,7 @@ export default class FileList extends React.Component {
       case '.docx':
         themeCode = '&#xe6ce;'
         break
-      case 'txt':
+      case '.txt':
         themeCode = '&#xe6cd;'
         break
       case '.doc':

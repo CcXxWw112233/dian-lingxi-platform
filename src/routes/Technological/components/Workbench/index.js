@@ -215,6 +215,7 @@ const Workbench = (props) => {
   }
   const PersonNewsProps = {
     model,
+    dispatch,
     logout() {
       dispatch({
         type: getEffectOrReducerByName_2('logout'),
@@ -280,6 +281,7 @@ const Workbench = (props) => {
   const NewsListProps = {
     modal,
     model,
+    dispatch,
     showModal() {
       dispatch({ type: 'modal/showModal' })
     },

@@ -318,7 +318,6 @@ export default {
         }
       })
       let res = yield call(getCardCommentListAll, payload)
-      debugger
       yield put({
         type: 'updateDatas',
         payload: {

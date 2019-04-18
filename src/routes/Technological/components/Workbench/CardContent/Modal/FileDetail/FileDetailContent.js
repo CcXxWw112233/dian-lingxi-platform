@@ -821,7 +821,6 @@ export default class FileDetailContent extends React.Component {
                 <Comment2 {...this.props} ></Comment2>
               </div>
             )}
-
           </div>
 
         </div>
