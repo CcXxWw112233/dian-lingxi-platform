@@ -1,42 +1,47 @@
 import React, { Component } from 'react';
+import { connect, } from 'dva';
 import indexStyles from './index.less'
-import {checkIsHasPermissionInBoard} from "../../../../utils/businessFunction";
+import { isToday } from './getDate'
 
+const getEffectOrReducerByName = name => `gantt/${name}`
+@connect(mapStateToProps)
 export default class GetRowGanttItem extends Component {
 
-  getDate = () => {
-    const DateArray = []
-    for(let i = 1; i < 13; i++) {
-      const obj = {
-        dateTop: `${i}月`,
-        dateInner: []
-      }
-      for(let j = 1; j < 32; j++) {
-        const obj2 = {
-          name: `${i}/${j}`,
-          is_daily: j % 6 || j % 7 == 0 ? '1' : '0'
-        }
-        obj.dateInner.push(obj2)
-      }
-      DateArray.push(obj)
+  constructor(props) {
+    super(props)
+    this.state = {
+      rows: 7
     }
-    return DateArray
   }
 
   render () {
+
+    const { rows } = this.state
+    const arr = new Array(rows)
+    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
 
     return (
       <div className={indexStyles.ganttAreaOut}>
 
         <div className={indexStyles.ganttArea} >
-          {this.getDate().map((value, key) => {
-            const { dateInner = [] } = value
+          {gold_date_arr.map((value, key) => {
+            const { date_inner = [] } = value
             return (
               <div className={indexStyles.ganttAreaItem} key={key}>
                 <div className={indexStyles.ganttDetail} >
-                  {dateInner.map((value2, key2) => {
+                  {date_inner.map((value2, key2) => {
+                    const { week_day, timestamp } = value2
                     return (
-                      <div className={`${indexStyles.ganttDetailItem}`} key={key2}></div>
+                      <div className={`${indexStyles.ganttDetailItem}`}
+                           key={key2}
+                           style={{backgroundColor: (week_day == 0 || week_day == 6) ? 'rgb(250, 250, 250)' : (isToday(timestamp)? 'rgb(242, 251, 255)': '')}}
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7].map((value, key) => {
+                          return (
+                            <div className={indexStyles.ganttDetailItem_item} key={key}></div>
+                          )
+                        })}
+                      </div>
                     )
                   })}
                 </div>
@@ -49,4 +54,8 @@ export default class GetRowGanttItem extends Component {
     )
   }
 
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ modal, gantt, loading }) {
+  return { modal, model: gantt, loading }
 }

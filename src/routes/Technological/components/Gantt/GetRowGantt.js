@@ -1,38 +1,12 @@
 import React, { Component } from 'react';
+import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
-
+const getEffectOrReducerByName = name => `gantt/${name}`
+@connect(mapStateToProps)
 export default class GetRowGantt extends Component {
-  getDate = () => {
-    const DateArray = []
-    for(let i = 1; i < 13; i++) {
-      const obj = {
-        dateTop: `${i}月`,
-        dateInner: []
-      }
-      for(let j = 1; j < 32; j++) {
-        const obj2 = {
-          name: `${i}/${j}`,
-          is_daily: j % 6 || j % 7 == 0 ? '1' : '0'
-        }
-        obj.dateInner.push(obj2)
-      }
-      DateArray.push(obj)
-    }
-    return DateArray
-  }
-  getListRow = () => {
-    const arr = []
-    for(let i = 0; i < 3; i ++) {
-      const obj = {
-        name: `任务名称_${i}`
-      }
-      arr.push(obj)
-    }
-    return arr
-  }
   constructor(props) {
     super(props)
     this.state = {
@@ -134,7 +108,6 @@ export default class GetRowGantt extends Component {
     this.isMouseDown = false
     this.stopDragging()
   }
-
   dashedMouseOver(e) {
     if(this.isMouseDown) { //按下的情况不处理
       return false
@@ -233,11 +206,13 @@ export default class GetRowGantt extends Component {
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
 
+    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
+
     return (
       <div className={indexStyles.gantt_operate_top}
            // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
-           onMouseOut={this.dashedMouseOver.bind(this)}
-           onMouseLeave={this.dashedMouseLeave.bind(this)}
+           // onMouseOut={this.dashedMouseOver.bind(this)}
+           // onMouseLeave={this.dashedMouseLeave.bind(this)}
            ref={'operateArea'}>
 
         {dasheRectShow && (
@@ -247,7 +222,7 @@ export default class GetRowGantt extends Component {
           }} />
         )}
 
-        {this.getListRow().map((value, key) => {
+        {list_group.map((value, key) => {
           return (
             <GetRowGanttItem key={key}/>
           )
@@ -257,4 +232,8 @@ export default class GetRowGantt extends Component {
     )
   }
 
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ modal, gantt, loading }) {
+  return { modal, model: gantt, loading }
 }

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { dateDataArray, monthDataArray } from './calDate'
 
+const getEffectOrReducerByName = name => `gantt/${name}`
+@connect(mapStateToProps)
 export default class DateList extends Component {
 
   constructor(props) {
@@ -29,19 +32,20 @@ export default class DateList extends Component {
   }
 
   render () {
+    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
 
     return (
       <div className={indexStyles.dateArea} >
-        {this.getDate().map((value, key) => {
-          const { dateTop, dateInner = [] } = value
+        {gold_date_arr.map((value, key) => {
+          const { date_top, date_inner = [] } = value
           return (
             <div className={indexStyles.dateAreaItem} key={key}>
-              <div className={indexStyles.dateTitle}>{dateTop}</div>
+              <div className={indexStyles.dateTitle}>{date_top}</div>
               <div className={indexStyles.dateDetail} >
-                {dateInner.map((value2, key2) => {
-                  const { name, is_daily } = value2
+                {date_inner.map((value2, key2) => {
+                  const { month, date_no } = value2
                   return (
-                    <div className={`${indexStyles.dateDetailItem}`} key={key2}>{name}</div>
+                    <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
                   )
                 })}
               </div>
@@ -52,4 +56,8 @@ export default class DateList extends Component {
     )
   }
 
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ modal, gantt, loading }) {
+  return { modal, model: gantt, loading }
 }
