@@ -297,6 +297,12 @@ const Workbench = (props) => {
         type: getEffectOrReducerByName_3('addCardNewComment'),
         payload: data
       })
+    },
+    routingJump(data){
+      dispatch({
+        type: getEffectOrReducerByName_3('routingJump'),
+        payload: data
+      })
     }
   }
   const CreateTaskProps = {
@@ -727,6 +733,7 @@ const Workbench = (props) => {
       })
     }
   }
+  
   let isPropVisitControl = false
   const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(

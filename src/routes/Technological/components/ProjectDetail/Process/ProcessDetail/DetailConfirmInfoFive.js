@@ -380,7 +380,7 @@ export default class DetailConfirmInfoFive extends React.Component {
         </div>
       )
     }
-    const { processCurrentCompleteStep } = this.props.model.datas
+    
     let node_amount = this.props.model.datas && this.props.model.datas.processInfo && this.props.model.datas.processInfo.node_amount
     let stylLine, stylCircle
     if(this.props.model.datas.processInfo.completed_amount == itemKey+1) { //0 1    1  2 | 1 3 | 1 4

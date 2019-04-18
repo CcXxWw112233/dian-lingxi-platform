@@ -41,7 +41,10 @@ export default {
               menuList: []
             }
           })
-
+          dispatch({
+            type: 'getMenuList',
+            payload: {}
+          })
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = 1
           }else if(location.pathname === '/technological/workbench'){

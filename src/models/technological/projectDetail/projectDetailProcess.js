@@ -461,11 +461,11 @@ export default modelExtend(projectDetail, {
         if(node_amount === curr_node_sort) {
           let processDoingList = yield select(selectProcessDoingList),
           processComepletedList = yield select(selectProcessComepletedList),
-          totalId = yield select(selectProcessTotalId),
+          // totalId = yield select(selectProcessTotalId),
           processDoingLists = [],
           processComepletedLists = []
           processDoingList.forEach((c) => {
-            if(c.id === totalId.flow) {
+            if(c.id === instance_id) {
               processComepletedLists.push(c)
             } else {
               processDoingLists.push(c)
