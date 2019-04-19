@@ -36,11 +36,11 @@ export default class GetRowGanttItem extends Component {
                            key={key2}
                            style={{backgroundColor: (week_day == 0 || week_day == 6) ? 'rgb(250, 250, 250)' : (isToday(timestamp)? 'rgb(242, 251, 255)': '')}}
                       >
-                        {[1, 2, 3, 4, 5, 6, 7].map((value, key) => {
-                          return (
-                            <div className={indexStyles.ganttDetailItem_item} key={key}></div>
-                          )
-                        })}
+                        {/*{[1, 2, 3, 4, 5, 6, 7].map((value, key) => {*/}
+                          {/*return (*/}
+                            {/*<div className={indexStyles.ganttDetailItem_item} key={key}></div>*/}
+                          {/*)*/}
+                        {/*})}*/}
                       </div>
                     )
                   })}

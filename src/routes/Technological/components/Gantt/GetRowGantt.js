@@ -109,6 +109,7 @@ export default class GetRowGantt extends Component {
     this.stopDragging()
   }
   dashedMouseOver(e) {
+    console.log(111)
     if(this.isMouseDown) { //按下的情况不处理
       return false
     }
@@ -124,8 +125,7 @@ export default class GetRowGantt extends Component {
     const target_1 = document.getElementById('gantt_card_out_middle')
     const target = this.refs.operateArea
     this.x2 = e.clientX - target_0.offsetLeft + target_1.scrollLeft - 20
-    this.y2 = e.clientY - target.offsetTop - 60
-    // this.SelectedRect = {x: 0, y: 0 }
+    this.y2 = e.clientY - target_0.offsetTop - 60
 
     // 判断拖拽对象是否存在
     if (this.isObj(this.SelectedRect)) {
@@ -211,8 +211,8 @@ export default class GetRowGantt extends Component {
     return (
       <div className={indexStyles.gantt_operate_top}
            // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
-           // onMouseOut={this.dashedMouseOver.bind(this)}
-           // onMouseLeave={this.dashedMouseLeave.bind(this)}
+           onMouseOut={this.dashedMouseOver.bind(this)}
+           onMouseLeave={this.dashedMouseLeave.bind(this)}
            ref={'operateArea'}>
 
         {dasheRectShow && (
