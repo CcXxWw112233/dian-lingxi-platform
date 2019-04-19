@@ -21,7 +21,14 @@ export default class InitialNews extends React.Component {
     })
     this.props.getNewsDynamicList('0')
   }
-
+  routingJump(path) {
+    this.props.dispatch({
+      type: 'newsDynamic/routingJump',
+      payload: {
+        route: path
+      }
+    })
+  }
   render() {
     
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
@@ -31,18 +38,18 @@ export default class InitialNews extends React.Component {
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}`}>{messageValue.content.board.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content.card.id}`}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
       
       let jumpToFile = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.board_file.id}`}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flow_instance.id}`}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
       // 会议
       // let jumpToMeeting = (
@@ -105,7 +112,15 @@ export default class InitialNews extends React.Component {
         case 'board.flow.task.attach.upload':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data.id}`}>{messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」#{jumpToBoard} #{jumpToProcess} #{messageValue.content.flow_node_instance.name}</div>
+              <div className={NewsListStyle.news_3_text}>
+              {messageValue.creator.name} 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+              onClick={() => this.props.dispatch({
+                type: 'newsDynamic/routingJump',
+                payload: {
+                  route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data && messageValue.content.rela_data.id}`
+                }
+              })}>
+              {messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」#{jumpToBoard} #{jumpToProcess} #{messageValue.content.flow_node_instance.name}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -113,7 +128,13 @@ export default class InitialNews extends React.Component {
         case 'board.flow.cc.notice':
             messageContain = (
               <div className={NewsListStyle.news_3}>
-                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flowInstance.id}`}>{messageValue.content && messageValue.content.flowInstance && messageValue.content.flowInstance.name}</span>}」中 {messageValue.title}</div>
+                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                onClick={() =>this.props.dispatch({
+                  type: 'newsDynamic/routingJump',
+                  payload: {
+                    route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flowInstance && messageValue.content.flowInstance.id}`
+                  }
+                })}>{messageValue.content && messageValue.content.flowInstance && messageValue.content.flowInstance.name}</span>}」中 {messageValue.title}</div>
                 <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
               </div>
             )
@@ -592,8 +613,20 @@ export default class InitialNews extends React.Component {
                 messageContain = (
                   <div className={NewsListStyle.news_3} key={key}>
                     <div className={NewsListStyle.news_3_text}> {val.creator.name} 新增了评论{currentNounPlanFilterName(TASKS)}</div>
-                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${val.content.board.id}&appsSelectKey=3&card_id=${val.content.card.id}`}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file.id}`}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
+                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    onClick={() => this.props.dispatch({
+                      type: 'newsDynamic/routingJump',
+                      payload: {
+                        route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
+                      }
+                    })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
+                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    onClick={() => this.props.dispatch({
+                      type: 'newsDynamic/routingJump',
+                      payload: {
+                        route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
+                      }
+                    })}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
                     <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
@@ -603,8 +636,20 @@ export default class InitialNews extends React.Component {
                 messageContain = (
                   <div className={NewsListStyle.news_3} key={key}>
                     <div className={NewsListStyle.news_3_text}> {val.creator.name} 删除了评论{currentNounPlanFilterName(TASKS)}</div>
-                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${val.content.board.id}&appsSelectKey=3&card_id=${val.content.card.id}`}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file.id}`}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
+                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    onClick={() => this.props.dispatch({
+                      type: 'newsDynamic/routingJump',
+                      payload: {
+                        route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
+                      }
+                    })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
+                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    onClick={() => this.props.dispatch({
+                      type: 'newsDynamic/routingJump',
+                      payload: {
+                        route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
+                      }
+                    })}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
                     <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
