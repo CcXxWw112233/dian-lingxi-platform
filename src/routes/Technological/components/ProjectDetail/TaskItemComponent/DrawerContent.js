@@ -817,7 +817,6 @@ class DrawContent extends React.Component {
     }
     })
 
-    console.log(flag, 'get visitcontrol change')
   }
   visitControlUpdateCurrentModalData = (obj = {}) => {
     const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
@@ -856,8 +855,6 @@ class DrawContent extends React.Component {
         this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
       }
     })
-    //设置特权，然后更新卡片详情
-    console.log(ids, 'idddddds')
   }
   handleVisitControlRemoveContentPrivilege = id => {
     const { datas: { drawContent = {}} } = this.props.model
@@ -910,7 +907,6 @@ class DrawContent extends React.Component {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
 
-    console.log(id, type, 'get other person operator type from visitControl.')
   }
   render() {
     that = this
@@ -1163,7 +1159,6 @@ class DrawContent extends React.Component {
                 principalList={drawContent.executors}
                 otherPrivilege={drawContent.privileges}
                 handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                id={drawContent.card_id}
                 handleAddNewMember={this.handleVisitControlAddNewMember}
                 />
               </span>

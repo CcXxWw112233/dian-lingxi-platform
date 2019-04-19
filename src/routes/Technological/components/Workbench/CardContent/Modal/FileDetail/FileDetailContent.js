@@ -21,6 +21,9 @@ import {message} from "antd/lib/index";
 import {color_4} from "../../../../../../../globalset/js/styles";
 import Cookies from "js-cookie";
 
+import VisitControl from './../../../../VisitControl/index'
+import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../../../services/technological/project'
+
 export default class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
@@ -450,6 +453,7 @@ export default class FileDetailContent extends React.Component {
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { board_id, filePreviewCurrentFileId, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    console.log(this.props.model, 'this.props.model')
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -716,7 +720,7 @@ export default class FileDetailContent extends React.Component {
           })}
           <Menu.Item key="updateVersion" >
             <Upload {...uploadProps} showUploadList={false}>
-              <div style={{ color: color_4, textAlign: 'center', width: 368,}}>
+              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
                 <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
               </div>
             </Upload>
@@ -750,7 +754,6 @@ export default class FileDetailContent extends React.Component {
                 </Button>
               </Dropdown>
             )}
-
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
               <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
                 <Icon type="download" />下载
@@ -759,6 +762,16 @@ export default class FileDetailContent extends React.Component {
 
             <span style={{marginLeft: '10px'}}>
           </span>
+          {/* <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
+            <VisitControl
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                otherPrivilege={privileges}
+                notShowPrincipal={true}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+                />
+            </span> */}
             <div style={{cursor: 'pointer'}}>
               {seeFileInput === 'fileModule'? (
                 <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>

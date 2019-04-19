@@ -251,6 +251,7 @@ export default class FileList extends React.Component {
     this.props.updateFileDatas({
       seeFileInput: 'file',
       board_id,
+      currentPreviewFileData: data,
       filePreviewCurrentId: file_resource_id,
       currentParrentDirectoryId: folder_id,
       filePreviewCurrentFileId: id,

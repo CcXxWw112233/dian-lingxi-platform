@@ -114,6 +114,7 @@ class FileItem extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: file_id,
       pdfDownLoadSrc: '',
+      currentPreviewFileData: data,
     })
 
     if(getSubfixName(file_name) == '.pdf') {

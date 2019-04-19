@@ -3,6 +3,7 @@ import styles from './ProjectMenu.less';
 import { connect } from 'dva';
 import classNames from 'classnames/bind';
 import { Tree, Tooltip, Menu, Dropdown, Input, message, Modal } from 'antd';
+import { isHasOrgTeamBoardEditPermission } from './../../../../utils/businessFunction';
 
 const { TreeNode } = Tree;
 const { Item } = Menu;
@@ -30,36 +31,35 @@ class ProjectMenu extends Component {
     };
   }
   getSelectedItemKeywordOrId = () => {
-    const {selectedKeys} = this.state
+    const { selectedKeys } = this.state;
     //除了已归档项目的key为'archived-${组织id}'的形式，其他都是 id
-    const [key] = selectedKeys
-    if(key.includes('archived')) {
+    const [key] = selectedKeys;
+    if (key.includes('archived')) {
       return {
         type: 'keyword',
         value: 'archived'
-      }
-    } else if(key.includes('org')) {
+      };
+    } else if (key.includes('org')) {
       return {
         type: 'org',
         value: key.split('-')[1]
-      }
-    } else
-     {
+      };
+    } else {
       return {
         type: 'group_id',
         value: key
-      }
+      };
     }
-  }
+  };
   handleSelectedProjectMenuItem = () => {
-    const {type, value} = this.getSelectedItemKeywordOrId()
-    this.handleSelectedProjectMenuItemChange(value, null, type)
-  }
+    const { type, value } = this.getSelectedItemKeywordOrId();
+    this.handleSelectedProjectMenuItemChange(value, null, type);
+  };
   initSelectedKeys = () => {
     this.setState({
       selectedKeys: []
-    })
-  }
+    });
+  };
   handleSelectedProjectMenuItemChange = (item, e, type) => {
     const { dispatch, currentSelectedProjectMenuItem } = this.props;
     if (e) {
@@ -68,30 +68,37 @@ class ProjectMenu extends Component {
     }
     //如果是点击我参与的项目和我收藏的项目，则清空选中
 
-    if(!type) {
-      this.initSelectedKeys()
+    if (!type) {
+      this.initSelectedKeys();
     }
-    if(item === currentSelectedProjectMenuItem) return
+    if (item === currentSelectedProjectMenuItem) return;
     Promise.resolve(
       dispatch({
         type: 'project/setCurrentSelectedProjectMenuItem',
         payload: {
           selected: item,
-          type: (!type) || type === 'keyword' ? 'keyword': type === 'group_id' ? 'group_id' : 'org_id'
+          type:
+            !type || type === 'keyword'
+              ? 'keyword'
+              : type === 'group_id'
+              ? 'group_id'
+              : 'org_id'
         }
       })
-    ).then(() => {
-      return Promise.resolve(
-        dispatch({
-          type: 'project/fetchCurrentProjectGroupProjectList',
-          payload: {
-            keyword: (!type) || type === 'keyword' ? item : "",
-            group_id: type === 'group_id' ? item : '',
-            org_id: type === 'org' ? item : ''
-          }
-        })
-      )
-    }).catch(err => console.log('切换项目列表失败：' + err))
+    )
+      .then(() => {
+        return Promise.resolve(
+          dispatch({
+            type: 'project/fetchCurrentProjectGroupProjectList',
+            payload: {
+              keyword: !type || type === 'keyword' ? item : '',
+              group_id: type === 'group_id' ? item : '',
+              org_id: type === 'org' ? item : ''
+            }
+          })
+        );
+      })
+      .catch(err => console.log('切换项目列表失败：' + err));
   };
   adjustArchivedProjectAlign = text => {
     const archivedProject = '已归档项目';
@@ -109,11 +116,11 @@ class ProjectMenu extends Component {
   parseKeyTitle = (key = '') => key.split('-')[1];
   handleCreateTreeNode = (key = '') => {
     const parentId = this.parseKeyId(key);
-    const isOrg = key.split('-')[2] === 'org' ? true :false
+    const isOrg = key.split('-')[2] === 'org' ? true : false;
     this.setState({
       create_tree_node: isOrg ? `org-${parentId}` : parentId,
       expandedKeys: [isOrg ? `org-${parentId}` : parentId],
-      autoExpandParent: true,
+      autoExpandParent: true
     });
   };
   handEditTreeNodeName = (key = '') => {
@@ -134,31 +141,33 @@ class ProjectMenu extends Component {
       maskClosable: true,
       onCancel: () => {},
       onOk: () => this.comfirmedDeleteGroup(id)
-    })
-  }
+    });
+  };
   comfirmedDeleteGroup = id => {
-    const {dispatch} = this.props
-    Promise.resolve(dispatch({
-      type: 'project/deleteProjectGroupTreeNode',
-      payload: {
-        id
+    const { dispatch } = this.props;
+    Promise.resolve(
+      dispatch({
+        type: 'project/deleteProjectGroupTreeNode',
+        payload: {
+          id
+        }
+      })
+    ).then(res => {
+      if (res === 'error') {
+        message.error('删除分组失败');
+        return;
       }
-    })).then(res => {
-      if(res === 'error') {
-        message.error('删除分组失败')
-        return
-      }
-      message.success('删除分组成功')
-    })
-  }
+      message.success('删除分组成功');
+    });
+  };
   handleDeleteTreeNode = (key = '') => {
     const id = this.parseKeyId(key);
     const projectNum = this.shouldDeleteTreeNodeProjectNum(id);
-    if(projectNum !== 0) {
-      message.error('分组或其子分组中存在任务，删除失败')
-      return
+    if (projectNum !== 0) {
+      message.error('分组或其子分组中存在任务，删除失败');
+      return;
     }
-    this.showDeleteModal(id)
+    this.showDeleteModal(id);
   };
   shouldDeleteTreeNodeProjectNum = key => {
     const {
@@ -167,30 +176,35 @@ class ProjectMenu extends Component {
     const treeData = this.genTreeData(board_group);
     let treeNodeProjectNum = 0;
     const findCurrentTreeNode = (arr = []) => {
-      const finded = arr.find(item => item.key === key)
-      const hasChildren = arr.filter(item => item.children && item.children.length)
-      if(finded) {
-        return finded
+      const finded = arr.find(item => item.key === key);
+      const hasChildren = arr.filter(
+        item => item.children && item.children.length
+      );
+      if (finded) {
+        return finded;
       }
-      if(hasChildren.length) {
-        const childrenArr = hasChildren.reduce((acc, curr) => [...acc, ...curr.children], [])
-        return findCurrentTreeNode(childrenArr)
+      if (hasChildren.length) {
+        const childrenArr = hasChildren.reduce(
+          (acc, curr) => [...acc, ...curr.children],
+          []
+        );
+        return findCurrentTreeNode(childrenArr);
       }
-      if(!finded || !hasChildren.length) {
-        return null
+      if (!finded || !hasChildren.length) {
+        return null;
       }
     };
-    const accumulateTreeNodeProjectNum = (node) => {
-      treeNodeProjectNum += Number(node.board_count)
-      if(!(node.children && node.children.length)) {
-        return
+    const accumulateTreeNodeProjectNum = node => {
+      treeNodeProjectNum += Number(node.board_count);
+      if (!(node.children && node.children.length)) {
+        return;
       }
-      return node.children.map(item => accumulateTreeNodeProjectNum(item))
-    }
-    const findedTreeNode = findCurrentTreeNode(treeData)
-    if(!findedTreeNode) return treeNodeProjectNum
-    accumulateTreeNodeProjectNum(findedTreeNode)
-    return treeNodeProjectNum
+      return node.children.map(item => accumulateTreeNodeProjectNum(item));
+    };
+    const findedTreeNode = findCurrentTreeNode(treeData);
+    if (!findedTreeNode) return treeNodeProjectNum;
+    accumulateTreeNodeProjectNum(findedTreeNode);
+    return treeNodeProjectNum;
   };
   handleClickedProjectMenuTreeNodeMenuItem = ({ item, key }) => {
     const caseMap = new Map([
@@ -209,14 +223,14 @@ class ProjectMenu extends Component {
     // or, you can remove all expanded children keys.
     this.setState({
       expandedKeys,
-      autoExpandParent: false,
+      autoExpandParent: false
     });
   };
-  onSelect = (selectedKeys) => {
+  onSelect = selectedKeys => {
     this.setState({ selectedKeys }, () => {
-      const {selectedKeys} = this.state
-      if(!selectedKeys.length) return
-      this.handleSelectedProjectMenuItem()
+      const { selectedKeys } = this.state;
+      if (!selectedKeys.length) return;
+      this.handleSelectedProjectMenuItem();
     });
   };
   isNumberBigEnough = (num = 0) => {
@@ -273,12 +287,12 @@ class ProjectMenu extends Component {
       };
     });
   };
-  genEditTreeNodeTitle = (layer) => {
+  genEditTreeNodeTitle = layer => {
     const { edit_tree_node_name } = this.state;
     return (
-        <Input
+      <Input
         size="small"
-        style={{ width: '175px', marginLeft: `${(-18) * (layer + 1)}px` }}
+        style={{ width: '175px', marginLeft: `${-18 * (layer + 1)}px` }}
         ref={this.createTreeNodeRef}
         value={edit_tree_node_name}
         onChange={this.handleEditTreeNodeNameChange}
@@ -287,6 +301,7 @@ class ProjectMenu extends Component {
       />
     );
   };
+
   genTreeNodeTitle = ops => {
     const { title, layer, board_count, key, parentkey } = ops;
     const { edit_tree_node } = this.state;
@@ -318,7 +333,7 @@ class ProjectMenu extends Component {
         {item}
       </Menu>
     );
-    const calculateWidthByLayer = (scope) => {
+    const calculateWidthByLayer = scope => {
       const wrapperWidthMap = new Map([
         [0, '175px'],
         [1, '157px'],
@@ -327,7 +342,7 @@ class ProjectMenu extends Component {
         [4, '102px'],
         [5, '84px'],
         [6, '66px']
-      ])
+      ]);
       const titleWidthMap = new Map([
         [0, '150px'],
         [1, '140px'],
@@ -336,36 +351,38 @@ class ProjectMenu extends Component {
         [4, '88px'],
         [5, '70px'],
         [6, '60px']
-      ])
-      let widthCase
-      if(scope === 'wrapper') {
-        widthCase = [...wrapperWidthMap].find(([key, _]) => layer === key)
-        if(widthCase) {
-          const [_, width ] = widthCase
-        return {
-          width
-        }
+      ]);
+      let widthCase;
+      if (scope === 'wrapper') {
+        widthCase = [...wrapperWidthMap].find(([key, _]) => layer === key);
+        if (widthCase) {
+          const [_, width] = widthCase;
+          return {
+            width
+          };
         }
         return {
           width: '175px'
-        }
+        };
       }
-      if(scope === 'title') {
-        widthCase = [...titleWidthMap].find(([key, _]) => layer === key)
-        if(widthCase) {
-          const [_, width ] = widthCase
-        return {
-          maxWidth: width
-        }
+      if (scope === 'title') {
+        widthCase = [...titleWidthMap].find(([key, _]) => layer === key);
+        if (widthCase) {
+          const [_, width] = widthCase;
+          return {
+            maxWidth: width
+          };
         }
         return {
           maxWidth: '144px'
-        }
+        };
       }
-
-    }
+    };
     return (
-      <div className={styles.projectMenuTree__treeNode_wrapper} style={Object.assign({}, calculateWidthByLayer('wrapper'))}>
+      <div
+        className={styles.projectMenuTree__treeNode_wrapper}
+        style={Object.assign({}, calculateWidthByLayer('wrapper'))}
+      >
         <Tooltip title={title}>
           <span className={styles.projectMenuTree__treeNode_title}>
             {title}
@@ -373,15 +390,21 @@ class ProjectMenu extends Component {
         </Tooltip>
         {!isArchived && (
           <div onClick={e => (e ? e.stopPropagation() : null)}>
-            <Dropdown overlay={operatorMenu} trigger={['click']}>
-              <span
-                className={
-                  styles.projectMenuTree__treeNode_boardCount_with_ellipsis
-                }
-              >
+            {isHasOrgTeamBoardEditPermission() ? (
+              <Dropdown overlay={operatorMenu} trigger={['click']}>
+                <span
+                  className={
+                    styles.projectMenuTree__treeNode_boardCount_with_ellipsis
+                  }
+                >
+                  {board_count}
+                </span>
+              </Dropdown>
+            ) : (
+              <span>
                 {board_count}
               </span>
-            </Dropdown>
+            )}
           </div>
         )}
         {isArchived && (
@@ -491,7 +514,7 @@ class ProjectMenu extends Component {
       message.info('分组名称不能为空');
       return;
     }
-    const isOrg = create_tree_node.split('-')[0] === 'org' ? true : false
+    const isOrg = create_tree_node.split('-')[0] === 'org' ? true : false;
     Promise.resolve(
       dispatch({
         type: 'project/createProjectGroupTreeNode',
@@ -507,7 +530,7 @@ class ProjectMenu extends Component {
       message.error('创建子分组失败');
       return;
     }
-    message.success('创建子分组成功')
+    message.success('创建子分组成功');
     this.initCreateTreeNode();
   };
   initCreateTreeNode = () => {
@@ -521,7 +544,7 @@ class ProjectMenu extends Component {
       message.error('创建分组失败');
       return;
     }
-    message.success('创建分组成功')
+    message.success('创建分组成功');
     this.initEidtTreeNode();
   };
   initEidtTreeNode = () => {
@@ -541,7 +564,7 @@ class ProjectMenu extends Component {
     const { new_tree_node_name } = this.state;
     return (
       <Input
-        style={{width: '175px'}}
+        style={{ width: '175px' }}
         size="small"
         placeholder="输入分组名称，回车创建"
         ref={this.createTreeNodeRef}
@@ -574,7 +597,7 @@ class ProjectMenu extends Component {
           >
             {key === create_tree_node && (
               <TreeNode
-                style={{ width: '100%', marginLeft: `${(-18) * (layer + 1)}px` }}
+                style={{ width: '100%', marginLeft: `${-18 * (layer + 1)}px` }}
                 key={`create_input_${create_tree_node}`}
                 title={this.renderCreateNode()}
               />
@@ -599,7 +622,7 @@ class ProjectMenu extends Component {
         >
           {key === create_tree_node && (
             <TreeNode
-              style={{ marginLeft: `${(-18 * (layer + 1))}px` }}
+              style={{ marginLeft: `${-18 * (layer + 1)}px` }}
               key={`create_input_${create_tree_node}`}
               title={this.renderCreateNode()}
             />

@@ -24,7 +24,8 @@ export default class CreateTask extends React.Component {
     clientHeight: changeClientHeight(), //分组列表高度
     /*定义两个值用来存放当前元素的left和top值*/
     needX: 0,
-    needY: 0
+    needY: 0,
+    isScrolling: false, //是否正在滚动
   }
   constructor(){
     super();
@@ -51,6 +52,18 @@ export default class CreateTask extends React.Component {
     let latoutNode = document.getElementById("taskAppOuterMost");
     if (latoutNode) {
       latoutNode.addEventListener("scroll", e => {
+        //判断是否在滚动
+        if(this.timer) {
+          clearTimeout(this.timer)
+        }
+        this.setState({
+          isScrolling: true
+        })
+        this.timer = setTimeout(() => {
+          this.setState({
+            isScrolling: false
+          })
+        }, 500)
         localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft);
       });
     }
@@ -209,7 +222,7 @@ export default class CreateTask extends React.Component {
   }
   //右方抽屉弹窗---end
   render() {
-    const { clientHeight=changeClientHeight(), } = this.state
+    const { clientHeight=changeClientHeight(), isScrolling} = this.state
     const { datas: { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if(clientHeight < 900) {
@@ -231,12 +244,15 @@ export default class CreateTask extends React.Component {
                 return (
                   <div style={{ width: 'auto', marginRight: 40}}
                     key={key}>
-                    <TaskItem taskItemValue={value}
-                              clientHeight={clientHeight}
-                              itemKey={key}
-                              taskGroupListIndex={key}
-                              {...this.props}
-                              setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)} ></TaskItem>
+                    <TaskItem
+                      isScrolling={isScrolling}
+                      taskItemValue={value}
+                      clientHeight={clientHeight}
+                      itemKey={key}
+                      taskGroupListIndex={key}
+                      {...this.props}
+                      setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)}
+                    ></TaskItem>
                   </div>
                 )
               })}
