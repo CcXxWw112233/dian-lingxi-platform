@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import { Row, Col, Tooltip, Card} from 'antd'
 import { NODE_ENV } from '../../globalset/js/constant'
-import src from '../../assets/demo.html'
+import src from '../../assets/wechatCode.html'
 import FormList from './FormList'
 import FormListBind from './FormListBind'
 import globalClassName from '../../globalset/css/globalClassName.less'
