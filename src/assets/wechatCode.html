@@ -23,10 +23,10 @@
 <script type="text/javascript">
   window.onload = function() {
     var url
-    if(window.location.host.indexOf('lingxi') !== -1){
-      url = 'https://lingxi.di-an.com/api/upms/weChat/collBack'
-    } else {
+    if(window.location.host.indexOf('prerelease') !== -1){
       url = 'http://d4x6rb.natappfree.cc/api/upms/weChat/collBack'
+    } else {
+      url = 'https://lingxi.di-an.com/api/upms/weChat/collBack'
     }
     var obj = new WxLogin({
       self_redirect:true,
