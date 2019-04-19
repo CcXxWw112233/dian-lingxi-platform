@@ -2,18 +2,6 @@ import request from '../../utils/requestAxios'
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
-//邀请新用户参与
-export async function inviteNewUserInProject({data}) {
-  //data 用户，手机号或者邮箱，多个逗号隔开
-  return request({
-    url: `${REQUEST_DOMAIN}/user/invite`,
-    method: 'POST',
-    data: {
-      data
-    }
-  })
-}
-
 //获取用户信息
 export async function getUSerInfo(params) {
   return request({
