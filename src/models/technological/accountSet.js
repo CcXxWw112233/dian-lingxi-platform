@@ -143,7 +143,10 @@ export default modelExtend(technological, {
     //解绑微信
     * unBindWechat({payload}, {select, call, put}){
       let res = yield call(unBindWechat, payload)
-      let r = yield call(getUserInfo, payload)
+      yield put({
+        type: 'getUserInfo',
+        payload: {}
+      })
     }
   },
 
