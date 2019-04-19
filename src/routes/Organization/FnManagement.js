@@ -19,7 +19,7 @@ export default class FnManagement extends React.Component{
     // const that = this
     
     const change = (id, bl) => {
-      console.log(id, bl)
+      // console.log(id, bl)
       bl===true?message.success('已开启流程功能'):message.warning('已关闭流程功能')
       this.props.setFnManagement({
         id: id,

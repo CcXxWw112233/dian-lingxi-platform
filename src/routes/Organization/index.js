@@ -37,7 +37,7 @@ const Organization = (options) => {
   const historyGoBack = () => {
     // window.history.go(-1)
     const nextPath = getUrlQueryString(window.location.href, 'nextpath')
-    console.log(nextPath)
+    // console.log(nextPath)
     routingJump(nextPath)
   }
 

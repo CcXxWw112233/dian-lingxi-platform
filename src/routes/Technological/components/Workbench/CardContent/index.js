@@ -67,56 +67,57 @@ class CardContent extends React.Component {
     newTask: {},
     projectGroupLists:[]
   };
-  componentWillMount() {
-    const { CardContentType, boxId } = this.props;
-    switch (CardContentType) {
-      case 'RESPONSIBLE_TASK':
-        let that = this;
-        // Promise.resolve(that.props.setProjectTabCurrentSelectedProject('0')).then(() => this.props.getResponsibleTaskList({ id: boxId }))
-        this.props.getResponsibleTaskList({ id: boxId });
-        break;
-      case 'EXAMINE_PROGRESS': //待处理的流程
-        this.props.getBackLogProcessList({ id: boxId });
-        break;
-      case 'joinedFlows': //参与的流程
-        this.props.getJoinedProcessList({ id: boxId });
-        break;
-      case 'MY_DOCUMENT':
-        this.props.getUploadedFileList({ id: boxId });
-        break;
-      case 'MEETIMG_ARRANGEMENT':
-        this.props.getMeetingList({ id: boxId });
-        break;
-      case 'PROJECT_STATISTICS':
-        break;
-      case 'YINYI_MAP':
-        break;
-      case 'MY_CIRCLE':
-        this.props.getProjectUserList();
-        this.props.getOrgMembers();
-        break;
-      case 'PROJECT_TRCKING':
-        this.props.getProjectStarList();
-        break;
-      //老师
-      case 'MY_SCHEDULING': //我的排课 --会议
-        this.props.getSchedulingList({ id: boxId });
-        break;
-      case 'JOURNEY': //行程安排 --会议
-        this.props.getJourneyList({ id: boxId });
-        break;
-      case 'TO_DO': //代办事项 --任务
-        this.props.getTodoList({ id: boxId });
-        break;
-      case 'SCHOOLWORK_CORRECTION': //作业批改
-        break;
-      case 'TEACHING_EFFECT': //教学计划
-        break;
-      default:
-        break;
-    }
-    this.initSet(this.props);
-  }
+  //这里
+  // componentWillMount() {
+  //   const { CardContentType, boxId } = this.props;
+  //   switch (CardContentType) {
+  //     case 'RESPONSIBLE_TASK':
+  //       let that = this;
+  //       // Promise.resolve(that.props.setProjectTabCurrentSelectedProject('0')).then(() => this.props.getResponsibleTaskList({ id: boxId }))
+  //       this.props.getResponsibleTaskList({ id: boxId });
+  //       break;
+  //     case 'EXAMINE_PROGRESS': //待处理的流程
+  //       this.props.getBackLogProcessList({ id: boxId });
+  //       break;
+  //     case 'joinedFlows': //参与的流程
+  //       this.props.getJoinedProcessList({ id: boxId });
+  //       break;
+  //     case 'MY_DOCUMENT':
+  //       this.props.getUploadedFileList({ id: boxId });
+  //       break;
+  //     case 'MEETIMG_ARRANGEMENT':
+  //       this.props.getMeetingList({ id: boxId });
+  //       break;
+  //     case 'PROJECT_STATISTICS':
+  //       break;
+  //     case 'YINYI_MAP':
+  //       break;
+  //     case 'MY_CIRCLE':
+  //       this.props.getProjectUserList();
+  //       this.props.getOrgMembers();
+  //       break;
+  //     case 'PROJECT_TRCKING':
+  //       this.props.getProjectStarList();
+  //       break;
+  //     //老师
+  //     case 'MY_SCHEDULING': //我的排课 --会议
+  //       this.props.getSchedulingList({ id: boxId });
+  //       break;
+  //     case 'JOURNEY': //行程安排 --会议
+  //       this.props.getJourneyList({ id: boxId });
+  //       break;
+  //     case 'TO_DO': //代办事项 --任务
+  //       this.props.getTodoList({ id: boxId });
+  //       break;
+  //     case 'SCHOOLWORK_CORRECTION': //作业批改
+  //       break;
+  //     case 'TEACHING_EFFECT': //教学计划
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   this.initSet(this.props);
+  // }
   getNewTaskInfo = obj => {
     this.setState({
       newTask: obj

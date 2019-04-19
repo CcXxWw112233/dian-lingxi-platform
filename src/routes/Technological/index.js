@@ -32,7 +32,7 @@ export default class Technological extends React.Component{
       model,
       dispatch,
       getMenuList(data) {
-        console.log('this is parents')
+        // console.log('this is parents')
         dispatch({
           type: getEffectOrReducerByName('getMenuList'),
           data

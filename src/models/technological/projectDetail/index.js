@@ -144,11 +144,11 @@ export default {
         }else{
           Cookies.remove('appsSelectKeyIsAreadyClickArray', { path: '' })
           localStorage.setItem('defferBoardDetailRoute', location.pathname) //项目详情头部返回路径
-          // initialData()
-          // dispatch({//清空项目默认页面可见数据--（一进来就看到的）
-          //   type: 'removeAllProjectData',
-          //   payload: {}
-          // })
+          initialData()
+          dispatch({//清空项目默认页面可见数据--（一进来就看到的）
+            type: 'removeAllProjectData',
+            payload: {}
+          })
         }
         //刷新页面时去除掉appsSelectKeyIsAreadyClickArray
         window.onbeforeunload = function () {

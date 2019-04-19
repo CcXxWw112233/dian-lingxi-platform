@@ -12,27 +12,32 @@ const Dragger = Upload.Dragger
 
 export default class Comment extends React.Component {
   state = {
-    editText: '',
-    submitButtonDisabled: true
+    editText: toContentState(''),
+    submitButtonDisabled: false,
   }
+
   MentionSpacerClick() {
   }
-  MentionEditorChange(e, value) {
-    this.setState({
-      editText: toString(e)
-    }, function () {
-      this.setState({
-        submitButtonDisabled: !!!this.state.editText
-      })
+  async MentionEditorChange(e) {
+
+    await this.setState({
+      editText: e,
+    })
+    await this.setState({
+      submitButtonDisabled: !!!this.state.editText
     })
   }
+
   submitComment() {
     const { card_id, parentKey, childrenKey } = this.props
     this.props.addCardNewComment({
       card_id,
-      comment: this.state.editText,
+      comment: toString(this.state.editText),
       parentKey,
       childrenKey,
+    })
+    this.setState({
+      editText: toContentState('')
     })
   }
 
@@ -56,7 +61,7 @@ export default class Comment extends React.Component {
       onChange(info) {
         const status = info.file.status;
         if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
+          // console.log(info.file, info.fileList);
         }
         if (status === 'done') {
         } else if (status === 'error') {
@@ -92,6 +97,7 @@ export default class Comment extends React.Component {
                   className={CommentStyles.mention}
                   style={{ width: '100%', border: ' none', outline: 'none', height: 48}}
                   suggestions={suggestions}
+                  value={this.state.editText}
                 />
               <div className={CommentStyles.functionBar}>
                   <div className={CommentStyles.functionBar_left}>

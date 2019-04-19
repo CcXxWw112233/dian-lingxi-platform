@@ -24,7 +24,7 @@ export default class SiderLeft extends React.Component {
     ShowAddMenberModalVisibile: false,
   }
   componentDidMount() {
-    this.props.getMenuList()
+    // this.props.getMenuList()
   }
   setCollapsed(collapsed) {
     this.setState({

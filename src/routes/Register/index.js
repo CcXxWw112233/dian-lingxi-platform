@@ -33,7 +33,7 @@ const Register = (options) => {
       })
     },
     checkAccountRestered(data) {
-      console.log(data)
+      // console.log(data)
       dispatch({
         type: getEffectOrReducerByName('checkAccountRestered'),
         payload: {
@@ -64,7 +64,13 @@ const Register = (options) => {
   }
   const bindAccount = () => {
     localStorage.setItem('bindType', 'wechat')
-    NODE_ENV != 'development'?window.location.href=('http://localhost/#/login'):window.location.host.indexOf('lingxi') !== -1?window.location.href='https://lingxi.di-an.com/#/login':window.location.href='http://www.new-di.com/#/login'
+    // NODE_ENV != 'development'?window.location.href=('http://localhost/#/login'):window.location.host.indexOf('lingxi') !== -1?window.location.href='https://lingxi.di-an.com/#/login':window.location.href='http://www.new-di.com/#/login'
+    this.props.dispatch({
+      type: 'register/routingJump',
+      payload: {
+        route: '/login'
+      }
+    })
   }
   if(juge === 'wechatRegister'){
     return (

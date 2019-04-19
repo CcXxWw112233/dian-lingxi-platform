@@ -176,7 +176,7 @@ export default class ProjectRole extends React.Component {
   }
 
   finallySave({value, parentKey}) {
-    console.log(parentKey, value)
+    // console.log(parentKey, value)
     const { id, function_tree_data = [], content_tree_data = [], already_has_content_permission_trans = [] } = value
 
     let function_data = []

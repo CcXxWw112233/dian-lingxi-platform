@@ -295,7 +295,7 @@ export default class Header extends React.Component {
     for (let i = 0; i < fileList.length; i++) {
       for (let val of selectedRowKeys) {
         if(val !== i){
-          console.log(i)
+          // console.log(i)
           newSelectedRowKeys.push(i)
         }
       }

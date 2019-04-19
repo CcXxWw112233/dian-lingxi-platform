@@ -90,7 +90,7 @@ export default class MoveToDirectory extends React.Component {
 
   }
   onSelect = (e) => {
-    console.log(e)
+    // console.log(e)
     this.setState({
       selectFolderId: e[0]
     })

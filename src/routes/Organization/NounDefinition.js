@@ -63,7 +63,7 @@ export default class NounDefinition extends React.Component {
       for(let i in refs) {
         if(i.toLowerCase().indexOf('input_') !== -1){
           const { value } = refs[i]
-          console.log(!!!value)
+          // console.log(!!!value)
           if (!!!value) {
             saveDisabled = true
             break

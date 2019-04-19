@@ -11,7 +11,7 @@ export default class MenuSearchMultiple extends React.Component{
   componentWillMount() {
     const { keyWord } = this.state
     const { usersArray = [] } = this.props
-    console.log(usersArray)
+    // console.log(usersArray)
     this.setState({
       resultArr: this.fuzzyQuery(usersArray, keyWord)
     })

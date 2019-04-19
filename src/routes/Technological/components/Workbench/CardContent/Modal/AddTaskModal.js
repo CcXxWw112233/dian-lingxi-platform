@@ -233,7 +233,7 @@ class AddTaskModal extends Component {
         idsList: collectFileId(attachment_fileList)
       }
     })
-    console.log(attachment_fileList, 'attachment_fileList')
+    // console.log(attachment_fileList, 'attachment_fileList')
   }
 
   uploadNewFile = () => {

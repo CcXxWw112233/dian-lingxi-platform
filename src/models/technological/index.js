@@ -30,7 +30,7 @@ export default {
   state: {},
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(async (location) => {
         message.destroy()
         //头部table key
         locallocation = location
@@ -41,7 +41,10 @@ export default {
               menuList: []
             }
           })
-
+          dispatch({
+            type: 'getMenuList',
+            payload: {}
+          })
           if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
             naviHeadTabIndex = 1
           }else if(location.pathname === '/technological/workbench'){
@@ -49,11 +52,12 @@ export default {
           }else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
             naviHeadTabIndex = 4
           }
-          dispatch({
+
+          await dispatch({
             type: 'upDateNaviHeadTabIndex',
           })
           //如果cookie存在用户信息，则部请求，反之则请求
-          dispatch({
+          await dispatch({
             type: 'getUSerInfo',
             payload: {}
           })
@@ -77,16 +81,16 @@ export default {
           // }
 
           //获取当前的用户当前组织的项目列表,
-          dispatch({
+          await dispatch({
             type: 'getCurrentOrgProjectList',
             payload: {}
           })
           //获取用户当前组织的组织成员
-          dispatch({
+          await dispatch({
             type: 'fetchCurrentOrgAllMembers',
           })
 
-          //获取工作台当前选中的项目诗句
+          //获取工作台当前选中的项目诗句(屏蔽)
           // dispatch({
           //   type: 'workbench/getBoxList',
           // })
@@ -95,21 +99,19 @@ export default {
           //   payload: {}
           // })
           //查询所在组织列表
-          dispatch({
+          await dispatch({
             type: 'getCurrentUserOrganizes',
             payload: {}
           })
 
           //当前名词定义的方案
           const currentNounPlan = localStorage.getItem('currentNounPlan')
-          // console.log('currentNounPlan',currentNounPlan)
           if (!currentNounPlan) {
             dispatch({
               type: 'getCurrentNounPlan',
               payload: {}
             })
           }
-
         }
 
         //切换组织时需要重新加载

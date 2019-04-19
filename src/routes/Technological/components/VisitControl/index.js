@@ -57,7 +57,7 @@ class VisitControl extends Component {
   }
   handleGetAddNewMember = members => {
     this.testAsync(3000).then(() => {
-      console.log(members, 'members');
+      // console.log(members, 'members');
     });
   };
   handleInviteMemberReturnResult = members => {
@@ -139,7 +139,7 @@ class VisitControl extends Component {
     ).every(item => currentOrgAllMembersList.find(each => each.id === item));
     if (!isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList) {
       message.error('访问控制中有非该组织成员的人');
-      console.log('runnnnnnnnnnnnnnnherer');
+      // console.log('runnnnnnnnnnnnnnnherer');
       return;
     }
     const othersPersonList = Object.entries(otherPrivilege).reduce(

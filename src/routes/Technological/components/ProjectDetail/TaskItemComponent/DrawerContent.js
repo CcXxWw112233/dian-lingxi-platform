@@ -494,7 +494,7 @@ class DrawContent extends React.Component {
       this.setPreviewFileModalVisibile()
     }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
       const src = e.target.getAttribute('src')
-      console.log(src)
+      // console.log(src)
       this.setState({
         previewFileType: 'video',
         previewFileSrc: src
@@ -796,10 +796,10 @@ class DrawContent extends React.Component {
     })
   }
   handleVisitControlChange = (flag) => {
-    console.log(flag, 'get visitcontrol change')
+    // console.log(flag, 'get visitcontrol change')
   }
   handleClickedOtherPersonListOperatorItem = (id, type) => {
-    console.log(id, type, 'get other person operator type from visitControl.')
+    // console.log(id, type, 'get other person operator type from visitControl.')
   }
   render() {
     that = this
@@ -938,7 +938,7 @@ class DrawContent extends React.Component {
         })
       },
       onChange({ file, fileList, event }) {
-        console.log('event', file)
+        // console.log('event', file)
         if (file.status === 'done' && file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
