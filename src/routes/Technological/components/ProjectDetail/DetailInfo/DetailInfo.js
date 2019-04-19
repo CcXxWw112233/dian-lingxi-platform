@@ -4,6 +4,7 @@ import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, 
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {isHasOrgMemberQueryPermission} from './../../../../../utils/businessFunction'
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
+import UserCard from './../../../../../components/UserCard/index'
 
 const TextArea = Input.TextArea
 
@@ -15,7 +16,7 @@ export default class DetailInfo extends React.Component {
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
     isSoundsEvrybody_2: false, //edit是否通知项目所有人
-    editDetaiDescription: false , //是否处于编辑状态
+    editDetaiDescription: false, //是否处于编辑状态
     detaiDescriptionValue: '',
     ShowAddMenberModalVisibile: false
   }
@@ -101,6 +102,7 @@ export default class DetailInfo extends React.Component {
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={img} full_name={full_name} />
       }
+      return (<UserCard avatar={img} email={email} name={full_name} mobile={mobile} role_name={''} />)
       return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>

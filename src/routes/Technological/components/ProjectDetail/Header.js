@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React from 'react'
 import indexStyle from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
@@ -5,7 +6,7 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_JOIN, PROJECT_FILES_FILE_INTERVIEW,
   PROJECT_TEAM_CARD_INTERVIEW,
-  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE,PROJECT_TEAM_BOARD_MEMBER,
+  UPLOAD_FILE_SIZE, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_ARCHIVE, PROJECT_TEAM_BOARD_DELETE, PROJECT_TEAM_BOARD_MEMBER,
   ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FOLDER, ORG_UPMS_ORGANIZATION_DELETE, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_EDIT,
 } from '../../../../globalset/js/constant'
@@ -19,6 +20,8 @@ import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_U
 import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import AddModalForm from './components/AddModalForm'
 import DetailInfo from './DetailInfo'
+import VisitControl from './../../components/VisitControl/index'
+import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../services/technological/project'
 
 
 let is_starinit = null
@@ -35,6 +38,7 @@ export default class Header extends React.Component {
     //修改项目名称所需state
     localBoardName: '',
     isInEditBoardName: false,
+    isShouldBeDropdownVisible: false,
   }
   componentWillMount () {
     //设置默认项目名称
@@ -246,7 +250,15 @@ export default class Header extends React.Component {
       ellipsisShow: false
     })
   }
+  toggleDropdownVisible = () => {
+    const {dropdownVisibleChangeValue} = this.state
+    this.setState({
+      dropdownVisibleChangeValue: !dropdownVisibleChangeValue,
+    })
+  }
   onDropdownVisibleChange(visible){
+    const {isShouldBeDropdownVisible} = this.state
+    if(isShouldBeDropdownVisible) return
     this.setState({
       dropdownVisibleChangeValue: visible,
     })
@@ -440,14 +452,126 @@ export default class Header extends React.Component {
     }, 200)
   }
   //右方部分点击-----------------end
+  getFieldFromProjectDetailInfoData = (...fields) => {
+    const {datas: { projectDetailInfoData = {}}} = this.props.model
+    if(!fields.length) return {}
+    return fields.reduce((acc, curr) => {
+      let fieldObj = {}
+      curr in projectDetailInfoData ? fieldObj[curr] = projectDetailInfoData[curr] : null
+      return Object.assign({}, acc, fieldObj)
+    }, {})
+  }
+  handleVisitControlPopoverVisible = (flag) => {
+      if(!flag) {
+        this.setState({
+          dropdownVisibleChangeValue: false
+        })
+      }
+      this.setState({
+        isShouldBeDropdownVisible: flag,
+      })
+  }
+  handleVisitControlChange = flag => {
+    const {is_privilege, board_id} = this.getFieldFromProjectDetailInfoData('is_privilege', 'board_id')
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if(flag === is_privilege_bool) {
+      return
+    }
+    //toggle权限
+    const data = {
+      content_id: board_id,
+      content_type: 'board',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+      if(res && res.code === '0') {
+          this.visitControlUpdateCurrentProjectData(board_id)
+        } else {
+          message.error('设置内容权限失败，请稍后再试')
+        }
+    })
+  }
+  handleVisitControlRemoveContentPrivilege = id => {
+    const {board_id, board_id: content_id} = this.getFieldFromProjectDetailInfoData('board_id')
+    removeContentPrivilege({
+      content_id,
+      content_type: 'board',
+      user_id: id
+    }).then(res => {
+      const isResOk = res => res && res.code === '0'
+      if(isResOk(res)) {
+        message.success('移出用户成功')
+        this.visitControlUpdateCurrentProjectData(board_id)
+      } else {
+        message.error('移出用户失败')
+      }
+    })
+  }
+  handleVisitControlChangeContentPrivilege = (id, type) => {
+    this.handleSetContentPrivilege(id, type)
+  }
+  handleClickedOtherPersonListOperatorItem = (id, type) => {
+    if(type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(id)
+    } else {
+      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+    }
+    console.log(id, type, 'handleClickedOtherPersonListOperatorItem')
+  }
+  handleSetContentPrivilege = (ids, type, errorText='访问控制添加人员失败，请稍后再试') => {
+    const {board_id, board_id: content_id} = this.getFieldFromProjectDetailInfoData('board_id')
+    const content_type = 'board'
+    const privilege_code = type
+    const user_ids = ids
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids
+    }).then(res => {
+      if(res && res.code === '0') {
+        this.visitControlUpdateCurrentProjectData(board_id)
+      } else {
+        message.error(errorText)
+      }
+    })
+  }
+  handleVisitControlAddNewMember = (ids = []) => {
+    if(!ids.length) return
+    const user_ids = ids.reduce((acc, curr) => {
+      if(!acc) return curr
+      return `${acc},${curr}`
+    }, '')
+    this.handleSetContentPrivilege(user_ids, 'read')
+  }
+  async visitControlUpdateCurrentProjectData(board_id) {
+    await this.props.updateProject({
+      board_id
+    })
 
+  }
   render() {
     const that = this
     const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1'}} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName } = this.state
-    const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges } = projectDetailInfoData
     const processName = processInfo.name
     is_starinit = is_star
+
+    const visitControlOtherPersonOperatorMenuItem = [
+      {
+        key: '可访问',
+        value: 'read'
+      },
+      {
+        key: '移出',
+        value: 'remove',
+        style: {
+          color: '#f73b45'
+        }
+      }
+    ]
     //项目操作菜单
     const menu = (
       <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
@@ -465,6 +589,25 @@ export default class Header extends React.Component {
             </div>
           </Menu.Item>
         )}
+        {<Menu.Item key={'99'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            <div className={indexStyle.elseProjectMemu} style={{marginLeft: '-35px'}}>
+            <VisitControl
+              popoverPlacement={'leftTop'}
+              isPropVisitControl={is_privilege === '0' ? false : true}
+              principalList={projectParticipant}
+              principalInfo='位项目参与人'
+              otherPrivilege={privileges}
+              otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
+              removeMemberPromptText='移出后用户将不能访问此项目'
+              handleVisitControlChange={this.handleVisitControlChange}
+              handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
+              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+              handleAddNewMember={this.handleVisitControlAddNewMember}
+              >
+              <span>访问控制&nbsp;&nbsp;<span className={globalStyles.authTheme}>&#xe7eb;</span></span>
+            </VisitControl>
+            </div>
+          </Menu.Item>}
         {/*<Menu.Item key={'2'} style={{textAlign: 'center',padding:0,margin: 0}}>*/}
           {/*<div className={indexStyle.elseProjectMemu}>*/}
             {/*{currentNounPlanFilterName(PROJECTS)}归档*/}
@@ -712,8 +855,8 @@ export default class Header extends React.Component {
                      {/*onClick={this.starClick.bind(this, board_id)}*/}
                      {/*type={isInitEntry ? (is_star === '1'? 'star':'star-o'):(isCollection? 'star':'star-o')}*/}
                      {/*style={{margin: '6px 0 0 8px',fontSize: 20,color: '#FAAD14'}} />*/}
-               <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.onDropdownVisibleChange.bind(this)} >
-                 <Icon type="ellipsis" style={{fontSize: 24, margin: '4px 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}}/>
+               <Dropdown overlay={menu} trigger={['click']} visible={dropdownVisibleChangeValue} onVisibleChange={this.onDropdownVisibleChange.bind(this)}>
+                 <Icon type="ellipsis" style={{fontSize: 24, margin: '4px 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}} onClick={this.toggleDropdownVisible} />
                </Dropdown>
            </div>
            <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>

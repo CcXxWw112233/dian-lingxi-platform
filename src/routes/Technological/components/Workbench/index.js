@@ -11,7 +11,6 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
-import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
 
 
@@ -735,9 +734,12 @@ const Workbench = (props) => {
       })
     }
   }
+<<<<<<< HEAD
   
   let isPropVisitControl = false
   const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
+=======
+>>>>>>> huo_415
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />

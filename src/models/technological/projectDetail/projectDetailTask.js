@@ -13,7 +13,7 @@ import {
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
   updateBoardTag, updateTask,
-  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub,getCardCommentListAll
+  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub, getCardCommentListAll
 } from "../../../services/technological/task";
 import {
   selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
@@ -226,11 +226,20 @@ export default modelExtend(projectDetail, {
     },
 
     * updateTaskGroup({ payload }, { select, call, put }) { //
-      let res = yield call(updateTaskGroup, payload)
-      const { itemKey = 0, name } = payload
+      const {name, itemKey = 0, id} = payload
+      let res = yield call(updateTaskGroup, {name, itemKey, id})
+      const {is_privilege, privileges} = payload
       const taskGroupList = yield select(selectTaskGroupList)
       if(isApiResponseOk(res)) {
-        taskGroupList[itemKey]['list_name'] = name
+        if(name) {
+          taskGroupList[itemKey]['list_name'] = name
+        }
+        if(is_privilege) {
+          taskGroupList[itemKey]['is_privilege'] = is_privilege
+        }
+        if(privileges) {
+          taskGroupList[itemKey]['privileges'] = privileges
+        }
         yield put({
           type: 'updateDatas',
           payload: {
@@ -858,7 +867,7 @@ export default modelExtend(projectDetail, {
     },
 
     //评论--end
-    * getCardCommentListAll({payload} ,{select, call, put}) {
+    * getCardCommentListAll({payload}, {select, call, put}) {
       yield put({
         type: 'updateDatas',
         payload: {

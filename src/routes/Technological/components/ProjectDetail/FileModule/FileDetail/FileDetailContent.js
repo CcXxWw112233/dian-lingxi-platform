@@ -20,6 +20,9 @@ import {message} from "antd/lib/index";
 import {color_4} from "../../../../../../globalset/js/styles";
 import {createShareLink, modifOrStopShareLink} from "../../../../../../services/technological/workbench";
 import Cookies from "js-cookie";
+import VisitControl from './../../../VisitControl/index'
+import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from "../../../../../../services/technological/project";
+
 
 export default class FileDetailContent extends React.Component {
 
@@ -508,14 +511,108 @@ export default class FileDetailContent extends React.Component {
       message.error('操作失败')
     })
   }
-
+  handleVisitControlRemoveContentPrivilege = id => {
+    const {file_id, privileges} = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
+    removeContentPrivilege({
+      content_id: file_id,
+      content_type: 'file',
+      user_id: id
+    }).then(res => {
+      const isResOk = res => res && res.code === '0'
+      if(isResOk(res)) {
+        message.success('移出用户成功')
+        const newPrivileges = {}
+        for(let item in privileges) {
+          if(item !== id) {
+            newPrivileges[item] = privileges[item]
+          }
+        }
+        this.visitControlUpdateCurrentModalData({privileges: newPrivileges})
+      } else {
+        message.error('移出用户失败')
+      }
+    })
+  }
+  handleClickedOtherPersonListOperatorItem = (id, type) => {
+    if(type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(id)
+    } else {
+      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+    }
+  }
+  handleVisitControlAddNewMember = (ids = []) => {
+    if(!ids.length) return
+    const user_ids = ids.reduce((acc, curr) => {
+      if(!acc) return curr
+      return `${acc},${curr}`
+    }, '')
+    this.handleSetContentPrivilege(user_ids, 'read')
+  }
+  handleSetContentPrivilege = (ids, type, errorText='访问控制添加人员失败，请稍后再试') => {
+    const {file_id, privileges} = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
+    const content_id = file_id
+    const content_type = 'file'
+    const privilege_code = type
+    const user_ids = ids
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids
+    }).then(res => {
+      if(res && res.code === '0') {
+        const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, {[curr]: type}), {})
+        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, privileges, addedPrivileges)})
+      } else {
+        message.error(errorText)
+      }
+    })
+  }
+  handleVisitControlChange = (flag) => {
+    const {is_privilege = '0', file_id} = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'file_id')
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if(flag === is_privilege_bool) {
+      return
+    }
+    //toggle权限
+    const data = {
+      content_id: file_id,
+      content_type: 'file',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+  if(res && res.code === '0') {
+      this.visitControlUpdateCurrentModalData({is_privilege: flag ? '1':'0'}, flag)
+    } else {
+      message.error('设置内容权限失败，请稍后再试')
+    }
+    })
+    console.log(flag, 'get visitcontrol change')
+  }
+  visitControlUpdateCurrentModalData = obj => {
+    const { datas: { currentPreviewFileData, currentPreviewFileData: {belong_folder_id} } }= this.props.model
+    const newCurrentPreviewFileData = Object.assign({}, currentPreviewFileData, obj)
+    this.props.updateDatasFile({
+      currentPreviewFileData: newCurrentPreviewFileData
+    })
+    this.props.getFileList({
+      folder_id: belong_folder_id
+    })
+  }
+  getFieldFromPropsCurrentPreviewFileData = (...fields) => {
+    const { datas: { currentPreviewFileData = {} } }= this.props.model
+    return fields.reduce((acc, curr) => Object.assign({}, acc, {[curr]: currentPreviewFileData[curr]}), {})
+  }
   render() {
     const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { projectDetailInfoData={}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewIsRealImage=false } }= this.props.model
-    const { board_id } = projectDetailInfoData
+    const { board_id} = projectDetailInfoData
+    const {is_privilege, privileges} = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -826,6 +923,16 @@ export default class FileDetailContent extends React.Component {
 
             <span style={{marginLeft: '10px'}}>
           </span>
+            <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
+            <VisitControl
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                otherPrivilege={privileges}
+                notShowPrincipal={true}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+                />
+            </span>
             <div style={{cursor: 'pointer'}}>
               {seeFileInput === 'fileModule'? (
                 <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
