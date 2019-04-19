@@ -193,10 +193,10 @@ class BindAccountForm extends React.Component {
             )}
           >
             {getFieldDecorator('wechat', {
-              initialValue: is_bind==='1'?wechat: '' || undefined,
+              initialValue: wechat,
               rules: [{ required: false, message: '请输入微信', whitespace: true }],
             })(
-              <Input placeholder="" className={indexStyle.personInfoInput} onChange={this.wechatChange.bind(this)}/>
+              <Input value={is_bind =='1'?wechat: ''} disabled='true' placeholder="" className={indexStyle.personInfoInput} onChange={this.wechatChange.bind(this)}/>
             )}
           </FormItem>
           {/* 确认 */}
