@@ -76,8 +76,13 @@ class Login extends React.Component {
     })
   }
   bindRegister() {
-    NODE_ENV == 'development'?window.location.href='http://localhost/#/register':window.location.host.indexOf('lingxi') !== -1?window.location.href='https://lingxi.di-an.com/#/register':window.location.href='http://www.new-di.com/#/register'
-    
+    // NODE_ENV == 'development'?window.location.href='http://localhost/#/register':window.location.host.indexOf('lingxi') !== -1?window.location.href='https://lingxi.di-an.com/#/register':window.location.href='http://www.new-di.com/#/register'
+    this.props.dispatch({
+      type: 'login/routingJump',
+      payload: {
+        route: `/register`
+      }
+    })
     localStorage.setItem('wechat', 'wechatRegister')
   }
   render() {
