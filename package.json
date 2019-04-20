@@ -35,7 +35,6 @@
   "devDependencies": {
     "autoresponsive-react": "^1.1.31",
     "babel-plugin-dva-hmr": "^0.3.2",
-    "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^4.14.0",
     "eslint-config-umi": "^0.1.1",
     "eslint-plugin-compat": "^2.6.3",
