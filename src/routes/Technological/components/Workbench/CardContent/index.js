@@ -44,7 +44,6 @@ import {
   PROJECT_FLOWS_FLOW_CREATE
 } from '../../../../../globalset/js/constant';
 import { message } from 'antd/lib/index';
-import CheckboxGroup from './CheckboxGroup/index'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -431,18 +430,6 @@ class CardContent extends React.Component {
       </>
     );
   };
-  contentSelectMenu = () => {
-    return (
-      <div className={indexstyles.contentSelectMenuWrapper}>
-        <CheckboxGroup onItemChange={this.handleContentSelectdMenuItemChange} />
-      </div>
-    );
-  }
-  handleContentSelectdMenuItemChange = item => {
-    console.log(item, 'iiiiiiiiiiiiiiiiiiiitem')
-    const { itemValue } = this.props;
-    console.log(itemValue, 'itemValue')
-  }
   render() {
     // console.log('hello world!!!', this.props)
     const { datas = {} } = this.props.model;
@@ -745,14 +732,13 @@ class CardContent extends React.Component {
             />
           )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
-           <Dropdown
+          {/* <Dropdown
              trigger={['click']}
-             placement="bottomCenter"
              visible={this.state.dropDonwVisible}
              onVisibleChange={this.onVisibleChange.bind(this)}
-             overlay={this.contentSelectMenu()}>
+             overlay={menu()}>
             <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
-          </Dropdown>
+          </Dropdown> */}
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}
