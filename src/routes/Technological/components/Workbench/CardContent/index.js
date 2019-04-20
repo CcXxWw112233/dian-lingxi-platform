@@ -432,31 +432,32 @@ class CardContent extends React.Component {
   };
   contentSelectMenu = () => {
     return (
-      <Menu
-        onClick={this.handleMenuClick.bind(this)}
-        // selectedKeys={[this.state.current]}
-        // mode="horizontal"
-      >
-        <Menu.Item key="rename">重命名</Menu.Item>
-        {'YINYI_MAP' === CardContentType ||
-        'TEAM_SHOW' === CardContentType ? (
-          ''
-        ) : (
-          <SubMenu title={'选择项目'}>
-            <MenuSearchMultiple
-              keyCode={'board_id'}
-              onCheck={this.selectMultiple.bind(this)}
-              selectedKeys={selected_board_data}
-              menuSearchSingleSpinning={false}
-              Inputlaceholder={'搜索项目'}
-              searchName={'board_name'}
-              listData={projectList}
-            />
-          </SubMenu>
-        )}
+      <div></div>
+      // <Menu
+      //   onClick={this.handleMenuClick.bind(this)}
+      //   // selectedKeys={[this.state.current]}
+      //   // mode="horizontal"
+      // >
+      //   <Menu.Item key="rename">重命名</Menu.Item>
+      //   {'YINYI_MAP' === CardContentType ||
+      //   'TEAM_SHOW' === CardContentType ? (
+      //     ''
+      //   ) : (
+      //     <SubMenu title={'选择项目'}>
+      //       <MenuSearchMultiple
+      //         keyCode={'board_id'}
+      //         onCheck={this.selectMultiple.bind(this)}
+      //         selectedKeys={selected_board_data}
+      //         menuSearchSingleSpinning={false}
+      //         Inputlaceholder={'搜索项目'}
+      //         searchName={'board_name'}
+      //         listData={projectList}
+      //       />
+      //     </SubMenu>
+      //   )}
 
-        <Menu.Item key="remove">移除</Menu.Item>
-      </Menu>
+      //   <Menu.Item key="remove">移除</Menu.Item>
+      // </Menu>
     );
   }
   render() {
