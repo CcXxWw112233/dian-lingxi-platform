@@ -5,7 +5,7 @@ class CheckboxGroup extends Component {
   onItemCheckStatusChange = (e, item) => {
     const {onItemChange} = this.props
     if(e) e.stopPropagation()
-    console.log(item, item)
+    console.log(item, 'item')
     onItemChange(item)
   }
   render() {
