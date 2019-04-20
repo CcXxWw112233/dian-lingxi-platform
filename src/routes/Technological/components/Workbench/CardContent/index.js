@@ -44,6 +44,7 @@ import {
   PROJECT_FLOWS_FLOW_CREATE
 } from '../../../../../globalset/js/constant';
 import { message } from 'antd/lib/index';
+import CheckboxGroup from './CheckboxGroup/index'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -432,33 +433,15 @@ class CardContent extends React.Component {
   };
   contentSelectMenu = () => {
     return (
-      <div></div>
-      // <Menu
-      //   onClick={this.handleMenuClick.bind(this)}
-      //   // selectedKeys={[this.state.current]}
-      //   // mode="horizontal"
-      // >
-      //   <Menu.Item key="rename">重命名</Menu.Item>
-      //   {'YINYI_MAP' === CardContentType ||
-      //   'TEAM_SHOW' === CardContentType ? (
-      //     ''
-      //   ) : (
-      //     <SubMenu title={'选择项目'}>
-      //       <MenuSearchMultiple
-      //         keyCode={'board_id'}
-      //         onCheck={this.selectMultiple.bind(this)}
-      //         selectedKeys={selected_board_data}
-      //         menuSearchSingleSpinning={false}
-      //         Inputlaceholder={'搜索项目'}
-      //         searchName={'board_name'}
-      //         listData={projectList}
-      //       />
-      //     </SubMenu>
-      //   )}
-
-      //   <Menu.Item key="remove">移除</Menu.Item>
-      // </Menu>
+      <div className={indexstyles.contentSelectMenuWrapper}>
+        <CheckboxGroup onItemChange={this.handleContentSelectdMenuItemChange} />
+      </div>
     );
+  }
+  handleContentSelectdMenuItemChange = item => {
+    console.log(item, 'iiiiiiiiiiiiiiiiiiiitem')
+    const { itemValue } = this.props;
+    console.log(itemValue, 'itemValue')
   }
   render() {
     // console.log('hello world!!!', this.props)
@@ -764,6 +747,7 @@ class CardContent extends React.Component {
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
            <Dropdown
              trigger={['click']}
+             placement="bottomCenter"
              visible={this.state.dropDonwVisible}
              onVisibleChange={this.onVisibleChange.bind(this)}
              overlay={this.contentSelectMenu()}>
