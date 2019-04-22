@@ -7,11 +7,13 @@ import ShowAddMenberModal from './ShowAddMenberModal'
 import SearchTreeModal from './components/SearchTreeModal'
 import NoPermissionUserCard from './../../../../components/NoPermissionUserCard/index'
 import Cookies from 'js-cookie'
+import UserCard from './../../../../components/UserCard/index'
 import {connect} from 'dva'
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard,
   currentNounPlanFilterName, setStorage,
-  isHasOrgMemberQueryPermission
+  isHasOrgMemberQueryPermission,
+  isHasOrgTeamBoardEditPermission,
 } from "../../../../utils/businessFunction";
 import {
   MEMBERS,
@@ -321,6 +323,7 @@ class ElseProject extends React.Component{
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
       }
+      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={role_name} />)
       return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>

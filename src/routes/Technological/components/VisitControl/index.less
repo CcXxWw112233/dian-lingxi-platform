@@ -35,6 +35,8 @@
         color: rgba(140, 140, 140, 1);
         line-height: 20px;
       }
+      opacity: 1;
+      transition: all .3s;
     }
     .trigger__btn__wrapper:hover .trigger__btn__icon {
       cursor: pointer;
@@ -164,8 +166,12 @@
 
 .content__othersPersonList_Item_operator_dropdown_menu_item {
   text-align: center;
+  user-select: none;
 }
-
+.content__othersPersonList_Item_operator_dropdown_menu_item_disabled {
+  color: #B8B8B8;
+  cursor: not-allowed;
+}
 .content__noConten_wrapper {
   height: 189px;
   display: flex;

@@ -8,6 +8,7 @@ import {
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "../../../../../utils/businessFunction";
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
+import UserCard from './../../../../../components/UserCard/index'
 const TextArea = Input.TextArea
 
 
@@ -130,6 +131,7 @@ export default class DrawDetailInfo extends React.Component {
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       }
+      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>

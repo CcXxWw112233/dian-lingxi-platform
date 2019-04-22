@@ -15,6 +15,9 @@ import {
   ORG_UPMS_ORGANIZATION_GROUP
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermission, checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
+import VisitControl from './../../VisitControl/index'
+import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
+
 const TextArea = Input.TextArea
 const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;
@@ -29,6 +32,9 @@ export default class TaskItem extends React.Component {
     due_time: '',
     addTaskType: '0', //0默认 1日程
     elseElementHeight: 342, //除了list高度之外其他元素高度总和
+    taskGroupOperatorDropdownMenuVisible: false, //分组操作 dropdown 菜单 visible
+    isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
+    shouldHideVisitControlPopover: false,
   }
   constructor(props) {
     super(props)
@@ -225,14 +231,159 @@ export default class TaskItem extends React.Component {
       this.checkAddNewTask()
     }
   }
+  visitControlUpdateCurrentProjectData = (obj) => {
+    const { taskItemValue = {}, itemKey } = this.props
+    const {list_id, list_name} = taskItemValue
+    const data = Object.assign({}, {id: list_id, itemKey, name: list_name}, obj)
+    this.props.updateTaskGroup(data)
+    this.setState({
+      isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
+      taskGroupOperatorDropdownMenuVisible: false,
+        shouldHideVisitControlPopover: true,
+    })
+  }
+  handleVisitControlChange = flag => {
+    const { taskItemValue = {}, itemKey } = this.props
+    const {list_id, is_privilege} = taskItemValue
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if(flag === is_privilege_bool) {
+      return
+    }
+    //toggole 权限
+    const data = {
+      content_id: list_id,
+      content_type: 'lists',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+      if(res && res.code === '0') {
+        //更新数据
+        this.visitControlUpdateCurrentProjectData({is_privilege: flag ? '1' : '0'})
+      } else {
+        message.error('设置任务列表内容权限失败，请稍后再试')
+      }
+    })
+  }
+  handleVisitControlRemoveContentPrivilege = id => {
+    const { taskItemValue = {}} = this.props
+    const {list_id, privileges} = taskItemValue
+    const content_type = 'lists'
+    const content_id = list_id
+    removeContentPrivilege({
+      content_id,
+      content_type,
+      user_id: id
+    }).then(res => {
+      const isResOk = res => res && res.code === '0'
+      if(isResOk(res)) {
+        message.success('移出用户成功')
+        const obj = {}
+        for(let item in privileges) {
+          if(id !== item) {
+            obj[item] = privileges[item]
+          }
+        }
 
+        this.visitControlUpdateCurrentProjectData({privileges: obj})
+      } else {
+        message.error('移出用户失败')
+      }
+    })
+  }
+  handleClickedOtherPersonListOperatorItem = (id, type) => {
+    if(type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(id)
+    } else {
+      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+    }
+    console.log(id, type, 'handleClickedOtherPersonListOperatorItem')
+  }
+  handleVisitControlAddNewMember = (ids = []) => {
+    if(!ids.length) return
+    const user_ids = ids.reduce((acc, curr) => {
+      if(!acc) return curr
+      return `${acc},${curr}`
+    }, '')
+    this.handleSetContentPrivilege(user_ids, 'read')
+  }
+  handleSetContentPrivilege = (ids, type, errorText='访问控制添加人员失败，请稍后再试') => {
+    const { taskItemValue = {}} = this.props
+    const {list_id, privileges} = taskItemValue
+    const content_type = 'lists'
+    const privilege_code = type
+    const user_ids = ids
+    const content_id = list_id
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids
+    }).then(res => {
+      if(res && res.code === '0') {
+        const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, {[curr]: 'read'}), {}))
+        this.visitControlUpdateCurrentProjectData({privileges: obj})
+      } else {
+        message.error(errorText)
+      }
+    })
+  }
+  handleVisitControlPopoverVisible = (flag) => {
+    if(!flag) {
+      this.setState({
+        taskGroupOperatorDropdownMenuVisible: false
+      })
+    }
+    this.setState({
+      isShouldBeTaskGroupOperatorDropdownMenuVisible: flag,
+    })
+}
+  handleTaskGroupOperatorDropdownMenuVisibleChange = visible => {
+    const {isShouldBeTaskGroupOperatorDropdownMenuVisible} = this.state
+    if(isShouldBeTaskGroupOperatorDropdownMenuVisible) return
+    if(visible === true) {
+      this.setState({
+        shouldHideVisitControlPopover: false,
+      })
+    }
+    this.setState({
+      taskGroupOperatorDropdownMenuVisible: visible
+    })
+  }
+  hideTaskGroupOperatorDropdownMenuWhenScroll = nextProps => {
+    const {isScrolling: nextIsScrolling} = nextProps
+    if(nextIsScrolling) {
+      this.setState({
+        isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
+        taskGroupOperatorDropdownMenuVisible: false,
+        shouldHideVisitControlPopover: true,
+      })
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    this.hideTaskGroupOperatorDropdownMenuWhenScroll(nextProps)
+  }
   render() {
-    const { isAddEdit, isInEditName, executor={}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight } = this.state
+    const { isAddEdit, isInEditName, executor={}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
     const { taskItemValue = {}, clientHeight } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
-    const { list_name, list_id, card_data = [], editable } = taskItemValue
+    const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges} = taskItemValue
 
+    const projectParticipant = card_data.reduce((acc, curr) => [...acc, ...(curr&&curr.executors&&curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [] )], [])
+    const visitControlOtherPersonOperatorMenuItem = [
+      {
+        key: '可访问',
+        value: 'read'
+      },
+      {
+        key: '移出',
+        value: 'remove',
+        style: {
+          color: '#f73b45'
+        }
+      }
+    ]
     let isCheckDisabled = false
     if(!addNewTaskName) {
       isCheckDisabled = true
@@ -250,6 +401,27 @@ export default class TaskItem extends React.Component {
             <div className={CreateTaskStyle.elseProjectMemu}>
               重命名
             </div>
+          </Menu.Item>
+          <Menu.Item key={'99'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+            {!shouldHideVisitControlPopover && (
+              <div style={{marginLeft: '-35px', minWidth: '130px'}}>
+            <VisitControl
+              popoverPlacement={'rightTop'}
+              isPropVisitControl={is_privilege === '0' ? false : true}
+              principalList={projectParticipant}
+              principalInfo='位任务列表负责人'
+              otherPrivilege={privileges}
+              otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
+              removeMemberPromptText='移出后用户将不能访问此任务列表'
+              handleVisitControlChange={this.handleVisitControlChange}
+              handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
+              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+              handleAddNewMember={this.handleVisitControlAddNewMember}
+              >
+              <span>访问控制&nbsp;&nbsp;<span className={globalStyle.authTheme}>&#xe7eb;</span></span>
+            </VisitControl>
+            </div>
+            )}
           </Menu.Item>
           {card_data.length ? (''): (
             <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
@@ -279,7 +451,7 @@ export default class TaskItem extends React.Component {
                 <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
                 <div><Icon type="right" className={[CreateTaskStyle.nextIcon]}/></div>
                 {editable==='1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP)? (
-                  <Dropdown overlay={operateMenu()}>
+                <Dropdown overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                     <div className={CreateTaskStyle.titleOperate}>
                       <Icon type="ellipsis" theme="outlined" />
                     </div>
