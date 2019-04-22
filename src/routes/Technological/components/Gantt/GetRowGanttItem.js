@@ -10,14 +10,19 @@ export default class GetRowGanttItem extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      rows: 7
+      rows: 7,
+      needs_task_arr: [], //实现以起始时间相同的为同一分组
     }
+  }
+
+  componentDidMount() {
+    const { list_id, list_data } = this.props
+    console.log({ list_id, list_data })
   }
 
   render () {
 
     const { rows } = this.state
-    const arr = new Array(rows)
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
 
     return (
@@ -36,11 +41,6 @@ export default class GetRowGanttItem extends Component {
                            key={key2}
                            style={{backgroundColor: (week_day == 0 || week_day == 6) ? 'rgb(250, 250, 250)' : (isToday(timestamp)? 'rgb(242, 251, 255)': '')}}
                       >
-                        {/*{[1, 2, 3, 4, 5, 6, 7].map((value, key) => {*/}
-                          {/*return (*/}
-                            {/*<div className={indexStyles.ganttDetailItem_item} key={key}></div>*/}
-                          {/*)*/}
-                        {/*})}*/}
                       </div>
                     )
                   })}

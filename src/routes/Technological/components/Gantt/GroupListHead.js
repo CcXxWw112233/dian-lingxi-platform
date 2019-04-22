@@ -18,9 +18,9 @@ export default class GroupListHead extends Component {
     return (
       <div className={indexStyles.listHead}>
         {list_group.map((value, key) =>{
-          const { name } = value
+          const { list_name, list_id, list_data = [] } = value
           return (
-            <div className={indexStyles.listHeadItem} key={key}>{name}</div>
+            <div className={indexStyles.listHeadItem} key={list_id}>{list_name}</div>
           )
         })}
       </div>

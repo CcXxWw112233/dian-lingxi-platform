@@ -22,7 +22,6 @@ export default class Gantt extends Component {
 
   componentDidMount() {
     this.setGoldDateArr()
-    this.setListRowGroup()
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.setScrollPosition({delay: 300})
 
@@ -78,23 +77,7 @@ export default class Gantt extends Component {
     }
 
   }
-  //获取分组，赋值
-  setListRowGroup = () => {
-    const { dispatch } = this.props
-    const arr = []
-    for(let i = 0; i < 3; i ++) {
-      const obj = {
-        name: `任务名称_${i}`
-      }
-      arr.push(obj)
-    }
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        list_group: arr,
-      }
-    })
-  }
+
   //左右拖动,日期会更新
   ganttScroll = (e) => {
     const that = this
@@ -106,7 +89,7 @@ export default class Gantt extends Component {
     const scrollLeft = e.target.scrollLeft
     const scrollWidth = e.target.scrollWidth
     const clientWidth = e.target.clientWidth
-    const { datas: { ceilWidth, gold_date_arr = [] } } = this.props.model
+    const { datas: { ceilWidth, gold_date_arr = [], isDragging } } = this.props.model
     let delX = target_scrollLeft - scrollLeft //判断向左还是向右
 
     if(scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度

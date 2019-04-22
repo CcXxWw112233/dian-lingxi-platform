@@ -20,9 +20,16 @@ export default class GetRowGantt extends Component {
     this.isDragging = false //判断是否在拖拽虚线框
     this.isMouseDown = false //是否鼠标按下
     this.SelectedRect = {x: 0, y: 0 }
-
   }
-
+  setIsDragging(isDragging) {
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        isDragging
+      }
+    })
+  }
   //鼠标拖拽移动
   dashedMousedown(e) {
     if(this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
@@ -32,6 +39,7 @@ export default class GetRowGantt extends Component {
     this.x1 = currentRect.x
     this.y1 = currentRect.y
     this.isDragging = false
+    this.setIsDragging(this.isDragging)
     this.isMouseDown = true
     this.handleCreateTask('1')
     const target = this.refs.operateArea//event.target || event.srcElement;
@@ -40,6 +48,8 @@ export default class GetRowGantt extends Component {
   }
   dashedDragMousemove(e) {
     this.isDragging = true
+    this.setIsDragging(this.isDragging)
+
     const { datas: { ceiHeight, ceilWidth }} = this.props.model
 
     const target_0 = document.getElementById('gantt_card_out')
@@ -78,6 +88,7 @@ export default class GetRowGantt extends Component {
     const that = this
     setTimeout(function () {
       that.isDragging = false
+      that.setIsDragging(that.isDragging)
       that.isMouseDown = false
     }, 1000)
   }
@@ -194,8 +205,9 @@ export default class GetRowGantt extends Component {
         )}
 
         {list_group.map((value, key) => {
+          const { list_name, list_id, list_data = [] } = value
           return (
-            <GetRowGanttItem key={key}/>
+            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data}/>
           )
         })}
 

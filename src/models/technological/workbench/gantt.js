@@ -18,6 +18,7 @@ export default {
       ceiHeight: 24, //单元格高度
       date_total: 0, //总天数
       group_rows: [7, 7, 7], //每一个分组默认行数
+      isDragging: false, //甘特图是否在拖拽中
     },
   },
   subscriptions: {
@@ -30,6 +31,7 @@ export default {
               list_group: [
                 {
                   list_name: '分组一',
+                  list_id: '111',
                   list_data: [
                     {
                       start_time: 1552233600000,
@@ -37,6 +39,100 @@ export default {
                       start_time_string: '2019/3/11',
                       end_time_sting: '2019/3/18',
                       time_span: 7,
+                      create_time: 1,
+                    }, {
+                      start_time: 1552233600000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 2,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 3,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 4,
+                    }
+                  ],
+
+                },
+                {
+                  list_name: '分组二',
+                  list_id: '222',
+                  list_data: [
+                    {
+                      start_time: 1552233600000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 1,
+                    }, {
+                      start_time: 1552233600000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 2,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 3,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 4,
+                    }
+                  ],
+
+                },
+                {
+                  list_name: '分组三',
+                  list_id: '333',
+                  list_data: [
+                    {
+                      start_time: 1552233600000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 1,
+                    }, {
+                      start_time: 1552233600000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 2,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 3,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 4,
                     }
                   ],
 
