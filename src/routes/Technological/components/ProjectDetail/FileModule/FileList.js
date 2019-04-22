@@ -181,7 +181,6 @@ export default class FileList extends React.Component {
   judgeFileType(fileName) {
     let themeCode = ''
     const type = getSubfixName(fileName)
-    debugger
     switch (type) {
       case '.xls':
         themeCode = '&#xe6d5;'

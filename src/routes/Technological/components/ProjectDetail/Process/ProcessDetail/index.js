@@ -252,7 +252,7 @@ export default class ProcessDetail extends React.Component {
                 })}
                 <div className={indexStyles.seeAllList}>
                   <div></div>
-                  <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div>
+                  {/* <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div> */}
                   <div></div>
                 </div>
               </div>

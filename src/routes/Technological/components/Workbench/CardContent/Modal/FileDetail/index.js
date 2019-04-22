@@ -18,7 +18,7 @@ export default class FileDetail extends React.Component {
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
   }
-
+  
   resizeTTY(type) {
     const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
     const clientWidth = document.documentElement.clientWidth

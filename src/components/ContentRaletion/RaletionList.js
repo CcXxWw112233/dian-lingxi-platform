@@ -6,7 +6,7 @@ import globalStyles from '../../globalset/css/globalClassName.less'
 export default class RaletionList extends React.Component {
 
   state = {
-
+    isShowAll: false
   }
 
   handleDeleteRelation = (e, id) => {
@@ -20,7 +20,11 @@ export default class RaletionList extends React.Component {
     const url = protocol == 'http'? content_url: `http://${content_url}`
     window.open(url)
   }
-
+  isShowAll() {
+    this.setState({
+      isShowAll: !this.state.isShowAll
+    })
+  }
   judgeType(linked_sign) {
     let themeCode = ''
     switch (linked_sign) {
@@ -66,7 +70,8 @@ export default class RaletionList extends React.Component {
 
 
   render() {
-   const { relations, isShowAll } = this.props
+   const { relations } = this.props
+   const { isShowAll } = this.state
   //  console.log('this is relations', relations)
     return(
       <div className={indexStyles.relaData}>
@@ -100,6 +105,7 @@ export default class RaletionList extends React.Component {
             }
           }
         })}
+        <span onClick={this.isShowAll.bind(this)} style={{cursor: 'pointer', color: 'rgb(73, 155, 230)', marginTop: '8px'}}> {isShowAll?'收起部分':'查看更多'} </span>
       </div>
     )
   }

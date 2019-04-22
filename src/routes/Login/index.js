@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import { Row, Col, Tooltip, Card} from 'antd'
 import { NODE_ENV } from '../../globalset/js/constant'
-import src from '../../assets/demo.html'
+import src from '../../assets/wechatCode.html'
 import FormList from './FormList'
 import FormListBind from './FormListBind'
 import globalClassName from '../../globalset/css/globalClassName.less'
@@ -12,6 +12,7 @@ import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import indexStyles from './index.less'
 import sha256 from 'js-sha256'
+import { func } from 'prop-types';
 
 const juge = localStorage.getItem('bindType')?localStorage.getItem('bindType'): ''
 const getEffectOrReducerByName = name => `login/${name}`
@@ -65,6 +66,10 @@ class Login extends React.Component {
       loginType: 'wechat'
     })
   }
+  reloadCode(){
+    console.log(window.location)
+    debugger
+  }
   passwordLogin() {
     this.setState({
       loginType: 'password'
@@ -88,6 +93,7 @@ class Login extends React.Component {
   render() {
     const {dispatch} = this.props
     const { loginType, bindKey } = this.state
+
     //传给表单
     const formListProps = {
       formSubmit(data) {
@@ -144,7 +150,7 @@ class Login extends React.Component {
             }}>
               <TopContent text={'欢迎来到'} productName={'灵犀'}/>
               <div>
-                <iframe style={{marginLeft: '120px'}} frameBorder="0" src={src} width='211px' height='212px'></iframe>
+                <iframe id='wechatCode' style={{marginLeft: '120px'}} frameBorder="0" src={src} width='211px' height='212px'></iframe>
                 <div style={{
                   margin: '8px auto 16px', 
                   width: '212px', 

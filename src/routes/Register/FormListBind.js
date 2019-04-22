@@ -17,7 +17,7 @@ const RadioGroup = Radio.Group;
 const RangePicker = DatePicker.RangePicker
 
 class FormList extends React.Component {
-  
+
   state={
     checkBoxChecked: true, //默认选中
     //表单项失去焦点时是否通过验证标志
@@ -167,8 +167,8 @@ class FormList extends React.Component {
     }
     // console.log(NODE_ENV)
     // debugger
-    const hrefService = NODE_ENV == 'development'?'http://localhost/#/agreement/service':window.location.host.indexOf('lingxi') !== -1?'https://lingxi.di-an.com/#/agreement/service':'http://prerelease.lingxi.new-di.com/#/agreement/service',
-    hrefPrivacy = NODE_ENV == 'development'?'http://localhost/#/agreement/privacy':window.location.host.indexOf('lingxi') !== -1?'https://lingxi.di-an.com/#/agreement/privacy':'http://prerelease.lingxi.new-di.com/#/agreement/privacy'
+    const hrefService = NODE_ENV == 'development'?'http://localhost/#/agreement/service':window.location.host.indexOf('prerelease') !== -1?'http://prerelease.lingxi.new-di.com/#/agreement/service':'https://lingxi.di-an.com/#/agreement/service',
+    hrefPrivacy = NODE_ENV == 'development'?'http://localhost/#/agreement/privacy':window.location.host.indexOf('prerelease') !== -1?'http://prerelease.lingxi.new-di.com/#/agreement/privacy':'https://lingxi.di-an.com/#/agreement/privacy'
     return (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 姓名 */}
