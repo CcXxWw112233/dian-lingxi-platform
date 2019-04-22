@@ -104,8 +104,32 @@ function getAroundDate (timestamp) {
   return gold_date_arr
 }
 
+//获取固定日期下一个月的数据
+function getNextMonthDate(timestamp) {
+  const timestamp_trans = timestamp || current_date_timestamp
+  const {
+    year,
+    month,
+  } = getNeedDate(timestamp_trans)
+  //后一个月
+  const behind_one_year = month == 12 ? year + 1 : year
+  const behind_one_month = month == 12 ? 1 : month + 1
+  const behind_month_date = getOneMonthDateDetail(behind_one_year, behind_one_month)
+  const gold_date_arr = [
+    {
+      date_top: getDateTop(behind_one_year, behind_one_month),
+      date_inner: behind_month_date,
+    },
+  ]
+  // console.log({gold_date_arr})
+  return gold_date_arr
+}
+
 export const getMonthDate = (timestamp) => {
   return getAroundDate(timestamp)
+}
+export const getNextMonthDatePush = (timestamp) => { //日期累加
+  return getNextMonthDate(timestamp)
 }
 export const isToday = (timestamp) => {
   return new Date(timestamp).toDateString() === new Date().toDateString()

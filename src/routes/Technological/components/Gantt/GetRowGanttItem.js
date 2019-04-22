@@ -17,7 +17,6 @@ export default class GetRowGanttItem extends Component {
 
   componentDidMount() {
     const { list_id, list_data } = this.props
-    console.log({ list_id, list_data })
   }
 
   render () {

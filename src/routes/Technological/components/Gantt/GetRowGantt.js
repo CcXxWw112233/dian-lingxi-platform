@@ -12,6 +12,7 @@ export default class GetRowGantt extends Component {
     this.state = {
       currentRect: { x: 0, y: 0, width: 0, height: 20 }, //当前操作的矩形属性
       dasheRectShow: false, //虚线框是否显示
+      isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
       due_time: '',
     }
@@ -23,6 +24,7 @@ export default class GetRowGantt extends Component {
   }
   setIsDragging(isDragging) {
     const { dispatch } = this.props
+    this.isDragging = isDragging
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -38,8 +40,7 @@ export default class GetRowGantt extends Component {
     const { currentRect = {} } = this.state
     this.x1 = currentRect.x
     this.y1 = currentRect.y
-    this.isDragging = false
-    this.setIsDragging(this.isDragging)
+    this.setIsDragging(false)
     this.isMouseDown = true
     this.handleCreateTask('1')
     const target = this.refs.operateArea//event.target || event.srcElement;
@@ -47,8 +48,7 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
-    this.isDragging = true
-    this.setIsDragging(this.isDragging)
+    this.setIsDragging(true)
 
     const { datas: { ceiHeight, ceilWidth }} = this.props.model
 
@@ -87,9 +87,8 @@ export default class GetRowGantt extends Component {
     target.onmuseup = null;
     const that = this
     setTimeout(function () {
-      that.isDragging = false
-      that.setIsDragging(that.isDragging)
       that.isMouseDown = false
+      that.setIsDragging(false)
     }, 1000)
   }
 
@@ -161,33 +160,16 @@ export default class GetRowGantt extends Component {
       [update_name]: timestamp
     })
     if(start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
+       //出现具体任务实例
+      this.setState({
 
+      })
     }
   }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
 
     const { datas: { gold_date_arr = [], list_group =[], ceilWidth }} = this.props.model
-
-    const ss = [
-      {
-        date_no: 11,
-        date_string: "2019/3/11",
-        month: 3,
-        timestamp: 1552233600000,
-        week_day: 1,
-        week_day_name: "一",
-        year: 2019,
-      }, {
-        date_no: 18,
-        date_string: "2019/3/18",
-        month: 3,
-        timestamp: 1552838400000,
-        week_day: 1,
-        week_day_name: "一",
-        year: 2019,
-      }
-    ]
 
     return (
       <div className={indexStyles.gantt_operate_top}

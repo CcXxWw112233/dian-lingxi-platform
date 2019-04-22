@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate } from './getDate'
+import { getMonthDate, getNextMonthDatePush } from './getDate'
 import {INPUT_CHANGE_SEARCH_TIME} from "../../../../globalset/js/constant";
 
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -41,10 +41,15 @@ export default class Gantt extends Component {
   }
 
   //更新日期
-  setGoldDateArr(timestamp) {
+  setGoldDateArr(timestamp, to_right) {
     const { dispatch } = this.props
-    const { datas: { gold_date_arr = [] }} = this.props.model
-    const date_arr = getMonthDate(timestamp)
+    const { datas: { gold_date_arr = [], isDragging }} = this.props.model
+    let date_arr = []
+    if(!!to_right && isDragging ) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+      date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
+    } else {
+      date_arr = getMonthDate(timestamp)
+    }
     const date_arr_one_level = []
     let date_total = 0
     for(let val of date_arr) {
@@ -89,7 +94,7 @@ export default class Gantt extends Component {
     const scrollLeft = e.target.scrollLeft
     const scrollWidth = e.target.scrollWidth
     const clientWidth = e.target.clientWidth
-    const { datas: { ceilWidth, gold_date_arr = [], isDragging } } = this.props.model
+    const { datas: { ceilWidth, gold_date_arr = [], date_total } } = this.props.model
     let delX = target_scrollLeft - scrollLeft //判断向左还是向右
 
     if(scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
@@ -105,8 +110,8 @@ export default class Gantt extends Component {
       const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
       this.setState({
         searchTimer: setTimeout(function () {
-          that.setGoldDateArr(timestamp) //取有边界日期来做更新日期的基准
-          that.setScrollPosition({delay: 300, position: 30 * ceilWidth}) //大概移动两个月的位置
+          that.setGoldDateArr(timestamp, 'to_right') //取有边界日期来做更新日期的基准
+          that.setScrollPosition({delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth}) //移动到最新视觉
         }, INPUT_CHANGE_SEARCH_TIME)
       })
 
