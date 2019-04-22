@@ -10,6 +10,7 @@ import { getUrlQueryString } from '../../utils/util'
 import NounDefinition from "./NounDefinition";
 import {ORGANIZATION, PROJECTS} from "../../globalset/js/constant";
 import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import FnManagement from './FnManagement';
 
 const TabPane = Tabs.TabPane
 
@@ -24,6 +25,7 @@ const Organization = (options) => {
       payload: payload
     })
   }
+  
   const routingJump = (path) => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
@@ -35,12 +37,24 @@ const Organization = (options) => {
   const historyGoBack = () => {
     // window.history.go(-1)
     const nextPath = getUrlQueryString(window.location.href, 'nextpath')
-    console.log(nextPath)
+    // console.log(nextPath)
     routingJump(nextPath)
   }
 
   const asyncProprs = {
     model,
+    getFnManagementList(data) {
+      dispatch({
+        type: getEffectOrReducerByName('getFnManagementList'),
+        payload: data
+      })
+    },
+    setFnManagement(data) {
+      dispatch({
+        type: getEffectOrReducerByName('setFnManagement'),
+        payload: data
+      })
+    },
     updateOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('updateOrganization'),
@@ -125,6 +139,7 @@ const Organization = (options) => {
       tabSelectKey: key
     })
   }
+  
   return(
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
@@ -150,6 +165,9 @@ const Organization = (options) => {
               </TabPane>
               <TabPane tab="名词定义" key="4">
                 <NounDefinition {...asyncProprs} updateDatas={updateDatas}/>
+              </TabPane>
+              <TabPane tab="功能管理" key="5">
+                <FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement>
               </TabPane>
             </Tabs>
           </div>

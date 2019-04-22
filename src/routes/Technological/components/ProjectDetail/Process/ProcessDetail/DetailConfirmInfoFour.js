@@ -269,7 +269,7 @@ export default class DetailConfirmInfoFour extends React.Component {
             const { name, avatar, mobile, email } = value
             if (key <= 20)
               return(
-                <Tooltip key={key} placement="top" title={name|| avatar || mobile ||email || '佚名'}>
+                <Tooltip key={key} placement="top" title={name || mobile || email || '佚名'}>
                   <div>{imgOrAvatar2()}</div>
                 </Tooltip>
               )
@@ -312,13 +312,12 @@ export default class DetailConfirmInfoFour extends React.Component {
         </div>
       )
     }
-    const { processCurrentCompleteStep } = this.props.model.datas
-    let node_amount = this.props.model.datas.processInfo.node_amount
+    let node_amount = this.props.model.datas && this.props.model.datas.processInfo && this.props.model.datas.processInfo.node_amount
     let stylLine, stylCircle
-    if(processCurrentCompleteStep >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
+    if(this.props.model.datas.processInfo.completed_amount >= itemKey+1) { //0 1    1  2 | 1 3 | 1 4
       stylLine = styles.line
       stylCircle = styles.circle
-    }else if(processCurrentCompleteStep == itemKey){
+    }else if(this.props.model.datas.processInfo.completed_amount == itemKey){
       stylLine = styles.doingLine
       stylCircle = styles.doingCircle
     }else {

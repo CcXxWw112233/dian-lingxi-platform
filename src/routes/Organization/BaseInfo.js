@@ -122,7 +122,7 @@ export default class BaseInfo extends React.Component {
         }
       },
       onChange({ file, fileList, event }) {
-        console.log(file)
+        // console.log(file)
         if (file.status === 'uploading') {
           that.setState({
             uploading: true

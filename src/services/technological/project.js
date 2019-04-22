@@ -1,59 +1,6 @@
 import request from "../../utils/requestAxios";
 import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN} from "../../globalset/js/constant";
 
-//开启关闭特权
-export async function toggleContentPrivilege(data) {
-  const {content_id, content_type, is_open} = data
-  //content_id 内容ID（如 board_id,card_id 等）
-  //content_type 内容类型（如 board , lists, card, file, folder,flow等）
-  //is_open  1: 开启 || 0：关闭
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/content_privilege/open`,
-    method: 'POST',
-    data: {
-      content_id,
-      content_type,
-      is_open
-    }
-  })
-}
-
-//设置内容访问特权
-export async function setContentPrivilege(data) {
-  const {content_id, content_type, privilege_code, user_ids} = data
-  //content_id 内容ID（如 board_id,card_id 等）
-  //content_type 内容类型（如 board , lists, card, file, folder,flow等）
-  //privilege_code 内容类型（如 read comment edit等）
-  //user_ids 用户id, 多个用逗号隔开
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/content_privilege/set`,
-    method: 'POST',
-    data: {
-      content_id,
-      content_type,
-      privilege_code,
-      user_ids
-    }
-  })
-}
-
-//移除内容访问特权
-export async function removeContentPrivilege(data) {
-  const {content_id, content_type, user_id} = data
-  //contend_id 内容ID（如 board_id,card_id 等）
-  //content_type 内容类型（如 board , lists, card, file, folder,flow等）
-  //user_id 用户id
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/content_privilege/remove`,
-    method: 'DELETE',
-    data: {
-      content_id,
-      content_type,
-      user_id
-    }
-  })
-}
-
 //移动项目到指定分组
 export async function moveProjectToProjectGroup(data) {
   const {board_id, group_id} = data
@@ -205,7 +152,7 @@ export async function projectDetail(id) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/detail/${id}`,
     method: 'POST',
-    data: {
+    data:{
       id
     }
   });

@@ -25,7 +25,6 @@ class OpinionModal extends React.Component {
     })
   }
   nextStep() {
-    console.log('lalala')
   }
   onCancel = () => {
     this.setState({

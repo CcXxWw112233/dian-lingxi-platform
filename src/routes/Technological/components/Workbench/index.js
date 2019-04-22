@@ -11,6 +11,7 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
+import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
 
 
@@ -214,6 +215,7 @@ const Workbench = (props) => {
   }
   const PersonNewsProps = {
     model,
+    dispatch,
     logout() {
       dispatch({
         type: getEffectOrReducerByName_2('logout'),
@@ -279,6 +281,7 @@ const Workbench = (props) => {
   const NewsListProps = {
     modal,
     model,
+    dispatch,
     showModal() {
       dispatch({ type: 'modal/showModal' })
     },
@@ -294,6 +297,12 @@ const Workbench = (props) => {
     addCardNewComment(data) {
       dispatch({
         type: getEffectOrReducerByName_3('addCardNewComment'),
+        payload: data
+      })
+    },
+    routingJump(data){
+      dispatch({
+        type: getEffectOrReducerByName_3('routingJump'),
         payload: data
       })
     }
@@ -707,7 +716,7 @@ const Workbench = (props) => {
   // }
   const workflowComments = {
     addWorkFlowComment(payload) {
-      console.log('test')
+      // console.log('test')
       dispatch({
         type: 'workbenchDetailProcess/addWorkFlowComment',
         payload
@@ -726,6 +735,9 @@ const Workbench = (props) => {
       })
     }
   }
+  
+  let isPropVisitControl = false
+  const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />

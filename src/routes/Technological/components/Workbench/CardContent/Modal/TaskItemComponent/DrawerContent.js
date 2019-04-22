@@ -34,8 +34,6 @@ import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../../../services/technological/workbench'
 import ShareAndInvite from './../../../../ShareAndInvite/index'
-import VisitControl from './../../../../VisitControl/index'
-import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../../../services/technological/project'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -786,117 +784,6 @@ class DrawContent extends React.Component {
       message.error('操作失败')
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
-    if(type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
-    } else {
-      this.handleVisitControlChangeContentPrivilege(id, type)
-    }
-
-  }
-  handleVisitControlChangeContentPrivilege = (id, type) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    const obj = {
-      content_id: card_id,
-      content_type: 'card',
-      privilege_code: type,
-      user_ids: id
-    }
-    setContentPrivilege(obj).then(res => {
-      const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let changedPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            changedPrivileges[item] = privileges[item]
-          } else {
-            changedPrivileges[item] = type
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: changedPrivileges})
-      }else{
-        message.error('更新用户控制类型失败')
-      }
-    })
-  }
-  handleVisitControlRemoveContentPrivilege = id => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    removeContentPrivilege({content_id: card_id, content_type: 'card', user_id: id}).then(res => {
-      const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let remainPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            remainPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
-      }else{
-        message.error('移除用户内容控制权限失败')
-      }
-    })
-  }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if(!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if(!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    const content_id = card_id
-    const content_type = 'card'
-    setContentPrivilege({
-      content_id,
-      content_type,
-      privilege_code: 'read',
-      user_ids,
-    }).then(res => {
-      if(res && res.code === '0') {
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
-        }, {})
-        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
-      }
-    })
-  }
-  handleVisitControlChange = (flag) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {is_privilege = '0', card_id} = drawContent
-    const toBool = str => !!Number(str)
-    const is_privilege_bool = toBool(is_privilege)
-    if(flag === is_privilege_bool) {
-      return
-    }
-    //toggle权限
-    const data = {
-      content_id: card_id,
-      content_type: 'card',
-      is_open: flag ? 1 : 0
-    }
-    toggleContentPrivilege(data).then(res => {
-  if(res && res.code === '0') {
-      this.visitControlUpdateCurrentModalData({is_privilege: flag ? '1':'0'}, flag)
-    } else {
-      message.error('设置内容权限失败，请稍后再试')
-    }
-    })
-  }
-  visitControlUpdateCurrentModalData = (obj = {}) => {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
-    const {card_id} = drawContent
-
-    for (let item in obj) {
-      drawContent[item] = obj[item]
-    }
-    const updateObj ={
-      card_id
-    }
-    this.props.updateTask({updateObj})
-    this.props.updateTaskDatas({drawContent})
-  }
   render() {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList} = this.state
@@ -907,7 +794,7 @@ class DrawContent extends React.Component {
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared, is_privilege = '0', privileges} = drawContent
+    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
 
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
@@ -1133,18 +1020,6 @@ class DrawContent extends React.Component {
                 {/*</div>*/}
               {/*</Dropdown>*/}
             {/* </div> */}
-            <span style={{marginTop: '-2px', marginRight: drawContent.is_privilege === '1' ? '30px' : '10px'}}>
-              {drawContent.card_id && (
-                <VisitControl
-                isPropVisitControl={is_privilege === '1' ? true : false}
-                handleVisitControlChange={this.handleVisitControlChange}
-                principalList={executors}
-                otherPrivilege={privileges}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
-                )}
-              </span>
           </div>
 
           {/*标题*/}

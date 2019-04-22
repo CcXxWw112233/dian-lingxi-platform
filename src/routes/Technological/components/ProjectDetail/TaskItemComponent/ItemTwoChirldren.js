@@ -28,7 +28,7 @@ export default class ItemTwoChirldren extends React.Component {
   }
   render() {
     const { ItemTwoChirldrenVaue: { card_name, card_id, is_realize = '0' } } = this.props
-    console.log(this.props.ItemTwoChirldrenVaue)
+    // console.log(this.props.ItemTwoChirldrenVaue)
     return (
       <div key={'1'} className={CreateTaskStyle.item_2_chirld} >
         <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this, card_id)}>

@@ -49,7 +49,7 @@ const NewsDynamic = (props) => {
   }
   return(
     <div>
-        <Header/>
+      <Header/>
       <QueueAnim type="top">
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>

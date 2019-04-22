@@ -28,6 +28,7 @@ export const selectProcessPageFlagStep = state => state[(`projectDetailProcess`)
 export const selectProcessInfo = state => state[(`projectDetailProcess`)].datas.processInfo
 export const selectCurrentProcessCompletedStep = state => state[(`projectDetailProcess`)].datas.processCurrentCompleteStep
 export const selectProjectDetailProcessCommentList = state => state[(`projectDetailProcess`)].datas.workFlowComments
+export const selectProkectDetailProcessId = state => state[(`projectDetailProcess`)].datas.id
 //文档
 export const selectCurrentParrentDirectoryId = state => state[(`projectDetailFile`)].datas.currentParrentDirectoryId //当前文件夹id
 export const selectBreadcrumbList= state => state[(`projectDetailFile`)].datas.breadcrumbList //

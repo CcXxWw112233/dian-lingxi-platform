@@ -147,13 +147,7 @@ export default class CommentListItem extends React.Component {
         <div>
           {
             cardCommentAll.map((item, key) => {
-              if(!this.state.isShowAll) {
-                if(key < 4){
-                  return filterIssues(item)
-                }
-              } else {
-                return filterIssues(item)
-              }
+              return filterIssues(item)
             })
           }
         </div>

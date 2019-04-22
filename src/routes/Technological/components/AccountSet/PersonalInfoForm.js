@@ -29,7 +29,7 @@ class PersonalInfoForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log(values)
+        // console.log(values)
         this.props.updateUserInfo ? this.props.updateUserInfo(values) : false
       }
     });
@@ -246,7 +246,7 @@ class PersonalInfoForm extends React.Component {
           )}
         </FormItem>
         {/*  微信 */}
-        <FormItem
+        {/* <FormItem
           {...formItemLayout}
           label={(
             <span style={{fontSize: 16}}>
@@ -260,7 +260,7 @@ class PersonalInfoForm extends React.Component {
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>
           )}
-        </FormItem>
+        </FormItem> */}
         {/* 确认 */}
         <FormItem
           {...formItemLayout}

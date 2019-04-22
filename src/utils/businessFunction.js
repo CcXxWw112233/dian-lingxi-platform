@@ -83,5 +83,3 @@ export const setStorage = (key, value) => {
 //是否有组织成员查看权限
 
 export const isHasOrgMemberQueryPermission = () => checkIsHasPermission('org:upms:organization:member:query')
-
-export const isHasOrgTeamBoardEditPermission = () => checkIsHasPermission('org:team:board:edit')

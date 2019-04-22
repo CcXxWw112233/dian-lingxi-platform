@@ -25,8 +25,8 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
     this.setState({
       breadcrumbOutWidth: breadcrumbOutWidth > maxWidth ? maxWidth : breadcrumbOutWidth
     })
-    console.log('breadcrumbOutWidth', breadcrumbOutWidth)
-    console.log('breadcrumbOutWidth1', documentWidth)
+    // console.log('breadcrumbOutWidth', breadcrumbOutWidth)
+    // console.log('breadcrumbOutWidth1', documentWidth)
   }
 
   fileNavClick(data) {

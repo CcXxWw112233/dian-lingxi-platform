@@ -37,7 +37,8 @@ import {
   selectProjectProcessCommentList,
   selectProcessInfo,
   selectCurrentProcessCompletedStep,
-  selectProjectDetailProcessCommentList
+  selectProjectDetailProcessCommentList,
+  selectProkectDetailProcessId
 } from "../select";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {
@@ -378,11 +379,11 @@ export default modelExtend(projectDetail, {
       const newsUserId = newsData.userId
       const currentUserId = JSON.parse(localStorage.getItem('userInfo')).id
       const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
-      console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
+      // console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
 
       // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
       if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
-        console.log('进入查询状态')
+        // console.log('进入查询状态')
         const res = yield call(getProessDynamics, {flow_instance_id: id})
         if(isApiResponseOk(res)) {
           yield put({
@@ -392,14 +393,14 @@ export default modelExtend(projectDetail, {
             }
           })
         }
-        console.log('进入查询状态之后')
+        // console.log('进入查询状态之后')
       }
     },
     //获取项目信息
     * projectDetailInfo({ payload }, { select, call, put }) { //查看项目详情信息
       const { id, calback } = payload
       let res = yield call(projectDetailInfo, id)
-      console.log('projectDetailProcess:', res)
+      // console.log('projectDetailProcess:', res)
       if(typeof calback === 'function') {
         calback()
       }
@@ -415,7 +416,7 @@ export default modelExtend(projectDetail, {
     },
     * getCurrentCompleteStep({payload}, { select, call, put}) {
       let processInfo = yield select(selectProcessInfo)
-      console.log('我是所有列表', processInfo)
+      // console.log('我是所有列表', processInfo)
       if(processInfo) {
         yield put({
           type: 'updateDatas',
@@ -446,16 +447,25 @@ export default modelExtend(projectDetail, {
             processCurrentCompleteStep: parseInt(currentStep)+1
           }
         })
+        // let id = select(selectProkectDetailProcessId)
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
+
         let node_amount = yield select(selectNode_amount)
         let curr_node_sort = yield select(selectCurr_node_sort)
         if(node_amount === curr_node_sort) {
           let processDoingList = yield select(selectProcessDoingList),
           processComepletedList = yield select(selectProcessComepletedList),
-          totalId = yield select(selectProcessTotalId),
+          // totalId = yield select(selectProcessTotalId),
           processDoingLists = [],
           processComepletedLists = []
           processDoingList.forEach((c) => {
-            if(c.id === totalId.flow) {
+            if(c.id === instance_id) {
               processComepletedLists.push(c)
             } else {
               processDoingLists.push(c)
@@ -487,6 +497,15 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
+
         let currentStep = yield select(selectCurrentProcessCompletedStep)
         yield put({
           type: 'updateDatas',
@@ -511,6 +530,15 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
+
         let currentStep = yield select(selectCurrentProcessCompletedStep)
         yield put({
           type: 'updateDatas',
@@ -535,6 +563,15 @@ export default modelExtend(projectDetail, {
             }
           }
         })
+
+        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        yield put({
+          type: 'updateDatas',
+          payload:{
+            workFlowComments: r.data
+          }
+        })
+
         // let currentStep = yield select(selectCurrentProcessCompletedStep)
         // yield put({
         //   type: 'updateDatas',
@@ -603,7 +640,7 @@ export default modelExtend(projectDetail, {
     * addWorkFlowComment({payload}, {select, call, put}) {
       let res1 = yield select(selectProjectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
-      console.log('this is addWorkFlowComment', res1, res2)
+      // console.log('this is addWorkFlowComment', res1, res2)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -617,7 +654,7 @@ export default modelExtend(projectDetail, {
 
     * getWorkFlowComment({payload}, {select, call, put}) {
         let res = yield call(getWorkFlowComment, payload)
-        console.log('this is project_getWorkFlowComment', res)
+        // console.log('this is project_getWorkFlowComment', res)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -644,7 +681,7 @@ export default modelExtend(projectDetail, {
     },
     * workflowDelete({payload}, {select, call, put}) {
       let res = yield call(workflowDelete, payload)
-      console.log('this is workflowDelete:', res)
+      // console.log('this is workflowDelete:', res)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -655,7 +692,7 @@ export default modelExtend(projectDetail, {
 
     * workflowEnd({payload}, {select, call, put}) {
       let res = yield call(workflowEnd, payload)
-      console.log('this is workflowEnd:', res)
+      // console.log('this is workflowEnd:', res)
       yield put({
         type: 'updateDatas',
         payload: {

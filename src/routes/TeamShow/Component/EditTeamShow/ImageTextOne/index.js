@@ -68,7 +68,7 @@ export default class ImageTextOne extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        console.log(file)
+        // console.log(file)
         if (file.status === 'uploading') {
           that.setState({
             uploading: true

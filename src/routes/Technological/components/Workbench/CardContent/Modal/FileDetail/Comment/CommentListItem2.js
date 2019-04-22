@@ -148,17 +148,11 @@ export default class CommentListItem extends React.Component {
         <div>
           {
             this.props.model.datas.cardCommentAll.map((item, key) => {
-              if(!this.state.isShowAll) {
-                if(key < 4){
-                  return filterIssues(item)
-                }
-              } else {
-                return filterIssues(item)
-              }
+              return filterIssues(item)
             })
           }
         </div>
-        <span style={{cursor: 'pointer', color: '#499BE6' }} onClick={this.showAll.bind(this)}>{!this.state.isShowAll?'查看全部':'收起部分'}</span>
+        {/* <span style={{cursor: 'pointer', color: '#499BE6' }} onClick={this.showAll.bind(this)}>{!this.state.isShowAll?'查看全部':'收起部分'}</span> */}
         {filePreviewCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(

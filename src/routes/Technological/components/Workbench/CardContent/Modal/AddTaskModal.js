@@ -174,7 +174,7 @@ class AddTaskModal extends Component {
       currentSelectedProjectGroupListItem,
     } = this.state;
     const taskObj = {
-      // add_type: 1,//默认0， 按分组1
+      add_type: 1,//默认0， 按分组1
       board_id: currentSelectedProject.board_id,
       name: addTaskTitle,
       type: 0,
@@ -233,7 +233,7 @@ class AddTaskModal extends Component {
         idsList: collectFileId(attachment_fileList)
       }
     })
-    console.log(attachment_fileList, 'attachment_fileList')
+    // console.log(attachment_fileList, 'attachment_fileList')
   }
 
   uploadNewFile = () => {
@@ -265,8 +265,7 @@ class AddTaskModal extends Component {
       dispatch({
         type: 'workbench/addTask',
         payload: {
-          data: paramObj,
-          addFrom: 'workbench'
+          data: paramObj
         }
       })
     ).then(taskId => {
@@ -292,8 +291,7 @@ class AddTaskModal extends Component {
       dispatch({
         type: 'workbench/addTask',
         payload: {
-          data: paramObj,
-          addFrom: 'workbench'
+          data: paramObj
         }
       })
     )

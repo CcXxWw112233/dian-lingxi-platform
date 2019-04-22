@@ -65,7 +65,6 @@ export default class ConfirmInfoFive extends React.Component {
     this.setState({
       due_time: dateString
     })
-    console.log(timeToTimestamp(dateString))
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)

@@ -8,7 +8,7 @@ const Option = Select.Option;
 export default class ConfirmInfoThreeOne extends React.Component {
 
   areaChange = (value) => {
-    console.log(value)
+    // console.log(value)
   }
 
 

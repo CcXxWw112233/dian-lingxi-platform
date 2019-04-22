@@ -8,7 +8,6 @@ import {
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "../../../../../utils/businessFunction";
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
-import UserCard from './../../../../../components/UserCard/index'
 const TextArea = Input.TextArea
 
 
@@ -129,9 +128,64 @@ export default class DrawDetailInfo extends React.Component {
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
       if(!isHasOrgMemberQueryPermission()) {
-        return <NoPermissionUserCard avatar={avatar} full_name={name} />
+        return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       }
-      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
+      return (
+        <div className={DrawDetailInfoStyle.manImageDropdown}>
+          <div className={DrawDetailInfoStyle.manImageDropdown_top}>
+            <div className={DrawDetailInfoStyle.left}>
+              {avatar?(
+                <img src={avatar} />
+              ):(
+                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                  <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
+                </div>
+              )}
+            </div>
+            <div className={DrawDetailInfoStyle.right}>
+              <div className={DrawDetailInfoStyle.name}>{name || '佚名'}</div>
+              <Tooltip title="该功能即将上线">
+                <div className={DrawDetailInfoStyle.percent}>
+                  <div style={{width: '0'}}></div>
+                  <div style={{width: '0'}}></div>
+                  <div style={{width: '100%'}}></div>
+                </div>
+              </Tooltip>
+            </div>
+            {role_id === '3'? ('') : (
+              <Dropdown overlay={manOperateMenu(props)}>
+                <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+              </Dropdown>
+            )}
+
+          </div>
+          <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
+            <div className={DrawDetailInfoStyle.detailItem}>
+              <div>职位：</div>
+              <div>{role_name}</div>
+            </div>
+            {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
+              {/*<div>组织：</div>*/}
+              {/*<div>{organization}</div>*/}
+            {/*</div>*/}
+            <div className={DrawDetailInfoStyle.detailItem}>
+              <div>邮箱：</div>
+              <div>{email}</div>
+            </div>
+            <div className={DrawDetailInfoStyle.detailItem}>
+              <div>手机：</div>
+              <div>{mobile}</div>
+            </div>
+            <div className={DrawDetailInfoStyle.detailItem}>
+              <div>微信：</div>
+              <div>{we_chat}</div>
+            </div>
+          </div>
+          {/*<div className={DrawDetailInfoStyle.manImageDropdown_bott}>*/}
+          {/*<img src="" />*/}
+          {/*</div>*/}
+        </div>
+      )
     }
     const manOperateMenu = (props) => {
       const { is_visitor } = props

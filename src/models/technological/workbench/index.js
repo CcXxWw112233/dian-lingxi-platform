@@ -1,5 +1,5 @@
 import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList, getCurrentOrgAllMembers } from '../../../services/technological/workbench'
-import {addTask, addTaskInWorkbench} from '../../../services/technological/task'
+import {addTask} from '../../../services/technological/task'
 import {getFolderList} from './../../../services/technological/file'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -28,69 +28,69 @@ export default modelExtend(technological, {
         message.destroy()
         if (location.pathname === '/technological/workbench') {
           const initData = async () => {
-         await Promise.all([dispatch({
-            type: 'updateDatas',
-            payload: {
-              cardGroupKey: 0,
-              knowCityArticles: [], //优秀案例文章列表
-              knowPolicyArticles: [], //政策法规文章列表
-              previewAticle: {}, //预览的文章
-              spinning: false, //文章加载中状态
-              // boxList: [], //工作台盒子列表
-              projectList: [], //项目列表
-              projectStarList: [],
-              projectUserList: [], //项目列表（只返回用户信息）
-              orgMembers: [], //组织用户列表
-              boxUsableList: [], //用户当前可用盒子列表
-              boxCheckDisabled: false,
-              imData: {}, //用户信息
-              filePreviewIsUsable: true, //文档是否可见
-              filePreviewUrl: '', //预览文档src
-              current_file_resource_id: '', //当前操作文档id
-              processInfo: {}, //所选中的流程的信息
-              currentOrgFileUploads: [], //当前组织下我上传的文档列表
-              currentSelectedProjectMembersList: [],
-              currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
-              projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
-              currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
-              responsibleTaskList: [],
-              uploadedFileList: [],
-              backLogProcessList: [],
-              meetingLsit: [],
-              uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
-            }
-          }),
-          dispatch({
-            type: 'getCurrentOrgFileUploads',
-            payload: {
+            await Promise.all([dispatch({
+                type: 'updateDatas',
+                payload: {
+                  cardGroupKey: 0,
+                  knowCityArticles: [], //优秀案例文章列表
+                  knowPolicyArticles: [], //政策法规文章列表
+                  previewAticle: {}, //预览的文章
+                  spinning: false, //文章加载中状态
+                  // boxList: [], //工作台盒子列表
+                  projectList: [], //项目列表
+                  projectStarList: [],
+                  projectUserList: [], //项目列表（只返回用户信息）
+                  orgMembers: [], //组织用户列表
+                  boxUsableList: [], //用户当前可用盒子列表
+                  boxCheckDisabled: false,
+                  imData: {}, //用户信息
+                  filePreviewIsUsable: true, //文档是否可见
+                  filePreviewUrl: '', //预览文档src
+                  current_file_resource_id: '', //当前操作文档id
+                  processInfo: {}, //所选中的流程的信息
+                  currentOrgFileUploads: [], //当前组织下我上传的文档列表
+                  currentSelectedProjectMembersList: [],
+                  currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
+                  projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
+                  currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
+                  responsibleTaskList: [],
+                  uploadedFileList: [],
+                  backLogProcessList: [],
+                  meetingLsit: [],
+                  uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
+                }
+              }),
+              dispatch({
+                type: 'getCurrentOrgFileUploads',
+                payload: {
 
-            }
-          }),
-          // dispatch({
-          //   type: 'getUserImToken',
-          //   payload: {
-          //
-          //   }
-          // })
-          dispatch({
-            type: 'getBoxList',
-            payload: {}
-          }),
-          dispatch({
-            type: 'getProjectList',
-            payload: {}
-          }),
-          dispatch({
-            type: 'getBoxUsableList',
-            payload: {}
-          })
-        ])
-        await dispatch({
-          type: 'handleCurrentSelectedProjectChange',
-          payload: {
-            board_id: '0'
-          }
-        })
+                }
+              }),
+              // dispatch({
+              //   type: 'getUserImToken',
+              //   payload: {
+              //
+              //   }
+              // })
+              dispatch({
+                type: 'getBoxList',
+                payload: {}
+              }),
+              dispatch({
+                type: 'getProjectList',
+                payload: {}
+              }),
+              dispatch({
+                type: 'getBoxUsableList',
+                payload: {}
+              })
+            ])
+            await dispatch({
+              type: 'handleCurrentSelectedProjectChange',
+              payload: {
+                board_id: '0'
+              }
+            })
         }
         initData()
       }
@@ -129,18 +129,11 @@ export default modelExtend(technological, {
       }
     },
     * addTask({payload}, {call, put}) {
-      const {data, addFrom} = payload
-
-      let res
-      //工作台新增任务有另外的接口
-      if(addFrom === 'workbench') {
-        res = yield call(addTaskInWorkbench, data)
-      } else {
-        res = yield call(addTask, data)
-      }
+      const {data} = payload
+      const res = yield call(addTask, data)
       if(!isApiResponseOk(res)) {
         message.error('创建任务失败')
-        console.log('create task failed :' + res)
+        // console.log('create task failed :' + res)
         return
       } else {
         //创建任务成功的任务 id
@@ -432,7 +425,7 @@ export default modelExtend(technological, {
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
       let res = yield call(getCurrentBackLogProcessList)
-      console.log('workbench/getBackLogProcessList', res)
+      // console.log('workbench/getBackLogProcessList', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
