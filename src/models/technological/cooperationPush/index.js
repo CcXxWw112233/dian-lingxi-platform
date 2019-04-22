@@ -73,7 +73,7 @@ export default {
         if (location.pathname.indexOf('/technological') !== -1 || true) {
           //websocket连接判定
           setTimeout(function () {
-            console.log('1111', Cookies.get('wsLinking'))
+            // console.log('1111', Cookies.get('wsLinking'))
             if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
               const calback = function (event) {
                 dispatch({
@@ -688,7 +688,7 @@ export default {
     * handleWsData_workbench({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
-      console.log('eee', data)
+      // console.log('eee', data)
       const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
       let coperate = data[0] //协作

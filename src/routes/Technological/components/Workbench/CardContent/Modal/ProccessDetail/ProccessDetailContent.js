@@ -581,7 +581,7 @@ export default class FileDetailContent extends React.Component {
             <div style={{fontSize: '12px', color: '#595959'}}>
               <div>
                 <div></div>
-                <div style={{display: 'flex', justifyContent: 'center',marginTop: '12px' ,fontSize: '14px', cursor: 'pointer', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
+                {/* <div style={{display: 'flex', justifyContent: 'center',marginTop: '12px' ,fontSize: '14px', cursor: 'pointer', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div> */}
                 <div>
                   {
                     //processDynamics

@@ -23,7 +23,7 @@ import {
 class FileItem extends React.Component {
   judgeFileType(fileName) {
     let themeCode = '';
-    const type = fileName.substr(fileName.lastIndexOf('.')).toLowerCase();
+    const type = getSubfixName(fileName)
     switch (type) {
       case '.xls':
         themeCode = '&#xe6d5;';
@@ -49,7 +49,7 @@ class FileItem extends React.Component {
       case '.docx':
         themeCode = '&#xe6ce;';
         break;
-      case 'txt':
+      case '.txt':
         themeCode = '&#xe6cd;';
         break;
       case '.doc':
@@ -114,7 +114,6 @@ class FileItem extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: file_id,
       pdfDownLoadSrc: '',
-      currentPreviewFileData: data,
     })
 
     if(getSubfixName(file_name) == '.pdf') {

@@ -82,7 +82,7 @@ class AddModalForm extends React.Component {
       appsArray
     }, function () {
       let stepTwoContinueDisabled = true
-      console.log(this.state.appsArray)
+      // console.log(this.state.appsArray)
       for(let val of this.state.appsArray) {
         if(val && val !== 'itemIsNull') {
           stepTwoContinueDisabled = false

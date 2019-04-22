@@ -14,7 +14,7 @@ export default class Drag extends React.Component{
   }
   /*定义鼠标下落事件*/
   fnDown(e){
-    console.log(e)
+    // console.log(e)
     /*事件兼容*/
     let event = e || window.event;
     /*事件源对象兼容*/

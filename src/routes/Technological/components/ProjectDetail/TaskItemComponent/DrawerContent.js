@@ -1,6 +1,6 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message, Modal } from 'antd'
+import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message } from 'antd'
 import BraftEditor from 'braft-editor'
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
@@ -9,6 +9,7 @@ import PreviewFileModalRichText from './PreviewFileModalRichText'
 
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import DCMenuItemOne from './DCMenuItemOne'
+import {Modal} from "antd";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
@@ -33,7 +34,6 @@ import ContentRaletion from '../../../../../components/ContentRaletion'
 import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../services/technological/workbench'
 import ShareAndInvite from './../../ShareAndInvite/index'
 import VisitControl from './../../VisitControl/index'
-import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
 import {withRouter} from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
 const TextArea = Input.TextArea
@@ -494,7 +494,7 @@ class DrawContent extends React.Component {
       this.setPreviewFileModalVisibile()
     }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
       const src = e.target.getAttribute('src')
-      console.log(src)
+      // console.log(src)
       this.setState({
         previewFileType: 'video',
         previewFileSrc: src
@@ -796,128 +796,21 @@ class DrawContent extends React.Component {
     })
   }
   handleVisitControlChange = (flag) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {is_privilege = '0', card_id} = drawContent
-    const toBool = str => !!Number(str)
-    const is_privilege_bool = toBool(is_privilege)
-    if(flag === is_privilege_bool) {
-      return
-    }
-    //toggle权限
-    const data = {
-      content_id: card_id,
-      content_type: 'card',
-      is_open: flag ? 1 : 0
-    }
-    toggleContentPrivilege(data).then(res => {
-  if(res && res.code === '0') {
-      this.visitControlUpdateCurrentModalData({is_privilege: flag ? '1':'0'}, flag)
-    } else {
-      message.error('设置内容权限失败，请稍后再试')
-    }
-    })
-
-  }
-  visitControlUpdateCurrentModalData = (obj = {}) => {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
-    const {card_id} = drawContent
-
-    for (let item in obj) {
-      drawContent[item] = obj[item]
-      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][item] = obj[item]
-    }
-    const updateObj ={
-      card_id
-    }
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent, taskGroupList})
-  }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if(!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if(!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    const content_id = card_id
-    const content_type = 'card'
-    setContentPrivilege({
-      content_id,
-      content_type,
-      privilege_code: 'read',
-      user_ids,
-    }).then(res => {
-      if(res && res.code === '0') {
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
-        }, {})
-        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
-      }
-    })
-  }
-  handleVisitControlRemoveContentPrivilege = id => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    removeContentPrivilege({content_id: card_id, content_type: 'card', user_id: id}).then(res => {
-      const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let remainPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            remainPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
-      }else{
-        message.error('移除用户内容控制权限失败')
-      }
-    })
-  }
-  handleVisitControlChangeContentPrivilege = (id, type) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    const obj = {
-      content_id: card_id,
-      content_type: 'card',
-      privilege_code: type,
-      user_ids: id
-    }
-    setContentPrivilege(obj).then(res => {
-      const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let changedPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            changedPrivileges[item] = privileges[item]
-          } else {
-            changedPrivileges[item] = type
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: changedPrivileges})
-      }else{
-        message.error('更新用户控制类型失败')
-      }
-    })
+    // console.log(flag, 'get visitcontrol change')
   }
   handleClickedOtherPersonListOperatorItem = (id, type) => {
-    if(type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
-    } else {
-      this.handleVisitControlChangeContentPrivilege(id, type)
-    }
-
+    // console.log(id, type, 'get other person operator type from visitControl.')
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, isVisitControl} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [] } } = this.props.model
 
     const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
-    console.log(drawContent, '任务详情==================================')
+
     let { card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
@@ -1045,7 +938,7 @@ class DrawContent extends React.Component {
         })
       },
       onChange({ file, fileList, event }) {
-        console.log('event', file)
+        // console.log('event', file)
         if (file.status === 'done' && file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
@@ -1150,22 +1043,15 @@ class DrawContent extends React.Component {
                 <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
-              {/* <Dropdown overlay={topRightMenu}> */}
-              {drawContent.is_privilege && (
-                <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>
-              <VisitControl
-                isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                principalList={drawContent.executors}
-                otherPrivilege={drawContent.privileges}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
+                <Dropdown overlay={topRightMenu}>
+              {/* {drawContent.is_privilege && (
+                <span style={{marginRight: '50px'}}>
+              <VisitControl isPropVisitControl={drawContent.is_privilege === '0' ? false : true} handleVisitControlChange={this.handleVisitControlChange} principalList={drawContent.executors} otherPrivilege={drawContent.privileges} handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem} />
               </span>
-              )}
-              {/* </Dropdown> */}
-              <Dropdown overlay={topRightMenu}>
+              )} */}
+              {/*<Dropdown overlay={topRightMenu}>*/}
                   <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
+                {/*</Dropdown>*/}
                 </Dropdown>
               </div>
             </div>

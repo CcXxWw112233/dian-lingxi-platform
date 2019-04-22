@@ -67,7 +67,7 @@ export default class ConfirmInfoTwo extends React.Component {
     this.setState({
       due_time: dateString
     })
-    console.log(timeToTimestamp(dateString))
+    // console.log(timeToTimestamp(dateString))
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
@@ -273,7 +273,7 @@ export default class ConfirmInfoTwo extends React.Component {
         const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
         that.funTransitionHeight(element, 500, true)
         if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
+          // console.log(info.file, info.fileList);
         }
         if (status === 'done') {
           message.success(`${info.file.name} file uploaded successfully.`);

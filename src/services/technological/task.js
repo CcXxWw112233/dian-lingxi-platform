@@ -36,15 +36,6 @@ export async function getTaskGroupList(params) {
   });
 }
 
-//新增任务——工作台新增
-export async function addTaskInWorkbench(data) {
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card/add`,
-    method: 'POST',
-    data,
-  })
-}
-
 // 新增任务
 export async function addTask(data) {
   return request({
@@ -163,7 +154,7 @@ export async function getCardCommentList(id) {
     method: 'GET',
   });
 }
-//
+// 
 
 
 // 新增评论

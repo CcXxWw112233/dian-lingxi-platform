@@ -7,7 +7,6 @@ import classNames from 'classnames/bind';
 import AddModalFormWithExplicitProps from './../Project/AddModalFormWithExplicitProps';
 import { checkIsHasPermission } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
-import globalStyles from './../../../../globalset/css/globalClassName.less'
 
 let cx = classNames.bind(styles);
 
@@ -119,13 +118,6 @@ class ProjectListBar extends Component {
     }
     this.handleClickProjectItem(id);
   };
-  renderProjectListBarCreateNewProject = () => {
-    return(
-      <span onClick={e => this.handleCreateNewProject(e)} className={styles.createProject_cell}>
-      <i className={`${globalStyles.authTheme}`}>&#xe782;</i>
-    <span style={{marginLeft: '3px'}}>新建项目</span></span>
-    )
-  }
   componentDidMount() {
     this.handleWinResize();
     window.addEventListener('resize', this.handleWinResize, false);
@@ -172,8 +164,18 @@ class ProjectListBar extends Component {
           {dropDownMenuItemList.map(item => (
             <Menu.Item key={item.board_id}><span style={{userSelect: 'none'}}>{item.board_name}</span></Menu.Item>
           ))}
-          {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>}
+          {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}>新建项目</span></Menu.Item>}
         </Menu>
+      </div>
+    );
+    const dropDownMenuCreateProject = (
+      <div className={styles.dropDownMenuWrapper}>
+        <p
+          className={styles.dropDownMenuItem__createProject}
+          onClick={e => this.handleCreateNewProject(e)}
+        >
+          新建项目
+        </p>
       </div>
     );
     return (
@@ -200,7 +202,16 @@ class ProjectListBar extends Component {
             ))}
         </ul>
         {dropDownMenuItemList.length === 0 ? (
-          !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
+         projectList.length && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) ? (
+            <Dropdown
+              overlay={dropDownMenuCreateProject}
+              style={{ zIndex: '9999' }}
+            >
+              <div className={styles.projectListBarCreateNewProject}>
+                <p className={styles.projectListBarExpandImg} />
+              </div>
+            </Dropdown>
+          ) : null
         ) : (
           <Dropdown overlay={dropDownMenu} style={{ zIndex: '9999' }}>
             <div className={styles.projectListBarExpand}>

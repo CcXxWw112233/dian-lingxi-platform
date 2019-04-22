@@ -27,10 +27,7 @@ class SearchTreeModal extends Component {
       message.info('当前未选中任何项目分组')
       return
     }
-    const isSelectedOrg = (str = '') => str.startsWith('org-')
-    //如果是移动到组织根目录，那么就ground_id为空
-    const selectedKey = isSelectedOrg(selectedKeys[0]) ? '' : selectedKeys[0]
-    onOk(selectedKey);
+    onOk(selectedKeys[0]);
   };
   handleModalCancel = () => {
     const { onCancel } = this.props;
@@ -103,9 +100,7 @@ class SearchTreeModal extends Component {
     };
   };
   genTreeData = (tree = []) => {
-    const {org_id, org_name, board_group_tree = []} = tree
-
-    let children = board_group_tree.map(node => {
+    return tree.map(node => {
       const { group_id, group_name, children } = node;
       const genTreeTopDataWithArchivedNode = () => {
         if (!children || children.length === 0) return null;
@@ -120,13 +115,6 @@ class SearchTreeModal extends Component {
         children: genTreeTopDataWithArchivedNode()
       };
     });
-    //生成组织根目录
-    const org = {
-      title: org_name,
-      key: `org-${org_id}`,
-      children: children
-    }
-    return [org]
   };
   renderProjectTree = () => {
     const { projectGroupSearchTree } = this.props;

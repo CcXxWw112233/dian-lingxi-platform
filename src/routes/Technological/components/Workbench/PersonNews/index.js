@@ -235,9 +235,14 @@ export default class PersonNews extends React.Component {
             </Dropdown>
             <div
               className={indexStyles.contain1_one}
-              onClick={() => {
-                this.props.routingJump("/technological/accoutSet");
-              }}
+              onClick={(() => {
+                this.props.dispatch({
+                  type: 'technological/routingJump',
+                  payload: {
+                    route: "/technological/accoutSet"
+                  }
+                })
+              }).bind(this)}
             >
               {name}
             </div>

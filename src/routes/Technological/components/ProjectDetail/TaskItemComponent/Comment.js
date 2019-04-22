@@ -83,7 +83,7 @@ export default class Comment extends React.Component {
       onChange(info) {
         const status = info.file.status;
         if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
+          // console.log(info.file, info.fileList);
         }
         if (status === 'done') {
         } else if (status === 'error') {
