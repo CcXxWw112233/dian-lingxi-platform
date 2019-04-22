@@ -12,6 +12,7 @@ export default {
   state: {
     datas: {
       gold_date_arr: [], //所需要的日期数据
+      date_arr_one_level: [], //所有日期数据扁平成一级数组
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
       ceiHeight: 24, //单元格高度
@@ -23,6 +24,26 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname.indexOf('/technological') != -1) {
+          dispatch({
+            type: 'updateDatas',
+            payload: {
+              list_group: [
+                {
+                  list_name: '分组一',
+                  list_data: [
+                    {
+                      start_time: 1552233600000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                    }
+                  ],
+
+                }
+              ]
+            }
+          })
         }else{
         }
       })

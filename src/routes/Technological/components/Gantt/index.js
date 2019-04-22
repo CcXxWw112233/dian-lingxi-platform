@@ -46,18 +46,21 @@ export default class Gantt extends Component {
     const { dispatch } = this.props
     const { datas: { gold_date_arr = [] }} = this.props.model
     const date_arr = getMonthDate(timestamp)
+    const date_arr_one_level = []
     let date_total = 0
     for(let val of date_arr) {
       const { date_inner = [] } = val
       for(let val2 of date_inner) {
         date_total += 1
+        date_arr_one_level.push(val2)
       }
     }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
         gold_date_arr: date_arr,
-        date_total
+        date_total,
+        date_arr_one_level
       }
     })
 
@@ -139,7 +142,8 @@ export default class Gantt extends Component {
         <div className={indexStyles.cardDetail_middle}
              id={'gantt_card_out_middle'}
              ref={'gantt_card_out_middle'}
-             onScroll={this.ganttScroll}>
+             onScroll={this.ganttScroll}
+        >
           <DateList />
           <div className={indexStyles.panel}>
             <GroupListHead />
