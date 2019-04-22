@@ -3,6 +3,7 @@ import styles from './ProjectMenu.less';
 import { connect } from 'dva';
 import classNames from 'classnames/bind';
 import { Tree, Tooltip, Menu, Dropdown, Input, message, Modal } from 'antd';
+import { isHasOrgTeamBoardEditPermission } from './../../../../utils/businessFunction';
 
 const { TreeNode } = Tree;
 const { Item } = Menu;
@@ -373,15 +374,20 @@ class ProjectMenu extends Component {
         </Tooltip>
         {!isArchived && (
           <div onClick={e => (e ? e.stopPropagation() : null)}>
-            <Dropdown overlay={operatorMenu} trigger={['click']}>
-              <span
-                className={
-                  styles.projectMenuTree__treeNode_boardCount_with_ellipsis
-                }
-              >
+            {isHasOrgTeamBoardEditPermission() ? (
+              <Dropdown overlay={operatorMenu} trigger={['click']}>
+                <span
+                  className={
+                    styles.projectMenuTree__treeNode_boardCount_with_ellipsis
+                  }
+                >
+                  {board_count}
+                </span>
+              </Dropdown>
+            ) : (
+              <span>
                 {board_count}
-              </span>
-            </Dropdown>
+            </span>)}
           </div>
         )}
         {isArchived && (

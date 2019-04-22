@@ -555,7 +555,7 @@ export default class Header extends React.Component {
     const that = this
     const {datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1'}} = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName } = this.state
-    const { board_name, board_id, is_star, is_create, app_data = [], folder_id } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges } = projectDetailInfoData
     const processName = processInfo.name
     is_starinit = is_star
 
@@ -593,10 +593,10 @@ export default class Header extends React.Component {
             <div className={indexStyle.elseProjectMemu} style={{marginLeft: '-35px'}}>
             <VisitControl
               popoverPlacement={'leftTop'}
-              // isPropVisitControl={is_privilege === '0' ? false : true}
-              // principalList={projectParticipant}
+              isPropVisitControl={is_privilege === '0' ? false : true}
+              principalList={projectParticipant}
               principalInfo='位项目参与人'
-              // otherPrivilege={privileges}
+              otherPrivilege={privileges}
               otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
               removeMemberPromptText='移出后用户将不能访问此项目'
               handleVisitControlChange={this.handleVisitControlChange}
