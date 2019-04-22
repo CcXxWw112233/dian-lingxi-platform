@@ -654,7 +654,7 @@ const ProjectDetail = (props) => {
     switch (appsSelectKey) {
       case '2':
         appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (<ProcessIndex
-          {...this.props}
+          {...props}
           {...HeaderListProps}
           getProjectDetailInfo={getProjectDetailInfo}
           {...workflowComments}
