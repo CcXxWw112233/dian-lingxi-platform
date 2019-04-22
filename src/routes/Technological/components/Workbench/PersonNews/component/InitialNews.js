@@ -608,8 +608,9 @@ export default class InitialNews extends React.Component {
           {value.map((val, key) => {
             const { action } = val
             let messageContain
+            
             switch(action) {
-              case 'board.card.update.comment.add':           
+              case 'board.card.update.comment.add':
                 messageContain = (
                   <div className={NewsListStyle.news_3} key={key}>
                     <div className={NewsListStyle.news_3_text}> {val.creator.name} 新增了评论{currentNounPlanFilterName(TASKS)}</div>
@@ -626,7 +627,7 @@ export default class InitialNews extends React.Component {
                       payload: {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
                       }
-                    })}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
+                    })}>{val.content && val.content.board && val.content.board.name}</span>}</div>
                     <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
@@ -649,7 +650,7 @@ export default class InitialNews extends React.Component {
                       payload: {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
                       }
-                    })}>{val.content && val.content.board_file && val.content.board_file.name}</span>}</div>
+                    })}>{val.content && val.content.board && val.content.board.name}</span>}</div>
                     <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
