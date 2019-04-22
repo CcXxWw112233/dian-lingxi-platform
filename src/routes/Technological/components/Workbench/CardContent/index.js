@@ -431,6 +431,11 @@ class CardContent extends React.Component {
       </>
     );
   };
+  contentSelectMenu = () => {
+    return (
+      <div></div>
+    );
+  }
   render() {
     // console.log('hello world!!!', this.props)
     const { datas = {} } = this.props.model;
@@ -733,13 +738,13 @@ class CardContent extends React.Component {
             />
           )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
-          {/* <Dropdown
+          <Dropdown
              trigger={['click']}
              visible={this.state.dropDonwVisible}
              onVisibleChange={this.onVisibleChange.bind(this)}
-             overlay={menu()}>
+             overlay={this.contentSelectMenu()}>
             <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
-          </Dropdown> */}
+          </Dropdown>
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}
