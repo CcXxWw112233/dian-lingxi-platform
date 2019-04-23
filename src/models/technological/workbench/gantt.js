@@ -19,8 +19,10 @@ export default {
       ceilWidth: 44, //单元格的宽度
       ceiHeight: 24, //单元格高度
       date_total: 0, //总天数
-      group_rows: [7, 7, 7], //每一个分组默认行数
+      group_rows: [], //每一个分组默认行数 [7, 7, 7]
+      group_list_area: [], //分组高度区域
       isDragging: false, //甘特图是否在拖拽中
+      target_scrollLeft: 0, //总体滚动条向左滑动位置
     },
   },
   subscriptions: {
@@ -61,6 +63,13 @@ export default {
                       end_time: 1552579200000,
                       start_time_string: '2019/3/12',
                       end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 1,
+                    }, {
+                      start_time: 1552924800000,
+                      end_time: 1553184000000,
+                      start_time_string: '2019/3/19',
+                      end_time_sting: '2019/3/22',
                       time_span: 4,
                       create_time: 1,
                     }
@@ -138,8 +147,45 @@ export default {
                     }
                   ],
 
+                },
+                {
+                  list_name: '分组四',
+                  list_id: '444',
+                  list_data: [
+                    {
+                      start_time: 1552233600000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 1,
+                    }, {
+                      start_time: 1552233600000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/11',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 2,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552838400000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/18',
+                      time_span: 7,
+                      create_time: 3,
+                    }, {
+                      start_time: 1552320000000,
+                      end_time: 1552579200000,
+                      start_time_string: '2019/3/12',
+                      end_time_sting: '2019/3/15',
+                      time_span: 4,
+                      create_time: 4,
+                    }
+                  ],
+
                 }
-              ]
+              ],
+              group_rows: [7, 7, 7],
             }
           })
         }else{

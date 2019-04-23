@@ -49,6 +49,9 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
+    if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+      return false
+    }
     this.setIsDragging(true)
 
     const { datas: { ceiHeight, ceilWidth }} = this.props.model
@@ -170,15 +173,59 @@ export default class GetRowGantt extends Component {
   }
 
   componentDidMount() {
-    // this.initSet(this.prop)
+    const that = this
+    setTimeout(function () {
+      that.initSet(that.props)
+    }, 500)
+  }
+
+  componentWillReceiveProps(nextProps) {
+
   }
 
   initSet(props) {
-    //根据所获得的分组数据转换所需要的数据
-    const { datas: { list_group } } = this.props.model
-    const specific_example_arr = []
-    // for(let )
+    const { dispatch } = props
 
+    const target_0 = document.getElementById('gantt_card_out')
+    const target_1 = document.getElementById('gantt_card_out_middle')
+
+    //根据所获得的分组数据转换所需要的数据
+    const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
+    const specific_example_arr = []
+    const group_list_area = [] //分组高度区域
+
+    //设置分组区域高度, 并为每一个任务新增一条
+    for (let i = 0; i < list_group.length; i ++ ) {
+      const list_data = list_group[i]['list_data']
+      const length = (list_data.length || 1) + 1
+      const group_height = length * ceiHeight
+      group_list_area[i] = group_height
+      group_rows[i] = length
+      for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
+        const item = list_data[j]
+        item.width = item.time_span * ceilWidth
+        item.height = 20
+        //设置横坐标
+        for(let k = 0; k < date_arr_one_level.length; k ++) {
+           if(item['start_time'] == date_arr_one_level[k]['timestamp']) { //是同一天
+             item.left = k * ceilWidth
+             break
+           }
+        }
+        //设置纵坐标
+        item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
+        list_group[i]['list_data'][j] = item
+      }
+    }
+
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        group_list_area,
+        group_rows,
+        list_group
+      }
+    })
 
 
   }
@@ -203,12 +250,22 @@ export default class GetRowGantt extends Component {
             margin: '4px 0 0 2px'
           }} />
         )}
+        {list_group.map((value, key) => {
+          const { list_data = [] } = value
+          return (
+            list_data.map((value2, key) => {
+              const { left, top, width, height } = value2
+              return (
+                <div className={indexStyles.specific_example} data-targetclassname="specific_example" style={{
+                  left: left, top: top,
+                  width: (width || 6) - 6, height: height,
+                  margin: '4px 0 0 2px'
+                }} />
+              )
+            })
+          )
+        })}
 
-        <div className={indexStyles.specific_example} style={{
-          left: 440, top: 168,
-          width: 440, height: 20,
-          margin: '4px 0 0 2px'
-        }} />
 
         {list_group.map((value, key) => {
           const { list_name, list_id, list_data = [] } = value

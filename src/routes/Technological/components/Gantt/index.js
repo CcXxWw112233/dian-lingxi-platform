@@ -116,13 +116,18 @@ export default class Gantt extends Component {
           that.setScrollPosition({delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth}) //移动到最新视觉
         }, INPUT_CHANGE_SEARCH_TIME)
       })
-
     }
 
     this.setState({
       target_scrollLeft: scrollLeft
     })
-
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        target_scrollLeft: scrollLeft
+      }
+    })
   }
   render () {
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
