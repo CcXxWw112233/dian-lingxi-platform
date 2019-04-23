@@ -115,7 +115,7 @@ class AddTaskModal extends Component {
     })
   }
   handleSelectedItem = item => {
-    const { dispatch, taskType } = this.props;
+    const { dispatch, taskType, handleShouldUpdateProjectGroupList  } = this.props;
     this.setState(
       {
         currentSelectedProject: item,
@@ -128,6 +128,8 @@ class AddTaskModal extends Component {
             projectId: item.board_id
           }
         });
+        //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
+        handleShouldUpdateProjectGroupList()
         if (taskType === 'MY_DOCUMENT') {
           Promise.resolve(
             dispatch({

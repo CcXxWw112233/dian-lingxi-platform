@@ -210,6 +210,9 @@ class CardContent extends React.Component {
       previewProccessModalVisibile: false
     });
   }
+  handleShouldUpdateProjectGroupList = () => {
+    this.getProjectGoupLists()
+  }
   async getProjectGoupLists() {
     const res = await getProjectGoupList()
     const isResOk = res => res && res.code === '0'
@@ -787,6 +790,7 @@ class CardContent extends React.Component {
             addTaskModalVisible={addTaskModalVisible}
             addTaskModalVisibleChange={this.addTaskModalVisibleChange}
             projectGroupLists={projectGroupLists}
+            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
           />
         )}
         {addMeetingModalVisible && (
@@ -802,6 +806,7 @@ class CardContent extends React.Component {
             addTaskModalVisible={addMeetingModalVisible}
             addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
             projectGroupLists={projectGroupLists}
+            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
           />
         )}
         {uploadFileModalVisible && (

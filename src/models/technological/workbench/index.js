@@ -1,5 +1,5 @@
 import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList, getCurrentOrgAllMembers } from '../../../services/technological/workbench'
-import {addTask} from '../../../services/technological/task'
+import {addTaskInWorkbench} from '../../../services/technological/task'
 import {getFolderList} from './../../../services/technological/file'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -130,7 +130,7 @@ export default modelExtend(technological, {
     },
     * addTask({payload}, {call, put}) {
       const {data} = payload
-      const res = yield call(addTask, data)
+      const res = yield call(addTaskInWorkbench, data)
       if(!isApiResponseOk(res)) {
         message.error('创建任务失败')
         // console.log('create task failed :' + res)
