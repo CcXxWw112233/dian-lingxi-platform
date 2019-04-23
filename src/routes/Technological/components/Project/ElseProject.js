@@ -334,7 +334,7 @@ class ElseProject extends React.Component{
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
       }
-      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={role_name} />)
+      return (<UserCard avatar={avatar} email={email} name={full_name} mobile={mobile} role_name={role_name} />)
       return (
         <div className={detailInfoStyle.manImageDropdown}>
           <div className={detailInfoStyle.manImageDropdown_top}>
