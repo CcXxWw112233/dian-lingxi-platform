@@ -50,6 +50,7 @@ export default class Header extends React.Component {
         const newPersonList = genNewPersonList(curr.assignees);
         return [...acc, ...newPersonList];
       }
+      return acc
     }, []);
   };
   isVisitControlOpen = () => {

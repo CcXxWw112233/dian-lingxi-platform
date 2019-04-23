@@ -7,7 +7,8 @@ import {
   Menu,
   Tooltip,
   Modal,
-  Button
+  Button,
+  message
 } from 'antd';
 import indexstyles from '../index.less';
 import TaskItem from './TaskItem';
@@ -43,7 +44,7 @@ import {
   PROJECT_FILES_FILE_UPLOAD,
   PROJECT_FLOWS_FLOW_CREATE
 } from '../../../../../globalset/js/constant';
-import { message } from 'antd/lib/index';
+import CheckboxGroup from './CheckboxGroup/index'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -209,6 +210,9 @@ class CardContent extends React.Component {
     this.setState({
       previewProccessModalVisibile: false
     });
+  }
+  handleShouldUpdateProjectGroupList = () => {
+    this.getProjectGoupLists()
   }
   async getProjectGoupLists() {
     const res = await getProjectGoupList()
@@ -431,13 +435,53 @@ class CardContent extends React.Component {
       </>
     );
   };
+  getCurrentBoxScreenListAllSelectedItemIdStr = (arr = [], currentItem) => {
+    return arr.reduce((acc, curr) => {
+      if(curr.id === currentItem.id) {
+        return currentItem.checked ? acc ? `${acc},${curr.id}` :  `${curr.id}` : acc
+      }
+      return curr && curr.selected === '1' ? acc ? `${acc},${curr.id}` : `${curr.id}` : acc
+    } ,'')
+  }
+  handleSelectedCardFilterContentItem = (item, status) => {
+    const {itemValue: {id:box_id, screen_list, code}, dispatch} = this.props
+
+    const getSelectedCardFilterContentItemStatus = Object.assign({}, item, status)
+
+    const ids = this.getCurrentBoxScreenListAllSelectedItemIdStr(screen_list, getSelectedCardFilterContentItemStatus)
+    const data = {
+      id: box_id,
+      code,
+      ids
+    }
+    dispatch({
+      type: 'workbench/handleSetBoxFilterCon',
+      payload:data
+    })
+  }
+  strNumToBool = str => str === '0' ? false: str === '1' ? true : false
+  tranScreenList = (arr = []) => {
+    return arr.map(({name, id, editable, selected}) => ({
+      label: name,
+      checked: this.strNumToBool(selected),
+      disabled: !this.strNumToBool(editable),
+      id,
+    }))
+  }
   contentSelectMenu = () => {
+    const {itemValue: {screen_list = []} = {}} = this.props
+
     return (
-      <div></div>
+      <div>
+        <CheckboxGroup
+          dataList={this.tranScreenList(screen_list)}
+          onItemChange={this.handleSelectedCardFilterContentItem}
+        />
+      </div>
     );
   }
   render() {
-    // console.log('hello world!!!', this.props)
+
     const { datas = {} } = this.props.model;
     const {
       projectStarList = [],
@@ -739,6 +783,7 @@ class CardContent extends React.Component {
           )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
           <Dropdown
+            placement="bottomCenter"
              trigger={['click']}
              visible={this.state.dropDonwVisible}
              onVisibleChange={this.onVisibleChange.bind(this)}
@@ -792,6 +837,7 @@ class CardContent extends React.Component {
             addTaskModalVisible={addTaskModalVisible}
             addTaskModalVisibleChange={this.addTaskModalVisibleChange}
             projectGroupLists={projectGroupLists}
+            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
           />
         )}
         {addMeetingModalVisible && (
@@ -807,6 +853,7 @@ class CardContent extends React.Component {
             addTaskModalVisible={addMeetingModalVisible}
             addTaskModalVisibleChange={this.addMeetingModalVisibleChange}
             projectGroupLists={projectGroupLists}
+            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
           />
         )}
         {uploadFileModalVisible && (

@@ -115,7 +115,8 @@ class AddTaskModal extends Component {
     })
   }
   handleSelectedItem = item => {
-    const { dispatch, taskType } = this.props;
+    const { dispatch, taskType, projectGroupLists,handleShouldUpdateProjectGroupList } = this.props;
+
     this.setState(
       {
         currentSelectedProject: item,
@@ -128,6 +129,8 @@ class AddTaskModal extends Component {
             projectId: item.board_id
           }
         });
+        //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
+        handleShouldUpdateProjectGroupList()
         if (taskType === 'MY_DOCUMENT') {
           Promise.resolve(
             dispatch({
@@ -257,7 +260,7 @@ class AddTaskModal extends Component {
     });
   };
   addNewMeeting = paramObj => {
-    const { taskType, dispatch, addTaskModalVisibleChange } = this.props;
+    const { taskType, dispatch, addTaskModalVisibleChange, workbench: {datas: {boxList}} } = this.props;
     if (taskType !== 'MEETIMG_ARRANGEMENT') {
       return;
     }
@@ -275,7 +278,7 @@ class AddTaskModal extends Component {
     })
       .then(() =>
         dispatch({
-          type: 'workbench/getMeetingList'
+          type: 'workbench/getMeetingList',
         })
       )
       .then(() => {
@@ -283,7 +286,7 @@ class AddTaskModal extends Component {
       });
   };
   addNewTask = paramObj => {
-    const { taskType, dispatch, addTaskModalVisibleChange } = this.props;
+    const { taskType, dispatch, addTaskModalVisibleChange, workbench: {datas: {boxList}} } = this.props;
     if (taskType !== 'RESPONSIBLE_TASK') {
       return;
     }
@@ -302,7 +305,7 @@ class AddTaskModal extends Component {
       })
       .then(() => {
         dispatch({
-          type: 'workbench/getResponsibleTaskList'
+          type: 'workbench/getResponsibleTaskList',
         });
       })
       .then(() => {
@@ -422,6 +425,7 @@ class AddTaskModal extends Component {
       taskType,
       projectGroupLists
     } = this.props;
+
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
     const isHasSelectedProject = () =>
       currentSelectedProject && currentSelectedProject.board_id;
@@ -441,6 +445,7 @@ class AddTaskModal extends Component {
 
     const board_id = currentSelectedProject.board_id;
     const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
+
       const isFinded = projectGroupLists.find(item => item.board_id === board_id)
       if(!isFinded) return []
       //映射数据，只是为了复用 DropdownSelectWithSearch 组件
@@ -538,6 +543,7 @@ class AddTaskModal extends Component {
       }
     };
 
+    //有的项目没有开启目前的内容类型，将其过滤出去
     const filteredNoThatTypeProject = projectList.filter(item => {
       return (
         item.apps && item.apps.find(i => i.code === taskTypeToName[taskType])
