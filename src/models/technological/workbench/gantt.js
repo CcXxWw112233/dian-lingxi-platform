@@ -13,6 +13,8 @@ export default {
     datas: {
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
+      start_date: {}, //日期最开始的那一天
+      end_date: {}, //日期最后那一天
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
       ceiHeight: 24, //单元格高度
@@ -46,7 +48,7 @@ export default {
                       start_time_string: '2019/3/11',
                       end_time_sting: '2019/3/15',
                       time_span: 4,
-                      create_time: 2,
+                      create_time: 1,
                     }, {
                       start_time: 1552320000000,
                       end_time: 1552838400000,
@@ -60,7 +62,7 @@ export default {
                       start_time_string: '2019/3/12',
                       end_time_sting: '2019/3/15',
                       time_span: 4,
-                      create_time: 4,
+                      create_time: 1,
                     }
                   ],
 

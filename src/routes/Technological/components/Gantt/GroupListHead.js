@@ -14,13 +14,13 @@ export default class GroupListHead extends Component {
   }
 
   render () {
-    const { datas: { list_group =[] }} = this.props.model
+    const { datas: { list_group =[], group_rows = [], ceiHeight }} = this.props.model
     return (
       <div className={indexStyles.listHead}>
         {list_group.map((value, key) =>{
           const { list_name, list_id, list_data = [] } = value
           return (
-            <div className={indexStyles.listHeadItem} key={list_id}>{list_name}</div>
+            <div className={indexStyles.listHeadItem} key={list_id} style={{height: group_rows[key] * ceiHeight}}>{list_name}</div>
           )
         })}
       </div>

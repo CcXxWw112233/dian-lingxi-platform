@@ -64,7 +64,9 @@ export default class Gantt extends Component {
       payload: {
         gold_date_arr: date_arr,
         date_total,
-        date_arr_one_level
+        date_arr_one_level,
+        start_date: date_arr[0]['date_inner'][0],
+        end_date: date_arr[date_arr.length - 1]['date_inner'][date_arr[date_arr.length - 1]['date_inner'].length - 1],
       }
     })
 

@@ -15,6 +15,7 @@ export default class GetRowGantt extends Component {
       isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
       due_time: '',
+      specific_example_arr: [], //任务实例列表
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -140,6 +141,7 @@ export default class GetRowGantt extends Component {
     }
   }
 
+  //记录起始时间，做创建任务工作
   handleCreateTask(start_end) {
     const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] }} = this.props.model
     const { currentRect = {} } = this.state
@@ -166,10 +168,26 @@ export default class GetRowGantt extends Component {
       })
     }
   }
+
+  componentDidMount() {
+    // this.initSet(this.prop)
+  }
+
+  initSet(props) {
+    //根据所获得的分组数据转换所需要的数据
+    const { datas: { list_group } } = this.props.model
+    const specific_example_arr = []
+    // for(let )
+
+
+
+  }
+
+
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
 
-    const { datas: { gold_date_arr = [], list_group =[], ceilWidth }} = this.props.model
+    const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [] }} = this.props.model
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -186,10 +204,16 @@ export default class GetRowGantt extends Component {
           }} />
         )}
 
+        <div className={indexStyles.specific_example} style={{
+          left: 440, top: 168,
+          width: 440, height: 20,
+          margin: '4px 0 0 2px'
+        }} />
+
         {list_group.map((value, key) => {
           const { list_name, list_id, list_data = [] } = value
           return (
-            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data}/>
+            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]}/>
           )
         })}
 
