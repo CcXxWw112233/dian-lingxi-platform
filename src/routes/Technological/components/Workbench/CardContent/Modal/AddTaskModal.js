@@ -115,7 +115,7 @@ class AddTaskModal extends Component {
     })
   }
   handleSelectedItem = item => {
-    const { dispatch, taskType, projectGroupLists,handleShouldUpdateProjectGroupList } = this.props;
+    const { dispatch, taskType, projectGroupLists, handleShouldUpdateProjectGroupList } = this.props;
 
     this.setState(
       {
