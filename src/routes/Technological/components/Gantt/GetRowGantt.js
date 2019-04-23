@@ -212,8 +212,22 @@ export default class GetRowGantt extends Component {
              break
            }
         }
-        //设置纵坐标
+
         item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
+
+
+        // //设置纵坐标
+       //  if(j == 0) {
+       //    item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
+       //  } else {
+       //    if(list_data[j]['start_time'] < list_data[j - 1]['end_time'] || list_data[j]['end_time'] > list_data[j - 1]['start_time']) { //时间有重叠则另起一行
+       //      item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
+       //    }else{
+       //      item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
+       //
+       //    }
+       //  }
+
         list_group[i]['list_data'][j] = item
       }
     }
@@ -256,9 +270,9 @@ export default class GetRowGantt extends Component {
             list_data.map((value2, key) => {
               const { left, top, width, height } = value2
               return (
-                <div className={indexStyles.specific_example} data-targetclassname="specific_example" style={{
+                <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example" style={{
                   left: left, top: top,
-                  width: (width || 6) - 6, height: height,
+                  width: (width || 6) - 6, height: (height || 20),
                   margin: '4px 0 0 2px'
                 }} />
               )
