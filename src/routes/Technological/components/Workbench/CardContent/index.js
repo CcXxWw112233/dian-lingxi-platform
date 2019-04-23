@@ -486,7 +486,7 @@ class CardContent extends React.Component {
     const {
       projectStarList = [],
       // responsibleTaskList = [],
-      uploadedFileList = [],
+      uploadedFileList:{file_list = [], folder_list = []} = {},
       joinedProcessList = [],
       backLogProcessList = [],
       meetingLsit = [],
@@ -516,6 +516,8 @@ class CardContent extends React.Component {
       addProcessModalVisible,
       projectGroupLists
     } = this.state;
+
+
     const filterItem = CardContentType => {
       let contanner = <div />;
       switch (CardContentType) {
@@ -597,10 +599,11 @@ class CardContent extends React.Component {
           break;
         //我的文档
         case 'MY_DOCUMENT':
-          contanner = uploadedFileList.length ? (
+
+          contanner = file_list.length ? (
             <div>
               <div>
-                {uploadedFileList.map((value, key) => (
+                {file_list.map((value, key) => (
                   <FileItem
                     {...this.props}
                     key={key}
