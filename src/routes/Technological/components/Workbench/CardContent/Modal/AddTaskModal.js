@@ -130,7 +130,9 @@ class AddTaskModal extends Component {
           }
         });
         //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
-        handleShouldUpdateProjectGroupList()
+        if(taskType === 'RESPONSIBLE_TASK' || taskType === 'MEETIMG_ARRANGEMENT') {
+          handleShouldUpdateProjectGroupList()
+        }
         if (taskType === 'MY_DOCUMENT') {
           Promise.resolve(
             dispatch({

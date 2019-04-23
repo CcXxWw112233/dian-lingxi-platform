@@ -83,10 +83,21 @@ class ElseProject extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk() {
+        const {dispatch} = that.props
         if(type ==='1'){
-          that.props.archivedProject({board_id, is_archived: '1'})
+          Promise.resolve(that.props.archivedProject({board_id, is_archived: '1'})).then(() => {
+            dispatch({
+              type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+              payload: {}
+            })
+          })
         }else if(type === '0') {
-          that.props.deleteProject(board_id)
+          Promise.resolve(that.props.deleteProject(board_id)).then(() => {
+            dispatch({
+              type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+              payload: {}
+            })
+          })
         }
       }
     });

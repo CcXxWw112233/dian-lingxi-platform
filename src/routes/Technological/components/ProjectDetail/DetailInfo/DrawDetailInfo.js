@@ -131,7 +131,7 @@ export default class DrawDetailInfo extends React.Component {
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       }
-      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
+      // return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
           <div className={DrawDetailInfoStyle.manImageDropdown_top}>
@@ -178,10 +178,10 @@ export default class DrawDetailInfo extends React.Component {
               <div>手机：</div>
               <div>{mobile}</div>
             </div>
-            <div className={DrawDetailInfoStyle.detailItem}>
+            {/* <div className={DrawDetailInfoStyle.detailItem}>
               <div>微信：</div>
               <div>{we_chat}</div>
-            </div>
+            </div> */}
           </div>
           {/*<div className={DrawDetailInfoStyle.manImageDropdown_bott}>*/}
           {/*<img src="" />*/}
