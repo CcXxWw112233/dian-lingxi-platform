@@ -53,12 +53,12 @@ class DropdownSelectWithSearch extends Component {
   };
   handleSeletedMenuItem = item => {
     const { handleSelectedItem, list, isProjectGroupMode } = this.props;
-    if(isProjectGroupMode) {
-      handleSelectedItem(item)
+    if (isProjectGroupMode) {
+      handleSelectedItem(item);
       this.setState({
         visible: false
-      })
-      return
+      });
+      return;
     }
     const { board_id } = item;
     setStorage('board_id', board_id);
@@ -87,8 +87,8 @@ class DropdownSelectWithSearch extends Component {
     ));
   };
   renderNoContent = () => {
-    const {isCanCreateNew} = this.props
-    if(!isCanCreateNew) return null
+    const { isCanCreateNew } = this.props;
+    if (!isCanCreateNew) return null;
     const { current_org: { identity_type } = {} } = this.getUerInfoFromCookie();
     const isVisitor = this.isVisitor(identity_type);
     return (
@@ -257,14 +257,16 @@ class DropdownSelectWithSearch extends Component {
             </div>
           </Dropdown>
         )}
-        <AddModalFormWithExplicitProps
-          addNewProjectModalVisible={addNewProjectModalVisible}
-          key="1"
-          hideModal={this.hideModal}
-          showModal={this.showModal}
-          project={project}
-          handleSubmitNewProject={this.handleSubmitNewProject}
-        />
+        {addNewProjectModalVisible && (
+          <AddModalFormWithExplicitProps
+            addNewProjectModalVisible={addNewProjectModalVisible}
+            key="1"
+            hideModal={this.hideModal}
+            showModal={this.showModal}
+            project={project}
+            handleSubmitNewProject={this.handleSubmitNewProject}
+          />
+        )}
       </div>
     );
   }
@@ -277,7 +279,7 @@ DropdownSelectWithSearch.defaultProps = {
   isShowIcon: true, //是否显示 icon
   isSearch: true, //是否显示搜索input
   isCanCreateNew: true, //是否显示新建
-  isProjectGroupMode: false, //如果是项目分组复用这个组件
+  isProjectGroupMode: false //如果是项目分组复用这个组件
 };
 
 function mapStateToProps({ modal, project, loading }) {

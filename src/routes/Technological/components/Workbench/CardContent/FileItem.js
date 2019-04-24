@@ -163,7 +163,7 @@ class FileItem extends React.Component {
       key: id
     });
   };
-  genUploadFileSuccessNoteQueue(fileList) {
+  genUploadFileSuccessNoteQueue(fileList = []) {
     const {dispatch} = this.props
     for (let file of fileList) {
       this.createUploadFileSuccessNote(file)
@@ -181,9 +181,9 @@ class FileItem extends React.Component {
     uploadedFileList
   ) => {
     return this.genUploadFileSuccessNoteQueue(
-      uploadedFileList.filter(file =>
+      uploadedFileList && uploadedFileList.file_list ? uploadedFileList.file_list.filter(file =>
         uploadedFileNotificationIdList.find(eachId => file.id === eachId)
-      )
+      ) : []
     );
   };
   handleNewUploadedFileNotification = nextProps => {

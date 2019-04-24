@@ -83,10 +83,21 @@ class ElseProject extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk() {
+        const {dispatch} = that.props
         if(type ==='1'){
-          that.props.archivedProject({board_id, is_archived: '1'})
+          Promise.resolve(that.props.archivedProject({board_id, is_archived: '1'})).then(() => {
+            dispatch({
+              type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+              payload: {}
+            })
+          })
         }else if(type === '0') {
-          that.props.deleteProject(board_id)
+          Promise.resolve(that.props.deleteProject(board_id)).then(() => {
+            dispatch({
+              type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+              payload: {}
+            })
+          })
         }
       }
     });
@@ -323,55 +334,7 @@ class ElseProject extends React.Component{
       if(!isHasOrgMemberQueryPermission()) {
         return <NoPermissionUserCard avatar={avatar} full_name={full_name} />
       }
-      return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={role_name} />)
-      return (
-        <div className={detailInfoStyle.manImageDropdown}>
-          <div className={detailInfoStyle.manImageDropdown_top}>
-            <div className={detailInfoStyle.left}>
-              {avatar ? (<img src={avatar} alt='' />) : (
-                <div style={{backgroundColor: '#f2f2f2', textAlign: 'center', width: 32, height: 32, borderRadius: 32}}>
-                  <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20, marginTop: 6}}/>
-                </div>
-              )}
-            </div>
-            <div className={detailInfoStyle.right}>
-              <div className={detailInfoStyle.name}>{full_name || '佚名'}</div>
-              <Tooltip title="该功能即将上线">
-                <div className={detailInfoStyle.percent}>
-                  <div style={{width: '0'}}></div>
-                  <div style={{width: '0'}}></div>
-                  <div style={{width: '100%'}}></div>
-                </div>
-              </Tooltip>
-            </div>
-          </div>
-          <div className={detailInfoStyle.manImageDropdown_middle}>
-            {/* <div className={detailInfoStyle.detailItem}>
-              <div>姓名：</div>
-              <div>{full_name}</div>
-            </div> */}
-            <div className={detailInfoStyle.detailItem}>
-              <div>职位：</div>
-              <div>{role_name ? role_name : '无'}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>邮箱：</div>
-              <div>{email}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>手机：</div>
-              <div>{mobile}</div>
-            </div>
-            <div className={detailInfoStyle.detailItem}>
-              <div>微信：</div>
-              <div>{we_chat || '无'}</div>
-            </div>
-          </div>
-          {/*<div className={detailInfoStyle.manImageDropdown_bott}>*/}
-            {/*<img src="" />*/}
-          {/*</div>*/}
-        </div>
-      )
+      return (<UserCard avatar={avatar} email={email} name={full_name} mobile={mobile} role_name={role_name} />)
     }
 
     const cancelStarProjet = (

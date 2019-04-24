@@ -111,7 +111,7 @@ class DateRangePicker extends Component {
             showTime={{ format: 'HH:mm' }}
             style={{
               opacity: 0,
-              width: !start_time ? 16 : 100,
+              width: !start_time ? '16px' : '100px',
               height: 20,
               background: '#000000',
               cursor: 'pointer',
