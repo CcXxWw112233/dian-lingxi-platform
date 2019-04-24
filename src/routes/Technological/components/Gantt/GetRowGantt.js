@@ -35,6 +35,9 @@ export default class GetRowGantt extends Component {
   }
   //鼠标拖拽移动
   dashedMousedown(e) {
+    if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+      return false
+    }
     if(this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
@@ -81,7 +84,10 @@ export default class GetRowGantt extends Component {
       currentRect: property
     })
   }
-  dashedDragMouseup() {
+  dashedDragMouseup(e) {
+    if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+      return false
+    }
     this.stopDragging()
     this.handleCreateTask('2')
   }
@@ -98,6 +104,9 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove(e) {
+    if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+      return false
+    }
     const { datas: { ceiHeight, ceilWidth }} = this.props.model
     if(this.isMouseDown) { //按下的情况不处理
       return false
