@@ -82,7 +82,11 @@ export default class Gantt extends Component {
         }
       })
     }
-
+    //更新任务位置信息
+    const that = this
+    setTimeout(function () {
+      that.setListGroup(that.props)
+    }, 500)
   }
 
   //左右拖动,日期会更新
@@ -129,6 +133,61 @@ export default class Gantt extends Component {
       }
     })
   }
+
+  //设置分组数据
+  setListGroup(props) {
+    const { dispatch } = props
+
+    const target_0 = document.getElementById('gantt_card_out')
+    const target_1 = document.getElementById('gantt_card_out_middle')
+
+    //根据所获得的分组数据转换所需要的数据
+    const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
+    const specific_example_arr = []
+    const group_list_area = [] //分组高度区域
+
+    //设置分组区域高度, 并为每一个任务新增一条
+    for (let i = 0; i < list_group.length; i ++ ) {
+      const list_data = list_group[i]['list_data']
+      const length = (list_data.length || 1) + 1
+      const group_height = length * ceiHeight
+      group_list_area[i] = group_height
+      group_rows[i] = length
+      for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
+        const item = list_data[j]
+        item.width = item.time_span * ceilWidth
+        item.height = 20
+        //设置横坐标
+        for(let k = 0; k < date_arr_one_level.length; k ++) {
+          if(item['start_time'] == date_arr_one_level[k]['timestamp']) { //是同一天
+            item.left = k * ceilWidth
+            break
+          }
+        }
+
+        //设置纵坐标
+        //根据历史分组统计纵坐标累加
+        let after_group_height = 0
+        for(let k = 0; k < i; k ++ ) {
+          after_group_height += group_list_area[k]
+        }
+        item.top = after_group_height + j * ceiHeight
+
+        list_group[i]['list_data'][j] = item
+      }
+    }
+
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        group_list_area,
+        group_rows,
+        list_group
+      }
+    })
+    // this.taskItemToTop()
+  }
+
   render () {
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     return (

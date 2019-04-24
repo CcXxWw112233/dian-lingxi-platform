@@ -20,7 +20,7 @@ export default class GroupListHead extends Component {
         {list_group.map((value, key) =>{
           const { list_name, list_id, list_data = [] } = value
           return (
-            <div className={indexStyles.listHeadItem} key={list_id} style={{height: group_rows[key] * ceiHeight}}>{list_name}</div>
+            <div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>
           )
         })}
       </div>

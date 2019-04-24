@@ -173,10 +173,10 @@ export default class GetRowGantt extends Component {
   }
 
   componentDidMount() {
-    const that = this
-    setTimeout(function () {
-      that.initSet(that.props)
-    }, 500)
+  //   const that = this
+  //   setTimeout(function () {
+  //     that.initSet(that.props)
+  //   }, 500)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -213,20 +213,13 @@ export default class GetRowGantt extends Component {
            }
         }
 
-        item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
-
-
-        // //设置纵坐标
-       //  if(j == 0) {
-       //    item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
-       //  } else {
-       //    if(list_data[j]['start_time'] < list_data[j - 1]['end_time'] || list_data[j]['end_time'] > list_data[j - 1]['start_time']) { //时间有重叠则另起一行
-       //      item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
-       //    }else{
-       //      item.top = i * group_height + j * ceiHeight + (i == 0? 0 : 1 * ceiHeight) //1 * ceiHeight为空出来的一格
-       //
-       //    }
-       //  }
+        //设置纵坐标
+        //根据历史分组统计纵坐标累加
+        let after_group_height = 0
+        for(let k = 0; k < i; k ++ ) {
+          after_group_height += group_list_area[k]
+        }
+        item.top = after_group_height + j * ceiHeight
 
         list_group[i]['list_data'][j] = item
       }
@@ -240,10 +233,53 @@ export default class GetRowGantt extends Component {
         list_group
       }
     })
-
-
+   // this.taskItemToTop()
   }
 
+  //遍历
+  taskItemToTop() {
+    const { dispatch } = this.props
+
+    //根据所获得的分组数据转换所需要的数据
+    const { datas: { list_group = [] } } = this.props.model
+
+    const list_group_new = [...list_group]
+
+    //设置分组区域高度, 并为每一个任务新增一条
+    for (let i = 0; i < list_group_new.length; i ++ ) {
+      const list_data = list_group_new[i]['list_data']
+      const length = list_data.length
+      for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
+        const item = list_data[j]
+        let isoverlap = true //是否重叠，默认不重叠
+        if(j > 0) {
+          for(let k = 0; k < j; k ++) {
+            if(list_data[j]['start_time'] < list_data[k]['end_time'] || list_data[k]['end_time'] < list_data[j]['start_time']) {
+
+            } else {
+              isoverlap = false
+              item.top = list_data[k].top
+              console.log(k, j)
+              break
+            }
+          }
+        }
+        list_group_new[i]['list_data'][j] = item
+
+        if(!isoverlap) {
+          break
+        }
+
+      }
+    }
+
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        list_group: list_group_new
+      }
+    })
+  }
 
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
