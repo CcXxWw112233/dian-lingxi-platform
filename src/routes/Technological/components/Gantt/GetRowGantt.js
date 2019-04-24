@@ -174,6 +174,7 @@ export default class GetRowGantt extends Component {
       [update_name]: timestamp
     })
     if(start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
+      this.setSpecilTaskExample({}) //出现任务创建
        //出现具体任务实例
       this.setState({
 
@@ -182,68 +183,13 @@ export default class GetRowGantt extends Component {
   }
 
   componentDidMount() {
-  //   const that = this
-  //   setTimeout(function () {
-  //     that.initSet(that.props)
-  //   }, 500)
+
   }
 
   componentWillReceiveProps(nextProps) {
 
   }
 
-  initSet(props) {
-    const { dispatch } = props
-
-    const target_0 = document.getElementById('gantt_card_out')
-    const target_1 = document.getElementById('gantt_card_out_middle')
-
-    //根据所获得的分组数据转换所需要的数据
-    const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-    const specific_example_arr = []
-    const group_list_area = [] //分组高度区域
-
-    //设置分组区域高度, 并为每一个任务新增一条
-    for (let i = 0; i < list_group.length; i ++ ) {
-      const list_data = list_group[i]['list_data']
-      const length = (list_data.length || 1) + 1
-      const group_height = length * ceiHeight
-      group_list_area[i] = group_height
-      group_rows[i] = length
-      for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
-        const item = list_data[j]
-        item.width = item.time_span * ceilWidth
-        item.height = 20
-        //设置横坐标
-        for(let k = 0; k < date_arr_one_level.length; k ++) {
-           if(item['start_time'] == date_arr_one_level[k]['timestamp']) { //是同一天
-             item.left = k * ceilWidth
-             break
-           }
-        }
-
-        //设置纵坐标
-        //根据历史分组统计纵坐标累加
-        let after_group_height = 0
-        for(let k = 0; k < i; k ++ ) {
-          after_group_height += group_list_area[k]
-        }
-        item.top = after_group_height + j * ceiHeight
-
-        list_group[i]['list_data'][j] = item
-      }
-    }
-
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        group_list_area,
-        group_rows,
-        list_group
-      }
-    })
-   // this.taskItemToTop()
-  }
 
   //遍历
   taskItemToTop() {
@@ -290,6 +236,14 @@ export default class GetRowGantt extends Component {
     })
   }
 
+  //点击某个实例
+  setSpecilTaskExample({id},e) {
+    if(e) {
+      e.stopPropagation()
+    }
+    console.log({id})
+    this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+  }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
 
@@ -315,11 +269,14 @@ export default class GetRowGantt extends Component {
             list_data.map((value2, key) => {
               const { left, top, width, height } = value2
               return (
-                <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example" style={{
-                  left: left, top: top,
-                  width: (width || 6) - 6, height: (height || 20),
-                  margin: '4px 0 0 2px'
-                }} />
+                <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example"
+                     style={{
+                        left: left, top: top,
+                        width: (width || 6) - 6, height: (height || 20),
+                        margin: '4px 0 0 2px'
+                     }}
+                     onClick={this.setSpecilTaskExample.bind(this,{ id: 11})}
+                />
               )
             })
           )
