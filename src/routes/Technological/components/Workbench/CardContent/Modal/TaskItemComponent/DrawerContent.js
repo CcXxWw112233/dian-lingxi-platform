@@ -865,11 +865,11 @@ class DrawContent extends React.Component {
   handleVisitControlChange = (flag) => {
     const { datas: { drawContent = {}} } = this.props.model
     const {is_privilege = '0', card_id} = drawContent
-    // const toBool = str => !!Number(str)
-    // const is_privilege_bool = toBool(is_privilege)
-    // if(flag === is_privilege_bool) {
-    //   return
-    // }
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if(flag === is_privilege_bool) {
+      return
+    }
     //toggle权限
     const data = {
       content_id: card_id,
@@ -899,7 +899,7 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, is_privilege = '0', privileges} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList} = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { datas: { card_id, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
@@ -907,7 +907,7 @@ class DrawContent extends React.Component {
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
+    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared, is_privilege = '0', privileges = {} } = drawContent
 
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
@@ -1133,7 +1133,7 @@ class DrawContent extends React.Component {
                 {/*</div>*/}
               {/*</Dropdown>*/}
             {/* </div> */}
-            <span style={{marginTop: '-2px', marginRight: drawContent.is_privilege === '1' ? '30px' : '10px'}}>
+            <span style={{marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px'}}>
               {drawContent.card_id && (
                 <VisitControl
                 isPropVisitControl={is_privilege === '1' ? true : false}
