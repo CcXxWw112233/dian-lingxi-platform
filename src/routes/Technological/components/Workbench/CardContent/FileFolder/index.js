@@ -83,11 +83,19 @@ class FileFolder extends Component {
       this.initData(this.props)
       return
     }
+
     //如果点击的是其他层级的目录,则一层一层的匹配，直到匹配到
     let resultData = folder_list
-    for(let folder of breadCrumbList.slice(1)) {
+    //第一层数据的数据结构，和其他层数据结构不同，所以需要区分
+    let index = 0
+    for(let folder  of breadCrumbList.slice(1)) {
       const {id} = folder
-      resultData = resultData.find(i => i.id === id)
+      index++
+      if(index === 1) {
+        resultData = resultData.find(i => i.id === id)
+      } else {
+        resultData = resultData.child_folder_list.find(i => i.id === id)
+      }
       if(id === shouldTurnedLayerFolderId) {
         break;
       }
