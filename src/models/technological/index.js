@@ -219,7 +219,7 @@ export default {
             redirectHash = '/technological/project'
           }
           if(document.getElementById('iframImCircle')) {
-            document.getElementById('iframImCircle').src = `http://www.new-di.com/im?timestamp=${new Date().getTime()}`;;
+            document.getElementById('iframImCircle').src = `${window.location.protocol}//${window.location.host}/im?timestamp=${new Date().getTime()}`;;
           }
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }
@@ -446,7 +446,7 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
-    
+
     * getMenuList({payload}, {call, put}) {
       let res = yield call(getMenuList, payload)
       // console.log('this is model', res)
