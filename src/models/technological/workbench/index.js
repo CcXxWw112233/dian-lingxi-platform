@@ -60,12 +60,12 @@ export default modelExtend(technological, {
                   uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
                 }
               }),
-              dispatch({
-                type: 'getCurrentOrgFileUploads',
-                payload: {
+              // dispatch({
+              //   type: 'getCurrentOrgFileUploads',
+              //   payload: {
 
-                }
-              }),
+              //   }
+              // }),
               // dispatch({
               //   type: 'getUserImToken',
               //   payload: {
@@ -80,10 +80,10 @@ export default modelExtend(technological, {
                 type: 'getProjectList',
                 payload: {}
               }),
-              dispatch({
-                type: 'getBoxUsableList',
-                payload: {}
-              })
+              // dispatch({
+              //   type: 'getBoxUsableList',
+              //   payload: {}
+              // })
             ])
             await dispatch({
               type: 'handleCurrentSelectedProjectChange',

@@ -45,6 +45,7 @@ import {
   PROJECT_FLOWS_FLOW_CREATE
 } from '../../../../../globalset/js/constant';
 import CheckboxGroup from './CheckboxGroup/index'
+import FileFolder from './FileFolder/index'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -502,7 +503,9 @@ class CardContent extends React.Component {
       CardContentType,
       itemValue = {},
       workbench: {
-        datas: { responsibleTaskList = [] }
+        datas: {
+          responsibleTaskList = []
+        }
       }
     } = this.props;
     const { selected_board_data = [] } = itemValue; //已选board id
@@ -600,9 +603,9 @@ class CardContent extends React.Component {
         //我的文档
         case 'MY_DOCUMENT':
 
-          contanner = file_list.length ? (
+          contanner = file_list.length || folder_list.length ? (
             <div>
-              <div>
+              {/* <div>
                 {file_list.map((value, key) => (
                   <FileItem
                     {...this.props}
@@ -613,7 +616,8 @@ class CardContent extends React.Component {
                     )}
                   />
                 ))}
-              </div>
+              </div> */}
+              <FileFolder {...this.props} file_list={file_list} folder_list={folder_list} shouldFileItemSetPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
               {this.noContentTooltip('上传文档', 'MY_DOCUMENT')}
             </div>
           ) : (
