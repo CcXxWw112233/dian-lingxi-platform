@@ -7,7 +7,8 @@ import {
   Menu,
   Tooltip,
   Modal,
-  Button
+  Button,
+  message
 } from 'antd';
 import indexstyles from '../index.less';
 import TaskItem from './TaskItem';
@@ -43,7 +44,8 @@ import {
   PROJECT_FILES_FILE_UPLOAD,
   PROJECT_FLOWS_FLOW_CREATE
 } from '../../../../../globalset/js/constant';
-import { message } from 'antd/lib/index';
+import CheckboxGroup from './CheckboxGroup/index'
+import FileFolder from './FileFolder/index'
 
 const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
@@ -434,13 +436,58 @@ class CardContent extends React.Component {
       </>
     );
   };
+  getCurrentBoxScreenListAllSelectedItemIdStr = (arr = [], currentItem) => {
+    return arr.reduce((acc, curr) => {
+      if(curr.id === currentItem.id) {
+        return currentItem.checked ? acc ? `${acc},${curr.id}` :  `${curr.id}` : acc
+      }
+      return curr && curr.selected === '1' ? acc ? `${acc},${curr.id}` : `${curr.id}` : acc
+    } ,'')
+  }
+  handleSelectedCardFilterContentItem = (item, status) => {
+    const {itemValue: {id:box_id, screen_list, code}, dispatch} = this.props
+
+    const getSelectedCardFilterContentItemStatus = Object.assign({}, item, status)
+
+    const ids = this.getCurrentBoxScreenListAllSelectedItemIdStr(screen_list, getSelectedCardFilterContentItemStatus)
+    const data = {
+      id: box_id,
+      code,
+      ids
+    }
+    dispatch({
+      type: 'workbench/handleSetBoxFilterCon',
+      payload:data
+    })
+  }
+  strNumToBool = str => str === '0' ? false: str === '1' ? true : false
+  tranScreenList = (arr = []) => {
+    return arr.map(({name, id, editable, selected}) => ({
+      label: name,
+      checked: this.strNumToBool(selected),
+      disabled: !this.strNumToBool(editable),
+      id,
+    }))
+  }
+  contentSelectMenu = () => {
+    const {itemValue: {screen_list = []} = {}} = this.props
+
+    return (
+      <div>
+        <CheckboxGroup
+          dataList={this.tranScreenList(screen_list)}
+          onItemChange={this.handleSelectedCardFilterContentItem}
+        />
+      </div>
+    );
+  }
   render() {
-    // console.log('hello world!!!', this.props)
+
     const { datas = {} } = this.props.model;
     const {
       projectStarList = [],
       // responsibleTaskList = [],
-      uploadedFileList = [],
+      uploadedFileList:{file_list = [], folder_list = []} = {},
       joinedProcessList = [],
       backLogProcessList = [],
       meetingLsit = [],
@@ -456,7 +503,9 @@ class CardContent extends React.Component {
       CardContentType,
       itemValue = {},
       workbench: {
-        datas: { responsibleTaskList = [] }
+        datas: {
+          responsibleTaskList = []
+        }
       }
     } = this.props;
     const { selected_board_data = [] } = itemValue; //已选board id
@@ -470,6 +519,8 @@ class CardContent extends React.Component {
       addProcessModalVisible,
       projectGroupLists
     } = this.state;
+
+
     const filterItem = CardContentType => {
       let contanner = <div />;
       switch (CardContentType) {
@@ -551,10 +602,11 @@ class CardContent extends React.Component {
           break;
         //我的文档
         case 'MY_DOCUMENT':
-          contanner = uploadedFileList.length ? (
+
+          contanner = file_list.length || folder_list.length ? (
             <div>
-              <div>
-                {uploadedFileList.map((value, key) => (
+              {/* <div>
+                {file_list.map((value, key) => (
                   <FileItem
                     {...this.props}
                     key={key}
@@ -564,7 +616,8 @@ class CardContent extends React.Component {
                     )}
                   />
                 ))}
-              </div>
+              </div> */}
+              <FileFolder {...this.props} file_list={file_list} folder_list={folder_list} shouldFileItemSetPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
               {this.noContentTooltip('上传文档', 'MY_DOCUMENT')}
             </div>
           ) : (
@@ -736,13 +789,14 @@ class CardContent extends React.Component {
             />
           )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
-          {/* <Dropdown
+          <Dropdown
+            placement="bottomCenter"
              trigger={['click']}
              visible={this.state.dropDonwVisible}
              onVisibleChange={this.onVisibleChange.bind(this)}
-             overlay={menu()}>
+             overlay={this.contentSelectMenu()}>
             <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
-          </Dropdown> */}
+          </Dropdown>
         </div>
         <div className={indexstyles.contentBody}>
           {filterItem(CardContentType)}

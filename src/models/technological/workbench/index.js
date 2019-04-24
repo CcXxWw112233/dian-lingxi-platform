@@ -1,4 +1,4 @@
-import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList, getCurrentOrgAllMembers } from '../../../services/technological/workbench'
+import { getImRelaId, getUserImToken, getProjectStarList, getTodoList, getOrgMembers, getProjectUserList, updateBox, addBox, deleteBox, getBoxUsableList, getProjectList, getMeetingList, getBoxList, getItemBoxFilter, getArticleList, getArticleDetail, updateViewCounter, getBackLogProcessList, getJoinedProcessList, getResponsibleTaskList, getUploadedFileList, completeTask, getCurrentOrgFileUploads, getCurrentSelectedProjectMembersList, getCurrentResponsibleTask, setCurrentProjectIdToServer, getCurrentBackLogProcessList, getCurrentMeetingList, getcurrentOrgFileUploads, getProgressTemplateList, getCurrentOrgAllMembers, setBoxFilterCon, getTaskList_new, getMeetingList_new, getProcessList_new, getFileList_new} from '../../../services/technological/workbench'
 import {addTaskInWorkbench} from '../../../services/technological/task'
 import {getFolderList} from './../../../services/technological/file'
 import { isApiResponseOk, } from '../../../utils/handleResponseData'
@@ -60,19 +60,19 @@ export default modelExtend(technological, {
                   uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
                 }
               }),
-              dispatch({
-                type: 'getCurrentOrgFileUploads',
-                payload: {
+              // dispatch({
+              //   type: 'getCurrentOrgFileUploads',
+              //   payload: {
 
-                }
-              }),
+              //   }
+              // }),
               // dispatch({
               //   type: 'getUserImToken',
               //   payload: {
               //
               //   }
               // })
-              dispatch({
+            await dispatch({
                 type: 'getBoxList',
                 payload: {}
               }),
@@ -80,10 +80,10 @@ export default modelExtend(technological, {
                 type: 'getProjectList',
                 payload: {}
               }),
-              dispatch({
-                type: 'getBoxUsableList',
-                payload: {}
-              })
+              // dispatch({
+              //   type: 'getBoxUsableList',
+              //   payload: {}
+              // })
             ])
             await dispatch({
               type: 'handleCurrentSelectedProjectChange',
@@ -158,12 +158,14 @@ export default modelExtend(technological, {
       }
       //设置项目 id
       const setProjectIdRes = yield call(setCurrentProjectIdToServer, {payload: {id: board_id}})
+      const {boxList} = yield select(({workbench}) => ({boxList: workbench.datas.boxList}))
+      const getCardId = (arr, code) => arr.find(i => i.code === code) ? arr.find(i => i.code === code).id : ''
       if(isApiResponseOk(setProjectIdRes)){
       const [responsibleTaskListRes, backLogProcessListRes, meetingListRes, orgFileUploadsRes] = yield [
-        call(getCurrentResponsibleTask),
-        call(getCurrentBackLogProcessList),
-        call(getCurrentMeetingList),
-        call(getcurrentOrgFileUploads)
+        call(getTaskList_new, {id: getCardId(boxList, 'RESPONSIBLE_TASK')}),
+        call(getProcessList_new, {id: getCardId(boxList, 'EXAMINE_PROGRESS')}),
+        call(getMeetingList_new, {id: getCardId(boxList, 'MEETIMG_ARRANGEMENT')}),
+        call(getFileList_new, {id: getCardId(boxList, 'MY_DOCUMENT')})
       ]
       const isAllResOk = () => isApiResponseOk(responsibleTaskListRes) && isApiResponseOk(backLogProcessListRes) && isApiResponseOk(meetingListRes) && isApiResponseOk(orgFileUploadsRes)
       if(isAllResOk()) {
@@ -293,6 +295,7 @@ export default modelExtend(technological, {
     * getBoxList({ payload }, { select, call, put }) {
       const calback = payload && payload.calback
       let res = yield call(getBoxList, {})
+
       if(calback && typeof calback ==='function') {
         calback()
       }
@@ -382,8 +385,18 @@ export default modelExtend(technological, {
       }
     },
     * getMeetingList({ payload }, { select, call, put }) {
-      // let res = yield call(getMeetingList, payload)
-      let res = yield call(getCurrentMeetingList)
+      const card_id = yield yield put({
+        type: 'getCardId',
+        payload: {
+          code: 'MEETIMG_ARRANGEMENT'
+        }
+      })
+      if(!card_id) {
+        message('获取工作台日程列表失败')
+        return
+      }
+      let res = yield call(getMeetingList_new, {id: card_id})
+      // res = yield call(getCurrentMeetingList)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -395,8 +408,26 @@ export default modelExtend(technological, {
 
       }
     },
-    * getResponsibleTaskList(_, { select, call, put }) {
-      let res = yield call(getCurrentResponsibleTask)
+    *selectFieldFromWorkbench({payload}, {select}) {
+      const {fields} = payload
+      return yield select(({workbench}) => ([...fields.map(i => ({[i]: workbench.datas[i]}))]))
+    },
+    * getCardId({payload: {code = ''} = {}} = {}, {select}) {
+      const {boxList = []} = yield select(({workbench}) => ({boxList: workbench.datas.boxList}))
+      return boxList.find(i => i.code && i.code === code) ? boxList.find(i => i.code && i.code === code).id : ''
+    },
+    * getResponsibleTaskList({payload}, { select, call, put }) {
+      const card_id = yield yield put({
+        type: 'getCardId',
+        payload: {
+          code: 'RESPONSIBLE_TASK'
+        }
+      })
+      if(!card_id) {
+        message('获取工作台任务列表失败')
+        return
+      }
+      let res = yield call(getTaskList_new, {id: card_id})
       // let res = yield call(getResponsibleTaskList, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -410,8 +441,18 @@ export default modelExtend(technological, {
       }
     },
     * getUploadedFileList({ payload }, { select, call, put }) {
+      const card_id = yield yield put({
+        type: 'getCardId',
+        payload: {
+          code: 'MY_DOCUMENT'
+        }
+      })
+      if(!card_id) {
+        message('获取工作台文件列表失败')
+        return
+      }
+      let res = yield call(getFileList_new, {id: card_id})
       // let res = yield call(getUploadedFileList, payload)
-      let res = yield call(getcurrentOrgFileUploads)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -424,8 +465,18 @@ export default modelExtend(technological, {
       }
     },
     * getBackLogProcessList({ payload }, { select, call, put }) {
-      let res = yield call(getCurrentBackLogProcessList)
-      // console.log('workbench/getBackLogProcessList', res)
+      const card_id = yield yield put({
+        type: 'getCardId',
+        payload: {
+          code: 'EXAMINE_PROGRESS'
+        }
+      })
+      if(!card_id) {
+        message('获取工作台流程列表失败')
+        return
+      }
+      let res = yield call(getProcessList_new, {id: card_id})
+        // res = yield call(getCurrentBackLogProcessList)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -691,6 +742,72 @@ export default modelExtend(technological, {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+    * handleSetBoxFilterCon({payload}, {call, put}) {
+      const {code, id, ids} = payload
+      const ret = yield call(setBoxFilterCon, {id, rela_ids: ids})
+      const reqData = function *(callData, updateData, errorText) {
+        const ret = yield callData()
+        const isRetOk = ret => ret && ret.code === '0'
+        if(isRetOk(ret)) {
+          yield updateData(ret)
+        } else {
+          message.error(errorText)
+        }
+      }
+      const cond = {
+        'RESPONSIBLE_TASK': () => reqData(
+                                    () => put({
+                                        type: 'getResponsibleTaskList'
+                                    }),
+                                    (ret) => put({
+                                                type: 'updateDatas',
+                                                payload: {
+                                                  responsibleTaskList: ret.data
+                                                }
+                                              }), '更新工作台任务数据失败'),
+        'EXAMINE_PROGRESS': () => reqData(
+                                    () => put({
+                                      type: 'getBackLogProcessList',
+                                    }),
+                                    (ret) => put({
+                                           type: 'updateDatas',
+                                           payload: {
+                                             backLogProcessList: ret.data
+                                           }
+                                          }), '更新工作台流程数据失败'),
+
+        'MEETIMG_ARRANGEMENT': () => reqData(
+                                      () => put({
+                                        type: 'getMeetingList',
+                                      }),
+                                      ret => put({
+                                               type: 'updateDatas',
+                                               payload: {
+                                                 meetingLsit: ret.data
+                                               }
+                                            }), '更新工作台日程数据失败'),
+        'MY_DOCUMENT': () => reqData(
+                                () => put({
+                                  type: 'getUploadedFileList',
+                                }),
+                                ret => put({
+                                    type: 'updateDatas',
+                                    payload: {
+                                      uploadedFileList: ret.data,
+                                    }
+                                }), '更新工作台文档数据失败'),
+
+        }
+      if(ret && ret.code === '0') {
+        yield put({
+          type: 'getBoxList',
+          payload: {}
+        })
+        yield cond[code]()
+      } else {
+        message.error('筛选内容失败')
+      }
+    }
   },
 
   reducers: {

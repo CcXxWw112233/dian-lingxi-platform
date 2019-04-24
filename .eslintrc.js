@@ -89,7 +89,7 @@ if(process.env.NODE_ENV == 'production') {
       "radix": "off",
       "react/sort-comp": "off",
       "no-plusplus": "off",
-      "comma-spacing": 2,
+      "comma-spacing": 1,
       "key-spacing": [2],
       "eqeqeq": "off"
     },

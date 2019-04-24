@@ -865,11 +865,11 @@ class DrawContent extends React.Component {
   handleVisitControlChange = (flag) => {
     const { datas: { drawContent = {}} } = this.props.model
     const {is_privilege = '0', card_id} = drawContent
-    const toBool = str => !!Number(str)
-    const is_privilege_bool = toBool(is_privilege)
-    if(flag === is_privilege_bool) {
-      return
-    }
+    // const toBool = str => !!Number(str)
+    // const is_privilege_bool = toBool(is_privilege)
+    // if(flag === is_privilege_bool) {
+    //   return
+    // }
     //toggle权限
     const data = {
       content_id: card_id,

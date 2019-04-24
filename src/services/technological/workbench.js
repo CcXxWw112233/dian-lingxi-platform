@@ -2,6 +2,48 @@ import request from '../../utils/requestAxios'
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+export async function getTaskList_new({id}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/${id}`,
+    method: 'GET'
+  })
+}
+
+export async function getMeetingList_new({id}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting/${id}`,
+    method: 'GET'
+  })
+}
+
+export async function getProcessList_new({id}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/node/${id}`,
+    method: 'GET'
+  })
+}
+
+export async function getFileList_new({id}) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading/${id}`,
+    method: 'GET',
+  })
+}
+
+export async function setBoxFilterCon({id, rela_ids}) {
+  //id 盒子id
+  //rela_ids  当前所有选中的id, 多个以逗号隔开
+
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/box/set`,
+    method: 'PUT',
+    data: {
+        id,
+        rela_ids
+    }
+  })
+}
+
 export async function getUpdateLog() {
   return request({
     url: `${REQUEST_DOMAIN}/user/annunciate/updatelog`,
