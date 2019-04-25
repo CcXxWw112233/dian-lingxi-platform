@@ -16,6 +16,7 @@ export default class GanttFace extends Component {
       timer: null,
       viewModal: '2', //视图模式1周，2月，3年
       target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
+      gantt_card_out_middle_max_height: 600,
     }
     this.ganttScroll = this.ganttScroll.bind(this)
   }
@@ -24,7 +25,25 @@ export default class GanttFace extends Component {
     this.setGoldDateArr()
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.setScrollPosition({delay: 300})
+    this.setGanTTCardHeight()
+    window.addEventListener('resize', this.setGanTTCardHeight.bind(this))
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.setGanTTCardHeight.bind(this))
+  }
+  //设置卡片高度
+  setGanTTCardHeight() {
+    const documentHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const gantt_card_out = document.getElementById('gantt_card_out')
+    let offsetTop = 0
+    if(gantt_card_out) {
+      offsetTop = gantt_card_out.offsetTop
+      this.setState({
+        gantt_card_out_middle_max_height: documentHeight - offsetTop - 20
+      })
+    }
 
+    console.log({documentHeight, offsetTop})
   }
 
   componentWillReceiveProps (nextProps) {
@@ -190,6 +209,8 @@ export default class GanttFace extends Component {
 
   render () {
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
+    const { gantt_card_out_middle_max_height } = this.state
+
     return (
       <div className={indexStyles.cardDetail} id={'gantt_card_out'}>
         <div className={indexStyles.cardDetail_left}></div>
@@ -197,6 +218,7 @@ export default class GanttFace extends Component {
              id={'gantt_card_out_middle'}
              ref={'gantt_card_out_middle'}
              onScroll={this.ganttScroll}
+             style={{maxHeight: gantt_card_out_middle_max_height}}
         >
           <DateList />
           <div className={indexStyles.panel}>
