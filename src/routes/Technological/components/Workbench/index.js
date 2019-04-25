@@ -735,7 +735,7 @@ const Workbench = (props) => {
       })
     }
   }
-  
+
   let isPropVisitControl = false
   const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
@@ -743,7 +743,10 @@ const Workbench = (props) => {
       <UpdateLog />
       <PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
-      <ProjectListBar />
+      <div className={indexStyles.projectListBarWrapper_index}>
+      <div className={indexStyles.projectListBar}><ProjectListBar /></div>
+      <div className={indexStyles.toggleView}></div>
+      </div>
       {/* <VisitControl isPropVisitControl={isPropVisitControl} handleVisitControlChange={handleVisitControlChange} /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
