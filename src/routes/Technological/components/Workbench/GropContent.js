@@ -9,6 +9,7 @@ import {
 } from "../../../../globalset/js/constant";
 import CardContentFileModule from "./CardContentFileModule";
 import EditTeamShow from "./EditTeamShow";
+import Gantt from '../Gantt'
 
 export default class GroupContent extends React.Component {
   render() {
@@ -20,7 +21,7 @@ export default class GroupContent extends React.Component {
       model = {}
     } = this.props;
     const {
-      datas: { boxList = [], cardGroupKey = 0 }
+      datas: { boxList = [], cardGroupKey = 0, workbench_show_gantt_card = '0' }
     } = model;
 
     const container_0 = (
@@ -191,7 +192,11 @@ export default class GroupContent extends React.Component {
 
     return (
       <div className={indexStyles.workbenchOut}>
-        {filterContain(cardGroupKey)}
+        {workbench_show_gantt_card == '0'? (
+          filterContain(cardGroupKey)
+        ): (
+          <Gantt />
+        )}
       </div>
     );
   }
