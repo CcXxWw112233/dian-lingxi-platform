@@ -759,7 +759,8 @@ class AddTaskModal extends Component {
 AddTaskModal.defaultProps = {
   isUseInGantt: false, //是否是在甘特图使用
   projectIdWhenUseInGantt: '', //如果是在甘特图中使用，那么传项目 id
-  projectGroupListId: '' //项目分组id
+  projectGroupListId: '', //项目分组id
+  projectGroupLists: [], //当前选择项目任务分组列表
 };
 
 export default AddTaskModal;
