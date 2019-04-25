@@ -51,29 +51,48 @@ class AddTaskModal extends Component {
           currentSelectedProjectFileFolderList
         }
       },
-      taskType
+      taskType,
+      isUseInGantt,
+      projectIdWhenUseInGantt
     } = this.props;
     const rootFileFolder =
       currentSelectedProjectFileFolderList &&
       currentSelectedProjectFileFolderList.parent_id === '0' &&
       currentSelectedProjectFileFolderList.folder_id;
-    const findAndCheckCurrentSelectedProject = projectList.find(
-      item =>
-        item.board_id === projectTabCurrentSelectedProject &&
-        item.apps &&
-        item.apps.find(i => i.code === taskTypeToName[taskType])
-    );
+    const findAndCheckCurrentSelectedProject = where => {
+      const result = projectList.find(
+        item =>
+          item.board_id === where &&
+          item.apps &&
+          item.apps.find(i => i.code === taskTypeToName[taskType])
+      );
+      return result ? result : {};
+    };
+    const getCurrentSelectedProject = (
+      isUseInGantt,
+      projectIdWhenUseInGantt,
+      projectTabCurrentSelectedProject
+    ) => {
+      if (isUseInGantt) {
+        return findAndCheckCurrentSelectedProject(projectIdWhenUseInGantt);
+      }
+      return findAndCheckCurrentSelectedProject(
+        projectTabCurrentSelectedProject
+      );
+    };
     this.state = {
       addTaskTitle: '',
-      currentSelectedProject: findAndCheckCurrentSelectedProject
-        ? findAndCheckCurrentSelectedProject
-        : {},
+      currentSelectedProject: getCurrentSelectedProject(
+        isUseInGantt,
+        projectIdWhenUseInGantt,
+        projectTabCurrentSelectedProject
+      ),
       currentSelectedProjectMember: [],
       start_time: '',
       due_time: '',
       attachment_fileList: [],
       currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [''],
-      currentSelectedProjectGroupListItem: {},
+      currentSelectedProjectGroupListItem: {}
     };
   }
   handleDateRangeChange = dateRange => {
@@ -112,10 +131,15 @@ class AddTaskModal extends Component {
   handleSelectedProjectGroupItem = item => {
     this.setState({
       currentSelectedProjectGroupListItem: item
-    })
-  }
+    });
+  };
   handleSelectedItem = item => {
-    const { dispatch, taskType, projectGroupLists, handleShouldUpdateProjectGroupList } = this.props;
+    const {
+      dispatch,
+      taskType,
+      projectGroupLists,
+      handleShouldUpdateProjectGroupList
+    } = this.props;
 
     this.setState(
       {
@@ -130,8 +154,11 @@ class AddTaskModal extends Component {
           }
         });
         //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
-        if(taskType === 'RESPONSIBLE_TASK' || taskType === 'MEETIMG_ARRANGEMENT') {
-          handleShouldUpdateProjectGroupList()
+        if (
+          taskType === 'RESPONSIBLE_TASK' ||
+          taskType === 'MEETIMG_ARRANGEMENT'
+        ) {
+          handleShouldUpdateProjectGroupList();
         }
         if (taskType === 'MY_DOCUMENT') {
           Promise.resolve(
@@ -176,17 +203,19 @@ class AddTaskModal extends Component {
       currentSelectedProjectMember,
       start_time,
       due_time,
-      currentSelectedProjectGroupListItem,
+      currentSelectedProjectGroupListItem
     } = this.state;
     const taskObj = {
-      add_type: 1,//默认0， 按分组1
+      add_type: 1, //默认0， 按分组1
       board_id: currentSelectedProject.board_id,
       name: addTaskTitle,
       type: 0,
       users: currentSelectedProjectMember.reduce((acc, curr) => {
         return acc ? acc + ',' + curr.id : curr.id;
       }, ''),
-      list_id: currentSelectedProjectGroupListItem.board_id ? currentSelectedProjectGroupListItem.board_id : ''
+      list_id: currentSelectedProjectGroupListItem.board_id
+        ? currentSelectedProjectGroupListItem.board_id
+        : ''
     };
     if (taskType === 'MEETIMG_ARRANGEMENT') {
       return Object.assign({}, taskObj, { start_time, due_time, type: 1 });
@@ -226,20 +255,25 @@ class AddTaskModal extends Component {
   };
 
   getNewUploadedFileIdList = () => {
-    const {attachment_fileList} = this.state
-    const {dispatch} = this.props
+    const { attachment_fileList } = this.state;
+    const { dispatch } = this.props;
     const collectFileId = (arr = []) => {
-              //筛选出上传成功的文件
-      return arr.filter(file => file.response && file.response.code === '0' && file.response.data.id).map(file => file.response.data.id)
-    }
+      //筛选出上传成功的文件
+      return arr
+        .filter(
+          file =>
+            file.response && file.response.code === '0' && file.response.data.id
+        )
+        .map(file => file.response.data.id);
+    };
     dispatch({
       type: 'workbench/updateUploadedFileNotificationIdList',
       payload: {
         idsList: collectFileId(attachment_fileList)
       }
-    })
+    });
     // console.log(attachment_fileList, 'attachment_fileList')
-  }
+  };
 
   uploadNewFile = () => {
     const { taskType, dispatch } = this.props;
@@ -253,16 +287,23 @@ class AddTaskModal extends Component {
         type: 'workbench/getUploadedFileList'
       })
     )
-    .then(() => {
-      //获取刚才上传成功的文件的idList
-      this.getNewUploadedFileIdList()
-    })
-    .then(() => {
-      this.handleAddTaskModalCancel();
-    });
+      .then(() => {
+        //获取刚才上传成功的文件的idList
+        this.getNewUploadedFileIdList();
+      })
+      .then(() => {
+        this.handleAddTaskModalCancel();
+      });
   };
   addNewMeeting = paramObj => {
-    const { taskType, dispatch, addTaskModalVisibleChange, workbench: {datas: {boxList}} } = this.props;
+    const {
+      taskType,
+      dispatch,
+      addTaskModalVisibleChange,
+      workbench: {
+        datas: { boxList }
+      }
+    } = this.props;
     if (taskType !== 'MEETIMG_ARRANGEMENT') {
       return;
     }
@@ -273,14 +314,15 @@ class AddTaskModal extends Component {
           data: paramObj
         }
       })
-    ).then(taskId => {
-      if (!taskId) throw new Error('创建任务失败');
-      const { board_id, name } = paramObj;
-      this.showCreateTaskSuccessNote(board_id, taskId, name);
-    })
+    )
+      .then(taskId => {
+        if (!taskId) throw new Error('创建任务失败');
+        const { board_id, name } = paramObj;
+        this.showCreateTaskSuccessNote(board_id, taskId, name);
+      })
       .then(() =>
         dispatch({
-          type: 'workbench/getMeetingList',
+          type: 'workbench/getMeetingList'
         })
       )
       .then(() => {
@@ -288,7 +330,14 @@ class AddTaskModal extends Component {
       });
   };
   addNewTask = paramObj => {
-    const { taskType, dispatch, addTaskModalVisibleChange, workbench: {datas: {boxList}} } = this.props;
+    const {
+      taskType,
+      dispatch,
+      addTaskModalVisibleChange,
+      workbench: {
+        datas: { boxList }
+      }
+    } = this.props;
     if (taskType !== 'RESPONSIBLE_TASK') {
       return;
     }
@@ -307,7 +356,7 @@ class AddTaskModal extends Component {
       })
       .then(() => {
         dispatch({
-          type: 'workbench/getResponsibleTaskList',
+          type: 'workbench/getResponsibleTaskList'
         });
       })
       .then(() => {
@@ -316,26 +365,36 @@ class AddTaskModal extends Component {
       .catch(err => console.log(err));
   };
   getTaskTypeText = () => {
-    const {taskType} = this.props
+    const { taskType } = this.props;
     const taskTypeObj = {
       RESPONSIBLE_TASK: '任务',
       MEETIMG_ARRANGEMENT: '日程',
       MY_DOCUMENT: '文档'
-    }
-    return taskTypeObj[taskType]
-  }
+    };
+    return taskTypeObj[taskType];
+  };
   showCreateTaskSuccessNote = (board_id, id, name) => {
     const handleJump = e => {
       if (e) e.stopPropagation();
-      notification.destroy()
+      notification.destroy();
       this.props.updatePublicDatas({ board_id });
       this.props.getCardDetail({ id, board_id });
       this.props.setTaskDetailModalVisibile();
     };
     const descirptionEle = (
       <div>
-        <p><span>新建{this.getTaskTypeText()}“<span style={{color: '#1D93FF'}}>{name}</span>”成功，可在“项目详情”中查看{this.getTaskTypeText()}</span></p>
-        <div style={{textAlign: 'right'}}><Button type="primary" size="small" onClick={e => handleJump(e)} >查看详情</Button></div>
+        <p>
+          <span>
+            新建{this.getTaskTypeText()}“
+            <span style={{ color: '#1D93FF' }}>{name}</span>
+            ”成功，可在“项目详情”中查看{this.getTaskTypeText()}
+          </span>
+        </p>
+        <div style={{ textAlign: 'right' }}>
+          <Button type="primary" size="small" onClick={e => handleJump(e)}>
+            查看详情
+          </Button>
+        </div>
       </div>
     );
     notification.success({
@@ -447,13 +506,20 @@ class AddTaskModal extends Component {
 
     const board_id = currentSelectedProject.board_id;
     const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
-
-      const isFinded = projectGroupLists.find(item => item.board_id === board_id)
-      if(!isFinded) return []
+      const isFinded = projectGroupLists.find(
+        item => item.board_id === board_id
+      );
+      if (!isFinded) return [];
       //映射数据，只是为了复用 DropdownSelectWithSearch 组件
-      return isFinded.list_data.map(item => ({board_id: item['list_id'], board_name: item['list_name']}))
-    }
-    const currentSelectedProjectGroupList = findAndTransProjectGroupList(projectGroupLists, board_id)
+      return isFinded.list_data.map(item => ({
+        board_id: item['list_id'],
+        board_name: item['list_name']
+      }));
+    };
+    const currentSelectedProjectGroupList = findAndTransProjectGroupList(
+      projectGroupLists,
+      board_id
+    );
     const folderOptions = this.formatFolderTreeData(
       currentSelectedProjectFileFolderList
     );
@@ -488,7 +554,6 @@ class AddTaskModal extends Component {
           return false;
         }
         if (file.status === 'done' && file.response.code === '0') {
-
         } else if (
           file.status === 'error' ||
           (file.response && file.response.code !== '0')
@@ -568,26 +633,27 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
-            <DropdownSelectWithSearch
-              list={filteredNoThatTypeProject}
-              initSearchTitle="选择项目"
-              selectedItem={currentSelectedProject}
-              handleSelectedItem={this.handleSelectedItem}
-            />
-            <div className={styles.groupList__wrapper}>
-            {(taskType === 'RESPONSIBLE_TASK' || taskType === 'MEETIMG_ARRANGEMENT') && (
               <DropdownSelectWithSearch
-              list={currentSelectedProjectGroupList}
-              initSearchTitle="任务分组"
-              selectedItem={currentSelectedProjectGroupListItem}
-              handleSelectedItem={this.handleSelectedProjectGroupItem}
-              isShowIcon={false}
-              isSearch={false}
-              isCanCreateNew={false}
-              isProjectGroupMode={true}
-            />
-            )}
-            </div>
+                list={filteredNoThatTypeProject}
+                initSearchTitle="选择项目"
+                selectedItem={currentSelectedProject}
+                handleSelectedItem={this.handleSelectedItem}
+              />
+              <div className={styles.groupList__wrapper}>
+                {(taskType === 'RESPONSIBLE_TASK' ||
+                  taskType === 'MEETIMG_ARRANGEMENT') && (
+                  <DropdownSelectWithSearch
+                    list={currentSelectedProjectGroupList}
+                    initSearchTitle="任务分组"
+                    selectedItem={currentSelectedProjectGroupListItem}
+                    handleSelectedItem={this.handleSelectedProjectGroupItem}
+                    isShowIcon={false}
+                    isSearch={false}
+                    isCanCreateNew={false}
+                    isProjectGroupMode={true}
+                  />
+                )}
+              </div>
             </div>
             {taskType === 'MEETIMG_ARRANGEMENT' && (
               <DateRangePicker
@@ -689,5 +755,12 @@ class AddTaskModal extends Component {
     );
   }
 }
+
+AddTaskModal.defaultProps = {
+  isUseInGantt: false, //是否是在甘特图使用
+  projectIdWhenUseInGantt: '', //如果是在甘特图中使用，那么传项目 id
+  projectGroupListId: '', //项目分组id
+  projectGroupLists: [], //当前选择项目任务分组列表
+};
 
 export default AddTaskModal;

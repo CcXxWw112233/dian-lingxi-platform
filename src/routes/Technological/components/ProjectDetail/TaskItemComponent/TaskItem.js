@@ -234,7 +234,7 @@ export default class TaskItem extends React.Component {
   visitControlUpdateCurrentProjectData = (obj) => {
     const { taskItemValue = {}, itemKey } = this.props
     const {list_id, list_name} = taskItemValue
-    const data = Object.assign({}, {id: list_id, itemKey, name: list_name}, obj)
+    const data = Object.assign({}, {id: list_id, itemKey, name: list_name})
     this.props.updateTaskGroup(data)
     this.setState({
       isShouldBeTaskGroupOperatorDropdownMenuVisible: false,

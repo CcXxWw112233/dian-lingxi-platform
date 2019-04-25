@@ -116,10 +116,10 @@ class FileFolder extends Component {
     const { Item } = Breadcrumb;
     return (
       <Breadcrumb separator="/">
-        {breadCrumbList.map(({ folder_name, id }) => (
+        {breadCrumbList.map(({ folder_name, id }, index) => (
           <Item
             key={id}
-            className={styles.breadCrumbItem}
+            className={`${styles.breadCrumbItem} ${index + 1 === breadCrumbList.length ? styles.breadCurmbActive : ''}`}
             onClick={e => this.handleClickedBreadCrumb(e, id)}
           >
             {folder_name}
