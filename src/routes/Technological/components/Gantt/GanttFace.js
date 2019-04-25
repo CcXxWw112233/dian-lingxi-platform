@@ -201,7 +201,10 @@ export default class GanttFace extends Component {
           <DateList />
           <div className={indexStyles.panel}>
             <GroupListHead />
-            <GetRowGantt setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}/>
+            <GetRowGantt
+              setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+              addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+            />
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>

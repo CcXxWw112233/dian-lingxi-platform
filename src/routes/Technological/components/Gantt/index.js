@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { message } from 'antd'
 import {connect} from "dva/index";
 import GanttFace from './GanttFace'
 import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
+import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
+import {getProjectGoupList} from "../../../../services/technological/task";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
@@ -12,6 +15,7 @@ class Gantt extends Component{
   state = {
     TaskDetailModalVisibile: false,
     previewFileModalVisibile: false,
+    projectGroupLists: []
   }
   setPreviewFileModalVisibile() {
     this.setState({
@@ -23,9 +27,50 @@ class Gantt extends Component{
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
   }
+
+  //用来实现创建任务弹窗方法
+  handleShouldUpdateProjectGroupList = () => {
+    this.getProjectGoupLists()
+  }
+  async getProjectGoupLists() {
+    const res = await getProjectGoupList()
+    const isResOk = res => res && res.code === '0'
+    if(!isResOk(res)) {
+      message.error('获取项目分组信息失败')
+      return
+    }
+    return await this.setState({
+      projectGroupLists: res.data
+    })
+  }
+  getNewTaskInfo = obj => {
+    this.setState({
+      newTask: obj
+    });
+  };
+  addTaskModalVisibleChange = flag => {
+    this.setState({
+      addTaskModalVisible: flag
+    });
+  };
+
   render() {
-    const { dispatch, model, modal } = this.props
-    const { previewFileModalVisibile, TaskDetailModalVisibile } = this.state
+    const { dispatch, model = {}, modal } = this.props
+    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [] } = this.state
+    const { datas = {} } = model;
+    const {
+      projectStarList = [],
+      // responsibleTaskList = [],
+      uploadedFileList: {file_list = [], folder_list = []} = {},
+      joinedProcessList = [],
+      backLogProcessList = [],
+      meetingLsit = [],
+      projectList = [],
+      schedulingList = [],
+      journeyList = [],
+      todoList = [],
+      projectTabCurrentSelectedProject
+    } = datas;
     const CreateTaskProps = {
       modal,
       model,
@@ -338,6 +383,7 @@ class Gantt extends Component{
       <div>
         <GanttFace
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
+          addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
         />
         <FileDetailModal
           {...this.props}
@@ -359,6 +405,25 @@ class Gantt extends Component{
           updateDatasTask={updateDatasTask}
           updateDatasFile={updateDatasFile}
         />
+
+        {addTaskModalVisible && (
+          <AddTaskModal
+            {...this.props}
+            setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
+              this
+            )}
+            modalTitle="添加任务"
+            taskType="RESPONSIBLE_TASK"
+            getNewTaskInfo={this.getNewTaskInfo}
+            projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+            projectList={projectList}
+            addTaskModalVisible={addTaskModalVisible}
+            addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
+            projectGroupLists={projectGroupLists}
+            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
+          />
+        )}
+
       </div>
     )
   }

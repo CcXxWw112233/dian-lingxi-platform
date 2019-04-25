@@ -236,13 +236,16 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  //点击某个实例
+  //点击某个实例,或者创建任务
   setSpecilTaskExample({id},e) {
     if(e) {
       e.stopPropagation()
     }
-    console.log({id})
-    this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+    if(id) { //如果有id 则是修改任务，否则是创建任务
+      this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+    } else {
+      this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+    }
   }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
