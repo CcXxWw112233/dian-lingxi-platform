@@ -14,9 +14,9 @@ export default class GroupListHead extends Component {
   }
 
   render () {
-    const { datas: { list_group =[], group_rows = [], ceiHeight }} = this.props.model
+    const { datas: { list_group =[], group_rows = [], ceiHeight,target_scrollLeft }} = this.props.model
     return (
-      <div className={indexStyles.listHead}>
+      <div className={indexStyles.listHead} style={{left: target_scrollLeft}}>
         {list_group.map((value, key) =>{
           const { list_name, list_id, list_data = [] } = value
           return (

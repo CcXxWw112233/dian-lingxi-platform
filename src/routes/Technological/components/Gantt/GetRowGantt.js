@@ -4,6 +4,8 @@ import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
+const coperatedX = 80 //鼠标移动和拖拽的修正位置
+const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGantt extends Component {
@@ -64,7 +66,7 @@ export default class GetRowGantt extends Component {
     const target = this.refs.operateArea//event.target || event.srcElement;
 
     // 取得鼠标位置
-    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - 20
+    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
     const y = e.pageY - target.offsetTop - 60
     //设置宽度
     const offset_left = Math.abs(x - this.x1);
@@ -121,7 +123,7 @@ export default class GetRowGantt extends Component {
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
     // 取得鼠标位置
-    let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - 20
+    let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
     let py = e.pageY - target_0.offsetTop - 60
 
     const molX = px % ceilWidth
