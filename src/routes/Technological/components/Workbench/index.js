@@ -11,9 +11,9 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
-import VisitControl from './../VisitControl/index'
-import UpdateLog from './UpdateLog/index'
 
+import UpdateLog from './UpdateLog/index'
+import ZoomPicture from './../../../../components/ZoomPicture/index'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -735,18 +735,21 @@ const Workbench = (props) => {
       })
     }
   }
-  
-  let isPropVisitControl = false
-  const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
+  const imgInfo = {
+    isRealImage: true,
+    isUsable: true,
+    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-08/a80fab692b97d6ba3fbd64fdeae29952.jpg?Expires=1556174503&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=HMGjdnA5yMmyIzjHbS0kr%2BlTqUo%3D",
+    }
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />
-      <PersonNews {...PersonNewsProps} {...NewsListProps}/>
+      < PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
-      <ProjectListBar />
-      {/* <VisitControl isPropVisitControl={isPropVisitControl} handleVisitControlChange={handleVisitControlChange} /> */}
+      <div style={{margin: '50px', textAlign: 'center'}}><ZoomPicture imgInfo={imgInfo} /></div>
+
+      {/* <ProjectListBar />       */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
+       {/* <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} /> */}
     </div>
   )
 };
