@@ -212,7 +212,7 @@ class ProjectListBar extends Component {
         {dropDownMenuItemList.length === 0 ? (
         !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
         ) : (
-          <Dropdown overlay={dropDownMenu} style={{ zIndex: '9999' }}>
+          <Dropdown placement='bottomCenter' overlay={dropDownMenu} style={{ zIndex: '9999' }}>
             <div className={styles.projectListBarExpand}>
               <p className={styles.projectListBarExpandImg} />
             </div>
