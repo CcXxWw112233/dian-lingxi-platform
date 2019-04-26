@@ -20,6 +20,7 @@ import { message } from 'antd/lib/index';
 
 let cx = classNames.bind(styles);
 
+/* eslint-disable */
 class DropdownSelectWithSearch extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +32,8 @@ class DropdownSelectWithSearch extends Component {
     };
   }
   handleVisibleChange = flag => {
+    const {isShouldDisableDropdown} = this.props
+    if(isShouldDisableDropdown) return
     this.setState({
       visible: flag
     });
@@ -165,8 +168,11 @@ class DropdownSelectWithSearch extends Component {
     }
   }
   content = () => {
-    const { list, selectedItem, isSearch } = this.props;
+    const { list, selectedItem, isSearch, isShouldDisableDropdown } = this.props;
     const { filteredList, inputValue } = this.state;
+    if(isShouldDisableDropdown) {
+      return (<div></div>)
+    }
     if (!list || !list.length) {
       return <>{this.renderNoContent()}</>;
     }
@@ -213,7 +219,7 @@ class DropdownSelectWithSearch extends Component {
     return condMap.get(param);
   };
   render() {
-    const { initSearchTitle, selectedItem, project, isShowIcon } = this.props;
+    const { initSearchTitle, selectedItem, project, isShowIcon, isShouldDisableDropdown } = this.props;
     const { visible, addNewProjectModalVisible } = this.state;
     let titleClassName = cx({
       title: true,
@@ -252,7 +258,7 @@ class DropdownSelectWithSearch extends Component {
                       : initSearchTitle}
                   </span>
                 </Tooltip>
-                <span />
+                {!isShouldDisableDropdown && <span />}
               </p>
             </div>
           </Dropdown>
@@ -279,7 +285,8 @@ DropdownSelectWithSearch.defaultProps = {
   isShowIcon: true, //是否显示 icon
   isSearch: true, //是否显示搜索input
   isCanCreateNew: true, //是否显示新建
-  isProjectGroupMode: false //如果是项目分组复用这个组件
+  isProjectGroupMode: false, //如果是项目分组复用这个组件
+  isShouldDisableDropdown: false, //设置禁用选择，当已经有当前选中值得时候
 };
 
 function mapStateToProps({ modal, project, loading }) {
