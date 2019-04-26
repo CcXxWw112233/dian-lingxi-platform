@@ -6,13 +6,6 @@ import withHover from './../HOC/withHover';
 
 const cx = classNames.bind(styles);
 
-//图片单击信息
-const ImgClickInfo = {
-  mouseDown: {}
-}
-//判定为长按的时长
-const asLongClickTime = 500
-
 class ZoomPicture extends Component {
   constructor(props) {
     super(props);
@@ -22,8 +15,20 @@ class ZoomPicture extends Component {
       imgWidth: 0, //图片应该显示的宽度
       imgHeight: 0, //图片应该显示的高度
       currentImgZoomPercent: '0%', //当前图片缩放的比例
-      isCommentMode: false //是否在图评模式
+      isCommentMode: false, //是否在图评模式
+      isLongClick: false, //是否长按图片
     };
+    //判定为长按的时长
+    this.asLongClickTime = 500
+    //图片点击信息
+    this.imgClickInfo = {
+      mouseDown: {},
+      mouseUp: {},
+    }
+    //点击图片的 mouseDown 计时器
+    this.timer = null
+    //图片单击信息
+    this.isMouseUp = false
   }
   loadImage = url => {
     return new Promise((resolve, reject) => {
@@ -217,13 +222,66 @@ class ZoomPicture extends Component {
   };
   handleImgOnMouseUp = (e) => {
     if(e) e.stopPropagation()
+    this.isMouseUp = true
+    this.setState({
+      isLongClick: false,
+    })
+    if(this.timer) {
+      clearInterval(this.timer)
+    }
+    const storeMouseUpInfo = () => {
+      this.imgClickInfo.mouseUp = {
+        timeStamp: e.timeStamp,
+        x: e.pageX,
+        y: e.pageY
+      }
+    }
+    storeMouseUpInfo()
+    const isLongClick = ({mouseDown: {timeStamp: mouseDownTimeStamp}, mouseUp: {timeStamp: mouseUpTimeStamp}}, asLongClickTime) => {
+      const timeBetween = mouseUpTimeStamp - mouseDownTimeStamp
+      return timeBetween > asLongClickTime
+    }
+    if(isLongClick(this.imgClickInfo, this.asLongClickTime)) {
+      return
+    }
+    this.handleClickedImg(undefined, 'sup')
     console.log('mouseup', e)
     console.log('mouseup timeStamp', e.timeStamp)
     console.log('mouseup x, y', e.pageX, e.pageY)
   }
   handleImgOnMouseDown = (e) => {
     if(e) e.stopPropagation()
-    const isLongTimeClick = () =>
+
+    this.isMouseUp = false
+
+    const storeMouseDownInfo = () => {
+      this.imgClickInfo.mouseDown = {
+        timeStamp: e.timeStamp,
+        x: e.pageX,
+        y: e.pageY
+      }
+    }
+    storeMouseDownInfo()
+    const isLongTimeClick = () => {
+      let result = false
+      const {mouseDown: {timeStamp}} = this.imgClickInfo
+      let currentTime = timeStamp
+      const that = this
+      this.timer = setInterval(() => {
+        currentTime += 50
+        if(currentTime - timeStamp > this.asLongClickTime && !this.isMouseUp) {
+          result = true
+          that.setState({
+            isLongClick: true,
+          }, () => {
+            that.forceUpdate()
+          })
+          console.log('LongTimeClick...............')
+          clearInterval(this.timer)
+        }
+      }, 50)
+    }
+    isLongTimeClick()
     console.log('mousedown timeStamp', e.timeStamp)
     console.log('mousedown x, y', e.pageX, e.pageY)
   }
@@ -307,19 +365,23 @@ class ZoomPicture extends Component {
     const {
       imgInfo: { url }
     } = this.props;
-    const { isCommentMode, imgWidth, imgHeight } = this.state;
+    const { isCommentMode, imgWidth, imgHeight, isLongClick } = this.state;
     const imgStyle = {
-      cursor: isCommentMode ? 'crosshair' : 'zoom-in',
+      cursor: isCommentMode ? 'crosshair' : isLongClick ? 'grab' : 'zoom-in',
       width: imgWidth,
       height: imgHeight
     };
+    const className = {
+      content_img: true,
+      content_img_cursor_grab: isLongClick ? true : false,
+    }
     return (
       <>
         <img
           // onClick={e => this.handleClickedImg(e)}
           onMouseDown={e => this.handleImgOnMouseDown(e)}
           onMouseUp={e => this.handleImgOnMouseUp(e)}
-          className={styles.content_img}
+          className={className}
           src={url}
           style={imgStyle}
           alt=""

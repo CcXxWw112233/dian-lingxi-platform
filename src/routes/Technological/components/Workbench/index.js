@@ -738,7 +738,7 @@ const Workbench = (props) => {
   const imgInfo = {
     isRealImage: true,
     isUsable: true,
-    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-25/dfae587a10b9294a4ec49c6ad8a92cdb.png?Expires=1556252713&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=rcPJwvBytkAre1KJLS%2BpxMtZ6RE%3D",
+    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-25/dfae587a10b9294a4ec49c6ad8a92cdb.png?Expires=1556267849&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=4HokLlKSxm5YKflkwI8GvnIFehQ%3D",
     }
   return(
     <div className={indexStyles.wrapper}>
@@ -747,7 +747,7 @@ const Workbench = (props) => {
       {/* <Header {...cardContentListProps} /> */}
       <div style={{margin: '50px', textAlign: 'center'}}><ZoomPicture imgInfo={imgInfo} /></div>
 
-      {/* <ProjectListBar />       */}
+      {/* <ProjectListBar /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
        {/* <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} /> */}
     </div>
