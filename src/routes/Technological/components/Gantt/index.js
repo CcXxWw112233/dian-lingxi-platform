@@ -24,24 +24,38 @@ class Gantt extends Component{
   componentDidMount() {
     this.getListGoup()
     this.getProjectGoupLists()
+    this.setBoardUsers()
+  }
+
+  componentWillReceiveProps() {
+    this.getListGoup()
+    this.getProjectGoupLists()
+    this.setBoardUsers()
   }
 
   //初始化进来请求获取分组数据
   async getListGoup() {
-    const { datas: { board_id }} = this.props.model
+    const { datas: { projectTabCurrentSelectedProject }} = this.props.model
 
   }
 
-  setBoardUsers() {
 
-  }
-  async getBoardUsers() {
-    const res = await getCurrentSelectedProjectMembersList()
-    if(isApiResponseOk(res)){
-      return res.data || []
+  async setBoardUsers() {
+    const { datas: { projectTabCurrentSelectedProject }} = this.props.model
+    let board_users = []
+    if(projectTabCurrentSelectedProject == '0') {
+      board_users = []
     }else {
-     return []
+      const res = await getCurrentSelectedProjectMembersList({projectId: projectTabCurrentSelectedProject})
+      if(isApiResponseOk(res)){
+        board_users = res.data || []
+      }else {
+        board_users = []
+      }
     }
+    this.setState({
+      board_users
+    })
   }
 
   //弹窗
@@ -89,7 +103,7 @@ class Gantt extends Component{
   }
   render() {
     const { dispatch, model = {}, modal } = this.props
-    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [] } = this.state
+    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [], board_users = [] } = this.state
     const { datas = {} } = model;
     const {
       projectList = [],
@@ -439,7 +453,8 @@ class Gantt extends Component{
             )}
             isUseInGantt
             projectIdWhenUseInGantt={'1110417727652237312'}
-            projectGroupListId
+            projectMemberListWhenUseInGantt={board_users}
+            // projectGroupListId
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"
