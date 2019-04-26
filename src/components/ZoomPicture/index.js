@@ -220,9 +220,13 @@ class ZoomPicture extends Component {
         imgHeightUpdated: unitCond[getUnit](imgHeight, aspectRadio, 'height')
       };
   };
-  handleImgOnMouseUp = (e) => {
+  handleImgOnMouseMove = e => {
+    console.log(e, 'mousemove move move...........')
+  }
+  handleImgOnMouseUp = e => {
     if(e) e.stopPropagation()
     this.isMouseUp = true
+
     this.setState({
       isLongClick: false,
     })
@@ -249,7 +253,7 @@ class ZoomPicture extends Component {
     console.log('mouseup timeStamp', e.timeStamp)
     console.log('mouseup x, y', e.pageX, e.pageY)
   }
-  handleImgOnMouseDown = (e) => {
+  handleImgOnMouseDown = e => {
     if(e) e.stopPropagation()
 
     this.isMouseUp = false
@@ -273,10 +277,7 @@ class ZoomPicture extends Component {
           result = true
           that.setState({
             isLongClick: true,
-          }, () => {
-            that.forceUpdate()
           })
-          console.log('LongTimeClick...............')
           clearInterval(this.timer)
         }
       }, 50)
@@ -381,6 +382,7 @@ class ZoomPicture extends Component {
           // onClick={e => this.handleClickedImg(e)}
           onMouseDown={e => this.handleImgOnMouseDown(e)}
           onMouseUp={e => this.handleImgOnMouseUp(e)}
+          // onMouseMove={e => this.handleImgOnMouseMove(e)}
           className={className}
           src={url}
           style={imgStyle}
