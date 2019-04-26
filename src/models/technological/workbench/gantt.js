@@ -23,7 +23,8 @@ export default {
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
-      target_scrollTop: 0 //总体滚动条偏离顶部滑动位置
+      target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
+      current_list_group_id: '', //当前选中的分组id
     },
   },
   subscriptions: {

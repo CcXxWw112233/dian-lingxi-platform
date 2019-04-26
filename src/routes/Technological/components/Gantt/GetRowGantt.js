@@ -36,6 +36,15 @@ export default class GetRowGantt extends Component {
       }
     })
   }
+
+  componentDidMount() {
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+  }
+
   //鼠标拖拽移动
   dashedMousedown(e) {
     if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
@@ -49,7 +58,7 @@ export default class GetRowGantt extends Component {
     this.y1 = currentRect.y
     this.setIsDragging(false)
     this.isMouseDown = true
-    this.handleCreateTask('1')
+    this.handleCreateTask({start_end: '1', top: currentRect.y})
     const target = this.refs.operateArea//event.target || event.srcElement;
     target.onmousemove = this.dashedDragMousemove.bind(this);
     target.onmouseup = this.dashedDragMouseup.bind(this);
@@ -91,8 +100,9 @@ export default class GetRowGantt extends Component {
     if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
       return false
     }
+    const { currentRect = {} } = this.state
     this.stopDragging()
-    this.handleCreateTask('2')
+    this.handleCreateTask({start_end: '2', top: currentRect.y})
   }
   stopDragging() {
     const target = this.refs.operateArea
@@ -157,7 +167,7 @@ export default class GetRowGantt extends Component {
   }
 
   //记录起始时间，做创建任务工作
-  handleCreateTask(start_end) {
+  handleCreateTask({start_end, top}) {
     const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] }} = this.props.model
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
@@ -177,22 +187,44 @@ export default class GetRowGantt extends Component {
       [update_name]: timestamp
     })
     if(start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
-      this.setSpecilTaskExample({}) //出现任务创建
-       //出现具体任务实例
-      this.setState({
-
-      })
+      this.setSpecilTaskExample({top}) //出现任务创建或查看任务
     }
   }
 
-  componentDidMount() {
-
+  //获取当前所在的分组, 根据创建或者查看任务时的高度
+  getCurrentGroup({top}) {
+    if(!top) {
+      return
+    }
+    const getSum = (total, num) => {
+      return total + num;
+    }
+    const { dispatch } = this.props
+    const { datas: { group_list_area = [], list_group = []} } = this.props.model
+    let conter_key = 0
+    for(let i = 0; i < group_list_area.length; i ++) {
+      if(i == 0){
+        if(top < group_list_area[0]) {
+          conter_key = 0
+          break
+        }
+      }else {
+        const arr = group_list_area.slice(0, i + 1)
+        const sum = arr.reduce(getSum);
+        if(top < sum) {
+          conter_key = i
+          break
+        }
+      }
+    }
+    const current_list_group_id = list_group[conter_key]['list_id']
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        current_list_group_id
+      }
+    })
   }
-
-  componentWillReceiveProps(nextProps) {
-
-  }
-
 
   //遍历
   taskItemToTop() {
@@ -240,10 +272,11 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample({id},e) {
+  setSpecilTaskExample({id, top},e) {
     if(e) {
       e.stopPropagation()
     }
+    this.getCurrentGroup({top})
     if(id) { //如果有id 则是修改任务，否则是创建任务
       this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
     } else {
@@ -281,7 +314,7 @@ export default class GetRowGantt extends Component {
                         width: (width || 6) - 6, height: (height || 20),
                         margin: '4px 0 0 2px'
                      }}
-                     onClick={this.setSpecilTaskExample.bind(this,{ id: 11})}
+                     onClick={this.setSpecilTaskExample.bind(this,{ id: 11, top})}
                 />
               )
             })

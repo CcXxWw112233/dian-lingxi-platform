@@ -154,7 +154,6 @@ export default class GanttFace extends Component {
 
     const { datas: { target_scrollTop }} = this.props.model
     if(target_scrollTop != scrollTop ) {
-      console.log(scrollTop)
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
