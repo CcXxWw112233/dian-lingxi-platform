@@ -7,7 +7,6 @@ function withHover(WrappedComponent, propName = 'hovering') {
     state = {hovering: false}
     onMouseOver = () => this.setState({hovering: true})
     onMouseOut = () => this.setState({hovering: false})
-
     render() {
       const {hovering} = this.state
       const injected = {

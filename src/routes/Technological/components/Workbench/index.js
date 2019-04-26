@@ -738,7 +738,7 @@ const Workbench = (props) => {
   const imgInfo = {
     isRealImage: true,
     isUsable: true,
-    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-08/a80fab692b97d6ba3fbd64fdeae29952.jpg?Expires=1556174503&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=HMGjdnA5yMmyIzjHbS0kr%2BlTqUo%3D",
+    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-25/dfae587a10b9294a4ec49c6ad8a92cdb.png?Expires=1556252713&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=rcPJwvBytkAre1KJLS%2BpxMtZ6RE%3D",
     }
   return(
     <div className={indexStyles.wrapper}>
