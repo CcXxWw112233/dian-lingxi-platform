@@ -258,7 +258,8 @@ class DropdownSelectWithSearch extends Component {
                       : initSearchTitle}
                   </span>
                 </Tooltip>
-                {!isShouldDisableDropdown && <span />}
+                <span />
+                {/*{!isShouldDisableDropdown && <span />}*/}
               </p>
             </div>
           </Dropdown>

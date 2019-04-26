@@ -258,10 +258,12 @@ class AddTaskModal extends Component {
 
     if(isUseInGantt) {
       handleGetNewTaskParams(paramObj)
+    }else {
+      this.addNewTask(paramObj);
+      this.addNewMeeting(paramObj);
+      this.uploadNewFile();
     }
-    this.addNewTask(paramObj);
-    this.addNewMeeting(paramObj);
-    this.uploadNewFile();
+
   };
 
   getNewUploadedFileIdList = () => {

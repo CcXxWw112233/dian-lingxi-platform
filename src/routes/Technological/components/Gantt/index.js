@@ -20,10 +20,12 @@ class Gantt extends Component{
 
   componentDidMount() {
     this.getListGoup()
+    this.getProjectGoupLists()
   }
 
   //初始化进来请求获取分组数据
   async getListGoup() {
+    const { datas: { board_id }} = this.props.model
 
   }
 
@@ -64,7 +66,12 @@ class Gantt extends Component{
       addTaskModalVisible: flag
     });
   };
-
+  handleGetNewTaskParams(data) {
+    console.log(data)
+    this.setState({
+      addTaskModalVisible: false
+    })
+  }
   render() {
     const { dispatch, model = {}, modal } = this.props
     const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [] } = this.state
@@ -417,7 +424,7 @@ class Gantt extends Component{
             )}
             isUseInGantt
             projectIdWhenUseInGantt={'1110417727652237312'}
-
+            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"
             getNewTaskInfo={this.getNewTaskInfo}
