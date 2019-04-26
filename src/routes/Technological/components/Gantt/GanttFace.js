@@ -19,6 +19,7 @@ export default class GanttFace extends Component {
       gantt_card_out_middle_max_height: 600,
     }
     this.ganttScroll = this.ganttScroll.bind(this)
+    this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
 
   componentDidMount() {
@@ -26,10 +27,10 @@ export default class GanttFace extends Component {
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.setScrollPosition({delay: 300})
     this.setGanTTCardHeight()
-    window.addEventListener('resize', this.setGanTTCardHeight.bind(this))
+    window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this.setGanTTCardHeight.bind(this))
+    window.removeEventListener('resize', this.setGanTTCardHeight, false)
   }
   //设置卡片高度
   setGanTTCardHeight() {
@@ -42,9 +43,7 @@ export default class GanttFace extends Component {
         gantt_card_out_middle_max_height: documentHeight - offsetTop - 20
       })
     }
-
-    console.log({documentHeight, offsetTop})
-  }
+    }
 
   componentWillReceiveProps (nextProps) {
     const { datas: { gold_date_arr = [], list_group =[] }} = nextProps.model
@@ -116,6 +115,7 @@ export default class GanttFace extends Component {
       clearTimeout(searchTimer)
     }
     const { target_scrollLeft } = this.state
+    const scrollTop = e.target.scrollTop
     const scrollLeft = e.target.scrollLeft
     const scrollWidth = e.target.scrollWidth
     const clientWidth = e.target.clientWidth
@@ -151,6 +151,17 @@ export default class GanttFace extends Component {
         target_scrollLeft: scrollLeft
       }
     })
+
+    const { datas: { target_scrollTop }} = this.props.model
+    if(target_scrollTop != scrollTop ) {
+      console.log(scrollTop)
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: {
+          target_scrollTop: scrollTop
+        }
+      })
+    }
   }
 
   //设置分组数据
@@ -220,6 +231,9 @@ export default class GanttFace extends Component {
              onScroll={this.ganttScroll}
              style={{maxHeight: gantt_card_out_middle_max_height}}
         >
+          <div
+            style={{height: 60}} //撑住DateList相同高度的底部
+          />
           <DateList />
           <div className={indexStyles.panel}>
             <GroupListHead />

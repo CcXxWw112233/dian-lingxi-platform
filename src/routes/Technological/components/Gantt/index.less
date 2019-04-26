@@ -16,6 +16,7 @@
     background-color: #FFFFFF;
   }
   .cardDetail_middle{
+    position: relative;
     flex: 1;
     //overflow-y: hidden;
     overflow-y: auto;
@@ -24,8 +25,12 @@
 }
 .dateArea{
   display: flex;
+  position: absolute;
+  z-index: 8;
+  left: 0;
   width: auto;
   height: 60px;
+  background-color: #ffffff;
   align-items: center;
   .dateAreaItem {
     width: auto;

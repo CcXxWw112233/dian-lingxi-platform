@@ -32,10 +32,12 @@ export default class DateList extends Component {
   }
 
   render () {
-    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
+    const { datas: { gold_date_arr = [], list_group =[], target_scrollTop }} = this.props.model
 
     return (
-      <div className={indexStyles.dateArea} >
+      <div className={indexStyles.dateArea}
+           style={{top: target_scrollTop}}
+      >
         {gold_date_arr.map((value, key) => {
           const { date_top, date_inner = [] } = value
           return (
