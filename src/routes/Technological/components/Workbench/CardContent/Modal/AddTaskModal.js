@@ -53,7 +53,9 @@ class AddTaskModal extends Component {
       },
       taskType,
       isUseInGantt,
-      projectIdWhenUseInGantt
+      projectIdWhenUseInGantt,
+      projectGroupListId,
+      projectGroupLists,
     } = this.props;
     const rootFileFolder =
       currentSelectedProjectFileFolderList &&
@@ -80,6 +82,11 @@ class AddTaskModal extends Component {
         projectTabCurrentSelectedProject
       );
     };
+    const getCurrentSelectedProjectGroupListItem = (isUseInGantt, projectGroupListId, projectGroupLists) => {
+      if(!isUseInGantt) return {}
+      if(!projectGroupListId || (projectGroupLists && projectGroupLists.length)) return {}
+      return projectGroupLists.find(i => i.id === projectGroupListId)
+    }
     this.state = {
       addTaskTitle: '',
       currentSelectedProject: getCurrentSelectedProject(
@@ -92,7 +99,7 @@ class AddTaskModal extends Component {
       due_time: '',
       attachment_fileList: [],
       currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [''],
-      currentSelectedProjectGroupListItem: {}
+      currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(isUseInGantt, projectGroupListId, projectGroupLists)
     };
   }
   handleDateRangeChange = dateRange => {
@@ -224,7 +231,7 @@ class AddTaskModal extends Component {
   };
   handleClickedSubmitBtn = e => {
     e.stopPropagation();
-    const { taskType } = this.props;
+    const { taskType, handleGetNewTaskParams, isUseInGantt } = this.props;
     //权限控制
     let authCode = '';
     switch (taskType) {
@@ -247,8 +254,11 @@ class AddTaskModal extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
     }
-
     const paramObj = this.getNewTaskParams();
+
+    if(isUseInGantt) {
+      handleGetNewTaskParams(paramObj)
+    }
     this.addNewTask(paramObj);
     this.addNewMeeting(paramObj);
     this.uploadNewFile();
@@ -484,7 +494,9 @@ class AddTaskModal extends Component {
       },
       modalTitle,
       taskType,
-      projectGroupLists
+      projectGroupLists,
+      isUseInGantt,
+      projectIdWhenUseInGantt,
     } = this.props;
 
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
@@ -638,6 +650,7 @@ class AddTaskModal extends Component {
                 initSearchTitle="选择项目"
                 selectedItem={currentSelectedProject}
                 handleSelectedItem={this.handleSelectedItem}
+                isShouldDisableDropdown={isUseInGantt && projectIdWhenUseInGantt}
               />
               <div className={styles.groupList__wrapper}>
                 {(taskType === 'RESPONSIBLE_TASK' ||
@@ -651,6 +664,7 @@ class AddTaskModal extends Component {
                     isSearch={false}
                     isCanCreateNew={false}
                     isProjectGroupMode={true}
+                    isShouldDisableDropdown={isUseInGantt && currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
                   />
                 )}
               </div>
@@ -761,6 +775,9 @@ AddTaskModal.defaultProps = {
   projectIdWhenUseInGantt: '', //如果是在甘特图中使用，那么传项目 id
   projectGroupListId: '', //项目分组id
   projectGroupLists: [], //当前选择项目任务分组列表
+  handleGetNewTaskParams: function() { //返回当前新建 modal 用户提交的所有参数
+
+  }
 };
 
 export default AddTaskModal;
