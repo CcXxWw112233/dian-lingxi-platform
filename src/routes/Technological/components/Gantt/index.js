@@ -70,16 +70,10 @@ class Gantt extends Component{
     const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [] } = this.state
     const { datas = {} } = model;
     const {
-      projectStarList = [],
-      // responsibleTaskList = [],
-      uploadedFileList: {file_list = [], folder_list = []} = {},
-      joinedProcessList = [],
-      backLogProcessList = [],
-      meetingLsit = [],
       projectList = [],
-
       projectTabCurrentSelectedProject
     } = datas;
+
     const CreateTaskProps = {
       modal,
       model,
@@ -421,6 +415,9 @@ class Gantt extends Component{
             setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
               this
             )}
+            isUseInGantt
+            projectIdWhenUseInGantt={'1110417727652237312'}
+
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"
             getNewTaskInfo={this.getNewTaskInfo}
@@ -444,7 +441,7 @@ function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileD
   const modelObj = {
     datas: { ...workbench['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas']}
   }
-  return { model: gantt }
+  return { model: modelObj }
 }
 export default connect(mapStateToProps)(Gantt)
 
