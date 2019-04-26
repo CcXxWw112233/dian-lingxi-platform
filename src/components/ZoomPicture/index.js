@@ -245,9 +245,9 @@ class ZoomPicture extends Component {
       const timeBetween = mouseUpTimeStamp - mouseDownTimeStamp
       return timeBetween > asLongClickTime
     }
-    if(isLongClick(this.imgClickInfo, this.asLongClickTime)) {
-      return
-    }
+    // if(isLongClick(this.imgClickInfo, this.asLongClickTime)) {
+    //   return
+    // }
     this.handleClickedImg(undefined, 'sup')
     console.log('mouseup', e)
     console.log('mouseup timeStamp', e.timeStamp)
