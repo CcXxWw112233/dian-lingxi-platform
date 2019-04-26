@@ -6,6 +6,8 @@ import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
 import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
 import {getProjectGoupList} from "../../../../services/technological/task";
+import {getCurrentSelectedProjectMembersList} from "../../../../services/technological/workbench";
+import {isApiResponseOk} from "../../../../utils/handleResponseData";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
@@ -15,7 +17,8 @@ class Gantt extends Component{
   state = {
     TaskDetailModalVisibile: false,
     previewFileModalVisibile: false,
-    projectGroupLists: []
+    projectGroupLists: [],
+    board_users: []
   }
 
   componentDidMount() {
@@ -27,6 +30,18 @@ class Gantt extends Component{
   async getListGoup() {
     const { datas: { board_id }} = this.props.model
 
+  }
+
+  setBoardUsers() {
+
+  }
+  async getBoardUsers() {
+    const res = await getCurrentSelectedProjectMembersList()
+    if(isApiResponseOk(res)){
+      return res.data || []
+    }else {
+     return []
+    }
   }
 
   //弹窗
@@ -424,6 +439,7 @@ class Gantt extends Component{
             )}
             isUseInGantt
             projectIdWhenUseInGantt={'1110417727652237312'}
+            projectGroupListId
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"
