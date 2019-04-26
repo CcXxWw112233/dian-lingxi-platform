@@ -15,7 +15,7 @@ import {
   REQUEST_DOMAIN_BOARD,
   UPLOAD_FILE_SIZE
 } from './../../../../../../globalset/js/constant';
-import { deleteUploadFile } from './../../../../../../services/technological/workbench';
+import { deleteUploadFile, getCurrentSelectedProjectMembersList } from './../../../../../../services/technological/workbench';
 import DropdownSelectWithSearch from './../DropdownSelectWithSearch/index';
 import DropdownMultipleSelectWithSearch from './../DropdownMultipleSelectWithSearch/index';
 import DateRangePicker from './../DateRangePicker/index';
@@ -56,6 +56,7 @@ class AddTaskModal extends Component {
       projectIdWhenUseInGantt,
       projectGroupListId,
       projectGroupLists,
+      currentSelectedprojectMemberListWhenUseInGantt,
     } = this.props;
     const rootFileFolder =
       currentSelectedProjectFileFolderList &&
@@ -87,6 +88,12 @@ class AddTaskModal extends Component {
       if(!projectGroupListId || (projectGroupLists && projectGroupLists.length)) return {}
       return projectGroupLists.find(i => i.id === projectGroupListId)
     }
+    const getCurrentSelectedProjectMember = (isUseInGantt, currentSelectedprojectMemberListWhenUseInGantt) => {
+      if(isUseInGantt) {
+        return currentSelectedprojectMemberListWhenUseInGantt
+      }
+      return []
+    }
     this.state = {
       addTaskTitle: '',
       currentSelectedProject: getCurrentSelectedProject(
@@ -94,7 +101,7 @@ class AddTaskModal extends Component {
         projectIdWhenUseInGantt,
         projectTabCurrentSelectedProject
       ),
-      currentSelectedProjectMember: [],
+      currentSelectedProjectMember: getCurrentSelectedProjectMember(isUseInGantt, currentSelectedprojectMemberListWhenUseInGantt),
       start_time: '',
       due_time: '',
       attachment_fileList: [],
@@ -497,6 +504,7 @@ class AddTaskModal extends Component {
       projectGroupLists,
       isUseInGantt,
       projectIdWhenUseInGantt,
+      projectMemberListWhenUseInGantt,
     } = this.props;
 
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
@@ -733,9 +741,8 @@ class AddTaskModal extends Component {
                     taskType === 'RESPONSIBLE_TASK' ? '执行人' : '参与人'
                   }
                   list={
-                    currentSelectedProject.board_id
-                      ? currentSelectedProjectMembersList
-                      : []
+                    currentSelectedProject.board_id && !isUseInGantt
+                      ? currentSelectedProjectMembersList : isUseInGantt && projectMemberListWhenUseInGantt ? projectMemberListWhenUseInGantt : []
                   }
                   handleSelectedItemChange={this.handleSelectedItemChange}
                   currentSelectedProjectMember={currentSelectedProjectMember}
@@ -777,7 +784,9 @@ AddTaskModal.defaultProps = {
   projectGroupLists: [], //当前选择项目任务分组列表
   handleGetNewTaskParams: function() { //返回当前新建 modal 用户提交的所有参数
 
-  }
+  },
+  projectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，需要将当前选中的项目成员列表传入
+  currentSelectedprojectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，所有需要提前选中的人员列表
 };
 
 export default AddTaskModal;
