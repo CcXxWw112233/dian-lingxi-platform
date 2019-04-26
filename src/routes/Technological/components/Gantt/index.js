@@ -17,6 +17,17 @@ class Gantt extends Component{
     previewFileModalVisibile: false,
     projectGroupLists: []
   }
+
+  componentDidMount() {
+    this.getListGoup()
+  }
+
+  //初始化进来请求获取分组数据
+  async getListGoup() {
+
+  }
+
+  //弹窗
   setPreviewFileModalVisibile() {
     this.setState({
       previewFileModalVisibile: !this.state.previewFileModalVisibile
@@ -66,9 +77,7 @@ class Gantt extends Component{
       backLogProcessList = [],
       meetingLsit = [],
       projectList = [],
-      schedulingList = [],
-      journeyList = [],
-      todoList = [],
+
       projectTabCurrentSelectedProject
     } = datas;
     const CreateTaskProps = {
