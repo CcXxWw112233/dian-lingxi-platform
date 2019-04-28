@@ -254,7 +254,7 @@ export default class GetRowGantt extends Component {
             } else {
               isoverlap = false
               item.top = list_data[k].top
-              console.log(k, j)
+              // console.log(k, j)
               break
             }
           }

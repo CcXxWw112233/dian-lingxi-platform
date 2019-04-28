@@ -36,7 +36,6 @@ export default class GetRowGanttItem extends Component {
       arr.sort(sortCreateTime)
       needs_task_arr = [].concat(needs_task_arr, arr)
     }
-    console.log({needs_task_arr})
   }
 
   render () {

@@ -109,7 +109,7 @@ class Gantt extends Component{
       .catch(err => console.log(err));
   }
   handleGetNewTaskParams(data) {
-    console.log({data})
+    // console.log({data})
     const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
     const param = {
       start_time: create_start_time,
