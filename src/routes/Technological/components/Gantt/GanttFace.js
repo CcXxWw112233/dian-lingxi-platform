@@ -4,8 +4,10 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush } from './getDate'
+import { getMonthDate, getNextMonthDatePush, isSamDay } from './getDate'
 import {INPUT_CHANGE_SEARCH_TIME} from "../../../../globalset/js/constant";
+import {getGanttData} from "../../../../services/technological/gantt";
+import {isApiResponseOk} from "../../../../utils/handleResponseData";
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -17,18 +19,28 @@ export default class GanttFace extends Component {
       viewModal: '2', //视图模式1周，2月，3年
       target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
+      local_project_tab_current_selected_project: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
     }
     this.ganttScroll = this.ganttScroll.bind(this)
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
 
   componentDidMount() {
-    this.setGoldDateArr()
+    const { projectTabCurrentSelectedProject } = this.props
+    this.setState({
+      local_project_tab_current_selected_project: projectTabCurrentSelectedProject
+    })
+    this.setGoldDateArr({init: true})
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.setScrollPosition({delay: 300})
     this.setGanTTCardHeight()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
+  componentWillReceiveProps (nextProps) {
+    const { projectTabCurrentSelectedProject } = nextProps
+    const { local_project_tab_current_selected_project } = this.state
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.setGanTTCardHeight, false)
   }
@@ -45,10 +57,6 @@ export default class GanttFace extends Component {
     }
     }
 
-  componentWillReceiveProps (nextProps) {
-    const { datas: { gold_date_arr = [], list_group =[] }} = nextProps.model
-  }
-
   //设置滚动条位置
   setScrollPosition({delay = 300, position = 200}) {
     const that = this
@@ -58,8 +66,64 @@ export default class GanttFace extends Component {
     }, delay)
   }
 
-  //更新日期
-  setGoldDateArr(timestamp, to_right) {
+  //左右拖动,日期会更新
+  ganttScroll = (e) => {
+    const that = this
+    const { searchTimer } = this.state
+    if (searchTimer) {
+      clearTimeout(searchTimer)
+    }
+    const { target_scrollLeft } = this.state
+    const scrollTop = e.target.scrollTop
+    const scrollLeft = e.target.scrollLeft
+    const scrollWidth = e.target.scrollWidth
+    const clientWidth = e.target.clientWidth
+    const { datas: { ceilWidth, gold_date_arr = [], date_total } } = this.props.model
+    let delX = target_scrollLeft - scrollLeft //判断向左还是向右
+
+    if(scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+      const { timestamp} = gold_date_arr[0]['date_inner'][0]
+      this.setState({
+        searchTimer: setTimeout(function () {
+          that.setGoldDateArr({timestamp}) //取左边界日期来做日期更新的基准
+          that.setScrollPosition({delay: 300, position: 30 * ceilWidth}) //大概移动四天的位置
+        }, INPUT_CHANGE_SEARCH_TIME)
+      })
+
+    }else if ((scrollWidth - scrollLeft - clientWidth < ceilWidth) && delX < 0 ){
+      const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
+      this.setState({
+        searchTimer: setTimeout(function () {
+          that.setGoldDateArr({timestamp,to_right: 'to_right'}) //取有边界日期来做更新日期的基准
+          that.setScrollPosition({delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth}) //移动到最新视觉
+        }, INPUT_CHANGE_SEARCH_TIME)
+      })
+    }
+
+    this.setState({
+      target_scrollLeft: scrollLeft
+    })
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        target_scrollLeft: scrollLeft
+      }
+    })
+
+    const { datas: { target_scrollTop }} = this.props.model
+    if(target_scrollTop != scrollTop ) {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: {
+          target_scrollTop: scrollTop
+        }
+      })
+    }
+  }
+
+  //更新日期,日期更新后做相应的数据请求
+  setGoldDateArr({timestamp, to_right, init}) {
     const { dispatch } = this.props
     const { datas: { gold_date_arr = [], isDragging }} = this.props.model
     let date_arr = []
@@ -103,66 +167,66 @@ export default class GanttFace extends Component {
     //更新任务位置信息
     const that = this
     setTimeout(function () {
-      that.setListGroup(that.props)
-    }, 500)
+      dispatch({
+        type: getEffectOrReducerByName('getGanttData'),
+        payload: {}
+      })
+    }, 300)
   }
-
-  //左右拖动,日期会更新
-  ganttScroll = (e) => {
-    const that = this
-    const { searchTimer } = this.state
-    if (searchTimer) {
-      clearTimeout(searchTimer)
+  //已废弃，移动到model中进行处理F
+  //请求获取分组数据
+  async getGanttData() {
+    const { dispatch, projectTabCurrentSelectedProject } = this.props
+    const { datas: { start_date, end_date }} = this.props.model
+    const params = {
+      start_time: start_date['timestamp'],
+      end_time: end_date['timestamp'],
     }
-    const { target_scrollLeft } = this.state
-    const scrollTop = e.target.scrollTop
-    const scrollLeft = e.target.scrollLeft
-    const scrollWidth = e.target.scrollWidth
-    const clientWidth = e.target.clientWidth
-    const { datas: { ceilWidth, gold_date_arr = [], date_total } } = this.props.model
-    let delX = target_scrollLeft - scrollLeft //判断向左还是向右
-
-    if(scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
-      const { timestamp} = gold_date_arr[0]['date_inner'][0]
-      this.setState({
-        searchTimer: setTimeout(function () {
-          that.setGoldDateArr(timestamp) //取左边界日期来做日期更新的基准
-          that.setScrollPosition({delay: 300, position: 30 * ceilWidth}) //大概移动四天的位置
-        }, INPUT_CHANGE_SEARCH_TIME)
-      })
-
-    }else if ((scrollWidth - scrollLeft - clientWidth < ceilWidth) && delX < 0 ){
-      const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
-      this.setState({
-        searchTimer: setTimeout(function () {
-          that.setGoldDateArr(timestamp, 'to_right') //取有边界日期来做更新日期的基准
-          that.setScrollPosition({delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth}) //移动到最新视觉
-        }, INPUT_CHANGE_SEARCH_TIME)
-      })
+    if(projectTabCurrentSelectedProject != '0' && projectTabCurrentSelectedProject) {
+      params.board_id = projectTabCurrentSelectedProject
     }
+    const res = await getGanttData(params)
+    if(isApiResponseOk(res)){
+       this.handleListGroup(res.data)
+    }else {
 
-    this.setState({
-      target_scrollLeft: scrollLeft
-    })
+    }
+  }
+  //处理分组数据
+  handleListGroup(data) {
     const { dispatch } = this.props
+    let list_group = []
+    for(let val of data) {
+      const list_group_item = {
+        ...val,
+        list_name: val['lane_name'],
+        list_id: val['lane_id'],
+        list_data: [],
+        list_no_time_data: val['lane_data']['card_no_time'] || []
+      }
+      for(let val_1 of val['lane_data']['card']) {
+        const due_time = Number(val_1['due_time']) * 1000
+        const start_time = Number(val_1['start_time']) * 1000
+        const create_time = Number(val_1['create_time']) * 1000
+        let list_data_item = {
+          ...val_1,
+          start_time,
+          end_time: due_time,
+          create_time,
+          time_span: Math.ceil((due_time - start_time) / (24 * 3600 * 1000)),
+        }
+        list_group_item.list_data.push(list_data_item)
+      }
+      list_group.push(list_group_item)
+    }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        target_scrollLeft: scrollLeft
+        list_group
       }
     })
-
-    const { datas: { target_scrollTop }} = this.props.model
-    if(target_scrollTop != scrollTop ) {
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: {
-          target_scrollTop: scrollTop
-        }
-      })
-    }
+    this.setListGroup(this.props)
   }
-
   //设置分组数据
   setListGroup(props) {
     const { dispatch } = props
@@ -188,7 +252,7 @@ export default class GanttFace extends Component {
         item.height = 20
         //设置横坐标
         for(let k = 0; k < date_arr_one_level.length; k ++) {
-          if(item['start_time'] == date_arr_one_level[k]['timestamp']) { //是同一天
+          if(isSamDay (item['start_time'], date_arr_one_level[k]['timestamp'] )) { //是同一天
             item.left = k * ceilWidth
             break
           }

@@ -134,3 +134,7 @@ export const getNextMonthDatePush = (timestamp) => { //日期累加
 export const isToday = (timestamp) => {
   return new Date(timestamp).toDateString() === new Date().toDateString()
 }
+
+export const isSamDay = (timestamp, timestamp2) => {
+  return new Date(timestamp).toDateString() === new Date(timestamp2).toDateString()
+}

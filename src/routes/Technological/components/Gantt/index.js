@@ -6,6 +6,7 @@ import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
 import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
 import {getProjectGoupList} from "../../../../services/technological/task";
+import { getGanttData } from "../../../../services/technological/gantt";
 import {getCurrentSelectedProjectMembersList} from "../../../../services/technological/workbench";
 import {isApiResponseOk} from "../../../../utils/handleResponseData";
 
@@ -18,27 +19,17 @@ class Gantt extends Component{
     TaskDetailModalVisibile: false,
     previewFileModalVisibile: false,
     projectGroupLists: [],
-    board_users: []
+    board_users: [],
   }
 
   componentDidMount() {
-    this.getListGoup()
     this.getProjectGoupLists()
     this.setBoardUsers()
   }
 
-  componentWillReceiveProps() {
-    this.getListGoup()
-    this.getProjectGoupLists()
-    this.setBoardUsers()
-  }
-
-  //初始化进来请求获取分组数据
-  async getListGoup() {
-    const { datas: { projectTabCurrentSelectedProject }} = this.props.model
+  componentWillReceiveProps(nextProps) {
 
   }
-
 
   async setBoardUsers() {
     const { datas: { projectTabCurrentSelectedProject }} = this.props.model
@@ -95,8 +86,45 @@ class Gantt extends Component{
       addTaskModalVisible: flag
     });
   };
+  addNewTask(data) {
+    const { dispatch } = this.props
+    Promise.resolve(
+      dispatch({
+        type: 'workbench/addTask',
+        payload: {
+          data
+        }
+      })
+    )
+      .then(res => {
+        if(res) {
+          dispatch({
+            type: 'gantt/getGanttData',
+            payload: {}
+          })
+        } else {
+          message.warn('创建任务失败')
+        }
+      })
+      .catch(err => console.log(err));
+  }
   handleGetNewTaskParams(data) {
-    console.log(data)
+    console.log({data})
+    const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+    const param = {
+      start_time: create_start_time,
+      due_time: create_end_time,
+      users: data['users'],
+      name: data['name'],
+      type: data['type'],
+    }
+    if(projectTabCurrentSelectedProject == '0') {
+      param.board_id = current_list_group_id
+    } else {
+      param.board_id = projectTabCurrentSelectedProject
+      param.list_id = current_list_group_id
+    }
+    this.addNewTask(param)
     this.setState({
       addTaskModalVisible: false
     })
@@ -107,7 +135,8 @@ class Gantt extends Component{
     const { datas = {} } = model;
     const {
       projectList = [],
-      projectTabCurrentSelectedProject
+      projectTabCurrentSelectedProject,
+      current_list_group_id,
     } = datas;
 
     const CreateTaskProps = {
@@ -423,6 +452,7 @@ class Gantt extends Component{
         <GanttFace
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
+          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
         />
         <FileDetailModal
           {...this.props}
@@ -452,9 +482,10 @@ class Gantt extends Component{
               this
             )}
             isUseInGantt
-            projectIdWhenUseInGantt={'1110417727652237312'}
+            projectIdWhenUseInGantt={projectTabCurrentSelectedProject=='0'?current_list_group_id:projectTabCurrentSelectedProject}
             projectMemberListWhenUseInGantt={board_users}
-            // projectGroupListId
+            projectGroupListId={projectTabCurrentSelectedProject=='0'?'':current_list_group_id}
+
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"

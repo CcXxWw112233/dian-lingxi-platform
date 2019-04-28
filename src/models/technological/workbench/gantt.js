@@ -1,11 +1,20 @@
-import { formSubmit, requestVerifyCode } from '../../../services/login'
+import { getGanttData } from '../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
-import modelExtend from 'dva-model-extend'
-import technological from './index'
+import {isSamDay} from "../../../routes/Technological/components/Gantt/getDate";
+import {
+  workbench_projectTabCurrentSelectedProject,
+  workbench_start_date,
+  workbench_end_date,
+  workbench_list_group,
+  workbench_group_rows,
+  workbench_ceiHeight,
+  workbench_ceilWidth,
+  workbench_date_arr_one_level
+} from './selects'
 
 export default {
   namespace: 'gantt',
@@ -15,6 +24,8 @@ export default {
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
       end_date: {}, //日期最后那一天
+      create_start_time: '', //创建任务开始时间
+      create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
       ceiHeight: 24, //单元格高度
@@ -24,7 +35,7 @@ export default {
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
-      current_list_group_id: '', //当前选中的分组id
+      current_list_group_id: '0', //当前选中的分组id
     },
   },
   subscriptions: {
@@ -34,173 +45,7 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload: {
-              list_group: [
-                {
-                  list_name: '分组一',
-                  list_id: '111',
-                  list_data: [
-                    {
-                      start_time: 1552233600000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552233600000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 3,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552924800000,
-                      end_time: 1553184000000,
-                      start_time_string: '2019/3/19',
-                      end_time_sting: '2019/3/22',
-                      time_span: 4,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552924800000,
-                      end_time: 1553184000000,
-                      start_time_string: '2019/3/19',
-                      end_time_sting: '2019/3/22',
-                      time_span: 4,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552924800000,
-                      end_time: 1553184000000,
-                      start_time_string: '2019/3/19',
-                      end_time_sting: '2019/3/22',
-                      time_span: 4,
-                      create_time: 1,
-                    }
-                  ],
-
-                },
-                {
-                  list_name: '分组二',
-                  list_id: '222',
-                  list_data: [
-                    {
-                      start_time: 1552233600000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552233600000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 2,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 3,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 4,
-                    }
-                  ],
-
-                },
-                {
-                  list_name: '分组三',
-                  list_id: '333',
-                  list_data: [
-                    {
-                      start_time: 1552233600000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552233600000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 2,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 3,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 4,
-                    }
-                  ],
-
-                },
-                {
-                  list_name: '分组四',
-                  list_id: '444',
-                  list_data: [
-                    {
-                      start_time: 1552233600000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 1,
-                    }, {
-                      start_time: 1552233600000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/11',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 2,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552838400000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/18',
-                      time_span: 7,
-                      create_time: 3,
-                    }, {
-                      start_time: 1552320000000,
-                      end_time: 1552579200000,
-                      start_time_string: '2019/3/12',
-                      end_time_sting: '2019/3/15',
-                      time_span: 4,
-                      create_time: 4,
-                    }
-                  ],
-
-                }
-              ],
+              list_group: [],
               group_rows: [7, 7, 7],
             }
           })
@@ -210,9 +55,119 @@ export default {
     },
   },
   effects: {
-    * getDataByTimestamp({payload}, {select, call, put}){
+    * getGanttData({payload}, {select, call, put}){
+      const projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      const params = {
+        start_time: start_date['timestamp'],
+        end_time: end_date['timestamp'],
+      }
+      if(projectTabCurrentSelectedProject != '0' && projectTabCurrentSelectedProject) {
+        params.board_id = projectTabCurrentSelectedProject
+      }
+      const res = yield call(getGanttData, params)
+      if(isApiResponseOk(res)){
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: res.data
+          }
+        })
+      }else {
 
-    }
+      }
+    },
+    * handleListGroup({payload}, {select, call, put}){
+      const { data } = payload
+      let list_group = []
+      for(let val of data) {
+        const list_group_item = {
+          ...val,
+          list_name: val['lane_name'],
+          list_id: val['lane_id'],
+          list_data: [],
+          list_no_time_data: val['lane_data']['card_no_time'] || []
+        }
+        for(let val_1 of val['lane_data']['card']) {
+          const due_time = Number(val_1['due_time']) * 1000
+          const start_time = Number(val_1['start_time']) * 1000
+          const create_time = Number(val_1['create_time']) * 1000
+          let list_data_item = {
+            ...val_1,
+            start_time,
+            end_time: due_time,
+            create_time,
+            time_span: Math.ceil((due_time - start_time) / (24 * 3600 * 1000)) || 1,
+          }
+          list_group_item.list_data.push(list_data_item)
+        }
+        list_group.push(list_group_item)
+      }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          list_group
+        }
+      })
+      yield put({
+        type: 'setListGroup',
+        payload: {
+        }
+      })
+    },
+    * setListGroup({payload}, {select, call, put}){
+
+      //根据所获得的分组数据转换所需要的数据
+      // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
+      const list_group = yield select(workbench_list_group)
+      const group_rows = yield select(workbench_group_rows)
+      const ceiHeight = yield select(workbench_ceiHeight)
+      const ceilWidth = yield select(workbench_ceilWidth)
+      const date_arr_one_level = yield select(workbench_date_arr_one_level)
+
+      const group_list_area = [] //分组高度区域
+
+      //设置分组区域高度, 并为每一个任务新增一条
+      for (let i = 0; i < list_group.length; i ++ ) {
+        const list_data = list_group[i]['list_data']
+        const length = (list_data.length || 1) + 1
+        const group_height = length * ceiHeight
+        group_list_area[i] = group_height
+        group_rows[i] = length
+        for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
+          const item = list_data[j]
+          item.width = item.time_span * ceilWidth
+          item.height = 20
+          //设置横坐标
+          for(let k = 0; k < date_arr_one_level.length; k ++) {
+            if(isSamDay (item['start_time'], date_arr_one_level[k]['timestamp'] )) { //是同一天
+              item.left = k * ceilWidth
+              break
+            }
+          }
+
+          //设置纵坐标
+          //根据历史分组统计纵坐标累加
+          let after_group_height = 0
+          for(let k = 0; k < i; k ++ ) {
+            after_group_height += group_list_area[k]
+          }
+          item.top = after_group_height + j * ceiHeight
+
+          list_group[i]['list_data'][j] = item
+        }
+      }
+
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          group_list_area,
+          group_rows,
+          list_group
+        }
+      })
+    },
   },
 
   reducers: {
@@ -224,3 +179,134 @@ export default {
     }
   },
 }
+// list_group: [
+//   {
+//     list_name: '分组一',
+//     list_id: '111',
+//     list_data: [
+//       {
+//         start_time: 1552233600000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552233600000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 3,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552924800000,
+//         end_time: 1553184000000,
+//         start_time_string: '2019/3/19',
+//         end_time_sting: '2019/3/22',
+//         time_span: 4,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552924800000,
+//         end_time: 1553184000000,
+//         start_time_string: '2019/3/19',
+//         end_time_sting: '2019/3/22',
+//         time_span: 4,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552924800000,
+//         end_time: 1553184000000,
+//         start_time_string: '2019/3/19',
+//         end_time_sting: '2019/3/22',
+//         time_span: 4,
+//         create_time: 1,
+//       }
+//     ],
+//     list_no_time_data: []
+//   },
+//   {
+//     list_name: '分组二',
+//     list_id: '222',
+//     list_data: [
+//       {
+//         start_time: 1552233600000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552233600000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 2,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 3,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 4,
+//       }
+//     ],
+//     list_no_time_data: []
+//   },
+//   {
+//     list_name: '分组三',
+//     list_id: '333',
+//     list_data: [
+//       {
+//         start_time: 1552233600000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 1,
+//       }, {
+//         start_time: 1552233600000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/11',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 2,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552838400000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/18',
+//         time_span: 7,
+//         create_time: 3,
+//       }, {
+//         start_time: 1552320000000,
+//         end_time: 1552579200000,
+//         start_time_string: '2019/3/12',
+//         end_time_sting: '2019/3/15',
+//         time_span: 4,
+//         create_time: 4,
+//       }
+//     ],
+//     list_no_time_data: []
+//   },
+// ],

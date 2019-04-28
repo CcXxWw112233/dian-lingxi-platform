@@ -29,3 +29,13 @@ export const workbench_selectCard_id = state => state[(`workbenchTaskDetail`)].d
 export const workbench_currentProcessInstanceId = state => state[(`workbenchDetailProcess`)].datas.currentProcessInstanceId
 
 
+export const workbench_projectTabCurrentSelectedProject = state => state[(`workbench`)].datas.projectTabCurrentSelectedProject
+export const workbench_start_date = state => state[(`gantt`)].datas.start_date
+export const workbench_end_date = state => state[(`gantt`)].datas.end_date
+export const workbench_list_group = state => state[(`gantt`)].datas.list_group
+export const workbench_group_rows = state => state[(`gantt`)].datas.group_rows
+export const workbench_ceiHeight = state => state[(`gantt`)].datas.ceiHeight
+export const workbench_ceilWidth = state => state[(`gantt`)].datas.ceilWidth
+export const workbench_date_arr_one_level = state => state[(`gantt`)].datas.date_arr_one_level
+
+

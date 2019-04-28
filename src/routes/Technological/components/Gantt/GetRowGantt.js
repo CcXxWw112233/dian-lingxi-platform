@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
+import { Tooltip } from 'antd'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 80 //鼠标移动和拖拽的修正位置
@@ -168,6 +169,7 @@ export default class GetRowGantt extends Component {
 
   //记录起始时间，做创建任务工作
   handleCreateTask({start_end, top}) {
+    const { dispatch } = this.props
     const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] }} = this.props.model
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
@@ -181,11 +183,14 @@ export default class GetRowGantt extends Component {
       }
     }
     const { timestamp } = date
-    console.log(start_end, date)
-    const update_name = start_end == '1'? 'start_time': 'end_time'
-    this.setState({
-      [update_name]: timestamp
+    const update_name = start_end == '1'? 'create_start_time': 'create_end_time'
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        [update_name]: timestamp
+      }
     })
+
     if(start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
       this.setSpecilTaskExample({top}) //出现任务创建或查看任务
     }
@@ -193,7 +198,7 @@ export default class GetRowGantt extends Component {
 
   //获取当前所在的分组, 根据创建或者查看任务时的高度
   getCurrentGroup({top}) {
-    if(!top) {
+    if(top == undefined || top == null) {
       return
     }
     const getSum = (total, num) => {
@@ -306,16 +311,18 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height } = value2
+              const { left, top, width, height, name, id } = value2
               return (
+                <Tooltip title={name}>
                 <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example"
                      style={{
                         left: left, top: top,
                         width: (width || 6) - 6, height: (height || 20),
                         margin: '4px 0 0 2px'
                      }}
-                     onClick={this.setSpecilTaskExample.bind(this,{ id: 11, top})}
+                     onClick={this.setSpecilTaskExample.bind(this,{ id, top})}
                 />
+                </Tooltip>
               )
             })
           )
