@@ -277,13 +277,33 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample({id, top},e) {
+  setSpecilTaskExample({id, board_id, top},e) {
     if(e) {
       e.stopPropagation()
     }
     this.getCurrentGroup({top})
+    const { dispatch } = this.props
     if(id) { //如果有id 则是修改任务，否则是创建任务
       this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+      dispatch({
+        type: 'workbenchTaskDetail/getCardDetail',
+        payload: {
+          id,
+          board_id
+        }
+      })
+      dispatch({
+        type: 'workbenchTaskDetail/getCardCommentListAll',
+        payload: {
+          id: id
+        }
+      })
+      dispatch({
+        type: 'workbenchPublicDatas/updateDatas',
+        payload: {
+          board_id
+        }
+      })
     } else {
       this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
     }
@@ -311,7 +331,7 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id } = value2
+              const { left, top, width, height, name, id, board_id } = value2
               return (
                 <Tooltip title={name}>
                 <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example"
@@ -320,7 +340,7 @@ export default class GetRowGantt extends Component {
                         width: (width || 6) - 6, height: (height || 20),
                         margin: '4px 0 0 2px'
                      }}
-                     onClick={this.setSpecilTaskExample.bind(this,{ id, top})}
+                     onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
                 />
                 </Tooltip>
               )

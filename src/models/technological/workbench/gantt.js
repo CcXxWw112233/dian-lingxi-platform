@@ -56,7 +56,12 @@ export default {
   },
   effects: {
     * getGanttData({payload}, {select, call, put}){
-      const projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+      const { tab_board_id } = payload
+      let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+
+      if(tab_board_id) {
+        projectTabCurrentSelectedProject = tab_board_id
+      }
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const params = {
@@ -98,7 +103,7 @@ export default {
             start_time,
             end_time: due_time,
             create_time,
-            time_span: Math.ceil((due_time - start_time) / (24 * 3600 * 1000)) || 1,
+            time_span: Math.ceil((due_time - start_time) / (24 * 3600 * 1000)) + 1,
           }
           list_group_item.list_data.push(list_data_item)
         }

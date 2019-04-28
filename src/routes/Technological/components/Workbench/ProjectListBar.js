@@ -118,7 +118,21 @@ class ProjectListBar extends Component {
       return;
     }
     this.handleClickProjectItem(id);
+    //处理工作台数据
+    this.handleGanttData(id)
   };
+  handleGanttData(id) {
+    const { dispatch, workbench_show_gantt_card } = this.props
+    if(workbench_show_gantt_card != '1') {
+      return
+    }
+    dispatch({
+      type: 'gantt/getGanttData',
+      payload: {
+        tab_board_id: id
+      }
+    })
+  }
   renderProjectListBarCreateNewProject = () => {
     return(
       <span onClick={e => this.handleCreateNewProject(e)} className={styles.createProject_cell}>
@@ -236,12 +250,15 @@ class ProjectListBar extends Component {
 export default connect(
   ({
     workbench: {
-      datas: { projectList, projectTabCurrentSelectedProject }
+      datas: { projectList, projectTabCurrentSelectedProject, workbench_show_gantt_card }
     },
+    gantt,
     project
   }) => ({
     project,
     projectList,
-    projectTabCurrentSelectedProject
+    projectTabCurrentSelectedProject,
+    gantt,
+    workbench_show_gantt_card
   })
 )(ProjectListBar);
