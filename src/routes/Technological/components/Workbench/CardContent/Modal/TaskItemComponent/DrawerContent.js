@@ -161,6 +161,10 @@ class DrawContent extends React.Component {
     });
   }
   //firstLine----------end
+  //甘特图传递进来的方法，用于名称更新和时间更新渲染
+  handleChangeCard({card_id,drawContent}) {
+    this.props.handleChangeCard && this.props.handleChangeCard({card_id,drawContent})
+  }
 
   //标题-------start
   setIsCheck() {
@@ -193,6 +197,8 @@ class DrawContent extends React.Component {
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
     this.props.updateTask({updateObj})
     this.props.updateTaskDatas({drawContent})
+    //处理甘特图
+    this.handleChangeCard({drawContent, card_id})
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -313,6 +319,8 @@ class DrawContent extends React.Component {
     }
     this.props.updateTask({updateObj})
     this.props.updateTaskDatas({drawContent})
+    //处理甘特图
+    this.handleChangeCard({drawContent, card_id})
   }
     //截止时间
   endDatePickerChange(e, timeString) {
@@ -330,6 +338,8 @@ class DrawContent extends React.Component {
     }
     this.props.updateTask({updateObj})
     this.props.updateTaskDatas({drawContent})
+    //处理甘特图
+    this.handleChangeCard({drawContent, card_id})
   }
   compareStartDueTime = (start_time, due_time) => {
     if(!start_time || !due_time) {

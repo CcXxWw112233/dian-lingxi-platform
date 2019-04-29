@@ -86,6 +86,18 @@ export default {
     * handleListGroup({payload}, {select, call, put}){
       const { data } = payload
       let list_group = []
+      const getDigit = (timestamp) => {
+        if(!timestamp) {
+          return 1
+        }
+        let new_timestamp = timestamp.toString()
+        if(new_timestamp.length == 10) {
+          new_timestamp = Number(new_timestamp) * 1000
+        } else {
+          new_timestamp = Number(new_timestamp)
+        }
+        return new_timestamp
+      }
       for(let val of data) {
         const list_group_item = {
           ...val,
@@ -95,15 +107,15 @@ export default {
           list_no_time_data: val['lane_data']['card_no_time'] || []
         }
         for(let val_1 of val['lane_data']['card']) {
-          const due_time = Number(val_1['due_time']) * 1000
-          const start_time = Number(val_1['start_time']) * 1000
-          const create_time = Number(val_1['create_time']) * 1000
+          const due_time = getDigit(val_1['due_time'])
+          const start_time = getDigit(val_1['start_time'])
+          const create_time = getDigit(val_1['create_time'])
           let list_data_item = {
             ...val_1,
             start_time,
             end_time: due_time,
             create_time,
-            time_span: Math.ceil((due_time - start_time) / (24 * 3600 * 1000)) + 1,
+            time_span: (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
           }
           list_group_item.list_data.push(list_data_item)
         }

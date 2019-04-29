@@ -310,7 +310,6 @@ export default class GetRowGantt extends Component {
   }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
-
     const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [] }} = this.props.model
 
     return (
@@ -333,8 +332,8 @@ export default class GetRowGantt extends Component {
             list_data.map((value2, key) => {
               const { left, top, width, height, name, id, board_id } = value2
               return (
-                <Tooltip title={name}>
-                <div className={indexStyles.specific_example} key={key} data-targetclassname="specific_example"
+                <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
+                <div className={indexStyles.specific_example} data-targetclassname="specific_example"
                      style={{
                         left: left, top: top,
                         width: (width || 6) - 6, height: (height || 20),

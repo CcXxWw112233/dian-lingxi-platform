@@ -85,8 +85,10 @@ class Gantt extends Component{
     }
 
     if(!projectGroupListsIsRequest) {
-      message.warn('您所需要的数据正在赶来的路上，请稍候...')
-      this.getProjectGoupLists()
+      const that = this
+      message.info('您所需要的数据正在赶来的路上，请稍候...', 2,function () {
+        that.getProjectGoupLists()
+      })
       return false
     }
     this.setState({
@@ -117,9 +119,15 @@ class Gantt extends Component{
   }
   handleGetNewTaskParams(data) {
     const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+
+    //设置截止日期最后一秒
+    const create_end_time_date = new Date(create_end_time)
+    const create_end_time_final = `${create_end_time_date.getFullYear()}/${create_end_time_date.getMonth() + 1}/${create_end_time_date.getDate()} 23:59:59`
+    const create_end_time_final_timestamp = new Date(create_end_time_final).getTime()
+
     const param = {
       start_time: create_start_time,
-      due_time: create_end_time,
+      due_time: create_end_time_final_timestamp,//create_end_time,
       users: data['users'],
       name: data['name'],
       type: data['type'],
@@ -136,6 +144,50 @@ class Gantt extends Component{
       addTaskModalVisible: false
     })
   }
+
+  //修改某一个任务
+  handleChangeCard({card_id,drawContent}) {
+    const { dispatch } = this.props
+    const { datas: { list_group = [], projectTabCurrentSelectedProject, current_list_group_id, board_id }} = this.props.model
+    const list_group_new = [...list_group]
+    if(projectTabCurrentSelectedProject == '0') {
+      for(let i = 0; i < list_group_new.length; i++ ) {
+        if(board_id == list_group_new[i].list_id) {
+          for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
+            if(card_id == list_group_new[i].lane_data.card[j].id) {
+              list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
+              list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+              break
+            }
+          }
+        }
+        break
+      }
+
+    } else {
+      for(let i = 0; i < list_group_new.length; i++ ) {
+        let flag = false
+        for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
+          if(card_id == list_group_new[i].lane_data.card[j].id) {
+            list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
+            list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+            break
+          }
+        }
+        if(flag) {
+          break
+        }
+      }
+
+    }
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
+  }
+
   render() {
     const { dispatch, model = {}, modal } = this.props
     const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [], board_users = [] } = this.state
@@ -481,6 +533,7 @@ class Gantt extends Component{
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           updateDatasTask={updateDatasTask}
           updateDatasFile={updateDatasFile}
+          handleChangeCard={this.handleChangeCard.bind(this)}
         />
 
         {addTaskModalVisible && (
