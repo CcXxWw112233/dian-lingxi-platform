@@ -123,6 +123,8 @@ class ProjectListBar extends Component {
   };
   handleGanttData(id) {
     const { dispatch, workbench_show_gantt_card } = this.props
+    const { projectTabCurrentSelectedProject } = this.props
+
     if(workbench_show_gantt_card != '1') {
       return
     }
@@ -132,6 +134,14 @@ class ProjectListBar extends Component {
         tab_board_id: id
       }
     })
+    if(id !== '0') {
+      dispatch({
+        type: 'workbench/fetchCurrentSelectedProjectMembersList',
+        payload: {
+          projectId: id
+        }
+      });
+    }
   }
   renderProjectListBarCreateNewProject = () => {
     return(

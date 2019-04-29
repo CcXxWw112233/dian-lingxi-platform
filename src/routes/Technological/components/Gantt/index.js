@@ -20,6 +20,7 @@ class Gantt extends Component{
     previewFileModalVisibile: false,
     projectGroupLists: [],
     board_users: [],
+    projectGroupListsIsRequest: false
   }
 
   componentDidMount() {
@@ -31,22 +32,14 @@ class Gantt extends Component{
 
   }
 
-  async setBoardUsers() {
-    const { datas: { projectTabCurrentSelectedProject }} = this.props.model
-    let board_users = []
-    if(projectTabCurrentSelectedProject == '0') {
-      board_users = []
-    }else {
-      const res = await getCurrentSelectedProjectMembersList({projectId: projectTabCurrentSelectedProject})
-      if(isApiResponseOk(res)){
-        board_users = res.data || []
-      }else {
-        board_users = []
+  setBoardUsers(projectId) {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbench/fetchCurrentSelectedProjectMembersList',
+      payload: {
+        projectId
       }
-    }
-    this.setState({
-      board_users
-    })
+    });
   }
 
   //弹窗
@@ -73,7 +66,8 @@ class Gantt extends Component{
       return
     }
     return await this.setState({
-      projectGroupLists: res.data
+      projectGroupLists: res.data,
+      projectGroupListsIsRequest: true
     })
   }
   getNewTaskInfo = obj => {
@@ -82,6 +76,19 @@ class Gantt extends Component{
     });
   };
   addTaskModalVisibleChange = flag => {
+    const { projectGroupListsIsRequest } = this.state
+    const { datas: { projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+    if(projectTabCurrentSelectedProject !== '0') {
+      this.setBoardUsers(projectTabCurrentSelectedProject)
+    } else {
+      this.setBoardUsers(current_list_group_id)
+    }
+
+    if(!projectGroupListsIsRequest) {
+      message.warn('您所需要的数据正在赶来的路上，请稍候...')
+      this.getProjectGoupLists()
+      return false
+    }
     this.setState({
       addTaskModalVisible: flag
     });
@@ -109,7 +116,6 @@ class Gantt extends Component{
       .catch(err => console.log(err));
   }
   handleGetNewTaskParams(data) {
-    // console.log({data})
     const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
     const param = {
       start_time: create_start_time,
@@ -120,6 +126,7 @@ class Gantt extends Component{
     }
     if(projectTabCurrentSelectedProject == '0') {
       param.board_id = current_list_group_id
+      param.list_id = data['list_id']
     } else {
       param.board_id = projectTabCurrentSelectedProject
       param.list_id = current_list_group_id
@@ -137,6 +144,7 @@ class Gantt extends Component{
       projectList = [],
       projectTabCurrentSelectedProject,
       current_list_group_id,
+      currentSelectedProjectMembersList = []
     } = datas;
 
     const CreateTaskProps = {
@@ -483,7 +491,7 @@ class Gantt extends Component{
             )}
             isUseInGantt
             projectIdWhenUseInGantt={projectTabCurrentSelectedProject=='0'?current_list_group_id:projectTabCurrentSelectedProject}
-            projectMemberListWhenUseInGantt={board_users}
+            projectMemberListWhenUseInGantt={currentSelectedProjectMembersList}
             projectGroupListId={projectTabCurrentSelectedProject=='0'?'':current_list_group_id}
 
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
