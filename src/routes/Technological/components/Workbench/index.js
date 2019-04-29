@@ -13,7 +13,7 @@ import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
 import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
-
+import ChangeCardView from './ChangeCardView'
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_2 = name => `technological/${name}`
@@ -745,7 +745,9 @@ const Workbench = (props) => {
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>
       <div className={indexStyles.projectListBar}><ProjectListBar /></div>
-      <div className={indexStyles.toggleView}></div>
+      <div className={indexStyles.toggleView} >
+        <ChangeCardView />
+      </div>
       </div>
       {/* <VisitControl isPropVisitControl={isPropVisitControl} handleVisitControlChange={handleVisitControlChange} /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
