@@ -517,11 +517,14 @@ class Gantt extends Component{
         <FileDetailModal
           {...this.props}
           {...CreateTaskProps}
+          {...FileModuleProps}
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
           modalVisible={previewFileModalVisibile}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           updateDatasTask={updateDatasTask}
           updateDatasFile={updateDatasFile}
+          updateTaskDatas={updateDatasTask}
+          updateFileDatas={updateDatasFile}
         />
 
         <TaskDetailModal
@@ -533,7 +536,10 @@ class Gantt extends Component{
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           updateDatasTask={updateDatasTask}
           updateDatasFile={updateDatasFile}
+          updateTaskDatas={updateDatasTask}
+          updateFileDatas={updateDatasFile}
           handleChangeCard={this.handleChangeCard.bind(this)}
+          updateDatas={updateDatasTask}
         />
 
         {addTaskModalVisible && (

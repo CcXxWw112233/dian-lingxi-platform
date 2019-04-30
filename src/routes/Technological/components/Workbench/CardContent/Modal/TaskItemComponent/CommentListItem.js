@@ -58,7 +58,7 @@ export default class CommentListItem extends React.Component {
               { pId === id &&  !judgeTimeDiffer_ten(create_time)?<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,value.id)}>
                  删除
               </div>: ''}
-              
+
             </div>
           </div>
         </div>
@@ -96,7 +96,10 @@ export default class CommentListItem extends React.Component {
         case 'board.card.update.executor.add':
           messageContainer=(
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
-              <div>{`${data.creator.name} 在任务 ${data.content.card.name} 添加了执行人 ${data.content.rela_data.name}`}</div>
+              <div>
+                {`${data.creator.name} 在任务 ${data.content.card.name} 添加了执行人 `}
+                {/*{`${data.content.rela_data && data.content.rela_data.name}`}*/}
+              </div>
               <div style={{color: '#BFBFBF', fontSize: '12px'}}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )
