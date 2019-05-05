@@ -30,7 +30,7 @@ export default class InitialNews extends React.Component {
     })
   }
   render() {
-    
+
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
     // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
@@ -43,7 +43,7 @@ export default class InitialNews extends React.Component {
       let jumpToTask = (
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
-      
+
       let jumpToFile = (
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
@@ -75,14 +75,14 @@ export default class InitialNews extends React.Component {
             </div>
           )
           break
-        case 'board.card.update.file.add':
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 上传了文件附件 「{messageValue.content.rela_data}」为「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}名称。</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
-            </div>
-          )
-          break
+        // case 'board.card.update.file.add':
+        //   messageContain = (
+        //     <div className={NewsListStyle.news_3}>
+        //       <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 上传了文件附件 「{messageValue.content.rela_data}」为「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+        //       <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+        //     </div>
+        //   )
+        //   break
         case 'board.update.description':
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -113,7 +113,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>
-              {messageValue.creator.name} 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+              {messageValue.creator.name} 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}}
               onClick={() => this.props.dispatch({
                 type: 'newsDynamic/routingJump',
                 payload: {
@@ -128,7 +128,7 @@ export default class InitialNews extends React.Component {
         case 'board.flow.cc.notice':
             messageContain = (
               <div className={NewsListStyle.news_3}>
-                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}}
                 onClick={() =>this.props.dispatch({
                   type: 'newsDynamic/routingJump',
                   payload: {
@@ -452,7 +452,7 @@ export default class InitialNews extends React.Component {
         case 'board.flow.instance.discontinue':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div> 
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div>
               {/* 「{messageValue.content.flow_node_instance.name}」 */}
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
@@ -608,20 +608,20 @@ export default class InitialNews extends React.Component {
           {value.map((val, key) => {
             const { action } = val
             let messageContain
-            
+
             switch(action) {
               case 'board.card.update.comment.add':
                 messageContain = (
                   <div className={NewsListStyle.news_3} key={key}>
                     <div className={NewsListStyle.news_3_text}> {val.creator.name} 新增了评论{currentNounPlanFilterName(TASKS)}</div>
-                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}}
                     onClick={() => this.props.dispatch({
                       type: 'newsDynamic/routingJump',
                       payload: {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
                       }
                     })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}}
                     onClick={() => this.props.dispatch({
                       type: 'newsDynamic/routingJump',
                       payload: {
@@ -637,14 +637,14 @@ export default class InitialNews extends React.Component {
                 messageContain = (
                   <div className={NewsListStyle.news_3} key={key}>
                     <div className={NewsListStyle.news_3_text}> {val.creator.name} 删除了评论{currentNounPlanFilterName(TASKS)}</div>
-                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    <div className={NewsListStyle.news_3_card}>{<span style={{color: '#1890FF', cursor: 'pointer'}}
                     onClick={() => this.props.dispatch({
                       type: 'newsDynamic/routingJump',
                       payload: {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
                       }
                     })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}}
                     onClick={() => this.props.dispatch({
                       type: 'newsDynamic/routingJump',
                       payload: {
