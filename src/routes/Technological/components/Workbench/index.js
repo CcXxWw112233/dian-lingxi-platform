@@ -735,10 +735,13 @@ const Workbench = (props) => {
       })
     }
   }
+  const smallImgUrl = 'http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-28/881babddc9545e41541cfee06eef1912.png?Expires=1556443854&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=G%2BJ4wWm%2FccWsfbbsZhE6qQa6igg%3D'
+  const broadImgUrl = "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-25/1c5de91a92639f063610eed00e655c14.png?Expires=1556528163&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=YefI1HM5BcQAZtV03SguhlazxLo%3D"
+  const commitImgUrl = 'http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-28/dff9f060b6cd0334bba5b693bb145656.png?Expires=1557048781&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=HA8oJAqjD%2BtuSaE4UnDjeQj4HrE%3D'
   const imgInfo = {
     isRealImage: true,
     isUsable: true,
-    url: "http://newdi-test.oss-cn-beijing.aliyuncs.com/2019-04-25/dfae587a10b9294a4ec49c6ad8a92cdb.png?Expires=1556279388&OSSAccessKeyId=LTAIiTOudd9oeHVo&Signature=qlcpvixLyoIRMsWdNMglTt4nxLA%3D",
+    url: commitImgUrl,
     }
   return(
     <div className={indexStyles.wrapper}>
@@ -748,7 +751,7 @@ const Workbench = (props) => {
       <div style={{margin: '50px', textAlign: 'center'}}><ZoomPicture imgInfo={imgInfo} /></div>
 
       {/* <ProjectListBar /> */}
-      {/*<EditCardDrop {...cardContentListProps}/>*/}
+      {/* <EditCardDrop {...cardContentListProps}/> */}
        {/* <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} /> */}
     </div>
   )
