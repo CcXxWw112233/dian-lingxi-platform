@@ -1,6 +1,6 @@
 .wrapper {
   position: relative;
-  outline: 1px solid red;
+  outline: 1px solid #bfbfbf;
 }
 .content_wrapper {
   width: 100%;
@@ -294,4 +294,29 @@ width: 230px;
 
 .commentItemPopoverContentCommentListItemContentUserDelete:hover {
   text-decoration: underline;
+}
+.commentItemPopoverContentCommentListItemContentUserDeleteForbidden {
+  cursor: not-allowed;
+}
+
+.pictureDisplaySegmentIndicatorWrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 99;
+  opacity: 1;
+}
+
+.pictureDisplaySegmentIndicatorWrapperOpacity {
+  opacity: 0;
+  transition: opacity .3s
+}
+
+.pictureDisplaySegmentIndicatorDisplaySegment {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  outline: 2px solid red;
 }

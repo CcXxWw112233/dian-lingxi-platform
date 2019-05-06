@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
@@ -24,7 +24,10 @@ import Cookies from "js-cookie";
 import VisitControl from './../../../../VisitControl/index'
 import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../../../services/technological/project'
 
-export default class FileDetailContent extends React.Component {
+import ZoomPicture from './../../../../../../../components/ZoomPicture/index'
+import withBodyClientDimens from './../../../../../../../components/HOC/withBodyClientDimens'
+
+class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
     const { file_resource_id, file_id } = value
@@ -56,6 +59,7 @@ export default class FileDetailContent extends React.Component {
     mentionFocus: false,
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
+    isZoomPictureFullScreenMode: false, //图评全屏模式
   }
   constructor() {
     super();
@@ -442,15 +446,62 @@ export default class FileDetailContent extends React.Component {
       default:
         break
     }
-
+  }
+  handleDeleteCommentItem = obj => {
+    const {id} = obj
+    const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits }} = this.props.model
+    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
+    this.props.updateDatasFile({
+      filePreviewPointNumCommits: filePreviewPointNumCommits.filter(i => i.id !== id)
+    })
+  }
+  async handleClickedCommentItem(flag) {
+    const { datas: {
+                filePreviewCurrentFileId,
+              } }= this.props.model
+    await this.props.updateDatasFile({
+      filePreviewCommitPointNumber: flag
+    })
+    await this.props.getPreviewFileCommits({
+      id: filePreviewCurrentFileId,
+      type: 'point'
+    })
+  }
+  getCurrentUserId = () => {
+    try {
+      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')): {}
+      return id
+    } catch (e) {
+      return ''
+    }
+  }
+  handleGetNewComment = obj => {
+    const {coordinates, comment, point_number} = obj
+    const { datas: {
+                filePreviewCurrentFileId,
+                board_id }
+              } = this.props.model
+    this.props.addFileCommit({
+      board_id,
+      point_number,
+      comment,
+      file_id: filePreviewCurrentFileId,
+      type: '1',
+      coordinates: JSON.stringify(coordinates),
+    })
+  }
+  handleZoomPictureFullScreen = (flag) => {
+    this.setState({
+      isZoomPictureFullScreenMode: flag,
+    })
   }
 
   render() {
 
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
-
+    const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { board_id, filePreviewCurrentFileId, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const getIframe = (src) => {
@@ -471,6 +522,24 @@ export default class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
+      <div style={{minWidth: '600px', minHeight: '600px', overflow: 'auto', textAlign: 'center', paddingTop: '10px'}}>
+      {filePreviewUrl && (
+            <ZoomPicture
+                imgInfo={{url: filePreviewUrl}}
+                componentInfo={{width: '550px', height: '550px'}}
+                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
+                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                handleDeleteCommentItem={this.handleDeleteCommentItem}
+                userId={this.getCurrentUserId()}
+                handleGetNewComment={this.handleGetNewComment}
+                handleFullScreen={this.handleZoomPictureFullScreen}
+              />
+        )}
+      </div>
+)
+
+    const punctuateDom_old = (
       <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
         <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
           <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
@@ -837,28 +906,29 @@ export default class FileDetailContent extends React.Component {
           </div>
 
         </div>
+        {isZoomPictureFullScreenMode && (
+          <Modal zIndex={9999999999} style={{top: 0, left: 0, height: bodyClientHeight - 200 + 'px'}} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({isZoomPictureFullScreenMode: false})}>
+          <div>
+          {filePreviewUrl && (
+            <ZoomPicture
+                imgInfo={{url: filePreviewUrl}}
+                componentInfo={{width: bodyClientWidth - 100, height: bodyClientHeight - 60}}
+                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
+                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                handleDeleteCommentItem={this.handleDeleteCommentItem}
+                userId={this.getCurrentUserId()}
+                handleGetNewComment={this.handleGetNewComment}
+                isFullScreenMode={isZoomPictureFullScreenMode}
+                handleFullScreen={this.handleZoomPictureFullScreen}
+              />
+        )}
+        </div>
+          </Modal>
+        )}
       </div>
     )
   }
 }
 
-
-
-
-
-
-
-
-// <Drawer
-//   mask={false}
-//   placement="right"
-//   closable={false}
-//   visible={true}
-//   maskClosable={true}
-//   width={420}
-//   top={172}
-//   zIndex={1010}
-//   maskStyle={{top: 60}}
-{/*>*/}
-  {/*<div>sasd</div>*/}
-{/*</Drawer>*/}
+export default withBodyClientDimens(FileDetailContent)
