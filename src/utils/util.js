@@ -1,5 +1,5 @@
 //是否同一周。以周一开始
-export const  isSameWeek = (oldTimestamp,nowTimestamp) => {
+export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24;
   var old_count = parseInt(oldTimestamp / oneDayTime);
   var now_other = parseInt(nowTimestamp / oneDayTime);
@@ -12,7 +12,7 @@ export const timeToTimestamp = (dateString) => { // 示例 '2014-04-23 18:55:49'
   return date.getTime()
 }
 //时间戳转日期(15000000000, '-', true)
-export const timestampToTimeNormal = (timestamp,split, flag) => {
+export const timestampToTimeNormal = (timestamp, split, flag) => {
   if(!timestamp){
     return false
   }
@@ -22,11 +22,11 @@ export const timestampToTimeNormal = (timestamp,split, flag) => {
   let Y = date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-  let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
-  let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
-  return flag ? Y + M + D + h + m  : Y + M + D;
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() ;
+  return flag ? Y + M + D + h + m : Y + M + D;
 }
-export const timestampToTimeNormal2 = (timestamp,split, flag) => {
+export const timestampToTimeNormal2 = (timestamp, split, flag) => {
   if(!timestamp){
     return false
   }
@@ -36,9 +36,9 @@ export const timestampToTimeNormal2 = (timestamp,split, flag) => {
   let Y = date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-  let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
-  let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
-  return !flag ? Y + M + D + h + m  : Y + M + D;
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() ;
+  return !flag ? Y + M + D + h + m : Y + M + D;
 }
 
 //时间戳转日期
@@ -51,9 +51,9 @@ export const timestampToTime = (timestamp, flag) => {
   let Y = date.getFullYear() + '年';
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
-  let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
-  let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
-  return flag ? Y + M + D + h + m  : Y + M + D;
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() ;
+  return flag ? Y + M + D + h + m : Y + M + D;
 }
 //时间戳转换为时分
 export const timestampToHM = (timestamp) => {
@@ -62,9 +62,9 @@ export const timestampToHM = (timestamp) => {
   }
   const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000: Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let h = date.getHours() < 10 ? '0' +  date.getHours() + ':' : date.getHours() + ':';
-  let m = date.getMinutes() < 10 ? '0' +  date.getMinutes()  : date.getMinutes() ;
-  return  h + m
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() ;
+  return h + m
 }
 
 //判断是否是当天
@@ -108,7 +108,7 @@ export const newsDynamicHandleTime = (timeStamp) => {
   if(!timeStamp) {
     return false
   }
-  const  now = new Date();
+  const now = new Date();
   const day = new Date(timeStamp).getDay() !== 0 ? new Date(timeStamp).getDay() : 7 ;
   const nowTime = now.getTime();
 
@@ -119,7 +119,7 @@ export const newsDynamicHandleTime = (timeStamp) => {
   const NowdifferOld = Math.floor((nowTime - timeStamp)/ (24 * 3600 * 1000)) //与本周一相差的天数1,2,3,4,5,6,7
 
   let DateDescription
-  if(isSameWeek(timeStamp,nowTime)) {
+  if(isSameWeek(timeStamp, nowTime)) {
     if(NowdifferOld === 0) {
       DateDescription = '今天'
     }else{
@@ -186,10 +186,10 @@ export const newsDynamicHandleTime = (timeStamp) => {
 }
 
 //获取url参数
-export const getUrlQueryString = (href,name) => {
+export const getUrlQueryString = (href, name) => {
   const reg = new RegExp(name +"=([^&]*)");
   const r = href.match(reg)//window.location.href.match(reg);
-  if(r!=null)return  unescape(r[1]); return null;
+  if(r!=null)return unescape(r[1]); return null;
 }
 
 //对象深拷贝
@@ -252,5 +252,37 @@ export function debounce(fn, delay) {
     timer = setTimeout(function () {
       fn.apply(context, args)
     }, delay)
+  }
+}
+
+
+// fn是我们需要包装的事件回调, delay是时间间隔的阈值
+export function throttle(fn, delay) {
+  // last为上一次触发回调的时间, timer是定时器
+  let last = 0,
+    timer = null
+  // 将throttle处理结果当作函数返回
+
+  return function() {
+    // 保留调用时的this上下文
+    let context = this
+    // 保留调用时传入的参数
+    let args = arguments
+    // 记录本次触发回调的时间
+    let now = +new Date()
+
+    // 判断上次触发的时间和本次触发的时间差是否小于时间间隔的阈值
+    if (now - last < delay) {
+      // 如果时间间隔小于我们设定的时间间隔阈值，则为本次触发操作设立一个新的定时器
+      clearTimeout(timer)
+      timer = setTimeout(function() {
+        last = now
+        fn.apply(context, args)
+      }, delay)
+    } else {
+      // 如果时间间隔超出了我们设定的时间间隔阈值，那就不等了，无论如何要反馈给用户一次响应
+      last = now
+      fn.apply(context, args)
+    }
   }
 }

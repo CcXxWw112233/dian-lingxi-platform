@@ -684,7 +684,6 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
 
@@ -725,7 +724,7 @@ export default modelExtend(projectDetail, {
       }
     },
     //获取文件详情的动态
-    * getCardCommentListAll({payload} ,{select, call, put}) {
+    * getCardCommentListAll({payload} , {select, call, put}) {
       yield put({
         type: 'updateDatas',
         payload: {
@@ -742,7 +741,7 @@ export default modelExtend(projectDetail, {
     },
 
     * getFileType({payload}, {select, call, put}) {
-      let { fileList,file_id } = payload
+      let { fileList, file_id } = payload
       let fileId = yield select(selectFilePreviewCurrentFileId)
       let res
       if(fileId) {

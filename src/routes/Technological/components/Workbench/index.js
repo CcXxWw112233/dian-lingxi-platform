@@ -741,7 +741,7 @@ const Workbench = (props) => {
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />
-      <PersonNews {...PersonNewsProps} {...NewsListProps}/>
+      < PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>
       <div className={indexStyles.projectListBar}><ProjectListBar /></div>
