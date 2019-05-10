@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent, Component } from 'react';
 import { Tooltip, message, Popover, Input, Button, Avatar, Modal } from 'antd';
 import styles from './index.less';
 import classNames from 'classnames/bind';
@@ -55,7 +55,7 @@ class ZoomPicture extends Component {
     this.commitInputRef = React.createRef();
 
     //判定为长按的时长
-    this.asLongClickTime = 500;
+    this.asLongClickTime = 300;
     //图片点击信息
     this.imgClickInfo = {
       mouseDown: {},
@@ -147,6 +147,21 @@ class ZoomPicture extends Component {
       addCommit: () => {
         const { isHideCommentList } = this.state;
         if (isHideCommentList) return;
+
+        //这里修正因为图片缩放，导致使用 ref 只能拿到上次 render 时的图片信息的问题
+        const updateImgInfo = () => {
+          let imgInfo = this.imgRef.current.getBoundingClientRect();
+          let containerInfo = this.containerRef.current.getBoundingClientRect();
+
+          this.imgClickInfo = Object.assign(
+            {},
+            this.imgClickInfo,
+            { imgInfo },
+            { containerInfo }
+          );
+        };
+        updateImgInfo()
+
         this.setState({
           isCommentMode: true,
           isLongClick: false
@@ -514,8 +529,9 @@ class ZoomPicture extends Component {
     //而不是本次点击，图片放大之后的信息
     const storeMouseUpInfo = () => {
       const { clientX, clientY, timeStamp, pageX, pageY } = e;
-      const imgInfo = this.imgRef.current.getBoundingClientRect();
-      const containerInfo = this.containerRef.current.getBoundingClientRect();
+      let imgInfo = this.imgRef.current.getBoundingClientRect();
+      let containerInfo = this.containerRef.current.getBoundingClientRect();
+
       this.imgClickInfo = Object.assign(
         {},
         this.imgClickInfo,
@@ -524,7 +540,8 @@ class ZoomPicture extends Component {
         { containerInfo }
       );
     };
-    storeMouseUpInfo();
+    storeMouseUpInfo()
+
     const { isCommentMode } = this.state;
     //如果是在图评模式
     //有两种标定图评区域的方式
@@ -545,6 +562,7 @@ class ZoomPicture extends Component {
       //如果mouse没有移动，并且没有触发 mousemove 事件， 那么说明是第一种方式
       //直接在点击位置，显示默认大小的图评块
       this.isCommitStart = false;
+
       if (
         isMouseNotMove(mouseDownX, mouseDownY, mouseUpX, mouseUpY) &&
         !this.isUserAdjustBlockSize
