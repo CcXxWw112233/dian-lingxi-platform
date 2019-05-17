@@ -146,6 +146,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     }
     if(executors.length) {
       executor = executors[0]
+      executor.user_name = executors[0]['name']
     }
 
     const imgOrAvatar = (img) => {
