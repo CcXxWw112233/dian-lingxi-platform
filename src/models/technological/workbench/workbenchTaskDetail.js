@@ -108,6 +108,7 @@ export default {
           }
         })
       }else{
+        message.error(res.message)
       }
     },
     * getBoardMembers({ payload }, { select, call, put }) { //查看项目详情信息
