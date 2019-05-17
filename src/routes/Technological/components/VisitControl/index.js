@@ -21,7 +21,7 @@ import classNames from 'classnames/bind';
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
-  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList
+  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList || []
 }))
 class VisitControl extends Component {
   constructor(props) {
@@ -161,7 +161,7 @@ class VisitControl extends Component {
       })
       return
     }
-    const { currentOrgAllMembersList } = this.props;
+    const { currentOrgAllMembersList = []} = this.props;
     const isEachMemberInPrincipalListCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       principalList.every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
@@ -237,7 +237,7 @@ class VisitControl extends Component {
 
   }
   parseOtherPrivileges = otherPrivilege => {
-    const { currentOrgAllMembersList } = this.props;
+    const { currentOrgAllMembersList = [] } = this.props;
     const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       Object.keys(otherPrivilege).every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
@@ -339,7 +339,7 @@ class VisitControl extends Component {
   };
   componentDidMount() {
     //将[id]:privilageType 对象转化为数组
-    const { otherPrivilege, principalList } = this.props;
+    const { otherPrivilege = [], principalList = [] } = this.props;
     this.parseOtherPrivileges(otherPrivilege);
     this.genPrincipalList(principalList)
   }
