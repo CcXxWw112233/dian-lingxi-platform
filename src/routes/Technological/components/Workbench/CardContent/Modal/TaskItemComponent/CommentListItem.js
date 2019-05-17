@@ -34,13 +34,13 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { datas: { cardCommentList = [] } } = this.props.model
+    const { datas: { cardCommentList = [], cardCommentAll = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
       const { full_name, avatar, text, create_time } = value
       const pId = value.user_id
-      const { id }  = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
+      const { id } = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
@@ -237,12 +237,11 @@ export default class CommentListItem extends React.Component {
       }
       return messageContainer
     }
-    if(!this.props.model.datas.cardCommentAll) return null
     return (
       <div style={{overflowY: 'auto'}} className={CommentStyles.commentListItemBox}>
         <div>
           {
-            this.props.model.datas.cardCommentAll.map((item, key) => {
+            cardCommentAll.map((item, key) => {
               return filterIssues(item)
             })
           }

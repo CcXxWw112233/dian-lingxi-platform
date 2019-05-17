@@ -24,6 +24,12 @@ export default class MeetingItem extends React.Component {
     this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
+    this.props.dispatch({
+      type: 'workbenchTaskDetail/getCardCommentListAll',
+      payload: {
+        id: id
+      }
+    })
   }
 
   render() {
