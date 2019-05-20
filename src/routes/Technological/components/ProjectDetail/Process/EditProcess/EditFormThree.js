@@ -124,7 +124,7 @@ export default class EditFormThree extends React.Component {
           "default_value": "",
           "verification_rule": "",
           "val_length": "20",
-          "is_required": "1"
+          "is_required": "0"
         }
         break
       case '2':
@@ -142,7 +142,7 @@ export default class EditFormThree extends React.Component {
           "property_name": "",
           "default_value": "",
           "verification_rule": "redio",
-          "is_required": "1",
+          "is_required": "0",
           "options_data": []
         }
         break

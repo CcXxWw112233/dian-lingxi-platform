@@ -283,9 +283,12 @@ export default class DetailConfirmInfoThree extends React.Component {
           break
         case '3':
           const { options_data = [] } = value
-          container = options_data.length ? (
+          container = (
             <ConfirmInfoThreeTwo FormCanEdit={FormCanEdit()} {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value} />
-          ): ''
+          )
+          // container = options_data.length ? (
+          //   <ConfirmInfoThreeTwo FormCanEdit={FormCanEdit()} {...this.props} parentItemKey={itemKey} itemKey={key} itemValue={value} />
+          // ): ''
           break
         case '2':
           container = (
