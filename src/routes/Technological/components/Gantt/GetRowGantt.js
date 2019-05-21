@@ -231,7 +231,7 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  //遍历
+  //遍历,做排序--交叉
   taskItemToTop() {
     const { dispatch } = this.props
 
@@ -330,14 +330,15 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id } = value2
+              const { left, top, width, height, name, id, board_id, is_realize } = value2
               return (
                 <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
                 <div className={indexStyles.specific_example} data-targetclassname="specific_example"
                      style={{
                         left: left, top: top,
                         width: (width || 6) - 6, height: (height || 20),
-                        margin: '4px 0 0 2px'
+                        margin: '4px 0 0 2px',
+                        backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
                      }}
                      onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
                 />

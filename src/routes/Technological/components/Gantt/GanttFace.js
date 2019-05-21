@@ -32,7 +32,7 @@ export default class GanttFace extends Component {
     })
     this.setGoldDateArr({init: true})
     const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
-    this.setScrollPosition({delay: 300})
+    this.initSetScrollPosition()
     this.setGanTTCardHeight()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
@@ -57,6 +57,13 @@ export default class GanttFace extends Component {
     }
     }
 
+  //  初始化设置滚动横向滚动条位置
+  initSetScrollPosition() {
+    const { datas: { ceilWidth } } = this.props.model
+    const date = new Date().getDate()
+    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复
+    this.setScrollPosition({delay: 300, position: ceilWidth * (30 - 3 + date - 1)})
+  }
   //设置滚动条位置
   setScrollPosition({delay = 300, position = 200}) {
     const that = this

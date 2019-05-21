@@ -148,7 +148,8 @@ export default {
       //设置分组区域高度, 并为每一个任务新增一条
       for (let i = 0; i < list_group.length; i ++ ) {
         const list_data = list_group[i]['list_data']
-        const length = (list_data.length || 1) + 1
+        // const length = (list_data.length || 1) + 1
+        const length = list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
         group_rows[i] = length
