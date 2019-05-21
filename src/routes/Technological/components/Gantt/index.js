@@ -160,8 +160,8 @@ class Gantt extends Component{
               break
             }
           }
+          break
         }
-        break
       }
 
     } else {

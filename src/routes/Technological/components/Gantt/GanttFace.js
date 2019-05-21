@@ -69,7 +69,11 @@ export default class GanttFace extends Component {
     const that = this
     const target = this.refs.gantt_card_out_middle
     setTimeout(function () {
-      target.scrollTo(position, 0)
+      if(target.scrollTo) {
+        target.scrollTo(position, 0)
+      }else {
+        target.scrollLeft = position
+      }
     }, delay)
   }
 

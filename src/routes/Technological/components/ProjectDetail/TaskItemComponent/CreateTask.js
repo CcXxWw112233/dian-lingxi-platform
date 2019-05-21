@@ -46,7 +46,12 @@ export default class CreateTask extends React.Component {
 
   componentDidMount() {
     const target = this.refs.outerMost
-    target.scrollTo(this.scrollLeft, 0)
+    // target.scrollTo(this.scrollLeft, 0)
+    if(target.scrollTo) {
+      target.scrollTo(this.scrollLeft, 0)
+    }else {
+      target.scrollLeft = this.scrollLeft
+    }
 
     //在本地监听一个scroll事件，缓存下来持久化，在model
     let latoutNode = document.getElementById("taskAppOuterMost");
@@ -184,6 +189,8 @@ export default class CreateTask extends React.Component {
     }
     if(target.scrollTo) {
       target.scrollTo(this.scrollLeft, 0)
+    } else {
+      target.scrollLeft = this.scrollLeft
     }
   }
   fnScroll(e) {

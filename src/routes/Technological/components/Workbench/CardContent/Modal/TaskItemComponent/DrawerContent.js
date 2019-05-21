@@ -181,6 +181,7 @@ class DrawContent extends React.Component {
     this.props.completeTask(obj)
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
     this.props.updateTaskDatas({drawContent})
+    this.handleChangeCard({drawContent, card_id})
   }
   titleTextAreaChangeBlur(e) {
     const { datas: { drawContent = {} } } = this.props.model
