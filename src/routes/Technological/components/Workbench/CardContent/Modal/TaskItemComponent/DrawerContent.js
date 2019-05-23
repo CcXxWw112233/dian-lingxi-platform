@@ -92,6 +92,11 @@ class DrawContent extends React.Component {
   initSetAttachmentFileList(props) {
     const { datas: { drawContent = {}} } = props.model
     let { attachment_data = [] } = drawContent
+    const attachment_fileList_local = this.state.attachment_fileList || []
+    if(attachment_data.length == attachment_fileList_local.length) {
+      return
+    }
+
     let attachment_fileList = []
     for(let i = 0; i < attachment_data.length; i++) {
       if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
