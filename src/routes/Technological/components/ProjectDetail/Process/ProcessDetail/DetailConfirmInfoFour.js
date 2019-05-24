@@ -53,6 +53,8 @@ export default class DetailConfirmInfoFour extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
+    //业务逻辑修改deadline_value作废
+    processEditDatas[itemKey]['deadline'] = timeToTimestamp(dateString)
     this.props.updateDatasProcess({
       processEditDatas
     })
@@ -123,7 +125,7 @@ export default class DetailConfirmInfoFour extends React.Component {
     const { board_id } = projectDetailInfoData
 
     const { curr_node_sort, status } = processInfo //当前节点
-    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, recipients = [] } = processEditDatas[itemKey]
+    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, deadline, is_workday, sort, enable_opinion, enable_revocation, recipients = [] } = processEditDatas[itemKey]
     // console.log( processEditDatas[itemKey])
     //推进人来源
     const users = projectDetailInfoData.data
@@ -201,9 +203,25 @@ export default class DetailConfirmInfoFour extends React.Component {
           container = (<div style={{color: '#595959'}}>无限期</div>)
           break
         case '2':
+          // container = (
+          //   <div style={{color: '#595959'}}>
+          //     {timestampToTimeNormal(deadline, '/', true)}
+          //   </div>
+          // )
           container = (
-            <div style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '/', true)}
+            <div style={{
+              color: (Number(sort) >= Number(curr_node_sort))?'#1890FF': '#595959',
+              position: 'relative'}}>
+              {timestampToTimeNormal(deadline, '/', true)}
+              {
+                (Number(sort) >= Number(curr_node_sort)) && (
+                  <DatePicker onChange={this.datePickerChange.bind(this)}
+                              placeholder={'选择截止时间'}
+                              showTime
+                              format="YYYY-MM-DD HH:mm"
+                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '108px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+                )
+              }
             </div>
           )
           break
@@ -344,7 +362,9 @@ export default class DetailConfirmInfoFour extends React.Component {
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
-              {filterDueTime(deadline_type)}
+              {/*{filterDueTime(deadline_type)}*/}
+              {filterDueTime('2')}
+
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>

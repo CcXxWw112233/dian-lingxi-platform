@@ -71,6 +71,9 @@ export default class ConfirmInfoTwo extends React.Component {
     const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
     const { itemKey } = this.props
     processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
+    //业务逻辑修改deadline_value作废
+    processEditDatas[itemKey]['deadline'] = timeToTimestamp(dateString)
+
     this.props.updateDatasProcess({
       processEditDatas
     })
@@ -296,7 +299,10 @@ export default class ConfirmInfoTwo extends React.Component {
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
-              {filterDueTime(deadline_type)}
+              {/*原先可以设置无限期/手动设置/固定天数*/}
+              {/*{filterDueTime(deadline_type)}*/}
+              {/*只能手动设置*/}
+              {filterDueTime('2')}
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
