@@ -900,12 +900,18 @@ class ZoomPicture extends Component {
     return findedCommentItem.coordinates;
   };
   handleCommitPublishText = (e, isNewAComment) => {
+    const { commitPublishText, shouldShowCommentDetailFlag } = this.state;
+    if(!commitPublishText || !commitPublishText.trim()) {
+        message.info({
+          content: '请不要提交空内容'
+        })
+        return
+    }
     const { handleGetNewComment } = this.props;
     if (e) e.stopPropagation();
     const { x, y, width, height } = isNewAComment
       ? this.getCommitBlockPositionInfo()
       : this.getCommitBlockPositionInfoFromExist();
-    const { commitPublishText, shouldShowCommentDetailFlag } = this.state;
     handleGetNewComment({
       coordinates: { x, y, width, height },
       comment: commitPublishText,
