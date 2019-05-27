@@ -75,7 +75,8 @@ export default class EditFormOne extends React.Component {
   mentionOnChange(contentState){
     // console.log(111)
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    // const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace(/\s/, '').replace('@', '').replace(/@/gim, ',').replace(/\s,/gim, ',') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型

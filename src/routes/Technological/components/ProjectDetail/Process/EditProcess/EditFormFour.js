@@ -74,7 +74,8 @@ export default class EditFormFour extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    // const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace(/\s/, '').replace('@', '').replace(/@/gim, ',').replace(/\s,/gim, ',') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   mentionOnChange2(contentState){
@@ -87,7 +88,9 @@ export default class EditFormFour extends React.Component {
     const { datas: { projectDetailInfoData = {} }} = this.props.model
     const users = projectDetailInfoData.data
     //将选择的名称转化成id
-    let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
+    // let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
+    let strNew = str.replace(/\s@/gim, ',').replace(/@/, ',').trim()
+
     let strNewArray = strNew.split(',')
     for(let i = 0; i < strNewArray.length; i++) {
       for(let j = 0; j < users.length; j++) {
@@ -101,7 +104,9 @@ export default class EditFormFour extends React.Component {
 
     const e = toContentState(strNew)
     const a = toString(e)
-    const b = a.length > 2 ? a.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : a
+    // const b = a.length > 2 ? a.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : a
+    const b = a.length > 2 ? a.replace(/\s/, '').replace('@', '').replace(/@/gim, ',').replace(/\s,/gim, ',') : a
+
     this.updateEdit({value: b}, 'recipients')
 
   }

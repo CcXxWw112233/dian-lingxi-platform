@@ -71,7 +71,8 @@ export default class EditFormFive extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    // const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace(/\s/, '').replace('@', '').replace(/@/gim, ',').replace(/\s,/gim, ',') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型

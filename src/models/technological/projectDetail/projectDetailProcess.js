@@ -85,7 +85,7 @@ export default modelExtend(projectDetail, {
             type: 'updateDatas',
             payload: {
               //流程
-              processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+              processPageFlagStep: '2', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
               node_type: '1', //节点类型， 默认1
               processCurrentEditStep: 0, //编辑第几步，默认 0
               processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
