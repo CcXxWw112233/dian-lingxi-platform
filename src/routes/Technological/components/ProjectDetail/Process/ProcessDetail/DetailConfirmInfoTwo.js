@@ -92,19 +92,39 @@ export default class DetailConfirmInfoTwo extends React.Component {
       })
     }
   }
+//截止日期
+  datePikerOnOpenChange(bool) {
+    //关闭后
+    if(!bool) {
+      const { due_time } = this.state
+      if(!due_time) {
+        return
+      }
+      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { itemKey, dispatch } = this.props
+      const { id } = processEditDatas[itemKey]
+      processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
+      //业务逻辑修改deadline_value作废
+      processEditDatas[itemKey]['deadline'] = timeToTimestamp(due_time)
+      this.props.updateDatasProcess({
+        processEditDatas
+      })
+      dispatch({
+        type: 'projectDetailProcess/setDueTimeInFlowsNode',
+        payload: {
+          deadline: timeToTimestamp(due_time),
+          flow_node_instance_id: id
+        }
+      })
+    }
+  }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return
+    }
     this.setState({
       due_time: dateString
     })
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey } = this.props
-    processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    //业务逻辑修改deadline_value作废
-    processEditDatas[itemKey]['deadline'] = timeToTimestamp(dateString)
-    this.props.updateDatasProcess({
-      processEditDatas
-    })
-
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
@@ -350,10 +370,11 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div style={{
               color: (Number(sort) >= Number(curr_node_sort))?'#1890FF': '#595959',
               position: 'relative'}}>
-              {timestampToTimeNormal(deadline, '/', true)}
+              {timestampToTimeNormal(deadline, '/', true) || '设置截止时间'}
               {
                 (Number(sort) >= Number(curr_node_sort)) && (
                   <DatePicker onChange={this.datePickerChange.bind(this)}
+                              onOpenChange={this.datePikerOnOpenChange.bind(this)}
                               placeholder={'选择截止时间'}
                               showTime
                               format="YYYY-MM-DD HH:mm"

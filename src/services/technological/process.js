@@ -171,12 +171,29 @@ export async function workflowDelete(data) {
     method: 'DELETE',
     data
   })
-} 
-//删除流程评论 
+}
+//删除流程评论
 export async function deleteWorkFlowComment(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment/${data.id}`,
     method: 'DELETE',
+    data
+  })
+}
+
+//设置流程节点截止日期
+export async function setDueTimeInFlowsNode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/deadline/set`,
+    method: 'PUT',
+    data
+  })
+}
+//设置流程实例截止日期
+export async function setDueTimeInFlowsInstance(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/workflow/instance/deadline/set`,
+    method: 'PUT',
     data
   })
 }
