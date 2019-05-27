@@ -48,17 +48,39 @@ export default class DetailConfirmInfoOne extends React.Component {
     }
   }
 
+  //截止日期
+  datePikerOnOpenChange(bool) {
+    //关闭后
+    if(!bool) {
+      const { due_time } = this.state
+      if(!due_time) {
+        return
+      }
+      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { itemKey, dispatch } = this.props
+      const { id } = processEditDatas[itemKey]
+      processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
+      //业务逻辑修改deadline_value作废
+      processEditDatas[itemKey]['deadline'] = timeToTimestamp(due_time)
+      this.props.updateDatasProcess({
+        processEditDatas
+      })
+      dispatch({
+        type: 'projectDetailProcess/setDueTimeInFlowsNode',
+        payload: {
+          deadline: timeToTimestamp(due_time),
+          flow_node_instance_id: id
+        }
+      })
+    }
+  }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return
+    }
     this.setState({
       due_time: dateString
     })
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey } = this.props
-    processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatasProcess({
-      processEditDatas
-    })
-
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
@@ -124,7 +146,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { itemKey, itemValue } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
     const { curr_node_sort, status } = processInfo //当前节点
-    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
+    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
     // console.log( processEditDatas[itemKey])
     //推进人来源
     const users = projectDetailInfoData.data
@@ -170,7 +192,7 @@ export default class DetailConfirmInfoOne extends React.Component {
                       </Tooltip>
                     )
                 })}
-                
+
                 {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
               </div>)
           break
@@ -203,8 +225,20 @@ export default class DetailConfirmInfoOne extends React.Component {
           break
         case '2':
           container = (
-            <div style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '/', true)}
+            <div style={{
+              color: (Number(sort) >= Number(curr_node_sort))?'#1890FF': '#595959',
+              position: 'relative'}}>
+              {timestampToTimeNormal(deadline, '/', true) || '设置截止时间'}
+              {
+                (Number(sort) >= Number(curr_node_sort)) && (
+                  <DatePicker onChange={this.datePickerChange.bind(this)}
+                              onOpenChange={this.datePikerOnOpenChange.bind(this)}
+                              placeholder={'选择截止时间'}
+                              showTime
+                              format="YYYY-MM-DD HH:mm"
+                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '108px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+                )
+              }
             </div>
           )
           break
@@ -308,7 +342,7 @@ export default class DetailConfirmInfoOne extends React.Component {
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               {/* <div className={indexStyles.ConfirmInfoOut_1_top_left_left} style={filterBorderStyle(sort)}>{itemKey + 1}</div> */}
-              
+
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
                 <div style={{marginTop:'10px'}} > <Icon type="flag" /> 里程碑</div>
@@ -316,7 +350,9 @@ export default class DetailConfirmInfoOne extends React.Component {
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right} style={{display: 'flex'}}>
               {filterAssignee(assignee_type)}
-              {filterDueTime(deadline_type)}
+              {/*{filterDueTime(deadline_type)}*/}
+              {filterDueTime('2')}
+
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>
@@ -347,7 +383,7 @@ export default class DetailConfirmInfoOne extends React.Component {
         <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible = {this.state.opinionModalVisible}/>
         </div>
       </div>
-        
+
       // </div>
     )
   }
