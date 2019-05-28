@@ -14,6 +14,8 @@ import {
   PROJECTS
 } from '../../../../globalset/js/constant';
 import AddModalForm from './AddModalForm';
+import CreateProject from './components/CreateProject/index';
+
 import ElseProject from './ElseProject';
 
 @connect(({ project }) => ({
@@ -57,7 +59,8 @@ class ProjectItems extends Component {
       <div className={styles.wrapper}>
         {this.renderAddProject()}
         {this.renderProjectItem()}
-        <AddModalForm {...this.props} />
+        {/*<AddModalForm {...this.props} />*/}
+        <CreateProject {...this.props}/>
       </div>
     );
   }
