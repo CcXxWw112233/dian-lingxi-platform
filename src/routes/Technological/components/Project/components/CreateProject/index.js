@@ -16,8 +16,8 @@ const { Option } = Select;
 
 class CreateProject extends React.Component {
   state = {
-    step: 2,
-    step_2_type: 'copy', // normal / copy step = 2 时 默认类型/复制
+    step: 1,
+    step_2_type: 'normal', // normal / copy step = 2 时 默认类型/复制
     appsArray: [],
     stepOneContinueDisabled: true,
     stepTwoContinueDisabled: true,
@@ -27,6 +27,7 @@ class CreateProject extends React.Component {
     projects: [], //带有app列表的项目列表//
     select_project_id: undefined,//
     project_apps: [], //选择board后的app列表
+    copy_value: {}, //复制的值
   }
   componentWillReceiveProps(nextProps) {
     const { datas = {}} = nextProps.model
@@ -113,6 +114,7 @@ class CreateProject extends React.Component {
   // 提交表单
   handleSubmit = (e) => {
     e.preventDefault();
+    const { step_2_type, select_project_id, copy_value = {} } = this.state
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_name'] = this.state.board_name
@@ -124,6 +126,13 @@ class CreateProject extends React.Component {
           }
         }
         values['apps'] = appsString
+        if(step_2_type == 'copy') {
+          const copy_obj = {
+            board_id: select_project_id,
+            ...copy_value
+          }
+          values['copy'] = JSON.stringify(copy_obj)
+        }
 
         //参与人
         // if(this.state.users) {
@@ -197,9 +206,23 @@ class CreateProject extends React.Component {
     const { step_2_type } = this.state
     this.setState({
       step_2_type: step_2_type == 'normal'? 'copy': 'normal',
-      project_apps: []
+      project_apps: [],
+      select_project_id: undefined,
+      appsArray: [],
+      stepTwoContinueDisabled: true,
     })
   }
+  setCopyValue = (data) => {
+    console.log('ssss',1, data)
+    const { copy_value = {} } = this.state
+    console.log('ssss',2,copy_value)
+    const copyValueNew = Object.assign(copy_value, data)
+    console.log('sss',3,copyValueNew)
+    this.setState({
+      copy_value: copyValueNew
+    })
+  }
+
   render() {
     const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [], select_project_id  } = this.state
     const { modal: { modalVisible }, model, handleCancel } = this.props;
@@ -251,7 +274,7 @@ class CreateProject extends React.Component {
             <div style={{margin: '0 auto', width: 392}}>
               {appsList.map((value, key) => {
                 return (
-                  <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                 )
               })}
             </div>
@@ -269,44 +292,38 @@ class CreateProject extends React.Component {
     const step_2_copy = (
       <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>复制现有项目</div>
-        {select_project_id? (
-          <div className={indexStyles.operateAreaOut}>
-            <div className={indexStyles.operateArea}>
-              <Select
-                value={select_project_id}
-                // showSearch
-                style={{ width: '100%' }}
-                size={'large'}
-                placeholder="选择项目"
-                optionFilterProp="children"
-                onChange={this.selectProjectChange}
-                // filterOption={(input, option) =>
-                //   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                // }
-              >
-                {projects.map((value, key) => {
-                  const { board_id, board_name } = value
-                  return (
-                    <Option value={board_id} key={board_id}>{board_name}</Option>
-                  )
-                })}
-              </Select>
+        <div className={indexStyles.operateAreaOut}>
+          <div className={indexStyles.operateArea}>
+            <Select
+              value={select_project_id}
+              style={{ width: '100%' }}
+              size={'large'}
+              placeholder="选择项目"
+              optionFilterProp="children"
+              onChange={this.selectProjectChange}
+            >
+              {projects.map((value, key) => {
+                const { board_id, board_name } = value
+                return (
+                  <Option value={board_id} key={board_id}>{board_name}</Option>
+                )
+              })}
+            </Select>
+            {select_project_id? (
               <div style={{margin: '0 auto', width: 392}}>
                 {project_apps.map((value, key) => {
                   return (
-                    <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                   )
                 })}
               </div>
-              <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
-            </div>
+            ):(
+              <div className={indexStyles.no_select_board}>选择项目后进行下一步操作</div>
+            )}
+
+            <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
           </div>
-        ):(
-          <div className={indexStyles.operateAreaOut}>
-            <div className={indexStyles.operateArea}>
-            </div>
-          </div>
-        )}
+        </div>
 
         <div style={{marginTop: 20, marginBottom: 40, }}>
           <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
@@ -332,7 +349,7 @@ class CreateProject extends React.Component {
     return(
       <div>
         <CustormModal
-          visible={true} //modalVisible
+          visible={modalVisible} //modalVisible
           maskClosable={false}
           width={472}
           footer={null}
