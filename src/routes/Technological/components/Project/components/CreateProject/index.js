@@ -24,8 +24,9 @@ class CreateProject extends React.Component {
     stepThreeContinueDisabled: true,
     completeValidation: false, //完成滑块验证
     users: [], //被邀请人
-    projects: [], //带有app列表的项目列表
-    project_apps: []
+    projects: [], //带有app列表的项目列表//
+    select_project_id: undefined,//
+    project_apps: [], //选择board后的app列表
   }
   componentWillReceiveProps(nextProps) {
     const { datas = {}} = nextProps.model
@@ -176,6 +177,7 @@ class CreateProject extends React.Component {
     const { projects = [] } = this.state
     const apps = (projects.find(item => board_id == item.board_id) || {}).apps
     this.setState({
+      select_project_id: board_id,
       project_apps: apps
     })
   }
@@ -191,8 +193,15 @@ class CreateProject extends React.Component {
       }
     })
   }
+  setStepTwotype = () => {
+    const { step_2_type } = this.state
+    this.setState({
+      step_2_type: step_2_type == 'normal'? 'copy': 'normal',
+      project_apps: []
+    })
+  }
   render() {
-    const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [] } = this.state
+    const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [], select_project_id  } = this.state
     const { modal: { modalVisible }, model, handleCancel } = this.props;
     const { datas = { }} = model
     const { appsList = [] } = datas
@@ -202,25 +211,29 @@ class CreateProject extends React.Component {
     const step_1 = (
       <Form style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
-        {/* 项目名称 */}
-        <FormItem style={{width: 336}}>
-          {getFieldDecorator('board_name', {
-            // initialValue:
-          })(
-            <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
-                   onChange={this.boardNameChange.bind(this)}
-                   style={{height: 40}}/>
-          )}
-        </FormItem>
-        {/* 项目描述 */}
-        <FormItem style={{width: 336}}>
-          {getFieldDecorator('description', {
-            // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
-          })(
-            <TextArea style={{height: 208, resize: 'none'}} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
-                      onChange={this.descriptionChange.bind(this)}/>
-          )}
-        </FormItem>
+        <div className={indexStyles.operateAreaOut}>
+          <div className={indexStyles.operateArea}>
+            {/* 项目名称 */}
+            <FormItem style={{width: 336}}>
+              {getFieldDecorator('board_name', {
+                // initialValue:
+              })(
+                <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
+                       onChange={this.boardNameChange.bind(this)}
+                       style={{height: 40}}/>
+              )}
+            </FormItem>
+            {/* 项目描述 */}
+            <FormItem style={{width: 336}}>
+              {getFieldDecorator('description', {
+                // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
+              })(
+                <TextArea style={{height: 208, resize: 'none'}} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
+                          onChange={this.descriptionChange.bind(this)}/>
+              )}
+            </FormItem>
+          </div>
+        </div>
         {/* 确认 */}
         <FormItem
         >
@@ -233,14 +246,19 @@ class CreateProject extends React.Component {
     const step_2 = (
       <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
-        <div style={{margin: '0 auto', width: 392}}>
-          {appsList.map((value, key) => {
-            return (
-              <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
-            )
-          })}
+        <div className={indexStyles.operateAreaOut}>
+          <div className={indexStyles.operateArea}>
+            <div style={{margin: '0 auto', width: 392}}>
+              {appsList.map((value, key) => {
+                return (
+                  <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                )
+              })}
+            </div>
+            <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>从现有项目复制</div>
+          </div>
         </div>
-        <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}}>从现有项目复制</div>
+
         <div style={{marginTop: 20, marginBottom: 40, }}>
           <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
           <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
@@ -251,32 +269,45 @@ class CreateProject extends React.Component {
     const step_2_copy = (
       <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>复制现有项目</div>
-        <Select
-          showSearch
-          style={{ width: '100%' }}
-          size={'large'}
-          placeholder="选择项目"
-          optionFilterProp="children"
-          onChange={this.selectProjectChange}
-          filterOption={(input, option) =>
-            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          {projects.map((value, key) => {
-            const { board_id, board_name } = value
-            return (
-              <Option value={board_id} key={board_id}>{board_name}</Option>
-            )
-          })}
-        </Select>
-        <div style={{margin: '0 auto', width: 392}}>
-          {project_apps.map((value, key) => {
-            return (
-              <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
-            )
-          })}
-        </div>
-        <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}}>从现有项目复制</div>
+        {select_project_id? (
+          <div className={indexStyles.operateAreaOut}>
+            <div className={indexStyles.operateArea}>
+              <Select
+                value={select_project_id}
+                // showSearch
+                style={{ width: '100%' }}
+                size={'large'}
+                placeholder="选择项目"
+                optionFilterProp="children"
+                onChange={this.selectProjectChange}
+                // filterOption={(input, option) =>
+                //   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                // }
+              >
+                {projects.map((value, key) => {
+                  const { board_id, board_name } = value
+                  return (
+                    <Option value={board_id} key={board_id}>{board_name}</Option>
+                  )
+                })}
+              </Select>
+              <div style={{margin: '0 auto', width: 392}}>
+                {project_apps.map((value, key) => {
+                  return (
+                    <StepTwoListItem itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                  )
+                })}
+              </div>
+              <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
+            </div>
+          </div>
+        ):(
+          <div className={indexStyles.operateAreaOut}>
+            <div className={indexStyles.operateArea}>
+            </div>
+          </div>
+        )}
+
         <div style={{marginTop: 20, marginBottom: 40, }}>
           <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
           <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
@@ -290,13 +321,11 @@ class CreateProject extends React.Component {
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
         {/* 他人信息 */}
         <InviteOthers isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
-          {/* 确认 */}
-        <FormItem>
-          <div style={{marginTop: 20, marginBottom: 40, }}>
-            <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
-            <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
-          </div>
-        </FormItem>
+        {/* 确认 */}
+        <div style={{marginTop: 20, marginBottom: 20, }}>
+          <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
+          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
+        </div>
       </Form>
     )
 
@@ -310,7 +339,7 @@ class CreateProject extends React.Component {
           destroyOnClose
           style={{textAlign: 'center'}}
           onCancel={this.onCancel}
-          overInner={( <div style={{height: step=== 2 ? 440: step === 3 ? 520 : 'auto' }}>
+          overInner={( <div style={{height: step=== 2 ? 440: 'auto' }}>
             <div style={{display: step === 1?'block': 'none'}}>
               {step_1}
             </div>
