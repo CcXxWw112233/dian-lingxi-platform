@@ -175,7 +175,7 @@ export default class PagingnationContent extends React.Component {
             style={{backgroundColor: '#f5f5f5', marginTop: 4}}>
             {listData.map((value, key) => {
               return (
-                <Panel header={<FlowsInstanceItem itemValue={value} dispatch={this.props.dispatch} processItemClick={this.processItemClick.bind(this)}/>} key={key} style={customPanelStyle} />
+                <Panel header={<FlowsInstanceItem itemValue={value} status={status} dispatch={this.props.dispatch} processItemClick={this.processItemClick.bind(this)}/>} key={key} style={customPanelStyle} />
               )
             })}
           </Collapse>

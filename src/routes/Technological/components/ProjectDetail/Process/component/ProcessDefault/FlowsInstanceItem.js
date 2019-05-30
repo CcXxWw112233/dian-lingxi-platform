@@ -89,7 +89,7 @@ export default class FlowsInstanceItem extends Component {
   render() {
 
     const { due_time } = this.state
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, status } = this.props
     const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num, deadline } = itemValue
 
     return (
