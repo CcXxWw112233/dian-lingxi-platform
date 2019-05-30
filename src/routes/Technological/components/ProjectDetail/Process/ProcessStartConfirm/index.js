@@ -36,9 +36,9 @@ export default class ProcessStartConfirm extends React.Component {
       //     return false
       //   }
       // }
-      if(!currentData['deadline_value'] || currentData['deadline_value'].length < 10) {
-        return false
-      }
+      // if(!currentData['deadline_value'] || currentData['deadline_value'].length < 10) {
+      //   return false
+      // }
 
       if(currentData['assignee_type'] === '2'){
         if(!currentData['assignees']) {
