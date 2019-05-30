@@ -22,13 +22,25 @@ import ElseProject from './ElseProject';
   currentProjectGroupProjectList: project.datas.currentProjectGroupProjectList,
 }))
 class ProjectItems extends Component {
+
+  state = {
+    addProjectModalVisible: false,
+  }
+
+  setAddProjectModalVisible = () => {
+    const { addProjectModalVisible } = this.state
+    this.setState({
+      addProjectModalVisible: !addProjectModalVisible
+    })
+  }
+
   addItem = (e) => {
     if(e) e.preventDefault()
     if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
     }
-    this.props.showModal();
+    this.setAddProjectModalVisible()
   };
 
   renderAddProject = () => {
@@ -55,12 +67,21 @@ class ProjectItems extends Component {
     );
   };
   render() {
+    const { addProjectModalVisible } = this.state
+    const { model = { } } = this.props;
+    const { datas: { appsList = [] }} = model
+
     return (
       <div className={styles.wrapper}>
         {this.renderAddProject()}
         {this.renderProjectItem()}
         {/*<AddModalForm {...this.props} />*/}
-        <CreateProject {...this.props}/>
+        <CreateProject
+          addNewProject={this.props.addNewProject}
+          setAddProjectModalVisible={this.setAddProjectModalVisible}
+          addProjectModalVisible={addProjectModalVisible}
+          appsList={appsList}
+        />
       </div>
     );
   }

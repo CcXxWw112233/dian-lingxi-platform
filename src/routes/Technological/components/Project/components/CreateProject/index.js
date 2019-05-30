@@ -30,12 +30,6 @@ class CreateProject extends React.Component {
     copy_value: {}, //复制的值
   }
   componentWillReceiveProps(nextProps) {
-    const { datas = {}} = nextProps.model
-    const { appsList = [] } = datas
-    // this.setState({
-    //   appsArray: new Array(appsList.length)
-    // })
-
   }
   componentDidMount() {
     this.getProjectList()
@@ -83,7 +77,7 @@ class CreateProject extends React.Component {
     this.setState({
       step: 1
     })
-    this.props.hideModal()
+    this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible()
   }
 
   //step 2 表单单项button点击
@@ -213,11 +207,8 @@ class CreateProject extends React.Component {
     })
   }
   setCopyValue = (data) => {
-    console.log('ssss',1, data)
     const { copy_value = {} } = this.state
-    console.log('ssss',2,copy_value)
     const copyValueNew = Object.assign(copy_value, data)
-    console.log('sss',3,copyValueNew)
     this.setState({
       copy_value: copyValueNew
     })
@@ -225,9 +216,8 @@ class CreateProject extends React.Component {
 
   render() {
     const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [], select_project_id  } = this.state
-    const { modal: { modalVisible }, model, handleCancel } = this.props;
-    const { datas = { }} = model
-    const { appsList = [] } = datas
+    const { addProjectModalVisible, appsList = [] } = this.props;
+
     const { getFieldDecorator } = this.props.form;
 
     //编辑名称
@@ -349,7 +339,7 @@ class CreateProject extends React.Component {
     return(
       <div>
         <CustormModal
-          visible={modalVisible} //modalVisible
+          visible={addProjectModalVisible} //modalVisible
           maskClosable={false}
           width={472}
           footer={null}

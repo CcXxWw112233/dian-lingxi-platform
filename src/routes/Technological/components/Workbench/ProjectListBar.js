@@ -4,7 +4,9 @@ import { Dropdown, Menu, message } from 'antd';
 import styles from './index.less';
 import ProjectListBarCell from './ProjectListBarCell';
 import classNames from 'classnames/bind';
-import AddModalFormWithExplicitProps from './../Project/AddModalFormWithExplicitProps';
+// import AddModalFormWithExplicitProps from './../Project/AddModalFormWithExplicitProps';
+import CreateProject from './../Project/components/CreateProject/index';
+
 import { checkIsHasPermission } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
 import globalStyles from './../../../../globalset/css/globalClassName.less'
@@ -17,7 +19,7 @@ class ProjectListBar extends Component {
     this.listRef = React.createRef();
     this.state = {
       dropDownMenuItemList: [],
-      addNewProjectModalVisible: false
+      addProjectModalVisible: false
     };
   }
   handleClickProjectItem = id => {
@@ -57,7 +59,7 @@ class ProjectListBar extends Component {
     this.handleClickProjectItem(key);
   };
   handleCreateProject = () => {
-    this.showModal()
+    this.setAddProjectModalVisible()
   };
   getUerInfoFromLocalStorage = () => {
     try {
@@ -87,6 +89,23 @@ class ProjectListBar extends Component {
       }
     );
   };
+  setAddProjectModalVisible = () => {
+    const { dispatch } = this.props
+    const { addProjectModalVisible } = this.state
+    this.setState({
+      addProjectModalVisible: !addProjectModalVisible
+    }, () => {
+      if(!addProjectModalVisible) {
+        dispatch({
+          type: 'project/getAppsList',
+          payload: {
+            type: '2'
+          }
+        });
+      }
+    })
+  }
+
   handleSubmitNewProject = data => {
     const { dispatch } = this.props;
     Promise.resolve(
@@ -102,7 +121,7 @@ class ProjectListBar extends Component {
         });
       })
       .then(() => {
-        this.hideModal();
+        this.setAddProjectModalVisible();
       });
   };
   isVisitor = param => {
@@ -180,7 +199,9 @@ class ProjectListBar extends Component {
   };
   render() {
     const { project, projectList, projectTabCurrentSelectedProject } = this.props;
-    const { dropDownMenuItemList, addNewProjectModalVisible } = this.state;
+    const { datas = { }} = project
+    const { appsList = [] } = datas
+    const { dropDownMenuItemList, addNewProjectModalVisible, addProjectModalVisible } = this.state;
     let projectListBarAllClass = cx({
       [styles.projectListBarAll]: true,
       [styles.projectListBarCellActive]:
@@ -242,14 +263,22 @@ class ProjectListBar extends Component {
             </div>
           </Dropdown>
         )}
-        {addNewProjectModalVisible && (
-          <AddModalFormWithExplicitProps
-            addNewProjectModalVisible={addNewProjectModalVisible}
-            key="1"
-            hideModal={this.hideModal}
-            showModal={this.showModal}
-            project={project}
-            handleSubmitNewProject={this.handleSubmitNewProject}
+        {/*{addNewProjectModalVisible && (*/}
+          {/*<AddModalFormWithExplicitProps*/}
+            {/*addNewProjectModalVisible={addNewProjectModalVisible}*/}
+            {/*key="1"*/}
+            {/*hideModal={this.hideModal}*/}
+            {/*showModal={this.showModal}*/}
+            {/*project={project}*/}
+            {/*handleSubmitNewProject={this.handleSubmitNewProject}*/}
+          {/*/>*/}
+        {/*)}*/}
+        {addProjectModalVisible && (
+          <CreateProject
+            setAddProjectModalVisible={this.setAddProjectModalVisible}
+            addProjectModalVisible={addProjectModalVisible}
+            appsList={appsList}
+            addNewProject={this.handleSubmitNewProject}
           />
         )}
       </div>
