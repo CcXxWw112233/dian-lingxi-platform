@@ -12,12 +12,9 @@ import {
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
 import {getProcessListByType} from "../../../../../../../services/technological/process";
-import {
-  selectProcessComepletedList, selectProcessDoingList,
-  selectProcessStopedList
-} from "../../../../../../../models/technological/select";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
 import ProccessDetailModal from '../../../../Workbench/CardContent/Modal/ProccessDetailModal'
+import FlowsInstanceItem from './FlowsInstanceItem'
 
 const Panel = Collapse.Panel;
 
@@ -34,32 +31,31 @@ export default class PagingnationContent extends React.Component {
     this.getProcessListByType()
   }
   componentWillUnmount() {
-    const { status } = this.props
-    let listName
-    switch (status ) {
-      case '1':
-        listName = 'processDoingList'
-        break
-      case '2':
-        listName = 'processStopedList'
-        break
-      case '3':
-        listName = 'processComepletedList'
-        break
-      default:
-        listName = 'processDoingList'
-        break
-    }
-    this.props.updateDatasProcess({
-      [listName]: [],
-    })
+    // const { status } = this.props
+    // let listName
+    // switch (status ) {
+    //   case '1':
+    //     listName = 'processDoingList'
+    //     break
+    //   case '2':
+    //     listName = 'processStopedList'
+    //     break
+    //   case '3':
+    //     listName = 'processComepletedList'
+    //     break
+    //   default:
+    //     listName = 'processDoingList'
+    //     break
+    // }
+    // this.props.updateDatasProcess({
+    //   [listName]: [],
+    // })
   }
     //分页逻辑
   async getProcessListByType() {
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
     const { page_number, page_size, } = this.state
     const { listData = [], status, } = this.props
-
     const obj = {
       page_number,
       page_size,
@@ -98,10 +94,10 @@ export default class PagingnationContent extends React.Component {
       })
       this.setState({
         scrollBlock: !(data.length < page_size),
-        loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
       }, () => {
         this.setState({
           loadMoreDisplay: listData.length ? 'block' : 'none',
+          loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
         })
       })
     }
@@ -168,58 +164,6 @@ export default class PagingnationContent extends React.Component {
     for(let i = 0; i < 20; i ++) {
       allStep.push(i)
     }
-    const filterProgress = (status, completed_node_num, total_node_num) => {
-      let ele = `（${completed_node_num}/${total_node_num}）`
-      switch (status) {
-        case '1':
-          ele = `（${completed_node_num}/${total_node_num}）`
-          break
-        case '2':
-          ele = `已终止`
-          break
-        case '3':
-          ele = ``
-          break
-        default:
-          ele = `（${completed_node_num}/${total_node_num}）`
-          break
-      }
-      return ele
-    }
-    const PanelHeader = (value) => {
-      const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num } = value
-      let obj = {
-        flow: id,
-        board: board_id
-      }
-      return (
-        <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, obj)}>
-          <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>&#xe605;</div>
-          <div className={indexStyles.panelHead_m}>
-            <div className={indexStyles.panelHead_m_l}>{name}{filterProgress(status, completed_node_num, total_node_num)}</div>
-            <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
-          </div>
-          {/*<div className={indexStyles.panelHead_r}>*/}
-            {/*<div className={indexStyles.panelHead_r_l}>*/}
-              {/*{status == '2'?(*/}
-                {/*<span style={{color: '#8c8c8c'}}>已终止</span>*/}
-              {/*) : (*/}
-                {/*allStep.map((value, key) => (*/}
-                    {/*<span key={key} style={{color: key < areadyStep? '#262626': '#8c8c8c'}}>|</span>*/}
-                  {/*)*/}
-                {/*)*/}
-              {/*)}*/}
-
-            {/*</div>*/}
-            {/*<div className={indexStyles.panelHead_r_m}>{status != '2' && percentage}</div>*/}
-            {/*/!*<div className={indexStyles.panelHead_r_r}>*!/*/}
-              {/*/!*<Avatar size="small" icon="user" />*!/*/}
-            {/*/!*</div>*!/*/}
-          {/*</div>*/}
-        </div>
-      )
-    }
-    const { processDetailModalVisible } = this.props.model.datas
 
     return (
       <div
@@ -231,10 +175,15 @@ export default class PagingnationContent extends React.Component {
             style={{backgroundColor: '#f5f5f5', marginTop: 4}}>
             {listData.map((value, key) => {
               return (
-                <Panel header={PanelHeader(value)} key={key} style={customPanelStyle} />
+                <Panel header={<FlowsInstanceItem itemValue={value} dispatch={this.props.dispatch} processItemClick={this.processItemClick.bind(this)}/>} key={key} style={customPanelStyle} />
               )
             })}
           </Collapse>
+        {/*{listData.map((value, key) => {*/}
+          {/*return (*/}
+            {/*<FlowsInstanceItem itemValue={value} processItemClick={this.processItemClick.bind(this)}/>*/}
+          {/*)*/}
+        {/*})}*/}
         {!listData.length || !listData?(
           <div className={indexStyles.nodata} style={{height: maxContentHeight - 30}} >
             <div className={indexStyles.nodata_inner}>

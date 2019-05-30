@@ -24,7 +24,8 @@ import {
   workflowDelete,
   workflowEnd,
   deleteWorkFlowComment,
-  setDueTimeInFlowsNode
+  setDueTimeInFlowsNode,
+  setDueTimeInFlowsInstance,
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {
@@ -711,6 +712,16 @@ export default modelExtend(projectDetail, {
         message.success(res.message)
       }
     },
+    * setDueTimeInFlowsInstance({payload}, {select, call, put}) {
+      const res = yield call(setDueTimeInFlowsInstance, payload)
+      // console.log('this is workflowEnd:', res)
+      if (isApiResponseOk(res)) {
+        message.success('设置截止日期成功')
+      }else {
+        message.success(res.message)
+      }
+    },
+
   },
 
   reducers: {
