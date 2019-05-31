@@ -23,6 +23,7 @@ class CreateProject extends React.Component {
     stepTwoContinueDisabled: true,
     stepThreeContinueDisabled: true,
     completeValidation: false, //完成滑块验证
+    addProjectModalVisibleLocal: false,
     users: [], //被邀请人
     projects: [], //带有app列表的项目列表//
     select_project_id: undefined,//
@@ -30,9 +31,17 @@ class CreateProject extends React.Component {
     copy_value: {}, //复制的值
   }
   componentWillReceiveProps(nextProps) {
+    const { addProjectModalVisible } = nextProps
+    const { addProjectModalVisibleLocal } = this.state
+    if(addProjectModalVisible && !addProjectModalVisibleLocal) {
+      this.getProjectList(1)
+    }
+    this.setState({
+      addProjectModalVisibleLocal: addProjectModalVisible
+    })
   }
   componentDidMount() {
-    this.getProjectList()
+    // this.getProjectList(2)
   }
   //表单输入时记录值
   boardNameChange(e){
