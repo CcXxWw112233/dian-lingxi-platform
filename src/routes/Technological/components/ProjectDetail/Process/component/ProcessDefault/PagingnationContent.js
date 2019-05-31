@@ -90,7 +90,7 @@ export default class PagingnationContent extends React.Component {
           break
       }
       this.props.updateDatasProcess({
-        [listName]: data
+        [listName]: page_number == 1?data: [].concat(listData, data)
       })
       this.setState({
         scrollBlock: !(data.length < page_size),

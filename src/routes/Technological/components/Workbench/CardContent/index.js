@@ -555,15 +555,17 @@ class CardContent extends React.Component {
           contanner = backLogProcessList.length ? (
             <div>
               <div>
-                {backLogProcessList.map((value, key) => (
-                  // <div>Hello World</div>
-                  <ProcessItem
-                    {...this.props}
-                    key={key}
-                    click={this.setPreviewProccessModalVisibile.bind(this)}
-                    itemValue={value}
-                  />
-                ))}
+                {backLogProcessList.map((value, key) =>{
+                  const { flow_instance_id } = value
+                  return (
+                    <ProcessItem
+                      {...this.props}
+                      key={`${flow_instance_id}_${key}`}
+                      click={this.setPreviewProccessModalVisibile.bind(this)}
+                      itemValue={value}
+                    />
+                 )}
+                )}
               </div>
               {/* {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")} */}
             </div>

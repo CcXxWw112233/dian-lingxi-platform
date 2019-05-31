@@ -3,6 +3,9 @@ import request from "./requestAxios";
 import {REQUEST_DOMAIN} from "../globalset/js/constant";
 import Cookies from 'js-cookie'
 
+//is401: refreshToken 避免重复请求的标记
+Cookies.set('is401', false, {expires: 30, path: ''})
+
 const gotoRefresh = async (data) => {
   const refreshTokenApi = (data) => {
     return request({
