@@ -42,7 +42,7 @@ export default class DateListLCBItem extends Component {
   }
 
   renderLCBList = () => {
-    const lcb_list = [1,2,3,4,5]
+    const lcb_list = [1, 2, 3, 4, 5]
     return (
       <Menu onClick={this.selectLCB}>
         {lcb_list.map((value, key) => {
@@ -62,8 +62,6 @@ export default class DateListLCBItem extends Component {
   render () {
 
     const { has_lcb, name = 'sss', lcb_list = [] } = this.props
-
-
 
     return (
       <div

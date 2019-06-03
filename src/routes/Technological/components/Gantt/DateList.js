@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Tooltip } from 'antd'
 import DateListLCBItem from './DateListLCBItem'
+import AddLCBModal from './components/AddLCBModal'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
