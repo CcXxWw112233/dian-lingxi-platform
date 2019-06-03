@@ -21,12 +21,7 @@ const gotoRefresh = async (data) => {
     Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
     Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
     Cookies.set('is401', false, {expires: 30, path: ''})
-  }else if('401' == code){
-    Cookies.set('is401', true, {expires: 30, path: ''})
-    setTimeout(function () {
-      window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
-    },1000)
-  }else {
+  } else {
     Cookies.set('is401', true, {expires: 30, path: ''})
     setTimeout(function () {
       window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
