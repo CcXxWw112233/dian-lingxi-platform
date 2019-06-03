@@ -56,7 +56,7 @@ export default class DateList extends Component {
                   return (
                     <div key={`${month}/${date_no}`}>
                       <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
-                      <DateListLCBItem has_lcb={has_lcb}/>
+                      {/*<DateListLCBItem has_lcb={has_lcb}/>*/}
                     </div>
                   )
                 })}
