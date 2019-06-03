@@ -43,7 +43,7 @@
   z-index: 2;
   left: 0;
   width: auto;
-  height: 60px;
+  height: 76px;
   background-color: #ffffff;
   align-items: center;
   .dateAreaItem {
@@ -61,6 +61,46 @@
         width: 44px;
         text-align: center;
         color: rgba(0,0,0,.65);
+      }
+      .lcb_area {
+        height: 24px;
+        display: flex;
+        justify-content: center;
+      }
+      .has_lcb {
+        .lcb_logo {
+          width: 18px;
+          text-align: center;
+          height: 18px;
+          line-height: 18px;
+          margin-top: 6px;
+          color: #FAAD14;
+        }
+      }
+      .has_lcb:hover {
+        .lcb_logo {
+          background-color: #FAAD14;
+          color: #FFFFFF;
+          border-radius: 16px;
+        }
+      }
+      .no_has_lcb {
+        .lcb_logo {
+          width: 18px;
+          text-align: center;
+          height: 18px;
+          line-height: 18px;
+          margin-top: 6px;
+          background-color: rgba(0,0,0,.25);
+          color: #FFFFFF;
+          border-radius: 18px;
+          display: none;
+         }
+       }
+      .no_has_lcb:hover{
+        .lcb_logo{
+          display: block;
+        }
       }
     }
   }
