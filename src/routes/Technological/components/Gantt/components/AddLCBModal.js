@@ -82,12 +82,9 @@ class AddTaskModal extends Component {
 
   handleAddTaskModalCancel = () => {
     this.setState({
-      addTaskTitle: '',
       currentSelectedProject: {},
-      start_time: '',
       due_time: '',
-      attachment_fileList: [],
-      currentSelectedFileFolder: ['']
+      add_name: ''
     });
 
     this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
