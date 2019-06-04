@@ -16,7 +16,8 @@ export default class DateList extends Component {
   }
 
   state = {
-    lcb_modal_visible: true
+    add_lcb_modal_visible: false,
+    create_lcb_time: '',
   }
 
   getDate = () => {
@@ -41,16 +42,40 @@ export default class DateList extends Component {
   checkLCB = ({has_lcb}) => {
 
   }
-  setAddLCBModalVisibile() {
+
+  submitCreatMilestone = (data) => {
+
+  }
+
+  setAddLCBModalVisibile = () => {
     this.setState({
-      lcb_modal_visible: !this.state.lcb_modal_visible
+      add_lcb_modal_visible: !this.state.add_lcb_modal_visible
     });
   }
 
-  render () {
-    const { datas: { gold_date_arr = [], list_group =[], target_scrollTop }} = this.props.model
+  setCreateLcbTime = (timestamp) => {
+    this.setState({
+      create_lcb_time: timestamp
+    })
+  }
 
-    const { lcb_modal_visible } = this.state
+  getBoardName = (boardId) => {
+    const { projectList = [] } = this.props
+    const board_name = (projectList.find(item => item.board_id == boardId) || {} ).board_name
+    return board_name || '项目名称'
+  }
+
+  render () {
+    const {
+      gold_date_arr = [],
+      list_group =[],
+      target_scrollTop,
+      projectList,
+      projectTabCurrentSelectedProject,
+      currentSelectedProjectMembersList = []
+    } = this.props
+
+    const { add_lcb_modal_visible, create_lcb_time } = this.state
 
     return (
       <div>
@@ -63,12 +88,18 @@ export default class DateList extends Component {
                 <div className={indexStyles.dateTitle}>{date_top}</div>
                 <div className={indexStyles.dateDetail} >
                   {date_inner.map((value2, key2) => {
-                    const { month, date_no } = value2
+                    const { month, date_no, date_string } = value2
                     const has_lcb = key2%2==0
                     return (
                       <div key={`${month}/${date_no}`}>
                         <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
-                        <DateListLCBItem has_lcb={has_lcb}/>
+                        {projectTabCurrentSelectedProject != '0' && (
+                          <DateListLCBItem
+                            has_lcb={has_lcb}
+                            timestamp={new Date(`${date_string} 23:59:59`)}
+                            setCreateLcbTime={this.setCreateLcbTime}
+                            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}/>
+                        )}
                       </div>
                     )
                   })}
@@ -77,26 +108,16 @@ export default class DateList extends Component {
             )
           })}
         </div>
-        {lcb_modal_visible && (
+        {projectTabCurrentSelectedProject != '0' && (
           <AddLCBModal
-            {...this.props}
-            setTaskDetailModalVisibile={this.setAddLCBModalVisibile.bind(
-              this
-            )}
-            isUseInGantt
-            projectIdWhenUseInGantt={0}
-            projectMemberListWhenUseInGantt={[]}
-            projectGroupListId={0}
-            // handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
-            modalTitle="添加任务"
-            taskType="RESPONSIBLE_TASK"
-            getNewTaskInfo={this.getNewTaskInfo}
-            projectTabCurrentSelectedProject={0}
-            projectList={[]}
-            addTaskModalVisible={lcb_modal_visible}
-            addTaskModalVisibleChange={this.setAddLCBModalVisibile.bind(this)}
-            projectGroupLists={[]}
-            // handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
+            userList={currentSelectedProjectMembersList}
+            projectList={projectList}
+            boardName={this.getBoardName(projectTabCurrentSelectedProject)}
+            create_lcb_time={create_lcb_time}
+            boardId={projectTabCurrentSelectedProject}
+            add_lcb_modal_visible={add_lcb_modal_visible}
+            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
+            submitCreatMilestone={this.submitCreatMilestone}
           />
         )}
       </div>
@@ -105,6 +126,10 @@ export default class DateList extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps(
+  {
+    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [] } },
+    workbench: { datas: { projectList = [], projectTabCurrentSelectedProject, currentSelectedProjectMembersList = [] }}
+  }){
+  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList }
 }

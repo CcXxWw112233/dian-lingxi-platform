@@ -58,11 +58,12 @@ export default class DateListLCBItem extends Component {
       </Menu>
     )
   }
-
+  setAddLCBModalVisibile = (timestamp) => {
+    this.props.setCreateLcbTime && this.props.setCreateLcbTime(timestamp)
+    this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
+  }
   render () {
-
-    const { has_lcb, name = 'sss', lcb_list = [] } = this.props
-
+    const { has_lcb, name = 'sss', lcb_list = [], timestamp } = this.props
     return (
       <div
         onClick={this.checkLCB.bind(this, {has_lcb})}
@@ -74,7 +75,7 @@ export default class DateListLCBItem extends Component {
             </Tooltip>
           </Dropdown>
         ): (
-          <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`}>&#xe633;</div>
+          <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`} onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
         )}
 
       </div>
