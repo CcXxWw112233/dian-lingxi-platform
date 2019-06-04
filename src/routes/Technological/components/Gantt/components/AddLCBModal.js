@@ -33,6 +33,7 @@ import {
   PROJECT_TEAM_CARD_CREATE
 } from '../../../../../globalset/js/constant';
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../utils/util";
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 
 const taskTypeToName = {
   RESPONSIBLE_TASK: 'Tasks',
@@ -110,9 +111,9 @@ class AddTaskModal extends Component {
 
   handleClickedSubmitBtn = () => {
     const { currentSelectedProject, add_name, due_time, currentSelectedProjectMember } = this.state
-    let users = ''
+    let users = []
     for(let val of currentSelectedProjectMember) {
-      users += `${val['id']},`
+      users.push(val['id'])
     }
     const param = {
       currentSelectedProject, add_name, due_time,users
@@ -151,8 +152,8 @@ class AddTaskModal extends Component {
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
               {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
-              <div className={styles.groupList__wrapper}>
-                {boardName}
+              <div>
+                <span className={globalStyles.authTheme} style={{marginRight: 4, fontSize: 16}}>&#xe60a;</span>{boardName}
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-import { getProjectRoles, setMemberRoleInProject, projectDetailInfo, updateProject, removeMenbers } from '../../../services/technological/prjectDetail'
+import { getProjectRoles, setMemberRoleInProject, projectDetailInfo, updateProject, removeMenbers, createMilestone, getMilestoneList } from '../../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
@@ -31,7 +31,11 @@ let appsSelectKey = null
 // appsSelectKey 项目详情里面应用的app标志
 export default {
   namespace: 'projectDetail',
-  state: {},
+  state: {
+    datas: {
+      milestoneList: []
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -89,6 +93,7 @@ export default {
               isInitEntry: false, //是否初次进来项目详情
               relations_Prefix: [], //内容关联前部分
               projectDetailInfoData: {},
+              milestoneList: [],
             }
           })
         }
@@ -161,7 +166,6 @@ export default {
 
     //清空项目默认页面可见数据--（一进来就看到的）
     * removeAllProjectData({ payload }, { select, call, put }) {
-      console.log('sss', 1111111)
       yield put({
         type: 'projectDetailFile/updateDatas',
         payload: {
@@ -176,7 +180,6 @@ export default {
           taskGroupList: [], //任务列表
         }
       })
-      console.log('sss', 22222)
       yield put({
         type: 'projectDetailProcess/updateDatas',
         payload: {
@@ -224,6 +227,12 @@ export default {
           })
 
         }
+        yield put({
+          type: 'getMilestoneList',
+          payload: {
+            id
+          }
+        })
         //缓存下来当前项目的权限
         // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
       }else{
@@ -550,6 +559,35 @@ export default {
       const res = yield call(postCommentToDynamics, payload)
       if(isApiResponseOk(res)) {
       }else{
+      }
+    },
+
+    * createMilestone({ payload }, { select, call, put }) { //
+      const res = yield call(createMilestone, payload)
+      if(isApiResponseOk(res)) {
+        const { board_id } = payload
+        yield put({
+          type: 'getMilestoneList',
+          payload: {
+            id: board_id
+          }
+        })
+        message.success(res.message)
+      }else{
+        message.error(res.message)
+      }
+    },
+    * getMilestoneList({ payload }, { select, call, put }) { //
+      const res = yield call(getMilestoneList, payload)
+      if(isApiResponseOk(res)) {
+         yield put({
+           type: 'updateDatas',
+           payload: {
+             milestoneList: res.data
+           }
+         })
+      }else{
+        message.error(res.message)
       }
     },
 
