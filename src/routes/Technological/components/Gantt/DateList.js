@@ -44,7 +44,17 @@ export default class DateList extends Component {
   }
 
   submitCreatMilestone = (data) => {
-
+    const { dispatch } = this.props
+    const { users, currentSelectedProject, due_time, add_name } = data
+    dispatch({
+      type: 'gantt/createMilestone',
+      payload: {
+        board_id: currentSelectedProject,
+        deadline: due_time,
+        name: add_name,
+        users
+      }
+    })
   }
 
   setAddLCBModalVisibile = () => {
@@ -88,17 +98,19 @@ export default class DateList extends Component {
                 <div className={indexStyles.dateTitle}>{date_top}</div>
                 <div className={indexStyles.dateDetail} >
                   {date_inner.map((value2, key2) => {
-                    const { month, date_no, date_string } = value2
-                    const has_lcb = key2%2==0
+                    const { month, date_no, date_string, has_lcb } = value2
+                    // const has_lcb = key2%2==0
                     return (
                       <div key={`${month}/${date_no}`}>
                         <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
-                        {projectTabCurrentSelectedProject != '0' && (
+                        {projectTabCurrentSelectedProject != '0' ? (
                           <DateListLCBItem
                             has_lcb={has_lcb}
-                            timestamp={new Date(`${date_string} 23:59:59`)}
+                            timestamp={new Date(`${date_string} 23:59:59`).getTime()}
                             setCreateLcbTime={this.setCreateLcbTime}
                             setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}/>
+                        ):(
+                          <div className={indexStyles.lcb_area}></div>
                         )}
                       </div>
                     )
