@@ -65,14 +65,14 @@ export default class DateListLCBItem extends Component {
     this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
   }
   render () {
-    const { has_lcb, name = 'sss', lcb_list = [], timestamp } = this.props
+    const { has_lcb, boardName = '', lcb_list = [], timestamp } = this.props
     return (
       <div
         // onClick={this.checkLCB.bind(this, {has_lcb})}
         className={`${indexStyles.lcb_area} ${has_lcb?indexStyles.has_lcb:indexStyles.no_has_lcb}`}>
         {has_lcb ? (
           <Dropdown overlay={this.renderLCBList()}>
-            <Tooltip title={`${name}`}>
+            <Tooltip title={`${boardName}`}>
               <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`}
                    onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
             </Tooltip>

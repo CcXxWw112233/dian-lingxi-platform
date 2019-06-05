@@ -140,6 +140,7 @@ export default class DateList extends Component {
                         {projectTabCurrentSelectedProject != '0' ? (
                           <DateListLCBItem
                             has_lcb={has_lcb}
+                            boardName={this.getBoardName(projectTabCurrentSelectedProject)}
                             current_date_miletones={current_date_miletones}
                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
                             setCreateLcbTime={this.setCreateLcbTime}
