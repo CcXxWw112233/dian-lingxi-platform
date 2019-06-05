@@ -71,7 +71,8 @@ export default class EditFormFive extends React.Component {
   //提及
   mentionOnChange(contentState){
     const str = toString(contentState)
-    const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    // const newStr = str.length > 2 ? str.replace('@', '').replace(/@/gim, ',').replace(/\s/gim, '') : str
+    const newStr = str.length > 2 ? str.replace(/\s/, '').replace('@', '').replace(/@/gim, ',').replace(/\s,/gim, ',') : str
     this.updateEdit({value: newStr}, 'assignees')
   }
   //流转类型
@@ -183,24 +184,24 @@ export default class EditFormFive extends React.Component {
             </div>
           </div>
           {/*完成期限*/}
-          <div className={indexStyles.editBottItem}>
-            <div className={indexStyles.editBottItem_left}>
-              <span>完成期限</span><br/>
-              <span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>
-            </div>
-            <div className={indexStyles.editBottItem_right}>
-              <RadioGroup onChange={this.deadlineChange.bind(this)} value={deadline_type}>
-                <Radio className={indexStyles.ratio} value={'1'}>无限期</Radio>
-                <Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>
-                <Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>
-              </RadioGroup>
-              {deadline_type === '3'? (
-                <div>
-                  <InputNumber min={1} value={Number(deadline_value)} onChange={this.deadlineDayChange.bind(this)} style={{width: 70, height: 32, marginRight: 8}} />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日
-                </div>
-                ):('')}
-            </div>
-          </div>
+          {/*<div className={indexStyles.editBottItem}>*/}
+            {/*<div className={indexStyles.editBottItem_left}>*/}
+              {/*<span>完成期限</span><br/>*/}
+              {/*<span style={{fontSize: 12, color: '#8c8c8c'}}>从发起流程开始<br/>计算</span>*/}
+            {/*</div>*/}
+            {/*<div className={indexStyles.editBottItem_right}>*/}
+              {/*<RadioGroup onChange={this.deadlineChange.bind(this)} value={deadline_type}>*/}
+                {/*<Radio className={indexStyles.ratio} value={'1'}>无限期</Radio>*/}
+                {/*<Radio className={indexStyles.ratio}value={'2'}>启动流程时指定</Radio>*/}
+                {/*<Radio className={indexStyles.ratio} value={'3'}>固定天数</Radio>*/}
+              {/*</RadioGroup>*/}
+              {/*{deadline_type === '3'? (*/}
+                {/*<div>*/}
+                  {/*<InputNumber min={1} value={Number(deadline_value)} onChange={this.deadlineDayChange.bind(this)} style={{width: 70, height: 32, marginRight: 8}} />天 <Checkbox onChange={this.isWorkdayChange.bind(this)} checked={is_workday === '1'} style={{margin: '8px 8px 0 12px '}}/>只计算工作日*/}
+                {/*</div>*/}
+                {/*):('')}*/}
+            {/*</div>*/}
+          {/*</div>*/}
           {/*审批人*/}
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>

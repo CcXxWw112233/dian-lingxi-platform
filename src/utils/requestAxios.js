@@ -2,8 +2,8 @@ import { message } from 'antd';
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
-
-
+import {REQUEST_DOMAIN} from "../globalset/js/constant";
+import { reRefreshToken } from './auth'
 function messageLoading(url) {
   return (
     message.loading('加载中...', 0)
@@ -76,15 +76,10 @@ export default function request(options = {}, elseSet = {}) {
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
             case 401:
-              const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
-              Cookies.remove('userInfo', { path: '' })
-              if(!is401) {
-                Cookies.set('is401', true, {expires: 30, path: ''})
-                setTimeout(function () {
-                  window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
-                },1000)
-              }else{
-              }
+              reRefreshToken({
+                refreshToken: Cookies.get('refreshToken'),
+                accessToken: Cookies.get('Authorization')
+              })
               break
             default:
               break
@@ -95,3 +90,22 @@ export default function request(options = {}, elseSet = {}) {
       })
   })
 }
+
+
+
+
+// switch (error.response.status) {
+//   case 401:
+//     const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
+//     Cookies.remove('userInfo', { path: '' })
+//     if(!is401) {
+//       Cookies.set('is401', true, {expires: 30, path: ''})
+//       setTimeout(function () {
+//         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
+//       },1000)
+//     }else{
+//     }
+//     break
+//   default:
+//     break
+// }

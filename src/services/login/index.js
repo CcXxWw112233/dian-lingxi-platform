@@ -27,3 +27,13 @@ export async function wechatAccountBind(data) {
     data
   })
 }
+
+//刷新Token
+export const refreshTokenApi = (data) => {
+  return request({
+    url: `${REQUEST_DOMAIN}/refreshToken`,
+    method: 'PUT',
+    data
+  })
+}
+

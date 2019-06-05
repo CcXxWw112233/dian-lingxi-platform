@@ -3,11 +3,12 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
 import { Tooltip } from 'antd'
+import { date_area_height } from './constants'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
-const dateAreaHeight = 60 //日期区域高度，作为修正
+const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGantt extends Component {

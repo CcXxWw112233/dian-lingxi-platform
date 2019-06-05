@@ -161,6 +161,7 @@ export default {
 
     //清空项目默认页面可见数据--（一进来就看到的）
     * removeAllProjectData({ payload }, { select, call, put }) {
+      console.log('sss', 1111111)
       yield put({
         type: 'projectDetailFile/updateDatas',
         payload: {
@@ -175,8 +176,9 @@ export default {
           taskGroupList: [], //任务列表
         }
       })
+      console.log('sss', 22222)
       yield put({
-        type: 'projectDetailFile/updateDatas',
+        type: 'projectDetailProcess/updateDatas',
         payload: {
           processDoingList: [], //正在进行流程的列表
           processTemplateList: [], //流程模板列表

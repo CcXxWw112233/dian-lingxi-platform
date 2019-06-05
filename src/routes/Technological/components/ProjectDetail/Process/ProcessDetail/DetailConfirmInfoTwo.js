@@ -92,17 +92,39 @@ export default class DetailConfirmInfoTwo extends React.Component {
       })
     }
   }
+//截止日期
+  datePikerOnOpenChange(bool) {
+    //关闭后
+    if(!bool) {
+      const { due_time } = this.state
+      if(!due_time) {
+        return
+      }
+      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { itemKey, dispatch } = this.props
+      const { id } = processEditDatas[itemKey]
+      processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
+      //业务逻辑修改deadline_value作废
+      processEditDatas[itemKey]['deadline'] = timeToTimestamp(due_time)
+      this.props.updateDatasProcess({
+        processEditDatas
+      })
+      dispatch({
+        type: 'projectDetailProcess/setDueTimeInFlowsNode',
+        payload: {
+          deadline: timeToTimestamp(due_time),
+          flow_node_instance_id: id
+        }
+      })
+    }
+  }
   datePickerChange(date, dateString) {
+    if(!dateString) {
+      return
+    }
     this.setState({
       due_time: dateString
     })
-    const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
-    const { itemKey } = this.props
-    processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
-    this.props.updateDatasProcess({
-      processEditDatas
-    })
-
   }
   setAssignees(data) { //替换掉当前操作人
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
@@ -246,7 +268,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { board_id } = projectDetailInfoData
 
     const { curr_node_sort, status } = processInfo //当前节点
-    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data={} } = processEditDatas[itemKey]
+    const { id, name, description, assignees = [], assignee_type, deadline_type, deadline, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data={} } = processEditDatas[itemKey]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
     const fileTypeArray = limit_file_type.split(',') //文档类型
@@ -339,9 +361,26 @@ export default class DetailConfirmInfoTwo extends React.Component {
           container = (<div style={{color: '#595959'}}>无限期</div>)
           break
         case '2':
+          // container = (
+          //   <div style={{color: '#595959'}}>
+          //     {timestampToTimeNormal(deadline, '/', true)}
+          //   </div>
+          // )
           container = (
-            <div style={{color: '#595959'}}>
-              {timestampToTimeNormal(deadline_value, '/', true)}
+            <div style={{
+              color: (Number(sort) >= Number(curr_node_sort))?'#1890FF': '#595959',
+              position: 'relative'}}>
+              {timestampToTimeNormal(deadline, '/', true) || '设置截止时间'}
+              {
+                (Number(sort) >= Number(curr_node_sort)) && (
+                  <DatePicker onChange={this.datePickerChange.bind(this)}
+                              onOpenChange={this.datePikerOnOpenChange.bind(this)}
+                              placeholder={'选择截止时间'}
+                              showTime
+                              format="YYYY-MM-DD HH:mm"
+                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '108px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+                )
+              }
             </div>
           )
           break
@@ -617,7 +656,9 @@ export default class DetailConfirmInfoTwo extends React.Component {
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>
               {filterAssignee(assignee_type)}
-              {filterDueTime(deadline_type)}
+              {/*{filterDueTime(deadline_type)}*/}
+              {filterDueTime('2')}
+
               <div className={isShowBottDetail ? indexStyles.upDown_up: indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{color: '#595959'}}/></div>
             </div>
           </div>

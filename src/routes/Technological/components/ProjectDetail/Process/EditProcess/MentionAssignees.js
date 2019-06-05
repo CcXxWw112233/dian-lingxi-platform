@@ -12,7 +12,9 @@ export default class MentionAssignees extends React.Component {
     const { datas: { projectDetailInfoData = {} }} = this.props.model
     const users = projectDetailInfoData.data
     //将选择的名称转化成id
-    let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
+    // let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
+    let strNew = str.replace(/\s@/gim, ',').replace(/@/, ',').trim()
+
     let strNewArray = strNew.split(',')
     for(let i = 0; i < strNewArray.length; i++) {
       for(let j = 0; j < users.length; j++) {

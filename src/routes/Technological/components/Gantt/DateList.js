@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { dateDataArray, monthDataArray } from './calDate'
+import globalStyles from '../../../../globalset/css/globalClassName.less'
+import { Tooltip } from 'antd'
+import DateListLCBItem from './DateListLCBItem'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -31,6 +33,10 @@ export default class DateList extends Component {
     return DateArray
   }
 
+  checkLCB = ({has_lcb}) => {
+
+  }
+
   render () {
     const { datas: { gold_date_arr = [], list_group =[], target_scrollTop }} = this.props.model
 
@@ -46,8 +52,12 @@ export default class DateList extends Component {
               <div className={indexStyles.dateDetail} >
                 {date_inner.map((value2, key2) => {
                   const { month, date_no } = value2
+                  const has_lcb = key2%2==0
                   return (
-                    <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
+                    <div key={`${month}/${date_no}`}>
+                      <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
+                      {/*<DateListLCBItem has_lcb={has_lcb}/>*/}
+                    </div>
                   )
                 })}
               </div>

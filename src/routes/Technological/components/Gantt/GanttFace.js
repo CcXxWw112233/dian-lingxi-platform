@@ -8,6 +8,7 @@ import { getMonthDate, getNextMonthDatePush, isSamDay } from './getDate'
 import {INPUT_CHANGE_SEARCH_TIME} from "../../../../globalset/js/constant";
 import {getGanttData} from "../../../../services/technological/gantt";
 import {isApiResponseOk} from "../../../../utils/handleResponseData";
+import { date_area_height } from './constants'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -199,7 +200,7 @@ export default class GanttFace extends Component {
              style={{maxHeight: gantt_card_out_middle_max_height}}
         >
           <div
-            style={{height: 60}} //撑住DateList相同高度的底部
+            style={{height: date_area_height}} //撑住DateList相同高度的底部
           />
           <DateList />
           <div className={indexStyles.panel}>

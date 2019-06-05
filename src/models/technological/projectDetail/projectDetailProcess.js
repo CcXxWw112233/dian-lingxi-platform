@@ -7,11 +7,11 @@ import { projectDetailInfo } from '../../../services/technological/prjectDetail'
 import {
   completeProcessTask,
   createProcess,
-  fillFormComplete, 
-  getProcessInfo, 
-  getProcessList, 
-  getProcessTemplateList, 
-  getProessDynamics, 
+  fillFormComplete,
+  getProcessInfo,
+  getProcessList,
+  getProcessTemplateList,
+  getProessDynamics,
   getTemplateInfo,
   rebackProcessTask,
   rejectProcessTask,
@@ -24,6 +24,8 @@ import {
   workflowDelete,
   workflowEnd,
   deleteWorkFlowComment,
+  setDueTimeInFlowsNode,
+  setDueTimeInFlowsInstance,
 } from "../../../services/technological/process";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {
@@ -121,7 +123,7 @@ export default modelExtend(projectDetail, {
                 currentProcessInstanceId: flow_id
               }
             })
-            
+
             dispatch({
               type: 'projectDetailInfo',
               payload: {
@@ -426,7 +428,7 @@ export default modelExtend(projectDetail, {
         })
       }
     },
-    
+
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
@@ -478,7 +480,7 @@ export default modelExtend(projectDetail, {
               processComepletedList: processComepletedList
             }
           })
-          
+
         }
       }else{
         message.warn(res.message)
@@ -605,8 +607,8 @@ export default modelExtend(projectDetail, {
     * getProcessListByType({ payload }, { select, call, put }) {
       const { status = '1' } = payload
       const res = yield call(getProcessListByType, payload)
-      
-      
+
+
       let listName
       let selectList = []
       switch (status ) {
@@ -699,7 +701,27 @@ export default modelExtend(projectDetail, {
           isProcessEnd: true
         }
       })
-    }, 
+    },
+
+    * setDueTimeInFlowsNode({payload}, {select, call, put}) {
+      const res = yield call(setDueTimeInFlowsNode, payload)
+      // console.log('this is workflowEnd:', res)
+      if (isApiResponseOk(res)) {
+        message.success('设置截止日期成功')
+      }else {
+        message.success(res.message)
+      }
+    },
+    * setDueTimeInFlowsInstance({payload}, {select, call, put}) {
+      const res = yield call(setDueTimeInFlowsInstance, payload)
+      // console.log('this is workflowEnd:', res)
+      if (isApiResponseOk(res)) {
+        message.success('设置截止日期成功')
+      }else {
+        message.success(res.message)
+      }
+    },
+
   },
 
   reducers: {
