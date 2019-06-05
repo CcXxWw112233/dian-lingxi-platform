@@ -23,7 +23,7 @@ export async function getHoliday(params) {
 //获取甘特图里程碑列表
 export async function getGttMilestoneList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/milestone/${params.id}`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/milestone`,
     method: 'GET',
     params
   });

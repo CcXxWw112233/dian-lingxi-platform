@@ -42,23 +42,25 @@ export default class DateListLCBItem extends Component {
   }
 
   renderLCBList = () => {
-    const lcb_list = [1, 2, 3, 4, 5]
+    const { current_date_miletones } = this.props
     return (
       <Menu onClick={this.selectLCB}>
-        {lcb_list.map((value, key) => {
+        {current_date_miletones.map((value, key) => {
+          const { id, name } = value
           return (
             <MenuItem
               className={globalStyles.global_ellipsis}
               style={{width: 216}}
-              key={key}>
-              11111111111111111111111111111111111
+              key={id}>
+              {name}
             </MenuItem>
           )
         })}
       </Menu>
     )
   }
-  setAddLCBModalVisibile = (timestamp) => {
+  setAddLCBModalVisibile = (timestamp, e) => {
+    e.stopPropagation()
     this.props.setCreateLcbTime && this.props.setCreateLcbTime(timestamp)
     this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
   }
@@ -66,12 +68,13 @@ export default class DateListLCBItem extends Component {
     const { has_lcb, name = 'sss', lcb_list = [], timestamp } = this.props
     return (
       <div
-        onClick={this.checkLCB.bind(this, {has_lcb})}
+        // onClick={this.checkLCB.bind(this, {has_lcb})}
         className={`${indexStyles.lcb_area} ${has_lcb?indexStyles.has_lcb:indexStyles.no_has_lcb}`}>
         {has_lcb ? (
           <Dropdown overlay={this.renderLCBList()}>
             <Tooltip title={`${name}`}>
-              <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`}>&#xe633;</div>
+              <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`}
+                   onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
             </Tooltip>
           </Dropdown>
         ): (

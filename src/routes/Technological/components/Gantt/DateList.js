@@ -5,7 +5,7 @@ import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Tooltip } from 'antd'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
-
+import { isSamDay } from './getDate'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class DateList extends Component {
@@ -43,6 +43,16 @@ export default class DateList extends Component {
 
   }
 
+  componentDidMount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+
+      }
+    })
+  }
+
   submitCreatMilestone = (data) => {
     const { dispatch } = this.props
     const { users, currentSelectedProject, due_time, add_name } = data
@@ -75,6 +85,30 @@ export default class DateList extends Component {
     return board_name || '项目名称'
   }
 
+  isHasMiletoneList = (timestamp) => {
+    const { milestoneList = [] } = this.props
+    let flag = false
+    let current_date_miletones = []
+    if(!timestamp) {
+      return {
+        flag,
+        current_date_miletones
+      }
+    }
+    for(let key in milestoneList) {
+      if (isSamDay(Number(timestamp), Number(key))){
+        flag = true
+        current_date_miletones = milestoneList[key]
+        break
+      }
+    }
+
+    return {
+      flag,
+      current_date_miletones,
+    }
+  }
+
   render () {
     const {
       gold_date_arr = [],
@@ -84,7 +118,6 @@ export default class DateList extends Component {
       projectTabCurrentSelectedProject,
       currentSelectedProjectMembersList = []
     } = this.props
-
     const { add_lcb_modal_visible, create_lcb_time } = this.state
 
     return (
@@ -98,14 +131,16 @@ export default class DateList extends Component {
                 <div className={indexStyles.dateTitle}>{date_top}</div>
                 <div className={indexStyles.dateDetail} >
                   {date_inner.map((value2, key2) => {
-                    const { month, date_no, date_string, has_lcb } = value2
-                    // const has_lcb = key2%2==0
+                    const { month, date_no, date_string, timestamp } = value2
+                    const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
+                    const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
                       <div key={`${month}/${date_no}`}>
                         <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
                         {projectTabCurrentSelectedProject != '0' ? (
                           <DateListLCBItem
                             has_lcb={has_lcb}
+                            current_date_miletones={current_date_miletones}
                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
                             setCreateLcbTime={this.setCreateLcbTime}
                             setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}/>
@@ -140,8 +175,8 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [] } },
+    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneList = [] } },
     workbench: { datas: { projectList = [], projectTabCurrentSelectedProject, currentSelectedProjectMembersList = [] }}
   }){
-  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList }
+  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneList }
 }

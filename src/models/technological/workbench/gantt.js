@@ -204,7 +204,21 @@ export default {
       }
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
-      const res = yield call(getGttMilestoneList, payload)
+
+      const { tab_board_id } = payload
+      let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      if(tab_board_id) {
+        projectTabCurrentSelectedProject = tab_board_id
+      }
+      const params = {
+        board_id: projectTabCurrentSelectedProject,
+        start_time: start_date['timestamp'],
+        end_time: end_date['timestamp'],
+      }
+
+      const res = yield call(getGttMilestoneList, params)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
