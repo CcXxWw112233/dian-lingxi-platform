@@ -25,7 +25,7 @@ class Gantt extends Component{
 
   componentDidMount() {
     this.getProjectGoupLists()
-    this.setBoardUsers()
+    // this.setBoardUsers()
   }
 
   componentWillReceiveProps(nextProps) {

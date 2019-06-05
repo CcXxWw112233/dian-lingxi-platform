@@ -45,12 +45,12 @@ export default class DateList extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getGttMilestoneList',
-      payload: {
-
-      }
-    })
+    // dispatch({
+    //   type: 'gantt/getGttMilestoneList',
+    //   payload: {
+    //
+    //   }
+    // })
   }
 
   submitCreatMilestone = (data) => {
