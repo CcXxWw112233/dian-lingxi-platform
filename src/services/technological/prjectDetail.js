@@ -59,7 +59,23 @@ export async function getBoardMembers(params) {
   });
 }
 
+// 创建里程碑
+export async function createMilestone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone`,
+    method: 'POST',
+    data
+  });
+}
 
+// 获取里程碑列表
+export async function getMilestoneList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/${params.id}`,
+    method: 'GET',
+    params
+  });
+}
 
 
 

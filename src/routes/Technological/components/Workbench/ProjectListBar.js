@@ -153,6 +153,12 @@ class ProjectListBar extends Component {
         tab_board_id: id
       }
     })
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+        tab_board_id: id
+      }
+    })
     if(id !== '0') {
       dispatch({
         type: 'workbench/fetchCurrentSelectedProjectMembersList',

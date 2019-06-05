@@ -1,4 +1,4 @@
-import { getGanttData } from '../../../services/technological/gantt'
+import { getGanttData, getGttMilestoneList } from '../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -15,6 +15,7 @@ import {
   workbench_ceilWidth,
   workbench_date_arr_one_level
 } from './selects'
+import {createMilestone} from "../../../services/technological/prjectDetail";
 
 export default {
   namespace: 'gantt',
@@ -36,6 +37,7 @@ export default {
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
       current_list_group_id: '0', //当前选中的分组id
+      milestoneList: [], //里程碑列表
     },
   },
   subscriptions: {
@@ -186,6 +188,49 @@ export default {
         }
       })
     },
+    * createMilestone({ payload }, { select, call, put }) { //
+      const res = yield call(createMilestone, payload)
+      if(isApiResponseOk(res)) {
+        const { board_id } = payload
+        yield put({
+          type: 'getGttMilestoneList',
+          payload: {
+            id: board_id
+          }
+        })
+        message.success(res.message)
+      }else{
+        message.error(res.message)
+      }
+    },
+    * getGttMilestoneList({ payload }, { select, call, put }) { //
+
+      const { tab_board_id } = payload
+      let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      if(tab_board_id) {
+        projectTabCurrentSelectedProject = tab_board_id
+      }
+      const params = {
+        board_id: projectTabCurrentSelectedProject,
+        start_time: start_date['timestamp'],
+        end_time: end_date['timestamp'],
+      }
+
+      const res = yield call(getGttMilestoneList, params)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            milestoneList: res.data
+          }
+        })
+      }else{
+        message.error(res.message)
+      }
+    },
+
   },
 
   reducers: {
