@@ -19,10 +19,10 @@ class ProjectMenu extends Component {
     super(props);
     this.createTreeNodeRef = React.createRef();
     this.state = {
-      expandedKeys: [],
-      selectedKeys: [],
-      autoExpandParent: true,
-      deleteGroupModalVisible: false,
+      expandedKeys: [], // 展开的节点 key
+      selectedKeys: [], // 选中的节点 key
+      autoExpandParent: true, // 是否自动展开父节点
+      deleteGroupModalVisible: false, // 删除群组 modal visible
       create_tree_node: '', //需要创建子分组的节点 id
       new_tree_node_name: '', //创建的子分组的节点名称
       edit_tree_node: '', //需要编辑名称的节点id

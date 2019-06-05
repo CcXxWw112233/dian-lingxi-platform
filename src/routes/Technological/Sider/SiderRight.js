@@ -238,18 +238,6 @@ class SiderRight extends React.Component {
         if (flag === false) {
           this.initVideoMeetingPopover();
         }
-        const {
-          projectList,
-          projectTabCurrentSelectedProject,
-          currentSelectedProjectMembersList,
-          currentOrgAllMembers
-        } = this.props;
-        // console.log({
-        //   projectList,
-        //   projectTabCurrentSelectedProject,
-        //   currentSelectedProjectMembersList,
-        //   currentOrgAllMembers
-        // });
       }
     );
   };
@@ -263,14 +251,6 @@ class SiderRight extends React.Component {
       mentionSelectedMember: [], //已经选择的 item,
       selectedMemberTextAreaValue: ""
     });
-  };
-  getInfoFromCookie = key => {
-    try {
-      const userInfo = JSON.parse(Cookies.get(key));
-      return userInfo;
-    } catch (e) {
-      message.error("从 Cookie 中获取用户信息失败, 当发起视频会议的时候");
-    }
   };
   getInfoFromLocalStorage = item => {
     try{
