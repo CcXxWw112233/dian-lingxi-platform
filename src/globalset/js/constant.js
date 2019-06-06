@@ -30,7 +30,7 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
-export const IM_HTTP_PATH = `${window.location.protocol}//${window.location.host}/im`
+export const IM_HTTP_PATH = '/im'//`${window.location.protocol}//${window.location.host}/im`
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
 export const MESSAGE_DURATION_TIME = 3 //message弹框时间
