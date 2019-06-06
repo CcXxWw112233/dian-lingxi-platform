@@ -46,8 +46,14 @@ class InviteOthers extends Component {
   isValidMobileOrValidEmail = user => {
     return validateEmail(user) || validateTel(user)
   }
+  handleInputBlur = () => {
+    this.setState({
+      inputValue: [],
+      inputRet: [],
+    })
+  }
   handleSearchUser = user => {
-    const isValidUser = this.isValidMobileOrValidEmail(user)
+    console.log('search....................')
     this.setState(
       {
         inputValue: [],
@@ -55,9 +61,10 @@ class InviteOthers extends Component {
         fetching: false
       },
       () => {
-        if (isValidUser) {
-          this.fetchUsers(user)
-        }
+        this.fetchUsers(user)
+        // if (isValidUser) {
+        //   this.fetchUsers(user)
+        // }
       }
     )
   }
@@ -115,22 +122,48 @@ class InviteOthers extends Component {
           .then(res => {
             if (res.code && res.code === '0') {
               //如果查到了用户
-              if (res.data && res.data.id) {
-                const { avatar, nickname, id } = res.data
-                const value = this.genUserValueStr(
-                  avatar,
-                  nickname,
-                  user,
-                  true,
-                  id
-                )
+              if (res.data && res.data.length) {
+              const users = res.data.map(i => {
+                  const { avatar, name, id, mobile, email } = i
+                  const value = this.genUserValueStr(
+                    avatar,
+                    name,
+                    user,
+                    true,
+                    id
+                  )
+                  return {
+                    value,
+                    avatar,
+                    user: mobile ? mobile : email ? email : '',
+                    name,
+                  }
+                })
+
+                // const { avatar, nickname, id } = res.data
+                // const value = this.genUserValueStr(
+                //   avatar,
+                //   nickname,
+                //   user,
+                //   true,
+                //   id
+                // )
                 this.setState({
-                  inputRet: [
-                    { value, avatar, user, name: nickname }
-                  ],
+                  // inputRet: [
+                  //   { value, avatar, user, name: nickname }
+                  // ],
+                  inputRet: users,
                   fetching: false
                 })
               } else {
+                const isValidUser = this.isValidMobileOrValidEmail(user)
+                if(!isValidUser) {
+                  this.setState({
+                    fetching: false,
+                  })
+                  return
+                }
+
                 const value = this.genUserValueStr(
                   'default',
                   'default',
@@ -610,6 +643,7 @@ class InviteOthers extends Component {
             onDeselect={this.handleInputDeselected}
             style={{ width: '100%'}}
             dropdownStyle={{zIndex: '9999'}}
+            blur={this.handleInputBlur}
           >
             {inputRet.map(item => (
               <Option key={item.value}>{this.genOptionLabel(item)}</Option>
