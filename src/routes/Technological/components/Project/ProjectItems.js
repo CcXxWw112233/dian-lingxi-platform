@@ -68,13 +68,13 @@ class ProjectItems extends Component {
   };
   render() {
     const { addProjectModalVisible } = this.state
-    const { model = { } } = this.props;
+    const { model = { }, currentProjectGroupProjectList } = this.props;
     const { datas: { appsList = [] }} = model
 
     return (
       <div className={styles.wrapper}>
         {this.renderAddProject()}
-        {this.renderProjectItem()}
+        {currentProjectGroupProjectList && this.renderProjectItem()}
         {/*<AddModalForm {...this.props} />*/}
         <CreateProject
           addNewProject={this.props.addNewProject}

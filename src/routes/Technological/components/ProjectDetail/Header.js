@@ -22,7 +22,7 @@ import AddModalForm from './components/AddModalForm'
 import DetailInfo from './DetailInfo'
 import VisitControl from './../../components/VisitControl/index'
 import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../services/technological/project'
-
+import LcbInHeader from './components/LcbInHeader/index'
 
 let is_starinit = null
 
@@ -859,14 +859,21 @@ export default class Header extends React.Component {
                  <Icon type="ellipsis" style={{fontSize: 24, margin: '4px 0 0 8px', display: (ellipsisShow || dropdownVisibleChangeValue) ? 'inline-block': 'inline-block'}} onClick={this.toggleDropdownVisible} />
                </Dropdown>
            </div>
-           <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>
-             {projectInfoDisplay ? (
-               <span><Icon type="left" style={{marginRight: 2}}/>收起{currentNounPlanFilterName(PROJECTS)}信息</span>
-             ):(
-               <span>查看{currentNounPlanFilterName(PROJECTS)}信息<Icon type="right" style={{marginLeft: 2}}/></span>
-             )}
-
+           <div className={indexStyle.lcb_boardinfo_out}>
+             <div className={indexStyle.displayProjectinfo} onClick={this.setProjectInfoDisplay.bind(this)}>
+               {currentNounPlanFilterName(PROJECTS)}信息
+               {/*{projectInfoDisplay ? (*/}
+               {/*<span><Icon type="left" style={{marginRight: 2}}/>收起{currentNounPlanFilterName(PROJECTS)}信息</span>*/}
+               {/*):(*/}
+               {/*<span>查看{currentNounPlanFilterName(PROJECTS)}信息<Icon type="right" style={{marginLeft: 2}}/></span>*/}
+               {/*)}*/}
+             </div>
+             <div className={indexStyle.spaceLine}></div>
+             <div>
+               <LcbInHeader />
+             </div>
            </div>
+
          </div>
         <div className={indexStyle.right}>
           <div className={indexStyle.right_top} >
