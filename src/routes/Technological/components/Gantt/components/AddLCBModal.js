@@ -72,11 +72,12 @@ class AddTaskModal extends Component {
   };
 
   datePickerChange(date, dateString) {
+    const newDateString = dateString.replace(/-/gim, '/')
     if(!dateString) {
       return false
     }
     this.setState({
-      due_time: timeToTimestamp(dateString)
+      due_time: timeToTimestamp(newDateString)
     })
   }
 
