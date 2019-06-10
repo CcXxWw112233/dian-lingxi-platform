@@ -3,6 +3,43 @@ import mainStyles from './hot.less'
 import { Icon } from 'antd'
 
 export default class Hot extends Component {
+
+    constructor(pros) {
+        super(pros)
+        this.state = {
+            list: [
+                {
+                    hasImg: false,
+                    text: '国务院办公厅关于全面开展工程建设项目审批制度改革的实施意见',
+                    newsNet: '新华社',
+                    newsDate: '2019-05-24',
+                    id: 1,
+                },
+                {
+                    hasImg: true,
+                    text: '中共中央 国务院关于支持河北雄安新区全面深化改革和扩大开放的指导意见 ',
+                    newsNet: '央视新闻网',
+                    newsDate: '2019-05-15',
+                    id: 2,
+                },
+                {
+                    hasImg: false,
+                    text: '中共中央办公厅 国务院办公厅印发《地方党政领导干部食品安全责任制规定》',
+                    newsNet: '人民日报海外网',
+                    newsDate: '2019-05-20',
+                    id: 3,
+                },
+                {
+                    hasImg: true,
+                    text: '韩长赋：“五推进一加强”推动实施乡村振兴战略',
+                    newsNet: '新华社',
+                    newsDate: '2019-05-24',
+                    id: 4,
+                },
+            ]
+        }
+    }
+
     render() {
         return (
             <div className={mainStyles.mainContainer}>
@@ -34,75 +71,46 @@ export default class Hot extends Component {
                     </div>
                     <div className={mainStyles.news}>
                         <ul>
-                            <li>
-                                <div className={mainStyles.left}></div>
-                                <div className={mainStyles.right}>
-                                    <div className={mainStyles.message}>
-                                        <i className={mainStyles.dot}></i>
-                                        <a href="#">国务院办公厅关于全面开展工程建设项目审批制度改革的实施意见</a>
-                                    </div>
-                                    <div className={mainStyles.dot_note}>
-                                        <span>新华社</span>
-                                        <span>2019-05-24</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className={mainStyles.left}>
-                                    <img src="" />
-                                </div>
-                                <div className={mainStyles.right}>
-                                    <div className={mainStyles.message}>
-                                        {/* <i className={mainStyles.dot}></i> */}
-                                        <a href="#">中共中央 国务院关于支持河北雄安新区全面深化改革和扩大开放的指导意见 </a>
-                                    </div>
-                                    <div className={mainStyles.img_note}>
-                                        <span>央视新闻网</span>
-                                        <span>2019-05-15</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className={mainStyles.left}></div>
-                                <div className={mainStyles.right}>
-                                    <div className={mainStyles.message}>
-                                        <i className={mainStyles.dot}></i>
-                                        <a href="#">中共中央办公厅 国务院办公厅印发《地方党政领导干部食品安全责任制规定》</a>
-                                    </div>
-                                    <div className={mainStyles.dot_note}>
-                                        <span>人民日报海外网</span>
-                                        <span>2019-05-18</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className={mainStyles.left}>
-                                    <img src="" />
-                                </div>
-                                <div className={mainStyles.right}>
-                                    <div className={mainStyles.message}>
-                                        {/* <i className={mainStyles.dot}></i> */}
-                                        <a href="#">中共中央 韩长赋：“五推进一加强”推动实施乡村振兴战略 </a>
-                                    </div>
-                                    <div className={mainStyles.img_note}>
-                                        <span>新华社</span>
-                                        <span>2019-05-20</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className={mainStyles.left}></div>
-                                <div className={mainStyles.right}>
-                                    <div className={mainStyles.message}>
-                                        <i className={mainStyles.dot}></i>
-                                        <a href="#">中共中央办公厅 国务院办公厅转发《中央农办、农业农村部、国家发展改革委关于深入学习浙江“千村示范、万村整治”工程经验扎实推进农村人居环境整治工作的报告》</a>
-                                    </div>
-                                    <div className={mainStyles.dot_note}>
-                                        <span>环球网</span>
-                                        <span>2019-05-20</span>
-                                    </div>
-                                </div>
-                            </li>
+                            {
+                                this.state.list.map((item, index) => {
+                                    if (!item.hasImg) {
+                                        return (
+                                            <li>
+                                                {/* <div className={mainStyles.left}></div> */}
+                                                <div className={mainStyles.right}>
+                                                    <div className={mainStyles.message}>
+                                                        <i className={mainStyles.dot}></i>
+                                                        <a className={mainStyles.text} href="#">{item.text}</a>
+                                                    </div>
+                                                    <div className={mainStyles.dot_note}>
+                                                        <span>{item.newsNet}</span>
+                                                        <span>{item.newsDate}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        )
+                                    } else {
+                                        return (
+                                            <li>
+                                                <div className={mainStyles.left}>
+                                                    <img src="" />
+                                                </div>
+                                                <div className={mainStyles.right}>
+                                                    <div className={mainStyles.message}>
+                                                        {/* <i className={mainStyles.dot}></i> */}
+                                                        <a className={mainStyles.img_text} href="#">{item.text}</a>
+                                                    </div>
+                                                    <div className={mainStyles.img_note}>
+                                                        <span>{item.newsNet}</span>
+                                                        <span>{item.newsDate}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        )
+                                    }
+                                    
+                                })
+                            }   
                         </ul>
                     </div>
                 </div>

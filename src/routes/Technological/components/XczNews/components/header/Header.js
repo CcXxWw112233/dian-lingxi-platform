@@ -18,7 +18,7 @@ export default class Header extends Component {
                 <div className="search">
                     <Input.Search 
                         placeholder="请输入"
-                        style={{ width: 200,height: 32 }}
+                        style={{ width: 200,height: 32, marginRight: 16 }}
                         onSearch={value => console.log(value)}
                     />
                 </div>
