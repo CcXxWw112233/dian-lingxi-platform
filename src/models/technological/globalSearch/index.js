@@ -10,7 +10,7 @@ export default {
   namespace: 'globalSearch',
   state: {
     datas: {
-      globalSearchModalVisible: false,
+      globalSearchModalVisible: true,
       searchTypeList: [], //查询类型列表
       defaultSearchType: '', //默认类型
       allTypeResultList: [], //全部类型列表
@@ -22,6 +22,8 @@ export default {
       loadMoreDisplay: 'block',
       loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
       spinning: false,
+      isInMatchCondition: false, //是否在匹配条件
+      match_conditions: [], //输入匹配条件列表
     }
   },
   subscriptions: {

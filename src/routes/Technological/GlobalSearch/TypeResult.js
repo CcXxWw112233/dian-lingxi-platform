@@ -82,7 +82,7 @@ export default class TypeResult extends React.Component {
 
   render() {
 
-    const { allTypeResultList } = this.props.model
+    const { allTypeResultList } = this.props
     const { dispatch } = this.props
 
     return(
@@ -111,6 +111,6 @@ export default class TypeResult extends React.Component {
 
 function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, allTypeResultList = [] } } }) {
   return {
-    model: { searchTypeList, defaultSearchType, searchInputValue, allTypeResultList },
+     searchTypeList, defaultSearchType, searchInputValue, allTypeResultList
   }
 }

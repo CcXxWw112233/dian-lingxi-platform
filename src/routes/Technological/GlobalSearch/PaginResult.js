@@ -42,7 +42,7 @@ export default class PaginResult extends React.Component {
 
   //分页逻辑
   async getGlobalSearchResultList() {
-    const { model: { page_number, page_size, searchInputValue, defaultSearchType, }, dispatch } = this.props
+    const { page_number, page_size, searchInputValue, defaultSearchType, dispatch } = this.props
     const { listData = [], status, } = this.props
 
     const obj = {
@@ -61,7 +61,7 @@ export default class PaginResult extends React.Component {
 
   contentBodyScroll(e) {
     if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 2) {
-      const { model: { page_number = 1, scrollBlock }, dispatch } = this.props
+      const { page_number = 1, scrollBlock, dispatch } = this.props
       let page_no = page_number
       if(!scrollBlock) {
         return false
@@ -79,7 +79,7 @@ export default class PaginResult extends React.Component {
   }
 
   render() {
-    const { sigleTypeResultList = [], loadMoreTextType, loadMoreDisplay, page_number } = this.props.model
+    const { sigleTypeResultList = [], loadMoreTextType, loadMoreDisplay, page_number } = this.props
     const { dispatch } = this.props
     const sigleItem = sigleTypeResultList[0] || {}
     const { listType, lists=[] } = sigleItem
@@ -155,6 +155,6 @@ export default class PaginResult extends React.Component {
 }
 function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, loadMoreDisplay, scrollBlock, loadMoreTextType} } }) {
   return {
-    model: { searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreTextType, loadMoreDisplay },
+    searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreTextType, loadMoreDisplay
   }
 }
