@@ -24,23 +24,41 @@ export default class CondistionInput extends React.Component {
 
   componentDidMount() {
     this.set_match_conditions_area_height()
+    this.set_conditions_content()
   }
 
-  set_match_conditions_area_height() {
+  set_match_conditions_area_height = () => {
     const target = this.conditaion_area_input_ref;
     const { current } = target
-    const { clientHeight, clientWidth } = current
+    const { clientHeight } = current
     this.setState({
       match_conditions_area_height: clientHeight
     })
   }
 
-  onInput = e => {
-    this.set_match_conditions_area_height()
-    const innerHTML = e.target.innerHTML
+  set_conditions_content = () => {
+    const target = this.conditaion_area_input_ref;
+    const { current: { innerHTML } } = target
     this.setState({
       conditions_content: innerHTML
     })
+    this.parseContent(innerHTML)
+  }
+
+  parseContent = (innerHTML) => {
+    // console.log('sss1', innerHTML)
+    const id = 'conditions_content_'
+    const ele = document.createElement('div')
+    ele.id = id
+    ele.innerHTML = innerHTML
+    const nodeList = ele.childNodes[0].childNodes;
+    console.log('sss2', nodeList)
+  }
+
+  onInput = e => {
+    this.set_match_conditions_area_height()
+    const innerHTML = e.target.innerHTML
+    this.set_conditions_content()
   }
 
   renderMatchConditions = () => {
@@ -66,7 +84,9 @@ export default class CondistionInput extends React.Component {
   }
 
   render() {
-    const { style, conditions = [1, 2, 3, 4, 51, 2,1, 2, 3, 4, 51, 2,1, 2, 3, 4, 51, 2,] } = this.props
+    const { style, conditions = [1, 2, 3, 4] } = this.props
+    const { conditions_content } = this.state
+
     return(
       <div style={style} className={indexstyles.search_out_right} >
         <div contentEditable="true" resize ='none'
@@ -78,8 +98,8 @@ export default class CondistionInput extends React.Component {
             {
               conditions.map((value, key) => {
                 return (
-                  <div contenteditable="false" className={`${indexstyles.condition_item}`} key={key}>
-                    <span>{`sd${key}`}</span>
+                  <div contenteditable="false" data-value={value} className={`${indexstyles.condition_item}`} key={key}>
+                    {`sd${key}`}
                   </div>
                 )
               })
