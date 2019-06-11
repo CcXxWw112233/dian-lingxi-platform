@@ -88,6 +88,7 @@ export default class SearchArea extends React.Component {
   }
 
   //搜索查询区域
+  //固定条件
   renderFixedConditions = () => {
     return (
       <div className={indexstyles.fixed_conditions_area}>
@@ -99,6 +100,7 @@ export default class SearchArea extends React.Component {
       </div>
     )
   }
+  //匹配条件
   renderMatchConditions = () => {
     const { match_conditions = [1, 2, 3, 4, 5] } = this.props
     return (
@@ -116,6 +118,7 @@ export default class SearchArea extends React.Component {
       </div>
     )
   }
+  //整体查询输入区域
   renderInputSearch = () => {
     const { searchTypeList = [], defaultSearchType, searchInputValue } = this.props
     return (
@@ -129,16 +132,19 @@ export default class SearchArea extends React.Component {
               )
             })}
           </Select>
-          {/*<ConditionInput*/}
-            {/*style={{ width: '84%', fontSize: 14 }}*/}
-            {/*value={searchInputValue}*/}
-            {/*onChange={this.inputChange}*/}
-            {/*placeholder={'请输入'}*/}
-          {/*/>*/}
-          <Input style={{ width: '84%', fontSize: 14 }}
-                 value={searchInputValue}
-                 onChange={this.inputChange}
-                 placeholder={'请输入'} suffix={<i className={globalStyles.authTheme}>&#xe611;</i>}/>
+          <ConditionInput
+            style={{ width: '78%', fontSize: 14 }}
+            value={searchInputValue}
+            onChange={this.inputChange}
+            placeholder={'请输入'}
+          />
+          <div className={`${indexstyles.search_trigger}`} style={{width: '6%'}}>
+            <i className={globalStyles.authTheme}>&#xe611;</i>
+          </div>
+          {/*<Input style={{ width: '84%', fontSize: 14 }}*/}
+                 {/*value={searchInputValue}*/}
+                 {/*onChange={this.inputChange}*/}
+                 {/*placeholder={'请输入'} suffix={<i className={globalStyles.authTheme}>&#xe611;</i>}/>*/}
         </InputGroup>
       </div>
     )
@@ -148,7 +154,9 @@ export default class SearchArea extends React.Component {
     return(
       <div className={`${indexstyles.searchAreaOut}`}>
         {this.renderInputSearch()}
-        {/*{this.renderFixedConditions()}*/}
+        <div style={{height: 28}}>
+         {this.renderFixedConditions()}
+        </div>
         {/*{this.renderMatchConditions()}*/}
       </div>
     )

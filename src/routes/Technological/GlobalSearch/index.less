@@ -88,13 +88,21 @@
 .modal_out{
   .searchAreaOut {
     position: relative;
+    .search_trigger {
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border: 1px solid rgba(0,0,0,.1);
+      border-left: none;
+      cursor: pointer;
+    }
     .match_conditions_area {
       cursor: pointer;
       max-height: 210px;
       overflow-x: hidden;
       overflow-y: auto;
       position: absolute;
-      z-index: 2;
+      z-index: 3;
       margin-top: 8px;
       width: 100%;
       padding: 0 12px;
@@ -123,6 +131,9 @@
       cursor: pointer;
       display: flex;
       justify-content: space-between;
+      position: absolute;
+      width: 100%;
+      z-index: 2;
       margin-top: 8px;
       .fixed_conditions_area_left {
         display: flex;
