@@ -130,7 +130,7 @@ export default class Technological extends React.Component{
       }, {
         path: '/technological/xczNews',
         component: () => import('./components/XczNews')
-      }
+      },
     ]
 
     const iniLayout = (

@@ -1,12 +1,11 @@
-// 热点页面
+// 高层页面
 
 import React, { Component } from 'react'
-import mainStyles from './hot.less'
+import highRiseStyles from './highRise.less'
 import { Link } from 'dva/router'
 import { Icon } from 'antd'
 
-export default class Hot extends Component {
-
+export default class HighRise extends Component {
     constructor(pros) {
         super(pros)
         this.state = {
@@ -45,47 +44,30 @@ export default class Hot extends Component {
 
     render() {
         return (
-            <div className={mainStyles.mainContainer}>
-                <div className={mainStyles.list}>
-                    <Link to="/technological/xczNews" style={{color: '#fff', background: '#1890FF'}}>乡村振兴</Link>
-                    <Link to="/technological/xczNews">空间规划</Link>
-                    <Link to="/technological/xczNews">城市设计</Link>
-                    <Link to="/technological/xczNews">区域发展</Link>
-                    <Link to="/technological/xczNews">多规合一</Link>
-                    <Link to="/technological/xczNews">智慧城市</Link>
-                    <Link to="/technological/xczNews">美丽中国</Link>
-                    <Link to="/technological/xczNews">特色小镇</Link>
-                    <Link to="/technological/xczNews">海绵城市</Link>
-                    <Link to="/technological/xczNews">新型城镇</Link>
-                    <Link to="/technological/xczNews">雄安新区</Link>
-                    <Link to="/technological/xczNews">
-                        更多
-                        <Icon type="down" className="down" />
-                    </Link>
-                </div>
+            <div className={highRiseStyles.mainContainer}>
 
-                <div className={mainStyles.info}>
-                    <div className={mainStyles.title}>
-                        <h2>政策</h2>
+                <div className={highRiseStyles.info}>
+                    <div className={highRiseStyles.title}>
+                        <h2>置顶层</h2>
                         <a href="#">
                             更多
                             <Icon type="right" />
                         </a>
                     </div>
-                    <div className={mainStyles.news}>
+                    <div className={highRiseStyles.news}>
                         <ul>
                             {
                                 this.state.list.map((item, index) => {
                                     if (!item.hasImg) {
                                         return (
                                             <li>
-                                                {/* <div className={mainStyles.left}></div> */}
-                                                <div className={mainStyles.right}>
-                                                    <div className={mainStyles.message}>
-                                                        <i className={mainStyles.dot}></i>
-                                                        <a className={mainStyles.text} href="#">{item.text}</a>
+                                                {/* <div className={highRiseStyles.left}></div> */}
+                                                <div className={highRiseStyles.right}>
+                                                    <div className={highRiseStyles.message}>
+                                                        <i className={highRiseStyles.dot}></i>
+                                                        <a className={highRiseStyles.text} href="#">{item.text}</a>
                                                     </div>
-                                                    <div className={mainStyles.dot_note}>
+                                                    <div className={highRiseStyles.dot_note}>
                                                         <span>{item.newsNet}</span>
                                                         <span>{item.newsDate}</span>
                                                     </div>
@@ -95,15 +77,15 @@ export default class Hot extends Component {
                                     } else {
                                         return (
                                             <li>
-                                                <div className={mainStyles.left}>
+                                                <div className={highRiseStyles.left}>
                                                     <img src="" />
                                                 </div>
-                                                <div className={mainStyles.right}>
-                                                    <div className={mainStyles.message}>
-                                                        {/* <i className={mainStyles.dot}></i> */}
-                                                        <a className={mainStyles.img_text} href="#">{item.text}</a>
+                                                <div className={highRiseStyles.right}>
+                                                    <div className={highRiseStyles.message}>
+                                                        {/* <i className={highRiseStyles.dot}></i> */}
+                                                        <a className={highRiseStyles.img_text} href="#">{item.text}</a>
                                                     </div>
-                                                    <div className={mainStyles.img_note}>
+                                                    <div className={highRiseStyles.img_note}>
                                                         <span>{item.newsNet}</span>
                                                         <span>{item.newsDate}</span>
                                                     </div>
@@ -121,3 +103,4 @@ export default class Hot extends Component {
         )
     }
 }
+

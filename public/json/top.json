@@ -1,0 +1,29 @@
+{
+    "tabs": [
+        {
+            "name": "hot",
+            "path": "/technological/xczNews/hot",
+            "text": "热点"
+        },
+        {
+            "name": "highRise",
+            "path": "/technological/xczNews/highRise",
+            "text": "高层"
+        },
+        {
+            "name": "authority",
+            "path": "/technological/xczNews/authority",
+            "text": "权威"
+        },
+        {
+            "name": "area",
+            "path": "/technological/xczNews/area",
+            "text": "地区"
+        },
+        {
+            "name": "dataBase",
+            "path": "/technological/xczNews/dataBase",
+            "text": "资料库"
+        }
+    ]
+}
