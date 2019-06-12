@@ -1,5 +1,5 @@
-import { getUSerInfo, logout, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
-import { selectSearchTypeList, selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
+import { getGlobalSearchConditions, logout, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
+import { selectSearchTypeList, selectSelectedConditions,selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";
@@ -25,9 +25,9 @@ export default {
       spinning_conditions: false, //条件区域loading状态
       isInMatchCondition: false, //是否在匹配条件
       match_conditions: [
-        {id: '1', value: 11, parent_name: 111, name: 1111},
-        {id: 2, value: 22, parent_name: 222, name: 2222},
-        {id: 3, value: 33, parent_name: 333, name: 3333},
+        // {id: '1', value: 11, parent_name: 111, name: 1111},
+        // {id: 2, value: 22, parent_name: 222, name: 2222},
+        // {id: 3, value: 33, parent_name: 333, name: 3333},
       ], //输入匹配条件列表
       selected_conditions: [], //已选的条件列表
     }
@@ -85,13 +85,18 @@ export default {
       const searchInputValue = yield select(selectSearchInputValue)
       const page_number = yield select(selectPageNumber)
       const page_size = yield select(selectPageSize)
+      const selected_conditions = yield select(selectSelectedConditions)
+      const query_conditions = selected_conditions.map(val => {
+        return {
+          id: val['id'],
+          value: val['value']
+        }
+      })
 
-      if(!!!searchInputValue) {
-        return false
-      }
       const obj = {
         search_term: searchInputValue,
         search_type: defaultSearchType,
+        query_conditions: JSON.stringify(query_conditions),
         page_size: defaultSearchType == '1' ? 5 : page_size,
         page_number,
         ...payload,
@@ -168,12 +173,40 @@ export default {
     //获取搜索条件列表
     * getMatchConditions({ payload = {} }, { call, put, select }) {
       const searchInputValue = yield select(selectSearchInputValue)
-      const res = yield call(getGlobalSearchTypeList, payload)
+      if(!!!searchInputValue) {
+        return false
+      }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          spinning_conditions: true
+        }
+      })
+      const res = yield call(getGlobalSearchConditions, { keyword: searchInputValue })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          spinning_conditions: false
+        }
+      })
       if(isApiResponseOk(res)) {
+        const data = res.data
+        const new_match_conditions = []
+        for(let val of data) {
+          const id = val['id']
+          const parent_name = val['name']
+          for(let item of val['conditions']) {
+            const { value, name } = item
+            const obj = {
+              value, name, parent_name, id
+            }
+            new_match_conditions.push(obj)
+          }
+        }
         yield put({
           type: 'updateDatas',
           payload: {
-
+            match_conditions: new_match_conditions
           }
         })
         // debugger

@@ -46,9 +46,17 @@ export async function getGlobalSearchTypeList(params) {
 }
 
 //获取全局搜索类型列表
-export async function getGlobalSearchResultList(params) {
+export async function getGlobalSearchResultList(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/comm/search`,
+    method: 'POST',
+    data
+  }, {isNotLoading: true});
+}
+//根据关键字获取条件列表
+export async function getGlobalSearchConditions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/query_condition/list`,
     method: 'GET',
     params
   }, {isNotLoading: true});

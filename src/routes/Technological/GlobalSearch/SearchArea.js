@@ -138,7 +138,7 @@ export default class SearchArea extends React.Component {
             onChange={this.inputChange}
             placeholder={'请输入'}
           />
-          <div className={`${indexstyles.search_trigger}`} style={{width: '6%'}}>
+          <div className={`${indexstyles.search_trigger}`} style={{width: '6%'}} onClick={this.getGlobalSearchResult}>
             <i className={globalStyles.authTheme}>&#xe611;</i>
           </div>
           {/*<Input style={{ width: '84%', fontSize: 14 }}*/}
@@ -149,6 +149,15 @@ export default class SearchArea extends React.Component {
       </div>
     )
   }
+
+  getGlobalSearchResult = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('getGlobalSearchResultList'),
+      payload: {}
+    })
+  }
+
   render() {
 
     return(

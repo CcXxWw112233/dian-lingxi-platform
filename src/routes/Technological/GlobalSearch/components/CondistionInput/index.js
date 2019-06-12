@@ -167,10 +167,12 @@ export default class CondistionInput extends React.Component {
 
   //搜索出来的条件列表
   renderMatchConditions = () => {
-    const { match_conditions = [] } = this.props
+    const { match_conditions = [], spinning_conditions } = this.props
     const { match_conditions_area_height = 40 } = this.state
 
     return (
+      <div style={{position: 'relative'}}>
+      <Spin tip="数据加载中" style={{marginTop: 60}} spinning={spinning_conditions}>
       <div
         style={{top: match_conditions_area_height}}
         className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
@@ -178,13 +180,15 @@ export default class CondistionInput extends React.Component {
           match_conditions.map((val, key) => {
             const { id, value, parent_name, name } = val
             return (
-              <div className={indexstyles.match_conditions_item} onClick={() => this.selectCondition(val)} key={id}>
+              <div className={indexstyles.match_conditions_item} onClick={() => this.selectCondition(val)} key={`${id}_${value}`}>
                 <div className={indexstyles.match_conditions_item_title}>{parent_name}</div>
                 <div className={indexstyles.match_conditions_item_detail}>{name}</div>
               </div>
             )
           })
         }
+      </div>
+      </Spin>
       </div>
     )
   }
@@ -260,8 +264,8 @@ export default class CondistionInput extends React.Component {
     )
   }
 }
-function mapStateToProps({ globalSearch: { datas: { match_conditions, selected_conditions, isInMatchCondition, searchInputValue } } }) {
+function mapStateToProps({ globalSearch: { datas: { match_conditions, selected_conditions, isInMatchCondition, searchInputValue, spinning_conditions } } }) {
   return {
-    match_conditions, selected_conditions, isInMatchCondition, searchInputValue
+    match_conditions, selected_conditions, isInMatchCondition, searchInputValue, spinning_conditions
   }
 }

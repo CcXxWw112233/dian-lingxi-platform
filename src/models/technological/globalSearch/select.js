@@ -6,3 +6,4 @@ export const selectSigleTypeResultList = state => state[(`globalSearch`)].datas.
 export const selectSearchInputValue = state => state[(`globalSearch`)].datas.searchInputValue
 export const selectPageNumber = state => state[(`globalSearch`)].datas.page_number
 export const selectPageSize = state => state[(`globalSearch`)].datas.page_size
+export const selectSelectedConditions = state => state[(`globalSearch`)].datas.selected_conditions
