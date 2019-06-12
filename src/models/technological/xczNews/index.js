@@ -1,18 +1,17 @@
 import { getHeaderTabs } from '@/services/technological/xczNews'
-import { isApiResponseOk } from '@/utils/handleResponseData'
-import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "@/globalset/js/constant";
 
 export default {
   namespace: 'xczNews',
   state: {
-    topTabs: []
+    topTabs: [], // 顶部的导航，用来做实验的
+    commonList: [], // 获取列表信息
+    hotTabs: [], // 热点的tabs列表
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
-        console.log(location)
+        // console.log(location)
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
           dispatch({
             type: 'getHeaderTabs',
@@ -25,38 +24,24 @@ export default {
     },
   },
   effects: {
+    // 用来测试的：获取顶部信息
     * getHeaderTabs({ payload = {} }, { select, call, put }) {
       console.log(111111111111)
       const res = yield call(getHeaderTabs, {})
-      console.log('2222',res)
+      // console.log('2222',res)
       yield put({
           type: 'updateDatas',
           payload: {
             topTabs: res.tabs
           }
       })
-      // const { calback } = payload
-      // if(calback && typeof calback === 'function') {
-      //   calback()
-      // }
-      // if(isApiResponseOk(res)) {
-      //   console.log(res)
-      //   yield put({
-      //     type: 'updateDatas',
-      //     payload: {
-      //       topTabs: res.data
-      //     }
-      //   })
-      // }else{
-      //   message.warn(res.message, MESSAGE_DURATION_TIME)
-      // }
     },
 
   },
 
   reducers: {
     updateDatas(state, action) {
-      console.log(state, action)
+      // console.log(state, action)
       return {
         ...state, ...action.payload
         // datas: { ...state.datas, ...action.payload },

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import mainStyles from './hot.less'
-import { Link } from 'dva/router'
+import { Link, NavLink } from 'dva/router'
 import { Icon } from 'antd'
 
 export default class Hot extends Component {
@@ -48,7 +48,7 @@ export default class Hot extends Component {
             <div className={mainStyles.mainContainer}>
                 <div className={mainStyles.list}>
                     <Link to="/technological/xczNews" style={{color: '#fff', background: '#1890FF'}}>乡村振兴</Link>
-                    <Link to="/technological/xczNews">空间规划</Link>
+                    <NavLink to="/technological/xczNews">空间规划</NavLink>
                     <Link to="/technological/xczNews">城市设计</Link>
                     <Link to="/technological/xczNews">区域发展</Link>
                     <Link to="/technological/xczNews">多规合一</Link>
