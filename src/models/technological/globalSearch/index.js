@@ -21,10 +21,11 @@ export default {
       scrollBlock: true, //滚动锁
       loadMoreDisplay: 'block',
       loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
-      spinning: false,
+      spinning: false, //结果区域loading状态
+      spinning_conditions: false, //条件区域loading状态
       isInMatchCondition: false, //是否在匹配条件
       match_conditions: [
-        {id: 1, value: 11, parent_name: 111, name: 1111},
+        {id: '1', value: 11, parent_name: 111, name: 1111},
         {id: 2, value: 22, parent_name: 222, name: 2222},
         {id: 3, value: 33, parent_name: 333, name: 3333},
       ], //输入匹配条件列表
@@ -61,6 +62,7 @@ export default {
   },
   effects: {
 
+    //获取类型列表 全部 项目 任务 流程 文档
     * getGlobalSearchTypeList({ payload = {} }, { call, put, select }) {
       const res = yield call(getGlobalSearchTypeList, payload)
       if(isApiResponseOk(res)) {
@@ -77,6 +79,7 @@ export default {
       }
     },
 
+    //获取结果
     * getGlobalSearchResultList({ payload }, { call, put, select }) {
       const defaultSearchType = yield select(selectDefaultSearchType) || 1
       const searchInputValue = yield select(selectSearchInputValue)
@@ -157,6 +160,23 @@ export default {
             }
           })
         }
+      } else {
+        message.error(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    //获取搜索条件列表
+    * getMatchConditions({ payload = {} }, { call, put, select }) {
+      const searchInputValue = yield select(selectSearchInputValue)
+      const res = yield call(getGlobalSearchTypeList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+
+          }
+        })
+        // debugger
       } else {
         message.error(res.message, MESSAGE_DURATION_TIME)
       }
