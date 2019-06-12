@@ -23,7 +23,12 @@ export default {
       loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
       spinning: false,
       isInMatchCondition: false, //是否在匹配条件
-      match_conditions: [], //输入匹配条件列表
+      match_conditions: [
+        {id: 1, value: 11, parent_name: 111, name: 1111},
+        {id: 2, value: 22, parent_name: 222, name: 2222},
+        {id: 3, value: 33, parent_name: 333, name: 3333},
+      ], //输入匹配条件列表
+      selected_conditions: [], //已选的条件列表
     }
   },
   subscriptions: {

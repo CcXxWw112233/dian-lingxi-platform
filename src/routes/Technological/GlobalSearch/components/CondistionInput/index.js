@@ -2,7 +2,8 @@ import React from 'react'
 import { Modal, Form, Button, Input, message, Select, Spin, Icon } from 'antd'
 import indexstyles from './index.less'
 import globalStyles from './../../../../../globalset/css/globalClassName.less'
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
+import {connect} from "dva/index";
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -10,13 +11,39 @@ const InputGroup = Input.Group;
 const Option = Select.Option;
 
 const splitStingQuot = '_%_#/@_$_'
+
+function getDisplayName(ele) {
+  if (typeof ele.type === 'string') {
+    return ele.type;
+  }
+  return ele.type.name || ele.type.displayName || 'No Name';
+}
+
+function getAttrs(attrs) {
+  return Object.keys(attrs).map(attr => (attr === 'children' ? '' : `${attr}="${attrs[attr]}"`)).join('');
+}
+
+function transfer(ele) {
+  if (typeof ele === 'string' || typeof ele === 'number') {
+    return ele;
+  }
+
+  const props = ele.props || {};
+  const children = React.Children.toArray(props.children || []);
+
+  const html = children.map(transfer);
+  const tag = getDisplayName(ele);
+
+  return `<${tag} ${getAttrs(props)}>${html.join('')}</${tag}>`;
+}
+
 //应用与
+@connect(mapStateToProps)
 export default class CondistionInput extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      conditions_content: '',
       match_conditions_area_height: 40, //搜索框高度，也当作条件列表距离搜索框底部高度
     }
     this.conditaion_area_input_ref = React.createRef()
@@ -27,6 +54,7 @@ export default class CondistionInput extends React.Component {
     this.set_conditions_content()
   }
 
+  //设置//搜索框高度，也当作条件列表距离搜索框底部高度
   set_match_conditions_area_height = () => {
     const target = this.conditaion_area_input_ref;
     const { current } = target
@@ -36,21 +64,23 @@ export default class CondistionInput extends React.Component {
     })
   }
 
+  //设置输出框的内容
   set_conditions_content = () => {
     const target = this.conditaion_area_input_ref;
     const { current: { innerHTML } } = target
-    this.setState({
-      conditions_content: innerHTML
-    })
     this.parseContent(innerHTML)
   }
 
+  //解析框内的内容
   parseContent = (innerHTML) => {
     // console.log('sss1', innerHTML)
     const id = 'conditions_content_'
     const ele = document.createElement('div')
     ele.id = id
     ele.innerHTML = innerHTML
+    if(!ele.childNodes[0]) {
+      return
+    }
     const nodeList = ele.childNodes[0].childNodes;
     console.log('sss2', nodeList)
   }
@@ -61,8 +91,24 @@ export default class CondistionInput extends React.Component {
     this.set_conditions_content()
   }
 
+  //选择条件
+  selectCondition = (val) => {
+    const { id, value, parent_name, name } = val
+    const { selected_conditions = [], dispatch } = this.props
+    const obj = { id, value, parent_name, name }
+    const arr = selected_conditions.push(obj)
+    dispatch({
+      type: 'globalSearch/updateDatas',
+      payload: {
+        selected_conditions
+      }
+    })
+    this.dynamicRenderEditContent(selected_conditions)
+  }
+
+  //搜索出来的条件列表
   renderMatchConditions = () => {
-    const { match_conditions = [1, 2, 3, 4, 5] } = this.props
+    const { match_conditions = [] } = this.props
     const { match_conditions_area_height = 40 } = this.state
 
     return (
@@ -70,11 +116,12 @@ export default class CondistionInput extends React.Component {
         style={{top: match_conditions_area_height}}
         className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
         {
-          match_conditions.map((value, key) => {
+          match_conditions.map((val, key) => {
+            const { id, value, parent_name, name } = val
             return (
-              <div className={indexstyles.match_conditions_item}>
-                <div className={indexstyles.match_conditions_item_title}>名称匹配</div>
-                <div className={indexstyles.match_conditions_item_detail}>标题中包含：pdf</div>
+              <div className={indexstyles.match_conditions_item} onClick={() => this.selectCondition(val)} key={id}>
+                <div className={indexstyles.match_conditions_item_title}>{parent_name}</div>
+                <div className={indexstyles.match_conditions_item_detail}>{name}</div>
               </div>
             )
           })
@@ -83,105 +130,73 @@ export default class CondistionInput extends React.Component {
     )
   }
 
+  //动态渲染输入框
+  dynamicRenderEditContent = () => {
+    const { selected_conditions = [] } = this.props
+    const target = document.getElementById('conditaion_area_input_ref')
+    target.innerHTML = transfer(this.renderEditContent())
+    this.set_match_conditions_area_height()
+    this.parseContent(target.innerHTML)
+  }
+
+  //选择的条件列表
+  renderEditContent = () => {
+    const { selected_conditions = [] } = this.props
+
+    const itemStyle = `background-color: red;color: #ffffff;height: 24px; background:rgba(89,89,89,1);
+                 display: inline-block; height: 24px;line-height: 24px; padding: 0 6px;color: #FFFFFF;
+                  font-size: 12px; border-radius: 4px;margin-right: 6px; margin-bottom: 6px;`
+    return (
+      <div>
+        <div className={`${indexstyles.conditions}`}>
+          {
+            selected_conditions.map((val, key) => {
+              const { id, name } = val
+              return (
+                <div
+                  contenteditable="false"
+                  data-value={JSON.stringify(val)}
+                  className={`${indexstyles.condition_item}`}
+                  style={itemStyle}
+                  key={id}>
+                  {name}
+                </div>
+              )
+            })
+          }
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const { style, conditions = [1, 2, 3, 4] } = this.props
-    const { conditions_content } = this.state
+    const { style, selected_conditions = [] } = this.props
 
     return(
       <div style={style} className={indexstyles.search_out_right} >
-        <div contentEditable="true" resize ='none'
+        <div contentEditable="true"
+             suppressContentEditableWarning="true"
              placeholder="请输入"
+             id={'conditaion_area_input_ref'}
              ref={this.conditaion_area_input_ref}
              className={`${indexstyles.input_out}`}
              onInput={this.onInput}>
-          <div className={`${indexstyles.conditions}`}>
-            {
-              conditions.map((value, key) => {
-                return (
-                  <div contenteditable="false" data-value={value} className={`${indexstyles.condition_item}`} key={key}>
-                    {`sd${key}`}
-                  </div>
-                )
-              })
-            }
-          </div>
+          {/*{this.renderEditContent()}*/}
         </div>
-        {/*{this.renderMatchConditions()}*/}
+        {this.renderMatchConditions()}
+        {/*<div >*/}
+          {/*<div className="index__conditions___2pyNI">*/}
+            {/*<div contenteditable="false"data-value="{"id":1,"value":11,"parent_name":111,"name":1111}"className="index__condition_item___3bWsc">*/}
+              {/*1111*/}
+            {/*</div>*/}
+          {/*</div>*/}
+        {/*</div>*/}
       </div>
     )
   }
 }
-//    const { fetching, data, selected_value } = this.state;
-
-// state = {
-//   data: [],
-//   selected_value: [],
-//   fetching: false,
-// };
-//
-// constructor (props) {
-//   super(props)
-//   this.lastFetchId = 0;
-//   this.fetchUser = debounce(this.fetchUser, 800);
-// }
-// fetchUser = value => {
-//   this.lastFetchId += 1;
-//   const fetchId = this.lastFetchId;
-//   this.setState({ data: [], fetching: true });
-//   fetch('https://randomuser.me/api/?results=5')
-//     .then(response => response.json())
-//     .then(body => {
-//       if (fetchId !== this.lastFetchId) {
-//         // for fetch callback order
-//         return;
-//       }
-//       const data = body.results.map(user => ({
-//         text: `${user.name.first} ${user.name.last}`,
-//         value: user.login.username,
-//       }));
-//       this.setState({ data, fetching: false });
-//     });
-// };
-// handleChange = data => {
-//   const selected = data.map( item => {
-//     const key = item.key
-//     if(key.indexOf(splitStingQuot) == -1) {
-//       return item
-//     }
-//     const arr = key.split(splitStingQuot)
-//     const obj = {
-//       key: arr[0],
-//       label: arr[1],
-//     }
-//     return obj
-//   })
-//   this.setState({
-//     selected_value: selected,
-//     data: [],
-//     fetching: false,
-//   });
-// };
-{/*<Select*/}
-  {/*mode="multiple"*/}
-  {/*resize={'none'}*/}
-  {/*labelInValue*/}
-  {/*size={'large'}*/}
-  {/*suffixIcon={<Icon type="caret-down" />}*/}
-  {/*value={selected_value}*/}
-  {/*maxRows={1}*/}
-  {/*placeholder="请输入"*/}
-  {/*notFoundContent={fetching ? <Spin size="small" /> : null}*/}
-  {/*filterOption={false}*/}
-  {/*onSearch={this.fetchUser}*/}
-  {/*onChange={this.handleChange}*/}
-  {/*style={{ width: '100%', resize: 'none'}}*/}
-{/*>*/}
-  {/*{data.map( d => (*/}
-    {/*<Option key = {`${d.value}${splitStingQuot}${d.text}`} >*/}
-      {/*<div className={indexstyles.match_conditions_item}>*/}
-        {/*<div className={indexstyles.match_conditions_item_title}>名称匹配</div>*/}
-        {/*<div className={indexstyles.match_conditions_item_detail}>标题中包含：{d.text}</div>*/}
-      {/*</div>*/}
-    {/*</Option>*/}
-  {/*))}*/}
-{/*</Select>*/}
+function mapStateToProps({ globalSearch: { datas: { match_conditions, selected_conditions, isInMatchCondition } } }) {
+  return {
+    match_conditions, selected_conditions, isInMatchCondition
+  }
+}
