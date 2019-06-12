@@ -4,7 +4,9 @@ import React, { Component } from 'react'
 import mainStyles from './hot.less'
 import { Link, NavLink } from 'dva/router'
 import { Icon } from 'antd'
+import { connect } from 'dva'
 
+@connect(({xczNews = []}) => ({xczNews}))
 export default class Hot extends Component {
 
     constructor(pros) {
@@ -42,8 +44,9 @@ export default class Hot extends Component {
             ]
         }
     }
-
     render() {
+        const { xczNews } = this.props;
+        console.log(xczNews)
         return (
             <div className={mainStyles.mainContainer}>
                 <div className={mainStyles.list}>

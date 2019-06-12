@@ -1,4 +1,5 @@
-import request from '../../utils/requestAxios'
+import request from '@/utils/requestAxios'
+import { REQUEST_COMMON } from '@/globalset/js/constant'
 
 // 获取顶部 tabs 的 json 数据
 export async function getHeaderTabs(params) {
@@ -6,5 +7,15 @@ export async function getHeaderTabs(params) {
         url: "/json/top.json",
         method: "GET",
         params
+    })
+}
+
+// 获取热点 tabs 的数据
+export async function getHotTabs(params) {
+    console.log(params, '---------------------')
+    return request({
+        url: `${REQUEST_COMMON}/common/hotspot`,
+        method: "GET",
+        params,
     })
 }

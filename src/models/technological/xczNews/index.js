@@ -1,9 +1,9 @@
-import { getHeaderTabs } from '@/services/technological/xczNews'
+import { getHeaderTabs, getHotTabs } from '@/services/technological/xczNews'
 
 export default {
   namespace: 'xczNews',
   state: {
-    topTabs: [], // 顶部的导航，用来做实验的
+    topTabs: [], // 顶部的导航
     commonList: [], // 获取列表信息
     hotTabs: [], // 热点的tabs列表
   },
@@ -20,13 +20,21 @@ export default {
             }
           })
         }
+        if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
+          dispatch({
+            type: "getHotTabs",
+            payload: {
+              
+            }
+          })
+        }
       })
     },
   },
   effects: {
-    // 用来测试的：获取顶部信息
+    // 获取顶部信息
     * getHeaderTabs({ payload = {} }, { select, call, put }) {
-      console.log(111111111111)
+      // console.log(111111111111)
       const res = yield call(getHeaderTabs, {})
       // console.log('2222',res)
       yield put({
@@ -36,7 +44,19 @@ export default {
           }
       })
     },
-
+    // 获取热点tabs
+    * getHotTabs({ payload = {} }, { select, call, put }) {
+      console.log(payload)
+      console.log(2222222)
+      const res = yield call(getHotTabs, {})
+      console.log(res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          hotTabs: res.data
+        }
+      })
+    }
   },
 
   reducers: {
