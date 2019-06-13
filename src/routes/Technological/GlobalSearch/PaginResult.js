@@ -28,12 +28,12 @@ export default class PaginResult extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props
-    dispatch({
-      type: getEffectOrReducerByName('getGlobalSearchResultList'),
-      payload: {
-
-      }
-    })
+    // dispatch({
+    //   type: getEffectOrReducerByName('getGlobalSearchResultList'),
+    //   payload: {
+    //
+    //   }
+    // })
   }
 
   componentWillReceiveProps(nextProps) {

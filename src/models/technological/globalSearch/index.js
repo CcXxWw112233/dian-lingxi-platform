@@ -23,7 +23,6 @@ export default {
       loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
       spinning: false, //结果区域loading状态
       spinning_conditions: false, //条件区域loading状态
-      isInMatchCondition: false, //是否在匹配条件
       match_conditions: [
         // {id: '1', value: 11, parent_name: 111, name: 1111},
         // {id: 2, value: 22, parent_name: 222, name: 2222},
@@ -191,18 +190,22 @@ export default {
       })
       if(isApiResponseOk(res)) {
         const data = res.data
-        const new_match_conditions = []
-        for(let val of data) {
-          const id = val['id']
-          const parent_name = val['name']
-          for(let item of val['conditions']) {
-            const { value, name } = item
-            const obj = {
-              value, name, parent_name, id
+        let new_match_conditions = []
+        new_match_conditions = data.map(item => {
+          const parent_id = item.id
+          const parent_name = item.name
+          const conditions = item['conditions'].map(child_item => {
+            const { name, value } = child_item
+            return {
+              full_name: `${parent_name}： ${name}`,
+              name,
+              value,
+              id: parent_id,
             }
-            new_match_conditions.push(obj)
-          }
-        }
+          })
+          const new_item = Object.assign(item, {conditions})
+          return item
+        })
         yield put({
           type: 'updateDatas',
           payload: {

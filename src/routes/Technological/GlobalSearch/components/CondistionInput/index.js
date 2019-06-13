@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Spin, Icon } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Spin, } from 'antd'
 import indexstyles from './index.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../../../globalset/js/constant'
 import globalStyles from './../../../../../globalset/css/globalClassName.less'
@@ -47,13 +47,14 @@ export default class CondistionInput extends React.Component {
     this.state = {
       match_conditions_area_height: 40, //搜索框高度，也当作条件列表距离搜索框底部高度
       searchTimer: null,
+      show_match_conditions: false, //显示条件列表
+      show_match_conditions_flag: false, //显示条件列表,作为flag用于input失焦和条件列表单个点击的时间差的校验
     }
     this.conditaion_area_input_ref = React.createRef()
   }
 
   componentDidMount() {
     this.set_match_conditions_area_height()
-    // this.set_conditions_content()
   }
 
   //设置//搜索框高度，也当作条件列表距离搜索框底部高度
@@ -72,7 +73,12 @@ export default class CondistionInput extends React.Component {
     const { current: { innerHTML='' } } = target
     this.parseContent(innerHTML)
   }
-
+  //设置是否显示条件
+  set_show_match_conditions = (bool) => {
+    this.setState({
+      show_match_conditions: bool
+    })
+  }
   //解析框内的内容
   parseContent = (innerHTML) => {
     if(!!!innerHTML) {
@@ -91,8 +97,7 @@ export default class CondistionInput extends React.Component {
     if(!nodeList.length) { //未选条件,已输入
       this.handleSearchValueChange(innerHTML)
     }
-    // console.log('sssa', nodeList)
-    const selected_conditons_arr = []
+    let selected_conditons_arr = []
     //解析出来所选择的条件和输入的文本
     for(let i = 0; i < nodeList.length; i ++ ) {
       const node = nodeList[i]
@@ -110,6 +115,7 @@ export default class CondistionInput extends React.Component {
       }
     }
     //更新选择条件
+    //去重（字符串化再回溯）
     dispatch({
       type: 'globalSearch/updateDatas',
       payload: {
@@ -123,10 +129,11 @@ export default class CondistionInput extends React.Component {
     dispatch({
       type: 'globalSearch/updateDatas',
       payload: {
-        searchInputValue: textContent
+        searchInputValue: textContent.replace(/\s/gim, '').replace(/&nbsp;/gim, '')
       }
     })
     this.searchConditioins()
+    this.set_show_match_conditions(true)
   }
   //查询条件列表
   searchConditioins = () => {
@@ -149,12 +156,37 @@ export default class CondistionInput extends React.Component {
     this.set_match_conditions_area_height()
     this.set_conditions_content()
   }
-
+  //输入框失焦
+  onBlur = e => {
+    const that = this
+    setTimeout(function () {
+      const { show_match_conditions_flag } = that.state
+      that.set_show_match_conditions(show_match_conditions_flag)
+    }, 300)
+  }
+  onFocus = e => {
+    this.set_show_match_conditions(true)
+  }
   //选择条件
-  selectCondition = (val) => {
-    const { id, value, parent_name, name } = val
+  selectCondition = (val,e) => {
+    e.stopPropagation()
+    const that = this
+    //用于做点击失焦中间时间差判断显示隐藏-------
+    this.setState({
+      show_match_conditions_flag: true
+    })
+    setTimeout(() => {
+      this.setState({
+        show_match_conditions_flag: false
+      })
+    }, 300)
+    this.set_show_match_conditions(true)
+     //用于做点击失焦中间时间差判断显示隐藏-------end
+
+
+    const { id, value, full_name, name } = val
     const { selected_conditions = [], dispatch } = this.props
-    selected_conditions.push({ id, value, parent_name, name })
+    selected_conditions.push({ id, value, full_name, name })
     dispatch({
       type: 'globalSearch/updateDatas',
       payload: {
@@ -169,26 +201,43 @@ export default class CondistionInput extends React.Component {
   renderMatchConditions = () => {
     const { match_conditions = [], spinning_conditions } = this.props
     const { match_conditions_area_height = 40 } = this.state
+    const match_conditions_list = (
+      match_conditions.map((val, key) => {
+        const { id, value, conditions, name } = val
+        return (
+          <div className={indexstyles.match_conditions_item}  key={`${id}_${value}`}>
+            <div className={indexstyles.match_conditions_item_title}>{name}</div>
+            <div className={indexstyles.match_conditions_item_detail}>
+              {
+                conditions.map((val2, key2) => {
+                  const { full_name, name, id, value } = val2
+                  return (
+                    <div className={indexstyles.match_conditions_item_detail_item}
+                         onClick={(e) => this.selectCondition(val2, e)}
+                         key={`${id}_${value}`}>{name}</div>
+                  )
+                })
+              }
+            </div>
+          </div>
+        )
+      })
+    )
 
     return (
       <div style={{position: 'relative'}}>
-      <Spin tip="数据加载中" style={{marginTop: 60}} spinning={spinning_conditions}>
-      <div
-        style={{top: match_conditions_area_height}}
-        className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
-        {
-          match_conditions.map((val, key) => {
-            const { id, value, parent_name, name } = val
-            return (
-              <div className={indexstyles.match_conditions_item} onClick={() => this.selectCondition(val)} key={`${id}_${value}`}>
-                <div className={indexstyles.match_conditions_item_title}>{parent_name}</div>
-                <div className={indexstyles.match_conditions_item_detail}>{name}</div>
-              </div>
-            )
-          })
-        }
-      </div>
-      </Spin>
+        <div
+          style={{top: match_conditions_area_height}}
+          className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
+          <Spin tip="数据加载中" style={{marginTop: 60}} spinning={spinning_conditions}>
+            <div className={`${indexstyles.match_conditions_area_spin}`} style={{top: match_conditions_area_height}}></div>
+          </Spin>
+          {match_conditions.length? (
+            match_conditions_list
+          ) : (
+            <div className={indexstyles.match_conditions_area_nodata}>无数据，换个条件搜索吧</div>
+          )}
+        </div>
       </div>
     )
   }
@@ -212,9 +261,8 @@ export default class CondistionInput extends React.Component {
       <div className={`${indexstyles.conditions}`}>
         {
           selected_conditions.map((val, key) => {
-            const { id, name, parent_name, value } = val
+            const { id, name, full_name, value } = val
             const string = JSON.stringify(val)
-            // const data_string = `${splitStingQuot}id${splitStingQuot}:${id}, name:${name},value:${value}, parent_name:${parent_name}`
             let data_string = JSON.stringify(val)
             //替换双引号避免dataset丢失数据
             data_string = data_string.replace(/\"/gim, splitStingQuot)
@@ -224,8 +272,8 @@ export default class CondistionInput extends React.Component {
                 data-value={data_string}
                 className={`${indexstyles.condition_item}`}
                 style={itemStyle}
-                key={id}>
-                {name}
+                key={`${id}_${full_name}`}>
+                {full_name}
               </div>
             )
           })
@@ -236,11 +284,7 @@ export default class CondistionInput extends React.Component {
 
   render() {
     const { style, selected_conditions = [], searchInputValue } = this.props
-    console.log('sssss', {
-      selected_conditions,
-      searchInputValue
-    })
-
+    const { show_match_conditions } = this.state
     return(
       <div style={style} className={indexstyles.search_out_right} >
         <div contentEditable="true"
@@ -249,23 +293,20 @@ export default class CondistionInput extends React.Component {
              id={'conditaion_area_input_ref'}
              ref={this.conditaion_area_input_ref}
              className={`${indexstyles.input_out}`}
-             onInput={this.onInput}>
+             onInput={this.onInput}
+             onBlur={this.onBlur}
+             onFocus={this.onFocus}
+        >
           {/*{this.renderEditContent()}*/}
         </div>
-        {this.renderMatchConditions()}
-        {/*<div >*/}
-          {/*<div className="index__conditions___2pyNI">*/}
-            {/*<div contenteditable="false"data-value="{"id":1,"value":11,"parent_name":111,"name":1111}"className="index__condition_item___3bWsc">*/}
-              {/*1111*/}
-            {/*</div>*/}
-          {/*</div>*/}
-        {/*</div>*/}
+
+        {show_match_conditions && this.renderMatchConditions()}
       </div>
     )
   }
 }
-function mapStateToProps({ globalSearch: { datas: { match_conditions, selected_conditions, isInMatchCondition, searchInputValue, spinning_conditions } } }) {
+function mapStateToProps({ globalSearch: { datas: { match_conditions, selected_conditions, searchInputValue, spinning_conditions } } }) {
   return {
-    match_conditions, selected_conditions, isInMatchCondition, searchInputValue, spinning_conditions
+    match_conditions, selected_conditions, searchInputValue, spinning_conditions
   }
 }
