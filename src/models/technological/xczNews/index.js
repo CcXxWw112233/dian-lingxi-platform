@@ -1,10 +1,10 @@
-import { getHeaderTabs, getHotTabs } from '@/services/technological/xczNews'
+import { getHeaderTabs, getHotTabs, getHotArticles } from '@/services/technological/xczNews'
 
 export default {
   namespace: 'xczNews',
   state: {
     topTabs: [], // 顶部的导航
-    commonList: [], // 获取列表信息
+    hotArticlesList: [], // 获取热点文章列表信息
     hotTabs: [], // 热点的tabs列表
   },
   subscriptions: {
@@ -24,14 +24,20 @@ export default {
           dispatch({
             type: "getHotTabs",
             payload: {
-              
+              appid: 123
+            }
+          }),
+          dispatch({
+            type: "getHotArticles",
+            payload: {
+
             }
           })
         }
       })
     },
   },
-  effects: {
+  effects: { 
     // 获取顶部信息
     * getHeaderTabs({ payload = {} }, { select, call, put }) {
       // console.log(111111111111)
@@ -46,17 +52,30 @@ export default {
     },
     // 获取热点tabs
     * getHotTabs({ payload = {} }, { select, call, put }) {
-      console.log(payload)
-      console.log(2222222)
-      const res = yield call(getHotTabs, {})
-      console.log(res)
+      // console.log(payload, 'payload.....')
+      // console.log(2222222)
+      const res = yield call(getHotTabs, {...payload})
+      // console.log(res, 'res-----')
       yield put({
         type: 'updateDatas',
         payload: {
           hotTabs: res.data
         }
       })
+    },
+
+    // 获取热点文章
+    * getHotArticles({ payload = {} }, { select, call, put }) {
+      const res = yield call(getHotArticles, {...payload});
+      console.log(res,'======')
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          hotArticlesList: res.data
+        }
+      })
     }
+
   },
 
   reducers: {

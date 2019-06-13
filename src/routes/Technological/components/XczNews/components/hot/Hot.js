@@ -6,8 +6,12 @@ import { Link, NavLink } from 'dva/router'
 import { Icon } from 'antd'
 import { connect } from 'dva'
 
-@connect(({xczNews = []}) => ({xczNews}))
+@connect(({xczNews = []}) => ({
+    xczNews,
+    
+}))
 export default class Hot extends Component {
+    
 
     constructor(pros) {
         super(pros)
@@ -44,13 +48,42 @@ export default class Hot extends Component {
             ]
         }
     }
+
+    // 热点点击的显示对应的内容
+    handleHotContent(id, dispatch) {
+        console.log(id)
+        // const { dispatch } =this.props;
+        dispatch({
+          type: 'xczNews/getHotArticles',
+          payload: {
+            hotspot_id: id,
+            default_page_size: 5
+          }
+        })
+    }
+
+
     render() {
-        const { xczNews } = this.props;
-        console.log(xczNews)
+        console.log(this.props)
+        const { xczNews, location, dispatch } = this.props;
+        const {hotTabs = [], hotArticlesList} = xczNews;
+        console.log(hotArticlesList);
         return (
             <div className={mainStyles.mainContainer}>
                 <div className={mainStyles.list}>
-                    <Link to="/technological/xczNews" style={{color: '#fff', background: '#1890FF'}}>乡村振兴</Link>
+                    {
+                       hotTabs.map(item => {
+                           return (
+                               <div 
+                                    className={mainStyles.hotTabs}
+                                    id={item.id}
+                                    className={mainStyles.active}
+                                    onClick={this.handleHotContent.bind(null, item.id, dispatch)}
+                                >{ item.name }</div>
+                           )
+                       }) 
+                    }
+                    {/* <Link to="/technological/xczNews" style={{color: '#fff', background: '#1890FF'}}>乡村振兴</Link>
                     <NavLink to="/technological/xczNews">空间规划</NavLink>
                     <Link to="/technological/xczNews">城市设计</Link>
                     <Link to="/technological/xczNews">区域发展</Link>
@@ -64,7 +97,7 @@ export default class Hot extends Component {
                     <Link to="/technological/xczNews">
                         更多
                         <Icon type="down" className="down" />
-                    </Link>
+                    </Link> */}
                 </div>
 
                 <div className={mainStyles.info}>
