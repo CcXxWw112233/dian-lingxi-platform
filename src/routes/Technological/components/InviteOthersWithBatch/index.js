@@ -61,20 +61,48 @@ class InviteOtherWithBatch extends Component {
           .then(res => {
             if (res.code && res.code === '0') {
               //如果查到了用户
-              if (res.data && res.data.id) {
-                const { avatar, name, id } = res.data;
-                const value = this.genUserValueStr(
-                  avatar,
-                  name,
-                  user,
-                  true,
-                  id
-                );
+              if (res.data && res.data.length) {
+                const users = res.data.map(i => {
+                  const { avatar, name, id, mobile, email } = i
+                  const value = this.genUserValueStr(
+                    avatar,
+                    name,
+                    user,
+                    true,
+                    id
+                  )
+                  return {
+                    value,
+                    avatar,
+                    user: mobile ? mobile : email ? email : '',
+                    name,
+                  }
+                })
+                // const { avatar, name, id } = res.data;
+                // const value = this.genUserValueStr(
+                //   avatar,
+                //   name,
+                //   user,
+                //   true,
+                //   id
+                // );
+                // this.setState({
+                //   inputRet: [{ value, avatar, user, name: name }],
+                //   fetching: false
+                // });
                 this.setState({
-                  inputRet: [{ value, avatar, user, name: name }],
-                  fetching: false
-                });
+                  inputRet: users,
+                  fetching: false,
+                })
               } else {
+                const isValidUser = this.isValidMobileOrValidEmail(user)
+                if(!isValidUser) {
+                  this.setState({
+                    fetching: false,
+                  })
+                  return
+                }
+
                 const value = this.genUserValueStr(
                   'default',
                   'default',
@@ -239,9 +267,10 @@ class InviteOtherWithBatch extends Component {
         fetching: false
       },
       () => {
-        if (isValidUser) {
-          this.fetchUsers(user);
-        }
+        this.fetchUsers(user);
+        // if (isValidUser) {
+        //   this.fetchUsers(user);
+        // }
       }
     );
   };
