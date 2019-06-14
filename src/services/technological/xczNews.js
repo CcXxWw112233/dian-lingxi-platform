@@ -29,3 +29,30 @@ export async function getHotArticles(params) {
         params,
     })
 }
+
+// 获取高层文章的数据
+export async function getHighRiseArticles(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/top_leader`,
+        method: "GET",
+        params,
+    })
+}
+
+// 获取权威文章的数据
+export async function getAuthorityArticles(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/authority`,
+        method: "GET",
+        params,
+    })
+}
+
+// 获取资料库的数据
+export async function getDataBase(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/store`,
+        method: "GET",
+        params,
+    })
+}
