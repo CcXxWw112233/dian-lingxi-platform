@@ -135,14 +135,18 @@ export default class SearchArea extends React.Component {
       type: 'globalSearch/updateDatas',
       payload: {
         selected_conditions,
-        searchInputValue: '',
+        // searchInputValue: '',
       }
     })
   }
   //搜索出来的条件列表
   renderMatchConditions = () => {
-    const { match_conditions = [], spinning_conditions } = this.props
+    const { match_conditions = [], spinning_conditions, selected_conditions } = this.props
     const { match_conditions_area_height = 40 } = this.state
+    const isChooseItem = ({value, id}) => { //是否已选
+      const flag = selected_conditions.find(item => item.value == value && item.id == id)
+      return !!flag
+    }
     const match_conditions_list = (
       match_conditions.map((val, key) => {
         const { id, value, conditions, name } = val
@@ -156,7 +160,12 @@ export default class SearchArea extends React.Component {
                   return (
                     <div className={indexstyles.match_conditions_item_detail_item}
                          onClick={(e) => this.selectCondition(val2, e)}
-                         key={`${id}_${value}`}>{name}</div>
+                         key={`${id}_${value}`}>
+                      <div className={`${globalStyles.authTheme} ${globalStyles.global_ellipsis} ${indexstyles.match_conditions_item_detail_item_name}`}>{name}</div>
+                      {isChooseItem({value, id}) && (
+                        <div className={`${globalStyles.authTheme} ${indexstyles.match_conditions_item_detail_item_check}`}>&#xe7fc;</div>
+                      )}
+                    </div>
                   )
                 })
               }
@@ -210,7 +219,7 @@ export default class SearchArea extends React.Component {
                  onChange={this.inputChange}
                  onBlur={this.inputBlur}
                  onFocus={this.inputFocus}
-                 placeholder={'请输入'} suffix={<i className={globalStyles.authTheme} onClick={this.getGlobalSearchResult}>&#xe611;</i>}/>
+                 placeholder={'请输入'} suffix={<div className={globalStyles.authTheme} style={{height: 40, width: 30, textAlign: 'right', lineHeight: '40px', cursor: 'pointer'}} onClick={this.getGlobalSearchResult}>&#xe611;</div>}/>
           {/*<div className={`${indexstyles.search_trigger}`} style={{width: '6%'}} onClick={this.getGlobalSearchResult}>*/}
             {/*<i className={globalStyles.authTheme}>&#xe611;</i>*/}
           {/*</div>*/}
