@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Select, Icon } from 'antd'
+import { Input, Select, Icon, Spin } from 'antd'
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../globalset/js/constant'
@@ -14,10 +14,13 @@ const getEffectOrReducerByName = name => `globalSearch/${name}`
 export default class SearchArea extends React.Component {
   state = {
     searchTimer: null,
+    show_match_conditions: false, //显示条件列表
+    show_match_conditions_flag: false, //显示条件列表,作为flag用于input失焦和条件列表单个点击的时间差的校验
   }
 
   constructor() {
     super()
+    this.search_input_ref = React.createRef()
     this.selectTypeChange = this.selectTypeChange.bind(this)
     this.inputChange = this.inputChange.bind(this)
   }
@@ -64,10 +67,13 @@ export default class SearchArea extends React.Component {
     const that = this
     const value = e.target.value
     const { dispatch } = this.props
+    //设置显示条件列表区域
+    this.set_show_match_conditions(true)
+
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        searchInputValue: value,
+        searchInputValue: value.replace(/\s/gim, ''),
         page_number: 1,
         // allTypeResultList: [],
         // sigleTypeResultList: []
@@ -80,44 +86,103 @@ export default class SearchArea extends React.Component {
     this.setState({
       searchTimer: setTimeout(function () {
         dispatch({
-          type: getEffectOrReducerByName('getGlobalSearchResultList'),
+          type: getEffectOrReducerByName('getMatchConditions'),
           payload: {}
         })
       }, INPUT_CHANGE_SEARCH_TIME)
     })
   }
-
+  //输入框失焦
+  inputBlur = e => {
+    const that = this
+    setTimeout(function () {
+      const { show_match_conditions_flag } = that.state
+      that.set_show_match_conditions(show_match_conditions_flag)
+    }, 300)
+  }
+  inputFocus = e => {
+    this.set_show_match_conditions(true)
+  }
   //搜索查询区域
-  //固定条件
-  renderFixedConditions = () => {
-    return (
-      <div className={indexstyles.fixed_conditions_area}>
-        <div className={indexstyles.fixed_conditions_area_left}>
-          <div className={indexstyles.fixed_conditions_area_left_item}>近期完成的任务</div>
-          <div className={indexstyles.fixed_conditions_area_left_item}>最近添加的内容</div>
-        </div>
-        <div className={`${indexstyles.fixed_conditions_area_right} ${globalStyles.authTheme}`}>&#xe66f;</div>
-      </div>
-    )
+  //选择条件
+  set_show_match_conditions = (bool) => {
+    this.setState({
+      show_match_conditions: bool
+    })
   }
-  //匹配条件
+  selectCondition = (val,e) => {
+    e.stopPropagation()
+    const that = this
+    //用于做点击失焦中间时间差判断显示隐藏-------start
+    this.setState({
+      show_match_conditions_flag: true
+    })
+    setTimeout(() => {
+      this.setState({
+        show_match_conditions_flag: false
+      })
+    }, 300)
+    this.set_show_match_conditions(true)
+    //主动聚焦input
+    document.getElementById('globalSearch_input_').focus()
+    //用于做点击失焦中间时间差判断显示隐藏-------end
+
+    const { id, value, full_name, name } = val
+    const { selected_conditions = [], dispatch } = this.props
+    const isAreadyHasItem = selected_conditions.find(item => item.id == id && item.value == value) //是否存在相同，存在就不添加
+    !isAreadyHasItem && selected_conditions.push({ id, value, full_name, name })
+    dispatch({
+      type: 'globalSearch/updateDatas',
+      payload: {
+        selected_conditions,
+        searchInputValue: '',
+      }
+    })
+  }
+  //搜索出来的条件列表
   renderMatchConditions = () => {
-    const { match_conditions = [1, 2, 3, 4, 5] } = this.props
+    const { match_conditions = [], spinning_conditions } = this.props
+    const { match_conditions_area_height = 40 } = this.state
+    const match_conditions_list = (
+      match_conditions.map((val, key) => {
+        const { id, value, conditions, name } = val
+        return (
+          <div className={indexstyles.match_conditions_item} key={`${id}_${value}`}>
+            <div className={indexstyles.match_conditions_item_title}>{name}</div>
+            <div className={indexstyles.match_conditions_item_detail}>
+              {
+                conditions.map((val2, key2) => {
+                  const { full_name, name, id, value } = val2
+                  return (
+                    <div className={indexstyles.match_conditions_item_detail_item}
+                         onClick={(e) => this.selectCondition(val2, e)}
+                         key={`${id}_${value}`}>{name}</div>
+                  )
+                })
+              }
+            </div>
+          </div>
+        )
+      })
+    )
+
     return (
-      <div className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
-        {
-          match_conditions.map((value, key) => {
-            return (
-              <div className={indexstyles.match_conditions_item}>
-                <div className={indexstyles.match_conditions_item_title}>名称匹配</div>
-                <div className={indexstyles.match_conditions_item_detail}>标题中包含：pdf</div>
-              </div>
-            )
-          })
-        }
+      <div style={{position: 'relative'}}>
+        <div
+          className={`${globalStyles.global_card} ${indexstyles.match_conditions_area} ${globalStyles.global_vertical_scrollbar}`}>
+          <Spin tip="数据加载中" style={{marginTop: 60}} spinning={spinning_conditions}>
+            <div className={`${indexstyles.match_conditions_area_spin}`} style={{top: match_conditions_area_height}}></div>
+          </Spin>
+          {match_conditions.length? (
+            match_conditions_list
+          ) : (
+            <div className={indexstyles.match_conditions_area_nodata}>无数据，换个条件搜索吧</div>
+          )}
+        </div>
       </div>
     )
   }
+
   //整体查询输入区域
   renderInputSearch = () => {
     const { searchTypeList = [], defaultSearchType, searchInputValue } = this.props
@@ -132,24 +197,30 @@ export default class SearchArea extends React.Component {
               )
             })}
           </Select>
-          <ConditionInput
-            style={{ width: '78%', fontSize: 14 }}
-            value={searchInputValue}
-            onChange={this.inputChange}
-            placeholder={'请输入'}
-          />
-          <div className={`${indexstyles.search_trigger}`} style={{width: '6%'}} onClick={this.getGlobalSearchResult}>
-            <i className={globalStyles.authTheme}>&#xe611;</i>
-          </div>
-          {/*<Input style={{ width: '84%', fontSize: 14 }}*/}
-                 {/*value={searchInputValue}*/}
-                 {/*onChange={this.inputChange}*/}
-                 {/*placeholder={'请输入'} suffix={<i className={globalStyles.authTheme}>&#xe611;</i>}/>*/}
+          {/*<ConditionInput*/}
+            {/*style={{ width: '78%', fontSize: 14 }}*/}
+            {/*value={searchInputValue}*/}
+            {/*onChange={this.inputChange}*/}
+            {/*placeholder={'请输入'}*/}
+          {/*/>*/}
+          <Input style={{ width: '84%', fontSize: 14 }}
+                 value={searchInputValue}
+                 ref={this.search_input_ref}
+                 id={'globalSearch_input_'}
+                 onChange={this.inputChange}
+                 onBlur={this.inputBlur}
+                 onFocus={this.inputFocus}
+                 placeholder={'请输入'} suffix={<i className={globalStyles.authTheme} onClick={this.getGlobalSearchResult}>&#xe611;</i>}/>
+          {/*<div className={`${indexstyles.search_trigger}`} style={{width: '6%'}} onClick={this.getGlobalSearchResult}>*/}
+            {/*<i className={globalStyles.authTheme}>&#xe611;</i>*/}
+          {/*</div>*/}
+
         </InputGroup>
       </div>
     )
   }
 
+  //查询结果
   getGlobalSearchResult = () => {
     const { dispatch } = this.props
     dispatch({
@@ -158,22 +229,79 @@ export default class SearchArea extends React.Component {
     })
   }
 
-  render() {
+  //选择的条件列表
+  renderSelectedConditions = () => {
+    const { selected_conditions = [] } = this.props
+    return (
+      <div className={`${indexstyles.conditions}`}>
+        {
+          selected_conditions.map((val, key) => {
+            const { id, name, full_name, value } = val
+            //替换双引号避免dataset丢失数据
+            return (
+              <div
+                onClick={() => this.delectSelectedCondition(key)}
+                className={`${indexstyles.condition_item}`}
+                key={`${id}_${full_name}`}>
+                {full_name}
+              </div>
+            )
+          })
+        }
+      </div>
+    )
+  }
+  //删除某个条件
+  delectSelectedCondition = (key) => {
+    const { selected_conditions = [], dispatch } = this.props
+    const arr = [...selected_conditions]
+    arr.splice(key, 1)
+    dispatch({
+      type: 'globalSearch/updateDatas',
+      payload: {
+        selected_conditions: arr
+      }
+    })
+  }
+  //固定条件
+  renderFixedConditions = () => {
+    return (
+      <div className={indexstyles.fixed_conditions_area}>
+        <div className={indexstyles.fixed_conditions_area_left}>
+          <div className={indexstyles.fixed_conditions_area_left_item}>近期完成的任务</div>
+          <div className={indexstyles.fixed_conditions_area_left_item}>最近添加的内容</div>
+        </div>
+        <div className={`${indexstyles.fixed_conditions_area_right} ${globalStyles.authTheme}`}>&#xe66f;</div>
+      </div>
+    )
+  }
 
+  render() {
+    const { selected_conditions = [] } = this.props
+    const { show_match_conditions } = this.state
     return(
       <div className={`${indexstyles.searchAreaOut}`}>
         {this.renderInputSearch()}
-        <div style={{height: 28}}>
-         {this.renderFixedConditions()}
-        </div>
-        {/*{this.renderMatchConditions()}*/}
+        {show_match_conditions && this.renderMatchConditions()}
+
+        {
+          selected_conditions.length?(
+            this.renderSelectedConditions()
+          ): (
+            this.renderFixedConditions()
+          )
+        }
       </div>
     )
   }
 }
 
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition} } }) {
+function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType,
+  searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
+  match_conditions, selected_conditions, spinning_conditions
+} } }) {
   return {
-    searchTypeList, defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition
+    searchTypeList, defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
+    match_conditions, selected_conditions, spinning_conditions
   }
 }
