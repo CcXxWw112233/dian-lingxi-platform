@@ -1,4 +1,4 @@
-import { getGlobalSearchConditions, logout, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
+import { getGlobalSearchConditions, getFixedConditions, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
 import { selectSearchTypeList, selectSelectedConditions,selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -10,7 +10,7 @@ export default {
   namespace: 'globalSearch',
   state: {
     datas: {
-      globalSearchModalVisible: true,
+      globalSearchModalVisible: false,
       searchTypeList: [], //查询类型列表
       defaultSearchType: '', //默认类型
       allTypeResultList: [], //全部类型列表
@@ -29,6 +29,7 @@ export default {
         // {id: 3, value: 33, parent_name: 333, name: 3333},
       ], //输入匹配条件列表
       selected_conditions: [], //已选的条件列表
+      fixed_conditions: [], // 固定搭配的条件列表
     }
   },
   subscriptions: {
@@ -210,6 +211,44 @@ export default {
           type: 'updateDatas',
           payload: {
             match_conditions: new_match_conditions
+          }
+        })
+        // debugger
+      } else {
+        message.error(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    //获取固定搭配的条件列表
+    * getFixedConditions({ payload = {} }, { call, put, select }) {
+      const res = yield call(getFixedConditions, {})
+      if(isApiResponseOk(res)) {
+        const data = res.data
+        let new_fixed_conditions = []
+        new_fixed_conditions = data.map(item => {
+          const query_conditions = item['query_conditions'].map(child_item => {
+            const parent_id = child_item.id
+            const parent_name = child_item.name
+            const conditions = child_item.conditions
+            const new_conditions_ = conditions.map(child_item_child => {
+              const { name, value } = child_item_child
+              return {
+                full_name: `${parent_name}： ${name}`,
+                name,
+                value,
+                id: parent_id,
+              }
+            })
+            child_item.conditions = new_conditions_
+            return child_item
+          })
+          const new_item = Object.assign(item, {query_conditions})
+          return new_item
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            fixed_conditions: new_fixed_conditions
           }
         })
         // debugger

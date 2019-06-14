@@ -61,3 +61,12 @@ export async function getGlobalSearchConditions(params) {
     params
   }, {isNotLoading: true});
 }
+
+//查询固定条件
+export async function getFixedConditions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/query_condition/group`,
+    method: 'GET',
+    params
+  }, {isNotLoading: true});
+}

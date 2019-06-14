@@ -32,6 +32,12 @@ export default class SearchArea extends React.Component {
       payload: {
       }
     })
+    dispatch({
+      type: getEffectOrReducerByName('getFixedConditions'),
+      payload: {
+
+      }
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -272,13 +278,43 @@ export default class SearchArea extends React.Component {
       }
     })
   }
+  //固定条件点击
+  fixedConditionSelect = (data = []) => {
+    const { selected_conditions = [], dispatch } = this.props
+    let arr = [...selected_conditions]
+    data.map(item => {
+      const { conditions = [] } = item
+      arr = [].concat(arr, conditions)
+    })
+    console.log('ssss5', arr)
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        selected_conditions: arr
+      }
+    })
+    dispatch({
+      type: getEffectOrReducerByName('getGlobalSearchResultList'),
+      payload: {
+        // query_conditions: arr
+      }
+    })
+  }
   //固定条件
   renderFixedConditions = () => {
+    const { fixed_conditions = [] } = this.props
     return (
       <div className={indexstyles.fixed_conditions_area}>
         <div className={indexstyles.fixed_conditions_area_left}>
-          <div className={indexstyles.fixed_conditions_area_left_item}>近期完成的任务</div>
-          <div className={indexstyles.fixed_conditions_area_left_item}>最近添加的内容</div>
+          {
+            fixed_conditions.map((val) => {
+              const { id, name, query_conditions } = val
+              return (
+                <div className={indexstyles.fixed_conditions_area_left_item} key={`${id}_${name}`} onClick={() => this.fixedConditionSelect(query_conditions)}>{name}</div>
+              )
+            })
+          }
+          {/*<div className={indexstyles.fixed_conditions_area_left_item}>最近添加的内容</div>*/}
         </div>
         <div className={`${indexstyles.fixed_conditions_area_right} ${globalStyles.authTheme}`}>&#xe66f;</div>
       </div>
@@ -307,10 +343,10 @@ export default class SearchArea extends React.Component {
 
 function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType,
   searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
-  match_conditions, selected_conditions, spinning_conditions
+  match_conditions, selected_conditions, spinning_conditions, fixed_conditions
 } } }) {
   return {
     searchTypeList, defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
-    match_conditions, selected_conditions, spinning_conditions
+    match_conditions, selected_conditions, spinning_conditions, fixed_conditions
   }
 }
