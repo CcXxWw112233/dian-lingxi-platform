@@ -15,10 +15,17 @@ export default {
       history.listen((location) => {
         // message.destroy()
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
+          // console.log('111111111111111111',)
           dispatch({
             type: 'getHeaderTabs',
             payload: {
 
+            }
+          })
+          dispatch({
+            type: 'updateDatas',
+            payload: {
+              hotArticlesList: [], // 获取热点文章列表信息
             }
           })
         }

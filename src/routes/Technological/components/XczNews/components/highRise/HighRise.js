@@ -22,7 +22,7 @@ export default class HighRise extends Component {
     render() {
         const { xczNews } = this.props;
         const { highRiseArticlesList = [] } = xczNews;
-        console.log(highRiseArticlesList)
+        // console.log(highRiseArticlesList)
         return (
             <div className={highRiseStyles.mainContainer}>
                 {

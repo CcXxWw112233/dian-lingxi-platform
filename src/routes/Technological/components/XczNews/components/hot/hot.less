@@ -12,6 +12,8 @@
         margin: 0 auto;
         padding: 30px 46px 8px 46px;
         border-bottom: 1px solid rgba(0,0,0,0.09);
+        // max-height: 130px;
+        overflow: hidden;
         // border-color: rgba(0,0,0,0.09);
         .hotTabs {
             width: 16%;
@@ -33,3 +35,37 @@
         
     }
 // }
+
+:global {
+    .ant-radio-group {
+        
+    }
+    .ant-col-12 {
+        width: 100%;
+    }
+    .ant-radio-button-wrapper {
+        width: 88px;
+        height: 32px;
+        text-align: center;
+        border-radius:18px;
+        border: 0 none;
+        margin-bottom: 16px;
+        font-family:'PingFangSC-Regular';
+        color: rgba(0,0,0,0.85);
+        // margin-right: 40px;
+        &:not(:first-child)::before {
+            display: none;
+        }
+        &:first-child {
+            border-radius:18px;
+            border-left: 0;
+        }
+        &:last-child {
+            border-radius:18px;
+        }
+    }
+    .ant-radio-button-wrapper-checked {
+        background:rgba(24,144,255,1);
+        color: #fff;
+    }
+}
