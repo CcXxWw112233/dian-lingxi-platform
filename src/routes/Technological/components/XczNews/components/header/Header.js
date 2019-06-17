@@ -1,17 +1,15 @@
 import React, { Component } from 'react'
 import headerStyles from './header.less'
 import { Input } from 'antd';
-import { Route, Link, NavLink } from 'dva/router'
+import { Link } from 'dva/router'
 import { connect } from 'dva'
-import { getHeaderTabs } from '@/services/technological/xczNews'
 
 @connect(({xczNews = []}) => ({xczNews}))
 export default class Header extends Component {
 
     render() {
-        const { xczNews } = this.props
-        const { location } = this.props;
-        // console.log(this.props)
+        const { xczNews, location } = this.props
+        // console.log(location)
         return (
             <div className={headerStyles.header}>
                 <div className={headerStyles.mainContainer}>
@@ -22,11 +20,11 @@ export default class Header extends Component {
                                     // console.log(item)
                                     if (item.path == location.pathname) {
                                         return (
-                                            <NavLink className={headerStyles.active} to={item.path}>{item.text}</NavLink>
+                                            <Link className={headerStyles.active} to={item.path}>{item.text}</Link>
                                         )
                                     } else {
                                         return (
-                                            <NavLink to={item.path}>{item.text}</NavLink>
+                                            <Link to={item.path}>{item.text}</Link>
                                         )
                                     }
                                     

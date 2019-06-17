@@ -1,17 +1,26 @@
 import React, { Component } from 'react'
 import { Switch, Redirect, Route, Link } from 'dva/router'
-import indexStyles from './index.less'
+import { connect } from 'dva'
 import Header from './components/header/Header'
 import Hot from './components/hot/Hot'
 import HighRise from './components/highRise/HighRise'
 import Authority from './components/authority/Authority'
 import Area from './components/area/Area'
 import DataBase from './components/database/DataBase'
+import CommonArticlesList from './common/CommonArticlesList'
 
+
+
+
+@connect(({xczNews = []}) => ({
+    xczNews, 
+}))
 export default class index extends Component {
     render() {
         // console.log(this.props)
         const { location } = this.props;
+        const { xczNews } = this.props;
+        const { articlesList = [] } = xczNews;
         return (
             <div>
                 <Header location={location} />
@@ -23,9 +32,10 @@ export default class index extends Component {
                     <Route path="/technological/xczNews/database" component={ DataBase } />
                     
                     {/* 重定向 */}
-                    <Redirect from="/technological/xczNews" to="/technological/xczNews/hot" />
+                    {/* <Redirect from="/technological/xczNews" to="/technological/xczNews/hot" /> */}
                 </Switch>
-                {/* <Hot /> */}
+                {/* common文章列表 */}
+                {/* <CommonArticlesList { ...{articlesList} }/> */}
             </div>
         )
     }

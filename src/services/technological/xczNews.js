@@ -56,3 +56,26 @@ export async function getDataBase(params) {
         params,
     })
 }
+
+// 获取地区的数据
+export async function getAreas(params) {
+    return request({
+        url: `${REQUEST_COMMON}/common/areas`,
+        method: "GET",
+        params,
+        headers: {appid:1111}
+    })
+}
+
+// 顶部的全局搜索
+export async function getHeaderSearch(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/more`,
+        method: "GET",
+        params: {
+            page_no: 1,
+            page_size: 10
+        },
+        headers: {appid: 123}
+    })
+}

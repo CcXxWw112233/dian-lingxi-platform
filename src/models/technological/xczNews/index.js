@@ -1,14 +1,26 @@
-import { getHeaderTabs, getHotTabs, getHotArticles, getHighRiseArticles, getAuthorityArticles, getDataBase } from '@/services/technological/xczNews'
+import { 
+  getHeaderTabs, 
+  getHotTabs, 
+  getHotArticles, 
+  getHighRiseArticles, 
+  getAuthorityArticles, 
+  getDataBase, 
+  getAreas,
+  getHeaderSearch,
+} from '@/services/technological/xczNews'
 
 export default {
   namespace: 'xczNews',
   state: {
     topTabs: [], // 顶部的导航
+    articlesList: [], // 所有的公用文章列表
     hotArticlesList: [], // 获取热点文章列表信息
     hotTabs: [], // 热点的tabs列表,
     highRiseArticlesList: [], // 高层的文章列表信息
     authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
+    cityList: [], // 地区的城市列表
+    searchList: [], // 全局搜索的列表
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -21,25 +33,32 @@ export default {
             payload: {
 
             }
-          })
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              hotArticlesList: [], // 获取热点文章列表信息
-            }
-          })
-        }
-        if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
+          }),
           dispatch({
             type: "getHotTabs",
             payload: {
               
             }
-          }),
+          })
+          
+        }
+        if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
           dispatch({
             type: "getHotArticles",
             payload: {
-             
+              
+            }
+          }),
+          dispatch({
+            type: "getHeaderSearch",
+            payload: {
+
+            }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: []
             }
           })
         }
@@ -49,6 +68,12 @@ export default {
             payload: {
               
             }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: []
+            }
           })
         }
         if (location.pathname.indexOf('/technological/xczNews/authority') != -1) {
@@ -57,6 +82,12 @@ export default {
             payload: {
               
             }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: []
+            }
           })
         }
         if (location.pathname.indexOf('/technological/xczNews/dataBase') != -1) {
@@ -64,6 +95,26 @@ export default {
             type: "getDataBase",
             payload: {
               
+            }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: []
+            }
+          })
+        }
+        if (location.pathname.indexOf('/technological/xczNews/area') != -1) {
+          dispatch({
+            type: "getAreas",
+            payload: {
+
+            }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: []
             }
           })
         }
@@ -104,7 +155,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          hotArticlesList: res.data
+          articlesList: res.data
         }
       })
     },
@@ -116,7 +167,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          highRiseArticlesList: res.data
+          articlesList: res.data
         }
       })
     },
@@ -128,7 +179,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          authorityArticlesList: res.data
+          articlesList: res.data
         }
       })
     },
@@ -141,6 +192,30 @@ export default {
         type: 'updateDatas',
         payload: {
           dataBase: res.data
+        }
+      })
+    },
+
+    // 获取地区的城市列表
+    * getAreas({ payload = {} }, { select, call, put }) {
+      const res = yield call(getAreas, {...payload});
+      // console.log(res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cityList: res.data
+        }
+      })
+    },
+
+    // 顶部的全局搜索
+    * getHeaderSearch({ payload = {} }, { select, call, put }) {
+      const res = yield call(getHeaderSearch, {...payload})
+      console.log(res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          searchList: res.data
         }
       })
     },

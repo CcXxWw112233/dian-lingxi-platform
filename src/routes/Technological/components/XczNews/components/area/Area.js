@@ -1,13 +1,18 @@
 // 地区页面
 
 import React, { Component } from 'react'
+import { connect } from 'dva'
 import areaStyles from './area.less'
-import { Select, Input } from 'antd';
+import { Select, Input } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import CommonArticlesList from '../../common/CommonArticlesList'
 
 const { Option } = Select;
 const Search = Input.Search;
 
+@connect(({ xczNews = [] }) => ({
+    xczNews,
+}))
 export default class Area extends Component {
 
     handleChange(value) {
@@ -15,6 +20,8 @@ export default class Area extends Component {
     }
 
     render() {
+        const { xczNews } = this.props;
+        const { cityList = [], articlesList = [] } = xczNews;
         return (
             <React.Fragment>
                 <div className={areaStyles["city_list"]}>
@@ -107,9 +114,10 @@ export default class Area extends Component {
                         <div className={`${globalStyles.authTheme} ${areaStyles.down}`}>&#xe7ee;</div>
                     </div>
                 </div>
-                <div className={areaStyles.mainContainer}>
-                    我的天
-                </div>
+                
+                {/* 文章详情 */}
+                <CommonArticlesList { ...{articlesList} }/>
+            
             </React.Fragment>
         )
     }

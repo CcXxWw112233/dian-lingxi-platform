@@ -3,7 +3,7 @@
 import React, { Component } from 'react'
 import mainStyles from './hot.less'
 import { connect } from 'dva'
-import HotArticlesList from './HotArticlesList'
+import CommonArticlesList from '../../common/CommonArticlesList'
 import { Row, Col, Radio, Icon} from 'antd';
 
 const RadioGroup = Radio.Group;
@@ -51,7 +51,7 @@ export default class Hot extends Component {
     // renderSimpleForm 未展开更多
     renderSimpleForm() {
         const { xczNews } = this.props;
-        const { hotTabs = [], hotArticlesList = [] } = xczNews;
+        const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.list} style={{ maxHeight: 130 }}>
                 <Row style={{ width: '100%' }}>
@@ -92,7 +92,7 @@ export default class Hot extends Component {
     // 展开全部 renderAllForm
     renderAllForm() {
         const { xczNews } = this.props;
-        const { hotTabs = [], hotArticlesList = [] } = xczNews;
+        const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.list}>     
                 <Row style={{ width: '100%' }}>
@@ -118,13 +118,15 @@ export default class Hot extends Component {
 
     render() {
         const { xczNews } = this.props;
-        const { hotArticlesList = [] } = xczNews;
+        const { articlesList = [] } = xczNews;
         return (
-            <div className={mainStyles.mainContainer}>
+            <div>
+                {/* <div className={mainStyles.mainContainer}> */}
 
-                { this.renderForm() }
+                    { this.renderForm() }
 
-                <HotArticlesList {...{hotArticlesList}} />
+                    <CommonArticlesList { ...{articlesList} }/>
+                {/* </div> */}
             </div>
         )
     }
