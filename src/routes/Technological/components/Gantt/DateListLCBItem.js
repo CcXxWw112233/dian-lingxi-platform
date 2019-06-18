@@ -38,7 +38,7 @@ export default class DateListLCBItem extends Component {
   }
 
   selectLCB = (e) => {
-
+   this.props.set_miletone_detail_modal_visible && this.props.set_miletone_detail_modal_visible()
   }
 
   renderLCBList = () => {

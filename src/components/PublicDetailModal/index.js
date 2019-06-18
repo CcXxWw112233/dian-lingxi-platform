@@ -12,20 +12,17 @@ export default class DetailModal extends React.Component {
 
   onCancel(){
     const { modalVisibleName = 'modalVisible', modalVisibleValue } = this.props
-    this.props.setPublicDetailModal && this.props.setPublicDetailModal({
-      [modalVisibleName]: false
-    })
+    this.props.onCancel && this.props.onCancel()
   }
 
+
   render() {
-    const { modalVisibleName } = this.props
-    const modalVisibleValue = this.props[modalVisibleName]
-    //modalVisibleName 在多个应用该modal的地方区分状态名称
-    //modalVisibleValue  值为从props传递的[modalVisibleName] true/false
+    const { modalVisible } = this.props
+
     const modalTop = 20
     return(
       <CustormModal
-        visible={true}
+        visible={modalVisible}
         width={'90%'}
         close={this.props.close}
         closable={false}

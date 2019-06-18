@@ -12,6 +12,10 @@ export default class Header extends React.Component {
   state = {
   }
 
+  cancleModal = () => {
+    this.props.onCancel && this.props.onCancel()
+  }
+
   render() {
 
     return (
@@ -37,7 +41,7 @@ export default class Header extends React.Component {
         </div>
 
         <div style={{}}>
-          <Icon type="close" style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
+          <Icon type="close" style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} onClick={this.cancleModal} />
           <span
             style={{
               float: 'right',
