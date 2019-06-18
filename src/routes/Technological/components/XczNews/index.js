@@ -7,7 +7,7 @@ import HighRise from './components/highRise/HighRise'
 import Authority from './components/authority/Authority'
 import Area from './components/area/Area'
 import DataBase from './components/database/DataBase'
-import CommonArticlesList from './common/CommonArticlesList'
+import SearchArticlesList from './common/SearchArticlesList'
 
 
 
@@ -20,11 +20,11 @@ export default class index extends Component {
         // console.log(this.props)
         const { location } = this.props;
         const { xczNews } = this.props;
-        const { articlesList = [] } = xczNews;
         return (
             <div>
                 <Header location={location} />
                 <Switch>
+                    <Route path="/technological/xczNews" exact component={ SearchArticlesList } />
                     <Route path="/technological/xczNews/hot" component={ Hot } />
                     <Route path="/technological/xczNews/highRise" component={ HighRise } />
                     <Route path="/technological/xczNews/authority" component={ Authority } />
@@ -35,7 +35,7 @@ export default class index extends Component {
                     {/* <Redirect from="/technological/xczNews" to="/technological/xczNews/hot" /> */}
                 </Switch>
                 {/* common文章列表 */}
-                {/* <CommonArticlesList { ...{articlesList} }/> */}
+                {/* <SearchArticlesList { ...{searchList} }/> */}
             </div>
         )
     }

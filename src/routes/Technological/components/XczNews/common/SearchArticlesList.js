@@ -1,10 +1,13 @@
-// 公用的文章列表
+// 搜索的文章列表
 
 import React, { Component } from 'react'
 import commonStyles from './common.less'
-import { Icon } from 'antd'
+import { connect } from 'dva'
 
-export default class CommonArticlesList extends Component {
+@connect(({xczNews = []}) => ({
+    xczNews, 
+}))
+export default class SearchArticlesList extends Component {
 
     // 时间戳转换日期格式
     getdate() {
@@ -14,30 +17,40 @@ export default class CommonArticlesList extends Component {
             d = ("0" + now.getDate()).slice(-2);
         return y + "-" + m + "-" + d + " "
      }
+
+     // 对象转换数组
+     objectToArray(obj) {
+        var obj = obj;
+        var arr = []
+        for (let i in obj) {
+            let o = {};
+            o[i] = obj[i];
+            arr.push(o)
+        }
+        return arr;
+    }
      
     render() {
-        console.log(this.props)
-        const { articlesList = [] } = this.props;
+        const { xczNews } = this.props;
+        // const { searchList = {} } = this.props;
+        const {searchList, inputValue, onSearchButton } = xczNews;
+        console.log(inputValue, onSearchButton)
+
         return (
             <div className={commonStyles.mainContainer}>
+                <p style={{ marginLeft: 25, paddingTop: 15 }}>
+                    {`含"${inputValue}"的全部结果共"${1}"条`}
+                </p>
                 {
-                    articlesList.map(item => {
+                    searchList.records && searchList.records.map(item => {
+                        // console.log(list)
                         // console.log(item)
                         return (
                             <div className={commonStyles.info}>
-                                <div className={commonStyles.title}>
-                                    <h2 id={item.id}>{item.name}</h2>
-                                    <a href="#">
-                                        更多
-                                        <Icon type="right" />
-                                    </a>
-                                </div>
                                 <div className={commonStyles.news}>
                                     <ul>
                                         {
-                                            item.articles.map((item, index) => {
-                                                if (!item.hasImg) {
-                                                    return (
+                                           !item.hasImg ? (
                                                         <li>
                                                             <div className={commonStyles.right}>
                                                                 <div className={commonStyles.message}>
@@ -50,9 +63,7 @@ export default class CommonArticlesList extends Component {
                                                                 </div>
                                                             </div>
                                                         </li>
-                                                    )
-                                                } else {
-                                                    return (
+                                                    ) : (
                                                         <li>
                                                             <div className={commonStyles.left}>
                                                                 <img src="" />
@@ -67,10 +78,7 @@ export default class CommonArticlesList extends Component {
                                                                 </div>
                                                             </div>
                                                         </li>
-                                                    )
-                                                }
-                                                
-                                            })
+                                                    ) 
                                         }   
                                     </ul>
                                 </div>

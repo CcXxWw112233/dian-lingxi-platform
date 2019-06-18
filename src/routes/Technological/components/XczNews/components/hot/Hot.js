@@ -53,38 +53,40 @@ export default class Hot extends Component {
         const { xczNews } = this.props;
         const { hotTabs = [] } = xczNews;
         return (
-            <div className={mainStyles.list} style={{ maxHeight: 130 }}>
-                <Row style={{ width: '100%' }}>
-                    <Col span={12}>
-                        <RadioGroup>
-                            {
-                                hotTabs.map((item, index) => {
-                                    return index == 10 ? (
-                                        <>
+            <div className={mainStyles.tabsWrapper}>
+                <div className={mainStyles.list} style={{ maxHeight: 130 }}>
+                    <Row style={{ width: '100%' }}>
+                        <Col span={12}>
+                            <RadioGroup>
+                                {
+                                    hotTabs.map((item, index) => {
+                                        return index == 10 ? (
+                                            <>
+                                                <Radio.Button
+                                                    // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
+                                                    value={item.id}
+                                                    onChange={ () => { this.handleHotContent({ id: item.id }) } }
+                                                >{ item.name }</Radio.Button>
+                                                <Radio.Button 
+                                                    onChange={ () => { this.handleClickMore() } }
+                                                    value="more">
+                                                    更多
+                                                    <Icon type="down" />
+                                                </Radio.Button>
+                                            </>
+                                        ) : (
                                             <Radio.Button
                                                 // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
                                                 value={item.id}
                                                 onChange={ () => { this.handleHotContent({ id: item.id }) } }
                                             >{ item.name }</Radio.Button>
-                                            <Radio.Button 
-                                                onChange={ () => { this.handleClickMore() } }
-                                                value="more">
-                                                更多
-                                                <Icon type="down" />
-                                            </Radio.Button>
-                                        </>
-                                    ) : (
-                                        <Radio.Button
-                                            // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
-                                            value={item.id}
-                                            onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                        >{ item.name }</Radio.Button>
-                                    )
-                                })
-                            }
-                        </RadioGroup>
-                    </Col>
-                </Row>
+                                        )
+                                    })
+                                }
+                            </RadioGroup>
+                        </Col>
+                    </Row>
+                </div>
             </div>
         )
     }
@@ -94,38 +96,40 @@ export default class Hot extends Component {
         const { xczNews } = this.props;
         const { hotTabs = [] } = xczNews;
         return (
-            <div className={mainStyles.list}>     
-                <Row style={{ width: '100%' }}>
-                    <Col span={12}>
-                        <RadioGroup>
-                            {
-                                hotTabs.map((item, index) => {
-                                    return (
-                                        <Radio.Button
-                                            // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
-                                            value={item.id}
-                                            onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                        >{ item.name }</Radio.Button>     
-                                    )
-                                })
-                            }
-                        </RadioGroup>
-                    </Col>
-                </Row>
+            <div className={mainStyles.tabsWrapper}>
+                <div className={mainStyles.list}>     
+                    <Row style={{ width: '100%' }}>
+                        <Col span={12}>
+                            <RadioGroup>
+                                {
+                                    hotTabs.map((item, index) => {
+                                        return (
+                                            <Radio.Button
+                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
+                                                value={item.id}
+                                                onChange={ () => { this.handleHotContent({ id: item.id }) } }
+                                            >{ item.name }</Radio.Button>     
+                                        )
+                                    })
+                                }
+                            </RadioGroup>
+                        </Col>
+                    </Row>
+                </div>
             </div>
         )
     }
 
     render() {
-        const { xczNews } = this.props;
+        const { xczNews, location } = this.props;
         const { articlesList = [] } = xczNews;
         return (
-            <div>
+            <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
                 {/* <div className={mainStyles.mainContainer}> */}
 
                     { this.renderForm() }
 
-                    <CommonArticlesList { ...{articlesList} }/>
+                    <CommonArticlesList { ...{articlesList} } { ...{location} } />
                 {/* </div> */}
             </div>
         )

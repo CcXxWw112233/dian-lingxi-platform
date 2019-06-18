@@ -7,9 +7,37 @@ import { connect } from 'dva'
 @connect(({xczNews = []}) => ({xczNews}))
 export default class Header extends Component {
 
+    // onSearch
+    onSearch = (value, onSearchButton) => {
+        const { dispatch } = this.props;
+        console.log(onSearchButton)
+        dispatch({
+            type: "xczNews/getHeaderSearch",
+            payload: {
+                value: value,
+                onSearchButton: !onSearchButton
+            }
+        })
+    }
+
+    // onChange
+    // onChange = (e) => {
+    //     // console.log(e.target.value)
+    //     const { dispatch } = this.props;
+    //     let value = e.target.value
+    //     dispatch({
+    //         type: "xczNews/getHeaderSearch",
+    //         payload: {
+    //             value: value,
+    //         }
+    //     })
+
+    // }
+
     render() {
-        const { xczNews, location } = this.props
-        // console.log(location)
+        const { xczNews, location } = this.props;
+        const { inputValue, onSearchButton } = xczNews;
+        // console.log(inputValue)
         return (
             <div className={headerStyles.header}>
                 <div className={headerStyles.mainContainer}>
@@ -36,9 +64,12 @@ export default class Header extends Component {
                         location.pathname !== '/technological/xczNews/area' && (
                             <div className={headerStyles.Search}>
                                 <Input.Search 
+                                    // value={ inputValue }
+                                    allowClear={true}
+                                    // onChange={ (e) => { this.onChange(e) } }
                                     placeholder="请输入"
                                     style={{ width: 200,height: 32, marginRight: 16 }}
-                                    onSearch={value => console.log(value)}
+                                    onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
                                 />
                             </div>
                         )

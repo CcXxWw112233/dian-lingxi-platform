@@ -7,7 +7,10 @@ import {
   getDataBase, 
   getAreas,
   getHeaderSearch,
+  getCommonArticlesList,
 } from '@/services/technological/xczNews'
+
+import {selectTopTabs, selectList} from './select'
 
 export default {
   namespace: 'xczNews',
@@ -20,7 +23,9 @@ export default {
     authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
     cityList: [], // 地区的城市列表
-    searchList: [], // 全局搜索的列表
+    searchList: {}, // 全局搜索的列表
+    inputValue: '', // 搜索框的内容
+    onSearchButton: false,
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -35,24 +40,31 @@ export default {
             }
           }),
           dispatch({
-            type: "getHotTabs",
+            type: "getHeaderSearch",
             payload: {
-              
+
+            }
+          }),
+          dispatch({
+            type: "updateDatas",
+            payload: {
+              articlesList: [],
+              searchList: {}
             }
           })
           
         }
         if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
           dispatch({
-            type: "getHotArticles",
+            type: "getHotTabs",
             payload: {
               
             }
           }),
           dispatch({
-            type: "getHeaderSearch",
+            type: "getHotArticles",
             payload: {
-
+              
             }
           }),
           dispatch({
@@ -124,6 +136,9 @@ export default {
   effects: { 
     // 获取顶部信息
     * getHeaderTabs({ payload = {} }, { select, call, put }) {
+      const topTabs = yield select(selectTopTabs)
+      // console.log('ssss',topTabs)
+      if(topTabs && topTabs.length) return
       // console.log(111111111111)
       const res = yield call(getHeaderTabs, {})
       // console.log('2222',res)
@@ -210,15 +225,31 @@ export default {
 
     // 顶部的全局搜索
     * getHeaderSearch({ payload = {} }, { select, call, put }) {
+      const searchList = yield select(selectList)
+      if(searchList && searchList.length) return
       const res = yield call(getHeaderSearch, {...payload})
-      console.log(res)
+      const value = payload.value;
+      console.log(value)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          searchList: res.data,
+          inputValue: value
+        }
+      })
+    },
+
+    // 获取所有的文章列表
+    * getCommonArticlesList({ payload = {} }, { select, call, put }) {
+      const res = yield call(getCommonArticlesList, {...payload})
+      // console.log(res)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data
         }
       })
-    },
+    }
 
   },
 

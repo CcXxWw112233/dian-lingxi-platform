@@ -79,3 +79,16 @@ export async function getHeaderSearch(params) {
         headers: {appid: 123}
     })
 }
+
+// 获取全局文章的列表
+export async function getCommonArticlesList(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/more`,
+        method: "GET",
+        params: {
+            page_no: 1,
+            page_size: 10
+        },
+        headers: {appid: 123}
+    })
+}
