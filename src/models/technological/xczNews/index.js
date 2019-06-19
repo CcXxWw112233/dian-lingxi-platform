@@ -10,27 +10,33 @@ import {
   getCommonArticlesList,
 } from '@/services/technological/xczNews'
 
-import {selectTopTabs, selectList} from './select'
+import {selectTopTabs, selectList, selectInputValue, getSelectState} from './select'
+
+let path = '/technological/xczNews'
 
 export default {
   namespace: 'xczNews',
   state: {
     topTabs: [], // 顶部的导航
     articlesList: [], // 所有的公用文章列表
-    hotArticlesList: [], // 获取热点文章列表信息
+    // hotArticlesList: [], // 获取热点文章列表信息
     hotTabs: [], // 热点的tabs列表,
-    highRiseArticlesList: [], // 高层的文章列表信息
-    authorityArticlesList: [], // 权威的文章列表信息
+    // highRiseArticlesList: [], // 高层的文章列表信息
+    // authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
     cityList: [], // 地区的城市列表
     searchList: {}, // 全局搜索的列表
     inputValue: '', // 搜索框的内容
-    onSearchButton: false,
+    onSearchButton: false,  // 判断是否点击搜索
+    total: 10, // 默认文章的总数
+    page_size: 10,
+    page_no: 1,
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
+        path = location.pathname
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
           // console.log('111111111111111111',)
           dispatch({
@@ -225,16 +231,40 @@ export default {
 
     // 顶部的全局搜索
     * getHeaderSearch({ payload = {} }, { select, call, put }) {
-      const searchList = yield select(selectList)
+      const searchList = yield select((state) => getSelectState(state, 'searchList'))
+      const keywords = yield select((state) => getSelectState(state, 'inputValue'))
+      const page_size = yield select((state) => getSelectState(state, 'page_size'))
+      const page_no = yield select((state) => getSelectState(state, 'page_no'))
+      const params = {
+        keywords, page_size, page_no
+      }
       if(searchList && searchList.length) return
-      const res = yield call(getHeaderSearch, {...payload})
-      const value = payload.value;
-      console.log(value)
+      // console.log(path)
+      switch(path) {
+        case '/technological/xczNews/hot':
+          // console.log(111111111111) 
+          break;
+        case '/technological/xczNews/highRise':
+          break;
+        case '/technological/xczNews/authority':
+          break;
+        case '/technological/xczNews/area':
+          break;
+        case '/technological/xczNews/dataBase':
+          break;
+        case '/technological/xczNews':
+          // console.log('默认')
+          break;
+      }
+      const res = yield call(getHeaderSearch, {...params, ...payload})
+      const onSearchButton = payload.onSearchButton;
+      // console.log(onSearchButton)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data,
-          inputValue: value
+          // inputValue: value,
+          onSearchButton: onSearchButton
         }
       })
     },

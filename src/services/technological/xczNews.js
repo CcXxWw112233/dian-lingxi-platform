@@ -72,10 +72,7 @@ export async function getHeaderSearch(params) {
     return request({
         url: `${REQUEST_COMMON}/articles/more`,
         method: "GET",
-        params: {
-            page_no: 1,
-            page_size: 10
-        },
+        params,
         headers: {appid: 123}
     })
 }

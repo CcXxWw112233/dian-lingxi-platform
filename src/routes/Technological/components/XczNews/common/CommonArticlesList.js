@@ -16,7 +16,7 @@ export default class CommonArticlesList extends Component {
      }
      
     render() {
-        console.log(this.props)
+        // console.log(this.props)
         const { articlesList = [] } = this.props;
         return (
             <div className={commonStyles.mainContainer}>

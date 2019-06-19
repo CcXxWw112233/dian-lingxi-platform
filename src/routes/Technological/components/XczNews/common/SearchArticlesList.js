@@ -17,40 +17,33 @@ export default class SearchArticlesList extends Component {
             d = ("0" + now.getDate()).slice(-2);
         return y + "-" + m + "-" + d + " "
      }
-
-     // 对象转换数组
-     objectToArray(obj) {
-        var obj = obj;
-        var arr = []
-        for (let i in obj) {
-            let o = {};
-            o[i] = obj[i];
-            arr.push(o)
-        }
-        return arr;
-    }
      
     render() {
         const { xczNews } = this.props;
         // const { searchList = {} } = this.props;
-        const {searchList, inputValue, onSearchButton } = xczNews;
-        console.log(inputValue, onSearchButton)
+        const {searchList = {}, inputValue, onSearchButton } = xczNews;
+        const { total } = searchList;
+        // console.log(xczNews)
+        // console.log(inputValue, onSearchButton)
 
         return (
             <div className={commonStyles.mainContainer}>
-                <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                    {`含"${inputValue}"的全部结果共"${1}"条`}
-                </p>
+                {
+                    inputValue && onSearchButton && (
+                        <p style={{ marginLeft: 25, paddingTop: 15 }}>
+                            {`含"${inputValue}"的全部结果共"${total}"条`}
+                        </p>
+                    )
+                }
                 {
                     searchList.records && searchList.records.map(item => {
-                        // console.log(list)
                         // console.log(item)
                         return (
                             <div className={commonStyles.info}>
                                 <div className={commonStyles.news}>
                                     <ul>
                                         {
-                                           !item.hasImg ? (
+                                          !item.hasImg ? (
                                                         <li>
                                                             <div className={commonStyles.right}>
                                                                 <div className={commonStyles.message}>

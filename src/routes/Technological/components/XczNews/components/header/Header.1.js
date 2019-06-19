@@ -7,6 +7,15 @@ import { connect } from 'dva'
 @connect(({xczNews = []}) => ({xczNews}))
 export default class Header extends Component {
 
+    state = {
+        searchTimer: null
+    }
+
+    constructor(props) {
+        super(props)
+        this.searchTimer = null
+    }
+
     // onSearch 搜索框
     onSearch = (value, onSearchButton) => {
         const { dispatch } = this.props;
@@ -23,14 +32,36 @@ export default class Header extends Component {
     onChange = (e) => {
         const value = e.target.value
         const { dispatch } = this.props
+        console.log('sss', value)
         dispatch({
-            type: 'xczNews/updateDatas',
+            type:  "xczNews/updateDatas",
             payload: {
                 inputValue: value
             }
         })
-    }
 
+        const { searchTimer } = this.state
+        if(searchTimer) {
+            clearTimeout(searchTimer)
+        }
+        this.setState({
+            searchTimer: setTimeout(() => {
+                 this.getHeaderSearch()
+                }, 300)
+        })
+      
+    }
+    getHeaderSearch = () => {
+        const { dispatch } = this.props;
+        // console.log(onSearchButton)
+        dispatch({
+            type: "xczNews/getHeaderSearch",
+            payload: {
+               
+            }
+        })
+    }
+    
     render() {
         const { xczNews, location } = this.props;
         const { onSearchButton, inputValue } = xczNews;
@@ -65,7 +96,6 @@ export default class Header extends Component {
                                     allowClear={true}
                                     placeholder="请输入"
                                     style={{ width: 200,height: 32, marginRight: 16 }}
-                                    autocomplete="off"
                                     onChange={this.onChange}
                                     onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
                                 />
