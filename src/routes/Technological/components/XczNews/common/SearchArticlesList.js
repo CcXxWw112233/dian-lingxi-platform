@@ -21,17 +21,18 @@ export default class SearchArticlesList extends Component {
     render() {
         const { xczNews } = this.props;
         // const { searchList = {} } = this.props;
-        const {searchList = {}, inputValue, onSearchButton } = xczNews;
+        const {searchList = {}, inputValue, onSearchButton, contentVal } = xczNews;
         const { total } = searchList;
+        console.log(contentVal)
         // console.log(xczNews)
         // console.log(inputValue, onSearchButton)
 
         return (
             <div className={commonStyles.mainContainer}>
                 {
-                    inputValue && onSearchButton && (
+                    contentVal && onSearchButton && (
                         <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                            {`含"${inputValue}"的全部结果共"${total}"条`}
+                            {`含"${contentVal}"的全部结果共"${total}"条`}
                         </p>
                     )
                 }

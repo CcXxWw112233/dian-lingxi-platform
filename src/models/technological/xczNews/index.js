@@ -27,7 +27,9 @@ export default {
     cityList: [], // 地区的城市列表
     searchList: {}, // 全局搜索的列表
     inputValue: '', // 搜索框的内容
+    contentVal: '', // 文本的value值,
     onSearchButton: false,  // 判断是否点击搜索
+    hotFlag: true, // 热点的开关
     total: 10, // 默认文章的总数
     page_size: 10,
     page_no: 1,
@@ -257,13 +259,18 @@ export default {
           break;
       }
       const res = yield call(getHeaderSearch, {...params, ...payload})
+      // console.log(payload)  
       const onSearchButton = payload.onSearchButton;
+      const contentVal = payload.contentVal;
+      const hotFlag = payload.hotFlag;
       // console.log(onSearchButton)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data,
           // inputValue: value,
+          contentVal: contentVal,
+          hotFlag: hotFlag,
           onSearchButton: onSearchButton
         }
       })

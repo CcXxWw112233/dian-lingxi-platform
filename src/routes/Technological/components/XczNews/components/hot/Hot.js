@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import mainStyles from './hot.less'
 import { connect } from 'dva'
 import CommonArticlesList from '../../common/CommonArticlesList'
+import SearchArticlesList from '../../common/SearchArticlesList'
 import { Row, Col, Radio, Icon} from 'antd';
 
 const RadioGroup = Radio.Group;
@@ -122,16 +123,24 @@ export default class Hot extends Component {
 
     render() {
         const { xczNews, location } = this.props;
-        const { articlesList = [] } = xczNews;
-        return (
-            <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
-                {/* <div className={mainStyles.mainContainer}> */}
-
-                    { this.renderForm() }
-
-                    <CommonArticlesList { ...{articlesList} } { ...{location} } />
-                {/* </div> */}
-            </div>
-        )
+        const { articlesList = [],hotFlag = true } = xczNews;
+        console.log(hotFlag)
+        if (hotFlag) {
+            return (
+                <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
+                    {/* <div className={mainStyles.mainContainer}> */}
+    
+                        { this.renderForm() }
+    
+                        <CommonArticlesList { ...{articlesList} } { ...{location} } />
+                    {/* </div> */}
+                </div>
+            )
+        } else {
+            return (
+                <SearchArticlesList />
+            )
+        }
+        
     }
 }

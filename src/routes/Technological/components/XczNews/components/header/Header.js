@@ -8,14 +8,15 @@ import { connect } from 'dva'
 export default class Header extends Component {
 
     // onSearch 搜索框
-    onSearch = (value, onSearchButton) => {
+    onSearch = (value, onSearchButton, hotFlag) => {
         const { dispatch } = this.props;
-        // console.log(onSearchButton)
+        // console.log(value)
         dispatch({
             type: "xczNews/getHeaderSearch",
             payload: {
-                value: value,
+                contentVal: value,
                 onSearchButton: true,
+                hotFlag: false
             }
         })
     }
@@ -26,14 +27,15 @@ export default class Header extends Component {
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
-                inputValue: value
+                inputValue: value,
+                // onSearchButton: false,
             }
         })
     }
 
     render() {
         const { xczNews, location } = this.props;
-        const { onSearchButton, inputValue } = xczNews;
+        const { onSearchButton, inputValue, hotFlag } = xczNews;
         return (
             <div className={headerStyles.header}>
                 <div className={headerStyles.mainContainer}>
@@ -67,7 +69,7 @@ export default class Header extends Component {
                                     style={{ width: 200,height: 32, marginRight: 16 }}
                                     autocomplete="off"
                                     onChange={this.onChange}
-                                    onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
+                                    onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton, hotFlag)}
                                 />
                             </div>
                         )
