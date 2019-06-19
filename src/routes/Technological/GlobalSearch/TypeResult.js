@@ -99,7 +99,16 @@ export default class TypeResult extends React.Component {
                   </div>
                 )
               })}
-              <div className={indexstyles.lookMore} onClick={this.lookMore.bind(this, this.filterTitle(listType).defaultSearchType)}>查看更多...</div>
+              {lists.length?(
+                <div className={indexstyles.lookMore} onClick={this.lookMore.bind(this, this.filterTitle(listType).defaultSearchType)}>
+                  查看更多...
+                </div>
+              ):(
+                <div className={indexstyles.lookMore} >
+                  暂无数据
+                </div>
+              )}
+
             </div>
           )
         })}

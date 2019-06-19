@@ -1,5 +1,5 @@
 import { getGlobalSearchConditions, getFixedConditions, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
-import { selectSearchTypeList, selectSelectedConditions,selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
+import { selectSearchTypeList, selectDefaultSearchTypeNormal, selectSelectedConditions,selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";
@@ -13,6 +13,7 @@ export default {
       globalSearchModalVisible: false,
       searchTypeList: [], //查询类型列表
       defaultSearchType: '', //默认类型
+      defaultSearchTypeNormal: '', //默认类型一进去缓存下来，不再高边
       allTypeResultList: [], //全部类型列表
       sigleTypeResultList: [], //单个类型列表
       searchInputValue: '', //输入框的值
@@ -66,11 +67,13 @@ export default {
     * getGlobalSearchTypeList({ payload = {} }, { call, put, select }) {
       const res = yield call(getGlobalSearchTypeList, payload)
       if(isApiResponseOk(res)) {
+        const de = res.data && typeof res.data[0] == 'object' ? res.data[0]['search_type']: ''
         yield put({
           type: 'updateDatas',
           payload: {
             searchTypeList: res.data,
-            defaultSearchType: res.data && typeof res.data[0] == 'object' ? res.data[0]['search_type']: ''
+            defaultSearchType: de,
+            defaultSearchTypeNormal: de,
           }
         })
         // debugger
@@ -262,6 +265,29 @@ export default {
       yield put(routerRedux.push(route));
     },
 
+  // 初始化model数据
+    * initDatas({ payload }, { select, call, put }) {
+      const defaultSearchTypeNormal = yield select(selectDefaultSearchTypeNormal)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          defaultSearchType: defaultSearchTypeNormal,
+          globalSearchModalVisible: false,
+          allTypeResultList: [], //全部类型列表
+          sigleTypeResultList: [], //单个类型列表
+          searchInputValue: '', //输入框的值
+          page_number: 1,
+          page_size: 10,
+          scrollBlock: true, //滚动锁
+          loadMoreDisplay: 'block',
+          loadMoreTextType: '1', //加载的文案 1暂无更多数据 2加载中 3加载更多
+          spinning: false, //结果区域loading状态
+          spinning_conditions: false, //条件区域loading状态
+          match_conditions: [], //输入匹配条件列表
+          selected_conditions: [], //已选的条件列表
+        }
+      })
+    }
   },
 
   reducers: {

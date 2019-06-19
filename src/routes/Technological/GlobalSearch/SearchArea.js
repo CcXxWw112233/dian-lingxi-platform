@@ -109,6 +109,22 @@ export default class SearchArea extends React.Component {
   inputFocus = e => {
     this.set_show_match_conditions(true)
   }
+  inputOnPressEnter = e => {
+    const value = e.target.value
+    document.getElementById('globalSearch_input_').focus()
+    this.set_show_match_conditions(false)
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        searchInputValue: value.replace(/\s/gim, ''),
+        page_number: 1,
+      }
+    })
+    setTimeout(() => {
+      this.getGlobalSearchResult()
+    }, 300)
+  }
   //搜索查询区域
   //选择条件
   set_show_match_conditions = (bool) => {
@@ -222,6 +238,7 @@ export default class SearchArea extends React.Component {
                  value={searchInputValue}
                  ref={this.search_input_ref}
                  id={'globalSearch_input_'}
+                 onPressEnter={this.inputOnPressEnter}
                  onChange={this.inputChange}
                  onBlur={this.inputBlur}
                  onFocus={this.inputFocus}
@@ -277,6 +294,12 @@ export default class SearchArea extends React.Component {
         selected_conditions: arr
       }
     })
+    dispatch({
+      type: getEffectOrReducerByName('getGlobalSearchResultList'),
+      payload: {
+        // query_conditions: arr
+      }
+    })
   }
   //固定条件点击
   fixedConditionSelect = (data = []) => {
@@ -316,7 +339,7 @@ export default class SearchArea extends React.Component {
           }
           {/*<div className={indexstyles.fixed_conditions_area_left_item}>最近添加的内容</div>*/}
         </div>
-        <div className={`${indexstyles.fixed_conditions_area_right} ${globalStyles.authTheme}`}>&#xe66f;</div>
+        {/*<div className={`${indexstyles.fixed_conditions_area_right} ${globalStyles.authTheme}`}>&#xe66f;</div>*/}
       </div>
     )
   }

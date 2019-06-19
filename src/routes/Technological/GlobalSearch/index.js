@@ -44,6 +44,11 @@ export default class GlobalSearch extends React.Component {
         globalSearchModalVisible: false
       }
     })
+    dispatch({
+      type: getEffectOrReducerByName('initDatas'),
+      payload: {
+      }
+    })
   }
 
   render() {

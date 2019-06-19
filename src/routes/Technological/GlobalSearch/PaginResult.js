@@ -54,7 +54,7 @@ export default class PaginResult extends React.Component {
     dispatch({
       type: getEffectOrReducerByName('getGlobalSearchResultList'),
       payload: {
-        obj
+        ...obj
       }
     })
   }
@@ -73,8 +73,9 @@ export default class PaginResult extends React.Component {
           scrollBlock: false,
         }
       })
-
-      this.getGlobalSearchResultList()
+      setTimeout(() => {
+        this.getGlobalSearchResultList()
+      }, 300)
     }
   }
 
