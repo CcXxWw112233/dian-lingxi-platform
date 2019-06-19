@@ -291,14 +291,17 @@ export default class SearchArea extends React.Component {
     dispatch({
       type: 'globalSearch/updateDatas',
       payload: {
-        selected_conditions: arr
+        selected_conditions: arr,
+        page_number: 1,
       }
     })
-    dispatch({
-      type: getEffectOrReducerByName('getGlobalSearchResultList'),
-      payload: {
-        // query_conditions: arr
-      }
+    setTimeout(() => {
+      dispatch({
+        type: getEffectOrReducerByName('getGlobalSearchResultList'),
+        payload: {
+          // query_conditions: arr
+        }
+      })
     })
   }
   //固定条件点击
@@ -309,19 +312,21 @@ export default class SearchArea extends React.Component {
       const { conditions = [] } = item
       arr = [].concat(arr, conditions)
     })
-    console.log('ssss5', arr)
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        selected_conditions: arr
+        selected_conditions: arr,
+        page_number: 1,
       }
     })
-    dispatch({
-      type: getEffectOrReducerByName('getGlobalSearchResultList'),
-      payload: {
-        // query_conditions: arr
-      }
-    })
+    setTimeout(() => {
+      dispatch({
+        type: getEffectOrReducerByName('getGlobalSearchResultList'),
+        payload: {
+          // query_conditions: arr
+        }
+      })
+    }, 300)
   }
   //固定条件
   renderFixedConditions = () => {
