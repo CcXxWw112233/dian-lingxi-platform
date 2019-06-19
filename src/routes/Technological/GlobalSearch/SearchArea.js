@@ -350,7 +350,7 @@ export default class SearchArea extends React.Component {
   }
 
   render() {
-    const { selected_conditions = [] } = this.props
+    const { selected_conditions = [], defaultSearchTypeNormal, defaultSearchType } = this.props
     const { show_match_conditions } = this.state
     return(
       <div className={`${indexstyles.searchAreaOut}`}>
@@ -361,7 +361,7 @@ export default class SearchArea extends React.Component {
           selected_conditions.length?(
             this.renderSelectedConditions()
           ): (
-            this.renderFixedConditions()
+            (defaultSearchType == defaultSearchTypeNormal) && this.renderFixedConditions()
           )
         }
       </div>
@@ -369,12 +369,12 @@ export default class SearchArea extends React.Component {
   }
 }
 
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType,
+function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, defaultSearchTypeNormal,
   searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
   match_conditions, selected_conditions, spinning_conditions, fixed_conditions
 } } }) {
   return {
     searchTypeList, defaultSearchType, searchInputValue, globalSearchModalVisible, spinning, page_number, isInMatchCondition,
-    match_conditions, selected_conditions, spinning_conditions, fixed_conditions
+    match_conditions, selected_conditions, spinning_conditions, fixed_conditions, defaultSearchTypeNormal
   }
 }
