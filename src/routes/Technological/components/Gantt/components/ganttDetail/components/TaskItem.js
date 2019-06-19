@@ -3,6 +3,8 @@ import taskItemStyles from './taskItem.less'
 import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popconfirm, } from 'antd'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../../../utils/util'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
+import AvatarList from '../../../../../../../components/avatarList'
+
 const TextArea = Input.TextArea
 
 export default class DCAddChirdrenTaskItem extends React.Component{
@@ -39,13 +41,18 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           </div>
           {/*日期*/}
           <div style={{color: '#d5d5d5'}}>2019/2/3 12：22</div>
-          <Avatar size={16} src={executor.avatar} style={{fontSize: 14,margin: '0 12px 0 12px'}}>
-            {executor.name || '佚' }
-          </Avatar>
+          <div style={{margin: '0 8px'}}>
+            <AvatarList size={'small'} />
+          </div>
+          {/*<Avatar size={16} src={executor.avatar} style={{fontSize: 14,margin: '0 12px 0 12px'}}>*/}
+            {/*{executor.name || '佚' }*/}
+          {/*</Avatar>*/}
 
           {/*cuozuo*/}
           <Popconfirm onConfirm={this.deleteConfirm.bind(this, {card_id, chirldDataIndex})} title={'删除该子任务？'}>
-            <div className={`${globalStyles.authTheme} ${taskItemStyles.deletedIcon}`} style={{fontSize: 16}}>&#xe70f;</div>
+            <Tooltip title={'移出里程碑'}>
+              <div className={`${globalStyles.authTheme} ${taskItemStyles.deletedIcon}`} style={{fontSize: 16}}>&#xe70f;</div>
+            </Tooltip>
           </Popconfirm>
         </div>
       </div>

@@ -2,7 +2,7 @@ import React from 'react'
 import PublicDetailModal from '../../../../../../components/PublicDetailModal'
 import MainContent from './MainContent'
 import { connect } from 'dva'
-
+import HeaderContent from './HeaderContent'
 @connect(mapStateToProps)
 export default class GanttDetail extends React.Component {
 
@@ -19,6 +19,7 @@ export default class GanttDetail extends React.Component {
           modalVisible={miletone_detail_modal_visible}
           onCancel={set_miletone_detail_modal_visible}
           mainContent={<MainContent users={currentSelectedProjectMembersList}/>}
+          headerContent={<HeaderContent />}
         />
       </div>
     )

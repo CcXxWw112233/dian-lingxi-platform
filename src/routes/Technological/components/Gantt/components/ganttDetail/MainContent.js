@@ -357,9 +357,9 @@ export default class MainContent extends React.Component {
               <span className={globalStyle.authTheme}>&#xe7b2;</span>
               <span>备注</span>
             </div>
-            <div className={`${indexStyles.contain2_item_right}`} style={{height: 'auto'}} >
+            <div className={`${indexStyles.contain2_item_right}`} style={{height: 'auto', padding: 0}} >
               {!isInEditBraftEditor ? (
-                <div className={`${indexStyles.divContent_1} ${indexStyles.pub_hover}`} onClick={() => this.goEditBrafit()}>
+                <div className={`${indexStyles.divContent_1} ${indexStyles.pub_hover}`} style={{ padding: '0 10px'}} onClick={() => this.goEditBrafit()}>
                   <div className={indexStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
                     <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: typeof description === 'object'? description.toHTML() :description}}></div>
                   </div>
