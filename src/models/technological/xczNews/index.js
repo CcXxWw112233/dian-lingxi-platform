@@ -10,26 +10,30 @@ import {
   getCommonArticlesList,
 } from '@/services/technological/xczNews'
 
-import {selectTopTabs, selectList, selectInputValue, getSelectState} from './select'
+import { getSelectState } from './select'
 
 let path = '/technological/xczNews'
 
 export default {
   namespace: 'xczNews',
   state: {
-    topTabs: [], // 顶部的导航
+    // topTabs: [], // 顶部的导航
     articlesList: [], // 所有的公用文章列表
     // hotArticlesList: [], // 获取热点文章列表信息
     hotTabs: [], // 热点的tabs列表,
     // highRiseArticlesList: [], // 高层的文章列表信息
     // authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
+    dataBaseArticlesList: [], //资料库的文章列表
     cityList: [], // 地区的城市列表
     searchList: {}, // 全局搜索的列表
     inputValue: '', // 搜索框的内容
     contentVal: '', // 文本的value值,
     onSearchButton: false,  // 判断是否点击搜索
     hotFlag: true, // 热点的开关
+    highRiseFlag: true, // 高层的开关
+    authorityFlag: true, // 权威的开关
+    dataBaseFlag: true, // 资料库的开关
     total: 10, // 默认文章的总数
     page_size: 10,
     page_no: 1,
@@ -40,33 +44,25 @@ export default {
         // message.destroy()
         path = location.pathname
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
-          // console.log('111111111111111111',)
-          dispatch({
-            type: 'getHeaderTabs',
-            payload: {
-
-            }
-          }),
-          dispatch({
-            type: "getHeaderSearch",
-            payload: {
-
-            }
-          }),
           dispatch({
             type: "updateDatas",
             payload: {
               articlesList: [],
               searchList: {}
             }
-          })
-          
+          })  
         }
         if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
           dispatch({
             type: "getHotTabs",
             payload: {
               
+            }
+          }),
+          dispatch({
+            type: "getHeaderSearch",
+            payload: {
+              flag: 1,
             }
           }),
           dispatch({
@@ -78,7 +74,12 @@ export default {
           dispatch({
             type: "updateDatas",
             payload: {
-              articlesList: []
+              articlesList: [],
+              onSearchButton: false,  // 判断是否点击搜索
+              hotFlag: true, // 热点的开关
+              highRiseFlag: true,
+              authorityFlag: true, // 权威的开关
+              dataBaseFlag: true, // 资料库的开关
             }
           })
         }
@@ -90,9 +91,20 @@ export default {
             }
           }),
           dispatch({
+            type: "getHeaderSearch",
+            payload: {
+              flag: 2,
+            }
+          }),
+          dispatch({
             type: "updateDatas",
             payload: {
-              articlesList: []
+              articlesList: [],
+              onSearchButton: false,  // 判断是否点击搜索
+              hotFlag: true, // 热点的开关
+              highRiseFlag: true,
+              authorityFlag: true, // 权威的开关
+              dataBaseFlag: true, // 资料库的开关
             }
           })
         }
@@ -104,9 +116,20 @@ export default {
             }
           }),
           dispatch({
+            type: "getHeaderSearch",
+            payload: {
+              flag: 3,
+            }
+          }),
+          dispatch({
             type: "updateDatas",
             payload: {
-              articlesList: []
+              articlesList: [],
+              onSearchButton: false,  // 判断是否点击搜索
+              hotFlag: true, // 热点的开关
+              highRiseFlag: true,
+              authorityFlag: true, // 权威的开关
+              dataBaseFlag: true, // 资料库的开关
             }
           })
         }
@@ -118,9 +141,26 @@ export default {
             }
           }),
           dispatch({
+            type: "getHeaderSearch",
+            payload: {
+              flag: 5,
+            }
+          }),
+          dispatch({
+            type: "getDataBaseArticlesList",
+            payload: {
+
+            }
+          })
+          dispatch({
             type: "updateDatas",
             payload: {
-              articlesList: []
+              articlesList: [],
+              onSearchButton: false,  // 判断是否点击搜索
+              hotFlag: true, // 热点的开关
+              highRiseFlag: true,
+              authorityFlag: true, // 权威的开关
+              dataBaseFlag: true, // 资料库的开关
             }
           })
         }
@@ -142,21 +182,6 @@ export default {
     },
   },
   effects: { 
-    // 获取顶部信息
-    * getHeaderTabs({ payload = {} }, { select, call, put }) {
-      const topTabs = yield select(selectTopTabs)
-      // console.log('ssss',topTabs)
-      if(topTabs && topTabs.length) return
-      // console.log(111111111111)
-      const res = yield call(getHeaderTabs, {})
-      // console.log('2222',res)
-      yield put({
-          type: 'updateDatas',
-          payload: {
-            topTabs: res.tabs
-          }
-      })
-    },
     // 获取热点tabs
     * getHotTabs({ payload = {} }, { select, call, put }) {
       // console.log(payload, 'payload.....')
@@ -241,50 +266,32 @@ export default {
         keywords, page_size, page_no
       }
       if(searchList && searchList.length) return
-      // console.log(path)
-      switch(path) {
-        case '/technological/xczNews/hot':
-          // console.log(111111111111) 
-          break;
-        case '/technological/xczNews/highRise':
-          break;
-        case '/technological/xczNews/authority':
-          break;
-        case '/technological/xczNews/area':
-          break;
-        case '/technological/xczNews/dataBase':
-          break;
-        case '/technological/xczNews':
-          // console.log('默认')
-          break;
-      }
       const res = yield call(getHeaderSearch, {...params, ...payload})
-      // console.log(payload)  
-      const onSearchButton = payload.onSearchButton;
-      const contentVal = payload.contentVal;
-      const hotFlag = payload.hotFlag;
-      // console.log(onSearchButton)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data,
-          // inputValue: value,
-          contentVal: contentVal,
-          hotFlag: hotFlag,
-          onSearchButton: onSearchButton
+          contentVal: keywords,
         }
       })
     },
 
     // 获取所有的文章列表
     * getCommonArticlesList({ payload = {} }, { select, call, put }) {
-      const res = yield call(getCommonArticlesList, {...payload})
+      const searchList = yield select((state) => getSelectState(state, 'searchList'))
+      const page_size = yield select((state) => getSelectState(state, 'page_size'))
+      const page_no = yield select((state) => getSelectState(state, 'page_no'))
+      const params = {
+        page_size, page_no
+      }
+      if(searchList && searchList.length) return
+      const res = yield call(getCommonArticlesList, {...params, ...payload})
       // console.log(res)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data
-        }
+        },
       })
     }
 

@@ -1,15 +1,6 @@
 import request from '@/utils/requestAxios'
 import { REQUEST_COMMON } from '@/globalset/js/constant'
 
-// 获取顶部 tabs 的 json 数据
-export async function getHeaderTabs(params) {
-    return request({
-        url: "/json/top.json",
-        method: "GET",
-        params
-    })
-}
-
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {
     // console.log(params, '---------------------')
@@ -82,10 +73,7 @@ export async function getCommonArticlesList(params) {
     return request({
         url: `${REQUEST_COMMON}/articles/more`,
         method: "GET",
-        params: {
-            page_no: 1,
-            page_size: 10
-        },
+        params,
         headers: {appid: 123}
     })
 }

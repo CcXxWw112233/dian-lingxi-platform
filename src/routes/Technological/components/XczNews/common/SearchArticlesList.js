@@ -16,23 +16,30 @@ export default class SearchArticlesList extends Component {
             m = ("0" + (now.getMonth() + 1)).slice(-2),
             d = ("0" + now.getDate()).slice(-2);
         return y + "-" + m + "-" + d + " "
-     }
-     
-    render() {
-        const { xczNews } = this.props;
-        // const { searchList = {} } = this.props;
-        const {searchList = {}, inputValue, onSearchButton, contentVal } = xczNews;
-        const { total } = searchList;
-        console.log(contentVal)
-        // console.log(xczNews)
-        // console.log(inputValue, onSearchButton)
+    }
 
+     // 渲染 的组件
+
+     renderInfo() {
+        const { xczNews, location = {} } = this.props;
+        const {searchList = {}, onSearchButton, contentVal } = xczNews;
+        const { total } = searchList;
+        let name = '';
+        if (location.pathname == '/technological/xczNews/hot') {
+            name = '热点'
+        } else if (location.pathname == '/technological/xczNews/highRise') {
+            name = '高层'
+        } else if (location.pathname == '/technological/xczNews/authority') {
+            name = '权威'
+        } else if (location.pathname == '/technological/xczNews/dataBase') {
+            name = '资料库'
+        }
         return (
             <div className={commonStyles.mainContainer}>
                 {
                     contentVal && onSearchButton && (
                         <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                            {`含"${contentVal}"的全部结果共"${total}"条`}
+                            {`在"${name}"中含"${contentVal}"的全部结果共"${total}"条`}
                         </p>
                     )
                 }
@@ -44,35 +51,35 @@ export default class SearchArticlesList extends Component {
                                 <div className={commonStyles.news}>
                                     <ul>
                                         {
-                                          !item.hasImg ? (
-                                                        <li>
-                                                            <div className={commonStyles.right}>
-                                                                <div className={commonStyles.message}>
-                                                                    <i className={commonStyles.dot}></i>
-                                                                    <a className={commonStyles.text} target="_blank" href={item.origin_url}>{item.title}</a>
-                                                                </div>
-                                                                <div className={commonStyles.dot_note}>
-                                                                    <span>{item.origin_name}</span>
-                                                                    <span>{this.getdate(item.publish_time)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    ) : (
-                                                        <li>
-                                                            <div className={commonStyles.left}>
-                                                                <img src="" />
-                                                            </div>
-                                                            <div className={commonStyles.right}>
-                                                                <div className={commonStyles.message}>
-                                                                    <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
-                                                                </div>
-                                                                <div className={commonStyles.img_note}>
-                                                                    <span>{item.origin_name}</span>
-                                                                    <span>{this.getdate(item.publish_time)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    ) 
+                                            !item.hasImg ? (
+                                                <li>
+                                                    <div className={commonStyles.right}>
+                                                        <div className={commonStyles.message}>
+                                                            <i className={commonStyles.dot}></i>
+                                                            <a className={commonStyles.text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                        </div>
+                                                        <div className={commonStyles.dot_note}>
+                                                            <span>{item.origin_name}</span>
+                                                            <span>{this.getdate(item.publish_time)}</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ) : (
+                                                <li>
+                                                    <div className={commonStyles.left}>
+                                                        <img src="" />
+                                                    </div>
+                                                    <div className={commonStyles.right}>
+                                                        <div className={commonStyles.message}>
+                                                            <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                        </div>
+                                                        <div className={commonStyles.img_note}>
+                                                            <span>{item.origin_name}</span>
+                                                            <span>{this.getdate(item.publish_time)}</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ) 
                                         }   
                                     </ul>
                                 </div>
@@ -82,5 +89,20 @@ export default class SearchArticlesList extends Component {
                 }
             </div>
         )
+
+
+     }
+     
+    render() {
+        return (
+            <div>
+                { this.renderInfo() }
+            </div>
+            
+        )
+    
     }
+
+
+        
 }

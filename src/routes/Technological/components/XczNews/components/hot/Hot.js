@@ -123,9 +123,9 @@ export default class Hot extends Component {
 
     render() {
         const { xczNews, location } = this.props;
-        const { articlesList = [],hotFlag = true } = xczNews;
-        console.log(hotFlag)
-        if (hotFlag) {
+        // console.log(location, '-------------')
+        const { articlesList = [],hotFlag = true, inputValue } = xczNews;
+        if (hotFlag || inputValue == '') {
             return (
                 <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
                     {/* <div className={mainStyles.mainContainer}> */}
@@ -138,7 +138,7 @@ export default class Hot extends Component {
             )
         } else {
             return (
-                <SearchArticlesList />
+                <SearchArticlesList {...{location}} />
             )
         }
         

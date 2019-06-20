@@ -29,6 +29,19 @@ export default class Header extends Component {
         })
     }
 
+    // 一开始想的思路
+    // onChange = (e) => {
+    //     const value = e.target.value
+    //     const { dispatch } = this.props
+    //     dispatch({
+    //         type: 'xczNews/updateDatas',
+    //         payload: {
+    //             inputValue: value,
+    //             // onSearchButton: false,
+    //         }
+    //     })
+    // }
+
     onChange = (e) => {
         const value = e.target.value
         const { dispatch } = this.props
