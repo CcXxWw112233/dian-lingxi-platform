@@ -10,7 +10,10 @@ import TaskItem from './components/TaskItem'
 import globalStyle from '../../../../../../globalset/css/globalClassName.less'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
 import {REQUEST_DOMAIN_FILE} from "../../../../../../globalset/js/constant";
+import { connect, } from 'dva';
 
+const getEffectOrReducerByName = name => `milestoneDetail/${name}`
+@connect(mapStateToProps)
 export default class MainContent extends React.Component {
   state = {
     excutors_out_left_width: 0,
@@ -22,7 +25,10 @@ export default class MainContent extends React.Component {
     this.excutors_out_left_ref = React.createRef()
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+
+  }
+
 
   componentWillReceiveProps(nextProps) {
 
@@ -395,6 +401,12 @@ export default class MainContent extends React.Component {
     )
   }
 }
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ milestoneDetail }) {
+  return { milestoneDetail }
+}
+
 // const executors = [
 //   {
 //     id: "1131757491328258048",

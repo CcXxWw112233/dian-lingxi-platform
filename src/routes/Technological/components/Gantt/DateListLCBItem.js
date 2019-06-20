@@ -38,7 +38,19 @@ export default class DateListLCBItem extends Component {
   }
 
   selectLCB = (e) => {
-   this.props.set_miletone_detail_modal_visible && this.props.set_miletone_detail_modal_visible()
+    const id = e.key
+    this.props.set_miletone_detail_modal_visible && this.props.set_miletone_detail_modal_visible()
+    this.getMilestoneDetail(id)
+  }
+  //获取里程碑详情
+  getMilestoneDetail = (id) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/getMilestoneDetail',
+      payload: {
+        id
+      }
+    })
   }
 
   renderLCBList = () => {

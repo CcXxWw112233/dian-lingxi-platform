@@ -6,7 +6,7 @@ import { Tooltip } from 'antd'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
-import GanttDetail from './components/ganttDetail'
+import MilestoneDetail from './components/milestoneDetail'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -178,7 +178,7 @@ export default class DateList extends Component {
             submitCreatMilestone={this.submitCreatMilestone}
           />
         )}
-        <GanttDetail
+        <MilestoneDetail
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
         />

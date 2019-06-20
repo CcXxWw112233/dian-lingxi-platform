@@ -328,3 +328,11 @@ export async function boardAppCancelRelaMiletones(data) {
     data
   })
 }
+//获取里程碑详情
+export async function getMilestoneDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/detail/${params.id}`,
+    method: 'GET',
+    params
+  })
+}
