@@ -311,3 +311,20 @@ export async function getCardCommentListAll(params) {
     params
   })
 }
+
+//任务, 日程， 节点数据关联里程碑
+export async function boardAppRelaMiletones(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/rela`,
+    method: 'POST',
+    data
+  })
+}
+//任务, 日程， 节点数据取消关联里程碑
+export async function boardAppCancelRelaMiletones(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/rela`,
+    method: 'DELETE',
+    data
+  })
+}

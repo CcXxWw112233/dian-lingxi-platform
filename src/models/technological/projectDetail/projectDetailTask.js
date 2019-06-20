@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
 import {
+  boardAppCancelRelaMiletones,
+  boardAppRelaMiletones,
   addCardNewComment,
   addChirldTask, addTask, addTaskExecutor, addTaskGroup, addTaskTag,
   archivedTask, changeTaskType, completeTask,
@@ -872,7 +874,44 @@ export default modelExtend(projectDetail, {
           cardCommentAll: res.data
         }
       })
+    },
+
+    //关联里程碑
+    * taskRelaMiletones({payload} ,{select, call, put}) {
+      const { rela_id } = payload //此时的rela_id 为任务id
+      const res = yield call(boardAppRelaMiletones, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getCardDetail, { id: rela_id})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              drawContent: res2.data
+            }
+          })
+        }
+      }else {
+        message.warn(res.message)
+      }
+    },
+    * taskCancelRelaMiletones({payload} ,{select, call, put}) {
+      const { rela_id } = payload //此时的rela_id 为任务id
+      const res = yield call(boardAppCancelRelaMiletones, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getCardDetail, { id: rela_id})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              drawContent: res2.data
+            }
+          })
+        }
+      }else{
+        message.warn(res.message)
+      }
     }
+
   },
 
   reducers: {
