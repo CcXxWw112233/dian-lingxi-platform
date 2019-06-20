@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react'
 import commonStyles from './common.less'
+import { Icon } from 'antd'
 import { connect } from 'dva'
 
 @connect(({xczNews = []}) => ({
@@ -18,6 +19,20 @@ export default class SearchArticlesList extends Component {
         return y + "-" + m + "-" + d + " "
     }
 
+    // 点击返回的操作
+    handleBack = () => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                hotFlag: true,
+                highRiseFlag: true,
+                authorityFlag: true, // 权威的开关
+                dataBaseFlag: true, // 资料库的开关
+            }
+        })
+    }
+
      // 渲染 的组件
 
      renderInfo() {
@@ -25,21 +40,32 @@ export default class SearchArticlesList extends Component {
         const {searchList = {}, onSearchButton, contentVal } = xczNews;
         const { total } = searchList;
         let name = '';
+
         if (location.pathname == '/technological/xczNews/hot') {
             name = '热点'
+
         } else if (location.pathname == '/technological/xczNews/highRise') {
             name = '高层'
+  
         } else if (location.pathname == '/technological/xczNews/authority') {
             name = '权威'
+
         } else if (location.pathname == '/technological/xczNews/dataBase') {
             name = '资料库'
+    
         }
         return (
             <div className={commonStyles.mainContainer}>
                 {
                     contentVal && onSearchButton && (
                         <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                            {`在"${name}"中含"${contentVal}"的全部结果共"${total}"条`}
+                            <i 
+                                style={{ fontStyle: 'normal', display: 'inline-block', marginRight: 10, cursor: 'pointer', fontSize: 12 }}
+                                onClick={ () => { this.handleBack() } }
+                            >
+                                <Icon type="left" />返回
+                            </i>
+                            <span>{`在"${name}"中含"${contentVal}"的全部结果共"${total}"条`}</span>
                         </p>
                     )
                 }

@@ -21,6 +21,8 @@ export default {
     articlesList: [], // 所有的公用文章列表
     // hotArticlesList: [], // 获取热点文章列表信息
     hotTabs: [], // 热点的tabs列表,
+    category_ids: '', // 当前点击热点的title的id 政策...
+    hotspot_id: '', // 当前热点点击的id 城市设计...
     // highRiseArticlesList: [], // 高层的文章列表信息
     // authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
@@ -30,6 +32,7 @@ export default {
     inputValue: '', // 搜索框的内容
     contentVal: '', // 文本的value值,
     onSearchButton: false,  // 判断是否点击搜索
+    moreFlag: true, // 更多的开关
     hotFlag: true, // 热点的开关
     highRiseFlag: true, // 高层的开关
     authorityFlag: true, // 权威的开关
@@ -259,14 +262,16 @@ export default {
     // 顶部的全局搜索
     * getHeaderSearch({ payload = {} }, { select, call, put }) {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
+      const category_ids = yield select((state) => getSelectState(state, 'category_ids'))
       const keywords = yield select((state) => getSelectState(state, 'inputValue'))
       const page_size = yield select((state) => getSelectState(state, 'page_size'))
       const page_no = yield select((state) => getSelectState(state, 'page_no'))
       const params = {
-        keywords, page_size, page_no
+        category_ids,keywords, page_size, page_no
       }
       if(searchList && searchList.length) return
       const res = yield call(getHeaderSearch, {...params, ...payload})
+      console.log(payload)
       yield put({
         type: 'updateDatas',
         payload: {

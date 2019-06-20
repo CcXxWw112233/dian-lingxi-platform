@@ -5,6 +5,7 @@ import mainStyles from './hot.less'
 import { connect } from 'dva'
 import CommonArticlesList from '../../common/CommonArticlesList'
 import SearchArticlesList from '../../common/SearchArticlesList'
+import MoreList from '../../common/MoreList'
 import { Row, Col, Radio, Icon} from 'antd';
 
 const RadioGroup = Radio.Group;
@@ -24,7 +25,14 @@ export default class Hot extends Component {
         this.setState({
             selected_tab_id: id
         })
+
         const { dispatch } = this.props
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                hotspot_id: id,
+            }
+        })
         dispatch({
           type: 'xczNews/getHotArticles',
           payload: {
@@ -124,8 +132,8 @@ export default class Hot extends Component {
     render() {
         const { xczNews, location } = this.props;
         // console.log(location, '-------------')
-        const { articlesList = [],hotFlag = true, inputValue } = xczNews;
-        if (hotFlag || inputValue == '') {
+        const { articlesList = [], hotFlag = true, inputValue } = xczNews;
+        if (hotFlag) {
             return (
                 <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
                     {/* <div className={mainStyles.mainContainer}> */}

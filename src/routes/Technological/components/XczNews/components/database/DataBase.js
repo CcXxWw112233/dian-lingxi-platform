@@ -15,6 +15,12 @@ export default class DataBase extends Component {
     handleClick(id, name) {
         const { dispatch } = this.props;
         dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                dataBaseFlag: false,
+            }
+        })
+        dispatch({
             type: 'xczNews/getDataBase',
             payload: {
                 id: id,

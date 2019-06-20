@@ -3,7 +3,11 @@
 import React, { Component } from 'react'
 import commonStyles from './common.less'
 import { Icon } from 'antd'
+import { connect } from 'dva'
 
+@connect(({ xczNews }) => ({
+    xczNews,
+}))
 export default class CommonArticlesList extends Component {
 
     // 时间戳转换日期格式
@@ -13,6 +17,28 @@ export default class CommonArticlesList extends Component {
             m = ("0" + (now.getMonth() + 1)).slice(-2),
             d = ("0" + now.getDate()).slice(-2);
         return y + "-" + m + "-" + d + " "
+     }
+
+     // 更多的点击事件
+     handleMore(id) {
+         const { dispatch } = this.props;
+         dispatch({
+             type: 'xczNews/updateDatas',
+             payload: {
+                category_ids: id,
+                moreFlag: false,
+                hotFlag: false,
+                highRiseFlag: false, // 高层的开关
+                authorityFlag: false, // 权威的开关
+                dataBaseFlag: false,
+             }
+         })
+         dispatch({
+            type: 'xczNews/getHeaderSearch',
+            payload: {
+                
+            }
+         })
      }
      
     render() {
@@ -27,10 +53,10 @@ export default class CommonArticlesList extends Component {
                             <div className={commonStyles.info}>
                                 <div className={commonStyles.title}>
                                     <h2 id={item.id}>{item.name}</h2>
-                                    <a href="#">
+                                    <span onClick={() => { this.handleMore(item.id) }}>
                                         更多
                                         <Icon type="right" />
-                                    </a>
+                                    </span>
                                 </div>
                                 <div className={commonStyles.news}>
                                     <ul>

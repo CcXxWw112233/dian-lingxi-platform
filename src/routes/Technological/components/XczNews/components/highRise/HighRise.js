@@ -10,7 +10,7 @@ export default class HighRise extends Component {
     render() {
         const { xczNews, location } = this.props;
         const { articlesList = [], highRiseFlag, inputValue } = xczNews;
-        console.log(highRiseFlag)
+        // console.log(highRiseFlag)
 
         if (highRiseFlag || inputValue == '') {
             return (
