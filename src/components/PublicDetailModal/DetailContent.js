@@ -1,12 +1,12 @@
 import React from 'react'
 import indexStyles from './index.less'
-import Comment2 from './Comment/Comment2'
-import CommentListItem2 from './Comment/CommentListItem2'
-import ContentRaletion from '../../components/ContentRaletion'
+import CommentSubmit from './Comment/CommentSubmit'
+import CommentLists from './Comment/CommentLists'
+import globalStyles from '../../globalset/css/globalClassName.less'
 
 export default class DetailContent extends React.Component {
   state = {
-    isShowAll: false, //是否查看全部
+    isShowAllDynamic: false, //是否查看全部
   }
 
   constructor() {
@@ -26,54 +26,70 @@ export default class DetailContent extends React.Component {
   }
   setIsShowAll = () => {
     this.setState({
-      isShowAll: !this.state.isShowAll
+      isShowAllDynamic: !this.state.isShowAllDynamic
     })
   }
   render() {
     const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, } =this.props
+    const { isShowAllDynamic } = this.state
+    const {
+      mainContent = <div></div>, //主区域
+      viceAreaTopShow = false, //副区域的关联内容能否显示
+      viceAreaTopContent = <div></div>, //副区域顶部内容块
+      commentSubmitContent = '',
+      commentListsContent = '',
+      dynamicsContent = ''
+    } = this.props
 
-    const { mainContent = <div></div> } = this.props
 
     return (
       <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
         <div className={indexStyles.fileDetailContentLeft} style={{overflowY: 'auto'}}>
-             {/*主要内容放置区*/}
+          {/*主要内容放置区*/}
           {mainContent}
         </div>
 
         <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
 
-          {/*从文件卡片查看的时候才有*/}
-          <div className={indexStyles.fileDetailContentRight_top} ref={this.relative_content_ref}>
-            {/*关联内容放置区*/}
-            <ContentRaletion
-              {...this.props}
-              board_id ={board_id}
-              isShowAll = {this.state.isShowAll}
-              link_id={currentProcessInstanceId}
-              link_local={'2'}
-            />
-          </div>
+          {
+            viceAreaTopShow && (
+              <div className={indexStyles.fileDetailContentRight_top} ref={this.relative_content_ref}>
+                {/*关联内容放置区*/}
+                {viceAreaTopContent}
+              </div>
+            )
+          }
+
 
           <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
 
-            <div style={{display: 'flex', justifyContent: 'center',marginTop: '12px' ,fontSize: '14px', cursor: 'pointer', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div>
+            <div
+              className={indexStyles.lookAll}
+              onClick={this.setIsShowAll.bind(this)}>
+              {!isShowAllDynamic? '所有动态': '部分动态'}
+              {isShowAllDynamic?(
+                <i className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+              ):(
+                <i className={`${globalStyles.authTheme}  ${indexStyles.lookAll_logo}`}>&#xe7ed;</i>
+              )}
 
+            </div>
             {/*动态放置区*/}
             <div style={{fontSize: '12px', color: '#595959'}}>
               <div>
-                说的很对
+                {dynamicsContent}
               </div>
             </div>
             {/*评论放置区*/}
             <div>
-              <CommentListItem2 />
+              {commentListsContent || (
+                <CommentLists />
+              )}
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
-            <Comment2 />
+            {commentSubmitContent || <CommentSubmit />}
           </div>
-
 
         </div>
 
