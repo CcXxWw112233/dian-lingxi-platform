@@ -10,6 +10,14 @@ import { connect } from 'dva'
 }))
 export default class SearchArticlesList extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            arr: [],
+            page_num: 1,
+        }
+    }
+
     // 时间戳转换日期格式
     getdate() {
         var now = new Date(),
@@ -19,12 +27,48 @@ export default class SearchArticlesList extends Component {
         return y + "-" + m + "-" + d + " "
     }
 
+    // 监听滚动事件
+    componentDidMount() {
+        window.addEventListener('scroll', () => {
+            // console.log('滚动')
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            // console.log(scrollTop)
+            const { dispatch, xczNews } = this.props;
+            const { searchList, defaultArr } = xczNews;
+            if (scrollTop > 1000) {
+                dispatch({
+                    type: 'xczNews/getHeaderSearch',
+                    payload: {
+                        
+                    }
+                })
+                dispatch({
+                    type: 'xczNews/updateDatas',
+                    payload: {
+                        page_no: ++this.state.page_num,
+                        // defaultArr: defaultArr.connect(searchList)
+                    }
+                })
+                console.log(searchList)
+
+                
+                console.log(defaultArr)
+            }
+
+            
+
+
+
+        })
+    }
+
     // 点击返回的操作
     handleBack = () => {
         const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
+                inputValue: '',
                 hotFlag: true,
                 highRiseFlag: true,
                 authorityFlag: true, // 权威的开关
@@ -38,7 +82,11 @@ export default class SearchArticlesList extends Component {
      renderInfo() {
         const { xczNews, location = {} } = this.props;
         const {searchList = {}, onSearchButton, contentVal } = xczNews;
-        const { total } = searchList;
+        const { total, records } = searchList;
+        let { arr } = this.state;
+
+        
+
         let name = '';
 
         if (location.pathname == '/technological/xczNews/hot') {

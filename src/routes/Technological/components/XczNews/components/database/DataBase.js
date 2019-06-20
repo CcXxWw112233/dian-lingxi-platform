@@ -35,7 +35,7 @@ export default class DataBase extends Component {
         console.log(dataBase)
         // console.log(imgSrc)
 
-        if(dataBaseFlag || inputValue == '') {
+        if(dataBaseFlag) {
             return (
                 <div className={dataBaseStyles.material}>
                     {

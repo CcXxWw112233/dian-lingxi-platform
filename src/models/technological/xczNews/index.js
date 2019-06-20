@@ -1,5 +1,4 @@
 import { 
-  getHeaderTabs, 
   getHotTabs, 
   getHotArticles, 
   getHighRiseArticles, 
@@ -38,8 +37,9 @@ export default {
     authorityFlag: true, // 权威的开关
     dataBaseFlag: true, // 资料库的开关
     total: 10, // 默认文章的总数
-    page_size: 10,
-    page_no: 1,
+    page_size: 10, // 默认显示10条
+    page_no: 1,  // 默认第一页
+    defaultArr: [], // 默认的空数组
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -65,7 +65,7 @@ export default {
           dispatch({
             type: "getHeaderSearch",
             payload: {
-              flag: 1,
+              // flag: 1,
             }
           }),
           dispatch({
@@ -96,7 +96,7 @@ export default {
           dispatch({
             type: "getHeaderSearch",
             payload: {
-              flag: 2,
+              // flag: 2,
             }
           }),
           dispatch({
@@ -121,7 +121,7 @@ export default {
           dispatch({
             type: "getHeaderSearch",
             payload: {
-              flag: 3,
+              // flag: 3,
             }
           }),
           dispatch({
@@ -146,7 +146,7 @@ export default {
           dispatch({
             type: "getHeaderSearch",
             payload: {
-              flag: 5,
+              // flag: 5,
             }
           }),
           dispatch({
@@ -263,15 +263,16 @@ export default {
     * getHeaderSearch({ payload = {} }, { select, call, put }) {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
       const category_ids = yield select((state) => getSelectState(state, 'category_ids'))
+      const hotspot_id = yield select((state) => getSelectState(state, 'hotspot_id'))
       const keywords = yield select((state) => getSelectState(state, 'inputValue'))
       const page_size = yield select((state) => getSelectState(state, 'page_size'))
       const page_no = yield select((state) => getSelectState(state, 'page_no'))
       const params = {
-        category_ids,keywords, page_size, page_no
+        hotspot_id, category_ids,keywords, page_size, page_no
       }
       if(searchList && searchList.length) return
       const res = yield call(getHeaderSearch, {...params, ...payload})
-      console.log(payload)
+      // console.log(payload)
       yield put({
         type: 'updateDatas',
         payload: {

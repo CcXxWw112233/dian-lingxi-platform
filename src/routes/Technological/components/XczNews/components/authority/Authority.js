@@ -11,7 +11,7 @@ export default class Authority extends Component {
         const { xczNews, location } = this.props;
         const { articlesList = [], inputValue, authorityFlag } = xczNews;
 
-        if (authorityFlag || inputValue == '') {
+        if (authorityFlag) {
             return (
                 <div>
                     <CommonArticlesList {...{articlesList}}/>

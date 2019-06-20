@@ -12,7 +12,7 @@ export default class HighRise extends Component {
         const { articlesList = [], highRiseFlag, inputValue } = xczNews;
         // console.log(highRiseFlag)
 
-        if (highRiseFlag || inputValue == '') {
+        if (highRiseFlag) {
             return (
                 <div>
                     <CommonArticlesList {...{articlesList}}/>
