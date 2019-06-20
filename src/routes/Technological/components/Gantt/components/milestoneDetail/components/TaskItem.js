@@ -4,9 +4,10 @@ import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popco
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../../../utils/util'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import AvatarList from '../../../../../../../components/avatarList'
-
+import { connect } from 'dva'
 const TextArea = Input.TextArea
 
+@connect(mapStateToProps)
 export default class DCAddChirdrenTaskItem extends React.Component{
 
   state = {
@@ -14,18 +15,20 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     localChildTaskName: '',
     isInEditTaskName: false,
   }
-  deleteConfirm = () => {}
+  deleteConfirm = ({id}) => {
+    const { milestone_id, dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/taskCancelRelaMiletones',
+      payload: {
+        id: milestone_id,
+        rela_id: id
+      }
+    })
+  }
   render() {
-    const { chirldTaskItemValue = {}, chirldDataIndex } = this.props
-    const { card_id, card_name, due_time, is_realize = '0' ,executors = []} = chirldTaskItemValue
-    const data = []//任务执行人列表
-    const { localChildTaskName, isInEditTaskName} = this.state
+    const { itemValue = {} } = this.props
+    const { id, name, deadline, is_realize = '0' ,users = []} = itemValue
 
-    let executor = {//任务执行人信息
-      user_id: '',
-      user_name: '',
-      avatar: '',
-    }
     return (
       <div className={`${taskItemStyles.taskItem}`}>
         <div className={`${taskItemStyles.item_1} ${taskItemStyles.pub_hover}`} >
@@ -37,19 +40,19 @@ export default class DCAddChirdrenTaskItem extends React.Component{
 
           {/*名称*/}
           <div style={{wordWrap: 'break-word', paddingTop:2}} >
-            {'这是名称这是名称这是名称这是名称这是名称这是名称'}
+            {name}
           </div>
           {/*日期*/}
-          <div style={{color: '#d5d5d5'}}>2019/2/3 12：22</div>
+          <div style={{color: '#d5d5d5'}}>{timestampToTimeNormal(deadline, '/', true)}</div>
           <div style={{margin: '0 8px'}}>
-            <AvatarList size={'small'} />
+            <AvatarList size={'small'} users={users} />
           </div>
           {/*<Avatar size={16} src={executor.avatar} style={{fontSize: 14,margin: '0 12px 0 12px'}}>*/}
             {/*{executor.name || '佚' }*/}
           {/*</Avatar>*/}
 
           {/*cuozuo*/}
-          <Popconfirm onConfirm={this.deleteConfirm.bind(this, {card_id, chirldDataIndex})} title={'删除该子任务？'}>
+          <Popconfirm onConfirm={this.deleteConfirm.bind(this, {id})} title={'删除该子任务？'}>
             <Tooltip title={'移出里程碑'}>
               <div className={`${globalStyles.authTheme} ${taskItemStyles.deletedIcon}`} style={{fontSize: 16}}>&#xe70f;</div>
             </Tooltip>
@@ -58,4 +61,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
       </div>
     )
   }
+}
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} } }) {
+  return { milestone_detail }
 }

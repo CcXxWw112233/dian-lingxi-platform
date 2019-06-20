@@ -7,7 +7,7 @@ import {
 } from 'antd'
 
 const AvatarList = (props) => {
-  const { users = [1,2,3,4], size = 'default' } = props
+  const { users = [], size = 'default' } = props
   const getSizeNum = () => {
     switch (size){
       case 'small':
@@ -37,8 +37,9 @@ const AvatarList = (props) => {
     <div className={styles.avatar_list}>
       {
         users.map((value, key) => {
+          const { avatar, name } = value
           return key < 3 &&(
-            <Avatar size={size} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2),}}>s</Avatar>
+            <Avatar size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2),}}>{name}</Avatar>
           )
         })
       }

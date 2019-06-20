@@ -20,7 +20,7 @@ export default class DateList extends Component {
   state = {
     add_lcb_modal_visible: false,
     create_lcb_time: '',
-    miletone_detail_modal_visible: true
+    miletone_detail_modal_visible: false
   }
   set_miletone_detail_modal_visible = () => {
     const { miletone_detail_modal_visible } = this.state

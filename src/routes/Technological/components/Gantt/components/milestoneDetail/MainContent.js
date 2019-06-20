@@ -31,14 +31,31 @@ export default class MainContent extends React.Component {
 
 
   componentWillReceiveProps(nextProps) {
+    const { milestone_detail = {} } = nextProps
+    const { remarks } = milestone_detail
+    this.setState({
+      description: remarks,
+      brafitEditHtml: remarks
+    })
+  }
 
+  //更新详情
+  updateMilestone = (params) => {
+    const { dispatch, milestone_detail = {} } = this.props
+    const { id } = milestone_detail
+    dispatch({
+      type: 'milestoneDetail/updateMilestone',
+      payload: {
+        ...params,
+        id
+      }
+    })
   }
 
   //标题
   titleChangeBlur(e) {
-    this.setState({
-      titleIsEdit: false
-    })
+    const value = e.target.value
+    this.updateMilestone({name: value})
   }
   setTitleIsEdit = (titleIsEdit) => {
     this.setState({
@@ -87,14 +104,12 @@ export default class MainContent extends React.Component {
   //截止时间
   endDatePickerChange(e, timeString) {
     const due_timeStamp = timeToTimestamp(timeString)
-    this.setState({
-      due_time: due_timeStamp
-    })
+    this.updateMilestone({ deadline: due_timeStamp })
   }
-  disabledDueTime = (due_time) => {
+  disabledDueTime = (deadline) => {
     const now_time = new Date().getTime()
     const newStartTime = now_time.toString().length > 10 ? Number(now_time).valueOf() / 1000 : Number(now_time).valueOf()
-    return Number(due_time.valueOf()) / 1000 < newStartTime;
+    return Number(deadline.valueOf()) / 1000 < newStartTime;
   }
 
   //有关于富文本编辑---------------start
@@ -132,10 +147,7 @@ export default class MainContent extends React.Component {
     this.setState({
       description: brafitEditHtml,
     })
-    // const updateObj ={
-    //   description: brafitEditHtml,
-    // }
-    // this.props.updateTask({updateObj})
+   this.updateMilestone({ remarks: brafitEditHtml})
   }
   isJSON = (str) => {
     if (typeof str === 'string') {
@@ -227,7 +239,6 @@ export default class MainContent extends React.Component {
   render() {
     const { titleIsEdit,
       excutors_out_left_width = 0,
-      due_time,
       isInEditBraftEditor,
       brafitEditHtml,
     } = this.state
@@ -236,12 +247,12 @@ export default class MainContent extends React.Component {
     } = this.state
     description = (!description || description == '<p></p>') ? '<p>添加备注</p>': description
     const {
-      data = [],
-      titile = '这是标题',
       users = [],
-      executors = [],
+      milestone_detail = {},
     } = this.props
-
+    const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [] } = milestone_detail
+    const executors = [] = principals
+    console.log('sssss', milestone_detail)
     const new_users = users.map(item => {
       item['user_id'] = item['id']
       return item
@@ -276,13 +287,14 @@ export default class MainContent extends React.Component {
         {/*标题*/}
         <div className={indexStyles.contain1}>
           {!titleIsEdit ? (
-            <div className={`${indexStyles.contain1_title} ${indexStyles.pub_hover}`} onClick={this.setTitleIsEdit.bind(this, true)}>{titile}</div>
+            <div className={`${indexStyles.contain1_title} ${indexStyles.pub_hover}`} onClick={this.setTitleIsEdit.bind(this, true)}>{name}</div>
           ) : (
             <NameChangeInput
               onBlur={this.titleChangeBlur.bind(this)}
+              onPressEnter={this.titleChangeBlur.bind(this)}
               setIsEdit={this.setTitleIsEdit.bind(this, false)}
               autoFocus={true}
-              goldName={titile}
+              goldName={name}
               maxLength={100}
               nodeName={'input'}
               size={'large'}
@@ -298,7 +310,7 @@ export default class MainContent extends React.Component {
               <span>进度</span>
             </div>
             <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`} style={{lineHeight: '28px'}}>
-              <Progress percent={30} strokeColor={'#FAAD14'}/>
+              <Progress percent={complete_num/total_num} strokeColor={'#FAAD14'}/>
             </div>
           </div>
           {/*负责人*/}
@@ -345,14 +357,14 @@ export default class MainContent extends React.Component {
               <span>截至时间</span>
             </div>
             <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`}>
-              <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '添加时间'}
+              <span style={{position: 'relative'}}>{deadline ? timestampToTimeNormal(deadline, '/', true) : '添加时间'}
                 <DatePicker
                   disabledDate={this.disabledDueTime.bind(this)}
                   placeholder={'截止时间'}
                   format="YYYY/MM/DD HH:mm"
                   showTime={{format: 'HH:mm'}}
                   onChange={this.endDatePickerChange.bind(this)}
-                  style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1}} />
+                  style={{opacity: 0, width: !deadline? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1}} />
               </span>
             </div>
 
@@ -394,7 +406,12 @@ export default class MainContent extends React.Component {
         </div>
         <div className={`${indexStyles.contain3}`}>
           <div className={indexStyles.contain3_inner}>
-            <TaskItem />
+            {content_list.map((value, key) => {
+              const { name, id } = value
+              return (
+                <TaskItem itemValue = {value} key={id} milestone_id={milestone_detail['id']}/>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -403,8 +420,8 @@ export default class MainContent extends React.Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ milestoneDetail }) {
-  return { milestoneDetail }
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} } }) {
+  return { milestone_detail }
 }
 
 // const executors = [
