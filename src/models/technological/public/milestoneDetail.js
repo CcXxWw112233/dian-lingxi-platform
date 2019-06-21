@@ -1,4 +1,4 @@
-import {boardAppCancelRelaMiletones, getMilestoneDetail, updateMilestone} from '../../../services/technological/task'
+import {boardAppCancelRelaMiletones, getMilestoneDetail, updateMilestone, addMilestoneExcutos, removeMilestoneExcutos} from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -62,8 +62,43 @@ export default modelExtend(technological, {
       }else{
         message.warn(res.message)
       }
+    },
+    * addMilestoneExcutos({payload} ,{select, call, put}) {
+      const { id } = payload //此时的rela_id 为任务id
+      const res = yield call(addMilestoneExcutos, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getMilestoneDetail, { id })
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              milestone_detail: res2.data
+            }
+          })
+          message.success('设置成功')
+        }
+      }else{
+        message.warn(res.message)
+      }
+    },
+    * removeMilestoneExcutos({payload} ,{select, call, put}) {
+      const { id } = payload //此时的rela_id 为任务id
+      const res = yield call(removeMilestoneExcutos, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getMilestoneDetail, { id })
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              milestone_detail: res2.data
+            }
+          })
+          message.success('设置成功')
+        }
+      }else{
+        message.warn(res.message)
+      }
     }
-
   },
 
   reducers: {

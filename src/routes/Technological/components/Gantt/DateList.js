@@ -179,6 +179,7 @@ export default class DateList extends Component {
           />
         )}
         <MilestoneDetail
+          users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
         />

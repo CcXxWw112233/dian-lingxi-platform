@@ -10,15 +10,25 @@ export default class GanttDetail extends React.Component {
 
   componentWillReceiveProps(nextProps) {}
 
+  onCancel = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/updateDatas',
+      payload: {
+        milestone_detail: {}
+      }
+    })
+    this.props.set_miletone_detail_modal_visible && this.props.set_miletone_detail_modal_visible()
+  }
   render() {
     const { miletone_detail_modal_visible, set_miletone_detail_modal_visible } = this.props
-    const { currentSelectedProjectMembersList } = this.props
+    const { users } = this.props
     return(
       <div>
         <PublicDetailModal
           modalVisible={miletone_detail_modal_visible}
-          onCancel={set_miletone_detail_modal_visible}
-          mainContent={<MainContent users={currentSelectedProjectMembersList}/>}
+          onCancel={this.onCancel}
+          mainContent={<MainContent users={users}/>}
           headerContent={<HeaderContent />}
         />
       </div>

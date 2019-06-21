@@ -4,6 +4,8 @@ import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import { Progress, Dropdown, Menu } from 'antd';
 import AddLCBModal from '../../../Gantt/components/AddLCBModal'
 import { connect } from 'dva'
+import MilestoneDetail from '../../../../components/Gantt/components/milestoneDetail'
+
 const MenuItem = Menu.Item
 
 @connect(mapStateToProps)
@@ -15,7 +17,25 @@ export default class LcbInHeader extends Component {
     }
   }
   selectLCB = (e) => {
-
+    const { key } = e
+    this.getMilestoneDetail(key)
+    this.set_miletone_detail_modal_visible()
+  }
+  //获取里程碑详情
+  getMilestoneDetail = (id) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/getMilestoneDetail',
+      payload: {
+        id
+      }
+    })
+  }
+  set_miletone_detail_modal_visible = () => {
+    const { miletone_detail_modal_visible } = this.state
+    this.setState({
+      miletone_detail_modal_visible: !miletone_detail_modal_visible
+    })
   }
 
   renderLCBList = () => {
@@ -59,7 +79,7 @@ export default class LcbInHeader extends Component {
 
   render() {
     const { data, board_id, board_name, milestoneList } = this.props
-    const { add_lcb_modal_visible } = this.state
+    const { add_lcb_modal_visible, miletone_detail_modal_visible } = this.state
     const userList = data.map(item => {
       const value = item
       value['id'] = item['user_id']
@@ -95,6 +115,11 @@ export default class LcbInHeader extends Component {
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
           submitCreatMilestone={this.submitCreatMilestone}
+        />
+        <MilestoneDetail
+          users={data}
+          miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
+          set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
         />
       </div>
     )

@@ -18,6 +18,7 @@ export default class MainContent extends React.Component {
   state = {
     excutors_out_left_width: 0,
     isInEditBraftEditor: false,
+    selected_excutors: [],
   }
 
   constructor(prop) {
@@ -63,25 +64,28 @@ export default class MainContent extends React.Component {
     })
   }
 
-  chirldrenTaskChargeChange(data) {
-    const { users } = this.props
-    const new_users = users.map(item => {
-      item['user_id'] = item['id']
-      return item
-    })
-    let newExecutors = []
-    const { selectedKeys = [] } = data
-
-    newExecutors.map((item, index) => {
-
-    })
-
-    for(let i = 0; i < selectedKeys.length; i++) {
-      for(let j = 0; j < new_users.length; j++) {
-        if(selectedKeys[i] === new_users[j]['user_id']) {
-          newExecutors.push(new_users[j])
+  chirldrenTaskChargeChange = (data) => {
+    const { key, type } = data
+    const { dispatch, milestone_detail = {} } = this.props
+    const { id } = milestone_detail
+    if(type == 'add') {
+      dispatch({
+        type: 'milestoneDetail/addMilestoneExcutos',
+        payload: {
+          id,
+          user_id: key
         }
-      }
+      })
+    }else if(type == 'remove') {
+      dispatch({
+        type: 'milestoneDetail/removeMilestoneExcutos',
+        payload: {
+          id,
+          user_id: key
+        }
+      })
+    }else {
+
     }
     //用于判判断任务执行人菜单是否显示
     const that = this
@@ -91,13 +95,8 @@ export default class MainContent extends React.Component {
       that.setState({
         excutors_out_left_width
       })
-    }, 300)
+    }, 1000)
 
-    //执行接口请求
-    // this.props.addTaskExecutor({
-    //   card_id,
-    //   users: selectedKeys.join(',')
-    // })
 
   }
 
@@ -121,7 +120,6 @@ export default class MainContent extends React.Component {
     // if(e.target.nodeName.toUpperCase() === 'IMG') {
     //   const src = e.target.getAttribute('src')
     // }
-    console.log('sssss', 1111)
     this.setState({
       isInEditBraftEditor: true
     })
@@ -251,8 +249,7 @@ export default class MainContent extends React.Component {
       milestone_detail = {},
     } = this.props
     const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [] } = milestone_detail
-    const executors = [] = principals
-    console.log('sssss', milestone_detail)
+    const executors = principals
     const new_users = users.map(item => {
       item['user_id'] = item['id']
       return item
@@ -309,7 +306,7 @@ export default class MainContent extends React.Component {
               <span className={globalStyle.authTheme}>&#xe7b2;</span>
               <span>进度</span>
             </div>
-            <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`} style={{lineHeight: '28px'}}>
+            <div className={`${indexStyles.contain2_item_right}`} style={{lineHeight: '28px'}}>
               <Progress percent={complete_num/total_num} strokeColor={'#FAAD14'}/>
             </div>
           </div>
@@ -399,7 +396,7 @@ export default class MainContent extends React.Component {
           <div className={indexStyles.contain2_item} >
             <div className={indexStyles.contain2_item_left} style={{width: 200}}>
               <span className={globalStyle.authTheme}>&#xe7b2;</span>
-              <span>关联任务 · 24/80</span>
+              <span>关联任务 · {complete_num || '0'}/{total_num || '0'}</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`}></div>
           </div>

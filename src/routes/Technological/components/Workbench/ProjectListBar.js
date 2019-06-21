@@ -140,10 +140,10 @@ class ProjectListBar extends Component {
     //处理工作台数据
     this.handleGanttData(id)
     //获取里程碑列表
-    this.getMilestone(id)
+    this.getMilestoneList(id)
   };
   //获取项目里程碑列表
-  getMilestone = (id) => {
+  getMilestoneList = (id) => {
     const { dispatch } = this.props
     dispatch({
       type: 'workbenchPublicDatas/getMilestoneList',

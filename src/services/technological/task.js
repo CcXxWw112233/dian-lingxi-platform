@@ -344,3 +344,20 @@ export async function updateMilestone(data) {
     data
   })
 }
+
+//添加里程碑负责人
+export async function addMilestoneExcutos(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/user/add`,
+    method: 'POST',
+    data
+  })
+}
+//移除里程碑负责人
+export async function removeMilestoneExcutos(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/user/remove`,
+    method: 'POST',
+    data
+  })
+}
