@@ -30,7 +30,7 @@ export default class DataBase extends Component {
 
     render() {
         const { xczNews, location } = this.props;
-        const { dataBase, dataBaseFlag, inputValue } = xczNews;
+        const { dataBase, dataBaseFlag } = xczNews;
         // console.log(dataBase)
         // console.log(imgSrc)
 

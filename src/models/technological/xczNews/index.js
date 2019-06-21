@@ -3,13 +3,16 @@ import {
   getHotArticles, 
   getHighRiseArticles, 
   getAuthorityArticles, 
-  getDataBase, 
+  getDataBase,
+  getDataBaseDetail, 
   getAreas,
   getHeaderSearch,
   getCommonArticlesList,
 } from '@/services/technological/xczNews'
 
 import { getSelectState } from './select'
+import { isApiResponseOk } from '@/utils/handleResponseData'
+import { message } from 'antd';
 
 let path = '/technological/xczNews'
 
@@ -25,6 +28,7 @@ export default {
     // highRiseArticlesList: [], // 高层的文章列表信息
     // authorityArticlesList: [], // 权威的文章列表信息
     dataBase: [], // 资料库的数据
+    dataBaseDetail: [], // 资料库详情的数据
     dataBaseArticlesList: [], //资料库的文章列表
     cityList: [], // 地区的城市列表
     searchList: {}, // 全局搜索的列表
@@ -51,7 +55,8 @@ export default {
         dispatch({
           type: 'updateDatas',
           payload: {
-            page_no: 1
+            page_no: 1,
+            defaultArr: []
           }
         })
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
@@ -160,14 +165,20 @@ export default {
               
             }
           }),
+          // dispatch({
+          //   type: "getHeaderSearch",
+          //   payload: {
+          //     // flag: 5,
+          //   }
+          // }),
           dispatch({
-            type: "getHeaderSearch",
+            type: "getDataBaseArticlesList",
             payload: {
-              // flag: 5,
+
             }
           }),
           dispatch({
-            type: "getDataBaseArticlesList",
+            type: "getDataBaseDetail",
             payload: {
 
             }
@@ -267,6 +278,26 @@ export default {
       })
     },
 
+    // 获取资料库详情的数据
+    * getDataBaseDetail({ payload = {} }, { select, call, put }) {
+      const searchList = yield select((state) => getSelectState(state, 'searchList'))
+      const category_ids = yield select((state) => getSelectState(state, 'category_ids'))
+      const page_size = yield select((state) => getSelectState(state, 'page_size'))
+      const page_no = yield select((state) => getSelectState(state, 'page_no'))
+      const params = {
+        category_ids, page_size, page_no
+      }
+      if(searchList && searchList.length) return
+      const res = yield call(getDataBaseDetail, {...params, ...payload});
+      // console.log(res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          dataBaseDetail: res.data
+        }
+      })
+    },
+
     // 获取地区的城市列表
     * getAreas({ payload = {} }, { select, call, put }) {
       const res = yield call(getAreas, {...payload});
@@ -287,17 +318,29 @@ export default {
       const keywords = yield select((state) => getSelectState(state, 'inputValue'))
       const page_size = yield select((state) => getSelectState(state, 'page_size'))
       const page_no = yield select((state) => getSelectState(state, 'page_no'))
+      const defaultArr = yield select((state) => getSelectState(state, 'defaultArr'))
+      
       const params = {
-        hotspot_id, category_ids,keywords, page_size, page_no
+        category_ids,keywords, page_size, page_no
+      }
+      if(path.indexOf('/technological/xczNews/hot') != -1) {
+        params.hotspot_id = hotspot_id
       }
       if(searchList && searchList.length) return
       const res = yield call(getHeaderSearch, {...params, ...payload})
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
+      const aaa = [].concat(defaultArr, res.data.records)
+      console.log('sssss',aaa)
       // console.log(res.data.records.length)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data,
           contentVal: keywords,
+          defaultArr: aaa
           // is_onscroll_do_paging: res.data.records.length < page_size ? false: true
         }
       })

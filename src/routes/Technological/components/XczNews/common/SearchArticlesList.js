@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import commonStyles from './common.less'
-import { Icon, message } from 'antd'
+import { Icon } from 'antd'
 import { connect } from 'dva'
 
 @connect(({xczNews = []}) => ({
@@ -48,7 +48,7 @@ export default class SearchArticlesList extends Component {
                 payload: {
                     is_onscroll_do_paging: false,
                     page_no: ++new_page_no,
-                    defaultArr: defaultArr.concat([...defaultArr], [...searchList.records])
+                    // defaultArr: defaultArr.concat([...defaultArr], [...searchList.records])
                 }
             })
             dispatch({
@@ -68,7 +68,7 @@ export default class SearchArticlesList extends Component {
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
-                defaultArr: [...searchList.records]
+                // defaultArr: [...searchList.records]
             }
         })
         window.addEventListener('scroll', this.onScroll)
@@ -97,8 +97,7 @@ export default class SearchArticlesList extends Component {
      // 渲染 的组件
      renderInfo() {
         const { xczNews, location = {} } = this.props;
-        const {searchList = {}, defaultObj = {}, defaultArr = [], onSearchButton, contentVal, page_size, page_no } = xczNews;
-        console.log(page_no)
+        const {searchList = {}, defaultArr = [], onSearchButton, contentVal, page_size, page_no } = xczNews;
         const { total, records } = searchList;
 
         let name = '';
@@ -176,7 +175,7 @@ export default class SearchArticlesList extends Component {
                     })
                 }
                 {
-                   searchList.records.length < page_size ? (
+                   searchList && searchList.records && searchList.records.length < page_size ? (
                         <p style={{ textAlign: 'center' }}>没有更多数据啦...</p>
                     ) : (
                         <p style={{ textAlign: 'center' }}>疯狂加载中...</p>
