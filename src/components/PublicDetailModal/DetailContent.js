@@ -36,9 +36,10 @@ export default class DetailContent extends React.Component {
       mainContent = <div></div>, //主区域
       viceAreaTopShow = false, //副区域的关联内容能否显示
       viceAreaTopContent = <div></div>, //副区域顶部内容块
-      commentSubmitContent = '',
-      commentListsContent = '',
-      dynamicsContent = ''
+      commentSubmitContent = '', //评论提交区域区块
+      commentListsContent = '', //评论列表区块
+      dynamicsContent = '', //动态列表区块
+      commentUseParams = {}, //评论所需要参数
     } = this.props
 
 
@@ -81,14 +82,14 @@ export default class DetailContent extends React.Component {
               </div>
             </div>
             {/*评论放置区*/}
-            <div>
+            <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70}}>
               {commentListsContent || (
-                <CommentLists />
+                <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
               )}
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
-            {commentSubmitContent || <CommentSubmit />}
+            {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams}/>}
           </div>
 
         </div>

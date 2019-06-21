@@ -2,12 +2,43 @@ import React from 'react';
 import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment2.less'
 import {timestampToTimeNormal} from "../../../utils/util";
+import { connect } from 'dva'
 
 const Dragger = Upload.Dragger
 
+@connect(mapStateToProps)
 export default class CommentListItem extends React.Component {
   state = {
     closeNormal: true,
+    content_detail_use_id_local: '',
+  }
+
+  componentDidMount() {
+    this.getCommentList(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.getCommentList(nextProps)
+  }
+
+  //获取评论列表
+  getCommentList = (props) => {
+    const { dispatch, commentUseParams = {} } = props
+    const { content_detail_use_id, flag } = commentUseParams
+    const { content_detail_use_id_local } = this.state
+    if(!content_detail_use_id || content_detail_use_id == content_detail_use_id_local) {
+      return
+    }
+    dispatch({
+      type: 'publicModalComment/getPublicModalDetailCommentList',
+      payload: {
+        id: content_detail_use_id,
+        flag
+      }
+    })
+    this.setState({
+      content_detail_use_id_local: content_detail_use_id
+    })
   }
 
   boxOnMouseOver() {
@@ -22,9 +53,9 @@ export default class CommentListItem extends React.Component {
   }
 
   deleteComment(id) {
-    const { datas:{ filePreviewCurrentFileId }} = this.props.model
-    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
-    this.props.deleteCommitSet()
+    const { commentUseParams = {} } = this.props
+    const { deleteComment } = commentUseParams
+    deleteComment && deleteComment({id})
   }
 
   commitClicShowEdit(data) {
@@ -33,7 +64,7 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { commit_list = [] } = this.props
+    const { comment_list = [], isShowAllDynamic } = this.props
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -71,22 +102,22 @@ export default class CommentListItem extends React.Component {
     }
     return (
       <div className={CommentStyles.commentListItemBox}>
-        {commit_list.length > 20 ?(
-          <div className={CommentStyles.commentListItemControl}>
-            {closeNormal?(
-              <div>
-                <Icon type="eye" />
-              </div>
-            ):(
-              <div>
-                <Icon type="arrow-up" onClick={this.hideBeyond.bind(this)}/>
-              </div>
-            )}
-          </div>
-        ) : ('')}
+        {/*{comment_list.length > 20 ?(*/}
+          {/*<div className={CommentStyles.commentListItemControl}>*/}
+            {/*{closeNormal?(*/}
+              {/*<div>*/}
+                {/*<Icon type="eye" />*/}
+              {/*</div>*/}
+            {/*):(*/}
+              {/*<div>*/}
+                {/*<Icon type="arrow-up" onClick={this.hideBeyond.bind(this)}/>*/}
+              {/*</div>*/}
+            {/*)}*/}
+          {/*</div>*/}
+        {/*) : ('')}*/}
         <div onMouseOver={this.boxOnMouseOver.bind(this)}>
-          {commit_list.map((value, key) => {
-            if(closeNormal && key > 19) {
+          {comment_list.map((value, key) => {
+            if(isShowAllDynamic && key > 19) {
               return false
             }
             return (
@@ -102,3 +133,7 @@ export default class CommentListItem extends React.Component {
 }
 
 
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ publicModalComment: { comment_list = [] } }) {
+  return { comment_list }
+}

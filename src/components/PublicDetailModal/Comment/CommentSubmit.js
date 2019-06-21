@@ -18,6 +18,7 @@ export default class Comment extends React.Component {
     // this.props.getWorkFlowComment({
     //   flow_instance_id: this.props.model.datas.totalId.flow
     // })
+    // console.log('ssss', 11111)
   }
   MentionSpacerClick() {
   }
@@ -31,7 +32,10 @@ export default class Comment extends React.Component {
     })
   }
   submitComment() {
-
+    const { commentUseParams = {} } = this.props
+    const { commentSubmitPost } = commentUseParams
+    const { text } = this.state
+    commentSubmitPost && commentSubmitPost({text})
   }
   stopUp(e) {
     e.stopPropagation()
@@ -61,7 +65,7 @@ export default class Comment extends React.Component {
       }
       //只按了enter
       //执行发言
-
+      this.submitComment()
       this.setState({
         text: ''
       })
@@ -69,7 +73,6 @@ export default class Comment extends React.Component {
   }
 
   render() {
-
     const { editText } = this.state
     const { projectDetailInfoData = {} } = this.props
     const { data = [] } = projectDetailInfoData
@@ -98,7 +101,7 @@ export default class Comment extends React.Component {
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text}  onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}

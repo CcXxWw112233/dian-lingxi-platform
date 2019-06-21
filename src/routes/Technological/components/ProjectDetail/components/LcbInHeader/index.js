@@ -18,8 +18,16 @@ export default class LcbInHeader extends Component {
   }
   selectLCB = (e) => {
     const { key } = e
-    this.getMilestoneDetail(key)
+    // this.getMilestoneDetail(key)
     this.set_miletone_detail_modal_visible()
+    //更新里程碑id
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/updateDatas',
+      payload: {
+        milestone_id: key
+      }
+    })
   }
   //获取里程碑详情
   getMilestoneDetail = (id) => {

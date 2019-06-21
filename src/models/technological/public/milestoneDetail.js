@@ -10,6 +10,7 @@ import technological from '../index'
 export default modelExtend(technological, {
   namespace: 'milestoneDetail',
   state: {
+    milestone_id: '',
     milestone_detail: {},
   },
   subscriptions: {
