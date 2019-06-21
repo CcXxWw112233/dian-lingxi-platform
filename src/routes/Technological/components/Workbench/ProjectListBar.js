@@ -139,7 +139,19 @@ class ProjectListBar extends Component {
     this.handleClickProjectItem(id);
     //处理工作台数据
     this.handleGanttData(id)
+    //获取里程碑列表
+    this.getMilestoneList(id)
   };
+  //获取项目里程碑列表
+  getMilestoneList = (id) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbenchPublicDatas/getMilestoneList',
+      payload: {
+        id
+      }
+    })
+  }
   handleGanttData(id) {
     const { dispatch, workbench_show_gantt_card } = this.props
     const { projectTabCurrentSelectedProject } = this.props

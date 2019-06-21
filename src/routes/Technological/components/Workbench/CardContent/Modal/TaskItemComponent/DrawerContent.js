@@ -1,6 +1,6 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message } from 'antd'
+import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Popconfirm, message } from 'antd'
 import BraftEditor from 'braft-editor'
 import NameChangeInput from '../../../../../../../components/NameChangeInput'
 
@@ -73,6 +73,10 @@ class DrawContent extends React.Component {
     this.setState({
       brafitEditHtml: description
     })
+  }
+
+  componentDidMount() {
+    this.getMilestone()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -913,6 +917,64 @@ class DrawContent extends React.Component {
     this.props.updateTask({updateObj})
     this.props.updateTaskDatas({drawContent})
   }
+
+  //里程碑
+  renderMiletonesMenu = () => {
+    const { datas: { milestoneList = [] }} = this.props.model
+    return (
+      <Menu onClick={this.setRelaMiletones}>
+        {
+          milestoneList.map(value => {
+            const { id, name } = value
+            return (
+              <Menu.Item key={id}>{name}</Menu.Item>
+            )
+          })
+        }
+      </Menu>
+    )
+  }
+  setRelaMiletones = (e) => {
+    const id = e.key
+    const { datas: { drawContent = {} } } = this.props.model
+    const { card_id, type } = drawContent
+    const params = {
+      rela_id: card_id,
+      id,
+      origin_type: type
+    }
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbenchTaskDetail/taskRelaMiletones',
+      payload: {
+        ...params
+      }
+    })
+  }
+  cancelRelaMiletone = ({card_id, id}) => {
+    const params = {
+      rela_id: card_id,
+      id,
+    }
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbenchTaskDetail/taskCancelRelaMiletones',
+      payload: {
+        ...params
+      }
+    })
+  }
+  //获取项目里程碑列表
+  getMilestone = (id) => {
+    const { dispatch } = this.props
+    const { datas: { board_id }} = this.props.model
+    dispatch({
+      type: 'workbenchPublicDatas/getMilestoneList',
+      payload: {
+        id: board_id
+      }
+    })
+  }
   render() {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList} = this.state
@@ -923,7 +985,7 @@ class DrawContent extends React.Component {
     const { data = [] } = projectDetailInfoData //任务执行人列表
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
-    let { board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared, is_privilege = '0', privileges = {} } = drawContent
+    let { milestone_data = {}, board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared, is_privilege = '0', privileges = {} } = drawContent
 
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
@@ -1363,6 +1425,30 @@ class DrawContent extends React.Component {
                 {/*<Icon type="plus" style={{marginRight: 4}}/>关联内容*/}
               {/*</div>*/}
             {/*</div>*/}
+          </div>
+
+          {/*添加里程碑*/}
+          <div className={DrawerContentStyles.divContent_1}>
+            <div className={DrawerContentStyles.miletones}>
+              {
+                milestone_data['id']? (
+                  <div className={DrawerContentStyles.miletones_item}>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_logo}`}>&#xe633;</div>
+                    <div className={`${globalStyle.global_ellipsis} ${DrawerContentStyles.miletones_item_name}`}>{milestone_data['name']}</div>
+                    <Popconfirm title={'取消关联里程碑'} onConfirm={() => this.cancelRelaMiletone({card_id, id: milestone_data['id']})}>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_delete}`}>&#xe70f;</div>
+                    </Popconfirm>
+                  </div>
+                ) : (
+                  <Dropdown overlay={this.renderMiletonesMenu()}>
+                    <div className={DrawerContentStyles.miletones_item_add} style={{marginTop: 8, width: 100}}>
+                      <Icon type="plus" style={{marginRight: 4}}/>里程碑
+                    </div>
+                  </Dropdown>
+                )
+              }
+
+            </div>
           </div>
 
           {/*标签*/}

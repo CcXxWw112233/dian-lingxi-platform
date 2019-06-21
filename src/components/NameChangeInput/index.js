@@ -36,20 +36,20 @@ export default class NameChangeInput extends React.Component{
   inputonPressEnter(e) {
     const { localName } = this.state
     const { goldName } = this.props
-
+    this.props.setIsEdit && this.props.setIsEdit()
     if(localName == goldName) {
       return false
     }
-    this.props.onPressEnter()
+    this.props.onPressEnter && this.props.onPressEnter(e)
   }
   inputonBlur(e) {
     const { localName } = this.state
     const { goldName } = this.props
-
+    this.props.setIsEdit && this.props.setIsEdit()
     if(localName == goldName) {
       return false
     }
-    this.props.onBlur()
+    this.props.onBlur && this.props.onBlur(e)
   }
 
   //textarea
@@ -88,10 +88,12 @@ export default class NameChangeInput extends React.Component{
           nodeName == 'input'? (
             <Input value={localName}
                    className={className}
+                   size={size}
                    autoFocus={autoFocus}
                    onChange={this.inputLocalNameChange.bind(this)}
                    onPressEnter={this.inputonPressEnter.bind(this)}
                    onBlur={this.inputonBlur.bind(this)}
+                   style={{...style}}
             />
           ) :(
             <TextArea value={localName}

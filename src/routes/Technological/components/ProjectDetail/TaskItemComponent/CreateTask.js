@@ -207,6 +207,12 @@ export default class CreateTask extends React.Component {
     })
     // this.props.getCardDetail({id: card_id})
     this.props.dispatch({
+      type: 'projectDetailTask/getCardDetail',
+      payload: {
+        id: card_id
+      }
+    })
+    this.props.dispatch({
       type: 'projectDetailTask/getCardCommentListAll',
       payload: {
         id: card_id

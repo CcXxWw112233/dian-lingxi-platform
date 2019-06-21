@@ -311,3 +311,53 @@ export async function getCardCommentListAll(params) {
     params
   })
 }
+
+//任务, 日程， 节点数据关联里程碑
+export async function boardAppRelaMiletones(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/rela`,
+    method: 'POST',
+    data
+  })
+}
+//任务, 日程， 节点数据取消关联里程碑
+export async function boardAppCancelRelaMiletones(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/rela`,
+    method: 'DELETE',
+    data
+  })
+}
+//获取里程碑详情
+export async function getMilestoneDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/detail/${params.id}`,
+    method: 'GET',
+    params
+  })
+}
+//更新里程碑详情
+export async function updateMilestone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone`,
+    method: 'PUT',
+    data
+  })
+}
+
+//添加里程碑负责人
+export async function addMilestoneExcutos(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/user/add`,
+    method: 'POST',
+    data
+  })
+}
+//移除里程碑负责人
+export async function removeMilestoneExcutos(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/user/remove`,
+    method: 'POST',
+    data
+  })
+}

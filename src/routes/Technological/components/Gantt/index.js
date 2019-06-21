@@ -6,9 +6,6 @@ import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
 import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
 import {getProjectGoupList} from "../../../../services/technological/task";
-import { getGanttData } from "../../../../services/technological/gantt";
-import {getCurrentSelectedProjectMembersList} from "../../../../services/technological/workbench";
-import {isApiResponseOk} from "../../../../utils/handleResponseData";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
@@ -565,7 +562,6 @@ class Gantt extends Component{
             handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
           />
         )}
-
       </div>
     )
   }

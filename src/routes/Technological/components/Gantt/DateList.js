@@ -6,6 +6,8 @@ import { Tooltip } from 'antd'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
+import MilestoneDetail from './components/milestoneDetail'
+
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class DateList extends Component {
@@ -18,6 +20,13 @@ export default class DateList extends Component {
   state = {
     add_lcb_modal_visible: false,
     create_lcb_time: '',
+    miletone_detail_modal_visible: false
+  }
+  set_miletone_detail_modal_visible = () => {
+    const { miletone_detail_modal_visible } = this.state
+    this.setState({
+      miletone_detail_modal_visible: !miletone_detail_modal_visible
+    })
   }
 
   getDate = () => {
@@ -144,7 +153,8 @@ export default class DateList extends Component {
                             current_date_miletones={current_date_miletones}
                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
                             setCreateLcbTime={this.setCreateLcbTime}
-                            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}/>
+                            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
+                            set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
                         ):(
                           <div className={indexStyles.lcb_area}></div>
                         )}
@@ -168,6 +178,11 @@ export default class DateList extends Component {
             submitCreatMilestone={this.submitCreatMilestone}
           />
         )}
+        <MilestoneDetail
+          users={currentSelectedProjectMembersList}
+          miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
+          set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
+        />
       </div>
     )
   }

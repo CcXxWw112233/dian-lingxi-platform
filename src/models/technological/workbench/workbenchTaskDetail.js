@@ -31,7 +31,7 @@ import {
   toTopBoardTag,
   deleteBoardTag,
   deleteCardNewComment,
-  getCardCommentListAll
+  getCardCommentListAll, boardAppRelaMiletones, boardAppCancelRelaMiletones
 } from "../../../services/technological/task";
 import Cookies from "js-cookie";
 import {currentNounPlanFilterName} from "../../../utils/businessFunction";
@@ -554,6 +554,42 @@ export default {
       const { route } = payload
       yield put(routerRedux.push(route));
     },
+
+    //关联里程碑
+    * taskRelaMiletones({payload} ,{select, call, put}) {
+      const { rela_id } = payload //此时的rela_id 为任务id
+      const res = yield call(boardAppRelaMiletones, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getCardDetail, { id: rela_id})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              drawContent: res2.data
+            }
+          })
+        }
+      }else {
+        message.warn(res.message)
+      }
+    },
+    * taskCancelRelaMiletones({payload} ,{select, call, put}) {
+      const { rela_id } = payload //此时的rela_id 为任务id
+      const res = yield call(boardAppCancelRelaMiletones, payload)
+      if(isApiResponseOk(res)) {
+        const res2 = yield call(getCardDetail, { id: rela_id})
+        if(isApiResponseOk(res2)) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              drawContent: res2.data
+            }
+          })
+        }
+      }else{
+        message.warn(res.message)
+      }
+    }
   },
 
   reducers: {

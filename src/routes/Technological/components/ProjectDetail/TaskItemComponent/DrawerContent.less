@@ -516,3 +516,36 @@
   }
 }
 
+//里程碑
+.miletones {
+  margin-top: 16px;
+  .miletones_item_add {
+    font-size: 14px;
+    color: #d9d9d9;
+    cursor: pointer;
+  }
+  .miletones_item {
+    cursor: pointer;
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    .miletones_item_logo {
+      color: #1890ff;
+    }
+    .miletones_item_name {
+      flex: 1;
+      padding: 0 6px;
+    }
+    .miletones_item_delete{
+      display: none;
+    }
+  }
+  .miletones_item:hover {
+    .miletones_item_delete{
+      display: block;
+    }
+    .miletones_item_delete:hover{
+      color: #1890ff;
+    }
+  }
+}

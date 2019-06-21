@@ -6,6 +6,7 @@ import technological from '../index'
 import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {getRelationsSelectionPre} from "../../../services/technological/task";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
+import {getMilestoneList} from "../../../services/technological/prjectDetail";
 
 //用于存放工作台公共的数据
 export default modelExtend(technological, {
@@ -19,7 +20,8 @@ export default modelExtend(technological, {
             type: 'updateDatas',
             payload: {
               board_id: '',
-              relations_Prefix: []
+              relations_Prefix: [],
+              milestoneList: [], //里程碑列表
             }
           })
           dispatch({
@@ -47,6 +49,22 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+
+    //获取项目里程碑列表
+    * getMilestoneList({ payload }, { select, call, put }) { //
+      const res = yield call(getMilestoneList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            milestoneList: res.data
+          }
+        })
+      }else{
+        message.error(res.message)
+      }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
