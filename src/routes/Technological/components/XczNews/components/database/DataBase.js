@@ -21,10 +21,9 @@ export default class DataBase extends Component {
             }
         })
         dispatch({
-            type: 'xczNews/getDataBase',
+            type: 'xczNews/getHeaderSearch',
             payload: {
-                id: id,
-                name: name
+                category_ids: id,
             }
         })
     }
@@ -32,7 +31,7 @@ export default class DataBase extends Component {
     render() {
         const { xczNews, location } = this.props;
         const { dataBase, dataBaseFlag, inputValue } = xczNews;
-        console.log(dataBase)
+        // console.log(dataBase)
         // console.log(imgSrc)
 
         if(dataBaseFlag) {

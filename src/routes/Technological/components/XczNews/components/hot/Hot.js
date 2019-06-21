@@ -5,7 +5,6 @@ import mainStyles from './hot.less'
 import { connect } from 'dva'
 import CommonArticlesList from '../../common/CommonArticlesList'
 import SearchArticlesList from '../../common/SearchArticlesList'
-import MoreList from '../../common/MoreList'
 import { Row, Col, Radio, Icon} from 'antd';
 
 const RadioGroup = Radio.Group;

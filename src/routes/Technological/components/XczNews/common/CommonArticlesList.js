@@ -31,6 +31,7 @@ export default class CommonArticlesList extends Component {
                 highRiseFlag: false, // 高层的开关
                 authorityFlag: false, // 权威的开关
                 dataBaseFlag: false,
+                page_no: 1
              }
          })
          dispatch({

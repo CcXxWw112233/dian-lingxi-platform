@@ -2,21 +2,13 @@
 
 import React, { Component } from 'react'
 import commonStyles from './common.less'
-import { Icon } from 'antd'
+import { Icon, message } from 'antd'
 import { connect } from 'dva'
 
 @connect(({xczNews = []}) => ({
     xczNews, 
 }))
 export default class SearchArticlesList extends Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            arr: [],
-            page_num: 1,
-        }
-    }
 
     // 时间戳转换日期格式
     getdate() {
@@ -27,39 +19,64 @@ export default class SearchArticlesList extends Component {
         return y + "-" + m + "-" + d + " "
     }
 
-    // 监听滚动事件
-    componentDidMount() {
-        window.addEventListener('scroll', () => {
-            // console.log('滚动')
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-            // console.log(scrollTop)
-            const { dispatch, xczNews } = this.props;
-            const { searchList, defaultArr } = xczNews;
-            if (scrollTop > 1000) {
-                dispatch({
-                    type: 'xczNews/getHeaderSearch',
-                    payload: {
-                        
-                    }
-                })
-                dispatch({
-                    type: 'xczNews/updateDatas',
-                    payload: {
-                        page_no: ++this.state.page_num,
-                        // defaultArr: defaultArr.connect(searchList)
-                    }
-                })
-                console.log(searchList)
+    // 分页加载操作
+    onScroll = () => {
+        // console.log('滚动')
+        // 滚动条在Y轴上的滚动距离
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        // console.log(scrollTop, '滚动条在Y轴上的滚动距离')
+        // 文档的总高度
+        const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+        // console.log(scrollHeight, '文档高度')
+        // 浏览器视口高度
+        const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        // console.log(windowHeight, '浏览器视口高度')
 
-                
-                console.log(defaultArr)
+        const { dispatch, xczNews } = this.props;
+        const { is_onscroll_do_paging, page_no, searchList = {}, defaultArr = [] } = xczNews;
+        let new_page_no = page_no || 0;   
+
+        // scrollTop >= (scrollHeight - windowHeight)
+        if (scrollHeight - 20 <= (scrollTop + windowHeight) ) {
+
+            if(!is_onscroll_do_paging) {
+                return false
             }
 
-            
+            dispatch({
+                type: 'xczNews/updateDatas',
+                payload: {
+                    is_onscroll_do_paging: false,
+                    page_no: ++new_page_no,
+                    defaultArr: defaultArr.concat([...defaultArr], [...searchList.records])
+                }
+            })
+            dispatch({
+                type: 'xczNews/getHeaderSearch',
+                payload: {
+                    
+                }
+            })
+        }
+    }
 
+    // 监听滚动事件 防抖
+    componentDidMount() {
+        const { dispatch, xczNews } = this.props;
+        const { searchList = {}, defaultArr = [] } = xczNews;
 
-
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                defaultArr: [...searchList.records]
+            }
         })
+        window.addEventListener('scroll', this.onScroll)
+    }
+    
+    // 销毁滚动事件
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onScroll)
     }
 
     // 点击返回的操作
@@ -78,14 +95,11 @@ export default class SearchArticlesList extends Component {
     }
 
      // 渲染 的组件
-
      renderInfo() {
         const { xczNews, location = {} } = this.props;
-        const {searchList = {}, onSearchButton, contentVal } = xczNews;
+        const {searchList = {}, defaultObj = {}, defaultArr = [], onSearchButton, contentVal, page_size, page_no } = xczNews;
+        console.log(page_no)
         const { total, records } = searchList;
-        let { arr } = this.state;
-
-        
 
         let name = '';
 
@@ -118,7 +132,7 @@ export default class SearchArticlesList extends Component {
                     )
                 }
                 {
-                    searchList.records && searchList.records.map(item => {
+                    defaultArr.map(item => {
                         // console.log(item)
                         return (
                             <div className={commonStyles.info}>
@@ -160,6 +174,13 @@ export default class SearchArticlesList extends Component {
                             </div>
                         )
                     })
+                }
+                {
+                   searchList.records.length < page_size ? (
+                        <p style={{ textAlign: 'center' }}>没有更多数据啦...</p>
+                    ) : (
+                        <p style={{ textAlign: 'center' }}>疯狂加载中...</p>
+                    )
                 }
             </div>
         )

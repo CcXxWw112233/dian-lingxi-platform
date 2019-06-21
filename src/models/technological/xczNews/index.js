@@ -39,13 +39,21 @@ export default {
     total: 10, // 默认文章的总数
     page_size: 10, // 默认显示10条
     page_no: 1,  // 默认第一页
+    defaultObj: {}, // 默认的空对象
     defaultArr: [], // 默认的空数组
+    is_onscroll_do_paging: true, // 防抖 true可以滚动加载，false不能滚动加载
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
         // message.destroy()
         path = location.pathname
+        dispatch({
+          type: 'updateDatas',
+          payload: {
+            page_no: 1
+          }
+        })
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
           dispatch({
             type: "updateDatas",
@@ -78,11 +86,14 @@ export default {
             type: "updateDatas",
             payload: {
               articlesList: [],
+              searchList: {},
+              defaultArr: [],
               onSearchButton: false,  // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              page_no: 1
             }
           })
         }
@@ -103,11 +114,14 @@ export default {
             type: "updateDatas",
             payload: {
               articlesList: [],
+              searchList: [],
+              defaultArr: [],
               onSearchButton: false,  // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              page_no: 1,
             }
           })
         }
@@ -128,11 +142,14 @@ export default {
             type: "updateDatas",
             payload: {
               articlesList: [],
+              searchList: [],
+              defaultArr: [],
               onSearchButton: false,  // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              page_no: 1,
             }
           })
         }
@@ -159,11 +176,14 @@ export default {
             type: "updateDatas",
             payload: {
               articlesList: [],
+              searchList: [],
+              defaultArr: [],
               onSearchButton: false,  // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              page_no: 1,
             }
           })
         }
@@ -238,7 +258,7 @@ export default {
     // 获取资料库的数据
     * getDataBase({ payload = {} }, { select, call, put }) {
       const res = yield call(getDataBase, {...payload});
-      console.log(res)
+      // console.log(res)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -272,26 +292,34 @@ export default {
       }
       if(searchList && searchList.length) return
       const res = yield call(getHeaderSearch, {...params, ...payload})
-      // console.log(payload)
+      // console.log(res.data.records.length)
       yield put({
         type: 'updateDatas',
         payload: {
           searchList: res.data,
           contentVal: keywords,
+          // is_onscroll_do_paging: res.data.records.length < page_size ? false: true
         }
       })
+
+      const delay = (ms) => new Promise(resolve => {
+        setTimeout(resolve, ms)
+      })
+      yield call(delay, 500)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          is_onscroll_do_paging: res.data.records.length < page_size ? false: true
+        }
+      })
+
     },
 
     // 获取所有的文章列表
     * getCommonArticlesList({ payload = {} }, { select, call, put }) {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
-      const page_size = yield select((state) => getSelectState(state, 'page_size'))
-      const page_no = yield select((state) => getSelectState(state, 'page_no'))
-      const params = {
-        page_size, page_no
-      }
       if(searchList && searchList.length) return
-      const res = yield call(getCommonArticlesList, {...params, ...payload})
+      const res = yield call(getCommonArticlesList)
       // console.log(res)
       yield put({
         type: 'updateDatas',
