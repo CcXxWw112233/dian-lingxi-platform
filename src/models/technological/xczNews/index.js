@@ -56,7 +56,8 @@ export default {
           type: 'updateDatas',
           payload: {
             page_no: 1,
-            defaultArr: []
+            defaultArr: [],
+            searchList: [],
           }
         })
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
@@ -73,12 +74,6 @@ export default {
             type: "getHotTabs",
             payload: {
               
-            }
-          }),
-          dispatch({
-            type: "getHeaderSearch",
-            payload: {
-              // flag: 1,
             }
           }),
           dispatch({
@@ -110,12 +105,6 @@ export default {
             }
           }),
           dispatch({
-            type: "getHeaderSearch",
-            payload: {
-              // flag: 2,
-            }
-          }),
-          dispatch({
             type: "updateDatas",
             payload: {
               articlesList: [],
@@ -135,12 +124,6 @@ export default {
             type: "getAuthorityArticles",
             payload: {
               
-            }
-          }),
-          dispatch({
-            type: "getHeaderSearch",
-            payload: {
-              // flag: 3,
             }
           }),
           dispatch({
@@ -165,12 +148,6 @@ export default {
               
             }
           }),
-          // dispatch({
-          //   type: "getHeaderSearch",
-          //   payload: {
-          //     // flag: 5,
-          //   }
-          // }),
           dispatch({
             type: "getDataBaseArticlesList",
             payload: {
@@ -221,6 +198,10 @@ export default {
       // console.log(payload, 'payload.....')
       // console.log(2222222)
       const res = yield call(getHotTabs, {...payload})
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res, 'res-----')
       yield put({
         type: 'updateDatas',
@@ -233,6 +214,10 @@ export default {
     // 获取热点文章
     * getHotArticles({ payload = {} }, { select, call, put }) {
       const res = yield call(getHotArticles, {...payload});
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res,'======')
       yield put({
         type: 'updateDatas',
@@ -245,6 +230,10 @@ export default {
     // 获取高层的文章
     * getHighRiseArticles({ payload = {} }, { select, call, put }) {
       const res = yield call(getHighRiseArticles, {...payload});
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res)
       yield put({
         type: 'updateDatas',
@@ -269,6 +258,10 @@ export default {
     // 获取资料库的数据
     * getDataBase({ payload = {} }, { select, call, put }) {
       const res = yield call(getDataBase, {...payload});
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res)
       yield put({
         type: 'updateDatas',
@@ -289,6 +282,10 @@ export default {
       }
       if(searchList && searchList.length) return
       const res = yield call(getDataBaseDetail, {...params, ...payload});
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res)
       yield put({
         type: 'updateDatas',
@@ -363,6 +360,10 @@ export default {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
       if(searchList && searchList.length) return
       const res = yield call(getCommonArticlesList)
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
       // console.log(res)
       yield put({
         type: 'updateDatas',
