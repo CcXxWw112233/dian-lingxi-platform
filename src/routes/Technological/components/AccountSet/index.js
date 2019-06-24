@@ -3,9 +3,12 @@ import {connect} from "dva/index";
 import AccountSetMenu from './AccountSetMenu.js'
 import indexStyle from './index.less'
 
+console.log('accountSet页面22222222')
+
 const getEffectOrReducerByName = name => `accountSet/${name}`
 
 const AccountSet = (options) => {
+  console.log('accountSet页面33333333')
   const { model, dispatch } =options
   const menuFormProps = {
     model,
@@ -78,6 +81,8 @@ const AccountSet = (options) => {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, accountSet, loading }) {
+  console.log('accountSet页面111111111111')
+  console.log(modal, accountSet, loading)
   return { modal, model: accountSet, loading }
 }
 export default connect(mapStateToProps)(AccountSet)
