@@ -532,7 +532,7 @@ export default modelExtend(projectDetail, {
       let res = yield call(completeTask, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'projectDetailInfo',
+          type: 'projectDetail/projectDetailInfo',
           payload: {
             id: board_id,
             calback: function () {

@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode,wechatAccountBind } from '../../services/login'
+import { formSubmit, requestVerifyCode,wechatAccountBind, changePicVerifySrc } from '../../services/login'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -13,7 +13,8 @@ export default {
   state: {
     datas: {
       is_show_pic_verify_code: false, //是否显示图片验证码
-      pic_verify_src: ''
+      pic_verify_src: '',
+      captcha_key: ''
     }
   },
   subscriptions: {
@@ -25,6 +26,15 @@ export default {
           redirectLocation = location.search.replace('?redirect=', '')
         } else {
           localStorage.removeItem('bindType')
+        }
+        if(location.pathname.indexOf('/login') !== -1) {
+          dispatch({
+            type: 'updateDatas',
+            payload:{
+              is_show_pic_verify_code: false, //是否显示图片验证码
+              pic_verify_src: ''
+            }
+          })
         }
       })
     },
@@ -75,6 +85,7 @@ export default {
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       let res = yield call(formSubmit, payload)
+      const code = res.code
       if(isApiResponseOk(res)) {
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
@@ -113,6 +124,23 @@ export default {
           message.warn(res2.message, MESSAGE_DURATION_TIME)
         }
       }else{
+        if(code == '4005' || code == '4006' ) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              is_show_pic_verify_code: true,
+              pic_verify_src: res.data && `data:image/png;base64,${res.data['base64_img']}`,
+              captcha_key: res.data && res.data.captcha_key
+            }
+          })
+        }else if(code == '4007') {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              is_show_pic_verify_code: true,
+            }
+          })
+        }
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -127,14 +155,19 @@ export default {
       }
     },
     * changePicVerifySrc({ payload }, { select, call, put }) { //更新图片验证码
-      // const { data, calback } = payload
-      // let res = yield call(requestVerifyCode, data)
-      // calback && typeof calback === 'function' ? calback() : ''
-      // if(isApiResponseOk(res)) {
-      //   message.success(res.message, MESSAGE_DURATION_TIME)
-      // }else{
-      //   message.warn(res.message, MESSAGE_DURATION_TIME)
-      // }
+      const res = yield call(changePicVerifySrc, {})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            pic_verify_src: `data:image/png;base64,${res.data['base64_img']}`,
+            captcha_key: res.data.captcha_key
+          }
+        })
+
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
     },
 
     * routingJump({ payload }, { call, put }) {

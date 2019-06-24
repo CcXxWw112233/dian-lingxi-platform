@@ -51,8 +51,8 @@ class FormList extends React.Component {
             return false
           }
         }
-        if(is_show_pic_verify_code) { //需要输入图片验证码
-          if(!values['login_pic_verify_code']) {
+        if(is_show_pic_verify_code && loginType === 'password') { //需要输入图片验证码
+          if(!values['verifycode']) {
             message.warn('请输入图片验证码。', MESSAGE_DURATION_TIME)
             return false
           }
@@ -186,10 +186,10 @@ class FormList extends React.Component {
 
         </div>
 
-        {is_show_pic_verify_code && (
+        {is_show_pic_verify_code && loginType === 'password' && (
           <div style={{ display: 'flex'}}>
             <FormItem >
-              {getFieldDecorator('login_pic_verify_code', {
+              {getFieldDecorator('verifycode', {
                 rules: [{ required: false, message: '验证码', whitespace: true }],
               })(
                 <Input

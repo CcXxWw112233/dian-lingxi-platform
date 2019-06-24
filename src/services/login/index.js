@@ -37,3 +37,11 @@ export const refreshTokenApi = (data) => {
   })
 }
 
+//刷新图片验证码
+export const changePicVerifySrc = (params) => {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/getLoginImageCaptcha`,
+    method: 'GET',
+    params
+  })
+}
