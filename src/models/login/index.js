@@ -6,7 +6,7 @@ import { routerRedux } from "dva/router";
 import Cookies from 'js-cookie'
 import QueryString from 'querystring'
 import {getUSerInfo} from "../../services/technological";
-
+import { selectLoginCaptchaKey } from './selects'
 let redirectLocation
 export default {
   namespace: 'login',
@@ -84,7 +84,8 @@ export default {
 
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(formSubmit, payload)
+      const captcha_key = yield select(selectLoginCaptchaKey)
+      let res = yield call(formSubmit, {...payload, captcha_key})
       const code = res.code
       if(isApiResponseOk(res)) {
         const tokenArray = res.data.split('__')
@@ -141,7 +142,9 @@ export default {
             }
           })
         }
-        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if(code != '4005') {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
       }
     },
     * getVerificationcode({ payload }, { select, call, put }) { //获取验证码
@@ -155,7 +158,8 @@ export default {
       }
     },
     * changePicVerifySrc({ payload }, { select, call, put }) { //更新图片验证码
-      const res = yield call(changePicVerifySrc, {})
+      const captcha_key = yield select(selectLoginCaptchaKey)
+      const res = yield call(changePicVerifySrc, {captcha_key})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
