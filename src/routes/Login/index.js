@@ -52,7 +52,7 @@ class Login extends React.Component {
           bindKey: e.data.key
         })
       }
-      
+
     }
   }
   setLoginType() {
@@ -91,11 +91,13 @@ class Login extends React.Component {
     localStorage.setItem('wechat', 'wechatRegister')
   }
   render() {
-    const {dispatch} = this.props
+    const {dispatch, login = {} } = this.props
     const { loginType, bindKey } = this.state
-
+    const model = login
     //传给表单
     const formListProps = {
+      dispatch,
+      model,
       formSubmit(data) {
         dispatch({
           type: getEffectOrReducerByName('formSubmit'),
@@ -152,9 +154,9 @@ class Login extends React.Component {
               <div>
                 <iframe id='wechatCode' style={{marginLeft: '120px'}} frameBorder="0" src={src} width='211px' height='212px'></iframe>
                 <div style={{
-                  margin: '8px auto 16px', 
-                  width: '212px', 
-                  height: '20px', 
+                  margin: '8px auto 16px',
+                  width: '212px',
+                  height: '20px',
                   textAlign:'center',
                   fontSize: '14px',
                   fontFamily:'PingFangSC-Regular',
@@ -162,9 +164,9 @@ class Login extends React.Component {
                   color: '#D9D9D9'
                 }}>使用微信二维码登陆</div>
                 <div style={{
-                  margin: '0 auto', 
-                  width: '271px', 
-                  height: '52px', 
+                  margin: '0 auto',
+                  width: '271px',
+                  height: '52px',
                   borderTop: '1px solid #E8E8E8',
                   textAlign:'center',
                   lineHeight: '56px',
@@ -243,9 +245,9 @@ class Login extends React.Component {
               <TopContent text={'欢迎来到'} productName={'灵犀'}/>
               <FormListBind bindType={this.state.bindType} {...formListProps} setLoginType={this.setLoginType.bind(this)} loginType={loginType} routingJump={routingJump} />
               <div style={{
-                margin: '8px auto 100px', 
-                width: '266px', 
-                height: '20px', 
+                margin: '8px auto 100px',
+                width: '266px',
+                height: '20px',
                 fontSize: '14px',
                 fontFamily:'PingFangSC-Regular',
                 fontWeight:400,
@@ -255,7 +257,7 @@ class Login extends React.Component {
                 <span style={{cursor: 'pointer', float: 'left'}} onClick={this.changeBindWay.bind(this)}>{this.state.bindType ==='verifycode'?'账户密码绑定':'验证码绑定'}</span>
                 <span style={{cursor: 'pointer', float: 'right'}} onClick={this.bindRegister.bind(this)}>注册账户并绑定微信</span>
               </div>
-              
+
             </div>
             </div>
             <Copyright/>

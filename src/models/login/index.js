@@ -10,7 +10,12 @@ import {getUSerInfo} from "../../services/technological";
 let redirectLocation
 export default {
   namespace: 'login',
-  state: [],
+  state: {
+    datas: {
+      is_show_pic_verify_code: false, //是否显示图片验证码
+      pic_verify_src: ''
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
@@ -121,15 +126,30 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    * changePicVerifySrc({ payload }, { select, call, put }) { //更新图片验证码
+      // const { data, calback } = payload
+      // let res = yield call(requestVerifyCode, data)
+      // calback && typeof calback === 'function' ? calback() : ''
+      // if(isApiResponseOk(res)) {
+      //   message.success(res.message, MESSAGE_DURATION_TIME)
+      // }else{
+      //   message.warn(res.message, MESSAGE_DURATION_TIME)
+      // }
+    },
+
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
     }
+
   },
 
   reducers: {
-    'delete'(state, { payload: id }) {
-      return state.filter(item => item.id !== id);
-    },
+    updateDatas(state, action) {
+      return {
+        ...state,
+        datas: {...state.datas, ...action.payload},
+      }
+    }
   },
 };

@@ -34,7 +34,8 @@ class FormList extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { loginType } = this.props
+        const { loginType, model={} } = this.props
+        const { datas: { is_show_pic_verify_code }} = model
         if(!validateTel(values['account']) && !validateEmail(values['account'])) { //输入既不满足手机号又不满足邮箱
           message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
           return false
@@ -47,6 +48,12 @@ class FormList extends React.Component {
         }else{
           if(!values['verifycode']){
             message.warn('请输入短信验证码。', MESSAGE_DURATION_TIME)
+            return false
+          }
+        }
+        if(is_show_pic_verify_code) { //需要输入图片验证码
+          if(!values['login_pic_verify_code']) {
+            message.warn('请输入图片验证码。', MESSAGE_DURATION_TIME)
             return false
           }
         }
@@ -115,10 +122,26 @@ class FormList extends React.Component {
   routingJump(path) {
     this.props.routingJump(path)
   }
+
+  //图片验证码
+  changePicVerifySrc = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'login/changePicVerifySrc',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { isMobile} = this.state
-    const { loginType } = this.props
+    const { loginType, model = {} } = this.props
+    const { datas: { pic_verify_src, is_show_pic_verify_code }} = model
+    console.log('ssss',{
+      pic_verify_src, is_show_pic_verify_code
+    })
     return (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 输入账户 */}
@@ -162,6 +185,25 @@ class FormList extends React.Component {
           </div>
 
         </div>
+
+        {is_show_pic_verify_code && (
+          <div style={{ display: 'flex'}}>
+            <FormItem >
+              {getFieldDecorator('login_pic_verify_code', {
+                rules: [{ required: false, message: '验证码', whitespace: true }],
+              })(
+                <Input
+                  style={{height: '40px', width: 100, fontSize: 16, color: '#8C8C8C'}}
+                  maxLength={8} placeholder={'验证码'}
+                />
+              )}
+            </FormItem>
+            <img
+              style={{width: 100, height:40, margin: '0 10px', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4}}
+              src={pic_verify_src}></img>
+            <div style={{color: '#1890FF', cursor: 'pointer', height: '40px', lineHeight: '40px', textAlign:'center'}} onClick={this.changePicVerifySrc}>换一张</div>
+          </div>
+        )}
 
         {/* 确认 */}
         <FormItem>
