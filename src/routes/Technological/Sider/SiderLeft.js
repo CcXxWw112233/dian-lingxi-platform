@@ -74,7 +74,7 @@ export default class SiderLeft extends React.Component {
     })
   }
 
-  //添加组织成员操作
+  //添加组织成员操作-
   setShowAddMenberModalVisibile() {
     if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -132,7 +132,7 @@ export default class SiderLeft extends React.Component {
     this.props.model.datas.menuList && this.props.model.datas.menuList.forEach((item) => {
       if(item.status === '1') {
         temp.push(item)
-      } 
+      }
     })
     let res = temp.reduce((r, c) => {
       let _c
@@ -148,7 +148,7 @@ export default class SiderLeft extends React.Component {
           break
         case '投资地图':
           _c = { ...c,  theme: '&#xe676;'}
-        default: 
+        default:
           break
       }
       return [
