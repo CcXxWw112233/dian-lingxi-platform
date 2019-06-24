@@ -16,7 +16,6 @@ export default modelExtend(technological, {
       history.listen((location) => {
         // message.destroy()
         if (location.pathname === '/technological/accoutSet') {
-          console.log('Model--------accountSet')
           dispatch({
             type: 'getUserInfo',
             payload: {}
@@ -36,14 +35,12 @@ export default modelExtend(technological, {
   },
   effects: {
     * getUserInfo({ payload = {} }, { select, call, put }) {
-      console.log('getUserInfo执行')
       let res = yield call(getUserInfo, {})
       const { calback } = payload
       if(calback && typeof calback === 'function') {
         calback()
       }
       if(isApiResponseOk(res)) {
-        console.log(res, '发送请求返回的数据')
         yield put({
           type: 'updateDatas',
           payload: {
@@ -155,7 +152,6 @@ export default modelExtend(technological, {
 
   reducers: {
     updateDatas(state, action) {
-      console.log('数据更新了.......???????s')
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },
