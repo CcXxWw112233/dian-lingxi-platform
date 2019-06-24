@@ -5,9 +5,6 @@ export const REQUEST_DOMAIN_FILE = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_FLOWS = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_ABOUT_PROJECT = PROJECTS_API //项目相关接口域名前缀
 
-// 晓策志接口
-export const REQUEST_COMMON = '/api'
-
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbenchs'
 export const REQUEST_DOMAIN_TEAM_SHOW = '/api/more'
 

@@ -43,7 +43,6 @@ export default class AccountSetMenu extends React.Component {
     return Dom
   }
   render() {
-    console.log(this.props, 'AccountSetMenu页面')
     const {datas = { }} = this.props.model
     const { SelectedKeys } = datas
     return (

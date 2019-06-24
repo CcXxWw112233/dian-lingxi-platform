@@ -7,7 +7,6 @@ import ProjectItems from './ProjectItems';
 import QueueAnim from 'rc-queue-anim';
 import styles from './index.less';
 
-
 const getEffectOrReducerByName = name => `project/${name}`;
 
 const Project = props => {
