@@ -161,6 +161,10 @@ const Routers = function ({ history, app }) {
         import('./models/teamShow/editTeamShow'),
         import('./models/teamShow/teamList'),
         import('./models/teamShow/teamInfo'),
+
+        import('./models/technological/xczNews'),
+
+
       ],
       component: () => import('./routes/Technological/'),
     }, {
