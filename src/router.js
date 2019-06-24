@@ -32,6 +32,7 @@ import dynamic from 'dva/dynamic'
 const { ConnectedRouter } = routerRedux
 
 const Routers = function ({ history, app }) {
+  // console.log(app)
   history.listen((location)=>{
     switch (location.pathname) {
       case '/login':
@@ -161,6 +162,10 @@ const Routers = function ({ history, app }) {
         import('./models/teamShow/editTeamShow'),
         import('./models/teamShow/teamList'),
         import('./models/teamShow/teamInfo'),
+
+        import('./models/technological/xczNews'),
+
+        
       ],
       component: () => import('./routes/Technological/'),
     }, {
@@ -203,6 +208,7 @@ const Routers = function ({ history, app }) {
       <Switch>
         {
           routes.map(({ path, ...dynamics }, key) => {
+            // console.log(path, dynamics)
             return (
               <Route key={key}
                      exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1 )? false : true}
