@@ -26,7 +26,7 @@ if(process.env.NODE_ENV == 'production') {
           "extensions": [".js"]
         }
       ],
-      "global-require": [1],
+      "global-require": [0],
       "import/prefer-default-export": [0],
       "react/jsx-no-bind": [0],
       "react/prop-types": [0],
@@ -60,8 +60,8 @@ if(process.env.NODE_ENV == 'production') {
       "object-curly-newline": [0],
       "function-paren-newline": [0],
       "no-restricted-globals": [0],
-      "react/jsx-no-duplicate-props": [2],
-      "require-yield": [1],
+      "react/jsx-no-duplicate-props": [0],
+      "require-yield": [0],
       "compat/compat": "error",
       "linebreak-style": "off",
       "no-unused-vars": [0], //声明未使用
@@ -74,7 +74,7 @@ if(process.env.NODE_ENV == 'production') {
       "no-shadow": "off",
       "quotes": "off",
       "arrow-parens":"off",
-      "no-script-url": [1],
+      "no-script-url": [0],
       "react/no-array-index-key": "off",
       "react/no-multi-comp": "off",
       "prefer-template": "off",
@@ -85,12 +85,12 @@ if(process.env.NODE_ENV == 'production') {
       "no-unused-expressions": "off",
       "guard-for-in": "off",
       "object-shorthand": "off",
-      "no-multi-spaces": [2],
+      "no-multi-spaces": [0],
       "radix": "off",
       "react/sort-comp": "off",
       "no-plusplus": "off",
-      "comma-spacing": 1,
-      "key-spacing": [2],
+      "comma-spacing": [0],
+      "key-spacing": [0],
       "eqeqeq": "off"
     },
     "parserOptions": {
