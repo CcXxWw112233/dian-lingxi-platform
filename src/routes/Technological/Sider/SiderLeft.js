@@ -34,36 +34,38 @@ export default class SiderLeft extends React.Component {
   routingJump(route) {
     this.props.routingJump(route)
   }
-  menuClick(key) {
-    this.props.updateDatas({
-      naviHeadTabIndex: key
+  menuClick({ key, code }) {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        naviHeadTabIndex: code
+      }
     })
     let route
-    switch (key) {
-      case 0:
+    switch (code) {
+      case 'Workbench':
         route = 'workbench'
         break
-      case 1:
+      case 'Projects':
         route = 'project'
         break
-      case 2:
+      case 'Shows':
+        route='teamShow/teamList'
+        break
+      case 'Case':
         window.open('https://www.di-an.com/zhichengshe')
         return
         break
-      case 3:
-        window.open('https://www.di-an.com/xiaocezhi')
-        return
+      case 'Regulations':
+        route = 'xczNews'
         break
-      case 4:
-        route='teamShow/teamList'
-        break
-      case 5:
+      case 'InvestmentMaps':
         return
         break
       default:
         break
     }
-
     this.props.routingJump(`/technological/${route}`)
   }
 
@@ -132,7 +134,7 @@ export default class SiderLeft extends React.Component {
     this.props.model.datas.menuList && this.props.model.datas.menuList.forEach((item) => {
       if(item.status === '1') {
         temp.push(item)
-      } 
+      }
     })
     let res = temp.reduce((r, c) => {
       let _c
@@ -148,7 +150,7 @@ export default class SiderLeft extends React.Component {
           break
         case '投资地图':
           _c = { ...c,  theme: '&#xe676;'}
-        default: 
+        default:
           break
       }
       return [
@@ -161,11 +163,13 @@ export default class SiderLeft extends React.Component {
     const navArray = [
       {
         theme: '&#xe6f7;',
-        name: currentNounPlanFilterName(DASHBOARD)
+        name: currentNounPlanFilterName(DASHBOARD),
+        code: 'Workbench'
       },
       {
         theme: '&#xe60a;',
-        name: currentNounPlanFilterName(PROJECTS)
+        name: currentNounPlanFilterName(PROJECTS),
+        code: 'Projects'
       },
       ...res
     ]
@@ -264,9 +268,9 @@ export default class SiderLeft extends React.Component {
 
         <div className={indexStyles.contain_2}>
           {navArray.map((value, key) => {
-            const { theme, name } = value
+            const { theme, name, code } = value
             return (
-              <div key={key} className={`${indexStyles.navItem} ${key== naviHeadTabIndex?indexStyles.navItemSelected: ''}`} onClick={this.menuClick.bind(this, key)}>
+              <div key={key} className={`${indexStyles.navItem} ${code== naviHeadTabIndex?indexStyles.navItemSelected: ''}`} onClick={this.menuClick.bind(this, {key, code})}>
                 <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`} dangerouslySetInnerHTML={{__html: theme}}></div>
                 <div className={indexStyles.navItem_right}> {name}</div>
               </div>

@@ -45,17 +45,21 @@ export default {
             type: 'getMenuList',
             payload: {}
           })
-          if(location.pathname === '/technological/projectDetail' || location.pathname === '/technological/project' ) {
-            naviHeadTabIndex = 1
+          if(location.pathname.indexOf('/technological/projectDetail') != -1 || location.pathname.indexOf('/technological/project') != -1 ) {
+            naviHeadTabIndex = 'Projects'
+            await dispatch({
+              type: 'upDateNaviHeadTabIndex',
+            })
           }else if(location.pathname === '/technological/workbench'){
-            naviHeadTabIndex = 0
-          }else if(location.pathname.indexOf('/technological/teamShow') != -1 ) {
-            naviHeadTabIndex = 4
+            naviHeadTabIndex = 'Workbench'
+            await dispatch({
+              type: 'upDateNaviHeadTabIndex',
+            })
+          }else{
+
           }
 
-          await dispatch({
-            type: 'upDateNaviHeadTabIndex',
-          })
+
           //如果cookie存在用户信息，则部请求，反之则请求
           await dispatch({
             type: 'getUSerInfo',
