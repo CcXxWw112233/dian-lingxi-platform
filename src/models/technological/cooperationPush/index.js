@@ -43,7 +43,7 @@ import {
   workbench_selectFilePreviewCommitPointNumber,
   workbench_currentProcessInstanceId,
 } from '../workbench/selects'
-import { getModelSelectState } from '../../utils'
+import { getModelSelectState, getModelSelectDatasState } from '../../utils'
 
 //定义model名称
 const model_project = name => `project/${name}`
@@ -76,7 +76,7 @@ export default {
           //websocket连接判定
           setTimeout(function () {
             // console.log('1111', Cookies.get('wsLinking'))
-            if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+            // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
               const calback = function (event) {
                 dispatch({
                   type: 'connectWsToModel',
@@ -86,7 +86,7 @@ export default {
                 })
               }
               initWs(calback)
-            }
+            // }
             // const calback = function (event) {
             //   dispatch({
             //     type: 'connectWsToModel',
@@ -170,7 +170,8 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      console.log('eee', coperateData)
+      console.log('eee_coperateName', coperateName)
+      console.log('eee_coperateData', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
@@ -181,7 +182,7 @@ export default {
       // delete:cards， 删除子任务
       // change:card 改变任务
 
-      let board_id_
+      let board_id_ //推送中返回来的board_id
       switch (coperateType) {
         case 'change:board':
           let op_board_id = getAfterNameId(coperateName)
@@ -680,6 +681,49 @@ export default {
             }
           })
 
+          break
+        //添加里程碑
+        case 'add:milestone':
+          board_id_ = getAfterNameId(coperateName)
+          if(board_id_ == currentProjectBoardId) {
+            dispathes({
+              type: 'projectDetail/updateDatas',
+              payload: {
+                milestoneList: coperateData['milestoneList']
+              }
+            })
+          }
+          break
+        //修改里程碑
+        case 'change:milestone':
+          //当前的里程碑id和返回的里程碑id对应上
+          let milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          let milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+          let cope_milestone_id = getAfterNameId(coperateName)
+          //更新里程碑列表和详情
+          if(milestone_id == cope_milestone_id) {
+            const new_miletone_list = milestone_list.map(item => {
+              if(item.id == cope_milestone_id) {
+                item = {...item, coperateData}
+              }
+              return item
+            })
+            dispathes({
+              type: 'projectDetail/updateDatas',
+              payload: {
+                milestoneList: new_miletone_list
+              }
+            })
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: {...milestone_detail, ...coperateData}
+              }
+            })
+            // debugger
+          }
+          // debugger
           break
         default:
           break

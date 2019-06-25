@@ -2,3 +2,7 @@
 export const getModelSelectState = (modelName, stateName) => {
   return (state) => state[(modelName)][stateName]
 }
+
+export const getModelSelectDatasState = (modelName, stateName) => {
+  return (state) => state[(modelName)]['datas'][stateName]
+}
