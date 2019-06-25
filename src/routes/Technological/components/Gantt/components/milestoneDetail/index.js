@@ -66,7 +66,7 @@ export default class GanttDetail extends React.Component {
         origin_type: '4',
         comment: text,
         id: milestone_id,
-        flag: '0',
+        flag: '1',
       }
     })
   }
@@ -78,7 +78,7 @@ export default class GanttDetail extends React.Component {
       payload: {
         id,
         milestone_id,
-        flag: '0',
+        flag: '1',
       }
     })
   }
@@ -90,7 +90,7 @@ export default class GanttDetail extends React.Component {
       deleteComment: this.deleteComment,
       content_detail_use_id: milestone_id,
       origin_type: '4', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
-      flag: '0', //0或不传：评论和动态，1只显示评论，2只动态
+      flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
     }
     return(
       <div>
