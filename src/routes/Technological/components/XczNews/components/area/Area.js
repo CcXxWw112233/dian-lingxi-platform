@@ -31,26 +31,28 @@ export default class Area extends Component {
 
     // 获取 Option 选项
     getOption() {
-        let List;
+        let obj = {};
         const { xczNews } = this.props;
         const { cityList = [] } = xczNews;
         // console.log(cityList)
-        let newCityObj = cityList[0]
-        // console.log(newCityObj)
-        for (const key in newCityObj) {
-            console.log(typeof newCityObj[key])
-            if (typeof newCityObj[key] == 'object') {
-                console.log(newCityObj[key])
-                newCityObj[key].map(item => {
-                   console.log(item)
-                   if (typeof item.child == 'object') {
-                       for (const i in item.child) {
-                           console.log(item.child[i])
-                       }
-                   }
-                })
+        let newCityObj = cityList[0] && cityList[0].child
+        for (let key in newCityObj) {
+            let arr = []
+            // let sheng = (newCityObj[key]).name
+            let chi = newCityObj[key].child
+            console.log((newCityObj[key]).name,chi)
+             
+            // obj.name=
+            for (let index = 0; index < chi.length; index++) {
+
+                arr.push(chi[index].name)
+                obj[(newCityObj[key]).name]=arr
+                
             }
+            
         }
+        console.log(obj)
+       
         
     }
 

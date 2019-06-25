@@ -24,7 +24,7 @@ export default class index extends Component {
                     <Route path="/technological/xczNews/hot" component={ Hot } />
                     <Route path="/technological/xczNews/highRise" component={ HighRise } />
                     <Route path="/technological/xczNews/authority" component={ Authority } />
-                    {/* <Route path="/technological/xczNews/area" component={ Area } /> */}
+                    <Route path="/technological/xczNews/area" component={ Area } />
                     <Route path="/technological/xczNews/database" component={ DataBase } />
                     
                     {/* 重定向 */}
