@@ -701,20 +701,8 @@ export default {
           let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
           let milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
           let cope_milestone_id = getAfterNameId(coperateName)
-          //更新里程碑列表和详情
+          //更新里程碑详情
           if(milestone_id == cope_milestone_id) {
-            const new_miletone_list = milestone_list.map(item => {
-              if(item.id == cope_milestone_id) {
-                item = {...item, coperateData}
-              }
-              return item
-            })
-            dispathes({
-              type: 'projectDetail/updateDatas',
-              payload: {
-                milestoneList: new_miletone_list
-              }
-            })
             dispathes({
               type: 'milestoneDetail/updateDatas',
               payload: {
@@ -723,7 +711,24 @@ export default {
             })
             // debugger
           }
-          // debugger
+          //如果是项目id匹配上了，则更新里程碑列表
+          board_id_ = coperateData['board_id']
+          if(board_id_ == currentProjectBoardId) {
+            const new_miletone_list = milestone_list.map(item => {
+              let new_item = {...item}
+              const { id } = item
+              if(id == cope_milestone_id) {
+                new_item = {...item, ...coperateData}
+              }
+              return new_item
+            })
+            dispathes({
+              type: 'projectDetail/updateDatas',
+              payload: {
+                milestoneList: new_miletone_list
+              }
+            })
+          }
           break
         default:
           break
