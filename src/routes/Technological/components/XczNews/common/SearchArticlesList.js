@@ -136,10 +136,10 @@ export default class SearchArticlesList extends Component {
                         return (
                             <div className={commonStyles.info}>
                                 <div className={commonStyles.news}>
-                                    <ul>
+                                    <div className={commonStyles.ul}>
                                         {
                                             !item.hasImg ? (
-                                                <li>
+                                                <div className={commonStyles.li}>
                                                     <div className={commonStyles.right}>
                                                         <div className={commonStyles.message}>
                                                             <i className={commonStyles.dot}></i>
@@ -150,9 +150,9 @@ export default class SearchArticlesList extends Component {
                                                             <span>{this.getdate(item.publish_time)}</span>
                                                         </div>
                                                     </div>
-                                                </li>
+                                                </div>
                                             ) : (
-                                                <li>
+                                                <div className={commonStyles.li}>
                                                     <div className={commonStyles.left}>
                                                         <img src="" />
                                                     </div>
@@ -165,10 +165,10 @@ export default class SearchArticlesList extends Component {
                                                             <span>{this.getdate(item.publish_time)}</span>
                                                         </div>
                                                     </div>
-                                                </li>
+                                                </div>
                                             ) 
                                         }   
-                                    </ul>
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -176,9 +176,9 @@ export default class SearchArticlesList extends Component {
                 }
                 {
                    searchList && searchList.records && searchList.records.length < page_size ? (
-                        <p style={{ textAlign: 'center' }}>没有更多数据啦...</p>
+                        <p style={{ textAlign: 'center', paddingTop: 20 }}>没有更多数据啦...</p>
                     ) : (
-                        <p style={{ textAlign: 'center' }}>疯狂加载中...</p>
+                        <p style={{ textAlign: 'center', paddingTop: 20 }}>疯狂加载中...</p>
                     )
                 }
             </div>

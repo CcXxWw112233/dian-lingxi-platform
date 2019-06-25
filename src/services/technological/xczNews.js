@@ -8,7 +8,6 @@ export async function getHotTabs(params) {
         url: `${REQUEST_COMMON}/common/hotspot`,
         method: "GET",
         params,
-        headers: {appid:1111}
     })
 }
 
@@ -63,7 +62,6 @@ export async function getAreas(params) {
         url: `${REQUEST_COMMON}/common/areas`,
         method: "GET",
         params,
-        headers: {appid:1111}
     })
 }
 
@@ -73,7 +71,6 @@ export async function getHeaderSearch(params) {
         url: `${REQUEST_COMMON}/articles/more`,
         method: "GET",
         params,
-        headers: {appid: 123}
     })
 }
 
@@ -83,6 +80,5 @@ export async function getCommonArticlesList(params) {
         url: `${REQUEST_COMMON}/articles/more`,
         method: "GET",
         params,
-        headers: {appid: 123}
     })
 }

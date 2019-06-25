@@ -60,12 +60,12 @@ export default class CommonArticlesList extends Component {
                                     </span>
                                 </div>
                                 <div className={commonStyles.news}>
-                                    <ul>
+                                    <div className={commonStyles.ul}>
                                         {
                                             item.articles.map((item, index) => {
                                                 if (!item.hasImg) {
                                                     return (
-                                                        <li>
+                                                        <div className={commonStyles.li}>
                                                             <div className={commonStyles.right}>
                                                                 <div className={commonStyles.message}>
                                                                     <i className={commonStyles.dot}></i>
@@ -76,11 +76,11 @@ export default class CommonArticlesList extends Component {
                                                                     <span>{this.getdate(item.publish_time)}</span>
                                                                 </div>
                                                             </div>
-                                                        </li>
+                                                        </div>
                                                     )
                                                 } else {
                                                     return (
-                                                        <li>
+                                                        <div className={commonStyles.li}>
                                                             <div className={commonStyles.left}>
                                                                 <img src="" />
                                                             </div>
@@ -93,13 +93,13 @@ export default class CommonArticlesList extends Component {
                                                                     <span>{this.getdate(item.publish_time)}</span>
                                                                 </div>
                                                             </div>
-                                                        </li>
+                                                        </div>
                                                     )
                                                 }
                                                 
                                             })
                                         }   
-                                    </ul>
+                                    </div>
                                 </div>
                             </div>
                         )
