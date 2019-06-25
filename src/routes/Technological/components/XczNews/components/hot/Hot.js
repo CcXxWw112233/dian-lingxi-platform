@@ -62,7 +62,7 @@ export default class Hot extends Component {
         const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.tabsWrapper}>
-                <div className={mainStyles.list} style={{ maxHeight: 130 }}>
+                <div className={mainStyles.list} style={{ maxHeight: 125 }}>
                     <Row style={{ width: '100%' }}>
                         <Col span={12}>
                             <RadioGroup>
@@ -105,7 +105,7 @@ export default class Hot extends Component {
         const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.tabsWrapper}>
-                <div className={mainStyles.list}>     
+                <div className={mainStyles.list} style={{maxHeight: 125}}>     
                     <Row style={{ width: '100%' }}>
                         <Col span={12}>
                             <RadioGroup>
