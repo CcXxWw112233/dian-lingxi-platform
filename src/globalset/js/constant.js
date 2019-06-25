@@ -1,3 +1,6 @@
+export const NODE_ENV = process.env.NODE_ENV
+
+
 const PROJECTS_API = '/api/projects'
 export const REQUEST_DOMAIN = '/api/upms' //接口域名
 export const REQUEST_DOMAIN_BOARD = PROJECTS_API //接口域名
@@ -6,7 +9,8 @@ export const REQUEST_DOMAIN_FLOWS = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_ABOUT_PROJECT = PROJECTS_API //项目相关接口域名前缀
 
 // 晓策志接口
-export const REQUEST_COMMON = '/api'
+// export const REQUEST_COMMON = '/api'
+
 
 export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbenchs'
 export const REQUEST_DOMAIN_TEAM_SHOW = '/api/more'
@@ -18,9 +22,23 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
   return appType === '1'? '1029567653519429632' : '1029565930193162240'
 }
 
+// 晓策志接口
+export const REQUEST_COMMON = (function (NODE_ENV, location) {
+  let api = ''
+  if(NODE_ENV == 'development') {
+
+  } else {
+    if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
+      api = REQUEST_DOMAIN_ARTICLE
+    }else {
+      api = 'http://47.93.4.48'
+    }
+  }
+  return `${api}/api`
+})(NODE_ENV, window.location)
+
 //export const WEBSOCKET_URL = 'wss://lingxi.di-an.com/websocket' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
-export const NODE_ENV = process.env.NODE_ENV
 // export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if(NODE_ENV == 'development') {
