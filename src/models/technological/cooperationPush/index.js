@@ -43,6 +43,8 @@ import {
   workbench_selectFilePreviewCommitPointNumber,
   workbench_currentProcessInstanceId,
 } from '../workbench/selects'
+import { getModelSelectState } from '../../utils'
+
 //定义model名称
 const model_project = name => `project/${name}`
 const model_projectDetail = name => `projectDetail/${name}`
@@ -159,7 +161,7 @@ export default {
       const { res } = payload
       const { data } = res
       // console.log('eee', data)
-
+      //当前查看项目的项目id
       const currentProjectBoardId = yield select(selectProjectDetailBoardId)
 
       let coperate = data[0] //协作
@@ -168,7 +170,7 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      // console.log('eee', coperateData)
+      console.log('eee', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)

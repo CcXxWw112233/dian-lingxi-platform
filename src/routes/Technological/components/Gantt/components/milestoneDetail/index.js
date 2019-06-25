@@ -52,8 +52,14 @@ export default class GanttDetail extends React.Component {
 
   //评论
   commentSubmitPost = (data) => {
-    const { text } = data
+    let { text } = data
     const { dispatch, milestone_id } = this.props
+    if(text) {
+      text = text.replace(/\r|\n/gim, '')
+    }
+    if(!text) {
+      return
+    }
     dispatch({
       type: 'publicModalComment/submitPublicModalDetailComment',
       payload: {

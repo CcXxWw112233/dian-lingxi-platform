@@ -95,7 +95,7 @@ export default class DateList extends Component {
   }
 
   isHasMiletoneList = (timestamp) => {
-    const { milestoneList = [] } = this.props
+    const { milestoneMap = [] } = this.props
     let flag = false
     let current_date_miletones = []
     if(!timestamp) {
@@ -104,10 +104,10 @@ export default class DateList extends Component {
         current_date_miletones
       }
     }
-    for(let key in milestoneList) {
+    for(let key in milestoneMap) {
       if (isSamDay(Number(timestamp), Number(key))){
         flag = true
-        current_date_miletones = milestoneList[key]
+        current_date_miletones = milestoneMap[key]
         break
       }
     }
@@ -191,8 +191,8 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneList = [] } },
+    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneMap = [] } },
     workbench: { datas: { projectList = [], projectTabCurrentSelectedProject, currentSelectedProjectMembersList = [] }}
   }){
-  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneList }
+  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneMap }
 }

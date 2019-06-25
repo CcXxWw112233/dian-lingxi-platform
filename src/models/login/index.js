@@ -142,9 +142,7 @@ export default {
             }
           })
         }
-        if(code != '4005') {
-          message.warn(res.message, MESSAGE_DURATION_TIME)
-        }
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * getVerificationcode({ payload }, { select, call, put }) { //获取验证码

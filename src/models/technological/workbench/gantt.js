@@ -37,7 +37,7 @@ export default {
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
       current_list_group_id: '0', //当前选中的分组id
-      milestoneList: [], //里程碑列表
+      milestoneMap: [], //里程碑列表
     },
   },
   subscriptions: {
@@ -219,11 +219,12 @@ export default {
       }
 
       const res = yield call(getGttMilestoneList, params)
+      // debugger
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            milestoneList: res.data
+            milestoneMap: res.data
           }
         })
       }else{

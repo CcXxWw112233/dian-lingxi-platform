@@ -1,0 +1,4 @@
+//yield select获取不同命名空间的model的state
+export const getModelSelectState = (modelName, stateName) => {
+  return (state) => state[(modelName)][stateName]
+}

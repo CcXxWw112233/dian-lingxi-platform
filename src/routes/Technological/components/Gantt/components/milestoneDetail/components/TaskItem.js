@@ -34,7 +34,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
         <div className={`${taskItemStyles.item_1} ${taskItemStyles.pub_hover}`} >
 
           {/*完成*/}
-          <div className={is_realize !== '1' ? taskItemStyles.nomalCheckBoxActive: taskItemStyles.nomalCheckBox}>
+          <div className={is_realize == '1' ? taskItemStyles.nomalCheckBoxActive: taskItemStyles.nomalCheckBox}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize: 12, fontWeight: 'bold'}}/>
           </div>
 

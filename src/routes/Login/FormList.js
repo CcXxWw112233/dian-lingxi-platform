@@ -139,9 +139,9 @@ class FormList extends React.Component {
     const { isMobile} = this.state
     const { loginType, model = {} } = this.props
     const { datas: { pic_verify_src, is_show_pic_verify_code }} = model
-    console.log('ssss',{
-      pic_verify_src, is_show_pic_verify_code
-    })
+    // console.log('ssss',{
+    //   pic_verify_src, is_show_pic_verify_code
+    // })
     return (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 272}}>
         {/* 输入账户 */}
