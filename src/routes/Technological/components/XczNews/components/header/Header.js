@@ -27,12 +27,12 @@ export default class Header extends Component {
                 "path": "/technological/xczNews/authority",
                 "text": "权威"
             },
-            // {
-            //     "flag": 4,
-            //     "name": "area",
-            //     "path": "/technological/xczNews/area",
-            //     "text": "地区"
-            // },
+            {
+                "flag": 4,
+                "name": "area",
+                "path": "/technological/xczNews/area",
+                "text": "地区"
+            },
             {
                 "flag": 5,
                 "name": "dataBase",

@@ -118,7 +118,7 @@ export default class SearchArticlesList extends Component {
         return (
             <div className={commonStyles.mainContainer}>
                 {
-                    contentVal && onSearchButton && (
+                   location.pathname != '/technological/xczNews/area' && contentVal && onSearchButton && (
                         <p style={{ marginLeft: 25, paddingTop: 15 }}>
                             <i 
                                 style={{ fontStyle: 'normal', display: 'inline-block', marginRight: 10, cursor: 'pointer', fontSize: 12 }}

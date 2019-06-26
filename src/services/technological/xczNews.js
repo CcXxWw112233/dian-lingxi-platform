@@ -65,6 +65,16 @@ export async function getAreas(params) {
     })
 }
 
+// 点击某地区的时候文章的接口
+export async function getAreasArticles(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/areas`,
+        method: "GET",
+        params,
+    })
+}
+
+
 // 顶部的全局搜索
 export async function getHeaderSearch(params) {
     return request({
