@@ -218,7 +218,12 @@ export default class CreateTask extends React.Component {
         id: card_id
       }
     })
-
+    this.props.dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        card_id
+      }
+    })
     //添加url
     //  this.props.updateDatasTask(data)
     // this.props.cardItemClickEffect(data)

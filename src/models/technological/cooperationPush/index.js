@@ -730,6 +730,60 @@ export default {
             })
           }
           break
+        //里程碑关联任务
+        case 'add:milestone:content':
+          //当前的里程碑id和返回的里程碑id对应上
+           milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+           milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+           milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+           cope_milestone_id = getAfterNameId(coperateName)
+          //更新里程碑详情
+          if(milestone_id == cope_milestone_id) {
+             const contents = coperateData['content']
+            const new_milestone_detail = {...milestone_detail}
+            if(new_milestone_detail['content_list']) {
+              new_milestone_detail['content_list'].push(contents)
+            }else {
+              new_milestone_detail['content_list']= [contents]
+            }
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+            // debugger
+          }
+          break
+        //取消关联里程碑
+        case 'remove:milestone:content':
+          //当前的里程碑id和返回的里程碑id对应上
+          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+          cope_milestone_id = getAfterNameId(coperateName)
+          let milestone_rela_id = coperateData['rela_id']
+          let new_milestone_detail = {...milestone_detail}
+          //更新里程碑详情
+          if(milestone_id == cope_milestone_id) {
+            let content_list = new_milestone_detail['content_list']
+            if(typeof content_list != 'object') { //array
+              return
+            }
+            //如果删除的是某一条id则遍历 数组将之删除
+            for(let i = 0; i < content_list.length; i++) {
+              if(milestone_rela_id == content_list[i]['id']) {
+                new_milestone_detail['content_list'].splice(i, 1)
+              }
+            }
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+          }
+          break
         default:
           break
       }

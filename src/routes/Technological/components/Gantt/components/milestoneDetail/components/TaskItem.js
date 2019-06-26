@@ -27,14 +27,14 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   render() {
     const { itemValue = {} } = this.props
-    const { id, name, deadline, is_realize = '0' ,users = []} = itemValue
+    const { id, name, deadline, is_completed,users = []} = itemValue
 
     return (
       <div className={`${taskItemStyles.taskItem}`}>
         <div className={`${taskItemStyles.item_1} ${taskItemStyles.pub_hover}`} >
 
           {/*完成*/}
-          <div className={is_realize == '1' ? taskItemStyles.nomalCheckBoxActive: taskItemStyles.nomalCheckBox}>
+          <div className={is_completed == '1' ? taskItemStyles.nomalCheckBoxActive: taskItemStyles.nomalCheckBox}>
             <Icon type="check" style={{color: '#FFFFFF',fontSize: 12, fontWeight: 'bold'}}/>
           </div>
 
