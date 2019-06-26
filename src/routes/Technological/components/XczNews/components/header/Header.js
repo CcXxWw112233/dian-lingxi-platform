@@ -72,7 +72,8 @@ export default class Header extends Component {
         dispatch({
             type:  "xczNews/updateDatas",
             payload: {
-                inputValue: value
+                inputValue: value,
+                defaultArr: []
             }
         })
 

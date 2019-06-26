@@ -10,7 +10,7 @@ import { Row, Col, Radio, Icon} from 'antd';
 const RadioGroup = Radio.Group;
 
 @connect(({xczNews = []}) => ({
-    xczNews, 
+    xczNews,
 }))
 export default class Hot extends Component {
 
@@ -62,7 +62,7 @@ export default class Hot extends Component {
         const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.tabsWrapper}>
-                <div className={mainStyles.list} style={{ maxHeight: 130 }}>
+                <div className={mainStyles.list} style={{ maxHeight: 125 }}>
                     <Row style={{ width: '100%' }}>
                         <Col span={12}>
                             <RadioGroup>
@@ -71,12 +71,14 @@ export default class Hot extends Component {
                                         return index == 10 ? (
                                             <>
                                                 <Radio.Button
-                                                    // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
+                                                    // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
                                                     value={item.id}
+                                                    onClick={ () => { this.handleHotContent({ id: item.id }) } }
                                                     onChange={ () => { this.handleHotContent({ id: item.id }) } }
                                                 >{ item.name }</Radio.Button>
-                                                <Radio.Button 
+                                                <Radio.Button
                                                     onChange={ () => { this.handleClickMore() } }
+                                                    onClick={ () => { this.handleClickMore() } }
                                                     value="more">
                                                     更多
                                                     <Icon type="down" />
@@ -84,8 +86,9 @@ export default class Hot extends Component {
                                             </>
                                         ) : (
                                             <Radio.Button
-                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
+                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
                                                 value={item.id}
+                                                onClick={ () => { this.handleHotContent({ id: item.id }) } }
                                                 onChange={ () => { this.handleHotContent({ id: item.id }) } }
                                             >{ item.name }</Radio.Button>
                                         )
@@ -105,7 +108,7 @@ export default class Hot extends Component {
         const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.tabsWrapper}>
-                <div className={mainStyles.list}>     
+                <div className={mainStyles.list} style={{maxHeight: 125}}>
                     <Row style={{ width: '100%' }}>
                         <Col span={12}>
                             <RadioGroup>
@@ -113,10 +116,11 @@ export default class Hot extends Component {
                                     hotTabs.map((item, index) => {
                                         return (
                                             <Radio.Button
-                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`} 
+                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
                                                 value={item.id}
+                                                onClick={ () => { this.handleHotContent({ id: item.id }) } }
                                                 onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                            >{ item.name }</Radio.Button>     
+                                            >{ item.name }</Radio.Button>
                                         )
                                     })
                                 }
@@ -136,9 +140,9 @@ export default class Hot extends Component {
             return (
                 <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
                     {/* <div className={mainStyles.mainContainer}> */}
-    
+
                         { this.renderForm() }
-    
+
                         <CommonArticlesList { ...{articlesList} } { ...{location} } />
                     {/* </div> */}
                 </div>
@@ -148,6 +152,6 @@ export default class Hot extends Component {
                 <SearchArticlesList {...{location}} />
             )
         }
-        
+
     }
 }

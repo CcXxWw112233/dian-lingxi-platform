@@ -24,6 +24,14 @@ export default {
         if (location.pathname === '/login') {
           Cookies.set('is401', false, {expires: 30, path: ''})
           redirectLocation = location.search.replace('?redirect=', '')
+          dispatch({
+            type: 'updateDatas',
+            payload: {
+              is_show_pic_verify_code: false, //是否显示图片验证码
+              pic_verify_src: '',
+              captcha_key: ''
+            }
+          })
         } else {
           localStorage.removeItem('bindType')
         }

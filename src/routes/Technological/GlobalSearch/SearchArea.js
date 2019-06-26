@@ -219,7 +219,7 @@ export default class SearchArea extends React.Component {
     const { searchTypeList = [], defaultSearchType, searchInputValue } = this.props
     return (
       <div style={{paddingTop: 20}} >
-        <InputGroup compact size={'large'}>
+        <InputGroup compact={true} size={'large'} style={{display: 'flex'}}>
           <Select value={defaultSearchType} size={'large'} onChange={this.selectTypeChange} style={{ width: '16%', fontSize: 14 }} suffixIcon={<Icon type="caret-down" />}>
             {searchTypeList.map((value, key) => {
               const { search_type, name } = value
@@ -234,7 +234,7 @@ export default class SearchArea extends React.Component {
             {/*onChange={this.inputChange}*/}
             {/*placeholder={'请输入'}*/}
           {/*/>*/}
-          <Input style={{ width: '84%', fontSize: 14 }}
+          <Input style={{ width: '84%', fontSize: 14, marginLeft: '-10px' }}
                  value={searchInputValue}
                  ref={this.search_input_ref}
                  id={'globalSearch_input_'}

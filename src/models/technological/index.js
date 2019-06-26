@@ -223,7 +223,7 @@ export default {
             redirectHash = '/technological/project'
           }
           if(document.getElementById('iframImCircle')) {
-            document.getElementById('iframImCircle').src = `${window.location.protocol}//${window.location.host}/im?timestamp=${new Date().getTime()}`;;
+            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
           }
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }

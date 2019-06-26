@@ -335,7 +335,7 @@ export default {
         return
       }
       const aaa = [].concat(defaultArr, res.data.records)
-      console.log('sssss',aaa)
+      // console.log('sssss',aaa)
       // console.log(res.data.records.length)
       yield put({
         type: 'updateDatas',
