@@ -26,7 +26,7 @@ export async function getGttMilestoneList(params) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/milestone`,
     method: 'GET',
     params
-  });
+  }, { isNotLoading: true});
 }
 
 

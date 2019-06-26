@@ -76,7 +76,7 @@ export default {
           //websocket连接判定
           setTimeout(function () {
             // console.log('1111', Cookies.get('wsLinking'))
-            // if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
+            if(Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')){
               const calback = function (event) {
                 dispatch({
                   type: 'connectWsToModel',
@@ -86,7 +86,7 @@ export default {
                 })
               }
               initWs(calback)
-            // }
+            }
             // const calback = function (event) {
             //   dispatch({
             //     type: 'connectWsToModel',
@@ -170,8 +170,6 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      console.log('eee_coperateName', coperateName)
-      console.log('eee_coperateData', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
@@ -794,7 +792,7 @@ export default {
       const { res } = payload
       const { data } = res
       // console.log('eee', data)
-      const currentProjectBoardId = yield select(selectProjectDetailBoardId)
+      const currentProjectBoardId = yield select(getModelSelectDatasState('workbenchPublicDatas', 'board_id'))
 
       let coperate = data[0] //协作
       let news = data[1] || {} //消息
@@ -802,7 +800,8 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      // console.log('eee', coperateData)
+      // console.log('eee_coperateName', coperateName)
+      // console.log('eee_coperateData', coperateData)
 
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
@@ -1169,6 +1168,98 @@ export default {
           //     fileList: fileList_
           //   }
           // })
+        //添加里程碑
+        case 'add:milestone':
+          let workbench_show_gantt_card = yield select(getModelSelectDatasState('workbench', 'workbench_show_gantt_card'))
+          board_id_ = getAfterNameId(coperateName)
+          //如果是在甘特图模式下查看该项目
+          if(board_id_ == currentProjectBoardId && workbench_show_gantt_card == '1') {
+            dispathes({
+              type: 'gantt/getGttMilestoneList',
+              payload: {
+              }
+            })
+          }
+          break
+        //修改里程碑
+        case 'change:milestone':
+          //当前的里程碑id和返回的里程碑id对应上
+          let milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          workbench_show_gantt_card = yield select(getModelSelectDatasState('workbench', 'workbench_show_gantt_card'))
+          let cope_milestone_id = getAfterNameId(coperateName)
+          //更新里程碑详情
+          if(milestone_id == cope_milestone_id) {
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: {...milestone_detail, ...coperateData}
+              }
+            })
+            // debugger
+          }
+          //如果是项目id匹配上了,并且在查看甘特图的情况下，则更新甘特图里程碑列表
+          board_id_ = coperateData['board_id']
+          if(board_id_ == currentProjectBoardId && workbench_show_gantt_card == '1') {
+            dispathes({
+              type: 'gantt/getGttMilestoneList',
+              payload: {
+              }
+            })
+          }
+          break
+        //里程碑关联任务
+        case 'add:milestone:content':
+          //当前的里程碑id和返回的里程碑id对应上
+          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          cope_milestone_id = getAfterNameId(coperateName)
+          //更新里程碑详情
+          if(milestone_id == cope_milestone_id) {
+            const contents = coperateData['content']
+            const new_milestone_detail = {...milestone_detail}
+            if(new_milestone_detail['content_list']) {
+              new_milestone_detail['content_list'].push(contents)
+            }else {
+              new_milestone_detail['content_list']= [contents]
+            }
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+            // debugger
+          }
+          break
+        //取消关联里程碑
+        case 'remove:milestone:content':
+          //当前的里程碑id和返回的里程碑id对应上
+          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          cope_milestone_id = getAfterNameId(coperateName)
+          let milestone_rela_id = coperateData['rela_id']
+          let new_milestone_detail = {...milestone_detail}
+          //更新里程碑详情
+          if(milestone_id == cope_milestone_id) {
+            let content_list = new_milestone_detail['content_list']
+            if(typeof content_list != 'object') { //array
+              return
+            }
+            //如果删除的是某一条id则遍历 数组将之删除
+            for(let i = 0; i < content_list.length; i++) {
+              if(milestone_rela_id == content_list[i]['id']) {
+                new_milestone_detail['content_list'].splice(i, 1)
+              }
+            }
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+          }
+          break
         default:
           break
       }
@@ -1285,6 +1376,66 @@ export default {
 
     },
 
+    * handleWsData_comments_dynamics_in_detail_modal({ payload }, { call, put, select }) {
+      const { res } = payload
+      const { data } = res
+      let coperate = data[0] //协作
+      let news = data[1] //消息
+      //获取消息协作类型
+      const coperateName = coperate.e
+      const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+      let coperateData = JSON.parse(coperate.d)
+      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+        return coperateName.substring(coperateName.indexOf('/') + 1)
+      }
+      switch (coperateType) {
+        case 'remove:visitor:member':
+          const remove_user_id = getAfterNameId(coperateName)
+          const remove_org_id = coperateData['org_id']
+          const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+          const user_id = userInfo['id']
+          const { current_org = {}} = userInfo
+          const current_org_id = current_org['id']
+          if(current_org_id == remove_org_id && remove_user_id == user_id) {
+            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
+            const delay = (ms) => new Promise(resolve => {
+              setTimeout(resolve, ms)
+            })
+            yield call(delay, MESSAGE_DURATION_TIME*1000)
+            yield put({
+              type: model_technological('logout'),
+              payload: {
+
+              }
+            })
+          }
+
+          break
+        case 'change:permission':
+          const permission_type = coperateData['type']
+          if(permission_type == '1') {
+            dispathes({
+              type: model_technological('getUserOrgPermissions'),
+              payload: {
+
+              }
+            })
+          }else if (permission_type == '2'){
+            dispathes({
+              type: model_technological('getUserBoardPermissions'),
+              payload: {
+
+              }
+            })
+          } else {
+
+          }
+          break
+        default:
+          break
+      }
+
+    },
 
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
