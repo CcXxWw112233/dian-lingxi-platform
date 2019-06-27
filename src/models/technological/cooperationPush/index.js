@@ -171,6 +171,9 @@ export default {
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
 
+      // console.log('eee_name',coperateName)
+      // console.log('eee_coperateData',coperateData)
+
       const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
@@ -782,6 +785,33 @@ export default {
             })
           }
           break
+        //关联里程碑的任务更新信息后
+        case 'change:milestone:content:update':
+          //当前的里程碑id和返回的里程碑id对应上
+          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          cope_milestone_id = getAfterNameId(coperateName)
+          if(milestone_id == cope_milestone_id) {
+            new_milestone_detail = {...milestone_detail}
+            const content_list_ = new_milestone_detail['content_list'] || []
+            const { rela_id, rela_name } = coperateData //返回的关联任务的id
+            const new_content_list_ = content_list_.map(item => {
+              const { id } = item
+              let new_item = {...item}
+              if(id == rela_id) {
+                new_item = {...item, ...coperateData, name: rela_name, id: rela_id}
+              }
+              return new_item
+            })
+            new_milestone_detail['content_list'] = new_content_list_
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+          }
+          break
         default:
           break
       }
@@ -1252,6 +1282,33 @@ export default {
                 new_milestone_detail['content_list'].splice(i, 1)
               }
             }
+            dispathes({
+              type: 'milestoneDetail/updateDatas',
+              payload: {
+                milestone_detail: new_milestone_detail
+              }
+            })
+          }
+          break
+        //关联里程碑的任务更新信息后
+        case 'change:milestone:content:update':
+          //当前的里程碑id和返回的里程碑id对应上
+          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          cope_milestone_id = getAfterNameId(coperateName)
+          if(milestone_id == cope_milestone_id) {
+            new_milestone_detail = {...milestone_detail}
+            const content_list_ = new_milestone_detail['content_list'] || []
+            const { rela_id, rela_name } = coperateData //返回的关联任务的id
+            const new_content_list_ = content_list_.map(item => {
+              const { id } = item
+              let new_item = {...item}
+              if(id == rela_id) {
+                new_item = {...item, ...coperateData, name: rela_name, id: rela_id}
+              }
+              return new_item
+            })
+            new_milestone_detail['content_list'] = new_content_list_
             dispathes({
               type: 'milestoneDetail/updateDatas',
               payload: {
