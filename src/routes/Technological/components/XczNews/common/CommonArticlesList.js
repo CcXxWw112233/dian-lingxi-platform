@@ -48,7 +48,7 @@ export default class CommonArticlesList extends Component {
         return (
             <div className={commonStyles.mainContainer}>
                 {
-                   articlesList && articlesList.length && articlesList.map(item => {
+                   articlesList.map(item => {
                         // console.log(item)
                         return (
                             <div className={commonStyles.info}>

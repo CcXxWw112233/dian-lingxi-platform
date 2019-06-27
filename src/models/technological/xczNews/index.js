@@ -59,6 +59,7 @@ export default {
         dispatch({
           type: 'updateDatas',
           payload: {
+            inputValue: '',
             page_no: 1,
             defaultArr: [],
             searchList: {},
@@ -434,7 +435,7 @@ export default {
         payload: {
           searchList: res.data,
           contentVal: keywords,
-          defaultArr: aaa
+          defaultArr: defaultArr == res.data.records ? aaa : res.data.records
           // is_onscroll_do_paging: res.data.records.length < page_size ? false: true
         }
       })
@@ -446,7 +447,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          is_onscroll_do_paging: res.data.records.length < page_size ? false: true
+          is_onscroll_do_paging: res.data.records.length < page_size ? false: true,
         }
       })
 
