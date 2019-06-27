@@ -79,7 +79,7 @@ export default class Area extends Component {
 
     // handleSelectCity 每一个省级地区的点击选择事件
     handleSelectProvinceCity(id) {
-        console.log(id)
+        // console.log(id)
         const { dispatch, xczNews } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
@@ -99,8 +99,8 @@ export default class Area extends Component {
     }
 
      // handleSelectCity 每一个市级地区的点击选择事件
-     handleSelectCity(id) {
-        console.log(id)
+     handleSelectCity(id, parentId) {
+        console.log(parentId)
         const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
@@ -108,6 +108,8 @@ export default class Area extends Component {
                 area_ids: id,
                 cityValue: id,
                 defaultCityValue: id,
+                defaultProvinceValue: parentId,
+                provinceValue: parentId,
                 defaultArr: [],
             }
         })
@@ -140,7 +142,7 @@ export default class Area extends Component {
                                         item.child.map(key => {
                                             return (
                                                 <b 
-                                                    onClick={ () => { this.handleSelectCity(key.id) } } 
+                                                    onClick={ () => { this.handleSelectCity(key.id, key.parent_id) } } 
                                                     className={`${areaStyles.a} ${ area_ids && key.id == area_ids && areaStyles.active}`} id={key.id}>{key.name}</b>
                                             )
                                         })
@@ -227,7 +229,9 @@ export default class Area extends Component {
         const { xczNews, location } = this.props;
         const { cityList = [], provinceData = [], cityData = {}, provinceValue, cityValue, defaultCityValue, defaultProvinceValue } = xczNews;
         let cityValueArr = cityData && cityData[provinceValue];
-        let select_city_key = Object.keys(cityData);
+        let select_city_key = Object.keys(cityData); // 拿到所有省级的id,
+        // console.log(select_city_key)
+
 
         return (
             <React.Fragment>
@@ -252,7 +256,7 @@ export default class Area extends Component {
                             </Select>
                             <Select 
                                 value={ defaultCityValue }
-                                onChange={(value) => { this.handleCityChange(value) }}
+                                onChange={(value) => { this.handleCityChange(value, parentId) }}
                                 disabled={ provinceValue ? false : true }
                             >
                                 <Option value="cityTown" key="cityTown" disabled>城市</Option>

@@ -4,7 +4,6 @@ import {
   getHighRiseArticles, 
   getAuthorityArticles, 
   getDataBase,
-  getDataBaseDetail, 
   getAreas,
   getAreasArticles,
   getHeaderSearch,
@@ -25,7 +24,6 @@ export default {
     category_ids: '', // 当前点击热点的title的id 政策...
     hotspot_id: '', // 当前热点点击的id 城市设计...
     dataBase: [], // 资料库的数据
-    dataBaseDetail: [], // 资料库详情的数据
     dataBaseArticlesList: [], //资料库的文章列表
     cityList: [], // 地区的城市列表
     searchList: {}, // 全局搜索的列表
@@ -291,30 +289,6 @@ export default {
       })
     },
 
-    // 获取资料库详情的数据
-    * getDataBaseDetail({ payload = {} }, { select, call, put }) {
-      const searchList = yield select((state) => getSelectState(state, 'searchList'))
-      const category_ids = yield select((state) => getSelectState(state, 'category_ids'))
-      const page_size = yield select((state) => getSelectState(state, 'page_size'))
-      const page_no = yield select((state) => getSelectState(state, 'page_no'))
-      const params = {
-        category_ids, page_size, page_no
-      }
-      if(searchList && searchList.length) return
-      const res = yield call(getDataBaseDetail, {...params, ...payload});
-      if(!isApiResponseOk(res)) {
-        message.error(res.message)
-        return
-      }
-      // console.log(res)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          dataBaseDetail: res.data
-        }
-      })
-    },
-
     // 获取地区的城市列表
     * getAreas({ payload = {} }, { select, call, put }) {
       const provinceData = yield select((state) => getSelectState(state, 'provinceData'))
@@ -346,13 +320,15 @@ export default {
          let children = newCityObj[key].child // 取出第二层的市级数据
          // 想要的数据结构 -> [{ proviceName: '北京市', cityData: [{ id: 1, name: '直辖市' }] }]
          for (let index = 0; index < children.length; index++) {
-             // console.log(children[index])
+            //  console.log(children[index])
              let childName = children[index].name; // 每一个市级的名称
              let childId = children[index].id // 每一个市级的id
+             let parentId = children[index].parent_id // 每一个市级对应的父级id
              // 将市级名称以及id连接起来
              tempCity = {
                  id: childId,
-                 name: childName
+                 name: childName,
+                 parentId: parentId
              }
              tempArr.push(tempCity) // 把新连接的数据放进数组中
              cityData[(newCityObj[key]).id]=tempArr // 保存在省级名称的的级别下面 湖南省: ["长沙市", ...]

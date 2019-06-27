@@ -47,15 +47,6 @@ export async function getDataBase(params) {
     })
 }
 
-// 获取资料库详情的数据
-export async function getDataBaseDetail(params) {
-    return request({
-        url: `${REQUEST_COMMON}/articles/store/detail`,
-        method: "GET",
-        params,
-    })
-}
-
 // 获取地区的数据
 export async function getAreas(params) {
     return request({
