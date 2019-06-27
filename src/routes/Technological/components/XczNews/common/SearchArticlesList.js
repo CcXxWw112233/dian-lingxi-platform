@@ -37,7 +37,8 @@ export default class SearchArticlesList extends Component {
         let new_page_no = page_no || 0;   
 
         // scrollTop >= (scrollHeight - windowHeight)
-        if (scrollHeight - 20 <= (scrollTop + windowHeight) ) {
+        if (scrollHeight - 40 <= (scrollTop + windowHeight) ) {
+            console.log('page_no', page_no)
 
             if(!is_onscroll_do_paging) {
                 return false
@@ -51,12 +52,15 @@ export default class SearchArticlesList extends Component {
                     // defaultArr: defaultArr.concat([...defaultArr], [...searchList.records])
                 }
             })
-            dispatch({
-                type: 'xczNews/getHeaderSearch',
-                payload: {
-                    
-                }
-            })
+            setTimeout(() => {
+                dispatch({
+                    type: 'xczNews/getHeaderSearch',
+                    payload: {
+                        
+                    }
+                })
+            }, 300)
+            
         }
     }
 

@@ -6,6 +6,7 @@ import {
   getDataBase,
   getAreas,
   getAreasArticles,
+  getAreasSearch,
   getHeaderSearch,
   getCommonArticlesList,
 } from '@/services/technological/xczNews'
@@ -47,7 +48,12 @@ export default {
     cityValue: '', // 市级选择的value
     area_ids: '', // 地区对应的id
     defaultCityValue: 'cityTown', // 城市对应默认选择的value值
-    defaultProvinceValue: 'province' // 省级对应默认选择的value值
+    defaultProvinceValue: 'province', // 省级对应默认选择的value值
+    areaSearchValue: '', // 地区搜索的内容
+    areaSearchData: [], // 地区搜索的数据
+    isAreaSearch: false, // 是否正在搜索
+    // defaultSearchAreaVal: '', // 默认搜索框的value值
+    searchId: '', // 搜索的id值 
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -380,6 +386,24 @@ export default {
 
     },
 
+    // 获取地区搜索的内容
+    * getAreasSearch({ payload = {} }, { select, call, put }) {
+      const keyword = yield select((state) => getSelectState(state, 'areaSearchValue'))
+      const searchId = yield select((state) => getSelectState(state, 'searchId'))
+      const res = yield call(getAreasSearch, { keyword });
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
+      console.log(res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          areaSearchData: res.data,
+        }
+      })
+    },
+
 
     // 顶部的全局搜索
     * getHeaderSearch({ payload = {} }, { select, call, put }) {
@@ -411,8 +435,7 @@ export default {
         payload: {
           searchList: res.data,
           contentVal: keywords,
-          defaultArr: defaultArr == res.data.records ? aaa : res.data.records
-          // is_onscroll_do_paging: res.data.records.length < page_size ? false: true
+          defaultArr: aaa,
         }
       })
 

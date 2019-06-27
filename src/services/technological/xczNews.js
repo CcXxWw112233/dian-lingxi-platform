@@ -1,5 +1,6 @@
 import request from '@/utils/requestAxios'
 import { REQUEST_COMMON } from '@/globalset/js/constant'
+import { func } from 'prop-types';
 
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {
@@ -60,6 +61,15 @@ export async function getAreas(params) {
 export async function getAreasArticles(params) {
     return request({
         url: `${REQUEST_COMMON}/articles/areas`,
+        method: "GET",
+        params,
+    })
+}
+
+// 地区内容的搜索
+export async function getAreasSearch(params) {
+    return request({
+        url: `${REQUEST_COMMON}/common/areas/search`,
         method: "GET",
         params,
     })

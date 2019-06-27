@@ -3,24 +3,31 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import areaStyles from './area.less'
-import { Select, Input } from 'antd'
+import { Select, Input, Spin, Empty } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SearchArticlesList from '../../common/SearchArticlesList'
 
 const { Option } = Select;
 const Search = Input.Search;
+let timer;
 
 @connect(({ xczNews = [] }) => ({
     xczNews,
 }))
 export default class Area extends Component {
 
+    constructor(props) {
+        super(props)
+        this.lastFetchId = 0;
+    }
+
     state = {
         click_more: false, // 是否显示展开更多城市列表 默认为flase
         click_more_text: false, // 控制文字展开还是显示全部内容 默认为false 展开全部内容
         select_active: false, // 控制选项的高亮效果
+        fetching: false, // 是否正在查询
+        timer: null,
     }
-
 
      // handleProvinceChange 省级的选择
      handleProvinceChange(value) {
@@ -177,7 +184,7 @@ export default class Area extends Component {
                                         item.child.map(key => {
                                             return (
                                                 <b 
-                                                    onClick={ () => { this.handleSelectCity(key.id) } } 
+                                                    onClick={ () => { this.handleSelectCity(key.id, key.parent_id) } } 
                                                     className={`${areaStyles.a} ${ area_ids && key.id == area_ids && areaStyles.active}`} id={key.id}>{key.name}</b>
                                             )
                                         })
@@ -224,19 +231,101 @@ export default class Area extends Component {
         return click_more_text ? this.renderMoreBack() : this.renderMoreSimple()
     }
 
+    // 地区的搜索
+    getAreaSearch(value) {
+        const { dispatch } = this.props;
+        // console.log(value)
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                areaSearchValue: value,
+                isAreaSearch: false,
+            }
+        })
+        dispatch({
+            type: 'xczNews/getAreasSearch',
+            payload: {
+
+            }
+        })
+    }
+
+    // onSearch
+    handleAreaSearch(value) {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                areaSearchValue: value,
+                isAreaSearch: true,
+            }
+        })
+        const { timer } = this.state;
+        if(timer) {
+            clearTimeout(timer)
+        }
+        this.setState({
+            timer: setTimeout(() => {
+                this.getAreaSearch(value)
+            }, 500)
+        })
+        
+        
+    }
+
+    // areaChgVal 地区输入变化
+    areaChangeValue(value) {
+        // console.log(value)
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                areaSearchData: [],
+                isAreaSearch: false,
+                searchId: value
+            }
+        })
+    }
+
+    // 选项的点击
+    areaSelectOption(deep, id, parentId) {
+        console.log(deep, id)
+        const { dispatch } = this.props;
+        console.log(1111)
+        if (deep == 1) {
+            dispatch({
+                type: 'xczNews/updateDatas',
+                payload: {
+                    provinceValue: id,
+                    defaultProvinceValue: id,
+                    area_ids: id,
+                }
+            })
+        } else {
+            dispatch({
+                type: 'xczNews/updateDatas',
+                payload: {
+                    cityValue: id,
+                    defaultCityValue: id,
+                    provinceValue: parentId,
+                    area_ids: id,
+                }
+            })
+        }
+    }
+
 
     render() {
         const { xczNews, location } = this.props;
-        const { cityList = [], provinceData = [], cityData = {}, provinceValue, cityValue, defaultCityValue, defaultProvinceValue } = xczNews;
+        const { cityList = [], provinceData = [], cityData = {}, provinceValue, cityValue, defaultCityValue, defaultProvinceValue, defaultSearchAreaVal, areaSearchData = [], areaSearchValue, isAreaSearch, searchId } = xczNews;
         let cityValueArr = cityData && cityData[provinceValue];
         let select_city_key = Object.keys(cityData); // 拿到所有省级的id,
         // console.log(select_city_key)
 
-
         return (
             <React.Fragment>
                 <div className={areaStyles["city_list"]}>
-                    <div className={areaStyles.wrapper}>
+                    <div className={areaStyles.wrapper} style={{position: 'relative'}}>
                         <div className={areaStyles.choose}>
                         <Select
                             value={defaultProvinceValue} 
@@ -275,11 +364,28 @@ export default class Area extends Component {
                             </Select>
                             <span className={`${globalStyles.authTheme} ${areaStyles.position}` }>&#xe669;</span>
                         </div>
-                        <Search
+                        <Select
+                            showArrow={false}
+                            showSearch={true}
+                            // value={defaultSearchAreaVal}
                             placeholder="搜索地区"
-                            onSearch={value => console.log(value)}
-                            style={{ width: 147, height: 32 }}
-                        />
+                            notFoundContent={isAreaSearch ? <Spin size="small" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                            filterOption={false}
+                            style={{width: 148, cursor: 'auto'}}
+                            onSearch={(value) => { this.handleAreaSearch(value) }}
+                            onChange={(value) => { this.areaChangeValue(value) }}
+                        >
+                            {
+                                areaSearchData.map(item => {
+                                   return (
+                                    <Option 
+                                        onClick={() => { this.areaSelectOption(item.deep, item.id, item.parent_id) }}
+                                        value={item.id} key={item.id}>{item.name}</Option>
+                                   ) 
+                                })
+                            }
+                        </Select>
+                        <div className={`${globalStyles.authTheme} ${areaStyles.search}`}>&#xe611;</div>
                     </div>
                     <div className={areaStyles.areas}>
                         { this.renderInfo() }
