@@ -109,6 +109,7 @@ class AddTaskModal extends Component {
       due_time: '',
       attachment_fileList: [],
       currentSelectedFileFolder: rootFileFolder ? [rootFileFolder] : [''],
+      isInUploadFile: false,
       currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(isUseInGantt, projectGroupListId, projectGroupLists, projectIdWhenUseInGantt)
     };
   }
@@ -492,7 +493,8 @@ class AddTaskModal extends Component {
       due_time,
       attachment_fileList,
       currentSelectedFileFolder,
-      currentSelectedProjectGroupListItem
+      currentSelectedProjectGroupListItem,
+      isInUploadFile
     } = this.state;
     const {
       projectList,
@@ -525,10 +527,22 @@ class AddTaskModal extends Component {
         isHasTaskTitle() && isHasSelectedProject() && start_time && due_time;
     }
 
+    console.log('ssss',{isInUploadFile}, currentSelectedFileFolder)
+
     if (taskType === 'MY_DOCUMENT') {
       isShouldNotDisableSubmitBtn = () =>
         isHasSelectedProject() && currentSelectedFileFolder.length;
     }
+
+    const isShouldNotDisableSubmitBtnInDucument = () => {
+      if(taskType === 'MY_DOCUMENT') {
+        return !isInUploadFile
+      }else {
+        return false
+      }
+    }
+
+    console.log('ssss11', isShouldNotDisableSubmitBtnInDucument())
 
     const board_id = currentSelectedProject.board_id;
     const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
@@ -578,6 +592,18 @@ class AddTaskModal extends Component {
         if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
           return false;
+        }
+        if(file.status == 'done') {
+          that.setState({
+            isInUploadFile: false
+          })
+          if(!isInUploadFile) { //如果一个大文件上传的过程中，有个小文件很快上传结束，则加此状态修复
+
+          }
+        }else {
+          that.setState({
+            isInUploadFile: true
+          })
         }
         if (file.status === 'done' && file.response.code === '0') {
         } else if (
@@ -773,7 +799,7 @@ class AddTaskModal extends Component {
               <div className={styles.confirmBtn}>
                 <Button
                   type="primary"
-                  disabled={!isShouldNotDisableSubmitBtn()}
+                  disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
                   onClick={this.handleClickedSubmitBtn}
                 >
                   完成
@@ -785,7 +811,7 @@ class AddTaskModal extends Component {
               <div className={styles.confirmBtnRight}>
                 <Button
                   type="primary"
-                  disabled={!isShouldNotDisableSubmitBtn()}
+                  disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
                   onClick={this.handleClickedSubmitBtn}
                 >
                   完成

@@ -53,13 +53,18 @@ export default class DateList extends Component {
   }
 
   componentDidMount() {
+    this.getGttMilestoneList()
+  }
+
+  //获取和日期对应上的里程碑列表
+  getGttMilestoneList = () => {
     const { dispatch } = this.props
-    // dispatch({
-    //   type: 'gantt/getGttMilestoneList',
-    //   payload: {
-    //
-    //   }
-    // })
+    setTimeout(() => {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {}
+      })
+    }, 500)
   }
 
   submitCreatMilestone = (data) => {
