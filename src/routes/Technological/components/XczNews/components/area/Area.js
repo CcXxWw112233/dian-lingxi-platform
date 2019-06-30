@@ -135,7 +135,7 @@ export default class Area extends Component {
         return (
             <div className={areaStyles.ul} style={{ maxHeight: 180, overflow: 'hidden' }}>
                 {
-                    cityList && cityList.length && cityList.map(item => {
+                    cityList && cityList.map(item => {
                         return (
                             <div className={areaStyles.li}>
                                 <span className={areaStyles.province}>
@@ -171,7 +171,7 @@ export default class Area extends Component {
         return (
             <div className={areaStyles.ul}>
                 {
-                    cityList && cityList.length && cityList.map(item => {
+                    cityList && cityList.map(item => {
                         return (
                             <div className={areaStyles.li}>
                                 <span className={areaStyles.province}>
@@ -325,6 +325,55 @@ export default class Area extends Component {
         })
     }
 
+    // handleCityLocation 地区的定位
+    handleCityLocation() {
+        const { dispatch } = this.props;
+        console.log(1111)
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                locationIp: '119.139.198.187'
+            }
+        })
+        dispatch({
+            type: 'xczNews/getAreasLocation',
+            payload: {
+
+            }
+        })
+    }
+
+    getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
+        } else {
+            console.log("该浏览器不支持获取地理位置。");
+        }
+    }
+
+    showPosition(position) {
+        console.log("纬度: " + position.coords.latitude + " 经度: " + position.coords.longitude);    
+    }
+
+    showError(error) {
+        console.log(error);
+    }
+    componentDidMount() {
+        console.log(window.navigator.geolocation)
+        this.getLocation()
+        // var map = new BMap.Map("allmap");
+        // var point = new BMap.Point(116.331398,39.897445);
+        // map.centerAndZoom(point,12);
+
+        // function myFun(result){
+        // var cityName = result.name;
+        // map.setCenter(cityName);
+        // alert("当前定位城市:"+cityName);
+        // }
+        // var myCity = new BMap.LocalCity();
+        // myCity.get(myFun); 
+    }
+
 
     render() {
         const { xczNews, location } = this.props;
@@ -373,7 +422,9 @@ export default class Area extends Component {
                             
                             }
                             </Select>
-                            <span className={`${globalStyles.authTheme} ${areaStyles.position}` }>&#xe669;</span>
+                            <span 
+                                onClick={ () => { this.handleCityLocation() } }
+                                className={`${globalStyles.authTheme} ${areaStyles.position}` }>&#xe669;</span>
                         </div>
                         <Select
                             showArrow={false}

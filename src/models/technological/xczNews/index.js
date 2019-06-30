@@ -7,6 +7,7 @@ import {
   getAreas,
   getAreasArticles,
   getAreasSearch,
+  getAreasLocation,
   getHeaderSearch,
   getCommonArticlesList,
 } from '@/services/technological/xczNews'
@@ -54,6 +55,7 @@ export default {
     isAreaSearch: false, // 是否正在搜索
     // defaultSearchAreaVal: '', // 默认搜索框的value值
     searchId: '', // 搜索的id值 
+    locationIp: '', // 地区定位的ip
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -395,11 +397,30 @@ export default {
         message.error(res.message)
         return
       }
-      console.log(res)
+      // console.log(res)
       yield put({
         type: 'updateDatas',
         payload: {
           areaSearchData: res.data,
+        }
+      })
+    },
+
+    // 获取地区定位的ip
+    * getAreasLocation({ payload = {} }, { select, call, put }) {
+      console.log(2222)
+      const locationIp = yield select((state) => getSelectState(state, 'locationIp'))
+      const res = yield call(getAreasLocation, { locationIp });
+      console.log(locationIp)
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
+      console.log(res, 'sss')
+      yield put({
+        type: 'uapdateDatas',
+        payload: {
+          
         }
       })
     },
