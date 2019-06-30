@@ -71,6 +71,11 @@ export default {
             searchList: {},
             provinceData: [],
             cityData: {},
+            provinceData: [],
+            cityData: {},
+            provinceValue: '', // 省级选择的value
+            cityValue: '', // 市级选择的value
+            area_ids: '', // 地区对应的id 
             defaultCityValue: 'cityTown',
             defaultProvinceValue: 'province', 
           }

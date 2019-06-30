@@ -311,6 +311,7 @@ export default class Area extends Component {
                     cityValue: id,
                     defaultCityValue: id,
                     provinceValue: parentId,
+                    defaultProvinceValue: parentId,
                     area_ids: id,
                     defaultArr: [],
                 }
