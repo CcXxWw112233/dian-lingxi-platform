@@ -299,8 +299,11 @@ export default class Area extends Component {
                     provinceValue: id,
                     defaultProvinceValue: id,
                     area_ids: id,
+                    defaultArr: [],
+                    defaultCityValue: 'cityTown',
                 }
             })
+            
         } else {
             dispatch({
                 type: 'xczNews/updateDatas',
@@ -309,9 +312,17 @@ export default class Area extends Component {
                     defaultCityValue: id,
                     provinceValue: parentId,
                     area_ids: id,
+                    defaultArr: [],
                 }
             })
+            
         }
+        dispatch({
+            type: 'xczNews/getAreasArticles',
+            payload: {
+
+            }
+        })
     }
 
 
@@ -345,7 +356,7 @@ export default class Area extends Component {
                             </Select>
                             <Select 
                                 value={ defaultCityValue }
-                                onChange={(value) => { this.handleCityChange(value, parentId) }}
+                                onChange={(value) => { this.handleCityChange(value) }}
                                 disabled={ provinceValue ? false : true }
                             >
                                 <Option value="cityTown" key="cityTown" disabled>城市</Option>

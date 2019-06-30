@@ -369,7 +369,7 @@ export default {
         type: 'updateDatas',
         payload: {
           searchList: res.data,
-          defaultArr: aaa
+          defaultArr: aaa,
         }
       })
 
