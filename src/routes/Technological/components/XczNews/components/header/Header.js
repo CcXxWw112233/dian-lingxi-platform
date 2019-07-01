@@ -27,12 +27,12 @@ export default class Header extends Component {
                 "path": "/technological/xczNews/authority",
                 "text": "权威"
             },
-            // {
-            //     "flag": 4,
-            //     "name": "area",
-            //     "path": "/technological/xczNews/area",
-            //     "text": "地区"
-            // },
+            {
+                "flag": 4,
+                "name": "area",
+                "path": "/technological/xczNews/area",
+                "text": "地区"
+            },
             {
                 "flag": 5,
                 "name": "dataBase",
@@ -43,7 +43,24 @@ export default class Header extends Component {
     }
     // onSearch 搜索框
     onSearch = () => {
-        this.getHeaderSearch()
+        const { dispatch } = this.props;
+        dispatch({
+            type: "xczNews/updateDatas",
+            payload: {
+                // contentVal: value,
+                onSearchButton: true,
+                hotFlag: false,
+                highRiseFlag: false,
+                authorityFlag: false, // 权威的开关
+                dataBaseFlag: false, // 资料库的开关
+                defaultArr: [],
+            }
+        })
+        dispatch({
+            type: "xczNews/getHeaderSearch",
+            payload: {
+            }
+        })
     }
 
     getHeaderSearch = () => {

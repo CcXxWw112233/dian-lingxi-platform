@@ -1,5 +1,6 @@
 import request from '@/utils/requestAxios'
 import { REQUEST_COMMON } from '@/globalset/js/constant'
+import { func } from 'prop-types';
 
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {
@@ -47,15 +48,6 @@ export async function getDataBase(params) {
     })
 }
 
-// 获取资料库详情的数据
-export async function getDataBaseDetail(params) {
-    return request({
-        url: `${REQUEST_COMMON}/articles/store/detail`,
-        method: "GET",
-        params,
-    })
-}
-
 // 获取地区的数据
 export async function getAreas(params) {
     return request({
@@ -64,6 +56,34 @@ export async function getAreas(params) {
         params,
     })
 }
+
+// 点击某地区的时候文章的接口
+export async function getAreasArticles(params) {
+    return request({
+        url: `${REQUEST_COMMON}/articles/areas`,
+        method: "GET",
+        params,
+    })
+}
+
+// 地区内容的搜索
+export async function getAreasSearch(params) {
+    return request({
+        url: `${REQUEST_COMMON}/common/areas/search`,
+        method: "GET",
+        params,
+    })
+}
+
+// 获取地区定位的ip
+export async function getAreasLocation(params) {
+    return request({
+        url: `${REQUEST_COMMON}/common/areas/ip`,
+        method: "GET",
+        params, 
+    })
+}
+
 
 // 顶部的全局搜索
 export async function getHeaderSearch(params) {
