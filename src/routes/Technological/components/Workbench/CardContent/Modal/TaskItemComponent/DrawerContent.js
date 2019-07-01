@@ -1112,6 +1112,11 @@ class DrawContent extends React.Component {
         })
       },
       onChange({ file, fileList, event }) {
+        if (file.size == 0) {
+          return false;
+        } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          return false;
+        }
         if (file.status === 'done' && file.response.code === '0') {
 
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {

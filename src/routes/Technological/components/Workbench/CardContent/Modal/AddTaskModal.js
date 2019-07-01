@@ -527,7 +527,7 @@ class AddTaskModal extends Component {
         isHasTaskTitle() && isHasSelectedProject() && start_time && due_time;
     }
 
-    console.log('ssss',{isInUploadFile}, currentSelectedFileFolder)
+    // console.log('ssss',{isInUploadFile}, currentSelectedFileFolder)
 
     if (taskType === 'MY_DOCUMENT') {
       isShouldNotDisableSubmitBtn = () =>
@@ -589,6 +589,11 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
+        if (file.size == 0) {
+          return false;
+        } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          return false;
+        }
         if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
           return false;
