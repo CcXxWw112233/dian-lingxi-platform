@@ -10,14 +10,15 @@ import { connect } from 'dva'
 }))
 export default class SearchArticlesList extends Component {
 
-    // 时间戳转换日期格式
-    getdate() {
-        var now = new Date(),
-            y = now.getFullYear(),
-            m = ("0" + (now.getMonth() + 1)).slice(-2),
-            d = ("0" + now.getDate()).slice(-2);
-        return y + "-" + m + "-" + d + " "
-    }
+    // 时间戳转换为日期格式
+    getdate(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y,M,D;
+        Y = date.getFullYear();
+        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1);
+        D = date.getDate() ;
+        return Y + "-" + M + "-" + D + " "
+     }
 
     // 分页加载操作
     onScroll = () => {

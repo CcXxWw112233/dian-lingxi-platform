@@ -366,7 +366,7 @@ export default class Area extends Component {
                             onChange={(value) => { this.handleProvinceChange(value) }} 
                         >
 
-                                <Option value="province" key="province" disabled>省份</Option>
+                                <Option value="province" key="province">全国</Option>
                                 {
                                     provinceData && provinceData.length && provinceData.map(item => {
                                         return (
@@ -379,7 +379,7 @@ export default class Area extends Component {
                         <Select 
                             value={ defaultCityValue }
                             onChange={(value) => { this.handleCityChange(value) }}
-                            disabled={ provinceValue ? false : true }
+                            disabled={ provinceValue && provinceValue != 'province' ? false : true }
                         >
                             <Option value="cityTown" key="cityTown" disabled>城市</Option>
                         {
@@ -390,7 +390,7 @@ export default class Area extends Component {
                                     )
                                 })
                             ) : (
-                                <Option value="cityTown" key="cityTown" disabled>城市</Option>
+                                <Option value="cityTown" key="cityTown" disabled>--</Option>
                             )
                         
                         }
