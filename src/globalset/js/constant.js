@@ -55,11 +55,11 @@ export const IM_HTTP_PATH = '/im/index.html'//`${window.location.protocol}//${wi
 
 export const INPUT_CHANGE_SEARCH_TIME = 300 //input输入查询的时间
 export const MESSAGE_DURATION_TIME = 3 //message弹框时间
-export const UPLOAD_FILE_SIZE = 100 //上传文件MB限制
+export const UPLOAD_FILE_SIZE = 99 //上传文件MB限制
 
 export const INT_REQUEST_OK = 0 //接口返回常量定义
 
-export const UPLOAD_PROCESS_FILE_SIZE = 100 //流程上传文件MB限制
+export const UPLOAD_PROCESS_FILE_SIZE = 99 //流程上传文件MB限制
 
 export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 

@@ -589,6 +589,7 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
+        console.log('sssss', fileList)
         if (file.size == 0) {
           return false;
         } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
@@ -598,18 +599,19 @@ class AddTaskModal extends Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
           return false;
         }
-        if(file.status == 'done' || file.status === 'error') {
-          that.setState({
-            isInUploadFile: false
-          })
-          if(!isInUploadFile) { //如果一个大文件上传的过程中，有个小文件很快上传结束，则加此状态修复
 
+        // 遍历filelist 如果有一个状态没返回（上传状态）,则设置isInUploadFile的状态true
+        let isInUploadFileFlag = false
+        for(let val of fileList) {
+          if(!val['response']) {
+            isInUploadFileFlag = true
           }
-        }else {
-          that.setState({
-            isInUploadFile: true
-          })
         }
+        that.setState({
+          isInUploadFile: isInUploadFileFlag
+        })
+
+        //设置filelist
         if (file.status === 'done' && file.response.code === '0') {
         } else if (
           file.status === 'error' ||
