@@ -527,7 +527,7 @@ class AddTaskModal extends Component {
         isHasTaskTitle() && isHasSelectedProject() && start_time && due_time;
     }
 
-    console.log('ssss',{isInUploadFile}, currentSelectedFileFolder)
+    // console.log('ssss',{isInUploadFile}, currentSelectedFileFolder)
 
     if (taskType === 'MY_DOCUMENT') {
       isShouldNotDisableSubmitBtn = () =>
@@ -542,7 +542,7 @@ class AddTaskModal extends Component {
       }
     }
 
-    console.log('ssss11', isShouldNotDisableSubmitBtnInDucument())
+    // console.log('ssss11', isShouldNotDisableSubmitBtnInDucument())
 
     const board_id = currentSelectedProject.board_id;
     const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
@@ -589,11 +589,16 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
+        if (file.size == 0) {
+          return false;
+        } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          return false;
+        }
         if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
           return false;
         }
-        if(file.status == 'done') {
+        if(file.status == 'done' || file.status === 'error') {
           that.setState({
             isInUploadFile: false
           })
@@ -644,7 +649,7 @@ class AddTaskModal extends Component {
         // that.props.filePreview({ id: file_resource_id, file_id: file_id });
       },
       onRemove(e) {
-        const id = e.id || (e.response.data && e.response.data.id);
+        const id = e.id || (e.response && e.response.data && e.response.data.id);
         if (!id) {
           return;
         }
