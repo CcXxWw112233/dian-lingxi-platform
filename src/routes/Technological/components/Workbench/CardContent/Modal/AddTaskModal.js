@@ -542,7 +542,7 @@ class AddTaskModal extends Component {
       }
     }
 
-    console.log('ssss11', isShouldNotDisableSubmitBtnInDucument())
+    // console.log('ssss11', isShouldNotDisableSubmitBtnInDucument())
 
     const board_id = currentSelectedProject.board_id;
     const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
@@ -593,7 +593,7 @@ class AddTaskModal extends Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
           return false;
         }
-        if(file.status == 'done') {
+        if(file.status == 'done' || file.status === 'error') {
           that.setState({
             isInUploadFile: false
           })
@@ -644,7 +644,7 @@ class AddTaskModal extends Component {
         // that.props.filePreview({ id: file_resource_id, file_id: file_id });
       },
       onRemove(e) {
-        const id = e.id || (e.response.data && e.response.data.id);
+        const id = e.id || (e.response && e.response.data && e.response.data.id);
         if (!id) {
           return;
         }
