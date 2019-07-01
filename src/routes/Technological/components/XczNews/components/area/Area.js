@@ -3,7 +3,7 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import areaStyles from './area.less'
-import { Select, Input, Spin, Empty } from 'antd'
+import { Select, Input, Spin, Empty, message } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SearchArticlesList from '../../common/SearchArticlesList'
 
@@ -31,8 +31,7 @@ export default class Area extends Component {
 
      // handleProvinceChange 省级的选择
      handleProvinceChange(value) {
-        const { dispatch, xczNews } = this.props;
-        const { cityData = {}, defaultCityValue } = xczNews;
+        const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
@@ -41,6 +40,7 @@ export default class Area extends Component {
                 defaultCityValue: 'cityTown',
                 area_ids: value,
                 defaultArr: [],
+                defaultSearchAreaVal: undefined,
             }
         })
         dispatch({
@@ -49,22 +49,20 @@ export default class Area extends Component {
 
             }
         })
-        console.log(value)
-        // console.log(value)
     }
 
 
     // handleCityChange 市级的选择
     handleCityChange(value) {
-        const { dispatch, xczNews } = this.props;
-        const { defaultCityValue } = xczNews;
+        const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
                 cityValue: value,
                 area_ids: value,
                 defaultCityValue: value,
-                defaultArr: []
+                defaultArr: [],
+                defaultSearchAreaVal: undefined,
             }
         })
         dispatch({
@@ -87,14 +85,16 @@ export default class Area extends Component {
     // handleSelectCity 每一个省级地区的点击选择事件
     handleSelectProvinceCity(id) {
         // console.log(id)
-        const { dispatch, xczNews } = this.props;
+        const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
             payload: {
                 area_ids: id,
                 provinceValue: id,
                 defaultProvinceValue: id,
+                defaultCityValue: 'cityTown',
                 defaultArr: [],
+                defaultSearchAreaVal: undefined,
             }
         })
         dispatch({
@@ -118,6 +118,7 @@ export default class Area extends Component {
                 defaultProvinceValue: parentId,
                 provinceValue: parentId,
                 defaultArr: [],
+                defaultSearchAreaVal: undefined,
             }
         })
         dispatch({
@@ -301,6 +302,8 @@ export default class Area extends Component {
                     area_ids: id,
                     defaultArr: [],
                     defaultCityValue: 'cityTown',
+                    defaultSearchAreaVal: undefined,
+                    
                 }
             })
             
@@ -314,6 +317,7 @@ export default class Area extends Component {
                     defaultProvinceValue: parentId,
                     area_ids: id,
                     defaultArr: [],
+                    defaultSearchAreaVal: undefined,
                 }
             })
             
@@ -329,52 +333,19 @@ export default class Area extends Component {
     // handleCityLocation 地区的定位
     handleCityLocation() {
         const { dispatch } = this.props;
-        console.log(1111)
-        dispatch({
-            type: 'xczNews/updateDatas',
-            payload: {
-                locationIp: '119.139.198.187'
-            }
-        })
         dispatch({
             type: 'xczNews/getAreasLocation',
             payload: {
 
             }
         })
+        dispatch({
+            type: 'xczNews/updateDatas',
+            payload: {
+                
+            }
+        })
     }
-
-    getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
-        } else {
-            console.log("该浏览器不支持获取地理位置。");
-        }
-    }
-
-    showPosition(position) {
-        console.log("纬度: " + position.coords.latitude + " 经度: " + position.coords.longitude);    
-    }
-
-    showError(error) {
-        console.log(error);
-    }
-    componentDidMount() {
-        console.log(window.navigator.geolocation)
-        this.getLocation()
-        // var map = new BMap.Map("allmap");
-        // var point = new BMap.Point(116.331398,39.897445);
-        // map.centerAndZoom(point,12);
-
-        // function myFun(result){
-        // var cityName = result.name;
-        // map.setCenter(cityName);
-        // alert("当前定位城市:"+cityName);
-        // }
-        // var myCity = new BMap.LocalCity();
-        // myCity.get(myFun); 
-    }
-
 
     render() {
         const { xczNews, location } = this.props;
@@ -404,33 +375,35 @@ export default class Area extends Component {
                                 }
 
                             </Select>
-                            <Select 
-                                value={ defaultCityValue }
-                                onChange={(value) => { this.handleCityChange(value) }}
-                                disabled={ provinceValue ? false : true }
-                            >
+                        <Select 
+                            value={ defaultCityValue }
+                            onChange={(value) => { this.handleCityChange(value) }}
+                            disabled={ provinceValue ? false : true }
+                        >
+                            <Option value="cityTown" key="cityTown" disabled>城市</Option>
+                        {
+                            select_city_key.indexOf(provinceValue) !== -1 ? (
+                                cityValueArr.map(item => {
+                                    return (
+                                        <Option value={item.id} key={item.id}>{item.name}</Option>
+                                    )
+                                })
+                            ) : (
                                 <Option value="cityTown" key="cityTown" disabled>城市</Option>
-                            {
-                                select_city_key.indexOf(provinceValue) !== -1 ? (
-                                    cityValueArr.map(item => {
-                                        return (
-                                            <Option value={item.id} key={item.id}>{item.name}</Option>
-                                        )
-                                    })
-                                ) : (
-                                    <Option value="cityTown" key="cityTown" disabled>城市</Option>
-                                )
-                            
-                            }
-                            </Select>
-                            <span 
-                                onClick={ () => { this.handleCityLocation() } }
-                                className={`${globalStyles.authTheme} ${areaStyles.position}` }>&#xe669;</span>
+                            )
+                        
+                        }
+                        </Select>
+                        <span 
+                            onClick={ () => { this.handleCityLocation() } }
+                            className={`${globalStyles.authTheme} ${areaStyles.position}` }>&#xe669;
+                        </span>
                         </div>
                         <Select
                             showArrow={false}
                             showSearch={true}
-                            // value={defaultSearchAreaVal}
+                            value={defaultSearchAreaVal}
+
                             placeholder="搜索地区"
                             notFoundContent={isAreaSearch ? <Spin size="small" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                             filterOption={false}
@@ -442,7 +415,7 @@ export default class Area extends Component {
                                 areaSearchData.map(item => {
                                    return (
                                     <Option 
-                                        onClick={() => { this.areaSelectOption(item.deep, item.id, item.parent_id) }}
+                                        onClick={() => { this.areaSelectOption(item.deep, item.id, item.parent_id, item.name) }}
                                         value={item.id} key={item.id}>{item.name}</Option>
                                    ) 
                                 })

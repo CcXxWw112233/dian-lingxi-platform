@@ -76,9 +76,9 @@ export async function getAreasSearch(params) {
 }
 
 // 获取地区定位的ip
-export async function getAreasLocation() {
+export async function getAreasLocation(params) {
     return request({
-        url: `${REQUEST_COMMON}common/areas/ip`,
+        url: `${REQUEST_COMMON}/common/areas/ip`,
         method: "GET",
         params, 
     })

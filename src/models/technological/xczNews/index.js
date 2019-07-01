@@ -53,9 +53,10 @@ export default {
     areaSearchValue: '', // 地区搜索的内容
     areaSearchData: [], // 地区搜索的数据
     isAreaSearch: false, // 是否正在搜索
-    // defaultSearchAreaVal: '', // 默认搜索框的value值
+    defaultSearchAreaVal: undefined, // 默认搜索框的value值
     searchId: '', // 搜索的id值 
     locationIp: '', // 地区定位的ip
+    locationDataObj: {}, // 定位信息请求回来的数据
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -413,19 +414,34 @@ export default {
 
     // 获取地区定位的ip
     * getAreasLocation({ payload = {} }, { select, call, put }) {
-      console.log(2222)
-      const locationIp = yield select((state) => getSelectState(state, 'locationIp'))
-      const res = yield call(getAreasLocation, { locationIp });
-      console.log(locationIp)
+      const locationDataObj = yield select((state) => getSelectState(state, 'locationDataObj'))
+      if(locationDataObj && locationDataObj.length) return
+      const res = yield call(getAreasLocation, {});
       if(!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
-      console.log(res, 'sss')
+      let locationData = res.data.child;
+      console.log(locationData)
       yield put({
-        type: 'uapdateDatas',
+        type: 'updateDatas',
         payload: {
-          
+          provinceValue: locationData.parent_id,
+          defaultProvinceValue: locationData.parent_id,
+          defaultCityValue: locationData.id,
+          cityValue: locationData.id,
+          area_ids: locationData.id,
+          defaultArr: []
+        }
+      })
+      const delay = (ms) => new Promise(resolve => {
+        setTimeout(resolve, ms)
+      })
+      yield call(delay, 500)
+      yield put({
+        type: 'getAreasArticles',
+        payload: {
+
         }
       })
     },
