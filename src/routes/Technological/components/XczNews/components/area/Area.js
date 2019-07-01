@@ -3,9 +3,10 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import areaStyles from './area.less'
-import { Select, Input, Spin, Empty, message } from 'antd'
+import { Select, Input, Spin } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SearchArticlesList from '../../common/SearchArticlesList'
+import NoMatch from './NoMatch'
 
 const { Option } = Select;
 const Search = Input.Search;
@@ -405,7 +406,7 @@ export default class Area extends Component {
                             value={defaultSearchAreaVal}
 
                             placeholder="搜索地区"
-                            notFoundContent={isAreaSearch ? <Spin size="small" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                            notFoundContent={isAreaSearch ? <Spin size="small" /> : <NoMatch />}
                             filterOption={false}
                             style={{width: 148, cursor: 'auto'}}
                             onSearch={(value) => { this.handleAreaSearch(value) }}
