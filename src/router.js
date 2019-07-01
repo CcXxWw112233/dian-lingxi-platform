@@ -185,7 +185,7 @@ const Routers = function ({ history, app }) {
         import('./models/modal')
       ],
       component: () => import('./routes/TeamShow/'),
-    },, {
+    }, {
       path: '/noviceGuide',
       models: () => [import('./models/noviceGuide')],
       component: () => import('./routes/NoviceGuide'),
