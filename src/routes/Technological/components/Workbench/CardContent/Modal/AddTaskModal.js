@@ -589,7 +589,6 @@ class AddTaskModal extends Component {
         }
       },
       onChange({ file, fileList, event }) {
-        console.log('sssss', fileList)
         if (file.size == 0) {
           return false;
         } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
