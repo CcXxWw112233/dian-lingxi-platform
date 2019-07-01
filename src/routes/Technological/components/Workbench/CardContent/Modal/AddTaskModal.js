@@ -538,7 +538,7 @@ class AddTaskModal extends Component {
       if(taskType === 'MY_DOCUMENT') {
         return !isInUploadFile
       }else {
-        return false
+        return true
       }
     }
 
