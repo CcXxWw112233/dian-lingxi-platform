@@ -15,6 +15,12 @@ class DrawContentModal extends React.Component {
   componentWillReceiveProps(nextProps) {}
 
   onCancel() {
+    this.props.dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent: {}
+      }
+    })
     this.props.setDrawerVisibleClose()
   }
 
