@@ -33,13 +33,13 @@ export default class SearchArticlesList extends Component {
         const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
         // console.log(windowHeight, '浏览器视口高度')
 
-        const { dispatch, xczNews } = this.props;
+        const { dispatch, xczNews, location } = this.props;
         const { is_onscroll_do_paging, page_no, searchList = {}, defaultArr = [] } = xczNews;
         let new_page_no = page_no || 0;   
 
         // scrollTop >= (scrollHeight - windowHeight)
         if (scrollHeight - 40 <= (scrollTop + windowHeight) ) {
-            console.log('page_no', page_no)
+            // console.log('page_no', page_no)
 
             if(!is_onscroll_do_paging) {
                 return false
@@ -53,14 +53,25 @@ export default class SearchArticlesList extends Component {
                     // defaultArr: defaultArr.concat([...defaultArr], [...searchList.records])
                 }
             })
-            setTimeout(() => {
-                dispatch({
-                    type: 'xczNews/getHeaderSearch',
-                    payload: {
-                        
-                    }
-                })
-            }, 300)
+            if (location.pathname != "/technological/xczNews/area") {
+                setTimeout(() => {
+                    dispatch({
+                        type: 'xczNews/getHeaderSearch',
+                        payload: {
+                            
+                        }
+                    })
+                }, 300)
+            } else {
+                setTimeout(() => {
+                    dispatch({
+                        type: 'xczNews/getAreasArticles',
+                        payload: {
+                            
+                        }
+                    })
+                }, 300)
+            }
             
         }
     }

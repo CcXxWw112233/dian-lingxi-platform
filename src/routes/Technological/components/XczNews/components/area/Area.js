@@ -42,6 +42,7 @@ export default class Area extends Component {
                 area_ids: value,
                 defaultArr: [],
                 defaultSearchAreaVal: undefined,
+                page_no: 1,
             }
         })
         dispatch({
@@ -64,6 +65,7 @@ export default class Area extends Component {
                 defaultCityValue: value,
                 defaultArr: [],
                 defaultSearchAreaVal: undefined,
+                page_no: 1,
             }
         })
         dispatch({
@@ -96,6 +98,7 @@ export default class Area extends Component {
                 defaultCityValue: 'cityTown',
                 defaultArr: [],
                 defaultSearchAreaVal: undefined,
+                page_no: 1,
             }
         })
         dispatch({
@@ -120,6 +123,7 @@ export default class Area extends Component {
                 provinceValue: parentId,
                 defaultArr: [],
                 defaultSearchAreaVal: undefined,
+                page_no: 1,
             }
         })
         dispatch({
@@ -242,6 +246,7 @@ export default class Area extends Component {
             payload: {
                 areaSearchValue: value,
                 isAreaSearch: false,
+                page_no: 1,
             }
         })
         dispatch({
@@ -260,6 +265,7 @@ export default class Area extends Component {
             payload: {
                 areaSearchValue: value,
                 isAreaSearch: true,
+                page_no: 1,
             }
         })
         const { timer } = this.state;
@@ -270,9 +276,7 @@ export default class Area extends Component {
             timer: setTimeout(() => {
                 this.getAreaSearch(value)
             }, 500)
-        })
-        
-        
+        })     
     }
 
     // areaChgVal 地区输入变化
@@ -284,7 +288,8 @@ export default class Area extends Component {
             payload: {
                 areaSearchData: [],
                 isAreaSearch: false,
-                searchId: value
+                searchId: value,
+                page_no: 1,
             }
         })
     }
@@ -304,7 +309,7 @@ export default class Area extends Component {
                     defaultArr: [],
                     defaultCityValue: 'cityTown',
                     defaultSearchAreaVal: undefined,
-                    
+                    page_no: 1,
                 }
             })
             
@@ -319,6 +324,7 @@ export default class Area extends Component {
                     area_ids: id,
                     defaultArr: [],
                     defaultSearchAreaVal: undefined,
+                    page_no: 1,
                 }
             })
             
