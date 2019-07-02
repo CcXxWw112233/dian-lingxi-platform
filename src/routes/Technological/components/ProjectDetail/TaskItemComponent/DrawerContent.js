@@ -66,8 +66,23 @@ class DrawContent extends React.Component {
     this.setState({
       brafitEditHtml: description
     })
+  }
+  componentWillReceiveProps(nextProps) {
+    const { datas: { drawContent = {}} } = nextProps.model
+    let { description } = drawContent
+    this.setState({
+      brafitEditHtml: description
+    })
+    this.initSetAttachmentFileList(nextProps)
+  }
+  initSetAttachmentFileList(props) {
+    const { datas: { drawContent = {}} } = props.model
+    let { attachment_data = [] } = drawContent
+    const attachment_fileList_local = this.state.attachment_fileList || []
+    if(attachment_data.length == attachment_fileList_local.length) {
+      return
+    }
 
-    //任务附件
     let attachment_fileList = []
     for(let i = 0; i < attachment_data.length; i++) {
       if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
@@ -78,13 +93,6 @@ class DrawContent extends React.Component {
     }
     this.setState({
       attachment_fileList
-    })
-  }
-  componentWillReceiveProps(nextProps) {
-    const { datas: { drawContent = {}} } = nextProps.model
-    let { description } = drawContent
-    this.setState({
-      brafitEditHtml: description
     })
   }
   //firstLine -------start
@@ -624,11 +632,12 @@ class DrawContent extends React.Component {
       this.props.filePreview({id: file_resource_id, file_id})
     }
   }
-  attachmentItemOpera({type, data}, e) {
+  attachmentItemOpera({type, data = {}}, e) {
     e.stopPropagation()
-    const attachment_id = data.id || (data.response.data && data.response.data.attachment_id)
-    const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
+    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
     if(!attachment_id){
+      message.warn('上传中，请稍后...')
       return
     }
     if(type == 'remove') {
@@ -641,6 +650,8 @@ class DrawContent extends React.Component {
     const that = this
     const { attachment_fileList } = this.state
     const atta_arr = [...attachment_fileList]
+    const { datas: { drawContent = {} }} = this.props.model
+
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
       zIndex: 1007,
@@ -663,6 +674,14 @@ class DrawContent extends React.Component {
               }
               that.setState({
                 attachment_fileList: atta_arr
+              })
+              const drawContentNew = {...drawContent}
+              drawContentNew['attachment_data'] = atta_arr
+              that.props.dispatch({
+                type: 'projectDetailTask/updateDatas',
+                payload: {
+                  drawContent: drawContentNew
+                }
               })
               resolve()
             }
@@ -1103,7 +1122,11 @@ class DrawContent extends React.Component {
         }
         // console.log('event', file)
         if (file.status === 'done' && file.response.code === '0') {
-
+          for(let i=0; i < fileList.length; i++) {
+            if(file.uid == fileList[i].uid) {
+              fileList.splice(i, 1, {...file, ...file.response.data})
+            }
+          }
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
           for(let i=0; i < fileList.length; i++) {
             if(file.uid == fileList[i].uid) {
@@ -1123,10 +1146,12 @@ class DrawContent extends React.Component {
         that.setState({
           attachment_fileList: fileList
         })
-        drawContent['attachment_data'] = fileList
-        that.props.updateDatasTask({
-          drawContent
-        })
+
+        setTimeout(function () {
+          const drawContentNew = {...drawContent}
+          drawContentNew['attachment_data'] = fileList
+          that.props.updateDatasTask({ drawContent: drawContentNew})
+        }, 300)
       },
       onPreview(e, a) {
         const file_name = e.name
@@ -1157,7 +1182,7 @@ class DrawContent extends React.Component {
         }
       },
       onRemove(e) {
-        const attachment_id = e.id || (e.response.data && e.response.data.attachment_id)
+        const attachment_id = e.id || (e.response && e.response.data && e.response.data.attachment_id)
         if(!attachment_id){
           return
         }
@@ -1518,12 +1543,13 @@ class DrawContent extends React.Component {
             </Upload>
             <div className={DrawerContentStyles.attach_file_list}>
               {attachment_fileList.map((value, key) => {
-                const { name, lastModified, create_time, } = value
+                const { name, lastModified, create_time, file_id, uid} = value
+                const now_time = new Date().getTime()
                 return(
-                  <div className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
+                  <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
                     <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
-                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || lastModified, '/', true)}</div>
+                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value})}>&#xe7f1;</div>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value})}>&#xe70f;</div>
                   </div>

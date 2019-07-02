@@ -645,9 +645,10 @@ class DrawContent extends React.Component {
   }
   attachmentItemOpera({type, data}, e) {
     e.stopPropagation()
-    const attachment_id = data.id || (data.response.data && data.response.data.attachment_id)
-    const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
+    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
     if(!attachment_id){
+      message.warn('上传中，请稍后...')
       return
     }
     if(type == 'remove') {
@@ -1118,7 +1119,11 @@ class DrawContent extends React.Component {
           return false;
         }
         if (file.status === 'done' && file.response.code === '0') {
-
+          for(let i=0; i < fileList.length; i++) {
+            if(file.uid == fileList[i].uid) {
+              fileList.splice(i, 1, {...file, ...file.response.data})
+            }
+          }
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
           for(let i=0; i < fileList.length; i++) {
             if(file.uid == fileList[i].uid) {
@@ -1522,12 +1527,13 @@ class DrawContent extends React.Component {
             <div className={DrawerContentStyles.attach_file_list}>
               {attachment_fileList.map((value, key) => {
                 if(!value) return null
-                const { name, lastModified, create_time, } = value
+                const { name, lastModified, create_time, file_id, uid} = value
+                const now_time = new Date().getTime()
                 return(
-                  <div className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
+                  <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
                     <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
-                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || lastModified, '/', true)}</div>
+                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value})}>&#xe7f1;</div>
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value})}>&#xe70f;</div>
                   </div>
