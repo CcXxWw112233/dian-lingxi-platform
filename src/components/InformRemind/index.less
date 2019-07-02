@@ -1,5 +1,31 @@
-.info_wrapper {
-    .ant-modal-title {
-        text-align: center !important;
+.wrapperInfo{
+    min-height: 175px;
+    position: relative;
+    z-index: 1100;
+}
+
+.add_header {
+    width: 76px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    .icon {
+        font-size: 14px;
+        color: #1890FF;
+    }
+    .text {
+        font-size: 14px;
+        color: #1890FF;
+        margin-left: 4px;
+    }
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    .del {
+        cursor: pointer;
+        &:hover {
+            color: #1890FF;
+        }
     }
 }

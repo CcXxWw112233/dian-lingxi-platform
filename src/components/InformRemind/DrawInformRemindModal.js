@@ -4,16 +4,16 @@ import { Modal, Form } from 'antd'
 class DrawInformRemindModal extends Component {
 
     render() {
-        const { visible, title, width, zIndex, footer, overInner, wrapClassName } = this.props;
+        const { visible, title, width, zIndex, footer, overInner, mask } = this.props;
         return(
             <Modal
-                title={title} 
+                title={<div style={{textAlign:'center', fontSize: 16, fontWeight: 500, color: '#000'}}>{title}</div>} 
                 visible={visible}
                 width={width}
                 zIndex={zIndex}
                 footer={footer}
+                mask={mask}
                 destroyOnClose
-                wrapClassName={wrapClassName}
             >
                 { overInner }
             </Modal>

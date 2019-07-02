@@ -3,7 +3,7 @@ import { Tooltip, Modal } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import DrawInformRemindModal from './DrawInformRemindModal'
 import DrawerInformContent from './DrawerInformContent'
-import infoStyle from './index.less'
+import infoRemindStyle from './index.less'
 
 export default class index extends Component {
 
@@ -21,18 +21,6 @@ export default class index extends Component {
         const { visible, title } =this.state;
         return (
             <>
-                <DrawInformRemindModal
-                    title={title}
-                    visible={visible}
-                    width={558}
-                    zIndex={1100}
-                    maskClosable={false}
-                    destroyOnClose
-                    footer={null}
-                    wrapClassName={`${infoStyle.info_wrapper}`}
-                    // onCancel={this.onCancel.bind(this)}
-                    overInner={<DrawerInformContent />}
-                />
                 <Tooltip placement="top" title="通知提醒" arrowPointAtCenter>
                     <span 
                         className={`${globalStyles.authTheme} ${globalStyles.inform_remind}`}
@@ -41,6 +29,20 @@ export default class index extends Component {
                         &#xe637;
                     </span>
                 </Tooltip>
+                <div className={infoRemindStyle.wrapperInfo}>
+                    <DrawInformRemindModal
+                        title={title}
+                        visible={visible}
+                        width={560}
+                        zIndex={1007}
+                        maskClosable={false}
+                        destroyOnClose
+                        footer={null}
+                        mask={true}
+                        // onCancel={this.onCancel.bind(this)}
+                        overInner={<DrawerInformContent />}
+                    />
+                </div>
             </>
         )
     }
