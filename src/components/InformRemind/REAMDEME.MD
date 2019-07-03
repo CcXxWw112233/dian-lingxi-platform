@@ -13,3 +13,27 @@
 3. 通知提醒默认失效的状态
 
 4. 通知提醒默认已经实现提醒的状态
+
+# 获取事件列表
+
+- url: "http://localhost/api/projects/remind/trigger/list/${id}", // 1,2,3
+
+- 返回的数据
+
+```json
+"data": [
+    {
+      "id": "1",
+      "type_code": "task:start:before",
+      "type_name": "任务开始前",
+      "remind_item": "1",
+      "remind_edit_type": "1",
+      "create_time": "1560331140"
+    },
+]
+```
+- 根据 remind_edit_type 来判断是否显示后两项的选项内容
+
+# 选择框的数据思考
+
+`remind_time_type`: m/h/d 分钟/小时/天
