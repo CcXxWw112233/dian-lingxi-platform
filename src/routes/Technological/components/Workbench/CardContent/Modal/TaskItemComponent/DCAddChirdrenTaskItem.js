@@ -89,7 +89,8 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     executors[0] = {
       user_id,
       user_name: full_name,
-      avatar: avatar
+      avatar: avatar,
+      name: full_name,
     }
     this.props.addTaskExecutor({
       card_id,
