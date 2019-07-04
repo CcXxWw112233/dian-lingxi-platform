@@ -37,3 +37,17 @@
 # 选择框的数据思考
 
 `remind_time_type`: m/h/d 分钟/小时/天
+
+# 设置提醒的接口
+
+url: "http://192.168.1.68:8234/api/projects/remind"
+
+参数 remindParam
+{
+  rela_id: 类型id 任务 日程 节点 文件
+  rela_type: 类型 1: 任务 2: 日程 3: 节点 4: 文件
+  remind_time_type: 提醒的时间类型 m h d datetime 自定义时间
+  remind_time_value: 提醒时间值, 如果是自定义时间传时间戳
+  remind_trigger 提醒的触发器类型 type_code: "task:start:before"
+  users: [待提醒的用户]
+}

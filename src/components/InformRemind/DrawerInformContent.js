@@ -15,28 +15,34 @@ class DrawerInformContent extends Component {
         
     }
 
-    // 点击添加提醒的事件
-    handleAdd() {
+    /**
+     * 点击添加提醒的方法 AddRemind
+     * 1. 需要在当前弹框内追加一条信息
+     */
+    handleAddRemind() {
         // console.log(1111)
         const { dispatch, informRemind } = this.props;
-        const { is_history } = informRemind;
+        const { triggerList = [] } = informRemind;
         dispatch({
-            type: 'informRemind/updateDatas',
+            type: "informRemind/updateDatas",
             payload: {
-                is_history: !is_history
+                is_add_remind: true,
+                defaultTriggerVal: triggerList[0].type_code,
+                defaultRemindTimeVal: '',
+                defaultTextTermVal: '',
             }
         })
+        
     }
 
     render() {
-        const { dispatch, informRemind } = this.props;
         return (
             <>
-                <div className={infoRemindStyle.add_header} onClick={ () => { this.handleAdd() } }>
+                <div className={infoRemindStyle.add_header} onClick={ () => { this.handleAddRemind() } }>
                     <Icon className={infoRemindStyle.icon} type="plus-circle" />
                     <span className={infoRemindStyle.text}>添加提醒</span>
                 </div>
-                <RenderContent { ...informRemind } />
+                <RenderContent />
             </>
         )
     }

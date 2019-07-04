@@ -19,13 +19,30 @@
     }
 }
 
-.content {
-    display: flex;
-    justify-content: space-between;
+.content { 
+    cursor: pointer;
+    .slip{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        cursor: pointer;
+        .select {
+
+        }
+    }
     .del {
         cursor: pointer;
         &:hover {
             color: #1890FF;
         }
+    }
+    .overdue {
+        color: #FAAD14;
+        cursor: pointer;
+    }
+    .checked {
+        color: #52C41A;
+        cursor: pointer;
     }
 }
