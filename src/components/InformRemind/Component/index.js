@@ -2,10 +2,11 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import RenderHistory from './RenderHistory'
+import infoRemindStyle from '../index.less'
 
 
-@connect(({informRemind = []}) => ({
-    informRemind,
+@connect(({informRemind: { historyList }}) => ({
+  historyList,
 }))
 export default class RenderContent extends Component {
 
@@ -44,7 +45,9 @@ export default class RenderContent extends Component {
         type: 'informRemind/updateDatas',
         payload: {
           currentId: id,
-          is_edit_status: 1,
+          is_edit_status: 1, // 更改编辑的状态
+          is_icon_status: 4, // 更改小图标的状态
+          remind_trigger: code, // 更改选项Option的类型
         }
       })
   }
@@ -73,33 +76,16 @@ export default class RenderContent extends Component {
       })
     }
 
-    renderContent() {
-        const { is_show_other_select, is_show_data_picker } = this.state;
-        const { informRemind } = this.props;
-        const { 
-          triggerList = [], diff_text_term = [], diff_remind_time = [], historyList = [], is_history, is_edit_status, currentId,
-          is_icon_status,
-        } = informRemind;
-        return is_history ? <RenderHistory  
-                              is_show_other_select={is_show_other_select}
-                              is_show_data_picker={is_show_data_picker}
-                              is_edit_status={is_edit_status}
-                              triggerList={triggerList}
-                              diff_text_term={diff_text_term}
-                              diff_remind_time={diff_remind_time}
-                              historyList={historyList}
-                              is_edit_status={is_edit_status}
-                              currentId={currentId}
-                              is_icon_status={is_icon_status}
-                              handleTriggerChg={this.handleTriggerChg}
-                            /> : null
-    }
-
     render() {
+      const { historyList = [] } = this.props
         return (
-            <>
-                { this.renderContent() }
-            </>
+            <div className={infoRemindStyle.content}>
+                { historyList.map(value => {
+                  const { id } = value
+                  return <RenderHistory itemValue={value} key={id} />
+                 }) 
+                }
+            </div>
         )
     }
 }

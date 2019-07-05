@@ -19,7 +19,8 @@
     }
 }
 
-.content { 
+.content {
+    position: relative; 
     cursor: pointer;
     .slip{
         display: flex;
@@ -32,6 +33,12 @@
             background: palegoldenrod;
             .slip_hover {
                 display: block;
+            }
+            .overdue {
+                display: none;
+            }
+            .checked {
+                display: none;
             }
         }
         .slip_hover {
@@ -46,11 +53,17 @@
         }
     }
     .overdue {
+        // display: block;
         color: #FAAD14;
         cursor: pointer;
     }
     .checked {
+        // display: block;
         color: #52C41A;
         cursor: pointer;
+    }
+    .icon {
+        position: absolute;
+        right: 0;
     }
 }
