@@ -25,12 +25,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 16px;
-        cursor: pointer;
-        .select {
-
+        line-height: 48px;
+        // padding-bottom: 16px;
+        cursor: pointer; 
+        &:hover {
+            background: palegoldenrod;
+            .slip_hover {
+                display: block;
+            }
+        }
+        .slip_hover {
+            display: none;
         }
     }
+    
     .del {
         cursor: pointer;
         &:hover {

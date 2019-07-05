@@ -8,12 +8,31 @@ import { getModelSelectState } from '@/models/utils'
 export default {
     namespace: 'informRemind',
     state: {
+      diff_remind_time: [
+        { remind_time_value: 1 },
+        { remind_time_value: 2 },
+        { remind_time_value: 3 },
+        { remind_time_value: 4 },
+        { remind_time_value: 5 },
+        { remind_time_value: 6 },
+        { remind_time_value: 7 },
+        { remind_time_value: 8 },
+        { remind_time_value: 9 },
+        { remind_time_value: 10 },
+      ], // 1-60不同的时间段
+      diff_text_term: [
+        { remind_time_type: 'm', txtVal: '分钟' },
+        { remind_time_type: 'h', txtVal: '小时' },
+        { remind_time_type: 'd', txtVal: '天数' },
+      ], // 匹配不同的字段类型
       defaultTriggerVal: '', // 默认任务事件的选择框value
       defaultRemindTimeVal: '1', // 默认选择时间的value
       defaultTextTermVal: 'm', // 默认选择不同字段的value
       is_history: false, // 是否存在历史记录的列表 默认为 false 不存在
       historyList: [], // 保存设置的历史记录提醒
       triggerList: [], // 每个对应的选项的类型列表
+      currentId: '', // 当前列表的id,
+      is_edit_status: 0, // 是否是在编辑状态 默认为 0 不可编辑 , 1 为可以编辑
       is_add_remind: false, // 是否进行点击操作 默认为 false 没有点击
       is_overdue_time: false, // 是否是过期时间 默认为 false 没有过期以及是正常事件
       is_notified_time: false, // 是否已经通知过了 默认为 false 没有通知
@@ -33,7 +52,6 @@ export default {
            type: 'updateDatas', 
            payload: {
             triggerList: [],
-            remind_trigger: '',
            }
          })
         })
@@ -42,6 +60,7 @@ export default {
     },
 
     effects: {
+
       // 获取事件类型列表的方法
       * getTriggerList({ payload = {} }, { select, call, put }) {
         const { rela_type } = payload
@@ -53,11 +72,11 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            defaultTriggerVal: res.data && res.data[0].type_code,
             triggerList: res.data,
           }
         })
       },
+
       // 获取是否存在历史记录的方法
       * getTriggerHistory({ payload = {} }, { select, call, put }) {
         const { rela_id } = payload
@@ -71,46 +90,13 @@ export default {
           payload: {
             historyList: res.data, // 将结果赋值给一个列表
             is_history: res.data && res.data.length ? true : false,
-            // is_history: true,
-            is_icon_status: res.data && res.data.length && res.data[0].status, // 将获取的列表状态赋值给对应的内容
-            historyList: res.data,
-            defaultTriggerVal: res.data[0].remind_trigger,
-            defaultRemindTimeVal: res.data[0].remind_time_value,
-            defaultTextTermVal: res.data[0].remind_time_type,
           }
         })
       },
 
-      // 设置通知提醒的事件
-      * setRemindInformation({ payload = {} }, { select, call, put }) {
-        console.log(11111)
-        const rela_id = yield select(getModelSelectState('informRemind', 'rela_id'))
-        const rela_type = yield select(getModelSelectState('informRemind', 'rela_type'))
-        const remind_time_type = yield select(getModelSelectState('informRemind', 'remind_time_type'))
-        const remind_time_value = yield select(getModelSelectState('informRemind', 'remind_time_value'))
-        const remind_trigger = yield select(getModelSelectState('informRemind', 'remind_trigger'))
-        const users = yield select(getModelSelectState('informRemind', 'users'))
-        const remindParam = {
-          rela_id,
-          rela_type,
-          remind_time_type,
-          remind_time_value,
-          remind_trigger,
-          users
-        }
-        console.log(remindParam, 'lll')
-        const res = yield call(setRemindInformation, {...remindParam})
-        if(!isApiResponseOk(res)) {
-          message.error(res.message)
-          return
-        }
-        console.log(res)
-      },
 
     },
     
-
-
     reducers: {
       updateDatas(state, action) {
       // console.log(state, action)
