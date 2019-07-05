@@ -37,14 +37,6 @@ export default class index extends Component {
                 rela_id
             }
         })
-        // 3. 更改仓库中的id字段, 以及事件的类型
-        dispatch({
-            type: "informRemind/updateDatas",
-            payload: {
-                rela_id: rela_id,
-                rela_type: rela_type,
-            }
-        })
         // 改变弹窗的显示隐藏
         this.setState({
             visible: true

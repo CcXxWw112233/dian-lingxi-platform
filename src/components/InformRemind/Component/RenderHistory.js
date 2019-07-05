@@ -46,10 +46,6 @@ export default class RenderHistory extends Component {
           type: 'informRemind/updateDatas',
           payload: {
             historyList: new_history_list,
-            currentId: id,
-            // is_edit_status: 1, // 更改编辑的状态
-            // is_icon_status: 4, // 更改小图标的状态
-            // remind_trigger: code, // 更改选项Option的类型
           }
         })
     }
@@ -58,7 +54,7 @@ export default class RenderHistory extends Component {
         const {
             triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}
         } = this.props;
-        const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status,  is_icon_status, is_edit_status } = itemValue
+        const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status } = itemValue
         return (
             <div className={infoRemindStyle.slip}
             >
@@ -117,34 +113,28 @@ export default class RenderHistory extends Component {
               </div>
               {/* 鼠标的hover事件 控制删除小图标的显示隐藏 */}
               {
-                is_edit_status == 0 ? (
-                  <div className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
-                      <Tooltip placement="top" title="删除" arrowPointAtCenter>
-                          <Icon type="delete" className={infoRemindStyle.del}/>
-                      </Tooltip>
-                  </div>
+                 
+                is_edit_status ? (
+                    <Button className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
-                    is_edit_status? (
-                        <Button className={infoRemindStyle.icon} type="primary">确定</Button>
-                    ) : (
-                      <div className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
-                          <Tooltip placement="top" title="删除" arrowPointAtCenter>
-                              <Icon type="delete" className={infoRemindStyle.del}/>
-                          </Tooltip>
-                      </div>
-                    )
+                    <div className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
+                        <Tooltip placement="top" title="删除" arrowPointAtCenter>
+                            <Icon type="delete" className={infoRemindStyle.del}/>
+                        </Tooltip>
+                    </div>
                 )
+                
               }
               {/* 显示不同状态的小图标 */}
               {
-                  status == 3 ? (
+                !is_edit_status &&  status == 3 ? (
                       <div>
                           <Tooltip placement="top" title="已失效" arrowPointAtCenter>
                             <Icon type="exclamation-circle" className={`${infoRemindStyle.overdue} ${infoRemindStyle.icon}`} />
                           </Tooltip>
                       </div>
                   ) : (
-                      status == 2 ? (
+                    !is_edit_status &&  status == 2 ? (
                           <div>
                               <Tooltip placement="top" title="已提醒" arrowPointAtCenter>
                                 <Icon type="check-circle" className={`${infoRemindStyle.checked} ${infoRemindStyle.icon}`}/>
