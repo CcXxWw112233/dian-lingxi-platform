@@ -175,7 +175,7 @@ export default {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF } = payload //是否需要重新读取文档
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -184,13 +184,22 @@ export default {
           }
         })
         if(isNeedPreviewFile) {
-          yield put({
-            type: 'filePreview',
-            payload: {
-              id: res.data[0].file_resource_id,
-              file_id: res.data[0].file_id
-            }
-          })
+          if(!isPDF) {
+            yield put({
+              type: 'filePreview',
+              payload: {
+                id: res.data[0].file_resource_id,
+                file_id: res.data[0].file_id
+              }
+            })
+          }else {
+            yield put({
+              type: 'getFilePDFInfo',
+              payload: {
+                id: res.data[0].file_id,
+              }
+            })
+          }
         }
       }else{
 

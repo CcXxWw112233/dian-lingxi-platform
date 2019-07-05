@@ -529,7 +529,7 @@ export default modelExtend(projectDetail, {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF } = payload //是否需要重新读取文档
       const breadcrumbList = yield select(selectBreadcrumbList)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
 
@@ -543,13 +543,22 @@ export default modelExtend(projectDetail, {
           }
         })
         if(isNeedPreviewFile) {
-          yield put({
-            type: 'filePreview',
-            payload: {
-              id: res.data[0].file_resource_id,
-              file_id: res.data[0].file_id
-            }
-          })
+          if(!isPDF) {
+            yield put({
+              type: 'filePreview',
+              payload: {
+                id: res.data[0].file_resource_id,
+                file_id: res.data[0].file_id
+              }
+            })
+          }else {
+            yield put({
+              type: 'getFilePDFInfo',
+              payload: {
+                id: res.data[0].file_id,
+              }
+            })
+          }
           yield put({
             type: 'getFileList',
             payload: {

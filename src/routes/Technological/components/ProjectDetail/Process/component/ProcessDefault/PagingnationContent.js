@@ -157,6 +157,7 @@ export default class PagingnationContent extends React.Component {
     });
   }
   render() {
+    const { datas: { processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
     const { clientHeight, listData = [], status } = this.props
     const { loadMoreDisplay, loadMoreText } = this.state
     const maxContentHeight = clientHeight - 108 - 150
@@ -174,8 +175,21 @@ export default class PagingnationContent extends React.Component {
             bordered={false}
             style={{backgroundColor: '#f5f5f5', marginTop: 4}}>
             {listData.map((value, key) => {
+              const { id } = value
               return (
-                <Panel header={<FlowsInstanceItem itemValue={value} status={status} dispatch={this.props.dispatch} processItemClick={this.processItemClick.bind(this)}/>} key={key} style={customPanelStyle} />
+                <Panel key={id}
+                       style={customPanelStyle}
+                       header={
+                  <FlowsInstanceItem
+                   itemValue={value}
+                   status={status}
+                   dispatch={this.props.dispatch}
+                   listDataObj={{
+                     processDoingList,
+                     processStopedList,
+                     processComepletedList
+                   }}
+                   processItemClick={this.processItemClick.bind(this)}/>}/>
               )
             })}
           </Collapse>

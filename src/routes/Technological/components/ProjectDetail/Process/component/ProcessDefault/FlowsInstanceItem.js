@@ -47,7 +47,7 @@ export default class FlowsInstanceItem extends Component {
   }
 
   //截止日期
-  datePikerOnOpenChange =(bool) => {
+  datePikerOnOpenChange =(bool, id) => {
     //关闭后
     if(!bool) {
       const { due_time_trans, due_time } = this.state
@@ -71,6 +71,7 @@ export default class FlowsInstanceItem extends Component {
           flow_instance_id: id
         }
       })
+      this.updateListData(due_time_trans,id)
     }
   }
   datePickerChange = (date, dateString, e) => {
@@ -81,7 +82,43 @@ export default class FlowsInstanceItem extends Component {
       due_time_trans: timeToTimestamp(dateString)
     })
   }
-
+  updateListData = (due_time_trans, id) => {
+    const { status, dispatch } = this.props
+    const { listDataObj: { processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props
+    let listName
+    let selectList = []
+    switch (status ) {
+      case '1':
+        listName = 'processDoingList'
+        selectList = processDoingList
+        break
+      case '2':
+        listName = 'processStopedList'
+        selectList = processStopedList
+        break
+      case '3':
+        listName = 'processComepletedList'
+        selectList = processComepletedList
+        break
+      default:
+        listName = 'processDoingList'
+        selectList = processDoingList
+        break
+    }
+    selectList = selectList.map(item => {
+      let item_new = {...item}
+      if(item_new.id == id) {
+        item_new.deadline = due_time_trans
+      }
+      return item_new
+    })
+    dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        [listName]: selectList,
+      }
+    })
+  }
   stopPropagation = (e) => {
     e.stopPropagation()
   }
@@ -105,7 +142,7 @@ export default class FlowsInstanceItem extends Component {
           )}
           {
             <DatePicker onChange={this.datePickerChange}
-                        onOpenChange={this.datePikerOnOpenChange}
+                        onOpenChange={(bool) => this.datePikerOnOpenChange(bool, id)}
                         placeholder={'选择截止时间'}
                         showTime
                         format="YYYY-MM-DD HH:mm"

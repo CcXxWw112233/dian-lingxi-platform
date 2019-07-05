@@ -8,7 +8,10 @@ import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
-import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
+import {
+  checkIsHasPermissionInBoard, currentNounPlanFilterName,
+  getSubfixName
+} from "../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH,
@@ -411,7 +414,7 @@ class FileDetailContent extends React.Component {
         break
     }
   }
-  getVersionItemMenuClick({list, file_id}, e) {
+  getVersionItemMenuClick({list, file_id, file_name}, e) {
     const key = e.key
     switch (key) {
       case '1':
@@ -426,7 +429,10 @@ class FileDetailContent extends React.Component {
           imgLoaded: false
         })
         this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
-        this.props.filePreview({id: file_resource_id, file_id})
+        //版本改变预览
+        // this.props.filePreview({id: file_resource_id, file_id})
+        this.handleUploadPDForElesFilePreview({file_name, id: file_id, file_resource_id})
+
         this.setState({
           imgLoaded: false,
           editMode: true,
@@ -653,6 +659,20 @@ class FileDetailContent extends React.Component {
     this.setState({
       isZoomPictureFullScreenMode: flag,
     })
+  }
+
+  //pdf文件和普通文件区别时做不同地处理预览
+  handleUploadPDForElesFilePreview = ({ file_name, id, file_resource_id }) => {
+    if(getSubfixName(file_name) == '.pdf') {
+      this.props.dispatch({
+        type: 'projectDetailFile/getFilePDFInfo',
+        payload: {
+          id
+        }
+      })
+    } else {
+      this.props.filePreview({id: file_resource_id, file_id: id})
+    }
   }
   render() {
     const that = this
@@ -891,7 +911,7 @@ class FileDetailContent extends React.Component {
           // console.log('file', file)
           if(file.response && file.response.code == '0') {
             that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
-            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true})
+            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf'})
           }
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
@@ -935,7 +955,7 @@ class FileDetailContent extends React.Component {
                       <div className={`${indexStyles.status}`}>当前</div>)}
                    <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
                     <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                      <Dropdown overlay={versionItemMenu(list, file_id)}>
+                      <Dropdown overlay={versionItemMenu({list, file_id, file_name})}>
                         <span>&#xe7fd;</span>
                       </Dropdown>
                     </div>
@@ -955,9 +975,9 @@ class FileDetailContent extends React.Component {
       )
     }
 
-    const versionItemMenu = (list, file_id) => {
+    const versionItemMenu = ({list, file_id, file_name}) => {
       return (
-        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id})}>
+        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id, file_name})}>
           <Menu.Item key="1">设为当前</Menu.Item>
           <Menu.Item key="2" disabled>移到回收站</Menu.Item>
         </Menu>
