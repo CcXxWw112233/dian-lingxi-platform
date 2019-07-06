@@ -15,7 +15,9 @@ class DrawerInformContent extends Component {
     render() {
         return (
             <>
-                <div className={infoRemindStyle.add_header}>
+                <div className={infoRemindStyle.add_header}
+                    
+                >
                     <Icon className={infoRemindStyle.icon} type="plus-circle" />
                     <span className={infoRemindStyle.text}>添加提醒</span>
                 </div>

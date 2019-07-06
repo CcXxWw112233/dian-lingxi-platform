@@ -26,12 +26,24 @@ export async function getTriggerHistory(id) {
 
 /**
  * 设置提醒的接口
- * @param {Object} data 获取的字段信息
+ * @param {Object} data 需要设置的那一条提醒信息
  */
 export async function setRemindInformation(data) {
     return request({
         url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind`,
         method: "POST",
+        data,
+    })
+}
+
+/**
+ * 更新提醒的接口
+ * @param {Object} data 获取需要更新的那一条提醒信息
+ */
+export async function updateRemindInformation(data) {
+    return request({
+        url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind`,
+        method: "PUT",
         data,
     })
 }

@@ -8,16 +8,21 @@ import infoRemindStyle from '../index.less'
     triggerList, diff_text_term, diff_remind_time, historyList
   }))
 export default class RenderHistory extends Component {
-
-    state = {
-        is_show_other_select: this.props.is_show_other_select,
-        is_show_data_picker: this.props.is_show_data_picker,
-    }
     
-
+    /**
+     *  改变选项的类型切换的方法
+     * 如果 `remind_edit_type` 为1 就显示后面两项
+     * 如果 `remind_edit_type` 为2 | 3  就不显示后面两项
+     * 注意 `remind_edit_type` 为3 的时候,需要显示日历来选择时间 并将结果转换成时间戳
+     * @param {String} type 类型
+     * @param {String} id 当前对象的id
+     * @param {String} type 区分type类型 为1 能显示后面两项，为2|3 不能显示 为3的时候显示日期
+     * @param {String} code 
+     */
     handleTriggerChg(id,type, code) {
-        console.log(id, type, code, 'lll')
+        // console.log(id, type, code, 'lll')
         const { dispatch, historyList = [] } = this.props;
+        // 想要改变historyList中的某一条信息, 所以需要将它解构出来
         let new_history_list = [...historyList]
         new_history_list = new_history_list.map(item => {
             let new_item = item
@@ -26,22 +31,6 @@ export default class RenderHistory extends Component {
             }
             return new_item
         })
-        if (type == 1) {
-          this.setState({
-            is_show_other_select: true,
-            is_show_data_picker: false,
-          })
-        } else if (type == 2) {
-          this.setState({
-            is_show_other_select: false,
-            is_show_data_picker: false,
-          })
-        } else if (type == 3) {
-          this.setState({
-            is_show_other_select: false,
-            is_show_data_picker: true,
-          })
-        }
         dispatch({
           type: 'informRemind/updateDatas',
           payload: {
@@ -49,6 +38,77 @@ export default class RenderHistory extends Component {
           }
         })
     }
+
+    /**
+     * 改变不同的时间值
+     * @param {String} id 某一条记录的id
+     * @param {String} value 改变时间状态的value值
+     */
+    onDiffRemindTime(id,value) {
+      // console.log(id, value, 'lll')
+      const { dispatch, historyList = [] } = this.props;
+      let new_history_list = [...historyList]
+      new_history_list = new_history_list.map(item => {
+          let new_item = item
+          if(value != new_item.remind_time_value && id == new_item.id) {
+              new_item = {...new_item, is_edit_status: true, remind_time_value: value}
+          }
+          return new_item
+      })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          historyList: new_history_list
+        }
+      })
+    }
+
+    /**
+     * 改变不同时间字段的文本
+     * @param {String} 某一条记录的id
+     * @param {String} 改变时间的文本的类型
+     */
+    onDiffTextTerm(id, type) {
+      const { dispatch, historyList = [] } = this.props;
+      let new_history_list = [...historyList]
+        new_history_list = new_history_list.map(item => {
+            let new_item = item
+            if(type != new_item.remind_time_type && id == new_item.id) {
+                new_item = {...new_item, is_edit_status: true, remind_time_type: type}
+            }
+            return new_item
+        })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          historyList: new_history_list
+        }
+      })
+    }
+
+    /**
+     * 更新提醒消息的状态
+     */
+    handleUpdateInfoRemind(id) {
+      console.log(id, 'sss')
+      const { historyList = [], dispatch } = this.props;
+      let new_history_list = [...historyList]
+      new_history_list = new_history_list.filter(item => {
+        let new_item = item
+        if (new_item.id == id) {
+         return new_item = {...new_item, is_edit_status: false}
+        }
+        return new_item
+      })
+      dispatch({
+        type: 'informRemind/updateRemindInformation',
+        payload: {
+          new_history_list
+        }
+      })
+
+    }
+
 
     render() {
         const {
@@ -80,14 +140,13 @@ export default class RenderHistory extends Component {
                 {/* 显示1-60不同的时间段--选择框 */}
                 {
                   remind_edit_type == 1 && <Select 
-                      onChange={this.handleChgOption} 
                       defaultValue={remind_time_value} 
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_remind_time.map(childItem => {
                         return (
                           <Option
-                            onClick={() => { this.onDiffRemindTime(childItem.remind_time_value) }} 
+                            onClick={() => { this.onDiffRemindTime(id,childItem.remind_time_value) }} 
                             value={childItem.remind_time_value}>{childItem.remind_time_value}</Option>
                         )
                       })
@@ -97,13 +156,13 @@ export default class RenderHistory extends Component {
                 {/* 显示 分钟 小时 天数 的列表--选择框 */}
                 {
                    remind_edit_type == 1 && <Select 
-                      onChange={this.handleChgOption}
                       defaultValue={remind_time_type} 
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_text_term.map(childItem => {
                         return (
-                          <Option 
+                          <Option
+                            onClick={ () => { this.onDiffTextTerm(id, childItem.remind_time_type) } }
                             value={childItem.remind_time_type}>{childItem.txtVal}</Option>
                         )
                       })
@@ -115,7 +174,9 @@ export default class RenderHistory extends Component {
               {
                  
                 is_edit_status ? (
-                    <Button className={infoRemindStyle.icon} type="primary">确定</Button>
+                    <Button 
+                      onClick={ () => { this.handleUpdateInfoRemind(id) } }
+                      className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
                     <div className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
                         <Tooltip placement="top" title="删除" arrowPointAtCenter>
