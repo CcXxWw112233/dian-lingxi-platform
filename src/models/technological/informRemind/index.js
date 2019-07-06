@@ -1,5 +1,5 @@
 // 通知提醒的数据
-import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation } from '@/services/technological/informRemind'
+import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { message } from 'antd';
 import { getModelSelectState } from '@/models/utils'
@@ -75,16 +75,14 @@ export default {
         { remind_time_type: 'h', txtVal: '小时' },
         { remind_time_type: 'd', txtVal: '天数' },
       ], // 匹配不同的字段类型
-      defaultTriggerVal: '', // 默认任务事件的选择框value
-      defaultRemindTimeVal: '1', // 默认选择时间的value
-      defaultTextTermVal: 'm', // 默认选择不同字段的value
       is_history: false, // 是否存在历史记录的列表 默认为 false 不存在
       historyList: [], // 保存设置的历史记录提醒
       updateInfoRemind: [], // 更新提醒的信息列表
       triggerList: [], // 每个对应的选项的类型列表
       is_add_remind: false, // 是否进行点击操作 默认为 false 没有点击
-      is_overdue_time: false, // 是否是过期时间 默认为 false 没有过期以及是正常事件
-      is_notified_time: false, // 是否已经通知过了 默认为 false 没有通知
+      remind_trigger: '', // 提醒触发器类型
+      remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
+      remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
       users: ["1146245951040655360"], // 用户信息
     },
 
@@ -95,6 +93,7 @@ export default {
            type: 'updateDatas', 
            payload: {
             triggerList: [],
+            historyList: [],
            }
          })
         })
@@ -116,6 +115,7 @@ export default {
           type: 'updateDatas',
           payload: {
             triggerList: res.data,
+            remind_trigger: res.data[0].type_code
           }
         })
       },
@@ -163,6 +163,27 @@ export default {
           type: 'getTriggerHistory',
           payload: {
 
+          }
+        })
+      },
+
+      // 设置提醒的方法
+      * setRemindInformation({ payload = {} }, { select, call, put }) {
+
+      },
+
+      // 删除提醒的方法
+      * delRemindInformation({ payload = {} }, { select, call, put }) {
+        const { id, rela_id } = payload
+        const res = yield call(delRemindInformation, id)
+        if(!isApiResponseOk(res)) {
+          message.error(res.message)
+          return
+        }
+        yield put({
+          type: 'getTriggerHistory',
+          payload: {
+            rela_id
           }
         })
       }

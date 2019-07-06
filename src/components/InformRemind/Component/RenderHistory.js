@@ -14,10 +14,9 @@ export default class RenderHistory extends Component {
      * 如果 `remind_edit_type` 为1 就显示后面两项
      * 如果 `remind_edit_type` 为2 | 3  就不显示后面两项
      * 注意 `remind_edit_type` 为3 的时候,需要显示日历来选择时间 并将结果转换成时间戳
-     * @param {String} type 类型
      * @param {String} id 当前对象的id
      * @param {String} type 区分type类型 为1 能显示后面两项，为2|3 不能显示 为3的时候显示日期
-     * @param {String} code 
+     * @param {String} code trigger的状态
      */
     handleTriggerChg(id,type, code) {
         // console.log(id, type, code, 'lll')
@@ -26,7 +25,7 @@ export default class RenderHistory extends Component {
         let new_history_list = [...historyList]
         new_history_list = new_history_list.map(item => {
             let new_item = item
-            if(id == new_item.id) {
+            if(id == new_item.id && code != new_item.remind_trigger) {
                 new_item = {...new_item, remind_trigger: code, is_edit_status: true, remind_edit_type: type}
             }
             return new_item
@@ -88,9 +87,10 @@ export default class RenderHistory extends Component {
 
     /**
      * 更新提醒消息的状态
+     * @param {String} id 更新某一条状态对应的id
      */
     handleUpdateInfoRemind(id) {
-      console.log(id, 'sss')
+      // console.log(id, 'sss')
       const { historyList = [], dispatch } = this.props;
       let new_history_list = [...historyList]
       new_history_list = new_history_list.filter(item => {
@@ -108,6 +108,68 @@ export default class RenderHistory extends Component {
       })
 
     }
+
+    /**
+     * 删除提醒的方法
+     * @param {String} id 删除对应信息状态的id
+     */
+    handleDelInfoRemind(id) {
+      const { dispatch, rela_id } = this.props;
+      console.log(rela_id, 'sss')
+      dispatch({
+        type: 'informRemind/delRemindInformation',
+        payload: {
+          id,
+          rela_id
+        }
+      })
+    }
+
+    // 时间戳转换日期格式
+    getdate(timestamp) {
+      console.log(timestamp, 'lll')
+      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y,M,D,H,MIN;
+      Y = date.getFullYear();
+      M = date.getMonth() < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1;
+      D = date.getDate() + 1 < 10 ? '0' + date.getDate() : date.getDate() ;
+      H = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+      MIN = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+      return Y + "-" + M + "-" + D + " " + H + ":" + MIN
+   }
+
+    /**
+     * 自定义时间的方法
+     */
+    handleDatePicker(date, dateString, id, type) {
+      const { dispatch, historyList = [] } = this.props;
+      console.log(dateString, 'sss')
+      let new_history_list = [...historyList]
+      let userDefindDate = new Date(dateString)
+      let time = userDefindDate.valueOf() / 1000 // 转换成时间戳 
+      console.log(time, 'llll')
+        new_history_list = new_history_list.map(item => {
+            let new_item = item
+            if(id == new_item.id) {
+                new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type}
+            }
+            return new_item
+        })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          historyList: new_history_list,
+        }
+      })
+    }
+
+    /**
+     * 成功确定的回调
+     */
+    handleDatePickerOk(value) {
+      console.log(value)
+    }
+
 
 
     render() {
@@ -135,18 +197,24 @@ export default class RenderHistory extends Component {
                 </Select>
                 {/* 显示自定义时间 */}
                 {
-                  remind_edit_type == 3 && <DatePicker />
+                  remind_edit_type == 3 && 
+                    <DatePicker 
+                        showTime={true}
+                        placeholder="请选择日期"
+                        format="YYYY-MM-DD HH:mm"
+                        onOk={ (value) => { this.handleDatePickerOk(value) } }                           
+                        onChange={ (date,dateString) => { this.handleDatePicker(date, dateString, id, remind_edit_type) } } />
                 }
                 {/* 显示1-60不同的时间段--选择框 */}
                 {
                   remind_edit_type == 1 && <Select 
-                      defaultValue={remind_time_value} 
+                      defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_remind_time.map(childItem => {
                         return (
                           <Option
-                            onClick={() => { this.onDiffRemindTime(id,childItem.remind_time_value) }} 
+                            onClick={(value) => { this.onDiffRemindTime(id,childItem.remind_time_value) }} 
                             value={childItem.remind_time_value}>{childItem.remind_time_value}</Option>
                         )
                       })
@@ -156,7 +224,7 @@ export default class RenderHistory extends Component {
                 {/* 显示 分钟 小时 天数 的列表--选择框 */}
                 {
                    remind_edit_type == 1 && <Select 
-                      defaultValue={remind_time_type} 
+                      defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type} 
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_text_term.map(childItem => {
@@ -178,7 +246,9 @@ export default class RenderHistory extends Component {
                       onClick={ () => { this.handleUpdateInfoRemind(id) } }
                       className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
-                    <div className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
+                    <div 
+                      onClick={ () => { this.handleDelInfoRemind(id) } }
+                      className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
                         <Tooltip placement="top" title="删除" arrowPointAtCenter>
                             <Icon type="delete" className={infoRemindStyle.del}/>
                         </Tooltip>

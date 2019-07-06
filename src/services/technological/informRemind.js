@@ -47,3 +47,14 @@ export async function updateRemindInformation(data) {
         data,
     })
 }
+
+/**
+ * 删除提醒的接口
+ * @param {String} id 删除某一条信息对应的id
+ */
+export async function delRemindInformation(id) {
+    return request({
+        url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind/${id}`,
+        method: "DELETE",
+    })
+}
