@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import { Select, Icon, Tooltip, Button, DatePicker } from 'antd'
 import infoRemindStyle from '../index.less'
+import RenderAdd from './RenderAdd';
 
 
 @connect(({informRemind: { triggerList, diff_text_term, diff_remind_time,  historyList}}) => ({
@@ -174,10 +175,12 @@ export default class RenderHistory extends Component {
 
     render() {
         const {
-            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}
+            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, is_add_remind,
+            num,index
         } = this.props;
         const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status } = itemValue
         return (
+          <>
             <div className={infoRemindStyle.slip}
             >
               <div className={infoRemindStyle.select}>
@@ -276,8 +279,11 @@ export default class RenderHistory extends Component {
                       )
                   )
               }
-              
             </div>
+             {
+               is_add_remind && num - 1 == index  && <RenderAdd />
+             } 
+          </>
         )
     }
 }

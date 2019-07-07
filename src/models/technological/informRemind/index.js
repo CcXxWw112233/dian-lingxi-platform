@@ -75,11 +75,10 @@ export default {
         { remind_time_type: 'h', txtVal: '小时' },
         { remind_time_type: 'd', txtVal: '天数' },
       ], // 匹配不同的字段类型
-      is_history: false, // 是否存在历史记录的列表 默认为 false 不存在
+      // is_history: false, // 是否存在历史记录的列表 默认为 false 不存在
       historyList: [], // 保存设置的历史记录提醒
       updateInfoRemind: [], // 更新提醒的信息列表
       triggerList: [], // 每个对应的选项的类型列表
-      is_add_remind: false, // 是否进行点击操作 默认为 false 没有点击
       remind_trigger: '', // 提醒触发器类型
       remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
@@ -132,7 +131,7 @@ export default {
           type: 'updateDatas',
           payload: {
             historyList: res.data, // 将结果赋值给一个列表
-            is_history: res.data && res.data.length ? true : false,
+            // is_history: res.data && res.data.length ? true : false,
           }
         })
       },
