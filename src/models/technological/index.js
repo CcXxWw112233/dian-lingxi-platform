@@ -65,24 +65,7 @@ export default {
             type: 'getUSerInfo',
             payload: {}
           })
-          // if(!localStorage.getItem('userInfo')) {
-          //   dispatch({
-          //     type:'getUSerInfo',
-          //     payload: {}
-          //   })
-          // }else {
-          //   const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
-          //   if(current_org) {
-          //     dispatch({
-          //       type:'setcurrentSelectOrganizeByCookiesUSerInfo',
-          //       payload: {}
-          //     })
-          //     dispatch({
-          //       type:'getOrganizationMemberPermissions',
-          //       payload: {}
-          //     })
-          //   }
-          // }
+        
 
           //获取当前的用户当前组织的项目列表,
           await dispatch({
@@ -94,14 +77,7 @@ export default {
             type: 'fetchCurrentOrgAllMembers',
           })
 
-          //获取工作台当前选中的项目诗句(屏蔽)
-          // dispatch({
-          //   type: 'workbench/getBoxList',
-          // })
-          // dispatch({
-          //   type: 'fetchBoxAll',
-          //   payload: {}
-          // })
+         
           //查询所在组织列表
           await dispatch({
             type: 'getCurrentUserOrganizes',
@@ -135,10 +111,7 @@ export default {
     },
   },
   effects: {
-    * initiateVideoMeeting({payload}, {call}) {
-        const res = yield call(createMeeting, payload)
-        return res
-    },
+    // 左侧导航栏
     * upDateNaviHeadTabIndex({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
@@ -146,6 +119,11 @@ export default {
           naviHeadTabIndex
         }
       })
+    },
+    // 视频会议集成---start
+    * initiateVideoMeeting({payload}, {call}) {
+        const res = yield call(createMeeting, payload)
+        return res
     },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
@@ -170,7 +148,9 @@ export default {
           }
         })
       }
-  },
+    },
+   ///视频会议集成end
+    
     //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
     * onlyGetUserInfo({ payload }, { select, call, put }) {
       let res = yield call(getUSerInfo, {ss: '1'})
@@ -232,17 +212,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * setcurrentSelectOrganizeByCookiesUSerInfo({ payload }, { select, call, put }) { //c从cookie中拿到当前组织
-      const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
-      localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          currentSelectOrganize: current_org,
-        }
-      })
-    },
-
+    
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {
@@ -385,22 +355,6 @@ export default {
       if(isApiResponseOk(res)) {
         message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
       }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
-      //废弃
-    * getOrganizationMemberPermissions({ payload }, { select, call, put }) {
-      let res = yield call(getOrganizationMemberPermissions, payload)
-      if(isApiResponseOk(res)) {
-         yield put({
-           type: 'updateDatas',
-           payload: {
-             organizationMemberPermissions: res.data || [], //组织成员权限列表
-           }
-         })
-        localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data || []))
-      }else{
-        localStorage.setItem('organizationMemberPermissions', JSON.stringify([]))
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },

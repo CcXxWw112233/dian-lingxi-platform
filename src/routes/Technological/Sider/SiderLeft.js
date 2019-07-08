@@ -239,7 +239,7 @@ export default class SiderLeft extends React.Component {
                   <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
                 )}
                 {isHasManagerBack() && (
-                  <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
+                  <div onClick={this.routingJump.bind(this, `/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
                 )}
                 {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>}
             </div>

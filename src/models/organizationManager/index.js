@@ -19,13 +19,13 @@ import {checkIsHasPermission} from "../../utils/businessFunction";
 import {getUSerInfo} from "../../services/technological";
 
 export default {
-  namespace: 'organization',
-  state: [],
+  namespace: 'organizationManager',
+  state: {},
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
         message.destroy()
-        if (location.pathname === '/organization') {
+        if (location.pathname === '/organizationManager') {
           const currentSelectOrganize = localStorage.getItem('currentSelectOrganize') ? JSON.parse(localStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(localStorage.getItem('currentSelectOrganize'))
           const {name, member_join_model, member_join_content, logo, logo_id, id} = currentSelectOrganize
           dispatch({
