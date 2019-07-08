@@ -4,48 +4,38 @@ import { Icon, Select } from 'antd'
 import RenderContent from './Component'
 import infoRemindStyle from './index.less'
 
-@connect(({informRemind: { historyList }}) => ({
-    historyList
+@connect(({informRemind: { historyList = [], setInfoRemindList = [], is_add_remind }}) => ({
+    historyList, setInfoRemindList, is_add_remind
   }))
 class DrawerInformContent extends Component {
 
-    state = {
-        is_add_remind: false, // 是否点击了添加操作 默认为false 没有点击
-    }
-
     /**
      * 添加提醒的方法
+     * 需要把关联的id以及type类型传入
      */
     addInformRemind() {
-        // const { dispatch, historyList = [] } = this.props;
-        // // 想要改变historyList中的某一条信息, 所以需要将它解构出来
-        // let new_history_list = [...historyList]
-        // let temp = [
-        //     {
-        //         remind_trigger: 'task:start:before',
-        //         remind_edit_type: 1,
-        //         remind_time_type: 'm',
-        //         remind_time_value: '1',
-        //     }
-        // ];
-        // new_history_list = new_history_list.map(item => { 
-        //     return new_history_list.concat(temp) 
-        // })
-        // dispatch({
-        //   type: 'informRemind/updateDatas',
-        //   payload: {
-        //     historyList: new_history_list,
-        //   }
-        // })
-       this.setState({
-           is_add_remind: true,
+        const { dispatch, rela_id, rela_type, setInfoRemindList = [] } = this.props;
+        let new_setInfoRemindList = [...setInfoRemindList];
+        
+        new_setInfoRemindList = new_setInfoRemindList.map(item => {
+            let new_item = item
+            new_item = {...new_item, rela_id: rela_id, rela_type: rela_type}
+            return new_item
+        })
+        console.log(new_setInfoRemindList, 'sss')
+
+       dispatch({
+           type: 'informRemind/updateDatas',
+           payload: {
+               setInfoRemindList: new_setInfoRemindList,
+               is_add_remind: true,
+           }
        })
         
     }
 
     render() {
         const { rela_id } = this.props;
-        const { is_add_remind } = this.state;
         return (
             <>
                 <div className={infoRemindStyle.add_header}
@@ -54,7 +44,7 @@ class DrawerInformContent extends Component {
                     <Icon className={infoRemindStyle.icon} type="plus-circle" />
                     <span className={infoRemindStyle.text}>添加提醒</span>
                 </div>
-                <RenderContent rela_id={rela_id} is_add_remind={is_add_remind}  />
+                <RenderContent rela_id={rela_id}  />
             </>
         )
     }

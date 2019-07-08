@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import { Select, Icon, Tooltip, Button, DatePicker } from 'antd'
 import infoRemindStyle from '../index.less'
-import RenderAdd from './RenderAdd';
+import moment from 'moment';
 
 
 @connect(({informRemind: { triggerList, diff_text_term, diff_remind_time,  historyList}}) => ({
@@ -92,7 +92,7 @@ export default class RenderHistory extends Component {
      */
     handleUpdateInfoRemind(id) {
       // console.log(id, 'sss')
-      const { historyList = [], dispatch } = this.props;
+      const { historyList = [], dispatch, rela_id } = this.props;
       let new_history_list = [...historyList]
       new_history_list = new_history_list.filter(item => {
         let new_item = item
@@ -104,7 +104,8 @@ export default class RenderHistory extends Component {
       dispatch({
         type: 'informRemind/updateRemindInformation',
         payload: {
-          new_history_list
+          new_history_list,
+          rela_id
         }
       })
 
@@ -128,7 +129,7 @@ export default class RenderHistory extends Component {
 
     // 时间戳转换日期格式
     getdate(timestamp) {
-      console.log(timestamp, 'lll')
+      // console.log(timestamp, 'lll')
       var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y,M,D,H,MIN;
       Y = date.getFullYear();
@@ -175,8 +176,7 @@ export default class RenderHistory extends Component {
 
     render() {
         const {
-            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, is_add_remind,
-            num,index
+            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {},
         } = this.props;
         const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status } = itemValue
         return (
@@ -203,6 +203,7 @@ export default class RenderHistory extends Component {
                   remind_edit_type == 3 && 
                     <DatePicker 
                         showTime={true}
+                        defaultValue={ moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
                         onOk={ (value) => { this.handleDatePickerOk(value) } }                           
@@ -280,9 +281,6 @@ export default class RenderHistory extends Component {
                   )
               }
             </div>
-             {
-               is_add_remind && num - 1 == index  && <RenderAdd />
-             } 
           </>
         )
     }

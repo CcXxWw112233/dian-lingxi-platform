@@ -75,13 +75,23 @@ export default {
         { remind_time_type: 'h', txtVal: '小时' },
         { remind_time_type: 'd', txtVal: '天数' },
       ], // 匹配不同的字段类型
-      // is_history: false, // 是否存在历史记录的列表 默认为 false 不存在
       historyList: [], // 保存设置的历史记录提醒
-      updateInfoRemind: [], // 更新提醒的信息列表
+      setInfoRemindList: [
+        {
+          rela_id: '',
+          rela_type: '',
+          remind_trigger: '',
+          remind_time_type: 'm',
+          remind_time_value: '1',
+          users: ["1146245951040655360"],
+        }
+      ], // 设置提醒的信息列表
       triggerList: [], // 每个对应的选项的类型列表
+      is_add_remind: false, // 是否点击了添加操作 默认为false 没有点击
       remind_trigger: '', // 提醒触发器类型
       remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
+      remind_edit_type: 1, // 可编辑的类型
       users: ["1146245951040655360"], // 用户信息
     },
 
@@ -131,13 +141,13 @@ export default {
           type: 'updateDatas',
           payload: {
             historyList: res.data, // 将结果赋值给一个列表
-            // is_history: res.data && res.data.length ? true : false,
           }
         })
       },
 
       // 更新消息提醒的方法
       * updateRemindInformation({ payload = {} }, { select, call, put }) {
+        const { rela_id } = payload
         const updateInfoRemind = [...payload.new_history_list][0]
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
         const data = {
@@ -147,9 +157,7 @@ export default {
           remind_time_value,
           users: [message_consumers[0].user_id]
         }
-        console.log(data, 'sss')
         const res = yield call(updateRemindInformation,data)
-        console.log(res,'sss')
         if(!isApiResponseOk(res)) {
           message.error(res.message)
           return
@@ -161,14 +169,33 @@ export default {
         yield put({
           type: 'getTriggerHistory',
           payload: {
-
+            rela_id
           }
         })
       },
 
       // 设置提醒的方法
       * setRemindInformation({ payload = {} }, { select, call, put }) {
-
+        const { rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger,users } = payload.setInfoRemindList[0]
+        const data = {
+          rela_id,
+          rela_type,
+          remind_time_type,
+          remind_time_value,
+          remind_trigger,
+          users
+        }
+        const res = yield call(setRemindInformation, data)
+        if(!isApiResponseOk(res)) {
+          message.error(res.message)
+          return
+        }
+        yield put({
+          type: 'getTriggerHistory',
+          payload: {
+            rela_id
+          }
+        })
       },
 
       // 删除提醒的方法
