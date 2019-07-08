@@ -1203,7 +1203,7 @@ class DrawContent extends React.Component {
                 <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
-              <InformRemind rela_id={card_id} rela_type={'1'} />
+              <InformRemind rela_id={card_id} rela_type={'1'} user_remind_info={data} />
               {/* <Dropdown overlay={topRightMenu}> */}
               {drawContent.is_privilege && (
                 <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>

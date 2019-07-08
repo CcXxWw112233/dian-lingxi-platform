@@ -4,8 +4,8 @@ import { Icon, Select } from 'antd'
 import RenderContent from './Component'
 import infoRemindStyle from './index.less'
 
-@connect(({informRemind: { historyList = [], setInfoRemindList = [], is_add_remind }}) => ({
-    historyList, setInfoRemindList, is_add_remind
+@connect(({informRemind: { historyList = [], setInfoRemindList = [], is_add_remind, triggerList }}) => ({
+    historyList, setInfoRemindList, is_add_remind, triggerList
   }))
 class DrawerInformContent extends Component {
 
@@ -14,15 +14,14 @@ class DrawerInformContent extends Component {
      * 需要把关联的id以及type类型传入
      */
     addInformRemind() {
-        const { dispatch, rela_id, rela_type, setInfoRemindList = [] } = this.props;
+        const { dispatch, rela_id, rela_type, setInfoRemindList = [], triggerList = [] } = this.props;
         let new_setInfoRemindList = [...setInfoRemindList];
         
         new_setInfoRemindList = new_setInfoRemindList.map(item => {
             let new_item = item
-            new_item = {...new_item, rela_id: rela_id, rela_type: rela_type}
+            new_item = {...new_item, rela_id: rela_id, rela_type: rela_type, remind_trigger: triggerList[0].type_code}
             return new_item
         })
-        console.log(new_setInfoRemindList, 'sss')
 
        dispatch({
            type: 'informRemind/updateDatas',
@@ -35,7 +34,7 @@ class DrawerInformContent extends Component {
     }
 
     render() {
-        const { rela_id } = this.props;
+        const { rela_id, user_remind_info } = this.props;
         return (
             <>
                 <div className={infoRemindStyle.add_header}
@@ -44,7 +43,7 @@ class DrawerInformContent extends Component {
                     <Icon className={infoRemindStyle.icon} type="plus-circle" />
                     <span className={infoRemindStyle.text}>添加提醒</span>
                 </div>
-                <RenderContent rela_id={rela_id}  />
+                <RenderContent rela_id={rela_id} user_remind_info={user_remind_info}  />
             </>
         )
     }

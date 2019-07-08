@@ -27,22 +27,28 @@
         justify-content: space-between;
         align-items: center;
         line-height: 48px;
+        position: relative;
         // padding-bottom: 16px;
-        cursor: pointer; 
+        cursor: pointer;
         &:hover {
             background: palegoldenrod;
             .slip_hover {
-                display: block;
+                visibility: visible;
             }
             .overdue {
-                display: none;
+                visibility: hidden;
             }
             .checked {
-                display: none;
+                visibility: hidden;
             }
         }
         .slip_hover {
-            display: none;
+            visibility: hidden;
+        }
+        .user_info {
+            position: absolute;
+            right: 75px;
+            top: 12px;
         }
     }
     
@@ -65,5 +71,6 @@
     .icon {
         position: absolute;
         right: 0;
+        flex-shrink: 0; 
     }
 }

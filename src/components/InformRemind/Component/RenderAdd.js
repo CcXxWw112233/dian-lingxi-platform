@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Select, Icon, Tooltip, Button, DatePicker } from 'antd'
+import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
+import AvatarList from '@/components/avatarList'
+import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
 
 
-@connect(({informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [],  historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList}}) => ({
-    triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList
+@connect(({informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [],  historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers}}) => ({
+    triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers
   }))
 export default class RenderAdd extends Component {
 
@@ -107,6 +109,7 @@ export default class RenderAdd extends Component {
    */
   handleSetInfoRemind() {
     const { dispatch, setInfoRemindList = [], triggerList = [] } = this.props;
+    console.log(triggerList[0].type_code, 'hhhh')
     dispatch({
       type: 'informRemind/setRemindInformation',
       payload: {
@@ -162,17 +165,53 @@ export default class RenderAdd extends Component {
   }
 
   /**
-     * 成功确定的回调
-     */
-    handleDatePickerOk(value) {
-      console.log(value)
-    }
+   * 成功确定的回调
+   */
+  handleDatePickerOk(value) {
+    console.log(value)
+  }
+
+  // 用户信息的方法
+  multipleUserSelectUserChange (e, message) {
+    console.log(message, 'ppppp')
+    const { dispatch, setInfoRemindList = [], user_remind_info = [] } = this.props;
+      let new_user_remind_info = [...user_remind_info] // 用户列表的信息
+      let new_message = [...message] // 传递过来的用户信息 设置的用户 默认为空
+      new_user_remind_info = new_user_remind_info.map(item => {// 遍历用户信息列表
+        let new_info_item = item
+        if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
+          if (new_info_item.user_id == e.key) {
+            new_message = new_message.concat(new_info_item)
+          }
+        } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
+          if (new_info_item.user_id == e.key) {
+            new_message = new_message.splice(new_info_item, 1)
+          }
+        }
+        return new_message
+      })
+      // 更新设置的成员信息
+      let new_info_list = [...setInfoRemindList]
+      new_info_list = new_info_list.map(item => {
+        let new_item = item
+        new_item = {...new_item, is_edit_status: true, message_consumers: new_message}
+        return new_item
+      })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          setInfoRemindList: new_info_list,
+        }
+      })
+  }
 
 
   render() {
       const {
           triggerList = [], diff_text_term = [], diff_remind_time = [], remind_trigger, remind_time_type, remind_time_value,
+          user_remind_info = [],message_consumers,
       } = this.props;
+      console.log(message_consumers, 'lll')
       const { is_show_date_picker, is_show_other_select } = this.state;
       return (
           <div className={infoRemindStyle.slip}
@@ -236,6 +275,23 @@ export default class RenderAdd extends Component {
                   }
                 </Select>
               }
+              {/* 显示用户信息头像 */}
+              <div className={infoRemindStyle.user_info}>
+                  <Dropdown overlay={
+                    <UserSearchAndSelectMutiple 
+                      listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
+                      keyCode={'user_id'} //值关键字
+                      searchName={'name'} //搜索关键字
+                      currentSelect = {message_consumers} //selectedUsers为已选择用户列表[{user_id: '', name: '',...}, ]
+                      multipleSelectUserChange={(e) => this.multipleUserSelectUserChange(e, message_consumers)} //选择了某一项
+                      /> }>
+                        <div style={{maxWidth: 48, width: 'auto'}}>
+                          <AvatarList 
+                            size={'small'}
+                            users={message_consumers} /> 
+                        </div>
+                  </Dropdown>
+                </div>
             </div>
               <Button 
                   onClick={ () => { this.handleSetInfoRemind() } }

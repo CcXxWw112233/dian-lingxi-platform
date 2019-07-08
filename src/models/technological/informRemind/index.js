@@ -83,7 +83,10 @@ export default {
           remind_trigger: '',
           remind_time_type: 'm',
           remind_time_value: '1',
-          users: ["1146245951040655360"],
+          message_consumers: [
+            {}
+          ],
+          
         }
       ], // 设置提醒的信息列表
       triggerList: [], // 每个对应的选项的类型列表
@@ -92,7 +95,9 @@ export default {
       remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
       remind_edit_type: 1, // 可编辑的类型
-      users: ["1146245951040655360"], // 用户信息
+      message_consumers: [
+        {}
+      ],
     },
 
     subscriptions: {
@@ -146,16 +151,20 @@ export default {
       },
 
       // 更新消息提醒的方法
-      * updateRemindInformation({ payload = {} }, { select, call, put }) {
+      * updateRemindInformation({ payload = {} }, { select, call, put }) { 
         const { rela_id } = payload
         const updateInfoRemind = [...payload.new_history_list][0]
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
+        let tempId = []
+        for(var i in message_consumers) {
+          tempId.push(message_consumers[i].user_id)
+        }
         const data = {
           id,
           remind_trigger,
           remind_time_type,
           remind_time_value,
-          users: [message_consumers[0].user_id]
+          users: tempId
         }
         const res = yield call(updateRemindInformation,data)
         if(!isApiResponseOk(res)) {
@@ -176,14 +185,22 @@ export default {
 
       // 设置提醒的方法
       * setRemindInformation({ payload = {} }, { select, call, put }) {
-        const { rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger,users } = payload.setInfoRemindList[0]
+        const { rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger,message_consumers } = payload.setInfoRemindList[0]
+        let tempId = []
+        for(var i in message_consumers) {
+          if (message_consumers[i].user_id) {
+            tempId.push(message_consumers[i].user_id)
+          }
+          
+        }
+        console.log(tempId, 'pppppp')
         const data = {
           rela_id,
           rela_type,
           remind_time_type,
           remind_time_value,
           remind_trigger,
-          users
+          users: tempId
         }
         const res = yield call(setRemindInformation, data)
         if(!isApiResponseOk(res)) {
