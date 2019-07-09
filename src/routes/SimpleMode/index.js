@@ -47,9 +47,9 @@ const SimpleMode = (props) => {
       </div>
       <div className={indexStyles.wallpaperSelectWapper}>
         <div className={indexStyles.wallpaperSelector}>
-          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 1)', lineHeight: '28ox'}}>&#xe7ec;</i>
-          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '28px', color: 'rgba(255, 255, 255, 1)', marginLeft: '26px', marginRight: '26px'}}>&#xe631;</i>
-          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 1)', lineHeight: '28ox'}}>&#xe7eb;</i>
+          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 1)',}}>&#xe7ec;</i>
+          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '28px', color: 'rgba(255, 255, 255, 1)',marginLeft: '26px', marginRight: '26px'}}>&#xe631;</i>
+          <i className={`${globalStyles.authTheme}`} style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 1)',}}>&#xe7eb;</i>
         </div>
       </div>
     </div>
