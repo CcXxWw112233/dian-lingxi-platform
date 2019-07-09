@@ -5,6 +5,7 @@ import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
 import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 
 @connect(({informRemind: { triggerList, diff_text_term, diff_remind_time,  historyList}}) => ({
@@ -92,14 +93,18 @@ export default class RenderHistory extends Component {
      * 更新提醒消息的状态
      * @param {String} id 更新某一条状态对应的id
      */
-    handleUpdateInfoRemind(id) {
+    handleUpdateInfoRemind(id, message_consumers) {
       // console.log(id, 'sss')
       const { historyList = [], dispatch, rela_id } = this.props;
       let new_history_list = [...historyList]
+      let tempId = []
+      for(var i in message_consumers) {
+        tempId.push(message_consumers[i].user_id)
+      }
       new_history_list = new_history_list.filter(item => {
         let new_item = item
         if (new_item.id == id) {
-          return new_item = {...new_item, is_edit_status: false}
+          return new_item = {...new_item, is_edit_status: false, message_consumers: [{...message_consumers, user_id: tempId}]}
         }
         return new_history_list
       })
@@ -145,6 +150,9 @@ export default class RenderHistory extends Component {
 
     /**
      * 自定义时间的方法
+     * @param {String} dateString 选中的当前时间
+     * @param {String} id 当前这一条任务的id
+     * @param {String} type 可编辑的类型
      */
     handleDatePicker(date, dateString, id, type) {
       const { dispatch, historyList = [] } = this.props;
@@ -175,21 +183,25 @@ export default class RenderHistory extends Component {
       console.log(value)
     }
 
-    // 用户信息的方法
-    multipleUserSelectUserChange (e, id, message) {
+    /**
+     * 用户信息的方法
+     * @param {Object} e 用户列表的对象信息 
+     * @param {*} id 当前对象的id
+     * @param {*} message 传递进来的用户信息列表
+     */
+    multipleUserSelectUserChange (e, id, message) {  
       const { dispatch, historyList = [], user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 用户列表的信息
       let new_message = [...message] // 传递过来的用户信息
-      new_user_remind_info = new_user_remind_info.map(item => {
+      new_user_remind_info = new_user_remind_info.map((item, index) => {
         let new_info_item = item
         if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
-          if (new_info_item.user_id == e.key) {
-            new_message = new_message.concat(new_info_item)
+          if (new_info_item.user_id == e.key) {//判断当前的用户信息列表id与选中的id是否匹配
+            new_message = new_message.concat(new_info_item) // 如果匹配就给你追加进去
           }
-          
         } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
           if (new_info_item.user_id == e.key) {
-            new_message = new_message.splice(new_info_item, 1)
+            new_message.splice(index, 1)
           }
         }
         return new_message
@@ -215,10 +227,10 @@ export default class RenderHistory extends Component {
 
     render() {
         const {
-            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = []
+            triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],
         } = this.props;
         const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status, message_consumers } = itemValue
-        // console.log(message_consumers, 'lll')
+      
         return (
           <>
             <div className={infoRemindStyle.slip}
@@ -291,21 +303,27 @@ export default class RenderHistory extends Component {
                       currentSelect = {message_consumers} //selectedUsers为已选择用户列表[{user_id: '', name: '',...}, ]
                       multipleSelectUserChange={(e) => this.multipleUserSelectUserChange(e, id, message_consumers)} //选择了某一项
                       /> }>
-                        <div style={{maxWidth: 48, width: 'auto'}}>
-                          <AvatarList 
-                            size={'small'}
-                            users={message_consumers} /> 
-                        </div>
+                        {
+                          message_consumers && message_consumers.length > 0 ? (
+                            <div style={{maxWidth: 60, width: 'auto'}}>
+                              <AvatarList 
+                                size={'small'}
+                                users={message_consumers} /> 
+                            </div>
+                          ) : (
+                            <div className={`${globalStyles.authTheme} ${infoRemindStyle.plus}`}>&#xe70b;</div>
+                          )
+                        }
+                        
                   </Dropdown>
                 </div>
               </div>
              
               {/* 鼠标的hover事件 控制删除小图标的显示隐藏 */}
               {
-                 
                 is_edit_status ? (
                     <Button 
-                      onClick={ () => { this.handleUpdateInfoRemind(id) } }
+                      onClick={ () => { this.handleUpdateInfoRemind(id, message_consumers) } }
                       className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
                     <div 

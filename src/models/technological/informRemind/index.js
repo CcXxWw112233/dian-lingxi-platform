@@ -3,6 +3,7 @@ import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindIn
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { message } from 'antd';
 import { getModelSelectState } from '@/models/utils'
+import { getSelectState } from './select'
 
 
 export default {
@@ -83,9 +84,7 @@ export default {
           remind_trigger: '',
           remind_time_type: 'm',
           remind_time_value: '1',
-          message_consumers: [
-            {}
-          ],
+          message_consumers: [],
           
         }
       ], // 设置提醒的信息列表
@@ -95,9 +94,7 @@ export default {
       remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
       remind_edit_type: 1, // 可编辑的类型
-      message_consumers: [
-        {}
-      ],
+      message_consumers: [],
     },
 
     subscriptions: {
@@ -108,6 +105,16 @@ export default {
            payload: {
             triggerList: [],
             historyList: [],
+            setInfoRemindList: [
+              {
+                rela_id: '',
+                rela_type: '',
+                remind_trigger: '',
+                remind_time_type: 'm',
+                remind_time_value: '1',
+                message_consumers: [], 
+              }
+            ], // 设置提醒的信息列表
            }
          })
         })
@@ -155,16 +162,17 @@ export default {
         const { rela_id } = payload
         const updateInfoRemind = [...payload.new_history_list][0]
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
-        let tempId = []
+        // console.log(message_consumers, 'pppp')
+        let temp_user = [] // 存放用户的id
         for(var i in message_consumers) {
-          tempId.push(message_consumers[i].user_id)
+          temp_user.push(message_consumers[i].user_id)
         }
         const data = {
           id,
           remind_trigger,
           remind_time_type,
           remind_time_value,
-          users: tempId
+          users: temp_user
         }
         const res = yield call(updateRemindInformation,data)
         if(!isApiResponseOk(res)) {
@@ -185,15 +193,13 @@ export default {
 
       // 设置提醒的方法
       * setRemindInformation({ payload = {} }, { select, call, put }) {
-        const { rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger,message_consumers } = payload.setInfoRemindList[0]
+        const [{ rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger,message_consumers }] = yield select(getModelSelectState('informRemind', 'setInfoRemindList'))
         let tempId = []
         for(var i in message_consumers) {
           if (message_consumers[i].user_id) {
             tempId.push(message_consumers[i].user_id)
           }
-          
         }
-        console.log(tempId, 'pppppp')
         const data = {
           rela_id,
           rela_type,

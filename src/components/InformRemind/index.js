@@ -6,7 +6,7 @@ import DrawInformRemindModal from './DrawInformRemindModal'
 import DrawerInformContent from './DrawerInformContent'
 import infoRemindStyle from './index.less'
 
-@connect(({informRemind = []}) => ({
+@connect(({informRemind = {}}) => ({
     informRemind,
 }))
 export default class index extends Component {
@@ -45,15 +45,25 @@ export default class index extends Component {
 
     // 点击遮罩层或右上角叉或取消按钮的回调
     onCancel() {
+        const { dispatch } = this.props;
         this.setState({
             visible: false,
         })
-    }
-
-    // 点击确定时的回调
-    onOk() {
-        this.setState({
-            visible: false,
+        dispatch({
+            type: 'informRemind/updateDatas',
+            payload: {
+                is_add_remind: false,
+                setInfoRemindList: [
+                    {
+                      rela_id: '',
+                      rela_type: '',
+                      remind_trigger: '',
+                      remind_time_type: 'm',
+                      remind_time_value: '1',
+                      message_consumers: [], 
+                    }
+                  ], // 设置提醒的信息列表
+            }
         })
     }
 
@@ -76,13 +86,12 @@ export default class index extends Component {
                     <DrawInformRemindModal
                         title={title}
                         visible={visible}
-                        width={560}
+                        width={595}
                         zIndex={1007}
                         maskClosable={false}
                         destroyOnClose
                         mask={true}
                         footer={null}
-                        onOk={this.onOk.bind(this)}
                         onCancel={this.onCancel.bind(this)}
                         overInner={<DrawerInformContent  rela_type={rela_type} rela_id={rela_id} user_remind_info={user_remind_info} />}
                     />
