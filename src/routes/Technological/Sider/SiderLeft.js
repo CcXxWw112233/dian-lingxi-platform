@@ -14,9 +14,11 @@ import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationM
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
+import { connect, } from 'dva';
 
 const { Sider } = Layout;
 
+@connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
   state={
     collapsed: true,
@@ -24,15 +26,21 @@ export default class SiderLeft extends React.Component {
     ShowAddMenberModalVisibile: false,
   }
   componentDidMount() {
-    // this.props.getMenuList()
+   
   }
   setCollapsed(collapsed) {
     this.setState({
-      collapsed: collapsed
+      collapsed
     })
   }
   routingJump(route) {
-    this.props.routingJump(route)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/routingJump',
+      payload: {
+        route
+      }
+    })
   }
   menuClick({ key, code }) {
     const { dispatch } = this.props
@@ -66,7 +74,7 @@ export default class SiderLeft extends React.Component {
       default:
         break
     }
-    this.props.routingJump(`/technological/${route}`)
+    this.routingJump(`/technological/${route}`)
   }
 
   //创建或加入组织
@@ -87,12 +95,14 @@ export default class SiderLeft extends React.Component {
   }
   addMembers(data) {
     const { users } = data
-    const { datas = {} } = this.props.model
-    const { currentSelectOrganize = {} } = datas
+    const { currentSelectOrganize = {}, dispatch } = this.props
     const { id } = currentSelectOrganize
-    this.props.inviteJoinOrganization({
-      members: users,
-      org_id: id
+    dispatch({
+      type: 'technological/inviteJoinOrganization',
+      payload: {
+        members: users,
+        org_id: id
+      }
     })
   }
 
@@ -107,13 +117,24 @@ export default class SiderLeft extends React.Component {
       this.setCreateOrgnizationOModalVisable()
       return
     }
-    const { datas: {currentUserOrganizes = []}} = this.props.model
+    const { currentUserOrganizes = [] } = this.props
+    const { dispatch } = this.props
     for(let val of currentUserOrganizes) {
       if(key === val['id']){
         Cookies.set('org_id', val.id, {expires: 30, path: ''})
         localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
-        this.props.updateDatas({currentSelectOrganize: val})
-        this.props.changeCurrentOrg({org_id: val.id})
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectOrganize: val
+          }
+        })
+        dispatch({
+          type: 'technological/changeCurrentOrg',
+          payload: {
+            org_id: val.id
+          }
+        })
         break
       }
     }
@@ -130,8 +151,9 @@ export default class SiderLeft extends React.Component {
     })
   }
   render() {
+    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
-    this.props.model.datas.menuList && this.props.model.datas.menuList.forEach((item) => {
+    menuList.forEach((item) => {
       if(item.status === '1') {
         temp.push(item)
       }
@@ -174,8 +196,6 @@ export default class SiderLeft extends React.Component {
       ...res
     ]
 
-    const { datas = {} } = this.props.model
-    const { naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const { current_org={}, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
@@ -223,8 +243,8 @@ export default class SiderLeft extends React.Component {
       <Sider
         trigger={null}
         collapsible
-        onMouseOver={this.setCollapsed.bind(this, false)}
-        onMouseOut={this.setCollapsed.bind(this, true)}
+        onMouseEnter={this.setCollapsed.bind(this, false)}
+        onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <div className={indexStyles.contain_1}>
@@ -278,13 +298,19 @@ export default class SiderLeft extends React.Component {
           })}
         </div>
 
-        <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+        <CreateOrganizationModal dispatch={this.props.dispatch} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
 
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
 
       </Sider>
 
     )
   }
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ technological: { datas: {
+  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}
+}} }) {
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize }
 }

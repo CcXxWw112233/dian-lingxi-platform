@@ -115,13 +115,26 @@ class CreateOrganizationModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        const { dispatch } = this.props
         this.props.setCreateOrgnizationOModalVisable()
         const { operateType, name, org_id } = this.state
         values['name'] = name
         if(operateType === '0') {
-          this.props.applyJoinOrganization({org_id, remarks: values['remarks']})
+          dispatch({
+            type: 'technological/applyJoinOrganization',
+            payload: {
+              org_id, remarks: values['remarks']
+            }
+          })
+          // this.props.applyJoinOrganization({org_id, remarks: values['remarks']})
         }else if(operateType === '1') {
-          this.props.createOrganization(values)
+          dispatch({
+            type: 'technological/createOrganization',
+            payload: {
+              ...values
+            }
+          })
+          // this.props.createOrganization(values)
         }
         this.clearChange()
       }
@@ -130,7 +143,6 @@ class CreateOrganizationModal extends React.Component {
   render() {
     const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible, spinning, searchOrganizationList=[] } = this.state
     const { createOrganizationVisable } = this.props; //reName_Add_type操作类型1重命名 2添加
-    // const { datas: { spinning = false, searchOrganizationList = [] }} = this.props.model
     const { getFieldDecorator } = this.props.form;
 
     const formContain = (
