@@ -106,11 +106,11 @@ const Routers = function ({ history, app }) {
       path: '/agreement/service',
       models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/service')
-    },{
+    }, {
       path: '/agreement/privacy',
       models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/privacy')
-    },{
+    }, {
       path: '/login',
       models: () => [import('./models/login')],
       component: () => import('./routes/Login/'),
@@ -118,7 +118,7 @@ const Routers = function ({ history, app }) {
       path: '/register',
       models: () => [import('./models/register')],
       component: () => import('./routes/Register/'),
-    },{
+    }, {
       path: '/registerSuccess',
       models: () => [import('./models/registerSuccess')],
       component: () => import('./routes/RegisterSuccess/'),
@@ -199,6 +199,11 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/iframeOut',
       component: () => import('./routes/IframeOut'),
+    }, {
+      path: '/simplemode',
+      component: () => import('./routes/SimpleMode'),
+      models: () => [import('./models/simpleMode'),
+      ]
     },
   ]
   //去掉exact
