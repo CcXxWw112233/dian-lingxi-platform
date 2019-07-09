@@ -181,21 +181,17 @@ export default class RenderAdd extends Component {
 
   // 用户信息的方法
   multipleUserSelectUserChange (e, message_consumers) {
-    const { dispatch, user_remind_info = [] } = this.props;
+      const { dispatch, user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 通知提醒的用户列表的信息
-      let new_message = [...message_consumers] // 默认为空的用户列表 需要做添加和删除操作
-      new_user_remind_info = new_user_remind_info.filter((item, index) => {// 遍历用户信息列表
-        let new_info_item = item
-        if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
-          if (new_info_item.user_id == e.key) {
-            new_message = new_message.concat(new_info_item)
-          }
-        } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
-          if (new_info_item.user_id == e.key) {
-            new_message.splice(index, 1)
+      let new_message = [] // 传递过来的用户信息
+      console.log('sss', e)
+      const { selectedKeys = [] } = e
+      new_message = selectedKeys.map(item => {
+        for(let val of new_user_remind_info) {
+          if(item == val['user_id']) {
+            return val
           }
         }
-        return new_message
       })
       // 将全局的用户信息做修改
       dispatch({
@@ -299,7 +295,8 @@ export default class RenderAdd extends Component {
                   </Dropdown>
                 </div>
             </div>
-              <Button 
+              <Button
+                  disabled={message_consumers && message_consumers.length > 0 ? false : true} 
                   onClick={ () => { this.handleSetInfoRemind() } }
                   className={infoRemindStyle.icon} type="primary">确定</Button>
           </div>

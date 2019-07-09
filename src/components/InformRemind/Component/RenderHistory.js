@@ -192,20 +192,35 @@ export default class RenderHistory extends Component {
     multipleUserSelectUserChange (e, id, message) {  
       const { dispatch, historyList = [], user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 用户列表的信息
-      let new_message = [...message] // 传递过来的用户信息
-      new_user_remind_info = new_user_remind_info.map((item, index) => {
-        let new_info_item = item
-        if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
-          if (new_info_item.user_id == e.key) {//判断当前的用户信息列表id与选中的id是否匹配
-            new_message = new_message.concat(new_info_item) // 如果匹配就给你追加进去
-          }
-        } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
-          if (new_info_item.user_id == e.key) {
-            new_message.splice(index, 1)
+      let new_message = [] // 传递过来的用户信息
+      console.log('sss', e)
+      const { selectedKeys = [] } = e
+      new_message = selectedKeys.map(item => {
+        for(let val of new_user_remind_info) {
+          if(item == val['user_id']) {
+            return val
           }
         }
-        return new_message
       })
+      // new_user_remind_info = new_user_remind_info.map((item, index) => {
+      //   let new_info_item = item
+      //   if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
+      //     if (new_info_item.user_id == e.key) {//判断当前的用户信息列表id与选中的id是否匹配
+      //       new_message = new_message.concat(new_info_item) // 如果匹配就给你追加进去
+      //     }
+      //   } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
+      //     if (new_info_item.user_id == e.key) {
+      //       new_message = new_message.map((item2, key) => {
+      //         const { user_id } = item2
+      //         if(user_id != e.key) {
+      //           return item2
+      //         }
+      //       })
+      //       // new_message.splice(index, 1)
+      //     }
+      //   }
+      //   return new_message
+      // })
       // 更新成员的信息
       let new_history_list = [...historyList]
       new_history_list = new_history_list.map(item => {
