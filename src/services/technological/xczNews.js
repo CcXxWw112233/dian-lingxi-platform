@@ -1,6 +1,5 @@
 import request from '@/utils/requestAxios'
 import { REQUEST_COMMON } from '@/globalset/js/constant'
-import { func } from 'prop-types';
 
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {

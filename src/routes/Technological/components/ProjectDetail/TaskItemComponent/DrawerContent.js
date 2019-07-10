@@ -33,6 +33,7 @@ import ContentRaletion from '../../../../../components/ContentRaletion'
 import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../services/technological/workbench'
 import ShareAndInvite from './../../ShareAndInvite/index'
 import VisitControl from './../../VisitControl/index'
+import InformRemind from '@/components/InformRemind'
 import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
 import {withRouter} from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
@@ -1232,6 +1233,7 @@ class DrawContent extends React.Component {
                 <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
+              <InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} />
               {/* <Dropdown overlay={topRightMenu}> */}
               {drawContent.is_privilege && (
                 <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>

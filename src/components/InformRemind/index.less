@@ -1,0 +1,80 @@
+.wrapperInfo{
+    min-height: 175px;
+    position: relative;
+    z-index: 1100;
+}
+
+.add_header {
+    width: 76px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    .icon {
+        font-size: 14px;
+        color: #1890FF;
+    }
+    .text {
+        font-size: 14px;
+        color: #1890FF;
+        margin-left: 4px;
+    }
+}
+
+.content {
+    position: relative; 
+    cursor: pointer;
+    .slip{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 48px;
+        position: relative;
+        // padding-bottom: 16px;
+        cursor: pointer;
+        &:hover {
+            background: palegoldenrod;
+            .slip_hover {
+                visibility: visible;
+            }
+            .overdue {
+                visibility: hidden;
+            }
+            .checked {
+                visibility: hidden;
+            }
+        }
+        .slip_hover {
+            visibility: hidden;
+        }
+        .user_info {
+            position: absolute;
+            right: 85px;
+            top: 12px;
+            .plus {
+                font-size: 20px;
+                line-height: 28px;
+            }
+        }
+    }
+    
+    .del {
+        cursor: pointer;
+        &:hover {
+            color: #1890FF;
+        }
+    }
+    .overdue {
+        // display: block;
+        color: #FAAD14;
+        cursor: pointer;
+    }
+    .checked {
+        // display: block;
+        color: #52C41A;
+        cursor: pointer;
+    }
+    .icon {
+        position: absolute;
+        right: 0;
+        flex-shrink: 0; 
+    }
+}

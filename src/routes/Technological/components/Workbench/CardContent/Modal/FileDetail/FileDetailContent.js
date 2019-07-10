@@ -27,6 +27,8 @@ import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} fro
 import ZoomPicture from './../../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../../components/HOC/withBodyClientDimens'
 
+import InformRemind from '@/components/InformRemind'
+
 class FileDetailContent extends React.Component {
 
   versionItemClick({value, key}){
@@ -519,7 +521,8 @@ class FileDetailContent extends React.Component {
     const { clientHeight, offsetTopDeviation } =this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { board_id, filePreviewCurrentFileId, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -838,15 +841,14 @@ class FileDetailContent extends React.Component {
                 </Button>
               </Dropdown>
             )}
-
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
               <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
                 <Icon type="download" />下载
               </Button>
             )}
 
-            <span style={{marginLeft: '10px'}}>
-          </span>
+            <span style={{marginLeft: '10px'}}></span>
+            <InformRemind rela_id={board_id} rela_type={'4'} user_remind_info={data} />
              {/* <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
             <VisitControl
                 isPropVisitControl={is_privilege === '0' ? false : true}
