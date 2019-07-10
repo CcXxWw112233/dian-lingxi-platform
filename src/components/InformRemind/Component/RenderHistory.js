@@ -6,13 +6,13 @@ import moment from 'moment';
 import AvatarList from '@/components/avatarList'
 import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
 import globalStyles from '@/globalset/css/globalClassName.less'
-
+const { Option } = Select;
 
 @connect(({informRemind: { triggerList, diff_text_term, diff_remind_time,  historyList}}) => ({
     triggerList, diff_text_term, diff_remind_time, historyList
   }))
 export default class RenderHistory extends Component {
-    
+
     /**
      *  改变选项的类型切换的方法
      * 如果 `remind_edit_type` 为1 就显示后面两项
@@ -108,7 +108,7 @@ export default class RenderHistory extends Component {
         }
         return new_history_list
       })
-      
+
       dispatch({
         type: 'informRemind/updateRemindInformation',
         payload: {
@@ -159,7 +159,7 @@ export default class RenderHistory extends Component {
       console.log(dateString, 'sss')
       let new_history_list = [...historyList]
       let userDefindDate = new Date(dateString)
-      let time = userDefindDate.valueOf() / 1000 // 转换成时间戳 
+      let time = userDefindDate.valueOf() / 1000 // 转换成时间戳
       console.log(time, 'llll')
         new_history_list = new_history_list.map(item => {
             let new_item = item
@@ -185,11 +185,11 @@ export default class RenderHistory extends Component {
 
     /**
      * 用户信息的方法
-     * @param {Object} e 用户列表的对象信息 
+     * @param {Object} e 用户列表的对象信息
      * @param {*} id 当前对象的id
      * @param {*} message 传递进来的用户信息列表
      */
-    multipleUserSelectUserChange (e, id, message) {  
+    multipleUserSelectUserChange (e, id, message) {
       const { dispatch, historyList = [], user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 用户列表的信息
       let new_message = [] // 传递过来的用户信息
@@ -236,7 +236,7 @@ export default class RenderHistory extends Component {
           historyList: new_history_list,
         }
       })
-      
+
     }
 
 
@@ -245,7 +245,7 @@ export default class RenderHistory extends Component {
             triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],
         } = this.props;
         const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status, message_consumers } = itemValue
-      
+
         return (
           <>
             <div className={infoRemindStyle.slip}
@@ -257,35 +257,35 @@ export default class RenderHistory extends Component {
                     style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       triggerList && triggerList.length && triggerList.map(chileItrem => {
-                        return ( 
-                          <Option 
+                        return (
+                          <Option
                             onClick={this.handleTriggerChg.bind(this,id,chileItrem.remind_edit_type, chileItrem.type_code)}
                             value={chileItrem.type_code}>{chileItrem.type_name}</Option>
-                        )      
+                        )
                       })
                     }
                 </Select>
                 {/* 显示自定义时间 */}
                 {
-                  remind_edit_type == 3 && 
-                    <DatePicker 
+                  remind_edit_type == 3 &&
+                    <DatePicker
                         showTime={true}
                         defaultValue={ moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }                           
+                        onOk={ (value) => { this.handleDatePickerOk(value) } }
                         onChange={ (date,dateString) => { this.handleDatePicker(date, dateString, id, remind_edit_type) } } />
                 }
                 {/* 显示1-60不同的时间段--选择框 */}
                 {
-                  remind_edit_type == 1 && <Select 
+                  remind_edit_type == 1 && <Select
                       defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_remind_time.map(childItem => {
                         return (
                           <Option
-                            onClick={(value) => { this.onDiffRemindTime(id,childItem.remind_time_value) }} 
+                            onClick={(value) => { this.onDiffRemindTime(id,childItem.remind_time_value) }}
                             value={childItem.remind_time_value}>{childItem.remind_time_value}</Option>
                         )
                       })
@@ -294,8 +294,8 @@ export default class RenderHistory extends Component {
                 }
                 {/* 显示 分钟 小时 天数 的列表--选择框 */}
                 {
-                   remind_edit_type == 1 && <Select 
-                      defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type} 
+                   remind_edit_type == 1 && <Select
+                      defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
                       diff_text_term.map(childItem => {
@@ -311,7 +311,7 @@ export default class RenderHistory extends Component {
                 {/* 显示用户信息头像 */}
                 <div className={infoRemindStyle.user_info}>
                   <Dropdown overlay={
-                    <UserSearchAndSelectMutiple 
+                    <UserSearchAndSelectMutiple
                       listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                       keyCode={'user_id'} //值关键字
                       searchName={'name'} //搜索关键字
@@ -321,27 +321,27 @@ export default class RenderHistory extends Component {
                         {
                           message_consumers && message_consumers.length > 0 ? (
                             <div style={{maxWidth: 60, width: 'auto'}}>
-                              <AvatarList 
+                              <AvatarList
                                 size={'small'}
-                                users={message_consumers} /> 
+                                users={message_consumers} />
                             </div>
                           ) : (
                             <div className={`${globalStyles.authTheme} ${infoRemindStyle.plus}`}>&#xe70b;</div>
                           )
                         }
-                        
+
                   </Dropdown>
                 </div>
               </div>
-             
+
               {/* 鼠标的hover事件 控制删除小图标的显示隐藏 */}
               {
                 is_edit_status ? (
-                    <Button 
+                    <Button
                       onClick={ () => { this.handleUpdateInfoRemind(id, message_consumers) } }
                       className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
-                    <div 
+                    <div
                       onClick={ () => { this.handleDelInfoRemind(id) } }
                       className={`${infoRemindStyle.slip_hover} ${infoRemindStyle.icon}`}>
                         <Tooltip placement="top" title="删除" arrowPointAtCenter>
@@ -349,7 +349,7 @@ export default class RenderHistory extends Component {
                         </Tooltip>
                     </div>
                 )
-                
+
               }
               {/* 显示不同状态的小图标 */}
               {
