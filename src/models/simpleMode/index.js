@@ -1,6 +1,8 @@
 export default {
     namespace: 'simplemode',
-    state: {},
+    state: {
+        
+    },
     effects: {
 
     },
