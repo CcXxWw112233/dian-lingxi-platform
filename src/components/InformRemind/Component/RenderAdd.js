@@ -6,7 +6,7 @@ import moment from 'moment';
 import AvatarList from '@/components/avatarList'
 import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
 import globalStyles from '@/globalset/css/globalClassName.less'
-
+const { Option } = Select;
 
 @connect(({informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [],  historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers}}) => ({
     triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers
@@ -26,7 +26,7 @@ export default class RenderAdd extends Component {
     const { dispatch, setInfoRemindList = [] } = this.props;
     // 修改自己定义的数据
     let new_setInfoRemindList = [...setInfoRemindList];
-        
+
     new_setInfoRemindList = new_setInfoRemindList.map(item => {
         let new_item = item
         new_item = {...new_item, remind_trigger: code}
@@ -67,7 +67,7 @@ export default class RenderAdd extends Component {
     const { dispatch, setInfoRemindList = [] } = this.props;
     // 修改自己定义的数据
     let new_setInfoRemindList = [...setInfoRemindList];
-        
+
     new_setInfoRemindList = new_setInfoRemindList.map(item => {
         let new_item = item
         new_item = {...new_item, remind_time_value: value}
@@ -90,7 +90,7 @@ export default class RenderAdd extends Component {
     const { dispatch, setInfoRemindList = [] } = this.props;
     // 修改自己定义的数据
     let new_setInfoRemindList = [...setInfoRemindList];
-        
+
     new_setInfoRemindList = new_setInfoRemindList.map(item => {
         let new_item = item
         new_item = {...new_item, remind_time_type: type}
@@ -130,10 +130,10 @@ export default class RenderAdd extends Component {
     dispatch({
       type: 'informRemind/setRemindInformation',
       payload: {
-        
+
       }
     })
-    
+
   }
 
   // 时间戳转换日期格式
@@ -156,7 +156,7 @@ export default class RenderAdd extends Component {
     const { dispatch, setInfoRemindList = [] } = this.props;
     let new_set_info_list = [...setInfoRemindList]
     let userDefindDate = new Date(dateString)
-    let time = userDefindDate.valueOf() / 1000 // 转换成时间戳 
+    let time = userDefindDate.valueOf() / 1000 // 转换成时间戳
     new_set_info_list = new_set_info_list.map(item => {
       let new_item = item
       new_item = {...new_item, remind_time_type: 'datetime', remind_time_value: time}
@@ -219,36 +219,36 @@ export default class RenderAdd extends Component {
                   style={{ width: 122, height: 32, marginRight: 16 }}>
                   {
                     triggerList && triggerList.length && triggerList.map(chileItrem => {
-                      return ( 
+                      return (
                         <Option
                           onClick={ () => { this.handleTriggerChg(chileItrem.type_code, chileItrem.remind_edit_type) } }
                           value={chileItrem.type_code}>{chileItrem.type_name}</Option>
-                      )      
+                      )
                     })
                   }
               </Select>
               {/* 显示自定义时间 */}
               {
-                is_show_date_picker && 
-                  <DatePicker 
+                is_show_date_picker &&
+                  <DatePicker
                         showTime={true}
                         defaultValue={ remind_time_value == 1 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }                           
+                        onOk={ (value) => { this.handleDatePickerOk(value) } }
                         onChange={ (date,dateString) => { this.handleDatePicker(date, dateString) } }
                   />
               }
               {/* 显示1-60不同的时间段--选择框 */}
               {
-                is_show_other_select && <Select 
+                is_show_other_select && <Select
                     defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
                   {
                     diff_remind_time.map(childItem => {
                       return (
                         <Option
-                          onClick={ () => { this.onDiffRemindTime(childItem.remind_time_value) } } 
+                          onClick={ () => { this.onDiffRemindTime(childItem.remind_time_value) } }
                           value={childItem.remind_time_value}>{childItem.remind_time_value}</Option>
                       )
                     })
@@ -257,8 +257,8 @@ export default class RenderAdd extends Component {
               }
               {/* 显示 分钟 小时 天数 的列表--选择框 */}
               {
-                  is_show_other_select && <Select 
-                    defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type} 
+                  is_show_other_select && <Select
+                    defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
                   {
                     diff_text_term.map(childItem => {
@@ -274,7 +274,7 @@ export default class RenderAdd extends Component {
               {/* 显示用户信息头像 */}
               <div className={infoRemindStyle.user_info}>
                   <Dropdown overlay={
-                    <UserSearchAndSelectMutiple 
+                    <UserSearchAndSelectMutiple
                       listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                       keyCode={'user_id'} //值关键字
                       searchName={'name'} //搜索关键字
@@ -284,9 +284,9 @@ export default class RenderAdd extends Component {
                         {
                           message_consumers && message_consumers.length > 0 ? (
                             <div style={{maxWidth: 60, width: 'auto'}}>
-                              <AvatarList 
+                              <AvatarList
                                 size={'small'}
-                                users={message_consumers} /> 
+                                users={message_consumers} />
                             </div>
                           ) : (
                             <div className={`${globalStyles.authTheme} ${infoRemindStyle.plus}`}>&#xe70b;</div>
@@ -296,7 +296,7 @@ export default class RenderAdd extends Component {
                 </div>
             </div>
               <Button
-                  disabled={message_consumers && message_consumers.length > 0 ? false : true} 
+                  disabled={message_consumers && message_consumers.length > 0 ? false : true}
                   onClick={ () => { this.handleSetInfoRemind() } }
                   className={infoRemindStyle.icon} type="primary">确定</Button>
           </div>
