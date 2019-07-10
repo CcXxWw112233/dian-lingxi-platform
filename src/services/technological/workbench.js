@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 export async function getTaskList_new({id}) {
@@ -204,15 +204,21 @@ export async function getCurrentSelectedProjectMembersList({projectId}) {
 //获取项目列表
 export async function getProjectList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/app_list`,
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
+    params: {
+      contain_type: '3'
+    }
   });
 }
 //获取项目列表(只返回用户)
 export async function getProjectUserList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/user_lists`,
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
+    params: {
+      contain_type: '2'
+    }
   });
 }
 export async function getUserImToken(data) {

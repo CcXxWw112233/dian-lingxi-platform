@@ -1,5 +1,5 @@
 //项目归档
-import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { func } from "prop-types";
 
@@ -186,8 +186,11 @@ export async function deleteCardNewComment(data) {
 //获取项目分组列表
 export async function getProjectGoupList() {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/card_lists`,
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
+    params: {
+      contain_type: '1'
+    }
   });
 }
 

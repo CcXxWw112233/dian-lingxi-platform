@@ -3,7 +3,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
 import {REQUEST_DOMAIN} from "../globalset/js/constant";
-import { reRefreshToken } from './auth'
+import { reRefreshToken } from './oauth'
 function messageLoading(url) {
   return (
     message.loading('加载中...', 0)
@@ -48,9 +48,10 @@ export default function request(options = {}, elseSet = {}) {
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
-  const board_id = Cookies.get('board_id')
+
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
+  header['OrganizationId'] = '1110059501836439552'
   // header['board_id'] = board_id
 
   return new Promise((resolve, reject) => {

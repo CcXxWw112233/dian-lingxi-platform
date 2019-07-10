@@ -76,19 +76,19 @@ class CardContent extends React.Component {
       case 'RESPONSIBLE_TASK':
         let that = this;
         // Promise.resolve(that.props.setProjectTabCurrentSelectedProject('0')).then(() => this.props.getResponsibleTaskList({ id: boxId }))
-        this.props.getResponsibleTaskList({ id: boxId });
+        // this.props.getResponsibleTaskList({ id: boxId });
         break;
       case 'EXAMINE_PROGRESS': //待处理的流程
-        this.props.getBackLogProcessList({ id: boxId });
+        // this.props.getBackLogProcessList({ id: boxId });
         break;
       case 'joinedFlows': //参与的流程
-        this.props.getJoinedProcessList({ id: boxId });
+        // this.props.getJoinedProcessList({ id: boxId });
         break;
       case 'MY_DOCUMENT':
-        this.props.getUploadedFileList({ id: boxId });
+        // this.props.getUploadedFileList({ id: boxId });
         break;
       case 'MEETIMG_ARRANGEMENT':
-        this.props.getMeetingList({ id: boxId });
+        // this.props.getMeetingList({ id: boxId });
         break;
       case 'PROJECT_STATISTICS':
         break;
