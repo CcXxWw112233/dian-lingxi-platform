@@ -164,6 +164,8 @@ const Routers = function ({ history, app }) {
 
         import('./models/technological/xczNews'),
 
+        import('./models/technological/informRemind'),
+
 
       ],
       component: () => import('./routes/Technological/'),

@@ -27,6 +27,7 @@ import VisitControl from './../../../VisitControl/index'
 import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from "../../../../../../services/technological/project";
 import ZoomPicture from './../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../components/HOC/withBodyClientDimens'
+import InformRemind from '@/components/InformRemind'
 
 class FileDetailContent extends React.Component {
 
@@ -681,6 +682,7 @@ class FileDetailContent extends React.Component {
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { projectDetailInfoData={}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewIsRealImage=false } }= this.props.model
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id} = projectDetailInfoData
     const {is_privilege, privileges} = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
 
@@ -1010,6 +1012,7 @@ class FileDetailContent extends React.Component {
 
             <span style={{marginLeft: '10px'}}>
           </span>
+          <InformRemind rela_id={board_id} rela_type={'4'} user_remind_info={data} />
           <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
             <VisitControl
                 isPropVisitControl={is_privilege === '0' ? false : true}
