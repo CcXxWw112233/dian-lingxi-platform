@@ -253,6 +253,7 @@ export default class RenderHistory extends Component {
               <div className={infoRemindStyle.select}>
                 {/* 显示某种事件类型的列表--选择框 */}
                 <Select
+                    disabled={status == 2 ? true : false}
                     defaultValue={remind_trigger}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -269,6 +270,7 @@ export default class RenderHistory extends Component {
                 {
                   remind_edit_type == 3 &&
                     <DatePicker
+                        disabled={status == 2 ? true : false}
                         showTime={true}
                         defaultValue={ moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
@@ -279,6 +281,7 @@ export default class RenderHistory extends Component {
                 {/* 显示1-60不同的时间段--选择框 */}
                 {
                   remind_edit_type == 1 && <Select
+                      disabled={status == 2 ? true : false}
                       defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -295,6 +298,7 @@ export default class RenderHistory extends Component {
                 {/* 显示 分钟 小时 天数 的列表--选择框 */}
                 {
                    remind_edit_type == 1 && <Select
+                      disabled={status == 2 ? true : false}
                       defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -310,7 +314,7 @@ export default class RenderHistory extends Component {
                 }
                 {/* 显示用户信息头像 */}
                 <div className={infoRemindStyle.user_info}>
-                  <Dropdown overlay={
+                  <Dropdown disabled={status == 2 ? true : false} overlay={
                     <UserSearchAndSelectMutiple
                       listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                       keyCode={'user_id'} //值关键字
