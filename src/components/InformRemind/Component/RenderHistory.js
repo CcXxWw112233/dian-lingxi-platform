@@ -158,11 +158,11 @@ export default class RenderHistory extends Component {
       let new_history_list = [...historyList]
       let userDefindDate = new Date(dateString)
       let time = userDefindDate.valueOf() / 1000 // 转换成时间戳
-      console.log(time, 'llll')
+      // console.log(time, 'llll')
         new_history_list = new_history_list.map(item => {
             let new_item = item
             if(id == new_item.id) {
-                new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type}
+                new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status:true}
             }
             return new_item
         })
@@ -176,9 +176,28 @@ export default class RenderHistory extends Component {
 
     /**
      * 成功确定的回调
+     * @param {String} date 时间日期 moment对象
+     * @param {String} id 当前对象对应的id
+     * @param {String} type 可编辑的类型
      */
-    handleDatePickerOk(value) {
-      console.log(value)
+    handleDatePickerOk(date, id, type) {
+      const { dispatch, historyList = [] } = this.props;
+      let new_history_list = [...historyList]
+      let time = moment(date.format('YYYY-MM-DD HH:MM')).valueOf() / 1000
+      // console.log(time, 'sss')
+      new_history_list = new_history_list.map(item => {
+        let new_item = item
+        if(id == new_item.id) {
+            new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status: true}
+        }
+          return new_item
+      })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          historyList: new_history_list,
+        }
+      })
     }
 
     /**
@@ -255,7 +274,7 @@ export default class RenderHistory extends Component {
                         defaultValue={ remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }
+                        onOk={ (value) => { this.handleDatePickerOk(value, id, remind_edit_type) } }
                         onChange={ (date,dateString) => { this.handleDatePicker(date, dateString, id, remind_edit_type) } } />
                 }
                 {/* 显示1-60不同的时间段--选择框 */}
@@ -322,6 +341,7 @@ export default class RenderHistory extends Component {
               {
                 is_edit_status ? (
                     <Button
+                      disabled={ message_consumers && message_consumers.length ? false : true }
                       onClick={ () => { this.handleUpdateInfoRemind(id, message_consumers) } }
                       className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
