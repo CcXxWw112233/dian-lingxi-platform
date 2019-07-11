@@ -1,7 +1,14 @@
 export default {
     namespace: 'simplemode',
     state: {
-        
+        simpleHeaderVisiable: true,
+        myWorkbenchBoxsVisiable: true,
+        wallpaperSelectVisiable: true,
+        workbenchBoxSelectVisiable: false,
+        createNewBoardVisiable: false,
+        setWapperCenter: false,
+        wallpaperSelectModalVisiable: false,
+        chatImVisiable: false
     },
     effects: {
 
@@ -9,8 +16,7 @@ export default {
     reducers: {
         updateDatas(state, action) {
             return {
-                ...state,
-                datas: { ...state.datas, ...action.payload },
+                ...state, ...action.payload
             }
         }
     },

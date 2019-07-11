@@ -32,7 +32,7 @@ import dynamic from 'dva/dynamic'
 const { ConnectedRouter } = routerRedux
 
 const Routers = function ({ history, app }) {
-  history.listen((location)=>{
+  history.listen((location) => {
     switch (location.pathname) {
       case '/login':
         document.title = '灵犀-登录'
@@ -133,36 +133,36 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/technological',
       models: () => [import('./models/technological'),
-        import('./models/technological/cooperationPush'),
-        import('./models/technological/globalSearch'),
-        import('./models/technological/workbench/gantt'),
-        import('./models/technological/public/milestoneDetail'),
-        import('./models/technological/public/publicModalComment'),
+      import('./models/technological/cooperationPush'),
+      import('./models/technological/globalSearch'),
+      import('./models/technological/workbench/gantt'),
+      import('./models/technological/public/milestoneDetail'),
+      import('./models/technological/public/publicModalComment'),
 
-        import('./models/technological/accountSet'),
-        import('./models/technological/project'),
-        import('./models/technological/projectDetail/index'),
-        import('./models/technological/projectDetail/projectDetailTask'),
-        import('./models/technological/projectDetail/projectDetailFile'),
-        import('./models/technological/projectDetail/projectDetailProcess'),
-        import('./models/technological/projectDetail/projectDetailProcess'),
+      import('./models/technological/accountSet'),
+      import('./models/technological/project'),
+      import('./models/technological/projectDetail/index'),
+      import('./models/technological/projectDetail/projectDetailTask'),
+      import('./models/technological/projectDetail/projectDetailFile'),
+      import('./models/technological/projectDetail/projectDetailProcess'),
+      import('./models/technological/projectDetail/projectDetailProcess'),
 
-        import('./models/technological/newsDynamic'),
-        import('./models/technological/workbench/index'),
-        import('./models/technological/workbench/workbenchTaskDetail'),
-        import('./models/technological/workbench/workbenchPublicDatas'),
-        import('./models/technological/workbench/workbenchFileDetail'),
-        import('./models/technological/workbench/workbenchEditTeamShow'),
-        import('./models/technological/workbench/workbenchProccessDetail'),
+      import('./models/technological/newsDynamic'),
+      import('./models/technological/workbench/index'),
+      import('./models/technological/workbench/workbenchTaskDetail'),
+      import('./models/technological/workbench/workbenchPublicDatas'),
+      import('./models/technological/workbench/workbenchFileDetail'),
+      import('./models/technological/workbench/workbenchEditTeamShow'),
+      import('./models/technological/workbench/workbenchProccessDetail'),
 
-        import('./models/technological/organizationMember'),
-        import('./models/modal'),
-        import('./models/teamShow'),
-        import('./models/teamShow/editTeamShow'),
-        import('./models/teamShow/teamList'),
-        import('./models/teamShow/teamInfo'),
+      import('./models/technological/organizationMember'),
+      import('./models/modal'),
+      import('./models/teamShow'),
+      import('./models/teamShow/editTeamShow'),
+      import('./models/teamShow/teamList'),
+      import('./models/teamShow/teamInfo'),
 
-        import('./models/technological/xczNews'),
+      import('./models/technological/xczNews'),
 
 
       ],
@@ -203,6 +203,9 @@ const Routers = function ({ history, app }) {
       path: '/simplemode',
       component: () => import('./routes/SimpleMode'),
       models: () => [import('./models/simpleMode'),
+      import('./models/technological'),
+      import('./models/technological/workbench/index'),
+
       ]
     },
   ]
@@ -214,12 +217,12 @@ const Routers = function ({ history, app }) {
           routes.map(({ path, ...dynamics }, key) => {
             return (
               <Route key={key}
-                     exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1 )? false : true}
-                     path={path}
-                     component={dynamic({
-                       app,
-                       ...dynamics,
-                     })}
+                exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
+                path={path}
+                component={dynamic({
+                  app,
+                  ...dynamics,
+                })}
               />
             )
           })

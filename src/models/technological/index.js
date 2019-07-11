@@ -27,14 +27,16 @@ let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
-  state: {},
+  state: {
+    datas: {}
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
         locallocation = location
-        if (location.pathname.indexOf('/technological') !== -1) {
+        if (location.pathname.indexOf('/technological') !== -1 || location.pathname.indexOf('/simplemode') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {

@@ -21,22 +21,22 @@ class DropdownSelect extends Component {
     }
 
     renderAddMenuItem = (item) => {
-        return( 
-<Menu.Item key={item.id} style={{
-            lineHeight: '30px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: '#000000',
-            boxShadow: 'none',
-            borderRadius: '0',
-            border: '0',
-            borderRight: '0px!important',
-        }}>
-            <span onClick={this.handleSeletedMenuItem.bind(this, item)} style={{color: '#1890FF'}}>
-            <Icon type={item.icon} style={{fontSize: '17px'}}/><span style={{paddingLeft: '10px'}}>{item.name}</span>
-            </span>
-        </Menu.Item>
-);
+        return (
+            <Menu.Item key={item.id} style={{
+                lineHeight: '30px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#000000',
+                boxShadow: 'none',
+                borderRadius: '0',
+                border: '0',
+                borderRight: '0px!important',
+            }}>
+                <span onClick={item.selectHandleFun.bind(this, item)} style={{ color: '#1890FF' }}>
+                    <Icon type={item.icon} style={{ fontSize: '17px' }} /><span style={{ paddingLeft: '10px' }}>{item.name}</span>
+                </span>
+            </Menu.Item>
+        );
     }
 
     renderMenuItem = (filteredList) => {
@@ -52,18 +52,36 @@ class DropdownSelect extends Component {
                 borderRight: '0px!important',
             }}>
                 <span onClick={this.handleSeletedMenuItem.bind(this, item)}>
-                {item.name}<span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)'}}>#{item.parentName}</span>
+                    {item.name}<span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>
                 </span>
             </Menu.Item>
         ));
     };
 
+
+
     content() {
+        const addBoard = () => {
+            const {dispatch} = this.props;
+            console.log("Menu");
+            dispatch({
+                type: 'simplemode/updateDatas',
+                payload: {
+                    simpleHeaderVisiable: true,
+                    myWorkbenchBoxsVisiable: false,
+                    wallpaperSelectVisiable: true,
+                    workbenchBoxSelectVisiable: false,
+                    createNewBoardVisiable: true,
+                    setWapperCenter: true,
+                }
+            });
+
+        };
         const list = [{ 'name': '我参与的项目', 'parentName': '组织名称', 'value': '1' }, { 'name': '项目名称01', 'parentName': '组织名称', 'value': '101' }, { 'name': '项目名称02', 'value': '102' }]
         return (
             <Menu className>
-            {this.renderAddMenuItem({'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': function(){}})}
-            {this.renderMenuItem(list)}
+                {this.renderAddMenuItem({ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': addBoard })}
+                {this.renderMenuItem(list)}
 
             </Menu>
 

@@ -6,6 +6,19 @@ import { Icon } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 
 const MyWorkbenchBoxs = (props) => {
+    const { dispatch } = props;
+    const addMyWorkBoxs = () => {
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                simpleHeaderVisiable: false,
+                myWorkbenchBoxsVisiable: false,
+                wallpaperSelectVisiable: false,
+                workbenchBoxSelectVisiable: true,
+                createProjectVisiable: false,
+            }
+        });
+    }
     return (
         <div className={indexStyles.mainContentWapper}>
             <div className={indexStyles.projectSelector}>
@@ -29,7 +42,7 @@ const MyWorkbenchBoxs = (props) => {
                     <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe673;</i><br />
                     <span className={indexStyles.myWorkbenchBox_title}>项目文件</span>
                 </div>
-                <div className={indexStyles.myWorkbenchBox}>
+                <div className={indexStyles.myWorkbenchBox} onClick={addMyWorkBoxs}>
                     <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
                 </div>
 

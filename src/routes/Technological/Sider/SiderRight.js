@@ -46,7 +46,7 @@ const Nav = Mention.Nav;
 })
 class SiderRight extends React.Component {
   state = {
-    collapsed: true,
+    collapsed: false,
     saveToProject: null,
     meetingTitle: "",
     videoMeetingDefaultSuggesstions: [], //mention 原始数据
@@ -54,8 +54,12 @@ class SiderRight extends React.Component {
     suggestionValue: toContentState(""), //mention的值
     mentionSelectedMember: [], //已经选择的 item,
     selectedMemberTextAreaValue: "",
-    videoMeetingPopoverVisible: false
+    videoMeetingPopoverVisible: false,
+   
   };
+  constructor(props){
+    super(props);
+  }
   onCollapse(bool) {
     this.setState({
       collapsed: bool
@@ -450,9 +454,11 @@ class SiderRight extends React.Component {
       selectedSuggestions,
       suggestionValue,
       selectedMemberTextAreaValue,
-      videoMeetingPopoverVisible
+      videoMeetingPopoverVisible,
     } = this.state;
-    let { projectList } = this.props;
+    let { projectList, outInputSiderRightStyle = {}} = this.props;
+    console.log(outInputSiderRightStyle);
+    
     //过滤出来当前用户有编辑权限的项目
     projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 
@@ -539,8 +545,9 @@ class SiderRight extends React.Component {
         )}
       </div>
     );
+   
     return (
-      <div id={"siderRight"} className={indexStyles.siderRight}>
+      <div id={"siderRight"} className={indexStyles.siderRight} style={outInputSiderRightStyle}>
         <Sider
           collapsible
           onCollapse={this.onCollapse.bind(this)}
