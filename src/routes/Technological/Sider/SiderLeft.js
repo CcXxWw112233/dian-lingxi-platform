@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Layout, Menu, Dropdown} from 'antd';
+import { Icon, Layout, Menu, Dropdown, Tooltip, Switch} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
@@ -15,8 +15,10 @@ import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberMo
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
 import { connect, } from 'dva';
+import hobbyImg from '@/assets/sider_left/smile.png'
 
 const { Sider } = Layout;
+const { SubMenu  } = Menu;
 
 @connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
@@ -112,6 +114,7 @@ export default class SiderLeft extends React.Component {
     })
   }
   handleOrgListMenuClick = (e) => {
+    console.log(e, 'sssss')
     const { key } = e
     if('10' == key) {
       this.setCreateOrgnizationOModalVisable()
@@ -196,27 +199,95 @@ export default class SiderLeft extends React.Component {
       ...res
     ]
 
-    const { current_org={}, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { current_org={}, name, avatar } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
 
     const orgListMenu = (
-      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} >
-        {currentUserOrganizes.map((value, key) => {
-          const { name, id, identity_type } = value
-          return (
-            <Menu.Item key={id} >
-              {name}
-              {identity_type == '0'? (<span style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6}}>访客</span>) : ('')}
+      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
+        <Menu.Item key="24">
+          <div className={indexStyles.default_select_setting}>
+            <div className={indexStyles.team}>
+              <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
+              <span className={indexStyles.middle_text}>团队成员</span>
+            </div>
+          </div>
+        </Menu.Item>
+
+        <Menu.Item key="23">
+          <div className={indexStyles.default_select_setting}>
+            <div className={indexStyles.bank}>
+              <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
+              <span className={indexStyles.middle_text}>组织管理后台</span>
+            </div>
+          </div>
+        </Menu.Item>
+
+        <Menu.Item key="22">
+          <div className={indexStyles.default_select_setting}>
+            <div className={indexStyles.addUsers}>
+              <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
+              <span className={indexStyles.middle_text}>邀请成员加入</span>
+            </div>
+          </div>
+        </Menu.Item>
+
+        {identity_type == '1' && (<Menu.Divider />) }
+
+        <Menu.Item key="20">
+          <div className={indexStyles.default_select_setting}>
+            <div className={indexStyles.account_setting}>
+              {
+                avatar ? <span className={indexStyles.left_img}><img src={avatar} className={indexStyles.avartarImg} /></span> : ''
+              }
+              <span className={indexStyles.middle_text}>账户设置</span>
+              <Tooltip placement="top" title="退出登录">
+                <div 
+                  className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
+              </Tooltip>
+            </div>
+          </div>
+        </Menu.Item>
+
+        <SubMenu
+          key="21"
+          title={
+            <div className={indexStyles.default_select_setting}>
+              <div className={indexStyles.hobby}>
+                <img className={`${indexStyles.hobby_img} ${indexStyles.left_img}`} src={hobbyImg} />
+                <span className={indexStyles.middle_text}>偏好设置</span>
+                <span><Icon type="right" /></span>
+              </div>
+            </div>
+          }
+        >
+            <Menu.Item key="sub1">
+              <span>显示组织名称 <Switch defaultChecked></Switch></span>
             </Menu.Item>
-          )
-        })}
+            <Menu.Item key="sub2">
+              <span>通知设置</span>
+            </Menu.Item>
+        </SubMenu>
+              
         <Menu.Item key="10" >
           <div className={indexStyles.itemDiv} style={{ color: color_4}}>
             <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
           </div>
         </Menu.Item>
+
+        <Menu.Divider />
+
+        {currentUserOrganizes.map((value, key) => {
+          const { name, id, identity_type } = value
+          return (
+            <Menu.Item key={id} className={indexStyles.org_name} >
+              <img src={logo || linxiLogo} className={indexStyles.org_img}/>
+              <span>{name}</span>
+              {identity_type == '0'? (<span style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6}}>访客</span>) : ('')}
+            </Menu.Item>
+          )
+        })}
       </Menu>
     )
 
@@ -244,10 +315,30 @@ export default class SiderLeft extends React.Component {
         trigger={null}
         collapsible
         onMouseEnter={this.setCollapsed.bind(this, false)}
-        onMouseLeave={this.setCollapsed.bind(this, true)}
+        // onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
-        <div className={indexStyles.contain_1}>
+        <Dropdown overlay={orgListMenu}>
+          <div className={indexStyles.contain_1} style={{position: 'relative'}}>
+            <div className={indexStyles.left}>
+              <img src={logo || linxiLogo} className={indexStyles.left_img}/>
+            </div>
+            <div className={indexStyles.middle}>
+              <div className={indexStyles.username}>
+                {name}
+              </div>
+              <div className={indexStyles.middle_top}>{orgnizationName}</div>
+            </div>
+            {
+              identity_type == '1' && collapsed == false ? (
+                <div className={indexStyles.middle_bott} style={{position: 'absolute', top:20,right: 30}}>
+                    访客
+                </div>
+              ) : ('')
+            }
+          </div>
+        </Dropdown>
+        {/* <div className={indexStyles.contain_1}>
           <div className={indexStyles.left}>
             <img src={logo || linxiLogo} className={indexStyles.left_img}/>
           </div>
@@ -277,7 +368,7 @@ export default class SiderLeft extends React.Component {
             切换
           </div>
           </Dropdown>
-        </div>
+        </div> */}
 
         <div className={indexStyles.contain_2}>
           <div className={`${indexStyles.navItem}`} onClick={this.setGlobalSearchModalVisible.bind(this)} >
