@@ -184,7 +184,7 @@ export default class RenderAdd extends Component {
       const { dispatch, user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 通知提醒的用户列表的信息
       let new_message = [] // 传递过来的用户信息
-      console.log('sss', e)
+      // console.log('sss', e)
       const { selectedKeys = [] } = e
       new_message = selectedKeys.map(item => {
         for(let val of new_user_remind_info) {

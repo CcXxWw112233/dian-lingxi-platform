@@ -985,7 +985,7 @@ class DrawContent extends React.Component {
     const { datas: { card_id, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], board_id } } = this.props.model
 
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    console.log('ssss', projectDetailInfoData)
+    // console.log('ssss', projectDetailInfoData)
     // const { list_name } = taskGroupList[taskGroupListIndex]
 
     let { milestone_data = {}, board_name, list_name, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared, is_privilege = '0', privileges = {} } = drawContent
