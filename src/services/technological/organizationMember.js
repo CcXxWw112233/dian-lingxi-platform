@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //创建分组
@@ -127,7 +127,7 @@ export async function getCurrentUserOrganizes(params) {
 //
 export async function changeCurrentOrg(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/changecurrentorg`,
+    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/changecurrentorg/${data.org_id}`,
     method: 'PUT',
     data
   });

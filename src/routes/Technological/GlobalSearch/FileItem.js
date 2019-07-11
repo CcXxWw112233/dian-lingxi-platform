@@ -3,7 +3,7 @@ import { Modal, Form, Button, Input, message, Select, Icon, Avatar } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermission, checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
+import {checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage} from "../../../utils/businessFunction";
 import { timestampToTimeNormal } from '../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
@@ -33,7 +33,7 @@ export default class AnotherItem extends React.Component {
 
   itemClick(data, e) {
     const { id, board_id } = data;
-    setStorage('board_id', board_id)
+    setBoardIdStorage( board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false

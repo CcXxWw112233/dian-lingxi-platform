@@ -21,7 +21,7 @@ import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/c
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
-import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import {currentNounPlanFilterName, setOrganizationIdStorage} from "../../utils/businessFunction";
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
@@ -40,7 +40,7 @@ export default {
         //头部table key
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
-          
+
           dispatch({
             type: 'getMenuList',
             payload: {}
@@ -65,7 +65,7 @@ export default {
             type: 'getUSerInfo',
             payload: {}
           })
-        
+
 
           //获取当前的用户当前组织的项目列表,
           await dispatch({
@@ -77,7 +77,7 @@ export default {
             type: 'fetchCurrentOrgAllMembers',
           })
 
-         
+
           //查询所在组织列表
           await dispatch({
             type: 'getCurrentUserOrganizes',
@@ -147,8 +147,10 @@ export default {
       }
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
+      const { org_id } = payload
       let res = yield call(changeCurrentOrg, payload)
       if(isApiResponseOk(res)) {
+        setOrganizationIdStorage(org_id)
         const tokenArray = res.data.split('__')
         Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
@@ -386,7 +388,7 @@ export default {
     * initiateVideoMeeting({payload}, {call}) {
       const res = yield call(createMeeting, payload)
       return res
-    },  
+    },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
       let res = yield call(getProjectList, payload)
       if(isApiResponseOk(res)) {

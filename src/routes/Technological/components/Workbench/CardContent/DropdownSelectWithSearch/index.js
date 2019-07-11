@@ -14,7 +14,8 @@ import {
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermission,
-  setStorage
+  setStorage,
+  setBoardIdStorage
 } from '../../../../../../utils/businessFunction';
 import { message } from 'antd/lib/index';
 
@@ -64,7 +65,7 @@ class DropdownSelectWithSearch extends Component {
       return;
     }
     const { board_id } = item;
-    setStorage('board_id', board_id);
+    setBoardIdStorage( board_id);
     handleSelectedItem(item);
     this.setState({
       inputValue: '',

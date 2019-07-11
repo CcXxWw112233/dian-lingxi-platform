@@ -208,7 +208,7 @@ class ElseProject extends React.Component{
   onDropdownVisibleChange(visible){
     const { itemDetailInfo = {}} = this.props
     const { board_id} = itemDetailInfo
-    setStorage('board_id', board_id)
+    setBoardIdStorage( board_id)
     this.setState({
       dropdownVisibleChangeValue: visible,
     })

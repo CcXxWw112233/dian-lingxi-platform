@@ -22,7 +22,8 @@ import DateRangePicker from './../DateRangePicker/index';
 import Cookies from 'js-cookie';
 import {
   checkIsHasPermissionInBoard,
-  setStorage
+  setStorage,
+  setBoardIdStorage
 } from '../../../../../../utils/businessFunction';
 import {
   MESSAGE_DURATION_TIME,
@@ -126,7 +127,7 @@ class AddTaskModal extends Component {
     const {
       datas: { projectTabCurrentSelectedProject }
     } = this.props.workbench;
-    setStorage('board_id', projectTabCurrentSelectedProject);
+    setBoardIdStorage( projectTabCurrentSelectedProject);
 
     const { dispatch } = this.props;
     dispatch({
