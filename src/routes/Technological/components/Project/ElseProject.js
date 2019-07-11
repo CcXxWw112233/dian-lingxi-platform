@@ -13,7 +13,7 @@ import {
   checkIsHasPermission, checkIsHasPermissionInBoard,
   currentNounPlanFilterName, setStorage,
   isHasOrgMemberQueryPermission,
-  isHasOrgTeamBoardEditPermission,
+  isHasOrgTeamBoardEditPermission, setBoardIdStorage,
 } from "../../../../utils/businessFunction";
 import {
   MEMBERS,
@@ -114,6 +114,7 @@ class ElseProject extends React.Component{
   //菜单按钮点击
   handleMenuClick(board_id, e ) {
     e.domEvent.stopPropagation();
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -167,6 +168,7 @@ class ElseProject extends React.Component{
   }
   starClick(id, e) {
     e.stopPropagation();
+    setBoardIdStorage(id)
     const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo
     this.setState({

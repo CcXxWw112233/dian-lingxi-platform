@@ -51,7 +51,9 @@ export default function request(options = {}, elseSet = {}) {
 
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
-  header['OrganizationId'] = '1110059501836439552'
+  header['OrganizationId'] = localStorage.getItem('OrganizationId')
+  header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') //当前操作项目的项目id
+
   // header['board_id'] = board_id
 
   return new Promise((resolve, reject) => {

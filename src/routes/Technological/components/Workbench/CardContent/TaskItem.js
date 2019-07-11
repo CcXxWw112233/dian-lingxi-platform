@@ -3,9 +3,10 @@ import indexstyles from "../index.less";
 import { Icon, Tooltip} from "antd";
 import Cookies from "js-cookie";
 import { timestampToTimeNormal2 } from './../../../../../utils/util'
-import { checkIsHasPermissionInBoard, setStorage, checkIsHasPermission } from './../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
 import {message} from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
+import {setBoardIdStorage} from "../../../../../utils/businessFunction";
 
 export default class TaskItem extends React.Component {
   itemOneClick(e) {
@@ -19,7 +20,7 @@ export default class TaskItem extends React.Component {
       card_id: id,
       is_realize: is_realize === "1" ? "0" : "1"
     };
-    setStorage('board_id', board_id)
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -30,7 +31,7 @@ export default class TaskItem extends React.Component {
   }
   gotoBoardDetail({ id, board_id }, e) {
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    setStorage('board_id', board_id)
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -41,7 +42,7 @@ export default class TaskItem extends React.Component {
   }
   itemClick(data, e) {
     const { id, board_id } = data;
-    setStorage('board_id', board_id)
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false

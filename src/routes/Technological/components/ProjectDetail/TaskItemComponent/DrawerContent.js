@@ -1101,6 +1101,8 @@ class DrawContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        OrganizationId: localStorage.getItem('OrganizationId'),
+        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
       },
       showUploadList: true, //showUploadList,
       beforeUpload(e) {

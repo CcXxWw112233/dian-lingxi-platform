@@ -55,7 +55,9 @@ export default class ImageTextOne extends React.Component {
       action: `${REQUEST_DOMAIN}/organization/logo_upload`,
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken : Cookies.get('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
+        OrganizationId: localStorage.getItem('OrganizationId'),
+        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
       },
       beforeUpload(e) {
         if(e.size == 0) {

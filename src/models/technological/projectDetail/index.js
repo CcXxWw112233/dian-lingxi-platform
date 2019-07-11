@@ -19,7 +19,7 @@ import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData, select
 import Cookies from "js-cookie";
 import { fillFormComplete, getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList, createProcess, completeProcessTask, getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../../routes/Technological/components/ProjectDetail/Process/constant'
-import {currentNounPlanFilterName} from "../../../utils/businessFunction";
+import {currentNounPlanFilterName, setBoardIdStorage} from "../../../utils/businessFunction";
 import {postCommentToDynamics} from "../../../services/technological/library";
 import QueryString from 'querystring'
 
@@ -102,7 +102,8 @@ export default {
           const appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
 
           //存储当前项目id,用于左权县控制
-          localStorage.setItem('board_id', board_id)
+          setBoardIdStorage(board_id)
+
 
           //全局变化应用key
           dispatch({

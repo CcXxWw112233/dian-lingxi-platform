@@ -350,7 +350,8 @@ export default modelExtend(projectDetail, {
       }
     },
     * filePreview({ payload }, { select, call, put }) {
-      let res = yield call(filePreview, payload)
+      const { file_id } = payload
+      const res = yield call(filePreview, {id: file_id})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -360,7 +361,6 @@ export default modelExtend(projectDetail, {
             filePreviewIsRealImage: res.data.isRealImage,
           }
         })
-        const { file_id } = payload
         yield put({
           type: 'getPreviewFileCommits',
           payload: {

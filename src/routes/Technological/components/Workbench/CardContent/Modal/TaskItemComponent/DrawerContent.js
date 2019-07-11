@@ -1100,6 +1100,8 @@ class DrawContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        OrganizationId: localStorage.getItem('OrganizationId'),
+        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
       },
       showUploadList: true,
       beforeUpload(e) {
@@ -1225,7 +1227,7 @@ class DrawContent extends React.Component {
               {/*</Dropdown>*/}
             {/* </div> */}
             <span style={{position: 'absolute', right: 45, top: -2}}><InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
-            
+
             <span style={{marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px'}}>
               {drawContent.card_id && (
                 <VisitControl

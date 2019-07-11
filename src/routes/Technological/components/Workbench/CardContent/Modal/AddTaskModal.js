@@ -577,7 +577,9 @@ class AddTaskModal extends Component {
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken: Cookies.get('refreshToken')
+        refreshToken: Cookies.get('refreshToken'),
+        OrganizationId: localStorage.getItem('OrganizationId'),
+        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
       },
       beforeUpload(e) {
         if (e.size == 0) {

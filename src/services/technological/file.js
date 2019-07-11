@@ -33,7 +33,7 @@ export async function fileDownload(params) {
 //文件预览
 export async function filePreview(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/preview`,
+    url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
     params,
   });

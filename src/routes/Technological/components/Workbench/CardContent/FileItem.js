@@ -5,8 +5,7 @@ import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
-  setStorage
+  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage,
 } from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {connect} from 'dva'
@@ -66,7 +65,8 @@ class FileItem extends React.Component {
   }
   gotoBoardDetail({ id, board_id }, e) {
     stopPropagation(e);
-    setStorage('board_id', board_id);
+    setBoardIdStorage(board_id)
+
     if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
@@ -88,7 +88,7 @@ class FileItem extends React.Component {
       version_id
     } = data;
 
-    setStorage('board_id', board_id);
+    setBoardIdStorage(board_id)
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;

@@ -2,7 +2,9 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon } from 'antd'
 import Cookies from 'js-cookie'
-import {checkIsHasPermission, checkIsHasPermissionInBoard, setStorage} from "../../../../../utils/businessFunction";
+import {
+  checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage,
+} from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS,
@@ -24,7 +26,7 @@ export default class ProcessItem extends React.Component {
     })
   }
   async gotoBoardDetail(obj) {
-    setStorage('board_id', obj.board)
+    setBoardIdStorage(obj.board)
     if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -43,7 +45,8 @@ export default class ProcessItem extends React.Component {
   }
   async click(obj) {
     //用于缓存做权限调用
-    setStorage('board_id', this.state.value.board_id)
+    setBoardIdStorage(this.state.value.board_id)
+
     if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false

@@ -7,7 +7,7 @@ import classNames from 'classnames/bind';
 // import AddModalFormWithExplicitProps from './../Project/AddModalFormWithExplicitProps';
 import CreateProject from './../Project/components/CreateProject/index';
 
-import { checkIsHasPermission } from './../../../../utils/businessFunction';
+import { checkIsHasPermission, setBoardIdStorage } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
 import globalStyles from './../../../../globalset/css/globalClassName.less'
 
@@ -136,6 +136,9 @@ class ProjectListBar extends Component {
     if (id === projectTabCurrentSelectedProject) {
       return;
     }
+    //设置board_id缓存
+    setBoardIdStorage(id);
+
     this.handleClickProjectItem(id);
     //处理工作台数据
     this.handleGanttData(id)

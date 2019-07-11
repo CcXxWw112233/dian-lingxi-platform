@@ -104,6 +104,8 @@ export default class Header extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        OrganizationId: localStorage.getItem('OrganizationId'),
+        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){

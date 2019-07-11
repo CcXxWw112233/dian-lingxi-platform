@@ -79,6 +79,14 @@ export const getSubfixName = (file_name) => {
 export const setStorage = (key, value) => {
   localStorage.setItem(key, value)
 }
+//设置组织id localstorage缓存
+export const setOrganizationIdStorage = (value) => {
+  localStorage.setItem('OrganizationId', value)
+}
+//设置board_id localstorage缓存
+export const setBoardIdStorage = (value) => {
+  localStorage.setItem('storageCurrentOperateBoardId', value)
+}
 
 //是否有组织成员查看权限
 
