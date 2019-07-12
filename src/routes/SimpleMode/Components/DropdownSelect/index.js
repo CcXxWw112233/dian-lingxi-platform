@@ -12,10 +12,10 @@ class DropdownSelect extends Component {
             visible: false,
             addNew: false,
             inputValue: '',
-            itemList:this.props.itemList,
-            fuctionMenuItemList:this.props.fuctionMenuItemList,
+            itemList: this.props.itemList,
+            fuctionMenuItemList: this.props.fuctionMenuItemList,
             filteredList: this.props.list ? this.props.list : [],
-            menuItemClick:this.props.menuItemClick,
+            menuItemClick: this.props.menuItemClick,
         };
     }
 
@@ -57,22 +57,27 @@ class DropdownSelect extends Component {
             }}>
                 <span>
                     {item.name}
-                        {item.parentName && <span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>}
-                        
+                    {item.parentName && <span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>}
+
                 </span>
             </Menu.Item>
         ));
     };
 
-
+    componentWillReceiveProps() {
+        const { itemList, fuctionMenuItemList } = this.props;
+        this.setState({
+            itemList: itemList,
+            fuctionMenuItemList: fuctionMenuItemList,
+        })
+    }
 
     renderContent() {
-        const { fuctionMenuItemList = [] ,itemList = [], menuItemClick = ()=>{} } =  this.state;
-      
-        console.log("fuctionMenuItemList",fuctionMenuItemList);
+        const { fuctionMenuItemList = [], itemList = [], menuItemClick = () => { } } = this.state;
+        console.log('itemList', itemList);
         return (
             <Menu className
-            onClick={menuItemClick}
+                onClick={menuItemClick}
             >
                 {this.renderFunctionMenuItem(fuctionMenuItemList)}
                 {this.renderMenuItem(itemList)}
@@ -81,6 +86,7 @@ class DropdownSelect extends Component {
         );
     }
     render() {
+
         return (
             <div className={styles.wrapper}>
 
@@ -109,4 +115,4 @@ class DropdownSelect extends Component {
     }
 }
 
-export default connect(({}) => ({}))(DropdownSelect);
+export default connect(({ }) => ({}))(DropdownSelect);
