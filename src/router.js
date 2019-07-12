@@ -163,7 +163,7 @@ const Routers = function ({ history, app }) {
       import('./models/teamShow/teamInfo'),
 
       import('./models/technological/xczNews'),
-
+      import('./models/simpleMode'),
 
       ],
       component: () => import('./routes/Technological/'),
@@ -199,14 +199,6 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/iframeOut',
       component: () => import('./routes/IframeOut'),
-    }, {
-      path: '/simplemode',
-      component: () => import('./routes/SimpleMode'),
-      models: () => [import('./models/simpleMode'),
-      import('./models/technological'),
-      import('./models/technological/workbench/index'),
-
-      ]
     },
   ]
   //去掉exact

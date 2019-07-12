@@ -12,7 +12,10 @@ class DropdownSelect extends Component {
             visible: false,
             addNew: false,
             inputValue: '',
-            filteredList: this.props.list ? this.props.list : []
+            itemList:this.props.itemList,
+            fuctionMenuItemList:this.props.fuctionMenuItemList,
+            filteredList: this.props.list ? this.props.list : [],
+            menuItemClick:this.props.menuItemClick,
         };
     }
 
@@ -20,8 +23,8 @@ class DropdownSelect extends Component {
 
     }
 
-    renderAddMenuItem = (item) => {
-        return (
+    renderFunctionMenuItem = (itemList) => {
+        return itemList.map((item, index) => (
             <Menu.Item key={item.id} style={{
                 lineHeight: '30px',
                 fontSize: '14px',
@@ -32,15 +35,16 @@ class DropdownSelect extends Component {
                 border: '0',
                 borderRight: '0px!important',
             }}>
-                <span onClick={item.selectHandleFun.bind(this, item)} style={{ color: '#1890FF' }}>
+                <span style={{ color: '#1890FF' }}>
                     <Icon type={item.icon} style={{ fontSize: '17px' }} /><span style={{ paddingLeft: '10px' }}>{item.name}</span>
                 </span>
             </Menu.Item>
-        );
+        ));
+
     }
 
-    renderMenuItem = (filteredList) => {
-        return filteredList.map((item, index) => (
+    renderMenuItem = (itemList) => {
+        return itemList.map((item, index) => (
             <Menu.Item key={item.id} style={{
                 lineHeight: '30px',
                 fontSize: '14px',
@@ -51,8 +55,10 @@ class DropdownSelect extends Component {
                 border: '0',
                 borderRight: '0px!important',
             }}>
-                <span onClick={this.handleSeletedMenuItem.bind(this, item)}>
-                    {item.name}<span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>
+                <span>
+                    {item.name}
+                        {item.parentName && <span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>}
+                        
                 </span>
             </Menu.Item>
         ));
@@ -60,41 +66,26 @@ class DropdownSelect extends Component {
 
 
 
-    content() {
-        const addBoard = () => {
-            const {dispatch} = this.props;
-            console.log("Menu");
-            dispatch({
-                type: 'simplemode/updateDatas',
-                payload: {
-                    simpleHeaderVisiable: true,
-                    myWorkbenchBoxsVisiable: false,
-                    wallpaperSelectVisiable: true,
-                    workbenchBoxSelectVisiable: false,
-                    createNewBoardVisiable: true,
-                    setWapperCenter: true,
-                }
-            });
-
-        };
-        const list = [{ 'name': '我参与的项目', 'parentName': '组织名称', 'value': '1' }, { 'name': '项目名称01', 'parentName': '组织名称', 'value': '101' }, { 'name': '项目名称02', 'value': '102' }]
+    renderContent() {
+        const { fuctionMenuItemList = [] ,itemList = [], menuItemClick = ()=>{} } =  this.state;
+      
+        console.log("fuctionMenuItemList",fuctionMenuItemList);
         return (
-            <Menu className>
-                {this.renderAddMenuItem({ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': addBoard })}
-                {this.renderMenuItem(list)}
+            <Menu className
+            onClick={menuItemClick}
+            >
+                {this.renderFunctionMenuItem(fuctionMenuItemList)}
+                {this.renderMenuItem(itemList)}
 
             </Menu>
-
-
         );
     }
     render() {
-        const { visible } = this.state;
         return (
             <div className={styles.wrapper}>
 
                 <Dropdown
-                    overlay={this.content()}
+                    overlay={this.renderContent()}
                     trigger={['click']}
                 //visible={visible}
                 //onVisibleChange={this.handleVisibleChange}
@@ -118,4 +109,4 @@ class DropdownSelect extends Component {
     }
 }
 
-export default connect(({ }) => ({}))(DropdownSelect);
+export default connect(({}) => ({}))(DropdownSelect);

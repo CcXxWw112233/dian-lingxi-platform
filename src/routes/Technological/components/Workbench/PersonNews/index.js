@@ -137,6 +137,9 @@ export default class PersonNews extends React.Component {
       window.MozMutationObserver;
     // 选择目标节点
     const target = document.getElementById("siderRight");
+    if(!target) {
+      return
+    }
     // 创建观察者对象
     const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {

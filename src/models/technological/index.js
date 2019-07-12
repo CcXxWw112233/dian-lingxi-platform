@@ -28,19 +28,31 @@ let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
   state: {
-    datas: {}
+    datas: {
+      page_load_type:0
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
+        
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1 || location.pathname.indexOf('/simplemode') !== -1) {
+          let page_load_type = 0;
+          if(location.pathname.indexOf('/simplemode') !== -1){
+            console.log("subscriptions1");
+            page_load_type = 1;
+          }else{
+            page_load_type = 2;
+            console.log("subscriptions2");
+          }
           dispatch({
             type: 'updateDatas',
             payload: {
-              menuList: []
+              menuList: [],
+              page_load_type: page_load_type,
             }
           })
           dispatch({

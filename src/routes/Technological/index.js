@@ -21,11 +21,28 @@ const { Header, Sider, Content } = Layout;
 
 const getEffectOrReducerByName = name => `technological/${name}`
 @connect(mapStateToProps)
-export default class Technological extends React.Component{
+export default class Technological extends React.Component {
+
+  // componentDidMount() {
+  //   //console.log('sssss_22', window.location)
+  //   const hash = window.location.hash
+  //   let page_load_type = '0'
+  //   if(hash.indexOf('/technological/simplemode') != -1) {
+  //     page_load_type = '1'
+  //   } else {
+  //     page_load_type = '2'
+  //   }
+  //   this.setState({
+  //     page_load_type
+  //   })
+  // }
 
   render() {
 
-    const { dispatch, model } = this.props
+    const { dispatch, model } = this.props;
+    const { datas = {} } = model;
+    const { page_load_type = 0 } = datas;
+
     const app = dva();
     //导航栏props-------------
     const HeaderNavProps = {
@@ -51,7 +68,7 @@ export default class Technological extends React.Component{
           },
         })
       },
-      updateDatas (payload) {
+      updateDatas(payload) {
         dispatch({
           type: getEffectOrReducerByName('updateDatas'),
           payload: payload
@@ -130,51 +147,36 @@ export default class Technological extends React.Component{
       }, {
         path: '/technological/xczNews',
         component: () => import('./components/XczNews')
+      }, {
+        path: '/technological/simplemode',
+        component: () => import('../SimpleMode/index'),
       },
     ]
 
-    const iniLayout = (
-      <div className={globalClassNmae.page_style_3} style={{ position: 'relative'}}>
-        <HeaderNav {...HeaderNavProps}/>
-
-        {
-          routes.map(({ path, ...dynamics }, key) =>{
-            return (<Route key={key}
-                // exact
-                           path={path}
-                           component={dynamic({
-                             app,
-                             ...dynamics,
-                           })}
-              />
-            )})
-        }
-      </div>
-    )
-
-    const newLayout = (
+    const defaultLayout = (
       <Layout >
         <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
         <SiderLeft {...HeaderNavProps} />
-        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)'}}>
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{
             margin: '0 16px',
           }}
           >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
-              routes.map(({ path, ...dynamics }, key) =>{
-                return (<Route key={key}
-                               //exact
-                               path={path}
-                               component={dynamic({
-                                 app,
-                                 ...dynamics,
-                               })}
+                routes.map(({ path, ...dynamics }, key) => {
+                  return (<Route key={key}
+                    //exact
+                    path={path}
+                    component={dynamic({
+                      app,
+                      ...dynamics,
+                    })}
                   />
-                )})
+                  )
+                })
               }
-             </div>
+            </div>
           </Content>
         </Layout>
         <SiderRight />
@@ -183,10 +185,50 @@ export default class Technological extends React.Component{
 
     )
 
+    const simpleLayout = (
+      <Layout >
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+          <Content style={{ height: '100vh' }} >
+            <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
+              {
+                routes.map(({ path, ...dynamics }, key) => {
+                  return (<Route key={key}
+                    //exact
+                    path={path}
+                    component={dynamic({
+                      app,
+                      ...dynamics,
+                    })}
+                  />
+                  )
+                })
+              }
+            </div>
+          </Content>
+        </Layout>
+      </Layout>
+
+    )
+
+    let layout = <div></div>
+    switch (page_load_type) {
+      case 0:       
+        layout = '<div>page_load_type:0</div>'
+        break;
+      case 1:      
+        layout = simpleLayout
+        break;
+      case 2:      
+        layout = defaultLayout
+        break;
+      default:
+        break;
+    }
+    
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
-        {newLayout}
+        {layout}
       </LocaleProvider>
     );
   }

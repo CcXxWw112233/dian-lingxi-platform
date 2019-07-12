@@ -114,7 +114,7 @@ class SiderRight extends React.Component {
                 style={{ height: document.documentElement.clientHeight - 108 }}
                 className={ImMaskWhencollapsed}
               />
-              {NODE_ENV == 'development' && (
+              {NODE_ENV != 'development' && (
                 <iframe
                   title="im"
                   src={IM_HTTP_PATH}
