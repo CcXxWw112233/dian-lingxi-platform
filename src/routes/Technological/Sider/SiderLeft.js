@@ -28,7 +28,7 @@ export default class SiderLeft extends React.Component {
     ShowAddMenberModalVisibile: false,
   }
   componentDidMount() {
-   
+
   }
   setCollapsed(collapsed) {
     this.setState({
@@ -243,7 +243,7 @@ export default class SiderLeft extends React.Component {
               }
               <span className={indexStyles.middle_text}>账户设置</span>
               <Tooltip placement="top" title="退出登录">
-                <div 
+                <div
                   className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
               </Tooltip>
             </div>
@@ -269,7 +269,7 @@ export default class SiderLeft extends React.Component {
               <span>通知设置</span>
             </Menu.Item>
         </SubMenu>
-              
+
         <Menu.Item key="10" >
           <div className={indexStyles.itemDiv} style={{ color: color_4}}>
             <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
@@ -315,7 +315,7 @@ export default class SiderLeft extends React.Component {
         trigger={null}
         collapsible
         onMouseEnter={this.setCollapsed.bind(this, false)}
-        // onMouseLeave={this.setCollapsed.bind(this, true)}
+        onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <Dropdown overlay={orgListMenu}>
