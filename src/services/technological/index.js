@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD} from '../../globalset/js/constant'
+import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //邀请新用户参与
@@ -18,7 +18,7 @@ export async function inviteNewUserInProject({data}) {
 //获取用户信息
 export async function getUSerInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/user`,
+    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user`,
     method: 'GET',
   });
 }
