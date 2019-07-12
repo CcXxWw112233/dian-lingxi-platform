@@ -26,6 +26,7 @@ export default class SiderLeft extends React.Component {
     collapsed: true,
     createOrganizationVisable: false,
     ShowAddMenberModalVisibile: false,
+    is_show_all_org: true, // 是否默认显示全部组织 默认为 true 显示
   }
   componentDidMount() {
    
@@ -95,6 +96,7 @@ export default class SiderLeft extends React.Component {
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
+
   addMembers(data) {
     const { users } = data
     const { currentSelectOrganize = {}, dispatch } = this.props
@@ -108,17 +110,18 @@ export default class SiderLeft extends React.Component {
     })
   }
 
-  setCreateOrgnizationOModalVisable() {
-    this.setState({
-      createOrganizationVisable: !this.state.createOrganizationVisable
-    })
-  }
+  // 切换组织的点击事件
   handleOrgListMenuClick = (e) => {
     console.log(e, 'sssss')
     const { key } = e
     if('10' == key) {
       this.setCreateOrgnizationOModalVisable()
       return
+    }
+    if('0' == key) {
+      this.setState({
+        is_show_all_org: true
+      })
     }
     const { currentUserOrganizes = [] } = this.props
     const { dispatch } = this.props
@@ -153,6 +156,7 @@ export default class SiderLeft extends React.Component {
       }
     })
   }
+
   render() {
     const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
@@ -233,7 +237,7 @@ export default class SiderLeft extends React.Component {
           </div>
         </Menu.Item>
 
-        {identity_type == '1' && (<Menu.Divider />) }
+        <Menu.Divider />
 
         <Menu.Item key="20">
           <div className={indexStyles.default_select_setting}>
@@ -262,14 +266,14 @@ export default class SiderLeft extends React.Component {
             </div>
           }
         >
-            <Menu.Item key="sub1">
+            <Menu.Item key="subShowOrgName">
               <span>显示组织名称 <Switch defaultChecked></Switch></span>
             </Menu.Item>
-            <Menu.Item key="sub2">
+            <Menu.Item key="subInfoSet">
               <span>通知设置</span>
             </Menu.Item>
         </SubMenu>
-              
+
         <Menu.Item key="10" >
           <div className={indexStyles.itemDiv} style={{ color: color_4}}>
             <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
@@ -278,13 +282,22 @@ export default class SiderLeft extends React.Component {
 
         <Menu.Divider />
 
+        <Menu.Item key="0" className={indexStyles.org_name}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <img src={logo || linxiLogo} className={indexStyles.org_img}/>
+              <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
+            </div>
+        </Menu.Item>
+
         {currentUserOrganizes.map((value, key) => {
           const { name, id, identity_type } = value
           return (
             <Menu.Item key={id} className={indexStyles.org_name} >
-              <img src={logo || linxiLogo} className={indexStyles.org_img}/>
-              <span>{name}</span>
-              {identity_type == '0'? (<span style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6}}>访客</span>) : ('')}
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <img src={logo || linxiLogo} className={indexStyles.org_img}/>
+                <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{name}</span>
+              </div>
+              {identity_type == '0'? (<span className={indexStyles.middle_bott} style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6, position: 'absolute', right: 34, top: 32}}>访客</span>) : ('')}
             </Menu.Item>
           )
         })}
@@ -330,7 +343,7 @@ export default class SiderLeft extends React.Component {
               <div className={indexStyles.middle_top}>{orgnizationName}</div>
             </div>
             {
-              identity_type == '1' && collapsed == false ? (
+              identity_type == '0' && collapsed == false ? (
                 <div className={indexStyles.middle_bott} style={{position: 'absolute', top:20,right: 30}}>
                     访客
                 </div>

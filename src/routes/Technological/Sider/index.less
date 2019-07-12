@@ -80,9 +80,9 @@
 
 // 修改了全局的menu子菜单的样式
 :global {
-  // .ant-dropdown-hidden, .ant-dropdown-menu-hidden {
-  //   display: block;
-  // }
+  .ant-dropdown-hidden, .ant-dropdown-menu-hidden {
+    display: block;
+  }
   .ant-dropdown-menu-submenu-arrow {
     display: none;
   }
@@ -102,7 +102,8 @@
   line-height:64px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;  
+  white-space: nowrap;
+  position: relative;  
 }
 
 // 组织的图片
@@ -113,7 +114,7 @@
   margin-right: 8px;
 }
 
-.contain_1 {
+// 访客标识
   .middle_bott {
     width: 30px;
     height: 18px;
@@ -123,7 +124,7 @@
     line-height: 18px;
     text-align: center;
   }
-}
+
 
 // 默认设置的三项
 .default_select_setting {
