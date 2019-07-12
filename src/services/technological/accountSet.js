@@ -1,10 +1,10 @@
 import request from "../../utils/requestAxios";
-import {REQUEST_DOMAIN} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 
 //获取用户信息
 export async function getUserInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/user`,
+    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user`,
     method: 'GET',
   });
 }

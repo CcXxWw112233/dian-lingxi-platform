@@ -112,6 +112,49 @@ export default {
   },
   effects: {
 
+    // 获取用户信息
+    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+      const res = yield call(getUSerInfo)
+      // console.log(res, 'current user info includes origanition info----------------------------------------')
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userInfo: res.data, //当前用户信息
+            currentSelectOrganize: res.data.current_org || {}//当前选中的组织
+          }
+        })
+        //当前选中的组织
+        localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org || {}))
+
+        yield put({ //  获取当前成员在组织中的权限列表
+          type: 'getUserOrgPermissions',
+          payload: {}
+        })
+        yield put({
+         type: 'getUserBoardPermissions',
+         payload: {}
+         })
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
+
+        //组织切换重新加载
+        const { operateType } = payload
+        if(operateType === 'changeOrg') {
+          let redirectHash = locallocation.pathname
+          if(locallocation.pathname === '/technological/projectDetail') {
+            redirectHash = '/technological/project'
+          }
+          if(document.getElementById('iframImCircle')) {
+            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
+          }
+          yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
+        }
+        //存储
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     //组织 ----------- start
     * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
       let res = yield call(getCurrentUserOrganizes, {})
@@ -148,12 +191,10 @@ export default {
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
       const { org_id } = payload
-      let res = yield call(changeCurrentOrg, payload)
+      // const org_id = '0'
+      let res = yield call(changeCurrentOrg, { org_id })
       if(isApiResponseOk(res)) {
         setOrganizationIdStorage(org_id)
-        const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
-        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         yield put({
           type: 'getUSerInfo',
           payload: {
@@ -250,8 +291,15 @@ export default {
 
     //权限---start获取用户的全部组织和全部项目权限
     * getUserOrgPermissions({ payload }, { select, call, put }) {
-      let res = yield call(getUserOrgPermissions, payload)
+      const res = yield call(getUserOrgPermissions, payload)
       if(isApiResponseOk(res)) {
+        const OrganizationId = localStorage.getItem('OrganizationId')
+        // 全组织的情况下，直接存【组织=》权限】列表
+        if(OrganizationId == '0') {
+          localStorage.setItem('userOrgPermissions', JSON.stringify(res.data))
+          return
+        }
+        // 非全组织的情况下需要过滤出对应的当前选择的组织，获取对应的权限
         const userInfo = localStorage.getItem('userInfo') || '{}'
         const { current_org = {} } = JSON.parse(userInfo)
         const current_org_id = current_org['id']
@@ -290,66 +338,6 @@ export default {
     //名词定义------end
 
 
-    //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
-    * onlyGetUserInfo({ payload }, { select, call, put }) {
-      let res = yield call(getUSerInfo, {ss: '1'})
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            userInfo: res.data, //当前用户信息
-          }
-        })
-        //存储
-        localStorage.setItem('userInfo', JSON.stringify(res.data))
-      }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
-    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(getUSerInfo, payload)
-      // console.log(res, 'current user info includes origanition info----------------------------------------')
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            userInfo: res.data, //当前用户信息
-            currentSelectOrganize: res.data.current_org || {}//当前选中的组织
-          }
-        })
-        //当前选中的组织
-        if(res.data.current_org ) {
-          localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
-          yield put({ //  获取当前成员在组织中的权限列表
-             type: 'getUserOrgPermissions',
-             payload: {}
-           })
-          yield put({
-            type: 'getUserBoardPermissions',
-            payload: {
-
-            }
-          })
-        }
-        localStorage.setItem('userInfo', JSON.stringify(res.data))
-
-        //组织切换重新加载
-        const { operateType } = payload
-        if(operateType === 'changeOrg') {
-          let redirectHash = locallocation.pathname
-          if(locallocation.pathname === '/technological/projectDetail') {
-            redirectHash = '/technological/project'
-          }
-          if(document.getElementById('iframImCircle')) {
-            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
-          }
-          yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
-        }
-        //存储
-      }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
     * logout({ payload }, { select, call, put }) { //提交表单
       let res = yield call(logout, payload)
       if(isApiResponseOk(res)) {

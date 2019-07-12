@@ -29,7 +29,7 @@ export default class SiderLeft extends React.Component {
     is_show_all_org: true, // 是否默认显示全部组织 默认为 true 显示
   }
   componentDidMount() {
-   
+
   }
   setCollapsed(collapsed) {
     this.setState({
@@ -247,7 +247,7 @@ export default class SiderLeft extends React.Component {
               }
               <span className={indexStyles.middle_text}>账户设置</span>
               <Tooltip placement="top" title="退出登录">
-                <div 
+                <div
                   className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
               </Tooltip>
             </div>
@@ -328,7 +328,7 @@ export default class SiderLeft extends React.Component {
         trigger={null}
         collapsible
         onMouseEnter={this.setCollapsed.bind(this, false)}
-        // onMouseLeave={this.setCollapsed.bind(this, true)}
+        onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <Dropdown overlay={orgListMenu}>

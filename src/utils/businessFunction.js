@@ -4,9 +4,45 @@ import { NORMAL_NOUN_PLAN } from '../globalset/js/constant'
 import {getFilePDFInfo} from "../services/technological/file";
 import {getUserOrgPermissions} from "../services/technological/organizationMember";
 
-//检查是否有操作权限
-export const checkIsHasPermission = (code) => {
+// 权限的过滤和存储在technological下
+// 权限分为全组织和确定组织下
+// 确定组织下的数据为[{code: 'xxx'}]
+// 全组织下的数据格式为
+// const ss = [{
+//   org_id: 'sss',
+//   permissions: [
+//     { code: 'xxx'}
+//   ]
+// }]
+// 两者区别是通过确认的组织id过滤出permisions的列表
+//》
+//检查是否有操作权限(组织)
+// 当全组织状态下，如果调用方法不传确认的组织id则默认有权限。如果传递了组织id那就遍历相应的权限code来获取有无权限
+// 确认组织下，只需要传递code就可以遍历得到有无权限
+export const checkIsHasPermission = (code, param_org_id) => {
+  const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
+  if(OrganizationId == '0') {
+    if(!param_org_id) {
+      return true
+    } else {
+      let currentOrgPermission = []
+      for(let val of organizationMemberPermissions) {
+        if(param_org_id == val['org_id']) {
+          currentOrgPermission = val['permissions']
+          break
+        }
+      }
+      let flag = false
+      for(let i = 0; i < currentOrgPermission.length; i ++) {
+        if (code === currentOrgPermission[i]['code']) {
+          flag = true
+          break
+        }
+      }
+      return flag
+    }
+  }
   if(!Array.isArray(organizationMemberPermissions)) {
     return false
   }
