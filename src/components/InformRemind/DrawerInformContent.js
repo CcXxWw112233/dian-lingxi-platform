@@ -29,9 +29,9 @@ class DrawerInformContent extends Component {
        dispatch({
            type: 'informRemind/updateDatas',
            payload: {
-               setInfoRemindList: new_setInfoRemindList,
-               is_add_remind: true,
-               message_consumers: []
+							setInfoRemindList: new_setInfoRemindList,
+							is_add_remind: true,
+							message_consumers: [],
            }
        })
         

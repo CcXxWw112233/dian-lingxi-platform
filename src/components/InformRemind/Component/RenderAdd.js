@@ -138,7 +138,6 @@ export default class RenderAdd extends Component {
 
   // 时间戳转换日期格式
   getdate(timestamp) {
-    // console.log(timestamp, 'lll')
     var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
     var Y,M,D,H,MIN;
     Y = date.getFullYear();
@@ -175,8 +174,22 @@ export default class RenderAdd extends Component {
   /**
    * 成功确定的回调
    */
-  handleDatePickerOk(value) {
-    console.log(value)
+  handleDatePickerOk(date, value) {
+    const { dispatch, setInfoRemindList = [] } = this.props;
+    let new_set_info_list = [...setInfoRemindList]
+    new_set_info_list = new_set_info_list.map(item => {
+      let new_item = item
+      new_item = {...new_item, remind_time_type: 'datetime', remind_time_value: value, is_edit_status: true}
+      return new_item
+    })
+    dispatch({
+      type: 'informRemind/updateDatas',
+      payload: {
+        setInfoRemindList: new_set_info_list,
+        remind_time_type: 'datetime',
+        remind_time_value: value
+      }
+    })
   }
 
   // 用户信息的方法
@@ -209,6 +222,18 @@ export default class RenderAdd extends Component {
           user_remind_info = [],message_consumers,
       } = this.props;
       const { is_show_date_picker, is_show_other_select } = this.state;
+
+      const button_disable = () => {
+        if(message_consumers && message_consumers.length > 0) {
+          if(remind_trigger == 'userdefined' && (!remind_time_value || remind_time_value.length < 10)) {
+            return true
+          }
+          return false
+        } else {
+          return true
+        }
+      }
+
       return (
           <div className={infoRemindStyle.slip}
           >
@@ -232,10 +257,10 @@ export default class RenderAdd extends Component {
                 is_show_date_picker &&
                   <DatePicker
                         showTime={true}
-                        defaultValue={ remind_time_value == 1 ? '' : moment(this.getdate(remind_time_value)) }
+                        defaultValue={ remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }
+                        onOk={ (value) => { this.handleDatePickerOk(value, remind_time_value) } }
                         onChange={ (date,dateString) => { this.handleDatePicker(date, dateString) } }
                   />
               }
@@ -296,7 +321,7 @@ export default class RenderAdd extends Component {
                 </div>
             </div>
               <Button
-                  disabled={message_consumers && message_consumers.length > 0 ? false : true}
+                  disabled={button_disable()}
                   onClick={ () => { this.handleSetInfoRemind() } }
                   className={infoRemindStyle.icon} type="primary">确定</Button>
           </div>

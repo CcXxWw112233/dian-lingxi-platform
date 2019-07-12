@@ -180,15 +180,16 @@ export default class RenderHistory extends Component {
      * @param {String} id 当前对象对应的id
      * @param {String} type 可编辑的类型
      */
-    handleDatePickerOk(date, id, type) {
+    handleDatePickerOk(date, value, id, type) {
+      // console.log(date, value, 'ssss')
       const { dispatch, historyList = [] } = this.props;
       let new_history_list = [...historyList]
-      let time = moment(date.format('YYYY-MM-DD HH:MM')).valueOf() / 1000
+      // let time = moment(date.format('YYYY-MM-DD HH:MM')).valueOf() / 1000
       // console.log(time, 'sss')
       new_history_list = new_history_list.map(item => {
         let new_item = item
         if(id == new_item.id) {
-            new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status: true}
+            new_item = {...new_item, remind_time_value: value, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status: true}
         }
           return new_item
       })
@@ -274,7 +275,7 @@ export default class RenderHistory extends Component {
                         defaultValue={ remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value, id, remind_edit_type) } }
+                        onOk={ (value) => { this.handleDatePickerOk(value, remind_time_value, id, remind_edit_type) } }
                         onChange={ (date,dateString) => { this.handleDatePicker(date, dateString, id, remind_edit_type) } } />
                 }
                 {/* 显示1-60不同的时间段--选择框 */}

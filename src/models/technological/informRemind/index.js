@@ -160,9 +160,9 @@ export default {
       // 更新消息提醒的方法
       * updateRemindInformation({ payload = {} }, { select, call, put }) { 
         const { rela_id } = payload
-        console.log(payload, 'ssss')
+        // console.log(payload, 'ssss')
         const updateInfoRemind = {...payload.result}
-        console.log(updateInfoRemind, 'ss')
+        // console.log(updateInfoRemind, 'ss')
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
         // console.log(message_consumers, 'pppp')
         let temp_user = [] // 存放用户的id
