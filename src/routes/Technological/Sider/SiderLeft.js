@@ -328,7 +328,7 @@ export default class SiderLeft extends React.Component {
         trigger={null}
         collapsible
         onMouseEnter={this.setCollapsed.bind(this, false)}
-        // onMouseLeave={this.setCollapsed.bind(this, true)}
+        onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
         <Dropdown overlay={orgListMenu}>
