@@ -226,8 +226,8 @@ export default {
     },
 
     * collectionProject({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(collectionProject, id)
+      const {org_id, board_id } = payload
+      let res = yield call(collectionProject,  {org_id, board_id })
       if(isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProjectList',
@@ -247,8 +247,8 @@ export default {
     },
 
     * cancelCollection({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(cancelCollection, id)
+      const { org_id, board_id } = payload
+      let res = yield call(cancelCollection,  {org_id, board_id })
       if(isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProjectList',

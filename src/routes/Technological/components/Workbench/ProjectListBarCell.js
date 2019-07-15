@@ -3,7 +3,8 @@ import { Tooltip, message } from "antd";
 import styles from "./index.less";
 import globalStyles from './../../../../globalset/css/globalClassName.less';
 import classNames from 'classnames/bind'
-
+import {checkIsHasPermission,} from "../../../../utils/businessFunction";
+import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, } from "../../../../globalset/js/constant";
 
 let cx = classNames.bind(styles)
 
@@ -13,7 +14,8 @@ const ProjectListBarCell = ({
   handleClickedCell,
   org_name,
   shouldActive,
-  apps
+  apps,
+  org_id
 }) => {
   const projectListBarCellClass = cx({
     [styles.projectListBarCellWrapper]: true,
@@ -34,7 +36,11 @@ const ProjectListBarCell = ({
     window.location.href = url
 
   }
-  const handleJumpToProject = (e, board_id, apps) => {
+  const handleJumpToProject = (e, board_id, apps, org_id) => {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     if(e) e.stopPropagation()
     const isAppsItem = arr => Array.isArray(arr) && arr.length
     if(!isAppsItem(apps)) {
@@ -56,7 +62,7 @@ const ProjectListBarCell = ({
         </a>
       </Tooltip>
       <Tooltip title='进入项目'>
-        <span className={styles.projectListBarCellInterProject} onClick={e => handleJumpToProject(e, board_id, apps)}>
+        <span className={styles.projectListBarCellInterProject} onClick={e => handleJumpToProject(e, board_id, apps, org_id)}>
         <i className={`${globalStyles.authTheme}`}>
         &#xe793;
       </i>

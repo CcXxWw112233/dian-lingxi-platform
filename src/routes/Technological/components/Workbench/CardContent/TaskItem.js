@@ -29,10 +29,10 @@ export default class TaskItem extends React.Component {
     this.props.updateDatas({ responsibleTaskList });
     this.props.completeTask(obj);
   }
-  gotoBoardDetail({ id, board_id }, e) {
+  gotoBoardDetail({ id, board_id, org_id }, e) {
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -60,7 +60,7 @@ export default class TaskItem extends React.Component {
   }
   render() {
     const { itemValue = {}, isUsedInWorkbench } = this.props;
-    const { is_realize, board_id, board_name, name, id } = itemValue;
+    const { org_id, is_realize, board_id, board_name, name, id } = itemValue;
 
     //父级任务
     let parentCards = [];
@@ -129,7 +129,7 @@ export default class TaskItem extends React.Component {
           <div
           className={indexstyles.taskItem__workbench_content_projectname}
             style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
+            onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
           </div>
@@ -180,7 +180,7 @@ export default class TaskItem extends React.Component {
           })}
           <span
             style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
+            onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
           </span>
