@@ -146,6 +146,9 @@ export default class SiderLeft extends React.Component {
     //     break
     //   }
     // }
+        const { currentUserOrganizes = [] } = this.props
+    const { dispatch } = this.props
+
     switch (key) {
       case '10':
           this.setCreateOrgnizationOModalVisable()
