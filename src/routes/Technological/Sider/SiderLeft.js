@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Layout, Menu, Dropdown, Tooltip, Switch} from 'antd';
+import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
@@ -25,8 +25,7 @@ export default class SiderLeft extends React.Component {
   state={
     collapsed: true,
     createOrganizationVisable: false,
-    ShowAddMenberModalVisibile: false,
-    is_show_all_org: true, // 是否默认显示全部组织 默认为 true 显示
+    ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
   }
   componentDidMount() {
 
@@ -112,48 +111,46 @@ export default class SiderLeft extends React.Component {
 
   // 切换组织的点击事件
   handleOrgListMenuClick = (e) => {
-    console.log(e, 'sssss')
+    // console.log(e, 'ssss')
     const { key } = e
-    // if('10' == key) {
-    //   this.setCreateOrgnizationOModalVisable()
-    //   return
-    // }
-    // if('0' == key) {
-    //   dispatch({
-    //     type: 'technological/updateDatas',
-    //     payload: {
-    //       is_all_org: true
-    //     }
-    //   })
-    // }
-    // const { currentUserOrganizes = [] } = this.props
-    // const { dispatch } = this.props
-    // for(let val of currentUserOrganizes) {
-    //   if(key === val['id']){
-    //     localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
-    //     dispatch({
-    //       type: 'technological/updateDatas',
-    //       payload: {
-    //         currentSelectOrganize: val
-    //       }
-    //     })
-    //     dispatch({
-    //       type: 'technological/changeCurrentOrg',
-    //       payload: {
-    //         org_id: val.id
-    //       }
-    //     })
-    //     break
-    //   }
-    // }
-        const { currentUserOrganizes = [] } = this.props
+    const { currentUserOrganizes = [] } = this.props
     const { dispatch } = this.props
+    //是否拥有查看成员入口
+    const isHasMemberView = () => {
+      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
+    }
+
+    //是否拥有管理后台入口
+    const isHasManagerBack = () => {
+      let flag = false
+      if(
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+      ) {
+        flag = true
+      }
+      return flag
+    }
 
     switch (key) {
-      case '10':
+      case '24': // 匹配团队成员
+          isHasMemberView() && this.routingJump('/technological/organizationMember')
+          break
+      case '23': // 匹配成员管理后台
+          isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        break
+      case '22': // 匹配邀请成员加入弹框显示
+          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
+        break
+      case '20': // 匹配用户设置
+        this.routingJump('/technological/accoutSet')
+        break
+      case '10': // 创建或加入新组织
           this.setCreateOrgnizationOModalVisable()
         break
-      case '0':
+      case '0': // 匹配全部组织
           localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
           dispatch({
             type: 'technological/changeCurrentOrg',
@@ -169,7 +166,7 @@ export default class SiderLeft extends React.Component {
             }
           })
         break
-      default:
+      default: // 其他组织的切换
        for(let val of currentUserOrganizes) {
          if(key === val['id']){
            localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
@@ -186,7 +183,7 @@ export default class SiderLeft extends React.Component {
              }
            })
            break
-          }
+         }
        }
        dispatch({
         type: 'technological/updateDatas',
@@ -196,14 +193,6 @@ export default class SiderLeft extends React.Component {
       })
        break
     }
-  }
-
-  updateTechnologicalDatas(data = {}) {
-    const { dispatch } = this.props
-    dispatch({
-      type: '',
-      payload: {...data}
-    })
   }
 
   //设置全局搜索
@@ -216,6 +205,28 @@ export default class SiderLeft extends React.Component {
       }
     })
   }
+
+  // 退出登录的操作
+  logout(e) {
+    e.stopPropagation()
+    const { dispatch } = this.props
+    Modal.confirm({
+      title: '确定退出登录？',
+      okText: '确认',
+      zIndex: 2000,
+      onOk() {
+        dispatch({
+          type: 'technological/logout',
+          payload: {
+
+          }
+        })
+      },
+      cancelText: '取消',
+    });
+
+  }
+
 
   render() {
     const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
@@ -269,99 +280,117 @@ export default class SiderLeft extends React.Component {
     const { logo } = currentSelectOrganize
 
     const orgListMenu = (
-      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
-        <Menu.Item key="24">
-          <div className={indexStyles.default_select_setting}>
-            <div className={indexStyles.team}>
-              <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
-              <span className={indexStyles.middle_text}>团队成员</span>
-            </div>
-          </div>
-        </Menu.Item>
+      <div>
+          <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
+            
+            {
+              identity_type == '1' && (
+                <Menu.Item key="24">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.team}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
+                      <span className={indexStyles.middle_text}>团队成员</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
 
-        <Menu.Item key="23">
-          <div className={indexStyles.default_select_setting}>
-            <div className={indexStyles.bank}>
-              <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
-              <span className={indexStyles.middle_text}>组织管理后台</span>
-            </div>
-          </div>
-        </Menu.Item>
+            {
+              identity_type == '1' && (
+                <Menu.Item key="23">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.bank}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
+                      <span className={indexStyles.middle_text}>组织管理后台</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
 
-        <Menu.Item key="22">
-          <div className={indexStyles.default_select_setting}>
-            <div className={indexStyles.addUsers}>
-              <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
-              <span className={indexStyles.middle_text}>邀请成员加入</span>
-            </div>
-          </div>
-        </Menu.Item>
+            {
+              identity_type == '1' && (
+                <Menu.Item key="22">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.addUsers}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
+                      <span className={indexStyles.middle_text}>邀请成员加入</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
+          
+            {identity_type == '1' && <Menu.Divider />}
 
-        <Menu.Divider />
+            <Menu.Item key="20">
+              <div className={indexStyles.default_select_setting}>
+                <div className={indexStyles.account_setting}>
+                  {
+                    avatar ? <span className={indexStyles.left_img}><img src={avatar} className={indexStyles.avartarImg} /></span> : ''
+                  }
+                  <span className={indexStyles.middle_text}>账户设置</span>
+                  <Tooltip placement="top" title="退出登录">
+                    <div
+                      onClick={ (e) => { this.logout(e) } }
+                      className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
+                  </Tooltip>
+                </div>
+              </div>
+            </Menu.Item>
 
-        <Menu.Item key="20">
-          <div className={indexStyles.default_select_setting}>
-            <div className={indexStyles.account_setting}>
-              {
-                avatar ? <span className={indexStyles.left_img}><img src={avatar} className={indexStyles.avartarImg} /></span> : ''
+            <SubMenu
+              key="21"
+              title={
+                <div className={indexStyles.default_select_setting}>
+                  <div className={indexStyles.hobby}>
+                    <img className={`${indexStyles.hobby_img} ${indexStyles.left_img}`} src={hobbyImg} />
+                    <span className={indexStyles.middle_text}>偏好设置</span>
+                    {/* <span><Icon type="right" /></span> */}
+                  </div>
+                </div>
               }
-              <span className={indexStyles.middle_text}>账户设置</span>
-              <Tooltip placement="top" title="退出登录">
-                <div
-                  className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
-              </Tooltip>
-            </div>
-          </div>
-        </Menu.Item>
+            >
+                <Menu.Item key="subShowOrgName">
+                  <span>显示组织名称 <Switch defaultChecked></Switch></span>
+                </Menu.Item>
+                <Menu.Item key="subInfoSet">
+                  <span>通知设置</span>
+                </Menu.Item>
+            </SubMenu>
 
-        <SubMenu
-          key="21"
-          title={
-            <div className={indexStyles.default_select_setting}>
-              <div className={indexStyles.hobby}>
-                <img className={`${indexStyles.hobby_img} ${indexStyles.left_img}`} src={hobbyImg} />
-                <span className={indexStyles.middle_text}>偏好设置</span>
-                <span><Icon type="right" /></span>
+            <Menu.Item key="10" >
+              <div className={indexStyles.itemDiv} style={{ color: color_4}}>
+                <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
               </div>
-            </div>
-          }
-        >
-            <Menu.Item key="subShowOrgName">
-              <span>显示组织名称 <Switch defaultChecked></Switch></span>
             </Menu.Item>
-            <Menu.Item key="subInfoSet">
-              <span>通知设置</span>
+
+            <Menu.Divider />
+          </Menu>
+          <Menu
+            style={{maxHeight: 200, overflowY: 'auto'}}
+            onClick={this.handleOrgListMenuClick.bind(this)} selectable={true}  mode="vertical" >
+            <Menu.Item key="0" className={indexStyles.org_name}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  <img src={linxiLogo} className={indexStyles.org_img}/>
+                  <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
+                </div>
             </Menu.Item>
-        </SubMenu>
-
-        <Menu.Item key="10" >
-          <div className={indexStyles.itemDiv} style={{ color: color_4}}>
-            <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
-          </div>
-        </Menu.Item>
-
-        <Menu.Divider />
-
-        <Menu.Item key="0" className={indexStyles.org_name}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <img src={logo || linxiLogo} className={indexStyles.org_img}/>
-              <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
-            </div>
-        </Menu.Item>
-
-        {currentUserOrganizes.map((value, key) => {
-          const { name, id, identity_type } = value
-          return (
-            <Menu.Item key={id} className={indexStyles.org_name} >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <img src={logo || linxiLogo} className={indexStyles.org_img}/>
-                <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{name}</span>
-              </div>
-              {identity_type == '0'? (<span className={indexStyles.middle_bott} style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6, position: 'absolute', right: 34, top: 32}}>访客</span>) : ('')}
-            </Menu.Item>
-          )
-        })}
-      </Menu>
+            {currentUserOrganizes.map((value, key) => {
+                const { name, id, identity_type, logo } = value
+                return (
+                  <Menu.Item key={id} className={indexStyles.org_name} >
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                      <img src={logo || linxiLogo} className={indexStyles.org_img}/>
+                      <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{name}</span>
+                    </div>
+                    {identity_type == '0'? (<span className={indexStyles.middle_bott} style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6, position: 'absolute', right: 34, top: 12}}>访客</span>) : ('')}
+                  </Menu.Item>
+                )
+              })}
+          </Menu>
+        </div>
     )
 
     //是否拥有管理后台入口
