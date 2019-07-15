@@ -61,7 +61,7 @@ export default function request(options = {}, elseSet = {}) {
     axios({
       ...{
         url,
-        headers: header,
+        headers: {...header, ...headers},
         method,
         params,
         data,

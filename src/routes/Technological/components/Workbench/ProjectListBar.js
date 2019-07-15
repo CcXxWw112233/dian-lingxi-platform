@@ -264,12 +264,13 @@ class ProjectListBar extends Component {
         )}
         <ul className={styles.projectListBarItemWrapper} ref={this.listRef}>
           {projectList &&
-            projectList.map(({ board_id, board_name, apps }) => (
+            projectList.map(({ board_id, board_name, apps, org_id }) => (
               <ProjectListBarCell
                 board_id={board_id}
                 board_name={board_name}
                 key={board_id}
                 apps={apps}
+                org_id={org_id}
                 handleClickedCell={this.handleClickedCell}
                 shouldActive={projectTabCurrentSelectedProject}
               />
