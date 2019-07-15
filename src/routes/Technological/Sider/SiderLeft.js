@@ -114,36 +114,93 @@ export default class SiderLeft extends React.Component {
   handleOrgListMenuClick = (e) => {
     console.log(e, 'sssss')
     const { key } = e
-    if('10' == key) {
-      this.setCreateOrgnizationOModalVisable()
-      return
-    }
-    if('0' == key) {
-      this.setState({
-        is_show_all_org: true
-      })
-    }
-    const { currentUserOrganizes = [] } = this.props
-    const { dispatch } = this.props
-    for(let val of currentUserOrganizes) {
-      if(key === val['id']){
-        Cookies.set('org_id', val.id, {expires: 30, path: ''})
-        localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
-        dispatch({
-          type: 'technological/updateDatas',
-          payload: {
-            currentSelectOrganize: val
-          }
-        })
-        dispatch({
-          type: 'technological/changeCurrentOrg',
-          payload: {
-            org_id: val.id
-          }
-        })
+    // if('10' == key) {
+    //   this.setCreateOrgnizationOModalVisable()
+    //   return
+    // }
+    // if('0' == key) {
+    //   dispatch({
+    //     type: 'technological/updateDatas',
+    //     payload: {
+    //       is_all_org: true
+    //     }
+    //   })
+    // }
+    // const { currentUserOrganizes = [] } = this.props
+    // const { dispatch } = this.props
+    // for(let val of currentUserOrganizes) {
+    //   if(key === val['id']){
+    //     localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
+    //     dispatch({
+    //       type: 'technological/updateDatas',
+    //       payload: {
+    //         currentSelectOrganize: val
+    //       }
+    //     })
+    //     dispatch({
+    //       type: 'technological/changeCurrentOrg',
+    //       payload: {
+    //         org_id: val.id
+    //       }
+    //     })
+    //     break
+    //   }
+    // }
+    switch (key) {
+      case '10':
+          this.setCreateOrgnizationOModalVisable()
         break
-      }
+      case '0':
+          localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
+          dispatch({
+            type: 'technological/changeCurrentOrg',
+            payload: {
+              org_id: '0'
+            }
+          })
+          dispatch({
+            type: 'technological/updateDatas',
+            payload: {
+              currentSelectOrganize: {},
+              is_all_org: true,
+            }
+          })
+        break
+      default:
+       for(let val of currentUserOrganizes) {
+         if(key === val['id']){
+           localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
+           dispatch({
+             type: 'technological/updateDatas',
+             payload: {
+               currentSelectOrganize: val
+             }
+           })
+           dispatch({
+             type: 'technological/changeCurrentOrg',
+             payload: {
+               org_id: val.id
+             }
+           })
+           break
+          }
+       }
+       dispatch({
+        type: 'technological/updateDatas',
+        payload: {
+          is_all_org: false,
+        }
+      })
+       break
     }
+  }
+
+  updateTechnologicalDatas(data = {}) {
+    const { dispatch } = this.props
+    dispatch({
+      type: '',
+      payload: {...data}
+    })
   }
 
   //设置全局搜索
@@ -414,7 +471,7 @@ export default class SiderLeft extends React.Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: { datas: {
-  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}
+  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_all_org
 }} }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize }
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_all_org }
 }
