@@ -1,4 +1,4 @@
-import { getUSerInfo, logout } from '../../services/technological'
+import { getUSerInfo, logout, getUserAllOrgsAllBoards } from '../../services/technological'
 import {
   getOrganizationMemberPermissions,
   changeCurrentOrg,
@@ -60,7 +60,10 @@ export default {
           // }else{
 
           // }
-
+          await dispatch({
+            type: 'getUserAllOrgsAllBoards',
+            payload: {}
+          })
 
           //如果cookie存在用户信息，则部请求，反之则请求
           await dispatch({
@@ -152,6 +155,16 @@ export default {
           yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
         }
         //存储
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    // 获取和存储全组织的全部项目
+    * getUserAllOrgsAllBoards({ payload }, { select, call, put }) {
+      let res = yield call(getUserAllOrgsAllBoards, payload)
+      if(isApiResponseOk(res)) {
+        localStorage.setItem('userAllOrgsAllBoards', JSON.stringify(res.data))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

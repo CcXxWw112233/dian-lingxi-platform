@@ -4,29 +4,45 @@ import Cookies from 'js-cookie'
 
 export async function getTaskList_new({id}) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/${id}`,
-    method: 'GET'
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card`,
+    method: 'GET',
+    params: {
+      id,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
 export async function getMeetingList_new({id}) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting/${id}`,
-    method: 'GET'
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting`,
+    method: 'GET',
+    params: {
+      id,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
 export async function getProcessList_new({id}) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/node/${id}`,
-    method: 'GET'
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/node`,
+    method: 'GET',
+    params: {
+      id,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
 export async function getFileList_new({id}) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading/${id}`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
     method: 'GET',
+    params: {
+      id,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
@@ -165,7 +181,10 @@ export async function setCurrentProjectIdToServer({payload: {id}}) {
 export async function getcurrentOrgFileUploads() {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   })
 }
 
@@ -173,7 +192,10 @@ export async function getcurrentOrgFileUploads() {
 export async function getCurrentMeetingList() {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   })
 }
 
@@ -181,7 +203,10 @@ export async function getCurrentMeetingList() {
 export async function getCurrentBackLogProcessList() {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/backlog`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   })
 }
 
@@ -189,7 +214,10 @@ export async function getCurrentBackLogProcessList() {
 export async function getCurrentResponsibleTask() {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   })
 }
 
@@ -207,7 +235,8 @@ export async function getProjectList(params) {
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
     params: {
-      contain_type: '3'
+      contain_type: '3',
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   });
 }
@@ -217,7 +246,8 @@ export async function getProjectUserList(params) {
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
     params: {
-      contain_type: '2'
+      contain_type: '2',
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   });
 }

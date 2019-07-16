@@ -126,12 +126,12 @@ export default {
                 id: board_id
               }
             })
-            dispatch({
-              type: 'getAppsList',
-              payload: {
-                type: '2'
-              }
-            })
+            // dispatch({
+            //   type: 'getAppsList',
+            //   payload: {
+            //     type: '2'
+            //   }
+            // })
             dispatch({
               type: 'getRelationsSelectionPre',
               payload: {
@@ -202,6 +202,13 @@ export default {
             projectDetailInfoData: result.data,
             appsSelectKey: appsSelectKey || 1, //appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
             appsSelectKeyIsAreadyClickArray: [appsSelectKey || 1], //[result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
+          }
+        })
+        yield put({
+          type: 'getAppsList',
+          payload: {
+            type: '2',
+            org_id: result.data.org_id
           }
         })
         if(!appsSelectKey) {
@@ -287,12 +294,12 @@ export default {
             id: board_id
           }
         })
-        yield put({
-          type: 'getAppsList',
-          payload: {
-            type: '2'
-          }
-        })
+        // yield put({
+        //   type: 'getAppsList',
+        //   payload: {
+        //     type: '2'
+        //   }
+        // })
       }
     },
 

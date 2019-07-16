@@ -2,7 +2,7 @@ import { message } from 'antd';
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
-import {REQUEST_DOMAIN} from "../globalset/js/constant";
+import {REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ABOUT_PROJECT} from "../globalset/js/constant";
 import { reRefreshToken } from './oauth'
 function messageLoading(url) {
   return (
@@ -28,22 +28,6 @@ export default function request(options = {}, elseSet = {}) {
     data = {},
   } = options;
 
-  //去掉空字符串
-  // if (params && typeof params === 'object') {
-  //   for(let i in params) {
-  //     if(!params[i]) {
-  //       delete params[i]
-  //     }
-  //   }
-  // }
-  // if (data && typeof data === 'object') {
-  //   for (let i in data) {
-  //     if (!data[i]) {
-  //       delete data[i]
-  //     }
-  //   }
-  // }
-
   let loading = !isNotLoading ? messageLoading(url) : ''
   let header = Object.assign({}, options.headers)
   const Authorization = Cookies.get('Authorization')
@@ -54,17 +38,43 @@ export default function request(options = {}, elseSet = {}) {
   header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
   header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
 
-  // header['board_id'] = board_id
+  if(data['_organization_id'] || params['_organization_id']) {
+    header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
+  }
 
+  // header['baseInfo'] = {
+  //   organizationId: localStorage.getItem('OrganizationId') || '0',
+  //   boardId: localStorage.getItem('storageCurrentOperateBoardId') || '0',
+  //   contentDataType:'card',
+  //   contentDataId  :'7657665646576547654',
+  //   aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
+  // }
+
+  // 如果是和项目和工作台的接口相关，则把_organization_id传递进去
+  // let new_param = {}
+  // if(
+  //   (url.indexOf(REQUEST_DOMAIN_WORK_BENCH) != -1) ||
+  //   (url.indexOf(REQUEST_DOMAIN_ABOUT_PROJECT) != -1) 
+  // ) {
+  //   new_param = {
+  //     _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+  //   }
+  // }
+  
   return new Promise((resolve, reject) => {
-    const { clooseLoading = false } = elseSet
     axios({
       ...{
         url,
         headers: {...header, ...headers},
         method,
-        params,
-        data,
+        params: {
+          ...params, 
+          // ...new_param
+        },
+        data: {
+          ...data,
+          // ...new_param
+        },
         timeout: 60000,
       }
     })
@@ -95,20 +105,3 @@ export default function request(options = {}, elseSet = {}) {
 }
 
 
-
-
-// switch (error.response.status) {
-//   case 401:
-//     const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
-//     Cookies.remove('userInfo', { path: '' })
-//     if(!is401) {
-//       Cookies.set('is401', true, {expires: 30, path: ''})
-//       setTimeout(function () {
-//         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
-//       },1000)
-//     }else{
-//     }
-//     break
-//   default:
-//     break
-// }

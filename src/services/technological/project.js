@@ -71,6 +71,9 @@ export async function getProjectGroupSearchTree() {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
     method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+    }
   })
 }
 
@@ -86,16 +89,20 @@ export async function getCurrentProjectGroupProjectList(params) {
     params: {
       group_id,
       keyword,
-      org_id
+      org_id,
+      _organization_id: org_id
     }
   })
 }
 
 //获取项目分组树
-export async function getProjectGroupTree() {
+export async function getProjectGroupTree(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
@@ -147,10 +154,16 @@ export async function getProjectList(params) {
 }
 //获取app标
 export async function getAppsList(params) {
+  const { org_id } = params
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/app`,
     method: 'GET',
-    params
+    headers: {
+      OrganizationId: org_id
+    },
+    params: {
+      type: params.type
+    }
   });
 }
 

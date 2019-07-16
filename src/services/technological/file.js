@@ -26,7 +26,10 @@ export async function fileDownload(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/download`,
     method: 'GET',
-    params,
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+    },
   });
 }
 
@@ -191,9 +194,12 @@ export async function fileInfoByUrl_2(params) {
 //获取pdf信息
 export async function getFilePDFInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/pdf/getAnnotationEditUrl/${params.id}`,
+    url: `${REQUEST_DOMAIN_FILE}/file/pdf/getAnnotationEditUrl`,
     method: 'GET',
-    params,
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId'),
+    },
   });
 }
 

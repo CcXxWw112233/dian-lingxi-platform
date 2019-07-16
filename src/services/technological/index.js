@@ -58,7 +58,10 @@ export async function getGlobalSearchConditions(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/query_condition/list`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   }, {isNotLoading: true});
 }
 
@@ -69,4 +72,13 @@ export async function getFixedConditions(params) {
     method: 'GET',
     params
   }, {isNotLoading: true});
+}
+
+//获取和存储全组织的全部项目
+export async function getUserAllOrgsAllBoards(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/list/id`,
+    method: 'GET',
+    params
+  });
 }

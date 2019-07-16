@@ -29,12 +29,12 @@ export default {
               type: '1'
             }
           })
-          dispatch({
-            type: 'getAppsList',
-            payload: {
-              type: '2'
-            }
-          })
+          // dispatch({
+          //   type: 'getAppsList',
+          //   payload: {
+          //     type: '2'
+          //   }
+          // })
           dispatch({
             type: 'setCurrentSelectedProjectMenuItem',
             payload: {

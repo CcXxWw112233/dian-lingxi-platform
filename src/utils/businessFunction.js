@@ -122,6 +122,24 @@ export const setOrganizationIdStorage = (value) => {
 //设置board_id localstorage缓存
 export const setBoardIdStorage = (value) => {
   localStorage.setItem('storageCurrentOperateBoardId', value)
+  // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId
+  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || []
+  if(userAllOrgsAllBoards) {
+    userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
+  }
+  let org_id = ''
+  for(let val of userAllOrgsAllBoards) {
+    for(let val_2 of val['board_ids']) {
+      if(value == val_2) {
+        org_id = val['org_id']
+        break
+      }
+    }
+    if(org_id) {
+      break
+    }
+  }
+  localStorage.setItem('aboutBoardOrganizationId', org_id || '0')
 }
 
 //是否有组织成员查看权限

@@ -189,7 +189,8 @@ export async function getProjectGoupList() {
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,
     method: 'GET',
     params: {
-      contain_type: '1'
+      contain_type: '1',
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   });
 }
