@@ -63,11 +63,11 @@ class FileItem extends React.Component {
     }
     return themeCode;
   }
-  gotoBoardDetail({ id, board_id }, e) {
+  gotoBoardDetail({ id, board_id, org_id }, e) {
     stopPropagation(e);
     setBoardIdStorage(board_id)
 
-    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)) {
+    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
     }
@@ -207,6 +207,7 @@ class FileItem extends React.Component {
     const { itemValue = {} } = this.props;
     const {
       board_id,
+      org_id,
       board_name,
       file_name,
       create_time,
@@ -235,7 +236,7 @@ class FileItem extends React.Component {
           <span className={indexstyles.hoverUnderline}>{file_name}</span>
           <span
             style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer' }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
+            onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
           </span>

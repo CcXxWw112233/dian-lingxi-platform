@@ -30,6 +30,8 @@ export default {
   namespace: 'technological',
   state: {
     datas: {
+      is_show_org_name: true, // 是否显示组织名称
+      is_all_org: false, //是否全部组织
       menuList: [],  // 侧边栏功能导航列表
     }
   },

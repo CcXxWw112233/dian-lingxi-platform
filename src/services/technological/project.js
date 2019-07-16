@@ -190,12 +190,15 @@ export async function archivedProject(data) {
 }
 
 //取消收藏
-export async function cancelCollection(id) {
+export async function cancelCollection({org_id, board_id}) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${board_id}`,
     method: 'DELETE',
+    headers: {
+      OrganizationId: org_id
+    },
     data: {
-      id
+      id: board_id
     }
   });
 }
@@ -230,12 +233,13 @@ export async function quitProject(data) {
 }
 
 // 收藏项目
-export async function collectionProject(id) {
+export async function collectionProject({org_id, board_id}) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/star/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
     method: 'POST',
+    headers: { OrganizationId: org_id },
     data: {
-      id
+      id: board_id
     }
   }, { isNotLoading: true });
 }
