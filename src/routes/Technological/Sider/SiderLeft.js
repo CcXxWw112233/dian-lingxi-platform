@@ -26,6 +26,7 @@ export default class SiderLeft extends React.Component {
     collapsed: true,
     createOrganizationVisable: false,
     ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
+    is_disabled: true, // 是否是禁用状态, 默认为true 表示禁用状态
   }
   componentDidMount() {
 
@@ -113,8 +114,9 @@ export default class SiderLeft extends React.Component {
   handleOrgListMenuClick = (e) => {
     // console.log(e, 'ssss')
     const { key } = e
+    const { is_disabled } = this.state
     const { currentUserOrganizes = [] } = this.props
-    const { dispatch } = this.props
+    const { dispatch, is_show_org_name } = this.props
     //是否拥有查看成员入口
     const isHasMemberView = () => {
       return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
@@ -147,10 +149,17 @@ export default class SiderLeft extends React.Component {
       case '20': // 匹配用户设置
         this.routingJump('/technological/accoutSet')
         break
+      case 'subShowOrgName':
+        // console.log('sss', 2222)
+        this.handleShowAllOrg
+        break
       case '10': // 创建或加入新组织
           this.setCreateOrgnizationOModalVisable()
         break
       case '0': // 匹配全部组织
+          this.setState({
+            is_disabled: false
+          })
           localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
           dispatch({
             type: 'technological/changeCurrentOrg',
@@ -163,10 +172,16 @@ export default class SiderLeft extends React.Component {
             payload: {
               currentSelectOrganize: {},
               is_all_org: true,
+              is_show_org_name: is_show_org_name ? true : false,
             }
           })
+          
         break
       default: // 其他组织的切换
+      // console.log('sss', 11111)
+        this.setState({
+          is_disabled: true
+        })
        for(let val of currentUserOrganizes) {
          if(key === val['id']){
            localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
@@ -227,9 +242,21 @@ export default class SiderLeft extends React.Component {
 
   }
 
+  // 是否显示全部组织
+  handleShowAllOrg(checked) {
+    const { dispatch, is_show_org_name } = this.props
+    const { is_disabled } = this.state
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        is_show_org_name: !is_show_org_name
+      }
+    })
+  }
+
 
   render() {
-    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
     menuList.forEach((item) => {
       if(item.status === '1') {
@@ -259,7 +286,7 @@ export default class SiderLeft extends React.Component {
       ]
     }, [])
 
-    const { collapsed } = this.state
+    const { collapsed, is_disabled } = this.state
     const navArray = [
       {
         theme: '&#xe6f7;',
@@ -278,10 +305,10 @@ export default class SiderLeft extends React.Component {
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
-
+    
     const orgListMenu = (
-      <div>
-          <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
+      <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
+          <Menu subMenuCloseDelay={1} onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
             
             {
               identity_type == '1' && (
@@ -352,11 +379,28 @@ export default class SiderLeft extends React.Component {
                 </div>
               }
             >
-                <Menu.Item key="subShowOrgName">
-                  <span>显示组织名称 <Switch defaultChecked></Switch></span>
+                <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName">
+                  <span>显示组织名称 
+                    <Switch
+                      disabled={is_disabled}
+                      style={{ display: 'inline-block', marginLeft: 8 }} 
+                      onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                      defaultChecked={is_show_org_name}
+                      
+                    ></Switch>
+                  </span>
                 </Menu.Item>
                 <Menu.Item key="subInfoSet">
                   <span>通知设置</span>
+                </Menu.Item>
+                <Menu.Item key="subShowSimple">
+                  <span>
+                    极简模式
+                    <Switch 
+                      style={{ display: 'inline-block', marginLeft: 36 }}
+                      defaultChecked={false}
+                    ></Switch>
+                  </span>
                 </Menu.Item>
             </SubMenu>
 
@@ -369,6 +413,7 @@ export default class SiderLeft extends React.Component {
             <Menu.Divider />
           </Menu>
           <Menu
+            className={`${glabalStyles.global_vertical_scrollbar}`}
             style={{maxHeight: 200, overflowY: 'auto'}}
             onClick={this.handleOrgListMenuClick.bind(this)} selectable={true}  mode="vertical" >
             <Menu.Item key="0" className={indexStyles.org_name}>
@@ -390,7 +435,7 @@ export default class SiderLeft extends React.Component {
                 )
               })}
           </Menu>
-        </div>
+      </div>
     )
 
     //是否拥有管理后台入口
@@ -413,6 +458,7 @@ export default class SiderLeft extends React.Component {
     }
 
     return (
+      
       <Sider
         trigger={null}
         collapsible
@@ -420,57 +466,35 @@ export default class SiderLeft extends React.Component {
         onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
-        <Dropdown overlay={orgListMenu}>
-          <div className={indexStyles.contain_1} style={{position: 'relative'}}>
-            <div className={indexStyles.left}>
-              <img src={logo || linxiLogo} className={indexStyles.left_img}/>
-            </div>
-            <div className={indexStyles.middle}>
-              <div className={indexStyles.username}>
-                {name}
-              </div>
-              <div className={indexStyles.middle_top}>{orgnizationName}</div>
-            </div>
-            {
-              identity_type == '0' && collapsed == false ? (
-                <div className={indexStyles.middle_bott} style={{position: 'absolute', top:20,right: 30}}>
-                    访客
-                </div>
-              ) : ('')
-            }
-          </div>
-        </Dropdown>
-        {/* <div className={indexStyles.contain_1}>
-          <div className={indexStyles.left}>
-            <img src={logo || linxiLogo} className={indexStyles.left_img}/>
-          </div>
-          <div className={indexStyles.middle}>
-            <div className={indexStyles.middle_top}>{orgnizationName}</div>
-            {identity_type == '1'? (
-              <div className={indexStyles.middle_bott}>
-                {isHasMemberView() && (
-                  <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
-                )}
-                {isHasManagerBack() && (
-                  <div onClick={this.routingJump.bind(this, `/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
-                )}
-                {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>}
-            </div>
-            ) : (
-              identity_type=='0'?(
-                <div className={indexStyles.middle_bott}>
-                  访客
-                </div>
-                ):('')
-            )}
 
-          </div>
           <Dropdown overlay={orgListMenu}>
-          <div className={`${indexStyles.right} ${glabalStyles.link_mouse}`}>
-            切换
-          </div>
+            <div className={indexStyles.contain_1} style={{position: 'relative'}}>
+              <div className={indexStyles.left}>
+                <img src={logo || linxiLogo} className={indexStyles.left_img}/>
+              </div>
+              <div className={indexStyles.middle}>
+                <div className={indexStyles.username}>
+                  {name}
+                </div>
+                {
+                  is_show_org_name && (
+                    <div className={indexStyles.middle_top}>
+                      {orgnizationName}
+                    </div>
+                  )
+                }
+                
+              </div>
+              {
+                identity_type == '0' && collapsed == false ? (
+                  <div className={indexStyles.middle_bott} style={{position: 'absolute', top:20,right: 30}}>
+                      访客
+                  </div>
+                ) : ('')
+              }
+            </div>
           </Dropdown>
-        </div> */}
+
 
         <div className={indexStyles.contain_2}>
           <div className={`${indexStyles.navItem}`} onClick={this.setGlobalSearchModalVisible.bind(this)} >
@@ -497,13 +521,13 @@ export default class SiderLeft extends React.Component {
 
 
       </Sider>
-
+      
     )
   }
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: { datas: {
-  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_all_org
+  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name
 }} }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_all_org }
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name }
 }
