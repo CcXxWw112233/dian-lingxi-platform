@@ -114,6 +114,24 @@
           margin-top: 12px;
           color: #262626;
           justify-content: space-between;
+          .processText {
+            display: flex;
+            &:hover {
+              .org_name {
+                display: block;
+              }
+            }
+            .org_name {
+              display: none;
+              line-height: 21px;
+              color: #8c8c8c;
+              margin-left: 8px;
+              max-width: 150px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
           div:nth-child(1) {
             width: 540px;
           }
@@ -156,7 +174,24 @@
           div:nth-child(2) {
             flex: 1;
             margin: 0 8px;
+            &:hover {
+              .org_name {
+                display: block;
+              }
+              
+            }
+            .org_name {
+              display: none;
+              line-height: 21px;
+              color: #8c8c8c;
+              margin-left: 8px;
+              max-width: 150px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
           }
+          
         }
         .projectCountItem {
           color: #262626;
@@ -494,6 +529,22 @@
   }
 }
 
+.file_text {
+  &:hover {
+    .org_name {
+      display: block;
+    }
+  }
+  .org_name {
+    display: none;
+    margin-left: 8px;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .hoverUnderline:hover {
   text-decoration: underline;
   cursor: pointer;
@@ -758,6 +809,11 @@
     display: flex;
         flex: 10;
         overflow: hidden;
+        &:hover {
+          .taskItem__workbench_content_projectname .org_name {
+            display: block
+          }
+        }
     .taskItem__workbench_content_title {
       cursor: pointer;
       .ellipsis();
@@ -771,6 +827,14 @@
     .taskItem__workbench_content_projectname {
       .ellipsis();
       flex: 3 3 1;
+      .org_name {
+        margin-left: 8px;
+        display: none;
+        max-width: 150px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
     }
   }
   .taskItem__workbench_time {

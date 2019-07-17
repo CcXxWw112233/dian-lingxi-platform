@@ -6,8 +6,12 @@ import { timestampToTimeNormal2 } from './../../../../../utils/util'
 import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
 import {message} from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
-import {setBoardIdStorage} from "../../../../../utils/businessFunction";
+import {setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../../../utils/businessFunction";
+import { connect } from 'dva'
 
+@connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
+  currentUserOrganizes, is_show_org_name
+}))
 export default class TaskItem extends React.Component {
   itemOneClick(e) {
     e.stopPropagation();
@@ -58,8 +62,19 @@ export default class TaskItem extends React.Component {
       }
     })
   }
+
+  componentDidMount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/getCurrentUserOrganizes',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
-    const { itemValue = {}, isUsedInWorkbench } = this.props;
+    const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name} = this.props;
     const { org_id, is_realize, board_id, board_name, name, id } = itemValue;
 
     //父级任务
@@ -128,10 +143,16 @@ export default class TaskItem extends React.Component {
           <Tooltip title={board_name}>
           <div
           className={indexstyles.taskItem__workbench_content_projectname}
-            style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
+            style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer", display: 'flex' }}
             onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
+            {
+              is_show_org_name && (
+                <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+              )
+            }
+            
           </div>
           </Tooltip>
         </div>
