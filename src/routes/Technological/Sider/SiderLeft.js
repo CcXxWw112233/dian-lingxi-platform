@@ -487,7 +487,7 @@ export default class SiderLeft extends React.Component {
               </div>
               {
                 identity_type == '0' && collapsed == false ? (
-                  <div className={indexStyles.middle_bott} style={{position: 'absolute', top:20,right: 30}}>
+                  <div className={indexStyles.middle_bott} style={{position: 'absolute', top:25,right: 30}}>
                       访客
                   </div>
                 ) : ('')
