@@ -101,6 +101,19 @@ export const currentNounPlanFilterName = (code) => {
   return name
 }
 
+// 返回全组织（各个组织下）或某个确认组织下对应的org_name
+export const getOrgNameWithOrgIdFilter = (org_id, organizations = []) => {
+  const OrganizationId = localStorage.getItem('OrganizationId')
+  if(OrganizationId != '0') { //确认组织
+    let currentSelectOrganize = localStorage.getItem('currentSelectOrganize') || '{}'
+    currentSelectOrganize = JSON.parse(currentSelectOrganize)
+    return currentSelectOrganize['name']
+  } else { //全组织
+    const name = (organizations.find(item => org_id == item.id) || {} ).name
+    return name
+  }
+}
+
 //打开pdf文件名
 export const openPDF = (params) => {
   const { protocol, hostname } = window.location
@@ -119,7 +132,7 @@ export const setStorage = (key, value) => {
 export const setOrganizationIdStorage = (value) => {
   localStorage.setItem('OrganizationId', value)
 }
-//设置board_id localstorage缓存
+//设置board_id localstorage缓存, 同时存储board_id对应的org_id
 export const setBoardIdStorage = (value) => {
   localStorage.setItem('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId
