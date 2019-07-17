@@ -37,11 +37,11 @@ export default function request(options = {}, elseSet = {}) {
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
   
-  // header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
-  // header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
-  // if(data['_organization_id'] || params['_organization_id']) {
-  //   header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
-  // }
+  header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
+  header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
+  if(data['_organization_id'] || params['_organization_id']) {
+    header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
+  }
 
   // 请求头BaseInfo base64加密(后台权限拦截)，最终输出
   //BaseInfo: { organizationId，boardId, contentDataType, contentDataId,  aboutBoardOrganizationId, }

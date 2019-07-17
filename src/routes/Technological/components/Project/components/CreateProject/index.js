@@ -10,10 +10,12 @@ import CustormModal from '../../../../../../components/CustormModal'
 import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
+import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
 
+@connect(mapStateToProps)
 class CreateProject extends React.Component {
   state = {
     step: 1,
@@ -29,6 +31,8 @@ class CreateProject extends React.Component {
     select_project_id: undefined,//
     project_apps: [], //选择board后的app列表
     copy_value: {}, //复制的值
+    OrganizationId: localStorage.getItem('OrganizationId'),
+    _organization_id: '', //选择的组织id
   }
   componentWillReceiveProps(nextProps) {
     const { addProjectModalVisible } = nextProps
@@ -41,9 +45,39 @@ class CreateProject extends React.Component {
     })
   }
   componentDidMount() {
-    // this.getProjectList(2)
+    this.getProjectList(2)
+    this.getAppList(true)
+  }
+  getAppList = (init, payload = {}) => {
+    const { dispatch } = this.props
+    const { _organization_id, OrganizationId } = this.state
+    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
+      dispatch({
+        type: 'project/getAppsList',
+        payload: {
+          type: '2',
+        }
+      })
+    } else {
+      if(_organization_id) {
+        dispatch({
+          type: 'project/getAppsList',
+          payload: {
+            type: '2',
+            org_id: _organization_id,
+          }
+        })
+      }
+    }
   }
   //表单输入时记录值
+  orgOnChange = (id) => {
+    this.setState({
+      _organization_id: id
+    }, () => {
+      this.getAppList()
+    })
+  }
   boardNameChange(e){
     const value = e.target.value
     this.setState({
@@ -224,17 +258,49 @@ class CreateProject extends React.Component {
   }
 
   render() {
-    const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [], select_project_id  } = this.state
-    const { addProjectModalVisible, appsList = [] } = this.props;
-
+    const { 
+      step,
+      stepOneContinueDisabled, 
+      stepTwoContinueDisabled, 
+      stepThreeContinueDisabled, 
+      step_2_type, 
+      projects = [],
+      project_apps = [], 
+      select_project_id,
+      _organization_id
+    } = this.state
+    const { addProjectModalVisible, appsList = [], currentUserOrganizes = [] } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    //编辑名称
+    
+    //编辑第一步
     const step_1 = (
       <Form style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
+            {/* 项目名称 */}
+            <FormItem style={{width: 336}}>
+              {getFieldDecorator('_organization_id', {
+              })(
+                <Select
+                  size={'large'}
+                  value={_organization_id}
+                  style={{height: 40}}
+                  placeholder="请选择组织（单位）"
+                  onChange={this.orgOnChange}
+                >
+                  {
+                    currentUserOrganizes.map( item => {
+                      const { name, id } = item
+                      return (
+                        <Option value={id}>{name}</Option> 
+                      )
+                    })
+                  }
+                </Select>
+              )}
+            </FormItem>
             {/* 项目名称 */}
             <FormItem style={{width: 336}}>
               {getFieldDecorator('board_name', {
@@ -259,7 +325,7 @@ class CreateProject extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepOneContinueDisabled} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={(stepOneContinueDisabled || !_organization_id)} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
         </FormItem>
       </Form>
     )
@@ -348,7 +414,7 @@ class CreateProject extends React.Component {
     return(
       <div>
         <CustormModal
-          visible={addProjectModalVisible} //modalVisible
+          visible={true} //addProjectModalVisible
           maskClosable={false}
           width={472}
           footer={null}
@@ -378,3 +444,8 @@ class CreateProject extends React.Component {
   }
 }
 export default Form.create()(CreateProject)
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ technological: { datas: {currentUserOrganizes = [] }} }) {
+  return { currentUserOrganizes };
+}

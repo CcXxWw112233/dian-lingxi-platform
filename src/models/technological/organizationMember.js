@@ -61,7 +61,7 @@ export default modelExtend(technological, {
   },
   effects: {
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {})
+      let res = yield call(getGroupList, {...payload})
       if(isApiResponseOk(res)) {
         const groupList = res.data.data
         //将角色信息数据包裹
