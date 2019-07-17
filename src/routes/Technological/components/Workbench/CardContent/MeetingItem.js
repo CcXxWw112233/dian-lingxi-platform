@@ -4,13 +4,17 @@ import { Icon } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
-import {checkIsHasPermissionInBoard, setBoardIdStorage} from "../../../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_INTERVIEW
 } from "../../../../../globalset/js/constant";
+import { connect } from 'dva'
 
+@connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
+  currentUserOrganizes, is_show_org_name
+}))
 export default class MeetingItem extends React.Component {
 
   itemClick(e) {
@@ -33,15 +37,34 @@ export default class MeetingItem extends React.Component {
     })
   }
 
+  componentDidMount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/getCurrentUserOrganizes',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
-    const { itemValue = {}, itemKey } = this.props
-    const { name, start_time, due_time } = itemValue
+    const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name } = this.props
+    const { name, start_time, due_time, org_id } = itemValue
+    // console.log(itemValue, 'sss')
     return (
       <div className={indexstyles.meetingItem} onClick={this.itemClick.bind(this)} >
         <div>
           <Icon type="calendar" style={{fontSize: 16, color: '#8c8c8c'}}/>
         </div>
-        <div>{name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
+        <div style={{display: 'flex'}}>
+          {name}
+          {
+            is_show_org_name && (
+              <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+            )
+          }
+          
+          <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
       </div>
     )
   }

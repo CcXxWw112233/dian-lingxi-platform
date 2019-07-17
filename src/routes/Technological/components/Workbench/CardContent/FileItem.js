@@ -5,7 +5,7 @@ import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage,
+  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {connect} from 'dva'
@@ -14,10 +14,11 @@ import {
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 
-@connect(({ workbench }) => ({
+@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name } } }) => ({
   uploadedFileNotificationIdList:
     workbench.datas.uploadedFileNotificationIdList,
-  uploadedFileList: workbench.datas.uploadedFileList
+  uploadedFileList: workbench.datas.uploadedFileList,
+  currentUserOrganizes, is_show_org_name
 }))
 class FileItem extends React.Component {
   judgeFileType(fileName) {
@@ -203,8 +204,19 @@ class FileItem extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.handleNewUploadedFileNotification(nextProps);
   }
+
+  componentDidMount() {
+    const { dispatch} = this.props
+    dispatch({
+      type: 'technological/getCurrentUserOrganizes',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
-    const { itemValue = {} } = this.props;
+    const { itemValue = {}, currentUserOrganizes, is_show_org_name } = this.props;
     const {
       board_id,
       org_id,
@@ -213,7 +225,7 @@ class FileItem extends React.Component {
       create_time,
       file_resource_id,
       file_id,
-      id
+      id,
     } = itemValue;
     return (
       <div
@@ -232,13 +244,19 @@ class FileItem extends React.Component {
             dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}
           />
         </div>
-        <div>
+        <div className={indexstyles.file_text}>
           <span className={indexstyles.hoverUnderline}>{file_name}</span>
           <span
-            style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer' }}
+            style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', display: 'flex' }}
             onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
+            {
+              is_show_org_name && (
+                <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+              )
+            }
+            
           </span>
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>

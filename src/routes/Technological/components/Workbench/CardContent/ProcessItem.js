@@ -3,7 +3,7 @@ import indexstyles from '../index.less'
 import { Icon } from 'antd'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage,
+  checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {
@@ -12,17 +12,27 @@ import {
 } from "../../../../../globalset/js/constant";
 import { func } from 'prop-types';
 import { resolve } from 'path';
+import { connect } from 'dva'
 
+@connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
+  currentUserOrganizes, is_show_org_name
+}))
 export default class ProcessItem extends React.Component {
   state = {
     totalId: {},
     value: {}
   }
   componentDidMount() {
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, dispatch } = this.props
     const { flow_node_name,flow_template_name, name, board_name, board_id, status='1', flow_instance_id, org_id } = itemValue //status 1running 2stop 3 complete
     this.setState({
       value: { flow_node_name, flow_template_name, name, board_name, board_id, status, flow_instance_id, org_id }
+    })
+    dispatch({
+      type: 'technological/getCurrentUserOrganizes',
+      payload: {
+
+      }
     })
   }
   async gotoBoardDetail(obj) {
@@ -71,7 +81,7 @@ export default class ProcessItem extends React.Component {
     await this.props.click()
   }
   render() {
-    // const { itemValue = {} } = this.props
+    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name } = this.props
     // const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
     // console.log('hhhaha', this.props.itemValue)
     const obj = {
@@ -95,7 +105,16 @@ export default class ProcessItem extends React.Component {
 
     return (
       <div className={indexstyles.processItem}>
-        <div><span style={{cursor: 'pointer'}} onClick={this.click.bind(this, obj)}>{this.state.value.flow_node_name || this.state.value.name} #{this.state.value.flow_template_name}</span><span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{this.state.value.board_name}</span></div>
+        <div className={indexstyles.processText}>
+          <span style={{cursor: 'pointer'}} onClick={this.click.bind(this, obj)}>{this.state.value.flow_node_name || this.state.value.name} #{this.state.value.flow_template_name}</span>
+          <span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{this.state.value.board_name}</span>
+          {
+            is_show_org_name && (
+              <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(obj.org_id, currentUserOrganizes)}</span>
+            )
+          }
+          
+        </div>
         <div>
           <div style={{backgroundColor: filterColor(this.state.value.status)}}></div>
         </div>
