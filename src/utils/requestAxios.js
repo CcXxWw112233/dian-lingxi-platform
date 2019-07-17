@@ -3,6 +3,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
 import {REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ABOUT_PROJECT} from "../globalset/js/constant";
+import { Base64 } from 'js-base64';
 import { reRefreshToken } from './oauth'
 function messageLoading(url) {
   return (
@@ -29,43 +30,43 @@ export default function request(options = {}, elseSet = {}) {
   } = options;
 
   let loading = !isNotLoading ? messageLoading(url) : ''
-  let header = Object.assign({}, options.headers)
+  let header = Object.assign({}, headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
 
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
-  header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
-  header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
+  
+  // header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
+  // header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
+  // if(data['_organization_id'] || params['_organization_id']) {
+  //   header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
+  // }
 
+  // 请求头BaseInfo base64加密(后台权限拦截)，最终输出
+  //BaseInfo: { organizationId，boardId, contentDataType, contentDataId,  aboutBoardOrganizationId, }
+  let header_baseInfo_orgid = localStorage.getItem('OrganizationId') || '0'
   if(data['_organization_id'] || params['_organization_id']) {
-    header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
+    header_baseInfo_orgid = data['_organization_id'] || params['_organization_id']
+  }
+  const header_BaseInfo = Object.assign({
+      orgId: header_baseInfo_orgid,
+      boardId: localStorage.getItem('storageCurrentOperateBoardId') || '0',
+      aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
+  }, headers['BaseInfo'] || {})
+  const header_baseInfo_str = JSON.stringify(header_BaseInfo)
+  // console.log('sssss_1', header_baseInfo_str)
+  const header_baseInfo_str_base64 = Base64.encode(header_baseInfo_str)
+  // console.log('sssss_2', header_baseInfo_str_base64)
+  const header_base_info = {
+    BaseInfo:  header_baseInfo_str_base64
   }
 
-  // header['baseInfo'] = {
-  //   organizationId: localStorage.getItem('OrganizationId') || '0',
-  //   boardId: localStorage.getItem('storageCurrentOperateBoardId') || '0',
-  //   contentDataType:'card',
-  //   contentDataId  :'7657665646576547654',
-  //   aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
-  // }
-
-  // 如果是和项目和工作台的接口相关，则把_organization_id传递进去
-  // let new_param = {}
-  // if(
-  //   (url.indexOf(REQUEST_DOMAIN_WORK_BENCH) != -1) ||
-  //   (url.indexOf(REQUEST_DOMAIN_ABOUT_PROJECT) != -1) 
-  // ) {
-  //   new_param = {
-  //     _organization_id: localStorage.getItem('aboutBoardOrganizationId')
-  //   }
-  // }
-  
   return new Promise((resolve, reject) => {
     axios({
       ...{
         url,
-        headers: {...header, ...headers},
+        headers: {...header, ...headers, ...header_base_info},
         method,
         params: {
           ...params, 

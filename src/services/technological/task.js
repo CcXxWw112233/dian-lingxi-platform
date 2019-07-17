@@ -59,6 +59,12 @@ export async function updateTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card`,
     method: 'PUT',
+    headers: {
+      BaseInfo: {
+        contentDataType: 'card',
+        contentDataId: data.card_id
+      }
+    },
     data,
   });
 }
