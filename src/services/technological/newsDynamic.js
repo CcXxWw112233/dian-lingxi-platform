@@ -12,9 +12,12 @@ export async function getNewsDynamicList(next_id) {
 //获取动态列表
 export async function getNewsDynamicListActivity(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/activity/${params.next_id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/activity`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   });
 }
 // 评论列表
