@@ -136,7 +136,8 @@ export default {
           type: 'updateDatas',
           payload: {
             triggerList: res.data,
-            remind_trigger: res.data[0].type_code
+            remind_trigger: res.data[0].type_code,
+            remind_edit_type: res.data[0].remind_edit_type
           }
         })
       },

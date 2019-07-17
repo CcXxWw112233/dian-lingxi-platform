@@ -1012,7 +1012,7 @@ class FileDetailContent extends React.Component {
 
             <span style={{marginLeft: '10px'}}>
           </span>
-          <InformRemind rela_id={board_id} rela_type={'4'} user_remind_info={data} />
+          <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
           <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
             <VisitControl
                 isPropVisitControl={is_privilege === '0' ? false : true}
