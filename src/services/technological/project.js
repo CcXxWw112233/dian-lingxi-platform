@@ -154,16 +154,10 @@ export async function getProjectList(params) {
 }
 //获取app标
 export async function getAppsList(params) {
-  const { org_id } = params
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/app`,
     method: 'GET',
-    headers: {
-      OrganizationId: org_id
-    },
-    params: {
-      type: params.type
-    }
+    params
   });
 }
 

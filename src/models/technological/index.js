@@ -406,8 +406,8 @@ export default {
 
       }
     },
-    * fetchCurrentOrgAllMembers(_, {call, put}) {
-      let res = yield call(getCurrentOrgAllMembers)
+    * fetchCurrentOrgAllMembers({ payload }, {call, put}) {
+      let res = yield call(getCurrentOrgAllMembers, {...payload})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

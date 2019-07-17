@@ -23,12 +23,12 @@ export default {
               collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
             }
           })
-          dispatch({
-            type: 'getProjectList',
-            payload: {
-              type: '1'
-            }
-          })
+          // dispatch({
+          //   type: 'getProjectList',
+          //   payload: {
+          //     type: '1'
+          //   }
+          // })
           // dispatch({
           //   type: 'getAppsList',
           //   payload: {
@@ -207,16 +207,16 @@ export default {
     * addNewProject({ payload }, { select, call, put }) {
       let res = yield call(addNewProject, payload)
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'getProjectList',
-          payload: {
-            type: '1',
-            calback: function () {
-              message.success('添加项目成功', MESSAGE_DURATION_TIME)
-            },
-          }
-        })
-
+        // yield put({
+        //   type: 'getProjectList',
+        //   payload: {
+        //     type: '1',
+        //     calback: function () {
+        //       message.success('添加项目成功', MESSAGE_DURATION_TIME)
+        //     },
+        //   }
+        // })
+        message.success('添加项目成功', MESSAGE_DURATION_TIME)
         return yield put({
           type: 'fetchProjectListAndUpdateProjectGroupTree'
         })
