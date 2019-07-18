@@ -195,7 +195,7 @@ class CreateProject extends React.Component {
         values['users'] = this.handleUsersToUsersStr(users)
         values['_organization_id'] = _organization_id || OrganizationId
         this.props.addNewProject ? this.props.addNewProject(values) : false
-        this.onCancel()
+        this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({visible: false})
       }
     });
   }

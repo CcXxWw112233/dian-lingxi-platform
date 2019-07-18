@@ -78,12 +78,13 @@ export default {
             type: 'getCurrentOrgProjectList',
             payload: {}
           })
-          //获取用户当前组织的组织成员
-          await dispatch({
-            type: 'fetchCurrentOrgAllMembers',
-          })
-
-
+          //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
+          if(localStorage.getItem('OrganizationId') != '0') {
+            await dispatch({
+              type: 'fetchCurrentOrgAllMembers',
+            })
+          }
+          
           //查询所在组织列表
           await dispatch({
             type: 'getCurrentUserOrganizes',

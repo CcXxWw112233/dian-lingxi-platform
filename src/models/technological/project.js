@@ -217,6 +217,9 @@ export default {
         //   }
         // })
         message.success('添加项目成功', MESSAGE_DURATION_TIME)
+        yield put({ //获取全部组织的全部项目
+          type: 'technological/getUserAllOrgsAllBoards',
+        })
         return yield put({
           type: 'fetchProjectListAndUpdateProjectGroupTree'
         })
