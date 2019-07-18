@@ -89,21 +89,31 @@ class ProjectListBar extends Component {
       }
     );
   };
-  setAddProjectModalVisible = () => {
+  setAddProjectModalVisible = (data) => {
     const { dispatch } = this.props
     const { addProjectModalVisible } = this.state
-    this.setState({
-      addProjectModalVisible: !addProjectModalVisible
-    }, () => {
-      if(!addProjectModalVisible) {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
-    })
+    const { visible } = data || {}
+    if(data) {
+      // this.setState({
+      //   addProjectModalVisible: visible
+      // })
+    } else {
+      this.setState({
+        addProjectModalVisible: !addProjectModalVisible
+      })
+    }
+    // this.setState({
+    //   addProjectModalVisible: !addProjectModalVisible
+    // }, () => {
+    //   if(!addProjectModalVisible) {
+    //     dispatch({
+    //       type: 'project/getAppsList',
+    //       payload: {
+    //         type: '2'
+    //       }
+    //     });
+    //   }
+    // })
   }
 
   handleSubmitNewProject = data => {
