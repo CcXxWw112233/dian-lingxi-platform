@@ -23,16 +23,10 @@ export default class ProcessItem extends React.Component {
     value: {}
   }
   componentDidMount() {
-    const { itemValue = {}, dispatch } = this.props
+    const { itemValue = {} } = this.props
     const { flow_node_name,flow_template_name, name, board_name, board_id, status='1', flow_instance_id, org_id } = itemValue //status 1running 2stop 3 complete
     this.setState({
       value: { flow_node_name, flow_template_name, name, board_name, board_id, status, flow_instance_id, org_id }
-    })
-    dispatch({
-      type: 'technological/getCurrentUserOrganizes',
-      payload: {
-
-      }
     })
   }
   async gotoBoardDetail(obj) {
@@ -108,12 +102,6 @@ export default class ProcessItem extends React.Component {
         <div className={indexstyles.processText}>
           <span style={{cursor: 'pointer'}} onClick={this.click.bind(this, obj)}>{this.state.value.flow_node_name || this.state.value.name} #{this.state.value.flow_template_name}</span>
           <span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>#{this.state.value.board_name}</span>
-          {
-            is_show_org_name && (
-              <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(obj.org_id, currentUserOrganizes)}</span>
-            )
-          }
-          
         </div>
         <div>
           <div style={{backgroundColor: filterColor(this.state.value.status)}}></div>

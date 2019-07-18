@@ -205,16 +205,6 @@ class FileItem extends React.Component {
     this.handleNewUploadedFileNotification(nextProps);
   }
 
-  componentDidMount() {
-    const { dispatch} = this.props
-    dispatch({
-      type: 'technological/getCurrentUserOrganizes',
-      payload: {
-
-      }
-    })
-  }
-
   render() {
     const { itemValue = {}, currentUserOrganizes, is_show_org_name } = this.props;
     const {
@@ -251,11 +241,11 @@ class FileItem extends React.Component {
             onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
-            {
+            {/* {
               is_show_org_name && (
                 <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
               )
-            }
+            } */}
             
           </span>
         </div>

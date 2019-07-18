@@ -50,6 +50,7 @@ const ProjectListBarCell = ({
     return jumpToProject(board_id, apps)
   }
 
+
   return (
     <li
       className={projectListBarCellClass}
@@ -64,8 +65,8 @@ const ProjectListBarCell = ({
       <Tooltip title='进入项目'>
         <span className={styles.projectListBarCellInterProject} onClick={e => handleJumpToProject(e, board_id, apps, org_id)}>
         <i className={`${globalStyles.authTheme}`}>
-        &#xe793;
-      </i>
+          &#xe793;
+        </i>
         </span>
       </Tooltip>
     </li>
