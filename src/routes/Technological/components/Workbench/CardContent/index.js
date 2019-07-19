@@ -832,6 +832,7 @@ class CardContent extends React.Component {
             this
           )}
         />
+        {/* addTaskModalVisible */}
         {addTaskModalVisible && (
           <AddTaskModal
             {...this.props}
