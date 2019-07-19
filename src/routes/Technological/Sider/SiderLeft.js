@@ -12,6 +12,7 @@ import {
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
+import NotificationSettingsModal from './comonent/notificationSettings/NotificationSettingsModal'
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
 import { connect, } from 'dva';
@@ -26,6 +27,7 @@ export default class SiderLeft extends React.Component {
     collapsed: true,
     createOrganizationVisable: false,
     ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
+    NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
     is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
   }
   componentDidMount() {
@@ -84,6 +86,14 @@ export default class SiderLeft extends React.Component {
   setCreateOrgnizationOModalVisable() {
     this.setState({
       createOrganizationVisable: !this.state.createOrganizationVisable
+    })
+  }
+
+  // 显示通知设置
+  setNotificationSettingsModalVisible() {
+    const { NotificationSettingsModalVisible } = this.state
+    this.setState({
+      NotificationSettingsModalVisible: !NotificationSettingsModalVisible
     })
   }
 
@@ -152,6 +162,9 @@ export default class SiderLeft extends React.Component {
       case 'subShowOrgName':
         // console.log('sss', 2222)
         this.handleShowAllOrg
+        break
+      case 'subInfoSet':
+        this.setNotificationSettingsModalVisible()
         break
       case '10': // 创建或加入新组织
           this.setCreateOrgnizationOModalVisable()
@@ -530,6 +543,7 @@ export default class SiderLeft extends React.Component {
 
         <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
+        <NotificationSettingsModal dispatch={this.props.dispatch} notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
 
       </Sider>
       
