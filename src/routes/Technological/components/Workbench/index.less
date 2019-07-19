@@ -174,14 +174,8 @@
           div:nth-child(2) {
             flex: 1;
             margin: 0 8px;
-            &:hover {
-              .org_name {
-                display: block;
-              }
-              
-            }
             .org_name {
-              display: none;
+              display: block;
               line-height: 21px;
               color: #8c8c8c;
               margin-left: 8px;
@@ -530,11 +524,6 @@
 }
 
 .file_text {
-  &:hover {
-    .org_name {
-      display: block;
-    }
-  }
   .org_name {
     display: none;
     margin-left: 8px;
@@ -807,13 +796,20 @@
   }
   .taskItem__workbench_content {
     display: flex;
-        flex: 10;
-        overflow: hidden;
-        &:hover {
-          .taskItem__workbench_content_projectname .org_name {
-            display: block
-          }
-        }
+    flex: 10;
+    overflow: hidden;
+    align-items: center;
+    margin-right: 40px;
+    .org_name {
+      // margin-left: 8px;
+      display: block;
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: #8C8C8C;
+      cursor: pointer;
+    }
     .taskItem__workbench_content_title {
       cursor: pointer;
       .ellipsis();
@@ -827,12 +823,10 @@
     .taskItem__workbench_content_projectname {
       .ellipsis();
       flex: 3 3 1;
-      .org_name {
-        margin-left: 8px;
-        display: none;
-        max-width: 150px;
-        overflow: hidden;
+      .board_name {
+        max-width: 100px;
         white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
       }
     }

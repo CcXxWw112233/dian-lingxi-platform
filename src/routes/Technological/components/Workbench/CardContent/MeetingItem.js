@@ -1,6 +1,6 @@
 import React from 'react'
 import indexstyles from '../index.less'
-import { Icon } from 'antd'
+import { Icon, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
@@ -37,15 +37,6 @@ export default class MeetingItem extends React.Component {
     })
   }
 
-  componentDidMount() {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'technological/getCurrentUserOrganizes',
-      payload: {
-
-      }
-    })
-  }
 
   render() {
     const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name } = this.props
@@ -58,11 +49,6 @@ export default class MeetingItem extends React.Component {
         </div>
         <div style={{display: 'flex'}}>
           {name}
-          {
-            is_show_org_name && (
-              <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
-            )
-          }
           
           <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
       </div>
