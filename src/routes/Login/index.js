@@ -68,7 +68,7 @@ class Login extends React.Component {
   }
   reloadCode(){
     console.log(window.location)
-    debugger
+    //
   }
   passwordLogin() {
     this.setState({

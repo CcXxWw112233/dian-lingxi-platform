@@ -1,7 +1,34 @@
 //文件列表包括文件夹
-import {REQUEST_DOMAIN_FLOWS} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { func } from "prop-types";
+
+const createHeaderContentData = (contentType,contentId) => {
+  debugger
+  if (contentType && contentId) {
+    return {
+      BaseInfo: {
+        contentDataType: contentType,
+        contentDataId: contentId
+      }
+    }
+  } else {
+    return {}
+  }
+}
+
+const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
+  if (flowInstantId) {
+    return {
+      BaseInfo: {
+        contentDataType: CONTENT_DATA_TYPE_FLOW,
+        contentDataId: flowInstantId
+      }
+    }
+  } else {
+    return {}
+  }
+}
 
 //获取流程模板列表
 export async function getProcessTemplateList(params) {
@@ -59,22 +86,27 @@ export async function completeProcessTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/complete`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.instance_id),
     data,
   });
 }
 //撤回流程任务
 export async function rebackProcessTask(data) {
+  
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/recall`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.instance_id),
     data,
   });
 }
 //拒绝
 export async function rejectProcessTask(data) {
+
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reject`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.instance_id),
     data,
   });
 }
@@ -82,9 +114,11 @@ export async function rejectProcessTask(data) {
 
 //重新指定推进人
 export async function resetAsignees(data) {
+
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reassign_assignee`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.instance_id),
     data,
   });
 }
@@ -93,6 +127,7 @@ export async function resetAsignees(data) {
 export async function getProcessInfo(id) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/${id}`,
+    headers: createHeaderContentDataByFlowInstantId(id),
     method: 'GET',
   });
 }
@@ -102,14 +137,17 @@ export async function fillFormComplete(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/form`,
     method: 'POST',
+    headers: createHeaderContentDataByFlowInstantId(data.instance_id),
     data,
   });
 }
 //流程文件上传
 export async function processFileUpload(data) {
+  debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
     method: 'POST',
+    headers: createHeaderContentDataByFlowInstantId(id),
     data,
   });
 }
@@ -120,6 +158,7 @@ export async function getProessDynamics(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/dynamic/${params['currentProcessInstanceId']}`,
     method: 'GET',
+    headers: createHeaderContentDataByFlowInstantId(params.currentProcessInstanceId),
     params,
   });
 }
@@ -128,6 +167,7 @@ export async function deleteProcessFile(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/file/${data.id}`,
     method: 'DELETE',
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     data,
   });
 }
@@ -144,23 +184,28 @@ export async function addWorkFlowComment(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
     method: 'POST',
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     data
   })
 }
 
 export async function getWorkFlowComment(params) {
+  
   let res =  request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
     method: 'GET',
+    headers: createHeaderContentDataByFlowInstantId(params.flow_instance_id),
     params
   })
   return res
 }
 //终止流程
 export async function workflowEnd(data) {
+  
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/end/${data.id}`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.id),
     data
   })
 }
@@ -169,6 +214,7 @@ export async function workflowDelete(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/${data.id}`,
     method: 'DELETE',
+    headers: createHeaderContentDataByFlowInstantId(data.id),
     data
   })
 }
@@ -177,6 +223,7 @@ export async function deleteWorkFlowComment(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment/${data.id}`,
     method: 'DELETE',
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     data
   })
 }
@@ -186,6 +233,7 @@ export async function setDueTimeInFlowsNode(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/deadline/set`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     data
   })
 }
@@ -194,6 +242,7 @@ export async function setDueTimeInFlowsInstance(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/instance/deadline/set`,
     method: 'PUT',
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     data
   })
 }
