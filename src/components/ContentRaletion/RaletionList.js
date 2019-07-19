@@ -9,10 +9,10 @@ export default class RaletionList extends React.Component {
     isShowAll: false
   }
 
-  handleDeleteRelation = (e, id) => {
+  handleDeleteRelation = (e, params) => {
     const {handleDeleteRelationItem} = this.props
     if(e) e.stopPropagation()
-    handleDeleteRelationItem(id)
+    handleDeleteRelationItem(params)
   }
 
   relationClick(content_url) {
@@ -72,11 +72,12 @@ export default class RaletionList extends React.Component {
   render() {
    const { relations } = this.props
    const { isShowAll } = this.state
+
   //  console.log('this is relations', relations)
     return(
       <div className={indexStyles.relaData}>
         {relations.map((value, key) => {
-          const { id, linked_name, linked_url, linked_sign } = value
+          const { id,link_id,linked_name, linked_url, linked_sign,link_local } = value
           if(isShowAll){
             return (
               <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
@@ -85,7 +86,7 @@ export default class RaletionList extends React.Component {
                   <span>{linked_name}</span>
                 </div>
                 <Tooltip title='删除'>
-                <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, id)}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, {id,link_id,link_local})}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
                 </Tooltip>
               </div>
             )
@@ -98,7 +99,7 @@ export default class RaletionList extends React.Component {
                     <span>{linked_name}</span>
                   </div>
                   <Tooltip title='删除'>
-                  <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, id)}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                  <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, {id,link_id,link_local})}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
                   </Tooltip>
                 </div>
               )

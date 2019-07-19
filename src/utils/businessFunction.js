@@ -136,7 +136,7 @@ export const setOrganizationIdStorage = (value) => {
 export const setBoardIdStorage = (value) => {
   localStorage.setItem('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId
-  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || []
+  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
   if(userAllOrgsAllBoards) {
     userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
   }

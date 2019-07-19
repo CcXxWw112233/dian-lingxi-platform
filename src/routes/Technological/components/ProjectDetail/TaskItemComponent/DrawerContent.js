@@ -633,8 +633,9 @@ class DrawContent extends React.Component {
       this.props.filePreview({id: file_resource_id, file_id})
     }
   }
-  attachmentItemOpera({type, data = {}}, e) {
+  attachmentItemOpera({type, data = {}, card_id}, e) {
     e.stopPropagation()
+    //debugger
     const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
     const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
     if(!attachment_id){
@@ -642,12 +643,13 @@ class DrawContent extends React.Component {
       return
     }
     if(type == 'remove') {
-      this.deleteAttachmentFile(attachment_id)
+      this.deleteAttachmentFile({attachment_id,card_id})
     }else if(type == 'download') {
-      this.props.fileDownload({ids: file_resource_id})
+      this.props.fileDownload({ids: file_resource_id,card_id})
     }
   }
-  deleteAttachmentFile(attachment_id) {
+  deleteAttachmentFile(data) {
+    const { attachment_id } = data;
     const that = this
     const { attachment_fileList } = this.state
     const atta_arr = [...attachment_fileList]
@@ -663,7 +665,8 @@ class DrawContent extends React.Component {
       cancelText: '取消',
       onOk() {
         return new Promise((resolve, reject) => {
-          deleteTaskFile({attachment_id}).then((value) => {
+          deleteTaskFile(data).then((value) => {
+       
             if(value.code !=='0') {
               message.warn('删除失败，请重新删除。1')
               resolve()
@@ -1554,8 +1557,8 @@ class DrawContent extends React.Component {
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
                     <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
                     <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value})}>&#xe7f1;</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value})}>&#xe70f;</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id})}>&#xe7f1;</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id})}>&#xe70f;</div>
                   </div>
                 )
               })}
