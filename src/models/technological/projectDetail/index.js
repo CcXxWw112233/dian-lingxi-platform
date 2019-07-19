@@ -73,11 +73,6 @@ export default {
           }
         })
 
-        const isInBoardDetailRouteChange = Cookies.get('isInBoardDetailRouteChange') //判断是否是在当前路由页面切换参数引起的页面变化
-        const setIsInBoardDetailRouteChange = (val) => {
-          Cookies.set('isInBoardDetailRouteChange', val, {expires: 30, path: ''})
-        }
-
         const initialData = () => {
           dispatch({
             type: 'updateDatas',
@@ -196,6 +191,7 @@ export default {
       let result = yield call(projectDetailInfo, id)
       // const appsSelectKey = yield select(selectAppsSelectKey)
       if(isApiResponseOk(result)) {
+        setBoardIdStorage(board_id)
         yield put({
           type: 'updateDatas',
           payload: {

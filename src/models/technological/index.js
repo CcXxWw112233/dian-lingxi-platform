@@ -61,6 +61,12 @@ export default {
           // }else{
 
           // }
+
+          // 如果获取不到组织id就默认存储0
+          if(!localStorage.getItem('OrganizationId')) {
+            localStorage.setItem('OrganizationId', '0')
+          }
+
           await dispatch({
             type: 'getUserAllOrgsAllBoards',
             payload: {}
