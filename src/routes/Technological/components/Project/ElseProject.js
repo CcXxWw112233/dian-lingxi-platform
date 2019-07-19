@@ -379,10 +379,14 @@ export default class ElseProject extends React.Component{
             <div className={indexStyle.left}>
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <span>{board_name}</span>
-              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
               <span
                   style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex' }}
                 >
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+                    )
+                  }
                   {
                     is_show_org_name && is_all_org && (
                       <span className={indexStyle.org_name}>
