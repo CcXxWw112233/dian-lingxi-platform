@@ -32,7 +32,7 @@ export default {
     datas: {
       currentUserOrganizes: [], //用户组织列表
       is_show_org_name: true, // 是否显示组织名称
-      is_all_org: false, //是否全部组织
+      is_all_org: true, //是否全部组织
       menuList: [],  // 侧边栏功能导航列表
     }
   },
@@ -61,6 +61,12 @@ export default {
           // }else{
 
           // }
+
+          // 如果获取不到组织id就默认存储0
+          if(!localStorage.getItem('OrganizationId')) {
+            localStorage.setItem('OrganizationId', '0')
+          }
+
           await dispatch({
             type: 'getUserAllOrgsAllBoards',
             payload: {}

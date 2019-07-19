@@ -241,11 +241,6 @@ class FileItem extends React.Component {
             onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
-            {/* {
-              is_show_org_name && (
-                <span className={indexstyles.org_name}># {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
-              )
-            } */}
             
           </span>
         </div>

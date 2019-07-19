@@ -10,8 +10,10 @@ import {setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../../../utils
 import { connect } from 'dva'
 
 @connect((
-  {technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }}, 
-  { workbench: {  datas: { projectTabCurrentSelectedProject } } }
+  { 
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }, 
+    workbench: { datas: { projectTabCurrentSelectedProject } }
+  },
 ) => ({
   currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org
 }))
@@ -66,6 +68,11 @@ export default class TaskItem extends React.Component {
     })
   }
 
+  componentDidMount() {
+    const { projectTabCurrentSelectedProject } = this.props
+    console.log(projectTabCurrentSelectedProject, 'sss')
+  }
+
 
   render() {
     const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org} = this.props;
@@ -113,8 +120,9 @@ export default class TaskItem extends React.Component {
         >
           <Tooltip title={name}>
           <div
-            className={indexstyles.taskItem__workbench_content_title}
+            className={`${indexstyles.taskItem__workbench_content_title} ${indexstyles.ellipsis}`}
             style={{
+              maxWidth: 100,
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
             onClick={this.itemClick.bind(this, { id, board_id })}

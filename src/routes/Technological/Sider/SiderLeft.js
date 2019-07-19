@@ -26,7 +26,7 @@ export default class SiderLeft extends React.Component {
     collapsed: true,
     createOrganizationVisable: false,
     ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
-    is_disabled: true, // 是否是禁用状态, 默认为true 表示禁用状态
+    is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
   }
   componentDidMount() {
 
@@ -256,7 +256,7 @@ export default class SiderLeft extends React.Component {
 
 
   render() {
-    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
     menuList.forEach((item) => {
       if(item.status === '1') {
@@ -380,14 +380,25 @@ export default class SiderLeft extends React.Component {
               }
             >
                 <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName">
-                  <span>显示组织名称 
-                    <Switch
-                      disabled={is_disabled}
-                      style={{ display: 'inline-block', marginLeft: 8 }} 
-                      onClick={ (checked) => { this.handleShowAllOrg(checked) } }
-                      defaultChecked={is_show_org_name}
-                      
-                    ></Switch>
+                  <span>显示组织名称
+                    {
+                      is_show_org_name && is_all_org ? (
+                        <Switch
+                          disabled={is_disabled}
+                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                          defaultChecked={true}  
+                        ></Switch>
+                      ) : (
+                        <Switch
+                          disabled={is_disabled}
+                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                          defaultChecked={false}  
+                        ></Switch>
+                      )
+                    } 
+                    
                   </span>
                 </Menu.Item>
                 <Menu.Item key="subInfoSet">
@@ -527,7 +538,7 @@ export default class SiderLeft extends React.Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: { datas: {
-  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name
+  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org
 }} }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name }
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org }
 }

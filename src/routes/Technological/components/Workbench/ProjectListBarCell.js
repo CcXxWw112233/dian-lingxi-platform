@@ -3,12 +3,16 @@ import { Tooltip, message } from "antd";
 import styles from "./index.less";
 import globalStyles from './../../../../globalset/css/globalClassName.less';
 import classNames from 'classnames/bind'
-import {checkIsHasPermission,} from "../../../../utils/businessFunction";
+import {checkIsHasPermission, getOrgNameWithOrgIdFilter} from "../../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, } from "../../../../globalset/js/constant";
+import { connect } from 'dva'
 
 let cx = classNames.bind(styles)
 
 const ProjectListBarCell = ({
+  currentUserOrganizes,
+  is_show_org_name,
+  is_all_org,
   board_id,
   board_name,
   handleClickedCell,
@@ -50,6 +54,8 @@ const ProjectListBarCell = ({
     return jumpToProject(board_id, apps)
   }
 
+  org_name = is_show_org_name && getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)
+
 
   return (
     <li
@@ -58,8 +64,8 @@ const ProjectListBarCell = ({
     >
       <Tooltip title={org_name ? board_name + " #" + org_name : board_name} placement='topLeft'>
         <a className={styles.projectListBarCellContent}>
-          <span>{board_name}</span>
-          {org_name && `#${org_name}`}
+          <span style={{marginRight: 2}}>{board_name}</span>
+          <span style={{color: 'rgba(0,0,0,0.45)'}}>{org_name && `#${org_name}`}</span>
         </a>
       </Tooltip>
       <Tooltip title='进入项目'>
@@ -73,4 +79,14 @@ const ProjectListBarCell = ({
   );
 };
 
-export default ProjectListBarCell;
+export default connect(
+  ({
+    technological: {
+      datas: { currentUserOrganizes = [], is_show_org_name, is_all_org }
+    },
+  }) => ({
+    currentUserOrganizes,
+    is_show_org_name,
+    is_all_org,
+  })
+)(ProjectListBarCell) ;
