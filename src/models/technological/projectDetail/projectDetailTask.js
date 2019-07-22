@@ -356,9 +356,13 @@ export default modelExtend(projectDetail, {
             taskGroupList
           }
         })
-        message.success('更新成功', MESSAGE_DURATION_TIME)
+        if(res.data && res.data.remind_code !=  '0') { //通知提醒专用
+          message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
+        } else {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }
       }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
+        message.error(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
