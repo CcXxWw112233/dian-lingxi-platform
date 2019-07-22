@@ -218,6 +218,10 @@ export default {
         end_time: end_date['timestamp'],
       }
 
+      if(localStorage.getItem('aboutBoardOrganizationId') == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+        return
+      }
+
       const res = yield call(getGttMilestoneList, params)
       // debugger
       if(isApiResponseOk(res)) {
