@@ -7,7 +7,10 @@ export async function getGanttData(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+    }
   })
 }
 

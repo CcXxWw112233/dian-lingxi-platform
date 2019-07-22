@@ -64,7 +64,7 @@ export default {
 
           // 如果获取不到组织id就默认存储0
           if(!localStorage.getItem('OrganizationId')) {
-            localStorage.setItem('OrganizationId', '0')
+            setOrganizationIdStorage('0')
           }
 
           await dispatch({
@@ -126,19 +126,32 @@ export default {
   effects: {
 
     // 获取用户信息
-    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+    * getUSerInfo({ payload }, { select, call, put }) { 
+      
       const res = yield call(getUSerInfo)
-      // console.log(res, 'current user info includes origanition info----------------------------------------')
       if(isApiResponseOk(res)) {
+        const current_org = res.data.current_org || {}//当前选中的组织
+        const current_org_id = current_org.id
+        // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
+        if(current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
+          yield put({
+            type: 'changeCurrentOrg',
+            payload: {
+              org_id: current_org_id
+            }
+          })
+          return
+        } 
+
         yield put({
           type: 'updateDatas',
           payload: {
             userInfo: res.data, //当前用户信息
-            currentSelectOrganize: res.data.current_org || {}//当前选中的组织
+            currentSelectOrganize: current_org
           }
         })
         //当前选中的组织
-        localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org || {}))
+        localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
 
         yield put({ //  获取当前成员在组织中的权限列表
           type: 'getUserOrgPermissions',
