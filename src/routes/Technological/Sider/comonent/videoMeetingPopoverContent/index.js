@@ -520,6 +520,13 @@ class VideoMeetingPopoverContent extends React.Component {
     }
 
     render() {
+        const { currentSelectedProjectMembersList, currentOrgAllMembers, projectTabCurrentSelectedProject, projectList } = this.props
+        console.log('ssss', {
+            currentSelectedProjectMembersList,
+            currentOrgAllMembers,
+            projectTabCurrentSelectedProject,
+            projectList
+        })
         const { videoMeetingPopoverVisible } = this.state
         return (
             <Popover
