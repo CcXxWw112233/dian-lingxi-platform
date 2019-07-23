@@ -126,6 +126,7 @@ export default class RenderAdd extends Component {
         remind_trigger: triggerList[0].type_code,
         remind_time_type: 'm',
         remind_time_value: '1',
+        remind_edit_type: triggerList[0].remind_time_type
       }
     })
     dispatch({
