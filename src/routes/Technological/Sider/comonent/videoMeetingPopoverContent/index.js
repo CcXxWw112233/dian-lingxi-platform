@@ -50,26 +50,29 @@ class VideoMeetingPopoverContent extends React.Component {
 
     // 获取项目用户
     getProjectUsers  = ({projectId}) => {
-      getCurrentSelectedProjectMembersList({projectId}).then(res => {
-          if(res.code == '0') {
-              const board_users = res.data
-              this.setState({
-                currentSelectedProjectMembersList: board_users,
-                currentOrgAllMembers: board_users
-              }, () => {
-                this.setVideoMeetingDefaultSuggesstionsByBoardUser({board_users})
-              })
-          } else {
-              message.error(res.message)
-          }
-      })
+        if(!projectId) return
+        this.setVideoMeetingDefaultSuggesstionsByBoardUser({board_users: []})
+        getCurrentSelectedProjectMembersList({projectId}).then(res => {
+            if(res.code == '0') {
+                const board_users = res.data
+                this.setState({
+                    currentSelectedProjectMembersList: board_users,
+                    currentOrgAllMembers: board_users
+                }, () => {
+                    this.setVideoMeetingDefaultSuggesstionsByBoardUser({board_users})
+                })
+            } else {
+                message.error(res.message)
+            }
+        })
     }
 
     // 设置mention组件提及列表
     setVideoMeetingDefaultSuggesstionsByBoardUser = ({board_users = []}) => {
         const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(board_users);
         this.setState({
-            videoMeetingDefaultSuggesstions
+            videoMeetingDefaultSuggesstions,
+            suggestionValue: toContentState(""), //mention的值
         })
     }
 
@@ -457,19 +460,8 @@ class VideoMeetingPopoverContent extends React.Component {
             suggestionValue,
             selectedMemberTextAreaValue,
             videoMeetingPopoverVisible,
-
-            videoMeetingDefaultSuggesstions,
-            currentSelectedProjectMembersList,
-            currentOrgAllMembers,
         } = this.state;
         let { projectList } = this.props;
-
-        console.log('ssss', {
-            selectedSuggestions,
-            videoMeetingDefaultSuggesstions,
-            currentSelectedProjectMembersList,
-            currentOrgAllMembers,
-        })
 
         //过滤出来当前用户有编辑权限的项目
         projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
