@@ -1,8 +1,6 @@
 //业务逻辑公共工具类
-import { message } from 'antd'
-import { NORMAL_NOUN_PLAN } from '../globalset/js/constant'
-import {getFilePDFInfo} from "../services/technological/file";
-import {getUserOrgPermissions} from "../services/technological/organizationMember";
+import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/constant'
+import { get } from 'https';
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -166,3 +164,54 @@ export const setBoardIdStorage = (value) => {
 export const isHasOrgMemberQueryPermission = () => checkIsHasPermission('org:upms:organization:member:query')
 
 export const isHasOrgTeamBoardEditPermission = () => checkIsHasPermission('org:team:board:edit')
+
+
+// 返回通用接口设置header里的baseinfo(访问控制后台需要)
+export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
+
+  let header_base_info_orgid = localStorage.getItem('OrganizationId') || '0'
+  let header_base_info_board_id = localStorage.getItem('storageCurrentOperateBoardId') || '0'
+
+  if(data['_organization_id'] || params['_organization_id']) {
+    header_base_info_orgid = data['_organization_id'] || params['_organization_id']
+  }
+
+  if(data['boardId'] || params['boardId']) {
+    header_base_info_board_id = data['boardId'] || params['boardId']
+  }
+
+  const header_base_info = Object.assign({
+      orgId: header_base_info_orgid,
+      boardId: header_base_info_board_id,
+      aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
+  }, headers['BaseInfo'] || {})
+  const header_base_info_str = JSON.stringify(header_base_info)
+  const header_base_info_str_base64 = Base64.encode(header_base_info_str)
+  const new_herders = {
+    BaseInfo:  header_base_info_str_base64
+  }
+
+  return new_herders
+}
+
+// 返回设置上传接口设置header里的baseinfo(访问控制后台需要)
+export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganizationId, contentDataId, contentDataType}) => {
+
+  let header_base_info_orgid = orgId || localStorage.getItem('OrganizationId') || '0'
+  let header_base_info_board_id = boardId || localStorage.getItem('storageCurrentOperateBoardId') || '0'
+  let header_base_info_about_board_org_id = aboutBoardOrganizationId || localStorage.getItem('aboutBoardOrganizationId') || '0'
+  const header_base_info = {
+    orgId: header_base_info_orgid,
+    boardId: header_base_info_board_id,
+    aboutBoardOrganizationId: header_base_info_about_board_org_id,
+    contentDataType: contentDataType || CONTENT_DATA_TYPE_FILE,
+    contentDataId
+  }
+  const header_base_info_str = JSON.stringify(header_base_info)
+  const header_base_info_str_base64 = Base64.encode(header_base_info_str)
+  const new_herders = {
+    BaseInfo:  header_base_info_str_base64
+  }
+  
+  return new_herders
+}

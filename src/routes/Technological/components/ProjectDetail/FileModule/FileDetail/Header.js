@@ -15,6 +15,7 @@ import {withRouter} from 'react-router-dom'
 import ShareAndInvite from './../../../ShareAndInvite/index'
 import {createShareLink, modifOrStopShareLink} from './../../../../../../services/technological/workbench'
 import {color_4} from "../../../../../../globalset/js/styles";
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 class Header extends React.Component {
   state = {
@@ -191,8 +192,7 @@ class Header extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){

@@ -204,7 +204,7 @@ export default {
           type: 'getAppsList',
           payload: {
             type: '2',
-            org_id: result.data.org_id
+            _organization_id: result.data.org_id
           }
         })
         if(!appsSelectKey) {

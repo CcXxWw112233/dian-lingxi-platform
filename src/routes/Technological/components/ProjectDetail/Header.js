@@ -23,6 +23,7 @@ import DetailInfo from './DetailInfo'
 import VisitControl from './../../components/VisitControl/index'
 import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../services/technological/project'
 import LcbInHeader from './components/LcbInHeader/index'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 let is_starinit = null
 
@@ -658,8 +659,7 @@ export default class Header extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){

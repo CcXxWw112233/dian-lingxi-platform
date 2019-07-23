@@ -16,6 +16,7 @@ import ContentRaletion from '../../../../../../components/ContentRaletion'
 import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 import AvatarComps from '../../../../../../components/avatarMore'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
@@ -539,6 +540,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       fileList: this.state.fileList,
       beforeUpload(e) {

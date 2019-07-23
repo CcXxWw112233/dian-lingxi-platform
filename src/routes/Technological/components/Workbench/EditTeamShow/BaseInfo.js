@@ -9,6 +9,7 @@ import {
 } from "../../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../../utils/businessFunction";
 import BraftEditor from 'braft-editor'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const TextArea = Input.TextArea
 
@@ -123,8 +124,7 @@ export default class BaseInfo extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(e.size == 0) {

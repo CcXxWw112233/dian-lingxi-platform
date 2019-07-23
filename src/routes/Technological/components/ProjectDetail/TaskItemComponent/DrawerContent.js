@@ -16,7 +16,7 @@ import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
-  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS, CONTENT_DATA_TYPE_CARD
 } from "../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
@@ -37,6 +37,8 @@ import InformRemind from '@/components/InformRemind'
 import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
 import {withRouter} from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -840,7 +842,7 @@ class DrawContent extends React.Component {
     }
     })
 
-    console.log(flag, 'get visitcontrol change')
+    // console.log(flag, 'get visitcontrol change')
   }
   visitControlUpdateCurrentModalData = (obj = {}) => {
     const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
@@ -880,7 +882,7 @@ class DrawContent extends React.Component {
       }
     })
     //设置特权，然后更新卡片详情
-    console.log(ids, 'idddddds')
+    // console.log(ids, 'idddddds')
   }
   handleVisitControlRemoveContentPrivilege = id => {
     const { datas: { drawContent = {}} } = this.props.model
@@ -933,7 +935,7 @@ class DrawContent extends React.Component {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
 
-    console.log(id, type, 'get other person operator type from visitControl.')
+    // console.log(id, type, 'get other person operator type from visitControl.')
   }
 
   //里程碑
@@ -1104,8 +1106,7 @@ class DrawContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({contentDataType: CONTENT_DATA_TYPE_CARD}),
       },
       showUploadList: true, //showUploadList,
       beforeUpload(e) {

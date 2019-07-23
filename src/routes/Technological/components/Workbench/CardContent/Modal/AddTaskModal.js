@@ -35,6 +35,7 @@ import {
 } from '../../../../../../globalset/js/constant';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OrgSearchAndSelect from '@/components/OrgSearchAndSelect'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const taskTypeToName = {
   RESPONSIBLE_TASK: 'Tasks',
@@ -507,7 +508,7 @@ class AddTaskModal extends Component {
     )
   }
   orgSelectedChange = (selectedOrg = {}) => {
-    console.log('ssss', selectedOrg)
+    // console.log('ssss', selectedOrg)
     this.setState({
       selectedOrg,
       currentSelectedProject: {},
@@ -527,6 +528,7 @@ class AddTaskModal extends Component {
       isInUploadFile,
       selectedOrg = {},
     } = this.state;
+    console.log('sssss',{currentSelectedProject, selectedOrg})
     const {
       projectList,
       addTaskModalVisible,
@@ -609,8 +611,10 @@ class AddTaskModal extends Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({
+          boardId: currentSelectedProject.board_id,
+          orgId: selectedOrg.org_id
+        }),
       },
       beforeUpload(e) {
         if (e.size == 0) {

@@ -28,6 +28,7 @@ import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} fro
 import ZoomPicture from './../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../components/HOC/withBodyClientDimens'
 import InformRemind from '@/components/InformRemind'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 class FileDetailContent extends React.Component {
 
@@ -890,8 +891,7 @@ class FileDetailContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){

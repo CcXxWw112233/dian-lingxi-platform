@@ -3,6 +3,8 @@ import { Button, Input, Upload, message } from 'antd'
 import {REQUEST_DOMAIN, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import Detail from './Detail'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+
 const TextArea = Input.TextArea
 
 export default class ImageTextOne extends React.Component {
@@ -56,8 +58,7 @@ export default class ImageTextOne extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        OrganizationId: localStorage.getItem('OrganizationId'),
-        BoardId: localStorage.getItem('storageCurrentOperateBoardId'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(e.size == 0) {
