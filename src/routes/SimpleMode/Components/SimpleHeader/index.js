@@ -7,16 +7,24 @@ import VideoMeeting from '@/routes/Technological/Sider/Components/VideoMeeting/i
 import { Icon } from 'antd';
 
 const SimpleHeader = (props) => {
+
     const { dispatch } = props;
     const openOrCloseImChatModal = () => {
-        console.log("KKKKKKVVVV");
-
+        const width = document.body.scrollWidth;
+        let workbenchBoxContentWapperModalStyle = {};
+        if (!chatImVisiable) {
+            workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
+        } else {
+            workbenchBoxContentWapperModalStyle = { width: '100%' }
+        }
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                chatImVisiable: !chatImVisiable
+                chatImVisiable: !chatImVisiable,
+                workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
             }
         });
+
     }
     const { chatImVisiable = false } = props;
     return (
@@ -29,21 +37,21 @@ const SimpleHeader = (props) => {
             </div>
 
             {chatImVisiable && (
-<div className={indexStyles.chatWapper}>
-                     <div className={indexStyles.chatHeader}>
-                       <div className={indexStyles.menu} onClick={openOrCloseImChatModal}>
-                       <i className={`${globalStyles.authTheme}`} style={{color: '#1890FF', fontSize: '24px'}}>&#xe7f4;</i>
-                       </div>
+                <div className={indexStyles.chatWapper}>
+                    <div className={indexStyles.chatHeader}>
+                        <div className={indexStyles.menu} onClick={openOrCloseImChatModal}>
+                            <i className={`${globalStyles.authTheme}`} style={{ color: '#1890FF', fontSize: '24px' }}>&#xe7f4;</i>
+                        </div>
                     </div>
                     {/* <SiderRight outInputSiderRightStyle={{ position: "absolute", top: 0, right: 0 }} collapsed={true} /> */}
                     <div className={indexStyles.imWapper}>
                         <iframe src='/im/index.html'></iframe>
                     </div>
                     <div className={indexStyles.videoMeetingWapper}>
-                        <VideoMeeting/>
+                        <VideoMeeting />
                     </div>
                 </div>
-)}
+            )}
 
         </div>
     );

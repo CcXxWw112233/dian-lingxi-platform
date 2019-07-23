@@ -28,14 +28,14 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   createNewBoard = (data) => {
-    if(data.key === 'add'){
+    if (data.key === 'add') {
       console.log("createNewBoard");
       this.setState({
         addProjectModalVisible: true
       });
       return this.handleCreateProject();
-    }else{
-      
+    } else {
+
     }
     const { dispatch } = this.props;
 
@@ -94,9 +94,20 @@ class MyWorkbenchBoxs extends Component {
     let menuItemList = [];
     projectList.map((board, index) => {
       const { board_id: id, board_name: name } = board
-      menuItemList.push({ id, name});
+      menuItemList.push({ id, name });
     });
     return menuItemList;
+  }
+
+  goWorkbenchBox = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'simplemode/routingJump',
+      payload: {
+        route: '/technological/simplemode/communication'
+      }
+    })
+
   }
 
   render() {
@@ -119,11 +130,11 @@ class MyWorkbenchBoxs extends Component {
             <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
 
           </div>
-          <div className={indexStyles.myWorkbenchBox}>
+          <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe671;</i><br />
             <span className={indexStyles.myWorkbenchBox_title}>项目计划</span>
           </div>
-          <div className={indexStyles.myWorkbenchBox}>
+          <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe672;</i><br />
             <span className={indexStyles.myWorkbenchBox_title}>项目交流</span>
           </div>

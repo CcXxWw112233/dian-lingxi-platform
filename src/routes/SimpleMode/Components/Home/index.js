@@ -1,21 +1,17 @@
 import React, { Component } from "react";
-import dva, { connect } from "dva/index"
-import { Route, Router, Switch, Link } from 'dva/router'
-import dynamic from "dva/dynamic";
+import { connect } from "dva/index"
 import indexStyles from './index.less'
-import SimpleHeader from './Components/SimpleHeader/index'
-import MyWorkbenchBoxs from './Components/MyWorkbenchBoxs/index'
-import WallpaperSelect from './Components/WallpaperSelect/index'
-import WorkbenchBoxSelect from './Components/WorkbenchBoxSelect/index'
-import CreateNewBoard from './Components/CreateNewBoard/index'
-import WorkbenchBoxContentModal from './Components/WorkbenchBoxContentModal/index'
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import { LocaleProvider, Layout } from 'antd'
-const { Header, Sider, Content } = Layout;
+import SimpleHeader from '../SimpleHeader/index'
+import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
+import WallpaperSelect from '../WallpaperSelect/index'
+import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
+import CreateNewBoard from '../CreateNewBoard/index'
+import WorkbenchBoxContentModal from '..//WorkbenchBoxContentModal/index'
+
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
-class SimpleMode extends Component {
+class Home extends Component {
 
   constructor(props) {
     super(props);
@@ -59,17 +55,7 @@ class SimpleMode extends Component {
   }
 
   render() {
-    const app = dva();
-
-    const routes = [
-      {
-        path: '/technological/simplemode/home',
-        component: () => import('./Components/Home'),
-      }, {
-        path: '/technological/simplemode/communication',
-        component: () => import('./Components/WorkbenchPage'),
-      },
-    ]
+  
 
     const {
       model, dispatch,
@@ -83,33 +69,39 @@ class SimpleMode extends Component {
     } = this.props;
 
     return (
-      <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`}>
-        {simpleHeaderVisiable && <SimpleHeader />}
-        <LocaleProvider locale={zh_CN}>
-          <div style={{width:'100%',height:'100%'}}>
-            {
-              routes.map(({ path, ...dynamics }, key) => {
-                return (<Route key={key}
-                  //exact
-                  path={path}
-                  component={dynamic({
-                    app,
-                    ...dynamics,
-                  })}
-                />
-                )
-              })
-            }
-          </div>
-        </LocaleProvider>
-      </div>
+      <div>
+        {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs />}
 
+        {wallpaperSelectVisiable && <WallpaperSelect />}
+
+        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect />}
+
+        {createNewBoardVisiable && <CreateNewBoard />} 
+
+      </div>
     )
   }
 };
 
 export default connect(({ simplemode: {
- 
+  simpleHeaderVisiable,
+  myWorkbenchBoxsVisiable,
+  wallpaperSelectVisiable,
+  workbenchBoxSelectVisiable,
+  createNewBoardVisiable,
+  setWapperCenter,
+  wallpaperSelectModalVisiable,
+  workbenchBoxContentWapperModalStyle,
+  chatImVisiable
 } }) => ({
-  
-}))(SimpleMode)
+  simpleHeaderVisiable,
+  myWorkbenchBoxsVisiable,
+  wallpaperSelectVisiable,
+  workbenchBoxSelectVisiable,
+  createNewBoardVisiable,
+  setWapperCenter,
+  wallpaperSelectModalVisiable,
+  workbenchBoxContentWapperModalStyle,
+  chatImVisiable
+
+}))(Home)

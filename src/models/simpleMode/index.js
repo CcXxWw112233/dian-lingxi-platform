@@ -1,3 +1,5 @@
+import { routerRedux } from "dva/router";
+
 export default {
     namespace: 'simplemode',
     state: {
@@ -8,7 +10,8 @@ export default {
         createNewBoardVisiable: false,
         setWapperCenter: false,
         wallpaperSelectModalVisiable: false,
-        chatImVisiable: false
+        chatImVisiable: false,
+        workbenchBoxContentWapperModalStyle:{width: '100%'}
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -33,7 +36,10 @@ export default {
     }
     ,
     effects: {
-
+        * routingJump({ payload }, { call, put }) {
+            const { route } = payload
+            yield put(routerRedux.push(route));
+          }
     },
     reducers: {
         updateDatas(state, action) {
