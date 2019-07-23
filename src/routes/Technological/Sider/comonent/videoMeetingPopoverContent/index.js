@@ -431,7 +431,7 @@ class VideoMeetingPopoverContent extends React.Component {
             videoMeetingPopoverVisible
         } = this.state;
         let { projectList } = this.props;
-        console.log('sss', selectedSuggestions)
+        // console.log('sss', selectedSuggestions)
         //过滤出来当前用户有编辑权限的项目
         projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 
