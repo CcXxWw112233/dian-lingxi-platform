@@ -104,12 +104,12 @@ class DropdownSelectWithSearch extends Component {
             <div className={styles.addNewProject__content}>
               <p
                 className={styles.addNewProject__content_item}
-                // onClick={this.handleClickedNewProjectItem}
+                onClick={this.handleClickedNewProjectItem}
               >
                 <span className={styles.addNewProject__content_item_icon} />
                 <span className={styles.addNewProject__content_item_title}>
-                  {/* 新建项目 */}
-                  该组织无项目
+                  新建项目
+                  {/* 该组织无项目 */}
                 </span>
               </p>
             </div>
@@ -162,7 +162,7 @@ class DropdownSelectWithSearch extends Component {
     // });
   };
   setAddProjectModalVisible = () => {
-    const { addNewProjectModalVisible } = this.props
+    const { addNewProjectModalVisible } = this.state
     this.setState({
       addNewProjectModalVisible: !addNewProjectModalVisible
     })
@@ -231,7 +231,8 @@ class DropdownSelectWithSearch extends Component {
     return condMap.get(param);
   };
   render() {
-    const { initSearchTitle, selectedItem, project, isShowIcon, isShouldDisableDropdown } = this.props;
+    const { initSearchTitle, selectedItem, project = {}, isShowIcon, isShouldDisableDropdown } = this.props;
+    const { datas: { appsList } } = project
     const { visible, addNewProjectModalVisible } = this.state;
     let titleClassName = cx({
       title: true,
@@ -296,14 +297,14 @@ class DropdownSelectWithSearch extends Component {
             handleSubmitNewProject={this.handleSubmitNewProject}
           />
         )} */}
-        {/* {addNewProjectModalVisible && (
+        {addNewProjectModalVisible && (
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addNewProjectModalVisible}
             appsList={appsList}
             addNewProject={this.handleSubmitNewProject}
           />
-        )} */}
+        )}
       </div>
     );
   }

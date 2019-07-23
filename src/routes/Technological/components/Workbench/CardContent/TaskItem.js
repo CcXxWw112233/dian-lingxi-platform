@@ -70,7 +70,7 @@ export default class TaskItem extends React.Component {
 
   componentDidMount() {
     const { projectTabCurrentSelectedProject } = this.props
-    console.log(projectTabCurrentSelectedProject, 'sss')
+    // console.log(projectTabCurrentSelectedProject, 'sss')
   }
 
 
