@@ -75,7 +75,7 @@ export default class renderDetail extends Component {
                                         {
                                             projectOptions.map(item => {
                                                 return (
-                                                    <Col span={8}>
+                                                    <Col style={{marginBottom: 8}} span={8}>
                                                         <Checkbox value={item.value}>{item.label}</Checkbox>
                                                     </Col>
                                                 )
