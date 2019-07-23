@@ -141,11 +141,14 @@ export async function createMeeting(payload) {
 }
 
 //获取当前组织的所有成员信息
-export async function getCurrentOrgAllMembers(params) {
+export async function getCurrentOrgAllMembers(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN}/member/userlist`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
   })
 }
 

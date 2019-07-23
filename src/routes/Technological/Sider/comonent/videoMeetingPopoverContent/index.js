@@ -10,7 +10,7 @@ import {
 } from 'antd'
 import { connect } from 'dva'
 import { validateTel } from "@/utils/verify";
-
+import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench' 
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -27,11 +27,11 @@ const Nav = Mention.Nav;
             workbench.datas && workbench.datas.projectTabCurrentSelectedProject
                 ? workbench.datas.projectTabCurrentSelectedProject
                 : "0",
-        currentSelectedProjectMembersList:
-            workbench.datas && workbench.datas.currentSelectedProjectMembersList
-                ? workbench.datas.currentSelectedProjectMembersList
-                : [],
-        currentOrgAllMembers: technological.datas.currentOrgAllMembersList
+        // currentSelectedProjectMembersList:
+        //     workbench.datas && workbench.datas.currentSelectedProjectMembersList
+        //         ? workbench.datas.currentSelectedProjectMembersList
+        //         : [],
+        // currentOrgAllMembers: technological.datas.currentOrgAllMembersList
     };
 })
 class VideoMeetingPopoverContent extends React.Component {
@@ -43,10 +43,41 @@ class VideoMeetingPopoverContent extends React.Component {
         suggestionValue: toContentState(""), //mention的值
         mentionSelectedMember: [], //已经选择的 item,
         selectedMemberTextAreaValue: "",
-        videoMeetingPopoverVisible: false
+        videoMeetingPopoverVisible: false,
+        currentSelectedProjectMembersList: [], //当前选择项目的项目成员
+        currentOrgAllMembers: [], //当前组织的成员
+    }
+
+    // 获取项目用户
+    getProjectUsers  = ({projectId}) => {
+        if(!projectId) return
+        this.setVideoMeetingDefaultSuggesstionsByBoardUser({board_users: []})
+        getCurrentSelectedProjectMembersList({projectId}).then(res => {
+            if(res.code == '0') {
+                const board_users = res.data
+                this.setState({
+                    currentSelectedProjectMembersList: board_users,
+                    currentOrgAllMembers: board_users
+                }, () => {
+                    this.setVideoMeetingDefaultSuggesstionsByBoardUser({board_users})
+                })
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+
+    // 设置mention组件提及列表
+    setVideoMeetingDefaultSuggesstionsByBoardUser = ({board_users = []}) => {
+        const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(board_users);
+        this.setState({
+            videoMeetingDefaultSuggesstions,
+            suggestionValue: toContentState(""), //mention的值
+        })
     }
 
     handleVideoMeetingSaveSelectChange = value => {
+        this.getProjectUsers({projectId: value})
         this.setState({
             saveToProject: value
         });
@@ -74,18 +105,18 @@ class VideoMeetingPopoverContent extends React.Component {
         });
     };
     handleTransMentionSelectedMember = () => {
-        const { currentOrgAllMembers } = this.props;
+        const { currentOrgAllMembers } = this.state;
         const { mentionSelectedMember } = this.state;
-        //有可能存在 full_name(mobile) 和 full_name(email) 的情况
+        //有可能存在 name(mobile) 和 name(email) 的情况
         return mentionSelectedMember.reduce((acc, curr) => {
-            const isFindFullNameINCurr = full_name =>
-                currentOrgAllMembers.find(item => item.full_name === full_name);
+            const isFindFullNameINCurr = name =>
+                currentOrgAllMembers.find(item => item.name === name);
             const isFullNameWithMobleOrEmail = () =>
                 curr.endsWith(")") && isFindFullNameINCurr(curr.split("(")[0]);
             if (isFullNameWithMobleOrEmail()) {
-                const full_name = curr.split("(")[0];
+                const name = curr.split("(")[0];
                 const getUserByFull_name = currentOrgAllMembers.find(
-                    item => item.full_name === full_name
+                    item => item.name === name
                 );
                 const isUserHasMoblie = getUserByFull_name.mobile;
                 const isUserHasEmail = getUserByFull_name.email;
@@ -98,7 +129,7 @@ class VideoMeetingPopoverContent extends React.Component {
                 return acc;
             } else {
                 const getUserByFull_name = currentOrgAllMembers.find(
-                    item => item.full_name === curr
+                    item => item.name === curr
                 );
                 const isUserHasMoblie = getUserByFull_name.mobile;
                 const isUserHasEmail = getUserByFull_name.email;
@@ -250,16 +281,16 @@ class VideoMeetingPopoverContent extends React.Component {
     handleAssemVideoMeetingDefaultSuggesstions = (orgList = []) => {
         return orgList.reduce((acc, curr) => {
             const isHasRepeatedNameItem =
-                orgList.filter(item => item.full_name === curr.full_name).length >= 2;
+                orgList.filter(item => item.name === curr.name).length >= 2;
             //如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
-            //形式： full_name(mobile|email)
+            //形式： name(mobile|email)
             if (isHasRepeatedNameItem) {
-                const item = `${curr.full_name}(${
+                const item = `${curr.name}(${
                     curr.mobile ? curr.mobile : curr.email
                     })`;
                 return [...acc, item];
             }
-            return [...acc, curr.full_name];
+            return [...acc, curr.name];
         }, []);
     };
     getVideoMeetingDefaultSuggesstions = key => {
@@ -268,22 +299,22 @@ class VideoMeetingPopoverContent extends React.Component {
             !!this.props[key] && this.props[key].length;
         Promise.resolve(hasMemberInPropKey())
             .then(flag => {
-                if (!flag) {
-                    if (key === "currentSelectedProjectMembersList") {
-                        return dispatch({
-                            type: "workbench/fetchCurrentSelectedProjectMembersList",
-                            payload: { projectId: projectTabCurrentSelectedProject }
-                        });
-                    }
-                    return dispatch({
-                        type: "workbench/fetchCurrentOrgAllMembers",
-                        payload: {}
-                    });
-                }
+                // if (!flag) {
+                //     if (key === "currentSelectedProjectMembersList") {
+                //         return dispatch({
+                //             type: "workbench/fetchCurrentSelectedProjectMembersList",
+                //             payload: { projectId: projectTabCurrentSelectedProject }
+                //         });
+                //     }
+                //     return dispatch({
+                //         type: "workbench/fetchCurrentOrgAllMembers",
+                //         payload: {}
+                //     });
+                // }
             })
             .then(() => {
                 if (key === "currentSelectedProjectMembersList") {
-                    const { currentSelectedProjectMembersList } = this.props;
+                    const { currentSelectedProjectMembersList } = this.state;
                     if (
                         currentSelectedProjectMembersList &&
                         currentSelectedProjectMembersList.length
@@ -308,7 +339,7 @@ class VideoMeetingPopoverContent extends React.Component {
                         });
                     }
                 } else {
-                    const { currentOrgAllMembers } = this.props;
+                    const { currentOrgAllMembers } = this.state;
                     if (currentOrgAllMembers && currentOrgAllMembers.length) {
                         const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(
                             currentOrgAllMembers
@@ -428,10 +459,14 @@ class VideoMeetingPopoverContent extends React.Component {
             selectedSuggestions,
             suggestionValue,
             selectedMemberTextAreaValue,
-            videoMeetingPopoverVisible
+            videoMeetingPopoverVisible,
         } = this.state;
         let { projectList } = this.props;
+<<<<<<< HEAD
         // console.log('sss', selectedSuggestions)
+=======
+
+>>>>>>> 2035cff62b882ab7e56300dc5b80470e50c3d829
         //过滤出来当前用户有编辑权限的项目
         projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 
