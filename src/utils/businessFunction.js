@@ -1,6 +1,7 @@
 //业务逻辑公共工具类
 import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/constant'
 import { get } from 'https';
+import { Base64 } from 'js-base64';
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
