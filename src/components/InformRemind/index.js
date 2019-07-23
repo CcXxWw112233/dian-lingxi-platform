@@ -7,7 +7,7 @@ import DrawerInformContent from './DrawerInformContent'
 import infoRemindStyle from './index.less'
 
 @connect(({informRemind = {}}) => ({
-    informRemind,
+    informRemind
 }))
 export default class index extends Component {
 
