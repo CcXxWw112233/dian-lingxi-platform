@@ -118,9 +118,9 @@ class MyWorkbenchBoxs extends Component {
 
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    console.log(menuItemList);
+    console.log("myWorkbenchBoxList",myWorkbenchBoxList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
-    debugger
+  
     return (
       <div className={indexStyles.mainContentWapper}>
         <div className={indexStyles.projectSelector}>
@@ -128,11 +128,13 @@ class MyWorkbenchBoxs extends Component {
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
-            myWorkbenchBoxList.map((item, key) => {
-              <div className={indexStyles.myWorkbenchBox}>
-                <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
-                <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
-              </div>
+            myWorkbenchBoxList.length>0 && myWorkbenchBoxList.map((item, key) => {
+              return (
+                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox.bind(item.code)}>
+                  <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
+                  <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+                </div>
+              )
             })
           }
           {/*          

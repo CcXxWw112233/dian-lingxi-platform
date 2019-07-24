@@ -20,7 +20,11 @@ class Home extends Component {
   componentWillMount(){
     const {dispatch} = this.props;
     dispatch({
-      type: 'simplemode/getBoxs',
+      type: 'simplemode/getMyBoxs',
+      payload: {}
+    });
+    dispatch({
+      type: 'simplemode/getAllBoxs',
       payload: {}
     });
   }

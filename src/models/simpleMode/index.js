@@ -1,6 +1,8 @@
 import { routerRedux } from 'dva/router';
-import { getUserBoxs, getAllBoxs} from '@/services/technological/simplemode'
-
+import { getUserBoxs, getAllBoxs, boxSet, boxCancel } from '@/services/technological/simplemode'
+import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import { isApiResponseOk } from '../../utils/handleResponseData'
+import { message } from 'antd'
 export default {
     namespace: 'simplemode',
     state: {
@@ -44,21 +46,57 @@ export default {
             const { route } = payload
             yield put(routerRedux.push(route));
         },
-        * getBoxs({ payload }, { call, put }) {
-            let myWorkbenchBoxList = yield call(getUserBoxs, {});
-            let workbenchBoxList = yield call(getAllBoxs, {});
-            yield put({
-                type: 'updateDatas',
-                payload: {
-                    myWorkbenchBoxList: myWorkbenchBoxList,
-                    workbenchBoxList: workbenchBoxList
-                }
-            })
+        * getMyBoxs({ payload }, { call, put }) {
+            let res = yield call(getUserBoxs, {});
+          
+            if (isApiResponseOk(res)) {
+                let { data: workbenchBoxList } = res;
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        myWorkbenchBoxList: myWorkbenchBoxList
+                    }
+                })
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+           
+            
+        },
+        * getAllBoxs({ payload }, { call, put }){
+            let res = yield call(getAllBoxs, {});
+            if (isApiResponseOk(res)) {
+                let { data: workbenchBoxList } = res;
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        workbenchBoxList: workbenchBoxList
+                    }
+                })
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+        * myboxSet({ payload }, { call, put }) {
+            let res = yield call(boxSet, payload);
+            if (isApiResponseOk(res)) {
+            
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+        * myboxCancel({ payload }, { call, put }) {
+            let res = yield call(boxCancel, payload);
+            if (isApiResponseOk(res)) {
+            
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
         }
     },
     reducers: {
         updateDatas(state, action) {
-            
+
             return {
                 ...state, ...action.payload
             }
