@@ -11,6 +11,7 @@ import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 import { connect } from 'dva'
+import { getAppsList } from "../../../../../../services/technological/project";
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
@@ -32,7 +33,8 @@ class CreateProject extends React.Component {
     project_apps: [], //选择board后的app列表
     copy_value: {}, //复制的值
     OrganizationId: localStorage.getItem('OrganizationId'),
-    _organization_id: '', //选择的组织id
+    _organization_id: this.props._organization_id ||'', //选择的组织id
+    appsList: [], //app列表
   }
   componentWillReceiveProps(nextProps) {
     const { addProjectModalVisible } = nextProps
@@ -51,24 +53,38 @@ class CreateProject extends React.Component {
   getAppList = (init, payload = {}) => {
     const { dispatch } = this.props
     const { _organization_id, OrganizationId } = this.state
-    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
-      dispatch({
-        type: 'project/getAppsList',
-        payload: {
-          type: '2',
-        }
-      })
-    } else {
-      if(_organization_id) {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2',
-            _organization_id: _organization_id,
-          }
-        })
-      }
+    let params = {
+      type: '2'
     }
+    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
+      // dispatch({
+      //   type: 'project/getAppsList',
+      //   payload: {
+      //     type: '2',
+      //   }
+      // })
+    } else {
+      // if(_organization_id) {
+      //   dispatch({
+      //     type: 'project/getAppsList',
+      //     payload: {
+      //       type: '2',
+      //       _organization_id: _organization_id,
+      //     }
+      //   })
+      // }
+      params = Object.assign(params, { _organization_id })
+    }
+    if(!_organization_id || _organization_id == '0')  return
+    getAppsList(params).then(res => {
+      if(isApiResponseOk(res)) {
+        this.setState({
+          appsList: res.data
+        })
+      } else {
+        message.error(res.message)
+      }
+    })
   }
   //表单输入时记录值
   orgOnChange = (id) => {
@@ -279,12 +295,16 @@ class CreateProject extends React.Component {
       project_apps = [], 
       select_project_id,
       _organization_id,
+      appsList = [],
       OrganizationId
     } = this.state
-    const { addProjectModalVisible, appsList = [], currentUserOrganizes = [] } = this.props;
+    const { addProjectModalVisible, currentUserOrganizes = [] } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    
+    // console.log('sssssss', {
+    //   _organization_id,
+    //   _organization_id_: this.props._organization_id
+    // })
     //编辑第一步
     const step_1 = (
       <Form style={{margin: '0 auto', width: 336}}>
@@ -294,13 +314,13 @@ class CreateProject extends React.Component {
             {/* 组织 */}
             {
               OrganizationId == '0' && (
-                <FormItem style={{width: 336}}>
-                {getFieldDecorator('_organization_id', {
-                })(
+                // <FormItem style={{width: 336}}>
+                // {getFieldDecorator('_organization_id', {
+                // })(
                   <Select
                     size={'large'}
                     value={_organization_id}
-                    style={{height: 40}}
+                    style={{height: 40, marginBottom: 24}}
                     placeholder="请选择组织（单位）"
                     onChange={this.orgOnChange}
                   >
@@ -313,8 +333,8 @@ class CreateProject extends React.Component {
                       })
                     }
                   </Select>
-                )}
-              </FormItem>
+              //   )}
+              // {/* </FormItem> */}
               )
             }
            
@@ -419,7 +439,7 @@ class CreateProject extends React.Component {
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
         {/* 他人信息 */}
-        <InviteOthers _organization_id={_organization_id} shouldNotGetGroupInDidMount={true} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+        <InviteOthers _organization_id={_organization_id} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
         {/* 确认 */}
         <div style={{marginTop: 20, marginBottom: 20, }}>
           <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
