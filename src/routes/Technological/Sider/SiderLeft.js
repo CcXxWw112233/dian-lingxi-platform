@@ -266,6 +266,12 @@ export default class SiderLeft extends React.Component {
         is_show_org_name: !is_show_org_name
       }
     })
+    dispatch({
+      type: 'technological/getSetShowOrgName',
+      payload: {
+        preference_show_org_name: checked ? '1' : '0'
+      }
+    })
   }
 
 
@@ -393,9 +399,16 @@ export default class SiderLeft extends React.Component {
                 </div>
               }
             >
-                <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName">
+                {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
+                <Menu.Item key="subShowOrgName">
                   <span>显示组织名称
-                    {
+                  <Switch
+                      style={{ display: 'inline-block', marginLeft: 8 }} 
+                      onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                      defaultChecked={is_show_org_name}  
+                    ></Switch>
+                    {/* 这是控制禁用的状态逻辑(保留) */}
+                    {/* {
                       is_show_org_name && is_all_org ? (
                         <Switch
                           disabled={is_disabled}
@@ -411,8 +424,7 @@ export default class SiderLeft extends React.Component {
                           defaultChecked={false}  
                         ></Switch>
                       )
-                    } 
-                    
+                    }  */}
                   </span>
                 </Menu.Item>
                 <Menu.Item key="subInfoSet">
