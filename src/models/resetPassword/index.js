@@ -22,7 +22,7 @@ export default {
             type: 'updateDatas',
             payload: queryString.parse(location.search)
           })
-          const param =  queryString.parse(location.search)
+          const param = queryString.parse(location.search)
           if(param.token) { //如果是从邮件验证进来
             dispatch({
               type: 'initConfirm',

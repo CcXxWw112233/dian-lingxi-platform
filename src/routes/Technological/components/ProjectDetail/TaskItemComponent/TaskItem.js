@@ -126,7 +126,9 @@ export default class TaskItem extends React.Component {
   //点击分组操作
   handleMenuClick(e ) {
     e.domEvent.stopPropagation();
-    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)){
+    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { org_id } = projectDetailInfoData
+    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

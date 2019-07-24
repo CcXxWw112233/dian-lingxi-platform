@@ -15,7 +15,7 @@ export default class FileDetail extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
 
   resizeTTY(type) {
@@ -34,7 +34,7 @@ export default class FileDetail extends React.Component {
     return (
       <div className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
         <Header status={this.props.status} {...this.props} close={this.props.close} setPreviewProccessModalVisibile = {this.props.setPreviewProccessModalVisibile}/>
-        <ProccessDetailContent {...this.props}  clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
+        <ProccessDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
       </div>
     )
   }

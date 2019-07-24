@@ -42,8 +42,8 @@ export default ({dataSource, item, status}) => {
           return [
             ...r,
             (
-              c.content === '终止流程'?
-              <Menu.Item disabled={disabledEnd}>
+              c.content === '终止流程'? (
+<Menu.Item disabled={disabledEnd}>
                 <div 
                   key = {`key${i}`} 
                   onClick = {c.click} 
@@ -55,11 +55,12 @@ export default ({dataSource, item, status}) => {
                   }}
                 >
                   {
-                    c.content === '移入回收站'?[<Icon style={{marginRight: '5px'}} type='delete' />,c.content]:c.content
+                    c.content === '移入回收站'?[<Icon style={{marginRight: '5px'}} type='delete' />, c.content]:c.content
                   }
                 </div>
-              </Menu.Item>:
-              <Menu.Item disabled={disabledDel}>
+              </Menu.Item>
+): (
+<Menu.Item disabled={disabledDel}>
               <div 
                 key = {`key${i}`} 
                 onClick = {c.click} 
@@ -71,11 +72,11 @@ export default ({dataSource, item, status}) => {
                 }}
               >
                 {
-                  c.content === '移入回收站'?[<Icon style={{marginRight: '5px'}} type='delete' />,c.content]:c.content
+                  c.content === '移入回收站'?[<Icon style={{marginRight: '5px'}} type='delete' />, c.content]:c.content
                 }
               </div>
             </Menu.Item>
-            )
+))
           ]
         }, [])
       }

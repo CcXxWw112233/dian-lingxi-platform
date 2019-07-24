@@ -3,7 +3,7 @@ import dva, { connect } from "dva"
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SiderRight from '@/routes/Technological/Sider/SiderRight'
-import VideoMeeting from '@/routes/Technological/Sider/Components/VideoMeeting/index'
+import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
 import { Icon } from 'antd';
 
 const SimpleHeader = (props) => {

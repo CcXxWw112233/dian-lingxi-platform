@@ -1,6 +1,6 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form,Popconfirm, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Alert, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
+import { Form, Popconfirm, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Alert, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import moment from 'moment';
 import indexStyle from './index.less'
 import VerificationCodeTwo from '../../../../components/VerificationCodeTwo'
@@ -203,10 +203,11 @@ class BindAccountForm extends React.Component {
           <FormItem
           >
             {
-              is_bind === '1'?
-                <Popconfirm onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
+              is_bind === '1'? (
+<Popconfirm onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
                   <Button type="primary" style={{height: 40, marginLeft: 48}} disabled={isWechat}>解除绑定</Button>
-                </Popconfirm>:<div></div>
+                </Popconfirm>
+):<div></div>
                 // <Button type="primary" onClick={() => location.href='http://localhost/#/login'} style={{height: 40, marginLeft: 48}} disabled={isWechat}>绑定</Button> 
             }
           </FormItem>

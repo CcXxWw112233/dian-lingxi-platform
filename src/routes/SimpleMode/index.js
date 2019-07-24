@@ -72,24 +72,19 @@ class SimpleMode extends Component {
     ]
 
     const {
-      model, dispatch,
       simpleHeaderVisiable,
-      myWorkbenchBoxsVisiable,
-      wallpaperSelectVisiable,
-      workbenchBoxSelectVisiable,
-      createNewBoardVisiable,
       setWapperCenter,
-      chatImVisiable
     } = this.props;
 
     return (
       <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`}>
         {simpleHeaderVisiable && <SimpleHeader />}
         <LocaleProvider locale={zh_CN}>
-          <div style={{width:'100%',height:'100%'}}>
+          <div style={{width: '100%', height: '100%'}}>
             {
               routes.map(({ path, ...dynamics }, key) => {
-                return (<Route key={key}
+                return (
+<Route key={key}
                   //exact
                   path={path}
                   component={dynamic({
@@ -109,7 +104,9 @@ class SimpleMode extends Component {
 };
 
 export default connect(({ simplemode: {
- 
+  simpleHeaderVisiable,
+  setWapperCenter
 } }) => ({
-  
+  simpleHeaderVisiable,
+  setWapperCenter
 }))(SimpleMode)

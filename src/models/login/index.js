@@ -1,4 +1,4 @@
-import { formSubmit, requestVerifyCode,wechatAccountBind, changePicVerifySrc } from '../../services/login'
+import { formSubmit, requestVerifyCode, wechatAccountBind, changePicVerifySrc } from '../../services/login'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -38,7 +38,7 @@ export default {
         if(location.pathname.indexOf('/login') !== -1) {
           dispatch({
             type: 'updateDatas',
-            payload:{
+            payload: {
               is_show_pic_verify_code: false, //是否显示图片验证码
               pic_verify_src: ''
             }

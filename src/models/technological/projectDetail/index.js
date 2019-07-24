@@ -19,7 +19,7 @@ import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData, select
 import Cookies from "js-cookie";
 import { fillFormComplete, getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList, createProcess, completeProcessTask, getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../../routes/Technological/components/ProjectDetail/Process/constant'
-import {currentNounPlanFilterName} from "../../../utils/businessFunction";
+import {currentNounPlanFilterName, setBoardIdStorage} from "../../../utils/businessFunction";
 import {postCommentToDynamics} from "../../../services/technological/library";
 import QueryString from 'querystring'
 
@@ -73,11 +73,6 @@ export default {
           }
         })
 
-        const isInBoardDetailRouteChange = Cookies.get('isInBoardDetailRouteChange') //判断是否是在当前路由页面切换参数引起的页面变化
-        const setIsInBoardDetailRouteChange = (val) => {
-          Cookies.set('isInBoardDetailRouteChange', val, {expires: 30, path: ''})
-        }
-
         const initialData = () => {
           dispatch({
             type: 'updateDatas',
@@ -102,7 +97,8 @@ export default {
           const appsSelectKeyIsAreadyClickArray = Cookies.get('appsSelectKeyIsAreadyClickArray') && JSON.parse(Cookies.get('appsSelectKeyIsAreadyClickArray')) || []
 
           //存储当前项目id,用于左权县控制
-          localStorage.setItem('board_id', board_id)
+          setBoardIdStorage(board_id)
+
 
           //全局变化应用key
           dispatch({
@@ -125,12 +121,12 @@ export default {
                 id: board_id
               }
             })
-            dispatch({
-              type: 'getAppsList',
-              payload: {
-                type: '2'
-              }
-            })
+            // dispatch({
+            //   type: 'getAppsList',
+            //   payload: {
+            //     type: '2'
+            //   }
+            // })
             dispatch({
               type: 'getRelationsSelectionPre',
               payload: {
@@ -195,12 +191,20 @@ export default {
       let result = yield call(projectDetailInfo, id)
       // const appsSelectKey = yield select(selectAppsSelectKey)
       if(isApiResponseOk(result)) {
+        setBoardIdStorage(board_id)
         yield put({
           type: 'updateDatas',
           payload: {
             projectDetailInfoData: result.data,
             appsSelectKey: appsSelectKey || 1, //appsSelectKey || (result.data.app_data[0]? result.data.app_data[0].key : 1), //设置默认
             appsSelectKeyIsAreadyClickArray: [appsSelectKey || 1], //[result.data.app_data[0]? result.data.app_data[0].key : 1], //设置默认
+          }
+        })
+        yield put({
+          type: 'getAppsList',
+          payload: {
+            type: '2',
+            _organization_id: result.data.org_id
           }
         })
         if(!appsSelectKey) {
@@ -286,12 +290,12 @@ export default {
             id: board_id
           }
         })
-        yield put({
-          type: 'getAppsList',
-          payload: {
-            type: '2'
-          }
-        })
+        // yield put({
+        //   type: 'getAppsList',
+        //   payload: {
+        //     type: '2'
+        //   }
+        // })
       }
     },
 
@@ -429,8 +433,8 @@ export default {
     },
 
     * collectionProject({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(collectionProject, id)
+      const {org_id, board_id } = payload
+      let res = yield call(collectionProject, {org_id, board_id})
       if(isApiResponseOk(res)) {
         message.success('收藏成功', MESSAGE_DURATION_TIME)
       }else{
@@ -439,8 +443,8 @@ export default {
     },
 
     * cancelCollection({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(cancelCollection, id)
+      const {org_id, board_id } = payload
+      let res = yield call(cancelCollection, {org_id, board_id})
       if(isApiResponseOk(res)) {
         message.success('已取消收藏', MESSAGE_DURATION_TIME)
       }else{

@@ -556,7 +556,7 @@ export default {
     },
 
     //关联里程碑
-    * taskRelaMiletones({payload} ,{select, call, put}) {
+    * taskRelaMiletones({payload}, {select, call, put}) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppRelaMiletones, payload)
       if(isApiResponseOk(res)) {
@@ -573,7 +573,7 @@ export default {
         message.warn(res.message)
       }
     },
-    * taskCancelRelaMiletones({payload} ,{select, call, put}) {
+    * taskCancelRelaMiletones({payload}, {select, call, put}) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppCancelRelaMiletones, payload)
       if(isApiResponseOk(res)) {

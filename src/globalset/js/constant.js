@@ -7,7 +7,7 @@ export const REQUEST_DOMAIN_BOARD = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_FILE = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_FLOWS = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_ABOUT_PROJECT = PROJECTS_API //项目相关接口域名前缀
-
+export const REQUEST_INTERGFACE_VERSIONN = '/v2' //接口版本
 // 晓策志接口
 // export const REQUEST_COMMON = '/api'
 
@@ -123,3 +123,13 @@ export const PROJECTS = 'Projects'
 export const FILES = 'Files'
 export const MEMBERS = 'Members'
 export const CATCH_UP = 'Catch_Up'
+
+
+//内容类型 board , list, card, file, folder,flow
+export const CONTENT_DATA_TYPE_BOARD = 'board'
+export const CONTENT_DATA_TYPE_MILESTONE = 'milestone'
+export const CONTENT_DATA_TYPE_LIST = 'list'
+export const CONTENT_DATA_TYPE_CARD = 'card'
+export const CONTENT_DATA_TYPE_FILE = 'file'
+export const CONTENT_DATA_TYPE_FOLDER = 'folder'
+export const CONTENT_DATA_TYPE_FLOW = 'flow'

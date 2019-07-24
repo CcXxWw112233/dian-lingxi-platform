@@ -76,20 +76,20 @@ export default modelExtend(workbench, {
             }
           })
 
-          dispatch({
-            type: 'getProcessTemplateList',
-            payload: {
-              board_id: board_id
-            }
-          })
+          // dispatch({
+          //   type: 'getProcessTemplateList',
+          //   payload: {
+          //     board_id: board_id
+          //   }
+          // })
 
-          dispatch({
-            type: 'getProcessList',
-            payload: {
-              board_id: board_id,
-              type: '1'
-            }
-          })
+          // dispatch({
+          //   type: 'getProcessList',
+          //   payload: {
+          //     board_id: board_id,
+          //     type: '1'
+          //   }
+          // })
 
           if(flow_id) {
             dispatch({
@@ -357,7 +357,7 @@ export default modelExtend(workbench, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -404,7 +404,7 @@ export default modelExtend(workbench, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -435,7 +435,7 @@ export default modelExtend(workbench, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -467,7 +467,7 @@ export default modelExtend(workbench, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -518,7 +518,7 @@ export default modelExtend(workbench, {
           ...r,
           ...(c.id === id?[]:[c])
         ]
-      },[])
+      }, [])
       yield put({
         type: 'updateDatas',
         payload: {

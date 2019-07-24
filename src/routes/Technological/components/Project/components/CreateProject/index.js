@@ -10,10 +10,12 @@ import CustormModal from '../../../../../../components/CustormModal'
 import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
+import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
 
+@connect(mapStateToProps)
 class CreateProject extends React.Component {
   state = {
     step: 1,
@@ -26,24 +28,57 @@ class CreateProject extends React.Component {
     addProjectModalVisibleLocal: false,
     users: [], //被邀请人
     projects: [], //带有app列表的项目列表//
-    select_project_id: undefined,//
+    select_project_id: undefined, //
     project_apps: [], //选择board后的app列表
     copy_value: {}, //复制的值
+    OrganizationId: localStorage.getItem('OrganizationId'),
+    _organization_id: '', //选择的组织id
   }
   componentWillReceiveProps(nextProps) {
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
     if(addProjectModalVisible && !addProjectModalVisibleLocal) {
-      this.getProjectList(1)
+      this.getProjectList()
     }
     this.setState({
       addProjectModalVisibleLocal: addProjectModalVisible
     })
   }
   componentDidMount() {
-    // this.getProjectList(2)
+    this.getProjectList(true)
+    this.getAppList(true)
+  }
+  getAppList = (init, payload = {}) => {
+    const { dispatch } = this.props
+    const { _organization_id, OrganizationId } = this.state
+    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
+      dispatch({
+        type: 'project/getAppsList',
+        payload: {
+          type: '2',
+        }
+      })
+    } else {
+      if(_organization_id) {
+        dispatch({
+          type: 'project/getAppsList',
+          payload: {
+            type: '2',
+            _organization_id: _organization_id,
+          }
+        })
+      }
+    }
   }
   //表单输入时记录值
+  orgOnChange = (id) => {
+    this.setState({
+      _organization_id: id
+    }, () => {
+      this.getAppList()
+      this.getProjectList()
+    })
+  }
   boardNameChange(e){
     const value = e.target.value
     this.setState({
@@ -117,7 +152,7 @@ class CreateProject extends React.Component {
   // 提交表单
   handleSubmit = (e) => {
     e.preventDefault();
-    const { step_2_type, select_project_id, copy_value = {} } = this.state
+    const { step_2_type, select_project_id, copy_value = {}, _organization_id, OrganizationId } = this.state
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_name'] = this.state.board_name
@@ -158,7 +193,9 @@ class CreateProject extends React.Component {
         // }
         const {users} = this.state
         values['users'] = this.handleUsersToUsersStr(users)
+        values['_organization_id'] = _organization_id || OrganizationId
         this.props.addNewProject ? this.props.addNewProject(values) : false
+        this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({visible: false})
       }
     });
   }
@@ -193,9 +230,17 @@ class CreateProject extends React.Component {
       project_apps: apps
     })
   }
-  getProjectList = () => {
+  // 获取带有app的项目列表
+  getProjectList = (init) => {
     const that = this
-    getProjectList().then(res => {
+    const { OrganizationId, _organization_id } = this.state
+    let params = {}
+    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
+      
+    } else {
+      params['_organization_id'] = _organization_id
+    }
+    getProjectList(params).then(res => {
       if(isApiResponseOk(res)) {
         that.setState({
           projects: res.data
@@ -224,17 +269,55 @@ class CreateProject extends React.Component {
   }
 
   render() {
-    const { step, stepOneContinueDisabled, stepTwoContinueDisabled, stepThreeContinueDisabled, step_2_type, projects = [], project_apps = [], select_project_id  } = this.state
-    const { addProjectModalVisible, appsList = [] } = this.props;
-
+    const { 
+      step,
+      stepOneContinueDisabled, 
+      stepTwoContinueDisabled, 
+      stepThreeContinueDisabled, 
+      step_2_type, 
+      projects = [],
+      project_apps = [], 
+      select_project_id,
+      _organization_id,
+      OrganizationId
+    } = this.state
+    const { addProjectModalVisible, appsList = [], currentUserOrganizes = [] } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    //编辑名称
+    
+    //编辑第一步
     const step_1 = (
       <Form style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
+            {/* 组织 */}
+            {
+              OrganizationId == '0' && (
+                <FormItem style={{width: 336}}>
+                {getFieldDecorator('_organization_id', {
+                })(
+                  <Select
+                    size={'large'}
+                    value={_organization_id}
+                    style={{height: 40}}
+                    placeholder="请选择组织（单位）"
+                    onChange={this.orgOnChange}
+                  >
+                    {
+                      currentUserOrganizes.map( item => {
+                        const { name, id } = item
+                        return (
+                          <Option value={id}>{name}</Option> 
+                        )
+                      })
+                    }
+                  </Select>
+                )}
+              </FormItem>
+              )
+            }
+           
             {/* 项目名称 */}
             <FormItem style={{width: 336}}>
               {getFieldDecorator('board_name', {
@@ -259,7 +342,7 @@ class CreateProject extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepOneContinueDisabled} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && !_organization_id)} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
         </FormItem>
       </Form>
     )
@@ -268,8 +351,8 @@ class CreateProject extends React.Component {
     const step_2 = (
       <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
-        <div className={indexStyles.operateAreaOut}>
-          <div className={indexStyles.operateArea}>
+        <div className={indexStyles.operateAreaOut} style={{height: '300px'}}>
+          <div className={indexStyles.operateArea} style={{height: '300px'}}>
             <div style={{margin: '0 auto', width: 392}}>
               {appsList.map((value, key) => {
                 return (
@@ -277,7 +360,7 @@ class CreateProject extends React.Component {
                 )
               })}
             </div>
-            <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>从现有项目复制</div>
+            <div style={{color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>从现有项目复制</div>
           </div>
         </div>
 
@@ -291,8 +374,8 @@ class CreateProject extends React.Component {
     const step_2_copy = (
       <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>复制现有项目</div>
-        <div className={indexStyles.operateAreaOut}>
-          <div className={indexStyles.operateArea}>
+        <div className={indexStyles.operateAreaOut} style={{height: '300px'}}>
+          <div className={indexStyles.operateArea} style={{height: '300px'}}>
             <Select
               value={select_project_id}
               style={{ width: '100%' }}
@@ -320,7 +403,7 @@ class CreateProject extends React.Component {
               <div className={indexStyles.no_select_board}>选择项目后进行下一步操作</div>
             )}
 
-            <div style={{color: '#1890ff',textDecoration: 'underline',marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
+            <div style={{color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
           </div>
         </div>
 
@@ -336,7 +419,7 @@ class CreateProject extends React.Component {
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
         {/* 他人信息 */}
-        <InviteOthers isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+        <InviteOthers _organization_id={_organization_id} shouldNotGetGroupInDidMount={true} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
         {/* 确认 */}
         <div style={{marginTop: 20, marginBottom: 20, }}>
           <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
@@ -348,7 +431,7 @@ class CreateProject extends React.Component {
     return(
       <div>
         <CustormModal
-          visible={addProjectModalVisible} //modalVisible
+          visible={addProjectModalVisible} //addProjectModalVisible
           maskClosable={false}
           width={472}
           footer={null}
@@ -378,3 +461,8 @@ class CreateProject extends React.Component {
   }
 }
 export default Form.create()(CreateProject)
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ technological: { datas: {currentUserOrganizes = [] }} }) {
+  return { currentUserOrganizes };
+}

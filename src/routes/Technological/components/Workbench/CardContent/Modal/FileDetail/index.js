@@ -16,7 +16,7 @@ export default class FileDetail extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this,'ing'))
+    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   
   resizeTTY(type) {

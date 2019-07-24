@@ -25,7 +25,7 @@ export async function checkAccountRestered(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/${accountType}/check`,
     method: 'GET',
-    params:{
+    params: {
       email,
       mobile
     },

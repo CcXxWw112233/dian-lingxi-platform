@@ -168,7 +168,8 @@ export default class ConfirmInfoThree extends React.Component {
                   </div>
                 )}
               </Dropdown>
-            </div>)
+            </div>
+)
           break
         case '3':
           container = (

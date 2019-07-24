@@ -17,6 +17,7 @@ class IframeOut extends React.Component{
     const paramString = window.location.href.split('?')[1] || '{}'
     const param = QueryString.parse(paramString) || {}
     const { operateType, id } = param
+    //debugger
     this.setState({
       operateType
     })

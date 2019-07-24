@@ -5,6 +5,7 @@ import moment from 'moment';
 import indexStyle from './index.less'
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE} from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -86,6 +87,7 @@ class PersonalInfoForm extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(e.size == 0) {

@@ -47,7 +47,7 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * taskCancelRelaMiletones({payload} ,{select, call, put}) {
+    * taskCancelRelaMiletones({payload}, {select, call, put}) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppCancelRelaMiletones, payload)
       if(isApiResponseOk(res)) {
@@ -64,7 +64,7 @@ export default modelExtend(technological, {
         message.warn(res.message)
       }
     },
-    * addMilestoneExcutos({payload} ,{select, call, put}) {
+    * addMilestoneExcutos({payload}, {select, call, put}) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(addMilestoneExcutos, payload)
       if(isApiResponseOk(res)) {
@@ -82,7 +82,7 @@ export default modelExtend(technological, {
         message.warn(res.message)
       }
     },
-    * removeMilestoneExcutos({payload} ,{select, call, put}) {
+    * removeMilestoneExcutos({payload}, {select, call, put}) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(removeMilestoneExcutos, payload)
       if(isApiResponseOk(res)) {

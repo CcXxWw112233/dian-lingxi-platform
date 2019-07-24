@@ -65,7 +65,7 @@ export default class CommentListItem extends React.Component {
                 {create_time?timestampToTimeNormal(create_time, '', true):''}
               </div>
               { pId === id && !judgeTimeDiffer_ten(create_time)?(
-<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,value.id)}>
+<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this, value.id)}>
                  删除
               </div>
 ): ''}

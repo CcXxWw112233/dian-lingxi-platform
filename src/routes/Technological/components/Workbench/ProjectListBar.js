@@ -7,7 +7,7 @@ import classNames from 'classnames/bind';
 // import AddModalFormWithExplicitProps from './../Project/AddModalFormWithExplicitProps';
 import CreateProject from './../Project/components/CreateProject/index';
 
-import { checkIsHasPermission } from './../../../../utils/businessFunction';
+import { checkIsHasPermission, setBoardIdStorage } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
 import globalStyles from './../../../../globalset/css/globalClassName.less'
 
@@ -89,21 +89,31 @@ class ProjectListBar extends Component {
       }
     );
   };
-  setAddProjectModalVisible = () => {
+  setAddProjectModalVisible = (data) => {
     const { dispatch } = this.props
     const { addProjectModalVisible } = this.state
-    this.setState({
-      addProjectModalVisible: !addProjectModalVisible
-    }, () => {
-      if(!addProjectModalVisible) {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
-    })
+    const { visible } = data || {}
+    if(data) {
+      // this.setState({
+      //   addProjectModalVisible: visible
+      // })
+    } else {
+      this.setState({
+        addProjectModalVisible: !addProjectModalVisible
+      })
+    }
+    // this.setState({
+    //   addProjectModalVisible: !addProjectModalVisible
+    // }, () => {
+    //   if(!addProjectModalVisible) {
+    //     dispatch({
+    //       type: 'project/getAppsList',
+    //       payload: {
+    //         type: '2'
+    //       }
+    //     });
+    //   }
+    // })
   }
 
   handleSubmitNewProject = data => {
@@ -136,6 +146,9 @@ class ProjectListBar extends Component {
     if (id === projectTabCurrentSelectedProject) {
       return;
     }
+    //设置board_id缓存
+    setBoardIdStorage(id);
+
     this.handleClickProjectItem(id);
     //处理工作台数据
     this.handleGanttData(id)
@@ -261,12 +274,13 @@ class ProjectListBar extends Component {
         )}
         <ul className={styles.projectListBarItemWrapper} ref={this.listRef}>
           {projectList &&
-            projectList.map(({ board_id, board_name, apps }) => (
+            projectList.map(({ board_id, board_name, apps, org_id }) => (
               <ProjectListBarCell
                 board_id={board_id}
                 board_name={board_name}
                 key={board_id}
                 apps={apps}
+                org_id={org_id}
                 handleClickedCell={this.handleClickedCell}
                 shouldActive={projectTabCurrentSelectedProject}
               />

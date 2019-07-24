@@ -50,15 +50,15 @@ export default class DetailConfirmInfoOne extends React.Component {
 
   //截止日期
   datePikerOnOpenChange(bool) {
-    //关闭后
     if(!bool) {
       const { due_time } = this.state
       if(!due_time) {
         return
       }
-      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { datas: { processEditDatas = [], projectDetailInfoData = [], currentProcessInstanceId } } = this.props.model
       const { itemKey, dispatch } = this.props
       const { id } = processEditDatas[itemKey]
+      // const { currentProcessInstanceId } = this.props.projectDetailProcess.datas
       processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
       //业务逻辑修改deadline_value作废
       processEditDatas[itemKey]['deadline'] = timeToTimestamp(due_time)
@@ -69,7 +69,8 @@ export default class DetailConfirmInfoOne extends React.Component {
         type: 'projectDetailProcess/setDueTimeInFlowsNode',
         payload: {
           deadline: timeToTimestamp(due_time),
-          flow_node_instance_id: id
+          flow_node_instance_id: id,
+          flow_instance_id: currentProcessInstanceId
         }
       })
     }
@@ -194,7 +195,8 @@ export default class DetailConfirmInfoOne extends React.Component {
                 })}
 
                 {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
-              </div>)
+              </div>
+)
           break
         case '3':
           container = (
@@ -209,7 +211,8 @@ export default class DetailConfirmInfoOne extends React.Component {
                   )
               })}
               {assigneesArray.length >2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
-            </div>)
+            </div>
+)
           break
         default:
           container = (<div></div>)
@@ -345,7 +348,7 @@ export default class DetailConfirmInfoOne extends React.Component {
 
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div style={{marginTop:'10px'}} > <Icon type="flag" /> 里程碑</div>
+                <div style={{marginTop: '10px'}} > <Icon type="flag" /> 里程碑</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right} style={{display: 'flex'}}>

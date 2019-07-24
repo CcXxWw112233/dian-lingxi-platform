@@ -13,7 +13,7 @@ export default class CommonArticlesList extends Component {
     // 时间戳转换日期格式
     getdate(timestamp) {
         var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y,M,D;
+        var Y, M, D;
         Y = date.getFullYear();
         M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1);
         D = date.getDate() ;

@@ -278,7 +278,7 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample({id, board_id, top},e) {
+  setSpecilTaskExample({id, board_id, top}, e) {
     if(e) {
       e.stopPropagation()
     }
@@ -341,7 +341,7 @@ export default class GetRowGantt extends Component {
                         margin: '4px 0 0 2px',
                         backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
                      }}
-                     onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
+                     onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id})}
                 />
                 </Tooltip>
               )

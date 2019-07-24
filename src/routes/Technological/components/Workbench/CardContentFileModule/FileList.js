@@ -46,7 +46,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_resource_id})
+        this.props.fileDownload({ids: file_resource_id, fileIds: file_id})
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){

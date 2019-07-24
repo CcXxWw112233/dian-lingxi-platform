@@ -2,8 +2,10 @@ import { message } from 'antd';
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
-import {REQUEST_DOMAIN} from "../globalset/js/constant";
-import { reRefreshToken } from './auth'
+import {REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ABOUT_PROJECT} from "../globalset/js/constant";
+import { Base64 } from 'js-base64';
+import { reRefreshToken } from './oauth'
+import { setRequestHeaderBaseInfo } from './businessFunction'
 function messageLoading(url) {
   return (
     message.loading('加载中...', 0)
@@ -28,50 +30,63 @@ export default function request(options = {}, elseSet = {}) {
     data = {},
   } = options;
 
-  //去掉空字符串
-  // if (params && typeof params === 'object') {
-  //   for(let i in params) {
-  //     if(!params[i]) {
-  //       delete params[i]
-  //     }
-  //   }
-  // }
-  // if (data && typeof data === 'object') {
-  //   for (let i in data) {
-  //     if (!data[i]) {
-  //       delete data[i]
-  //     }
-  //   }
-  // }
-
   let loading = !isNotLoading ? messageLoading(url) : ''
-  let header = Object.assign({}, options.headers)
+  let header = Object.assign({}, headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
-  const board_id = Cookies.get('board_id')
+
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
-  // header['board_id'] = board_id
+  
+  // header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
+  // header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
+  // if(data['_organization_id'] || params['_organization_id']) {
+  //   header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
+  // }
+
+  // 请求头BaseInfo base64加密(后台权限拦截)，最终输出
+  //BaseInfo: { organizationId，boardId, contentDataType, contentDataId,  aboutBoardOrganizationId, }
+  // let header_baseInfo_orgid = localStorage.getItem('OrganizationId') || '0'
+  // if(data['_organization_id'] || params['_organization_id']) {
+  //   header_baseInfo_orgid = data['_organization_id'] || params['_organization_id']
+  // }
+  // const header_BaseInfo = Object.assign({
+  //     orgId: header_baseInfo_orgid,
+  //     boardId: localStorage.getItem('storageCurrentOperateBoardId') || '0',
+  //     aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
+  // }, headers['BaseInfo'] || {})
+  // const header_baseInfo_str = JSON.stringify(header_BaseInfo)
+  // const header_baseInfo_str_base64 = Base64.encode(header_baseInfo_str)
+  // const header_base_info = {
+  //   BaseInfo:  header_baseInfo_str_base64
+  // }
+
+  const header_base_info = setRequestHeaderBaseInfo({ data, params, headers})
 
   return new Promise((resolve, reject) => {
-    const { clooseLoading = false } = elseSet
     axios({
       ...{
         url,
-        headers: header,
+        headers: {...header, ...headers, ...header_base_info, },
         method,
-        params,
-        data,
+        params: {
+          ...params, 
+          // ...new_param
+        },
+        data: {
+          ...data,
+          // ...new_param
+        },
         timeout: 60000,
       }
     })
       .then(res => {
-        setTimeout(loading,0);
+        setTimeout(loading, 0);
 
         resolve(res.data);
       })
       .catch((error, e) => {
-        setTimeout(loading,0);
+        setTimeout(loading, 0);
 
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
@@ -92,20 +107,3 @@ export default function request(options = {}, elseSet = {}) {
 }
 
 
-
-
-// switch (error.response.status) {
-//   case 401:
-//     const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
-//     Cookies.remove('userInfo', { path: '' })
-//     if(!is401) {
-//       Cookies.set('is401', true, {expires: 30, path: ''})
-//       setTimeout(function () {
-//         window.location.hash = `#/login?redirect=${window.location.hash.replace('#','')}`
-//       },1000)
-//     }else{
-//     }
-//     break
-//   default:
-//     break
-// }

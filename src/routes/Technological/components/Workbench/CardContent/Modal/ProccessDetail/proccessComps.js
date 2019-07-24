@@ -2,7 +2,7 @@ import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import styles from './index.css'
-import { Icon  } from 'antd'
+import { Icon } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
 import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoThree'
@@ -96,7 +96,7 @@ export default class ProccessContent extends React.Component {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
    const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
-   const data  = this.props.model.datas &&
+   const data = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
 
@@ -127,7 +127,7 @@ export default class ProccessContent extends React.Component {
    }
   //  80 158
     const delHtmlTag = (str) =>{
-      return str.replace(/<[^>]+>/g,"")
+      return str.replace(/<[^>]+>/g, "")
     }
    return (
     <div>
@@ -138,12 +138,12 @@ export default class ProccessContent extends React.Component {
         position: 'relative',
           top: '70px', 
           right: '154px',
-          width:'41px',
-          height:17,
-          fontSize:12,
+          width: '41px',
+          height: 17,
+          fontSize: 12,
           fontFamily: 'PingFangSC-Regular',
-          fontWeight:400,
-          color:'rgba(140,140,140,1)',
+          fontWeight: 400,
+          color: 'rgba(140,140,140,1)',
           lineHeight: '17px'
       }}>逾期 * 天</span> 
       <span style={{
@@ -160,10 +160,10 @@ export default class ProccessContent extends React.Component {
       }}>{this.props.model.datas.processCurrentCompleteStep?this.props.model.datas.processCurrentCompleteStep:1}/{this.props.model.datas.processInfo.node_amount}</span>
       <div style={{height: '210px', padding: '32px 34px 70px 0', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
         <div style={{color: '#262626', fontSize: '20px'}}>{name}</div>
-        <div style={{fontSize:'12px',
+        <div style={{fontSize: '12px',
         fontFamily: 'PingFangSC-Regular',
-        fontWeight:'400',
-        color:'rgba(89,89,89,1)'}}>{this.props.model.datas.processInfo.description?delHtmlTag(this.props.model.datas.processInfo.description):'暂无描述'}</div>
+        fontWeight: '400',
+        color: 'rgba(89,89,89,1)'}}>{this.props.model.datas.processInfo.description?delHtmlTag(this.props.model.datas.processInfo.description):'暂无描述'}</div>
       </div>
       <div style={{padding: '36px 34px 0 36px'}}>
         {processEditDatas.map((value, key) => {

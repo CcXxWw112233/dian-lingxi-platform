@@ -23,6 +23,7 @@ import DetailInfo from './DetailInfo'
 import VisitControl from './../../components/VisitControl/index'
 import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../services/technological/project'
 import LcbInHeader from './components/LcbInHeader/index'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 let is_starinit = null
 
@@ -109,7 +110,9 @@ export default class Header extends React.Component {
   }
   confirm(board_id) {
     const that = this
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_JOIN)){
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { org_id } = projectDetailInfoData
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_JOIN, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -215,8 +218,11 @@ export default class Header extends React.Component {
     }
   }
   //收藏
-  starClick(id, e) {
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+  starClick({ board_id }, e) {
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { org_id } = projectDetailInfoData
+    const { dispatch } = this.props
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -229,9 +235,19 @@ export default class Header extends React.Component {
         starOpacity: 1
       }, function () {
         if(this.state.isCollection) {
-          this.props.collectionProject(id)
+          dispatch({
+            type: 'projectDetail/collectionProject',
+            payload: {
+              org_id, board_id
+            }
+          })
         }else{
-          this.props.cancelCollection(id)
+          dispatch({
+            type: 'projectDetail/cancelCollection',
+            payload: {
+              org_id, board_id
+            }
+          })
         }
       })
     })
@@ -643,6 +659,7 @@ export default class Header extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)){
@@ -822,12 +839,12 @@ export default class Header extends React.Component {
 
     const cancelStarProjet = (
       <i className={globalStyles.authTheme}
-         onClick={this.starClick.bind(this, board_id)}
+         onClick={this.starClick.bind(this, { board_id })}
          style={{margin: '0 0 0 8px', color: '#FAAD14 ', fontSize: 20}}>&#xe70e;</i>
     )
     const starProject = (
       <i className={globalStyles.authTheme}
-         onClick={this.starClick.bind(this, board_id)}
+         onClick={this.starClick.bind(this, { board_id })}
          style={{margin: '0 0 0 8px', color: '#FAAD14 ', fontSize: 20}}>&#xe6f8;</i>
     )
 

@@ -15,7 +15,7 @@ import {
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
   updateBoardTag, updateTask,
-  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub,getCardCommentListAll
+  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub, getCardCommentListAll
 } from "../../../services/technological/task";
 import {
   selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
@@ -95,6 +95,7 @@ export default modelExtend(projectDetail, {
             //     id: card_id
             //   }
             // })
+            
           } else {
             dispatch({
               type: 'getTaskGroupList',
@@ -860,7 +861,7 @@ export default modelExtend(projectDetail, {
     },
 
     //评论--end
-    * getCardCommentListAll({payload} ,{select, call, put}) {
+    * getCardCommentListAll({payload}, {select, call, put}) {
       yield put({
         type: 'updateDatas',
         payload: {
@@ -877,7 +878,7 @@ export default modelExtend(projectDetail, {
     },
 
     //关联里程碑
-    * taskRelaMiletones({payload} ,{select, call, put}) {
+    * taskRelaMiletones({payload}, {select, call, put}) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppRelaMiletones, payload)
       if(isApiResponseOk(res)) {
@@ -894,7 +895,7 @@ export default modelExtend(projectDetail, {
         message.warn(res.message)
       }
     },
-    * taskCancelRelaMiletones({payload} ,{select, call, put}) {
+    * taskCancelRelaMiletones({payload}, {select, call, put}) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppCancelRelaMiletones, payload)
       if(isApiResponseOk(res)) {

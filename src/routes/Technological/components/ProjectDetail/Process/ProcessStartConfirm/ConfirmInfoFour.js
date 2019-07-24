@@ -219,7 +219,8 @@ export default class ConfirmInfoFour extends React.Component {
                   </div>
                 )}
               </Dropdown>
-            </div>)
+            </div>
+)
           break
         case '3':
           container = (
@@ -294,7 +295,8 @@ export default class ConfirmInfoFour extends React.Component {
                   </div>
                 )}
               </Dropdown>
-            </div>)
+            </div>
+)
           break
         case '2':
           container = (

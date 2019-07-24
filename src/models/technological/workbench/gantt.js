@@ -35,7 +35,7 @@ export default {
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
-      target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
+      target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
     },
@@ -216,6 +216,10 @@ export default {
         board_id: projectTabCurrentSelectedProject,
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
+      }
+
+      if(localStorage.getItem('aboutBoardOrganizationId') == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+        return
       }
 
       const res = yield call(getGttMilestoneList, params)

@@ -653,7 +653,8 @@ const ProjectDetail = (props) => {
     let appFace = (<div></div>)
     switch (appsSelectKey) {
       case '2':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (<ProcessIndex
+        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (
+<ProcessIndex
           {...props}
           {...HeaderListProps}
           getProjectDetailInfo={getProjectDetailInfo}
@@ -663,7 +664,8 @@ const ProjectDetail = (props) => {
           updateDatas={updateDatas}
           updateDatasTask={updateDatasTask}
           updateDatasFile={updateDatasFile}
-          updateDatasProcess={updateDatasProcess} />)
+          updateDatasProcess={updateDatasProcess} />
+)
         break
       case '3':
         appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) && (<CreateTask {...FileModuleProps} {...CreateTaskProps} updateDatas={updateDatas} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />)

@@ -77,6 +77,162 @@
   animation: spindown 200ms ease;
 }
 
+
+// 修改了全局的menu子菜单的样式
+:global {
+  // .ant-dropdown-hidden, .ant-dropdown-menu-hidden {
+  //   display: block;
+  // }
+  // .ant-dropdown-menu-submenu-arrow {
+  //   display: none;
+  // }
+  .ant-dropdown-menu-submenu-title {
+    padding-right: 12px;
+  }
+}
+
+.menuWrapper {
+  width: 238px;
+  margin-left: 12px;
+}
+
+// 组织的名称
+.org_name {
+  max-width:259px;
+  height:64px;
+  font-size:16px;
+  font-family:PingFangSC-Regular;
+  font-weight:400;
+  color:rgba(38,38,38,1);
+  line-height:64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;  
+}
+
+// 组织的图片
+.org_img {
+  width:38px;
+  height:38px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+// 访客标识
+  .middle_bott {
+    width: 30px;
+    height: 18px;
+    background: #E8E8E8;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+  }
+
+
+// 默认设置的三项
+.default_select_setting {
+  line-height: 40px;
+  .left_img {
+    display: inline-block;
+    margin-right: 8px;
+    line-height: 20px;
+  }
+  .middle_text {
+    flex: 1;
+  }
+  .team {
+    display: flex;
+    align-items: center;
+    .team_icon {
+      font-size: 20px;
+      display: inline-block;
+      margin-right: 8px; 
+    }
+  }
+  .bank {
+    display: flex;
+    align-items: center;
+    .bank_icon {
+      font-size: 20px;
+      display: inline-block;
+      margin-right: 8px; 
+    }
+  }
+  .addUsers {
+    display: flex;
+    align-items: center;
+    .add_icon {
+      font-size: 20px;
+      display: inline-block;
+      margin-right: 8px; 
+    }
+  }
+  .hobby {
+    display: flex;
+    align-items: center;
+    .hobby_img {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      border-radius: 50%;
+    }
+  }
+  .account_setting {
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+    .avartarImg {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      border-radius: 50%;
+    }
+    .layout_icon {
+      color: #595959;
+      &:hover {
+        color: #40A9FF;
+      }
+    }
+  }
+  
+}
+
+
+.siderLeft {
+  .middle {
+    max-width: 80px;
+    margin-left: 16px; 
+    // background: pink;
+    .username {
+      max-width:112px;
+      height:22px;
+      font-size:16px;
+      font-family:PingFangSC-Semibold;
+      font-weight:600;
+      color:rgba(89,89,89,1);
+      line-height:22px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .middle_top {
+      max-width:59px;
+      height:17px;
+      font-size:12px;
+      font-family:PingFangSC-Regular;
+      font-weight:400;
+      color:#595959;
+      line-height:17px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
 .siderRight {
   position: relative;
   min-height: 100vh;

@@ -2,7 +2,7 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, message } from 'antd'
-import QueueAnim from  'rc-queue-anim'
+import QueueAnim from 'rc-queue-anim'
 import {checkIsHasPermissionInBoard} from "../../../../../utils/businessFunction";
 import {MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN} from "../../../../../globalset/js/constant";
 const Panel = Collapse.Panel
@@ -16,7 +16,7 @@ export default class ItemTwoChirldren extends React.Component {
       return false
     }
     const { ItemTwoChirldrenVaue, ItemTwoChirldrenIndex, taskGroupListIndex, taskGroupListIndex_index } = this.props
-    const {  datas:{ taskGroupList } } = this.props.model
+    const { datas: { taskGroupList } } = this.props.model
     const { card_id, is_realize = '0' } = ItemTwoChirldrenVaue
     const obj = {
       card_id,
@@ -32,9 +32,9 @@ export default class ItemTwoChirldren extends React.Component {
     return (
       <div key={'1'} className={CreateTaskStyle.item_2_chirld} >
         <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive: CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this, card_id)}>
-          <Icon type="check" style={{color:is_realize === '1' ? '#FFFFFF': '#F5F5F5',fontSize:12, fontWeight:'bold'}}/>
+          <Icon type="check" style={{color: is_realize === '1' ? '#FFFFFF': '#F5F5F5', fontSize: 12, fontWeight: 'bold'}}/>
         </div>
-        <div style={{textDecoration:is_realize === '1'? 'line-through': 'none'}}>{card_name}</div>
+        <div style={{textDecoration: is_realize === '1'? 'line-through': 'none'}}>{card_name}</div>
       </div>
     )
   }

@@ -23,7 +23,7 @@ export default class HeaderNav extends React.Component{
   addMembers(data) {
     const { users } = data
     const { datas = {} } = this.props.model
-    const {  currentSelectOrganize = {} } = datas
+    const { currentSelectOrganize = {} } = datas
     const { id } = currentSelectOrganize
     this.props.inviteJoinOrganization({
       members: users,
@@ -50,12 +50,12 @@ export default class HeaderNav extends React.Component{
             {teamShowTypeList.map((value, key) => {
               const {name, id} = value
               return(
-                <div onClick={this.queryTeamListWithType.bind(this,id)} key={id} style={{color: teamShowTypeId === id? '#1890FF': '#595959'}}>{name}</div>
+                <div onClick={this.queryTeamListWithType.bind(this, id)} key={id} style={{color: teamShowTypeId === id? '#1890FF': '#595959'}}>{name}</div>
               )
             })}
-            <div onClick={this.queryTeamListWithType.bind(this,null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>
+            <div onClick={this.queryTeamListWithType.bind(this, null)} style={{color: !teamShowTypeId? '#1890FF': '#595959'}}>全部</div>
             <div style={{marginLeft: 30}}>
-              <Icon type="appstore" style={{display:'inline-block',marginTop: 6 }} />
+              <Icon type="appstore" style={{display: 'inline-block', marginTop: 6 }} />
             </div>
           </div>
         </div>

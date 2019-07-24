@@ -17,9 +17,18 @@ class Home extends Component {
     super(props);
   }
 
+  componentWillMount(){
+    const {dispatch} = this.props;
+    dispatch({
+      type: 'simplemode/getBoxs',
+      payload: {}
+    });
+  }
+
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll.bind(this)) //监听滚动
     window.addEventListener('resize', this.handleResize.bind(this)) //监听窗口大小改变
+
   }
 
   componentWillUnmount() { //一定要最后移除监听器，以防多个组件之间导致this的指向紊乱

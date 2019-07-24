@@ -58,7 +58,7 @@ const Routers = function ({ history, app }) {
       case '/retrievePassword':
         document.title = '灵犀-找回密码'
         break
-      case '/organization':
+      case '/organizationManager':
         document.title = '灵犀-组织管理'
         break
       case '/technological/accoutSet':
@@ -165,6 +165,9 @@ const Routers = function ({ history, app }) {
       import('./models/technological/xczNews'),
       import('./models/simpleMode'),
 
+        import('./models/technological/informRemind'),
+
+
       ],
       component: () => import('./routes/Technological/'),
     }, {
@@ -172,9 +175,9 @@ const Routers = function ({ history, app }) {
       models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/'),
     }, {
-      path: '/organization',
-      models: () => [import('./models/organization')],
-      component: () => import('./routes/Organization/'),
+      path: '/organizationManager',
+      models: () => [import('./models/organizationManager')],
+      component: () => import('./routes/organizationManager/'),
     }, {
       path: '/teamShow',
       models: () => [
@@ -191,7 +194,7 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/NoviceGuide'),
     }, {
       path: '/test',
-      models: () => [import('./models/organization')],
+      models: () => [import('./models/organizationManager')],
       component: () => import('./routes/Test/'),
     }, {
       path: '/index',

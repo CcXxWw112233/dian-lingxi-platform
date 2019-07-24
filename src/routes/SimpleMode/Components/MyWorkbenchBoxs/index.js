@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
+import simpleMode from "../../../../models/simpleMode";
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -111,7 +112,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject } = this.props;
+    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList } = this.props;
     const { datas = {} } = project;
     const { appsList = [] } = datas;
 
@@ -125,11 +126,14 @@ class MyWorkbenchBoxs extends Component {
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
-          <div className={indexStyles.myWorkbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
-            <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
+          {myWorkbenchBoxList.map((item, key) => {
+            <div className={indexStyles.myWorkbenchBox}>
+              <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
+              <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
 
-          </div>
+            </div>
+          })}
+          {/*          
           <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe671;</i><br />
             <span className={indexStyles.myWorkbenchBox_title}>项目计划</span>
@@ -142,10 +146,10 @@ class MyWorkbenchBoxs extends Component {
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe673;</i><br />
             <span className={indexStyles.myWorkbenchBox_title}>项目文件</span>
           </div>
+          */}
           <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
           </div>
-
         </div>
 
         {addProjectModalVisible && (
@@ -166,8 +170,15 @@ export default connect(
   ({
     workbench: {
       datas: { projectList, projectTabCurrentSelectedProject } }
+    ,
+    simplemode: {
+      myWorkbenchBoxList,
+      workbenchBoxList
+    }
     , project }) => ({
       project,
       projectList,
       projectTabCurrentSelectedProject,
+      myWorkbenchBoxList,
+      workbenchBoxList
     }))(MyWorkbenchBoxs)

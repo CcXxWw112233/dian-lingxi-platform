@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'dva'
 import { Card, Icon, Input, Tooltip } from 'antd'
 import NewsListStyle from './NewsList.less'
 import styles from './index.css'
@@ -6,8 +7,13 @@ import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToTimeNormal2} from '../../../../../../utils/util'
 // import Comment from './Comment'
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
+import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter} from "../../../../../../utils/businessFunction";
+import double_right from '@/assets/workbench/double_right.png'
 
+
+@connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
+  currentUserOrganizes, is_show_org_name
+}))
 export default class InitialNews extends React.Component {
   allSetReaded() { //全部标记为已读
 
@@ -29,27 +35,39 @@ export default class InitialNews extends React.Component {
       }
     })
   }
+
+  componentDidMount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/getCurrentUserOrganizes',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
 
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
+    const { currentUserOrganizes = [], is_show_org_name } = this.props
     // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
       let jumpToFile = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
+        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
       // 会议
       // let jumpToMeeting = (
@@ -61,7 +79,21 @@ export default class InitialNews extends React.Component {
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>
+                {messageValue.creator.name} 创建{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」
+              </div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -70,7 +102,21 @@ export default class InitialNews extends React.Component {
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了原项目名 「{messageValue.content.rela_data}」为「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+              <div className={NewsListStyle.news_3_text}>
+                {messageValue.creator.name} 修改了原项目名 「{messageValue.content.rela_data}」为「{jumpToBoard}」名称。
+              </div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -87,6 +133,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了项目描述 为「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -95,7 +153,19 @@ export default class InitialNews extends React.Component {
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -104,7 +174,19 @@ export default class InitialNews extends React.Component {
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 退出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 退出了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -120,7 +202,19 @@ export default class InitialNews extends React.Component {
                   route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data && messageValue.content.rela_data.id}`
                 }
               })}>
-              {messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」#{jumpToBoard} #{jumpToProcess} #{messageValue.content.flow_node_instance.name}</div>
+              {messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」{jumpToBoard} {jumpToProcess} {messageValue.content.flow_node_instance.name}</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -135,6 +229,18 @@ export default class InitialNews extends React.Component {
                     route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flowInstance && messageValue.content.flowInstance.id}`
                   }
                 })}>{messageValue.content && messageValue.content.flowInstance && messageValue.content.flowInstance.name}</span>}」中 {messageValue.title}</div>
+                <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
                 <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
               </div>
             )
@@ -143,7 +249,21 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>
+                {messageValue.creator.name} 删除了「{jumpToBoard}」
+              </div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -152,7 +272,19 @@ export default class InitialNews extends React.Component {
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 邀请「{messageValue.content.rela_users}」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 邀请「{messageValue.content.rela_users}」加入了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -161,6 +293,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 新增了关联内容「{messageValue.content.link_name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -169,6 +313,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移除了关联内容「{messageValue.content.link_name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -177,6 +333,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了关联内容「{messageValue.content.link_name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -186,7 +354,19 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{ messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{ messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -197,8 +377,19 @@ export default class InitialNews extends React.Component {
            <div className={NewsListStyle.news_3}>
              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了{currentNounPlanFilterName(TASKS)}</div>
              <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-             <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-             <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+             <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+             <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
           </div>
           )
@@ -209,8 +400,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了子{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -221,8 +423,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 更新了{currentNounPlanFilterName(TASKS)}信息</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -233,8 +446,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -245,8 +469,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 完成了{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -257,8 +492,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 取消完成{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -269,8 +515,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -281,8 +538,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改卡片名称为{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -293,8 +561,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了开始时间在{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -305,8 +584,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改结束时间在{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -317,8 +607,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -329,8 +630,18 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 把{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
               <div className={NewsListStyle.news_3_text}>指派给 {messageValue.content.rela_data && messageValue.content.rela_data.name}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+              {
+                is_show_org_name && (
+                  <div className={NewsListStyle.news_3_orgName}>
+                    {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                    <img src={double_right} alt="" />
+                  </div>
+                )
+              }
+              {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
+              <div className={NewsListStyle.news_3_project}>{jumpToBoard} > </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -342,8 +653,19 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了标签「{messageValue.content.rela_data.name}」</div>
               <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -359,8 +681,19 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3}>
                 <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.content.rela_data.name}」</div>
                 <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
-                <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
-                <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div>
+                <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;>
+              </div>
+                <div className={NewsListStyle.news_3_group}>{messageValue.list_name?messageValue.list_name:'无'}</div>
                 <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
               </div>
             )
@@ -391,6 +724,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -399,7 +744,19 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users}」移出了「{jumpToBoard}」。</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -408,6 +765,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 撤回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -417,6 +786,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 驳回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -427,6 +808,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.content.user.name}</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -436,6 +829,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 上传了文件「{jumpToFile}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -444,6 +849,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 中完成了任务「{messageValue.content.flow_node_instance.name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -453,6 +870,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               {/* 「{messageValue.content.flow_node_instance.name}」 */}
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
@@ -463,6 +892,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>您有一个{currentNounPlanFilterName(FLOWS)}任务待处理</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -473,6 +914,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了文件夹「{messageValue.content.board_folder.name}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -486,6 +939,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 上传了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -495,6 +960,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 更新了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -504,6 +981,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移动文件夹「{messageValue.content.board_folder.name}」到回收站</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -513,6 +1002,18 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{jumpToFile}」到回收站</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -523,7 +1024,7 @@ export default class InitialNews extends React.Component {
           let hideList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if(i>=1){
-              hideList.push([<span>{item.fileName}</span>,<br />])
+              hideList.push([<span>{item.fileName}</span>, <br />])
             } else {
               showList.push(item.fileName)
             }
@@ -536,6 +1037,18 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideList}</div>}>
                 <span className={styles.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
+                <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -546,7 +1059,7 @@ export default class InitialNews extends React.Component {
           let hideCopyList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if(i>=1){
-              hideCopyList.push([<span>{item.fileName}</span>,<br />])
+              hideCopyList.push([<span>{item.fileName}</span>, <br />])
             } else {
               showCopyList.push(item.fileName)
             }
@@ -558,6 +1071,18 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideCopyList}</div>}>
                 <span className={styles.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                <div className={NewsListStyle.news_3_project}>
+                  <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_3_orgName}>
+                        {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                        <img src={double_right} alt="" />
+                      </div>
+                    )
+                  }
+                  {jumpToBoard}&nbsp;
+                </div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
@@ -595,7 +1120,7 @@ export default class InitialNews extends React.Component {
     }
     //评论动态
     const commentNews = (value, parentKey, childrenKey) => {
-      const { content = {}} = value[0]
+      const { content = {}, org_id} = value[0]
       const { board = {}, card = {}, card_list = {} } = content
       const card_name = card['name']
       const card_id = card['id']
@@ -621,14 +1146,25 @@ export default class InitialNews extends React.Component {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
                       }
                     })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}}
-                    onClick={() => this.props.dispatch({
-                      type: 'newsDynamic/routingJump',
-                      payload: {
-                        route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
+                    <div className={NewsListStyle.news_3_project}>
+                      <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                      {
+                        is_show_org_name && (
+                          <div className={NewsListStyle.news_3_orgName}>
+                            {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                            <img src={double_right} alt="" />
+                          </div>
+                        )
                       }
-                    })}>{val.content && val.content.board && val.content.board.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
+                      {<span style={{color: '#1890FF', cursor: 'pointer'}}
+                      onClick={() => this.props.dispatch({
+                        type: 'newsDynamic/routingJump',
+                        payload: {
+                          route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
+                        }
+                      })}>{val.content && val.content.board && val.content.board.name}</span>} > 
+                    </div>
+                    <div className={NewsListStyle.news_3_group}>{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
                 )
@@ -644,14 +1180,24 @@ export default class InitialNews extends React.Component {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
                       }
                     })}>{val.content && val.content.card && val.content.card.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：#{<span style={{color: '#1890FF', cursor: 'pointer'}}
+                    <div className={NewsListStyle.news_3_project}>
+                    <span style={{marginRight: 2, color: '#8C8C8C'}}>#</span>
+                      {
+                        is_show_org_name && (
+                          <div className={NewsListStyle.news_3_orgName}>
+                            {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                            <img src={double_right} alt="" />
+                          </div>
+                        )
+                      }
+                    {<span style={{color: '#1890FF', cursor: 'pointer'}}
                     onClick={() => this.props.dispatch({
                       type: 'newsDynamic/routingJump',
                       payload: {
                         route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
                       }
                     })}>{val.content && val.content.board && val.content.board.name}</span>}</div>
-                    <div className={NewsListStyle.news_3_group}>分组：{val.list_name?val.list_name:'无'}</div>
+                    <div className={NewsListStyle.news_3_group}>{val.list_name?val.list_name:'无'}</div>
                     <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
                   </div>
                 )

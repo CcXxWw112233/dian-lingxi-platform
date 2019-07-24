@@ -40,7 +40,7 @@ class Login extends React.Component {
         }
         let token = e.data.token
         this.props.dispatch({
-          type:getEffectOrReducerByName('wechatLogin'),
+          type: getEffectOrReducerByName('wechatLogin'),
           payload: {
             token
           }
@@ -68,7 +68,7 @@ class Login extends React.Component {
   }
   reloadCode(){
     console.log(window.location)
-    debugger
+    //
   }
   passwordLogin() {
     this.setState({
@@ -157,10 +157,10 @@ class Login extends React.Component {
                   margin: '8px auto 16px',
                   width: '212px',
                   height: '20px',
-                  textAlign:'center',
+                  textAlign: 'center',
                   fontSize: '14px',
-                  fontFamily:'PingFangSC-Regular',
-                  fontWeight:400,
+                  fontFamily: 'PingFangSC-Regular',
+                  fontWeight: 400,
                   color: '#D9D9D9'
                 }}>使用微信二维码登陆</div>
                 <div style={{
@@ -168,11 +168,11 @@ class Login extends React.Component {
                   width: '271px',
                   height: '52px',
                   borderTop: '1px solid #E8E8E8',
-                  textAlign:'center',
+                  textAlign: 'center',
                   lineHeight: '56px',
                   fontSize: '14px',
-                  fontFamily:'PingFangSC-Regular',
-                  fontWeight:400,
+                  fontFamily: 'PingFangSC-Regular',
+                  fontWeight: 400,
                   marginBottom: '30px',
                   color: '#1890FF'
                 }}><span style={{cursor: 'pointer'}} onClick={this.passwordLogin.bind(this)}>密码登陆</span></div>
@@ -249,8 +249,8 @@ class Login extends React.Component {
                 width: '266px',
                 height: '20px',
                 fontSize: '14px',
-                fontFamily:'PingFangSC-Regular',
-                fontWeight:400,
+                fontFamily: 'PingFangSC-Regular',
+                fontWeight: 400,
                 color: '#1890FF'
               }}>
               <div>

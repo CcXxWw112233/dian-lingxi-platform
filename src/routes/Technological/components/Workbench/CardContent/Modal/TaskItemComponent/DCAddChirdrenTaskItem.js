@@ -66,7 +66,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
 
   itemOneClick() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const {  datas:{ drawContent = {}, } } = this.props.model
+    const { datas: { drawContent = {}, } } = this.props.model
     const { card_id, is_realize = '0' } = chirldTaskItemValue
     const obj = {
       card_id,
@@ -78,7 +78,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   //设置子任务负责人组件---------------start
   setList(id) {
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData
     this.props.removeProjectMenbers({board_id, user_id: id})
   }
@@ -103,16 +103,16 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     const { chirldTaskItemValue } = this.props
     const { card_id, executors=[] } = chirldTaskItemValue
     executors[0] = {
-      user_id:'',
+      user_id: '',
       user_name: '',
       avatar: ''
     }
     this.props.removeTaskExecutor({
       card_id,
-      user_id : user_id,
+      user_id: user_id,
     })
     this.setState({
-      ss:1
+      ss: 1
     })
   }
 
@@ -120,7 +120,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     if(!dateString) {
       return false
     }
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     const { chirldTaskItemValue } = this.props
     const { card_id } = chirldTaskItemValue
     chirldTaskItemValue['due_time'] = timeToTimestamp(dateString).toString()
@@ -134,14 +134,14 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     this.props.deleteChirldTask({card_id, chirldDataIndex})
 
 
-    const { datas:{ drawContent = {} } } = this.props.model
+    const { datas: { drawContent = {} } } = this.props.model
     drawContent['child_data'].splice(chirldDataIndex, 1)
     this.props.updateTaskDatas({drawContent})
   }
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const { card_id, card_name, due_time, is_realize = '0' ,executors = []} = chirldTaskItemValue
-    const { datas:{ projectDetailInfoData = {} } } = this.props.model
+    const { card_id, card_name, due_time, is_realize = '0', executors = []} = chirldTaskItemValue
+    const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { localChildTaskName, isInEditTaskName} = this.state
 
@@ -156,43 +156,43 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     }
 
     const imgOrAvatar = (img) => {
-      return  img ? (
+      return img ? (
         <div>
-          <img src={img} style={{width: 16, height: 16,marginRight:8,borderRadius: 16, margin:'0 12px'}} />
+          <img src={img} style={{width: 16, height: 16, marginRight: 8, borderRadius: 16, margin: '0 12px'}} />
         </div>
       ):(
-        <div style={{width: 16, height: 16,marginRight:8,borderRadius: 16, margin:'0 12px',backgroundColor: '#8c8c8c'}}>
+        <div style={{width: 16, height: 16, marginRight: 8, borderRadius: 16, margin: '0 12px', backgroundColor: '#8c8c8c'}}>
           <Avatar size={16} >ss</Avatar>
         </div>
       )
     }
 
     return (
-      <div  className={DrawerContentStyles.taskItem}>
+      <div className={DrawerContentStyles.taskItem}>
         <div key={'1'} className={DrawerContentStyles.item_1} >
           {/*完成*/}
           <div className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
-            <Icon type="check" style={{color: '#FFFFFF',fontSize:12, fontWeight:'bold'}}/>
+            <Icon type="check" style={{color: '#FFFFFF', fontSize: 12, fontWeight: 'bold'}}/>
           </div>
           {/*名称和日期*/}
           <div>
             {!isInEditTaskName?(
-              <div  style={{wordWrap:'break-word', width: 250,paddingTop:2}} onClick = {this.setIsInEditTaskName.bind(this)}>
+              <div style={{wordWrap: 'break-word', width: 250, paddingTop: 2}} onClick = {this.setIsInEditTaskName.bind(this)}>
                {`${localChildTaskName}`}
               </div>
             ):(
               <TextArea value={localChildTaskName}
                      autoFocus
-                        autosize={{minRows:1}}
+                        autosize={{minRows: 1}}
                      size={'small'}
                      onChange={this.localChildTaskNameChange.bind(this)}
                      onPressEnter={this.editTaskNameComplete.bind(this)}
                      onBlur={this.editTaskNameComplete.bind(this)} />
             )}
-          <div style={{color: '#d5d5d5'}}>{due_time? (due_time.indexOf('-') !==-1? due_time : timestampToTimeNormal(due_time,'', true))+ '截止' : ''}</div>
+          <div style={{color: '#d5d5d5'}}>{due_time? (due_time.indexOf('-') !==-1? due_time : timestampToTimeNormal(due_time, '', true))+ '截止' : ''}</div>
           </div>
           {/*cuozuo*/}
-          <div style={{position:'relative', height: 22,display: 'flex', justifyContent: 'align-items'}}>
+          <div style={{position: 'relative', height: 22, display: 'flex', justifyContent: 'align-items'}}>
             <Popconfirm onConfirm={this.deleteConfirm.bind(this, {card_id, chirldDataIndex})} title={'删除该子任务？'}>
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16}}>&#xe70f;</div>
             </Popconfirm>
@@ -202,23 +202,23 @@ export default class DCAddChirdrenTaskItem extends React.Component{
               {executor.user_id? (
                 <Tooltip title={executor.user_name || executor.full_name || '佚名'}>
                   {/*{imgOrAvatar(executor.avatar)}*/}
-                  <Avatar size={16} src={executor.avatar} style={{fontSize: 14,margin: '4px 12px 0 12px'}}>
-                    {(executor.user_name || executor.full_name) ? (executor.user_name || executor.full_name).substring(0,1): '佚' }
+                  <Avatar size={16} src={executor.avatar} style={{fontSize: 14, margin: '4px 12px 0 12px'}}>
+                    {(executor.user_name || executor.full_name) ? (executor.user_name || executor.full_name).substring(0, 1): '佚' }
                     </Avatar>
                 </Tooltip>
               ) : (
                 <div>
                   {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
-                  <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}}>&#xe70c;</div>
+                  <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16, margin: '0 12px', cursor: 'pointer'}}>&#xe70c;</div>
                 </div>
               )}
 
             </Dropdown>
             <div>
               {!due_time?(
-                <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16,marginRight:'12px',cursor: 'pointer'}}>&#xe709;</div>
+                <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16, marginRight: '12px', cursor: 'pointer'}}>&#xe709;</div>
               ):(
-                <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16,marginRight:'12px',cursor: 'pointer'}}>&#xe8e0;</div>
+                <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16, marginRight: '12px', cursor: 'pointer'}}>&#xe8e0;</div>
               )}
             </div>
             <DatePicker
@@ -226,7 +226,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
               placeholder={'选择截止日期'}
               format="YYYY/MM/DD HH:mm"
               showTime={{format: 'HH:mm'}}
-              style={{opacity: 0,height: 16, width: 16,background: '#000000',position: 'absolute',right: 0,zIndex:2}} />
+              style={{opacity: 0, height: 16, width: 16, background: '#000000', position: 'absolute', right: 0, zIndex: 2}} />
           </div>
         </div>
       </div>

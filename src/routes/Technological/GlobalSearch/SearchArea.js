@@ -132,7 +132,7 @@ export default class SearchArea extends React.Component {
       show_match_conditions: bool
     })
   }
-  selectCondition = (val,e) => {
+  selectCondition = (val, e) => {
     e.stopPropagation()
     const that = this
     //用于做点击失焦中间时间差判断显示隐藏-------start

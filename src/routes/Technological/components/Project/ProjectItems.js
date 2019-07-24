@@ -27,11 +27,19 @@ class ProjectItems extends Component {
     addProjectModalVisible: false,
   }
 
-  setAddProjectModalVisible = () => {
+  setAddProjectModalVisible = (data) => {
     const { addProjectModalVisible } = this.state
-    this.setState({
-      addProjectModalVisible: !addProjectModalVisible
-    })
+    const { visible } = data || {}
+    if(data) {
+      this.setState({
+        addProjectModalVisible: visible
+      })
+    } else {
+      this.setState({
+        addProjectModalVisible: !addProjectModalVisible
+      })
+    }
+    
   }
 
   addItem = (e) => {

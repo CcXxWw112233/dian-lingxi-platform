@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment2.less'
-import {timestampToTimeNormal,judgeTimeDiffer, judgeTimeDiffer_ten} from "../../../../../../../utils/util";
+import {timestampToTimeNormal, judgeTimeDiffer, judgeTimeDiffer_ten} from "../../../../../../../utils/util";
 
 const Dragger = Upload.Dragger
 
@@ -23,7 +23,7 @@ export default class CommentListItem extends React.Component {
   }
 
   deleteComment(id) {
-    const { datas:{ filePreviewCurrentFileId }} = this.props.model
+    const { datas: { filePreviewCurrentFileId }} = this.props.model
     this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
     this.props.deleteCommitSet()
   }
@@ -38,17 +38,17 @@ export default class CommentListItem extends React.Component {
   }
   render() {
 
-    const { datas:{ filePreviewCommits = [], cardCommentAll = [] } } = this.props.model
+    const { datas: { filePreviewCommits = [], cardCommentAll = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
       const { full_name, avatar, text, create_time, flag, type } = value
       const pId = value.user_id
-      const { id }  = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
+      const { id } = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={CommentStyles.right}>
             <div>
@@ -66,18 +66,20 @@ export default class CommentListItem extends React.Component {
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {timestampToTimeNormal(create_time,'',true)}
+                {timestampToTimeNormal(create_time, '', true)}
               </div>
-              { pId === id &&  !judgeTimeDiffer_ten(create_time)?<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,value.id)}>
+              { pId === id && !judgeTimeDiffer_ten(create_time)?(
+<div className={CommentStyles.delete} onClick={this.deleteComment.bind(this, value.id)}>
                  删除
-              </div>: ''}
+              </div>
+): ''}
             </div>
           </div>
         </div>
       )
     }
     const filterIssues = (data) => {
-      const { action,create_time } = data
+      const { action, create_time } = data
       let container = ''
       let messageContainer = (<div></div>)
       switch (action) {
@@ -165,7 +167,7 @@ export default class CommentListItem extends React.Component {
             )}
           </div>
         ) : ('')}
-        <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
+        <div onMouseOver={this.boxOnMouseOver.bind(this)}>
           {filePreviewCommits.map((value, key) => {
             if(closeNormal && key > 19) {
               return false

@@ -88,11 +88,11 @@ const Register = (options) => {
                   width: '271px', 
                   height: '52px', 
                   borderTop: '1px solid #E8E8E8',
-                  textAlign:'center',
+                  textAlign: 'center',
                   lineHeight: '56px',
                   fontSize: '14px',
-                  fontFamily:'PingFangSC-Regular',
-                  fontWeight:400,
+                  fontFamily: 'PingFangSC-Regular',
+                  fontWeight: 400,
                   marginBottom: '30px',
                   color: '#1890FF'
                 }}><span style={{cursor: 'pointer'}} onClick={bindAccount}>已有账户,直接绑定</span></div>

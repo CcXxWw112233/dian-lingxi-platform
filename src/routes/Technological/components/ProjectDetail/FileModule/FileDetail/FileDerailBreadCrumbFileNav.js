@@ -132,7 +132,8 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
                 return (
                   <Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this, {value, key})}>
                     <span className={key != breadcrumbList.length - 1 && indexStyles.breadItem}>{value && value.file_name}</span>
-                  </Breadcrumb.Item> )
+                  </Breadcrumb.Item>
+ )
               })}
             </Breadcrumb>
           )}

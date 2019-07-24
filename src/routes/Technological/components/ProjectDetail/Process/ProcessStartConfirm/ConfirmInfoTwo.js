@@ -211,7 +211,8 @@ export default class ConfirmInfoTwo extends React.Component {
                   </div>
                 )}
               </Dropdown>
-            </div>)
+            </div>
+)
           break
         case '3':
           container = (

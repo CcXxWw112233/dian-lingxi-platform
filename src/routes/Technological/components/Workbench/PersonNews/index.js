@@ -245,7 +245,7 @@ export default class PersonNews extends React.Component {
                     route: "/technological/accoutSet"
                   }
                 })
-              }).bind(this)}
+              })}
             >
               {name}
             </div>

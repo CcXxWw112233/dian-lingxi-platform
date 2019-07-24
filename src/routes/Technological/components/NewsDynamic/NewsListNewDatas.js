@@ -6,8 +6,12 @@ import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter} from "../../../../utils/businessFunction";
+import { connect } from 'dva'
 
+@connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
+  currentUserOrganizes, is_show_org_name
+}))
 export default class NewsListNewDatas extends React.Component {
 
   allSetReaded() { //全部标记为已读
@@ -30,24 +34,30 @@ export default class NewsListNewDatas extends React.Component {
       }
     })
   }
+
   render() {
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic, newsList = [] }} = this.props.model
+    const { currentUserOrganizes = [], is_show_org_name } = this.props
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
+        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
+        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
       
       let jumpToFile = (
+        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
+        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
         <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
       // 会议
@@ -347,6 +357,11 @@ export default class NewsListNewDatas extends React.Component {
             messageContain = (
               <div className={NewsListStyle.news_3}>
                 <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.content.rela_data.name}」「{jumpToTask}」</div>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}># {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}&nbsp;&nbsp;>></div>
+                  )
+                }
                 {/* <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
                 <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
                 <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div> */}
@@ -512,7 +527,7 @@ export default class NewsListNewDatas extends React.Component {
           let hideList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if(i>=1){
-              hideList.push([<span>{item.fileName}</span>,<br />])
+              hideList.push([<span>{item.fileName}</span>, <br />])
             } else {
               showList.push(item.fileName)
             }
@@ -535,7 +550,7 @@ export default class NewsListNewDatas extends React.Component {
           let hideCopyList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if(i>=1){
-              hideCopyList.push([<span>{item.fileName}</span>,<br />])
+              hideCopyList.push([<span>{item.fileName}</span>, <br />])
             } else {
               showCopyList.push(item.fileName)
             }
@@ -564,7 +579,7 @@ export default class NewsListNewDatas extends React.Component {
     }
     //项目动态
     const projectNews = (value, key) => {
-      const { content = {}, action, created } = value
+      const { content = {}, action, created, org_id } = value
       const { board = {}, card = {}, card_list = {} } = content
 
       return (
@@ -593,7 +608,7 @@ export default class NewsListNewDatas extends React.Component {
     }
     //任务动态
     const taskNews = (value) =>{
-      const { content = {}} = value[0]
+      const { content = {}, org_id} = value[0]
       const { board = {}, card = {}, card_list = {} } = content
       const card_name = card['name']
       const card_id = card['id']
@@ -610,7 +625,19 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>{currentNounPlanFilterName(PROJECTS)}：{board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}：{board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''} */}
+                  {board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''}
+                </div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -631,7 +658,7 @@ export default class NewsListNewDatas extends React.Component {
     }
     //评论动态
     const commentNews = (value, parentKey, childrenKey) => {
-      const { content = {}} = value[0]
+      const { content = {}, org_id} = value[0]
       const { board = {}, card = {}, card_list = {} } = content
       const card_name = card['name']
       const card_id = card['id']
@@ -649,7 +676,19 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{card_name}</div>
-                <div>{currentNounPlanFilterName(PROJECTS)}：{board_name} <Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}：{board_name} <Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name} */}
+                  {board_name} <Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name}
+                </div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -702,7 +741,7 @@ export default class NewsListNewDatas extends React.Component {
     }
     //流程动态
     const processNews = (value) => {
-      const { content = {}, action} = value
+      const { content = {}, action, org_id} = value
       const { board = {}, flow_instance = {} } = content
       const board_name = board['name']
       const board_id = board['id']
@@ -716,7 +755,19 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{flow_instance['name']}</div>
-                <div>{currentNounPlanFilterName(PROJECTS)}： {board_name}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}： {board_name} */}
+                   {board_name}
+                </div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -731,7 +782,7 @@ export default class NewsListNewDatas extends React.Component {
     }
     //文档动态
     const fileNews = (value, key) => {
-      const { content = {}, action} = value
+      const { content = {}, action, org_id} = value
       const { board = {}, flow_instance = {} } = content
       const board_name = board['name']
       const board_id = board['id']
@@ -745,7 +796,19 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain} </div>
-                <div>{currentNounPlanFilterName(PROJECTS)}： {board_name}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}： {board_name} */}
+                   {board_name}
+                </div>
               </div>
             </div>
             <div className={NewsListStyle.right}>

@@ -247,7 +247,7 @@ export default {
 
               for(let i = 0; i < drawContent['child_data'].length; i++) {
                 if(drawContent['child_data'][i]['card_id'] == child_card_id) {
-                  drawContent['child_data'][i] = {... drawContent['child_data'][i], ...coperateData['child_data'][0]}
+                  drawContent['child_data'][i] = {...drawContent['child_data'][i], ...coperateData['child_data'][0]}
                   break
                 }
               }
@@ -905,7 +905,7 @@ export default {
             } else { //子任务
               for(let i = 0; i < drawContent['child_data'].length; i++) {
                 if(drawContent['child_data'][i]['card_id'] == child_card_id) {
-                  drawContent['child_data'][i] = {... drawContent['child_data'][i], ...coperateData['child_data'][0]}
+                  drawContent['child_data'][i] = {...drawContent['child_data'][i], ...coperateData['child_data'][0]}
                   break
                 }
               }

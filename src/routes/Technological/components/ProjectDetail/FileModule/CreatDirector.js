@@ -22,7 +22,7 @@ export default class CreatDirector extends React.Component {
     filedata_1.shift()
     this.props.addNewFolder({
       board_id,
-      folder_name:  this.state.file_name,
+      folder_name: this.state.file_name,
       parent_id: currentParrentDirectoryId
     })
     this.props.updateDatasFile({fileList, filedata_1, isInAddDirectory: false})
@@ -36,9 +36,9 @@ export default class CreatDirector extends React.Component {
   render () {
     return (
       <div style={{fontSize: 14}}>
-        <Input autoFocus style={{width: 160,height:24}} onChange={this.nameInputChange.bind(this)}/>
-        <Button style={{height:24,marginLeft:8}} type={'primary'} onClick={this.onOk.bind(this)}>确认</Button>
-        <Button style={{marginLeft:8,height:24}} onClick={this.onCancel.bind(this)}>取消</Button>
+        <Input autoFocus style={{width: 160, height: 24}} onChange={this.nameInputChange.bind(this)}/>
+        <Button style={{height: 24, marginLeft: 8}} type={'primary'} onClick={this.onOk.bind(this)}>确认</Button>
+        <Button style={{marginLeft: 8, height: 24}} onClick={this.onCancel.bind(this)}>取消</Button>
       </div>
     )
   }

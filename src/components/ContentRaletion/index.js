@@ -57,8 +57,8 @@ export default class ContentRaletion extends React.Component {
       isInChoose: bool
     })
   }
-  async handleDeleteRelationItem(id){
-      const res = await deleteRelation(id)
+  async handleDeleteRelationItem(data){
+      const res = await deleteRelation(data)
       if(isApiResponseOk(res)) {
         message.success('取消关联成功')
        return this.getRelations()

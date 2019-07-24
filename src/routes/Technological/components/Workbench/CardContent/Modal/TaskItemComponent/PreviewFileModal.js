@@ -39,7 +39,8 @@ class PreviewFileModal extends React.Component {
               <div>
                 <iframe style={{height: 0, width: 0}} src={previewFileSrc}></iframe>
                 当前文件无法预览
-              </div>)
+              </div>
+)
           }
 
         default:

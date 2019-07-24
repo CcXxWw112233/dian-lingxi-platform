@@ -106,7 +106,7 @@ export default class GanttFace extends Component {
       const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
       this.setState({
         searchTimer: setTimeout(function () {
-          that.setGoldDateArr({timestamp,to_right: 'to_right'}) //取有边界日期来做更新日期的基准
+          that.setGoldDateArr({timestamp, to_right: 'to_right'}) //取有边界日期来做更新日期的基准
           that.setScrollPosition({delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth}) //移动到最新视觉
         }, INPUT_CHANGE_SEARCH_TIME)
       })

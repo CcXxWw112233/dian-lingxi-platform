@@ -213,7 +213,7 @@ class FormList extends React.Component {
 
         {/* 确认 */}
         <FormItem>
-          <Button  type="primary" htmlType="submit" style={{width: '100%', height: 40, fontSize: 16}}>立即绑定</Button>
+          <Button type="primary" htmlType="submit" style={{width: '100%', height: 40, fontSize: 16}}>立即绑定</Button>
         </FormItem>
 
 

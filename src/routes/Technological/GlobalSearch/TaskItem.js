@@ -34,7 +34,7 @@ export default class TaskItem extends React.Component {
 
   itemClick(data, e) {
     const { id, board_id } = data;
-    setStorage('board_id', board_id)
+    setBoardIdStorage( board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -68,7 +68,7 @@ export default class TaskItem extends React.Component {
     //   card_id: id,
     //   is_realize: is_realize === "1" ? "0" : "1"
     // };
-    // setStorage('board_id', board_id)
+    // setBoardIdStorage( board_id)
     // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false

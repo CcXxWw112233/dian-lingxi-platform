@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect,  } from 'dva';
-import QueueAnim from  'rc-queue-anim'
+import { connect, } from 'dva';
+import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../../globalset/css/globalClassName.less'
 import { Route, Router, Switch, Link } from 'dva/router'
 import dynamic from "dva/dynamic";

@@ -90,9 +90,9 @@ export default class CommentListItem extends React.Component {
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {timestampToTimeNormal(create_time,'',true)}
+                {timestampToTimeNormal(create_time, '', true)}
               </div>
-              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
+              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this, id)}>
                  删除
               </div>
             </div>

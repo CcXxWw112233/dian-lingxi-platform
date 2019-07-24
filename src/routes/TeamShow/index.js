@@ -92,7 +92,8 @@ const TeamShow = (options) => {
         {/*<HeaderNav {...HeaderNavProps} updateDatas={updateDatas} />*/}
         {
           routes.map(({ path, ...dynamics }, key) =>{
-            return (<Route key={key}
+            return (
+<Route key={key}
                    exact
                    path={path}
                    component={dynamic({

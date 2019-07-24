@@ -27,7 +27,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
   }
   render() {
     const { itemValue = {} } = this.props
-    const { id, name, deadline, is_completed,users = []} = itemValue
+    const { id, name, deadline, is_completed, users = []} = itemValue
 
     return (
       <div className={`${taskItemStyles.taskItem}`}>
@@ -35,11 +35,11 @@ export default class DCAddChirdrenTaskItem extends React.Component{
 
           {/*完成*/}
           <div className={is_completed == '1' ? taskItemStyles.nomalCheckBoxActive: taskItemStyles.nomalCheckBox}>
-            <Icon type="check" style={{color: '#FFFFFF',fontSize: 12, fontWeight: 'bold'}}/>
+            <Icon type="check" style={{color: '#FFFFFF', fontSize: 12, fontWeight: 'bold'}}/>
           </div>
 
           {/*名称*/}
-          <div style={{wordWrap: 'break-word', paddingTop:2}} >
+          <div style={{wordWrap: 'break-word', paddingTop: 2}} >
             {name}
           </div>
           {/*日期*/}

@@ -13,7 +13,7 @@ export default class GroupListHeadItem extends Component {
     e.stopPropagation()
   }
   render () {
-    const { datas: { list_group =[], group_rows = [], ceiHeight,target_scrollLeft }} = this.props.model
+    const { datas: { list_group =[], group_rows = [], ceiHeight, target_scrollLeft }} = this.props.model
     const { itemValue = { }, itemKey } = this.props
     const { list_name, list_id, list_data = [], list_no_time_data = [] } = itemValue
     return (

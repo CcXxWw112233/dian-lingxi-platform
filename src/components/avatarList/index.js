@@ -37,9 +37,9 @@ const AvatarList = (props) => {
     <div className={styles.avatar_list}>
       {
         users.map((value, key) => {
-          const { avatar, name } = value
+          const { avatar, name, id, user_id } = value
           return key < 3 &&(
-            <Avatar size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2),}}>{name}</Avatar>
+            <Avatar key={id || user_id} size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }}>{name}</Avatar>
           )
         })
       }

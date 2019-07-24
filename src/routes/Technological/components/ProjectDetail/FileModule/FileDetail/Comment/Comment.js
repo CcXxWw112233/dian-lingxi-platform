@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
 import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem'
-import  Cookies  from 'js-cookie'
+import Cookies from 'js-cookie'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";
@@ -27,14 +27,14 @@ export default class Comment extends React.Component {
   MentionEditorChange(editorState) {
     this.setState({
       editText: editorState
-    },function () {
+    }, function () {
       this.setState({
         submitButtonDisabled: !!!toString(this.state.editText)
       })
     })
   }
   submitComment(editText) {
-    const { datas:{ projectDetailInfoData = {}, filePreviewCurrentFileId, filePreviewCommitPointNumber  } } = this.props.model
+    const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, filePreviewCommitPointNumber } } = this.props.model
     const { board_id } = projectDetailInfoData
     this.props.addFileCommit({
       board_id,
@@ -51,11 +51,11 @@ export default class Comment extends React.Component {
 
   }
   commentToDynamics(data) {
-    const { datas:{  filePreviewCurrentFileId  } } = this.props.model
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
     this.props.postCommentToDynamics({
       id: filePreviewCurrentFileId,
-      type:"2",
-      content:[data]
+      type: "2",
+      content: [data]
     })
   }
 
@@ -80,7 +80,7 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas:{ projectDetailInfoData = {}, filePreviewCommitPointNumber } } = this.props.model
+    const { datas: { projectDetailInfoData = {}, filePreviewCommitPointNumber } } = this.props.model
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for(let val of data) {
@@ -99,7 +99,7 @@ export default class Comment extends React.Component {
         <CommentListItem {...this.props} point_number={filePreviewCommitPointNumber}/>
         </div>
 
-      <div className={CommentStyles.out}  tabIndex="0" hideFocus="true" onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} style={{outline: 0,}} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out} tabIndex="0" hideFocus="true" onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} style={{outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
           {avatar?(
             <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />

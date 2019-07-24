@@ -7,7 +7,8 @@ import {
   Upload,
   Cascader,
   Tooltip,
-  notification
+  notification,
+  Dropdown
 } from 'antd';
 import styles from './AddTaskModal.less';
 import { connect } from 'dva';
@@ -22,7 +23,8 @@ import DateRangePicker from './../DateRangePicker/index';
 import Cookies from 'js-cookie';
 import {
   checkIsHasPermissionInBoard,
-  setStorage
+  setStorage,
+  setBoardIdStorage
 } from '../../../../../../utils/businessFunction';
 import {
   MESSAGE_DURATION_TIME,
@@ -31,6 +33,9 @@ import {
   PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_TEAM_CARD_CREATE
 } from '../../../../../../globalset/js/constant';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import OrgSearchAndSelect from '@/components/OrgSearchAndSelect'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const taskTypeToName = {
   RESPONSIBLE_TASK: 'Tasks',
@@ -99,6 +104,10 @@ class AddTaskModal extends Component {
     }
     this.state = {
       addTaskTitle: '',
+      selectedOrg: {
+        org_name: '',
+        org_id: '',
+      }, //选择的组织
       currentSelectedProject: getCurrentSelectedProject(
         isUseInGantt,
         projectIdWhenUseInGantt,
@@ -126,7 +135,7 @@ class AddTaskModal extends Component {
     const {
       datas: { projectTabCurrentSelectedProject }
     } = this.props.workbench;
-    setStorage('board_id', projectTabCurrentSelectedProject);
+    setBoardIdStorage( projectTabCurrentSelectedProject);
 
     const { dispatch } = this.props;
     dispatch({
@@ -484,6 +493,28 @@ class AddTaskModal extends Component {
       }
     }
   }
+  // 选择组织
+  renderSelectOrg = () => {
+    const { selectedOrg = {} } = this.state
+    return (
+      <Dropdown
+       overlay={<OrgSearchAndSelect orgSelectedChange={this.orgSelectedChange}/>}>
+        <div className={styles.org_selected_out}>
+          <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe7c6;</div>
+          <div>{selectedOrg.org_name || `选择组织`}</div>
+          <div className={`${globalStyles.authTheme} ${styles.down_logo}`}>&#xe7ee;</div>
+        </div>
+      </Dropdown>
+    )
+  }
+  orgSelectedChange = (selectedOrg = {}) => {
+    // console.log('ssss', selectedOrg)
+    this.setState({
+      selectedOrg,
+      currentSelectedProject: {},
+      currentSelectedProjectGroupListItem: {},
+    })
+  }
   render() {
     const {
       addTaskTitle,
@@ -494,8 +525,10 @@ class AddTaskModal extends Component {
       attachment_fileList,
       currentSelectedFileFolder,
       currentSelectedProjectGroupListItem,
-      isInUploadFile
+      isInUploadFile,
+      selectedOrg = {},
     } = this.state;
+    console.log('sssss',{currentSelectedProject, selectedOrg})
     const {
       projectList,
       addTaskModalVisible,
@@ -577,7 +610,11 @@ class AddTaskModal extends Component {
       },
       headers: {
         Authorization: Cookies.get('Authorization'),
-        refreshToken: Cookies.get('refreshToken')
+        refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({
+          boardId: currentSelectedProject.board_id,
+          orgId: selectedOrg.org_id
+        }),
       },
       beforeUpload(e) {
         if (e.size == 0) {
@@ -669,16 +706,26 @@ class AddTaskModal extends Component {
       }
     };
 
+    //项目是否在所选择的org_内
     //有的项目没有开启目前的内容类型，将其过滤出去
     const filteredNoThatTypeProject = projectList.filter(item => {
+      let board_is_in_selected_org = false //项目是否在所选择的org_内
+      // 如果是全组织的情况下就需要选择， 否则需要先选择组织
+      if(localStorage.getItem('OrganizationId') == '0') {
+         if(item.org_id == selectedOrg.org_id) {
+          board_is_in_selected_org = true
+         }
+      } else {
+        board_is_in_selected_org = true
+      }
       return (
-        item.apps && item.apps.find(i => i.code === taskTypeToName[taskType])
+        item.apps && item.apps.find(i => i.code === taskTypeToName[taskType]) && board_is_in_selected_org
       );
     });
 
     return (
       <Modal
-        visible={addTaskModalVisible}
+        visible={true} //addTaskModalVisible
         // maskClosable={false}
         title={
           // <div style={{ textAlign: "center" }}>{"添加内容" + modalTitle}</div>
@@ -692,6 +739,15 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
+              {/* 选择组织 */}
+              {
+                localStorage.getItem('OrganizationId') == '0' && (
+                <div>
+                 {this.renderSelectOrg()}
+                </div>
+                )
+              }
+              
               {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
               {(isUseInGantt && projectMemberListWhenUseInGantt != '0')? (
                 <div className={styles.groupList__wrapper}>

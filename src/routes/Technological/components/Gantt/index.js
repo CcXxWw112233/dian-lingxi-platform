@@ -83,7 +83,7 @@ class Gantt extends Component{
 
     if(!projectGroupListsIsRequest) {
       const that = this
-      message.info('您所需要的数据正在赶来的路上，请稍候...', 2,function () {
+      message.info('您所需要的数据正在赶来的路上，请稍候...', 2, function () {
         that.getProjectGoupLists()
       })
       return false
@@ -124,7 +124,7 @@ class Gantt extends Component{
 
     const param = {
       start_time: create_start_time,
-      due_time: create_end_time_final_timestamp,//create_end_time,
+      due_time: create_end_time_final_timestamp, //create_end_time,
       users: data['users'],
       name: data['name'],
       type: data['type'],
@@ -143,7 +143,7 @@ class Gantt extends Component{
   }
 
   //修改某一个任务
-  handleChangeCard({card_id,drawContent}) {
+  handleChangeCard({card_id, drawContent}) {
     const { dispatch } = this.props
     const { datas: { list_group = [], projectTabCurrentSelectedProject, current_list_group_id, board_id }} = this.props.model
     const list_group_new = [...list_group]

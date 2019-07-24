@@ -16,7 +16,7 @@ export default class TeamListTypeOne extends React.Component{
           {/*<Icon type="edit" style={{marginRight: 4}}/>编辑*/}
         {/*</div>*/}
         <div className={indexStyles.logo}>
-          <img src={cover_img} style={{height: '80px', width: 'auto',marginTop: 45}}/>
+          <img src={cover_img} style={{height: '80px', width: 'auto', marginTop: 45}}/>
         </div>
         <div className={indexStyles.title}>
           {name}

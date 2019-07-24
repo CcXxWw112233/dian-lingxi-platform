@@ -1,4 +1,5 @@
-import { routerRedux } from "dva/router";
+import { routerRedux } from 'dva/router';
+import { getUserBoxs,getAllBoxs} from '@/services/technological/simplemode'
 
 export default {
     namespace: 'simplemode',
@@ -11,7 +12,10 @@ export default {
         setWapperCenter: false,
         wallpaperSelectModalVisiable: false,
         chatImVisiable: false,
-        workbenchBoxContentWapperModalStyle:{width: '100%'}
+        workbenchBoxContentWapperModalStyle: { width: '100%' },
+        myWorkbenchBoxList: [],//我的盒子列表
+        workbenchBoxList:[],//所有可以选择的盒子列表
+        init: true
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -39,10 +43,22 @@ export default {
         * routingJump({ payload }, { call, put }) {
             const { route } = payload
             yield put(routerRedux.push(route));
-          }
+        },
+        * getBoxs({ payload }, { call, put }) {
+            const myWorkbenchBoxList = yield call(getUserBoxs, {});
+            const workbenchBoxList = yield call(getAllBoxs, {});
+            put({
+                type: 'updateDatas',
+                payload: {
+                    myWorkbenchBoxList: myWorkbenchBoxList,
+                    workbenchBoxList: workbenchBoxList
+                }
+            })
+        }
     },
     reducers: {
         updateDatas(state, action) {
+        
             return {
                 ...state, ...action.payload
             }

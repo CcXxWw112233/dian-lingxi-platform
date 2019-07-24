@@ -27,6 +27,8 @@ import VisitControl from './../../../VisitControl/index'
 import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from "../../../../../../services/technological/project";
 import ZoomPicture from './../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../components/HOC/withBodyClientDimens'
+import InformRemind from '@/components/InformRemind'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 class FileDetailContent extends React.Component {
 
@@ -343,7 +345,7 @@ class FileDetailContent extends React.Component {
       isExpandFrame: !isExpandFrame,
     })
   }
-  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
+  fileDownload({filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc}) {
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -352,7 +354,7 @@ class FileDetailContent extends React.Component {
     if(pdfDownLoadSrc) {
       window.open(pdfDownLoadSrc)
     }else {
-      this.props.fileDownload({ids: filePreviewCurrentId})
+      this.props.fileDownload({ids: filePreviewCurrentId, fileIds: filePreviewCurrentFileId})
     }
   }
   //item操作
@@ -373,7 +375,7 @@ class FileDetailContent extends React.Component {
         if(pdfDownLoadSrc) {
           window.open(pdfDownLoadSrc)
         }else {
-          this.props.fileDownload({ids: file_resource_id})
+          this.props.fileDownload({ids: file_resource_id, fileIds: file_id})
         }
         break
       case '3':
@@ -520,6 +522,7 @@ class FileDetailContent extends React.Component {
     })
   }
   handleVisitControlRemoveContentPrivilege = id => {
+  
     const {file_id, privileges} = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
     removeContentPrivilege({
       content_id: file_id,
@@ -557,8 +560,9 @@ class FileDetailContent extends React.Component {
     this.handleSetContentPrivilege(user_ids, 'read')
   }
   handleSetContentPrivilege = (ids, type, errorText='访问控制添加人员失败，请稍后再试') => {
-    const {file_id, privileges} = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
-    const content_id = file_id
+    //debugger
+    const {version_id, privileges} = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
+    const content_id = version_id
     const content_type = 'file'
     const privilege_code = type
     const user_ids = ids
@@ -663,6 +667,7 @@ class FileDetailContent extends React.Component {
 
   //pdf文件和普通文件区别时做不同地处理预览
   handleUploadPDForElesFilePreview = ({ file_name, id, file_resource_id }) => {
+  
     if(getSubfixName(file_name) == '.pdf') {
       this.props.dispatch({
         type: 'projectDetailFile/getFilePDFInfo',
@@ -681,6 +686,7 @@ class FileDetailContent extends React.Component {
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { projectDetailInfoData={}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewIsRealImage=false } }= this.props.model
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id} = projectDetailInfoData
     const {is_privilege, privileges} = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
 
@@ -885,6 +891,7 @@ class FileDetailContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
@@ -1003,13 +1010,14 @@ class FileDetailContent extends React.Component {
             )}
 
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
+              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc})}>
                 <Icon type="download" />下载
               </Button>
             )}
 
             <span style={{marginLeft: '10px'}}>
           </span>
+          <InformRemind rela_id={board_id} rela_type={'4'} user_remind_info={data} />
           <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
             <VisitControl
                 isPropVisitControl={is_privilege === '0' ? false : true}

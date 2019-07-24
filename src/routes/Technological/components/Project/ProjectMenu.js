@@ -387,7 +387,8 @@ class ProjectMenu extends Component {
             ) : (
               <span>
                 {board_count}
-            </span>)}
+            </span>
+)}
           </div>
         )}
         {isArchived && (

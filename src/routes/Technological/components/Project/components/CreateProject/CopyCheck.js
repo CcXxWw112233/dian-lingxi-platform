@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Checkbox, message } from 'antd'
 import indexStyles from './index.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_FLOW_FLOW_ACCESS,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_FLOWS_FLOW_TEMPLATE
 } from "../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";

@@ -35,7 +35,7 @@ export default class ImChat extends React.Component {
       <div>
         {/*聊天*/}
         {/*${imIframOutVisible === '1'?'': (imIframOutVisible ==='2'? indexStyles.imMessageHide: indexStyles.imMessageShow)}*/}
-        <div id={'imMessage'}  className={`${globalStyles.authTheme} ${indexStyles.imMessage} ${'imclick'}`} onClick={this.setImIframOutVisible.bind(this)}>
+        <div id={'imMessage'} className={`${globalStyles.authTheme} ${indexStyles.imMessage} ${'imclick'}`} onClick={this.setImIframOutVisible.bind(this)}>
           {/*<Icon type="message" />*/}
           &#xe639;
         </div>

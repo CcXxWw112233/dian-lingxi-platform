@@ -101,7 +101,7 @@ export default class Comment extends React.Component {
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text}  onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}

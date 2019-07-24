@@ -7,7 +7,7 @@ import BoardCommunication from './BoardCommunication/index'
 const WorkbenchBoxContentModal = (props) => {
     const { workbenchBoxContentWapperModalStyle } = props;
     console.log(workbenchBoxContentWapperModalStyle);
-    console.log("indexStyles",indexStyles.workbenchBoxContentModalWapper);
+    console.log("indexStyles", indexStyles.workbenchBoxContentModalWapper);
 
     return (
 

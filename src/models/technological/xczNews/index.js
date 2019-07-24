@@ -31,7 +31,7 @@ export default {
     searchList: {}, // 全局搜索的列表
     inputValue: '', // 搜索框的内容
     contentVal: '', // 文本的value值,
-    onSearchButton: false,  // 判断是否点击搜索
+    onSearchButton: false, // 判断是否点击搜索
     moreFlag: true, // 更多的开关
     hotFlag: true, // 热点的开关
     highRiseFlag: true, // 高层的开关
@@ -39,7 +39,7 @@ export default {
     dataBaseFlag: true, // 资料库的开关
     total: 10, // 默认文章的总数
     page_size: 10, // 默认显示10条
-    page_no: 1,  // 默认第一页
+    page_no: 1, // 默认第一页
     defaultObj: {}, // 默认的空对象
     defaultArr: [], // 默认的空数组
     is_onscroll_do_paging: true, // 防抖 true可以滚动加载，false不能滚动加载
@@ -109,7 +109,7 @@ export default {
             payload: {
               articlesList: [],
               defaultArr: [],
-              onSearchButton: false,  // 判断是否点击搜索
+              onSearchButton: false, // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
@@ -130,7 +130,7 @@ export default {
             payload: {
               articlesList: [],
               defaultArr: [],
-              onSearchButton: false,  // 判断是否点击搜索
+              onSearchButton: false, // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
@@ -151,7 +151,7 @@ export default {
             payload: {
               articlesList: [],
               defaultArr: [],
-              onSearchButton: false,  // 判断是否点击搜索
+              onSearchButton: false, // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
@@ -184,7 +184,7 @@ export default {
             payload: {
               articlesList: [],
               defaultArr: [],
-              onSearchButton: false,  // 判断是否点击搜索
+              onSearchButton: false, // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
@@ -212,7 +212,7 @@ export default {
               articlesList: [],
               // searchList: {},
               defaultArr: [],
-              onSearchButton: false,  // 判断是否点击搜索
+              onSearchButton: false, // 判断是否点击搜索
               hotFlag: true, // 热点的开关
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
@@ -330,7 +330,7 @@ export default {
              name: provinceName
          }
          // 将连接起来的新结构放进数组中
-         provinceData.push(tempProvince)  // 把每一个省级名称都添加进去 [{}, {},....]
+         provinceData.push(tempProvince) // 把每一个省级名称都添加进去 [{}, {},....]
          let children = newCityObj[key].child // 取出第二层的市级数据
          // 想要的数据结构 -> [{ proviceName: '北京市', cityData: [{ id: 1, name: '直辖市' }] }]
          for (let index = 0; index < children.length; index++) {
@@ -458,7 +458,7 @@ export default {
       const defaultArr = yield select((state) => getSelectState(state, 'defaultArr'))
       
       const params = {
-        category_ids,keywords, page_size, page_no
+        category_ids, keywords, page_size, page_no
       }
       if(path.indexOf('/technological/xczNews/hot') != -1) {
         params.hotspot_id = hotspot_id

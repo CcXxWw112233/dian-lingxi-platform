@@ -47,7 +47,7 @@ export default class Header extends Component {
         const { dispatch } = this.props
         console.log('sss', value)
         dispatch({
-            type:  "xczNews/updateDatas",
+            type: "xczNews/updateDatas",
             payload: {
                 inputValue: value
             }
@@ -108,7 +108,7 @@ export default class Header extends Component {
                                     value={inputValue}
                                     allowClear={true}
                                     placeholder="请输入"
-                                    style={{ width: 200,height: 32, marginRight: 16 }}
+                                    style={{ width: 200, height: 32, marginRight: 16 }}
                                     onChange={this.onChange}
                                     onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
                                 />

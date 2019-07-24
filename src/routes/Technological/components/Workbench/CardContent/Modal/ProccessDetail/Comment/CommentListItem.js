@@ -23,7 +23,7 @@ export default class CommentListItem extends React.Component {
 
   deleteComment(id, e) {
     e.stopPropagation()
-    const { datas:{ filePreviewCurrentFileId }} = this.props.model
+    const { datas: { filePreviewCurrentFileId }} = this.props.model
     this.props.deleteCommit({id, file_id: filePreviewCurrentFileId, type: '1', point_number: this.props.point_number})
   }
 
@@ -36,7 +36,7 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { datas:{ filePreviewPointNumCommits = [] } } = this.props.model
+    const { datas: { filePreviewPointNumCommits = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -44,7 +44,7 @@ export default class CommentListItem extends React.Component {
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={CommentStyles.right}>
             <div>
@@ -53,9 +53,9 @@ export default class CommentListItem extends React.Component {
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {create_time?timestampToTimeNormal(create_time,'', true):''}
+                {create_time?timestampToTimeNormal(create_time, '', true):''}
               </div>
-              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
+              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this, id)}>
                  删除
               </div>
             </div>
@@ -64,7 +64,7 @@ export default class CommentListItem extends React.Component {
       )
     }
     return (
-      <div className={CommentStyles.commentListItemBox}  tabIndex="0" hideFocus="true" style={{outline: 0,maxHeight:126,overflowY: 'scroll'}}  onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
+      <div className={CommentStyles.commentListItemBox} tabIndex="0" hideFocus="true" style={{outline: 0, maxHeight: 126, overflowY: 'scroll'}} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)}>
         {filePreviewPointNumCommits.length > 20 ?(
           <div className={CommentStyles.commentListItemControl}>
             {closeNormal?(
@@ -78,7 +78,7 @@ export default class CommentListItem extends React.Component {
             )}
           </div>
         ) : ('')}
-        <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
+        <div onMouseOver={this.boxOnMouseOver.bind(this)}>
           {filePreviewPointNumCommits.map((value, key) => {
             if(closeNormal && key > 19) {
               return false

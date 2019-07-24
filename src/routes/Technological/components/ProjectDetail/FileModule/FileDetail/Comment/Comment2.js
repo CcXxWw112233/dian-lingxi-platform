@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip,message } from 'antd'
+import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
 import CommentStyles from './Comment2.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import CommentListItem from './CommentListItem2'
-import  Cookies  from 'js-cookie'
+import Cookies from 'js-cookie'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,PROJECT_TEAM_CARD_COMMENT_PUBLISH,
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";

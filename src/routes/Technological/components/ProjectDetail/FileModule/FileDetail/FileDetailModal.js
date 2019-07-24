@@ -21,7 +21,7 @@ class FileDetailModal extends React.Component {
   }
 
   render() {
-    const { visible  } = this.props;
+    const { visible } = this.props;
 
     const modalTop = 20
 

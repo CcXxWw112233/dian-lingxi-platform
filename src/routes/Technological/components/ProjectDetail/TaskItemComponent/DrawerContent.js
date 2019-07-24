@@ -16,7 +16,7 @@ import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
-  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS
+  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS, CONTENT_DATA_TYPE_CARD
 } from "../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission,
@@ -33,9 +33,12 @@ import ContentRaletion from '../../../../../components/ContentRaletion'
 import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../services/technological/workbench'
 import ShareAndInvite from './../../ShareAndInvite/index'
 import VisitControl from './../../VisitControl/index'
+import InformRemind from '@/components/InformRemind'
 import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
 import {withRouter} from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -632,8 +635,9 @@ class DrawContent extends React.Component {
       this.props.filePreview({id: file_resource_id, file_id})
     }
   }
-  attachmentItemOpera({type, data = {}}, e) {
+  attachmentItemOpera({type, data = {}, card_id}, e) {
     e.stopPropagation()
+    //debugger
     const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
     const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
     if(!attachment_id){
@@ -641,12 +645,13 @@ class DrawContent extends React.Component {
       return
     }
     if(type == 'remove') {
-      this.deleteAttachmentFile(attachment_id)
+      this.deleteAttachmentFile({attachment_id, card_id})
     }else if(type == 'download') {
-      this.props.fileDownload({ids: file_resource_id})
+      this.props.fileDownload({ids: file_resource_id, card_id})
     }
   }
-  deleteAttachmentFile(attachment_id) {
+  deleteAttachmentFile(data) {
+    const { attachment_id } = data;
     const that = this
     const { attachment_fileList } = this.state
     const atta_arr = [...attachment_fileList]
@@ -662,7 +667,8 @@ class DrawContent extends React.Component {
       cancelText: '取消',
       onOk() {
         return new Promise((resolve, reject) => {
-          deleteTaskFile({attachment_id}).then((value) => {
+          deleteTaskFile(data).then((value) => {
+       
             if(value.code !=='0') {
               message.warn('删除失败，请重新删除。1')
               resolve()
@@ -836,7 +842,7 @@ class DrawContent extends React.Component {
     }
     })
 
-    console.log(flag, 'get visitcontrol change')
+    // console.log(flag, 'get visitcontrol change')
   }
   visitControlUpdateCurrentModalData = (obj = {}) => {
     const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
@@ -876,7 +882,7 @@ class DrawContent extends React.Component {
       }
     })
     //设置特权，然后更新卡片详情
-    console.log(ids, 'idddddds')
+    // console.log(ids, 'idddddds')
   }
   handleVisitControlRemoveContentPrivilege = id => {
     const { datas: { drawContent = {}} } = this.props.model
@@ -929,7 +935,7 @@ class DrawContent extends React.Component {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
 
-    console.log(id, type, 'get other person operator type from visitControl.')
+    // console.log(id, type, 'get other person operator type from visitControl.')
   }
 
   //里程碑
@@ -1100,6 +1106,7 @@ class DrawContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({contentDataType: CONTENT_DATA_TYPE_CARD}),
       },
       showUploadList: true, //showUploadList,
       beforeUpload(e) {
@@ -1232,6 +1239,7 @@ class DrawContent extends React.Component {
                 <span style={{marginRight: '10px'}}>
               {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
               </span>
+              <InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} />
               {/* <Dropdown overlay={topRightMenu}> */}
               {drawContent.is_privilege && (
                 <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>
@@ -1550,8 +1558,8 @@ class DrawContent extends React.Component {
                     <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
                     <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
                     <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value})}>&#xe7f1;</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value})}>&#xe70f;</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id})}>&#xe7f1;</div>
+                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id})}>&#xe70f;</div>
                   </div>
                 )
               })}

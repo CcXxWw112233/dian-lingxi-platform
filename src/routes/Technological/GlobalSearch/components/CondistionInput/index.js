@@ -103,7 +103,7 @@ export default class CondistionInput extends React.Component {
       const node = nodeList[i]
       if(node['nodeName'].toLowerCase() == 'div') { //选择的条件块
         let val = node['dataset']['value']
-        const re = new RegExp(splitStingQuot,"gim")
+        const re = new RegExp(splitStingQuot, "gim")
         //解析出来data-set的数据
         val = val.replace(re, '"')
         selected_conditons_arr.push(JSON.parse(val))
@@ -168,7 +168,7 @@ export default class CondistionInput extends React.Component {
     this.set_show_match_conditions(true)
   }
   //选择条件
-  selectCondition = (val,e) => {
+  selectCondition = (val, e) => {
     e.stopPropagation()
     const that = this
     //用于做点击失焦中间时间差判断显示隐藏-------
@@ -205,7 +205,7 @@ export default class CondistionInput extends React.Component {
       match_conditions.map((val, key) => {
         const { id, value, conditions, name } = val
         return (
-          <div className={indexstyles.match_conditions_item}  key={`${id}_${value}`}>
+          <div className={indexstyles.match_conditions_item} key={`${id}_${value}`}>
             <div className={indexstyles.match_conditions_item_title}>{name}</div>
             <div className={indexstyles.match_conditions_item_detail}>
               {

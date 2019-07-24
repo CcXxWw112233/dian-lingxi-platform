@@ -1,5 +1,5 @@
 import { getGlobalSearchConditions, getFixedConditions, getGlobalSearchTypeList, getGlobalSearchResultList } from '../../../services/technological'
-import { selectSearchTypeList, selectDefaultSearchTypeNormal, selectSelectedConditions,selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
+import { selectSearchTypeList, selectDefaultSearchTypeNormal, selectSelectedConditions, selectDefaultSearchType, selectAllTypeResultList, selectPageNumber, selectPageSize, selectSigleTypeResultList, selectSearchInputValue } from './select'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../../globalset/js/constant";

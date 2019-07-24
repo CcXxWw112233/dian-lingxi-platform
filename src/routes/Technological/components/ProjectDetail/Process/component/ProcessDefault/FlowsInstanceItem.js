@@ -71,7 +71,7 @@ export default class FlowsInstanceItem extends Component {
           flow_instance_id: id
         }
       })
-      this.updateListData(due_time_trans,id)
+      this.updateListData(due_time_trans, id)
     }
   }
   datePickerChange = (date, dateString, e) => {

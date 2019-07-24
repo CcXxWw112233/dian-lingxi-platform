@@ -87,7 +87,7 @@ export default class Header extends Component {
         const value = e.target.value
         const { dispatch } = this.props
         dispatch({
-            type:  "xczNews/updateDatas",
+            type: "xczNews/updateDatas",
             payload: {
                 inputValue: value,
                 defaultArr: []
@@ -140,7 +140,7 @@ export default class Header extends Component {
                                     value={inputValue}
                                     allowClear={true}
                                     placeholder="请输入"
-                                    style={{ width: 200,height: 32, marginRight: 16 }}
+                                    style={{ width: 200, height: 32, marginRight: 16 }}
                                     autocomplete="off"
                                     onChange={this.onChange}
                                     onSearch={this.onSearch}

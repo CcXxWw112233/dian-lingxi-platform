@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Breadcrumb } from  'antd'
+import { Breadcrumb } from 'antd'
 import indexStyles from './index.less'
 
 export default class BreadCrumbFileNav extends React.Component {
@@ -21,7 +21,8 @@ export default class BreadCrumbFileNav extends React.Component {
 
     return (
       <div className={indexStyles.BreadCrumbFileNavOut}>
-        {breadcrumbList.length>1 &&  <div className={indexStyles.BreadCrumbFileNavContent}>
+        {breadcrumbList.length>1 && (
+<div className={indexStyles.BreadCrumbFileNavContent}>
           <Breadcrumb
             separator=">"
           >
@@ -31,7 +32,8 @@ export default class BreadCrumbFileNav extends React.Component {
               )
             })}
           </Breadcrumb>
-        </div>}
+        </div>
+)}
       </div>
     )
   }

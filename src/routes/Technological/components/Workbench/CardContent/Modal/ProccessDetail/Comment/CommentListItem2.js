@@ -22,7 +22,7 @@ export default class CommentListItem extends React.Component {
   }
 
   deleteComment(id) {
-    const { datas:{ filePreviewCurrentFileId }} = this.props.model
+    const { datas: { filePreviewCurrentFileId }} = this.props.model
     this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
     this.props.deleteCommitSet()
   }
@@ -33,7 +33,7 @@ export default class CommentListItem extends React.Component {
 
   render() {
 
-    const { datas:{ filePreviewCommits = [] } } = this.props.model
+    const { datas: { filePreviewCommits = [] } } = this.props.model
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -41,7 +41,7 @@ export default class CommentListItem extends React.Component {
       return (
         <div className={CommentStyles.commentListItem}>
           <div className={CommentStyles.left}>
-            <Avatar src={avatar} icon="user" style={{color:'#8c8c8c'}}></Avatar>
+            <Avatar src={avatar} icon="user" style={{color: '#8c8c8c'}}></Avatar>
           </div>
           <div className={CommentStyles.right}>
             <div>
@@ -59,9 +59,9 @@ export default class CommentListItem extends React.Component {
             </div>
             <div className={CommentStyles.bott} >
               <div className={CommentStyles.create_time}>
-                {timestampToTimeNormal(create_time,'',true)}
+                {timestampToTimeNormal(create_time, '', true)}
               </div>
-              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this,id)}>
+              <div className={CommentStyles.delete} onClick={this.deleteComment.bind(this, id)}>
                  删除
               </div>
             </div>
@@ -84,7 +84,7 @@ export default class CommentListItem extends React.Component {
             )}
           </div>
         ) : ('')}
-        <div  onMouseOver={this.boxOnMouseOver.bind(this)}>
+        <div onMouseOver={this.boxOnMouseOver.bind(this)}>
           {filePreviewCommits.map((value, key) => {
             if(closeNormal && key > 19) {
               return false

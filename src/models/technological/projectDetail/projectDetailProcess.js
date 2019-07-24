@@ -453,7 +453,7 @@ export default modelExtend(projectDetail, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -503,7 +503,7 @@ export default modelExtend(projectDetail, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -536,7 +536,7 @@ export default modelExtend(projectDetail, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -569,7 +569,7 @@ export default modelExtend(projectDetail, {
         let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
         yield put({
           type: 'updateDatas',
-          payload:{
+          payload: {
             workFlowComments: r.data
           }
         })
@@ -673,7 +673,7 @@ export default modelExtend(projectDetail, {
           ...r,
           ...(c.id === id?[]:[c])
         ]
-      },[])
+      }, [])
       yield put({
         type: 'updateDatas',
         payload: {

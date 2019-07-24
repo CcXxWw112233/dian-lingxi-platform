@@ -357,21 +357,17 @@ export default class FileDetailContent extends React.Component {
       isShowAll: !this.state.isShowAll
     })
   }
-  deleteComment(id, e) {
+  deleteComment(data, e) {
     e.stopPropagation()
     if(window.location.hash.indexOf('projectDetail')!=-1) {
       this.props.dispatch({
         type: 'projectDetailProcess/deleteWorkFlowComment',
-        payload: {
-          id
-        }
+        payload: data
       })
     } else {
       this.props.dispatch({
         type: 'workbenchDetailProcess/deleteWorkFlowComment',
-        payload: {
-          id
-        }
+        payload: data
       })
     }
   }
@@ -380,7 +376,9 @@ export default class FileDetailContent extends React.Component {
     const { clientHeight, offsetTopDeviation } =this.props
 
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, 
+      filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
+      filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -417,23 +415,23 @@ export default class FileDetailContent extends React.Component {
                 <div>
                   <img style={{width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left'}} src={messageValue.creator.avatar}></img>
                   <div style={{
-                    height:'30px',
-                    fontSize:'12px',
+                    height: '30px',
+                    fontSize: '12px',
 
-                    fontFamily:'PingFangSC-Regular',
+                    fontFamily: 'PingFangSC-Regular',
                     fontWeight: 400,
-                    color:'rgba(140,140,140,1)',
+                    color: 'rgba(140,140,140,1)',
                     display: 'flex',
-                    justifyContent:'center',
+                    justifyContent: 'center',
                     alignItems: 'center',
                     marginLeft: '12px',
                     lineHeight: '17px', }}>{messageValue.creator.name}</div>
                 </div>
                 <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
               </div>
-              <div style={{display: 'flex', justifyContent: 'space-between', margin: '15px 0 15px 55px' ,color: '#595959', fontSize: '14px',fontFamily:'PingFangSC-Regular'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', margin: '15px 0 15px 55px', color: '#595959', fontSize: '14px', fontFamily: 'PingFangSC-Regular'}}>
                 <div>{messageValue.text}</div>
-                {id === messageValue.creator.id && !juge?<div onClick={this.deleteComment.bind(this, messageValue.id)} style={{color: 'red', cursor: 'pointer'}}>删除</div>:''}
+                {id === messageValue.creator.id && !juge?<div onClick={this.deleteComment.bind(this, {id: messageValue.id, flow_instance_id: currentProcessInstanceId})} style={{color: 'red', cursor: 'pointer'}}>删除</div>:''}
               </div>
             </div>
           )

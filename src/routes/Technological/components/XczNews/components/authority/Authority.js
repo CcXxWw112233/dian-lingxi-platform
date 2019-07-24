@@ -19,7 +19,7 @@ export default class Authority extends Component {
             )
         } else {
             return (
-                <SearchArticlesList  { ...{location} }/>
+                <SearchArticlesList { ...{location} }/>
             )
         }
 

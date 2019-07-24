@@ -1,13 +1,41 @@
 //项目归档
-import {REQUEST_DOMAIN_FILE} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { func } from "prop-types";
+
+const createHeaderContentData = (contentType, contentId) => {
+  if (contentType && contentId) {
+    return {
+      BaseInfo: {
+        contentDataType: contentType,
+        contentDataId: contentId
+      }
+    }
+  } else {
+    return {}
+  }
+}
+
+const createHeaderContentDataByFileId = (cardId) => {
+  if (cardId) {
+    return {
+      BaseInfo: {
+        contentDataType: CONTENT_DATA_TYPE_CARD,
+        contentDataId: cardId
+      }
+    }
+  } else {
+    return {}
+  }
+}
+
 
 //文件列表包括文件夹
 export async function getFileList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file`,
     method: 'GET',
+    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
     params,
   });
 }
@@ -17,24 +45,32 @@ export async function fileCopy(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/copy`,
     method: 'PUT',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, data.folder_id),
     data,
   });
 }
 
 //文件下载
 export async function fileDownload(params) {
+  //debugger
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/download`,
     method: 'GET',
-    params,
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+    },
   });
 }
 
 //文件预览
 export async function filePreview(params) {
+
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/preview`,
+    url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
     params,
   });
 }
@@ -191,9 +227,12 @@ export async function fileInfoByUrl_2(params) {
 //获取pdf信息
 export async function getFilePDFInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/pdf/getAnnotationEditUrl/${params.id}`,
+    url: `${REQUEST_DOMAIN_FILE}/file/pdf/getAnnotationEditUrl`,
     method: 'GET',
-    params,
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId'),
+    },
   });
 }
 

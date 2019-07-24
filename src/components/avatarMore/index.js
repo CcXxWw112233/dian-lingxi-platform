@@ -21,8 +21,8 @@ const AvatarMore = ({datas}) => {
   
   const filterAvatar = (arr) => {
     let temp = []
-    for(let i = 0,len = arr.length; i < len; i += 4){
-      temp.push(arr.slice(i,i+4))
+    for(let i = 0, len = arr.length; i < len; i += 4){
+      temp.push(arr.slice(i, i+4))
     }
     return temp.reduce((r, c) => {
       return [
@@ -51,9 +51,9 @@ const AvatarMore = ({datas}) => {
   const content = (
     <div style={{
       width: '100px',
-      minHeight : '50px',
+      minHeight: '50px',
       display: 'flex',
-      width:'100px',
+      width: '100px',
       background: 'rgba(255,255,255,1)',
       boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.15)',
       borderRadius: '4px'

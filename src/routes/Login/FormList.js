@@ -199,9 +199,9 @@ class FormList extends React.Component {
               )}
             </FormItem>
             <img
-              style={{width: 100, height:40, margin: '0 10px', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4}}
+              style={{width: 100, height: 40, margin: '0 10px', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4}}
               src={pic_verify_src}></img>
-            <div style={{color: '#1890FF', cursor: 'pointer', height: '40px', lineHeight: '40px', textAlign:'center'}} onClick={this.changePicVerifySrc}>换一张</div>
+            <div style={{color: '#1890FF', cursor: 'pointer', height: '40px', lineHeight: '40px', textAlign: 'center'}} onClick={this.changePicVerifySrc}>换一张</div>
           </div>
         )}
 

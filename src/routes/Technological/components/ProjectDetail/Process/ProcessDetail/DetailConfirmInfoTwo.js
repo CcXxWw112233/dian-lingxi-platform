@@ -16,6 +16,7 @@ import ContentRaletion from '../../../../../../components/ContentRaletion'
 import {getRelations, JoinRelation} from "../../../../../../services/technological/task";
 import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
 import AvatarComps from '../../../../../../components/avatarMore'
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
@@ -100,7 +101,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       if(!due_time) {
         return
       }
-      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { datas: { processEditDatas = [], projectDetailInfoData = [], currentProcessInstanceId} } = this.props.model
       const { itemKey, dispatch } = this.props
       const { id } = processEditDatas[itemKey]
       processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
@@ -113,7 +114,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
         type: 'projectDetailProcess/setDueTimeInFlowsNode',
         payload: {
           deadline: timeToTimestamp(due_time),
-          flow_node_instance_id: id
+          flow_node_instance_id: id,
+          flow_instance_id: currentProcessInstanceId
         }
       })
     }
@@ -331,7 +333,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
                   )
               })}
                {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
-            </div>)
+            </div>
+)
           break
         case '3':
           container = (
@@ -346,7 +349,8 @@ export default class DetailConfirmInfoTwo extends React.Component {
                   )
               })}
               {assigneesArray.length > 2?(<span style={{color: '#595959'}}><AvatarComps datas={assigneesArray} /></span>): ('') }
-            </div>)
+            </div>
+)
           break
         default:
           container = (<div></div>)
@@ -538,6 +542,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       fileList: this.state.fileList,
       beforeUpload(e) {
@@ -651,7 +656,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
-                <div style={{marginTop:'10px'}} > <Icon type="upload" /> 上传</div>
+                <div style={{marginTop: '10px'}} > <Icon type="upload" /> 上传</div>
               </div>
             </div>
             <div className={indexStyles.ConfirmInfoOut_1_top_right}>

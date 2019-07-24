@@ -140,7 +140,7 @@ export default class RaletionDrop extends React.Component {
 
         const selectedLast = selected[selected.length - 1]
         const linked_board_id = selected[0]['board_id']
-        const linked_app_key = selected[1] && selected[1] ['app_key']
+        const linked_app_key = selected[1] && selected[1]['app_key']
         let content_type = ''
         let parent_content_id = ''
         let parent_or_content_id = ''

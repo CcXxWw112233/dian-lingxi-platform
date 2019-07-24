@@ -165,14 +165,15 @@ export default class Technological extends React.Component {
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
                 routes.map(({ path, ...dynamics }, key) => {
-                  return (<Route key={key}
-                    //exact
-                    path={path}
-                    component={dynamic({
-                      app,
-                      ...dynamics,
-                    })}
-                  />
+                  return (
+                    <Route key={key}
+                      //exact
+                      path={path}
+                      component={dynamic({
+                        app,
+                        ...dynamics,
+                      })}
+                    />
                   )
                 })
               }
@@ -192,7 +193,8 @@ export default class Technological extends React.Component {
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
                 routes.map(({ path, ...dynamics }, key) => {
-                  return (<Route key={key}
+                  return (
+                    <Route key={key}
                     //exact
                     path={path}
                     component={dynamic({
