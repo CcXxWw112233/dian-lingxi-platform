@@ -1,12 +1,11 @@
 import React from 'react'
 import indexstyles from '../index.less'
-import { Icon, Button, notification } from 'antd'
+import { Icon, Button, notification, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
-  setStorage
+  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
 import {connect} from 'dva'
@@ -15,10 +14,12 @@ import {
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 
-@connect(({ workbench }) => ({
+@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
   uploadedFileNotificationIdList:
     workbench.datas.uploadedFileNotificationIdList,
-  uploadedFileList: workbench.datas.uploadedFileList
+  uploadedFileList: workbench.datas.uploadedFileList,
+  projectTabCurrentSelectedProject: workbench.datas.projectTabCurrentSelectedProject,
+  currentUserOrganizes, is_show_org_name, is_all_org
 }))
 class FileItem extends React.Component {
   judgeFileType(fileName) {
@@ -64,10 +65,11 @@ class FileItem extends React.Component {
     }
     return themeCode;
   }
-  gotoBoardDetail({ id, board_id }, e) {
+  gotoBoardDetail({ id, board_id, org_id }, e) {
     stopPropagation(e);
-    setStorage('board_id', board_id);
-    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)) {
+    setBoardIdStorage(board_id)
+
+    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
     }
@@ -88,7 +90,7 @@ class FileItem extends React.Component {
       version_id
     } = data;
 
-    setStorage('board_id', board_id);
+    setBoardIdStorage(board_id)
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
@@ -203,16 +205,19 @@ class FileItem extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.handleNewUploadedFileNotification(nextProps);
   }
+
   render() {
-    const { itemValue = {} } = this.props;
+    const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
+    console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
     const {
       board_id,
+      org_id,
       board_name,
       file_name,
       create_time,
       file_resource_id,
       file_id,
-      id
+      id,
     } = itemValue;
     return (
       <div
@@ -231,14 +236,43 @@ class FileItem extends React.Component {
             dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}
           />
         </div>
-        <div>
+        <div className={indexstyles.file_text}>
           <span className={indexstyles.hoverUnderline}>{file_name}</span>
-          <span
-            style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer' }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
-          >
-            #{board_name}
-          </span>
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
+          <Tooltip placement="topLeft" title={
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
+          }>
+            <div
+                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
+                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+              >
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span className={indexstyles.org_name}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span>
+                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                    </span>
+                  )
+                }
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={indexstyles.ellipsis}>{board_name}</span>
+                  )
+                }
+                
+              </div>
+            </Tooltip>
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>

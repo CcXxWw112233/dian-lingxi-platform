@@ -7,6 +7,7 @@ import {isApiResponseOk} from "../../../utils/handleResponseData";
 import {getRelationsSelectionPre} from "../../../services/technological/task";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {getMilestoneList} from "../../../services/technological/prjectDetail";
+import {setBoardIdStorage} from "../../../utils/businessFunction";
 
 //用于存放工作台公共的数据
 export default modelExtend(technological, {
@@ -76,7 +77,7 @@ export default modelExtend(technological, {
       const { payload = {} } = action
       const { board_id } = payload
       if(board_id) { //用于做权限控制
-        localStorage.setItem('board_id', board_id)
+        setBoardIdStorage(board_id)
       }
       return {
         ...state,

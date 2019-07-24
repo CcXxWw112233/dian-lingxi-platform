@@ -29,6 +29,7 @@ class InviteOthers extends Component {
     const { currentOrgAllMembersList } = props
     this.fetchUsers = debounce(this.fetchUsers, 300)
     this.state = {
+      local_organization_id: this.props._organization_id, //传递进来的orgid
       inputValue: [],
       inputRet: [],
       fetching: false,
@@ -489,11 +490,23 @@ class InviteOthers extends Component {
       })
     }
   }
-  getGroupList = () => {
+  getGroupList = (payload = {}) => {
     const { dispatch } = this.props
+    const { _organization_id } = payload
+    if(!_organization_id || _organization_id == '0') {
+      return
+    }
     dispatch({
       type: 'organizationMember/getGroupList',
-      payload: {}
+      payload: {
+        ...payload
+      }
+    })
+    dispatch({
+      type: 'technological/fetchCurrentOrgAllMembers',
+      payload: {
+        ...payload
+      }
     })
   }
   isValidImgSrc = (srcStr = '') => {
@@ -506,7 +519,25 @@ class InviteOthers extends Component {
     handleInviteMemberReturnResult(selectedMember)
   }
   componentDidMount() {
-    this.getGroupList()
+    const { _organization_id, shouldNotGetGroupInDidMount } = this.props
+    if(!shouldNotGetGroupInDidMount) {
+      this.getGroupList({ 
+        _organization_id
+      })
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    const { _organization_id, currentOrgAllMembersList } = nextProps
+    const { local_organization_id } = this.state
+    if(local_organization_id != _organization_id) {
+      this.setState({
+        local_organization_id: _organization_id
+      })
+      this.getGroupList({_organization_id})
+    }
+    this.setState({
+      membersListToSelect: currentOrgAllMembersList
+    })
   }
   renderWhenNoData = () => {
     return null
@@ -784,7 +815,9 @@ InviteOthers.defaultProps = {
   isShowSubmitBtn: true, //是否显示提交按钮
   handleInviteMemberReturnResult: function() {
     message.info('邀请他人组件， 需要被提供一个回调函数')
-  }
+  },
+  _organization_id: '', //localStorage.getItem('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
+  shouldNotGetGroupInDidMount: false, //false默认，true的时候在componentDidMount 里面做getGroupList请求
 }
 
 export default InviteOthers

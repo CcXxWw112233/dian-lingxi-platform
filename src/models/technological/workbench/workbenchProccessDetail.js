@@ -76,20 +76,20 @@ export default modelExtend(workbench, {
             }
           })
 
-          dispatch({
-            type: 'getProcessTemplateList',
-            payload: {
-              board_id: board_id
-            }
-          })
+          // dispatch({
+          //   type: 'getProcessTemplateList',
+          //   payload: {
+          //     board_id: board_id
+          //   }
+          // })
 
-          dispatch({
-            type: 'getProcessList',
-            payload: {
-              board_id: board_id,
-              type: '1'
-            }
-          })
+          // dispatch({
+          //   type: 'getProcessList',
+          //   payload: {
+          //     board_id: board_id,
+          //     type: '1'
+          //   }
+          // })
 
           if(flow_id) {
             dispatch({

@@ -11,6 +11,7 @@ import {
 } from "../../../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 export default class Header extends React.Component {
   state = {}
@@ -104,6 +105,7 @@ export default class Header extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){

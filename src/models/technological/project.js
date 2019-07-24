@@ -23,18 +23,18 @@ export default {
               collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
             }
           })
-          dispatch({
-            type: 'getProjectList',
-            payload: {
-              type: '1'
-            }
-          })
-          dispatch({
-            type: 'getAppsList',
-            payload: {
-              type: '2'
-            }
-          })
+          // dispatch({
+          //   type: 'getProjectList',
+          //   payload: {
+          //     type: '1'
+          //   }
+          // })
+          // dispatch({
+          //   type: 'getAppsList',
+          //   payload: {
+          //     type: '2'
+          //   }
+          // })
           dispatch({
             type: 'setCurrentSelectedProjectMenuItem',
             payload: {
@@ -207,16 +207,19 @@ export default {
     * addNewProject({ payload }, { select, call, put }) {
       let res = yield call(addNewProject, payload)
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'getProjectList',
-          payload: {
-            type: '1',
-            calback: function () {
-              message.success('添加项目成功', MESSAGE_DURATION_TIME)
-            },
-          }
+        // yield put({
+        //   type: 'getProjectList',
+        //   payload: {
+        //     type: '1',
+        //     calback: function () {
+        //       message.success('添加项目成功', MESSAGE_DURATION_TIME)
+        //     },
+        //   }
+        // })
+        message.success('添加项目成功', MESSAGE_DURATION_TIME)
+        yield put({ //获取全部组织的全部项目
+          type: 'technological/getUserAllOrgsAllBoards',
         })
-
         return yield put({
           type: 'fetchProjectListAndUpdateProjectGroupTree'
         })
@@ -226,8 +229,8 @@ export default {
     },
 
     * collectionProject({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(collectionProject, id)
+      const {org_id, board_id } = payload
+      let res = yield call(collectionProject,  {org_id, board_id })
       if(isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProjectList',
@@ -247,8 +250,8 @@ export default {
     },
 
     * cancelCollection({ payload }, { select, call, put }) {
-      const { id } = payload
-      let res = yield call(cancelCollection, id)
+      const { org_id, board_id } = payload
+      let res = yield call(cancelCollection,  {org_id, board_id })
       if(isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProjectList',

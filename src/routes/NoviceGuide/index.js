@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import GuideDetail from './GuideDetail.js'
+import Boundary from './Boundary'
 import indexStyles from './index.less'
 
 const getEffectOrReducerByName = name => `noviceGuide/${name}`
@@ -37,7 +38,8 @@ const NoviceGuide = (options) => {
   }
   return(
     <div>
-      <GuideDetail {...GuideDetailProps} />
+      {/* <GuideDetail {...GuideDetailProps} /> */}
+      <Boundary />
     </div>
   )
 };

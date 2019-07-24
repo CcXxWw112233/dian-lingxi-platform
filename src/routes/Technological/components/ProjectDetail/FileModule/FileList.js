@@ -50,7 +50,7 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ids: file_resource_id})
+        this.props.fileDownload({ids: file_resource_id, fileIds: file_id })
         break
       case '3':
         if(!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)){
@@ -445,9 +445,10 @@ export default class FileList extends React.Component {
     this.handleSetContentPrivilege(user_ids, 'read')
   }
   handleSetContentPrivilege = (ids, type, errorText='访问控制添加人员失败，请稍后再试') => {
-    const {visitControlModalData: {folder_id, file_id, privileges}} = this.state
+    //debugger
+    const {visitControlModalData: {folder_id, version_id, privileges}} = this.state
     const dataType = this.getVisitControlModalDataType()
-    const content_id = dataType === 'file' ? file_id : folder_id
+    const content_id = dataType === 'file' ? version_id : folder_id
     const content_type = dataType === 'file' ? 'file' : 'folder'
     const privilege_code = type
     const user_ids = ids

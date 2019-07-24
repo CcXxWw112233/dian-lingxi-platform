@@ -1,4 +1,4 @@
-import { getUSerInfo, logout } from '../../services/technological'
+import { getUSerInfo, logout, getUserAllOrgsAllBoards } from '../../services/technological'
 import {
   getOrganizationMemberPermissions,
   changeCurrentOrg,
@@ -21,13 +21,21 @@ import {MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION} from "../../globalset/js/c
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
-import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import {currentNounPlanFilterName, setOrganizationIdStorage} from "../../utils/businessFunction";
 
+// 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
-  state: {},
+  state: {
+    datas: {
+      currentUserOrganizes: [], //用户组织列表
+      is_show_org_name: true, // 是否显示组织名称
+      is_all_org: true, //是否全部组织
+      menuList: [],  // 侧边栏功能导航列表
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(async (location) => {
@@ -35,73 +43,54 @@ export default {
         //头部table key
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              menuList: []
-            }
-          })
+
           dispatch({
             type: 'getMenuList',
             payload: {}
           })
-          if(location.pathname.indexOf('/technological/projectDetail') != -1 || location.pathname.indexOf('/technological/project') != -1 ) {
-            naviHeadTabIndex = 'Projects'
-            await dispatch({
-              type: 'upDateNaviHeadTabIndex',
-            })
-          }else if(location.pathname === '/technological/workbench'){
-            naviHeadTabIndex = 'Workbench'
-            await dispatch({
-              type: 'upDateNaviHeadTabIndex',
-            })
-          }else{
+          // if(location.pathname.indexOf('/technological/projectDetail') != -1 || location.pathname.indexOf('/technological/project') != -1 ) {
+          //   naviHeadTabIndex = 'Projects'
+          //   await dispatch({
+          //     type: 'upDateNaviHeadTabIndex',
+          //   })
+          // }else if(location.pathname === '/technological/workbench'){
+          //   naviHeadTabIndex = 'Workbench'
+          //   await dispatch({
+          //     type: 'upDateNaviHeadTabIndex',
+          //   })
+          // }else{
 
+          // }
+
+          // 如果获取不到组织id就默认存储0
+          if(!localStorage.getItem('OrganizationId')) {
+            setOrganizationIdStorage('0')
           }
 
+          await dispatch({
+            type: 'getUserAllOrgsAllBoards',
+            payload: {}
+          })
 
           //如果cookie存在用户信息，则部请求，反之则请求
           await dispatch({
             type: 'getUSerInfo',
             payload: {}
           })
-          // if(!localStorage.getItem('userInfo')) {
-          //   dispatch({
-          //     type:'getUSerInfo',
-          //     payload: {}
-          //   })
-          // }else {
-          //   const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
-          //   if(current_org) {
-          //     dispatch({
-          //       type:'setcurrentSelectOrganizeByCookiesUSerInfo',
-          //       payload: {}
-          //     })
-          //     dispatch({
-          //       type:'getOrganizationMemberPermissions',
-          //       payload: {}
-          //     })
-          //   }
-          // }
+
 
           //获取当前的用户当前组织的项目列表,
           await dispatch({
             type: 'getCurrentOrgProjectList',
             payload: {}
           })
-          //获取用户当前组织的组织成员
-          await dispatch({
-            type: 'fetchCurrentOrgAllMembers',
-          })
-
-          //获取工作台当前选中的项目诗句(屏蔽)
-          // dispatch({
-          //   type: 'workbench/getBoxList',
-          // })
-          // dispatch({
-          //   type: 'fetchBoxAll',
-          //   payload: {}
-          // })
+          //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
+          if(localStorage.getItem('OrganizationId') != '0') {
+            await dispatch({
+              type: 'fetchCurrentOrgAllMembers',
+            })
+          }
+          
           //查询所在组织列表
           await dispatch({
             type: 'getCurrentUserOrganizes',
@@ -135,84 +124,43 @@ export default {
     },
   },
   effects: {
-    * initiateVideoMeeting({payload}, {call}) {
-        const res = yield call(createMeeting, payload)
-        return res
-    },
-    * upDateNaviHeadTabIndex({ payload }, { select, call, put }) {
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          naviHeadTabIndex
-        }
-      })
-    },
-    * getCurrentOrgProjectList({ payload }, { select, call, put }) {
-      let res = yield call(getProjectList, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            currentOrgProjectList: res.data
-          }
-        })
-      }else{
 
-      }
-    },
-    * fetchCurrentOrgAllMembers(_, {call, put}) {
-      let res = yield call(getCurrentOrgAllMembers)
+    // 获取用户信息
+    * getUSerInfo({ payload }, { select, call, put }) { 
+      
+      const res = yield call(getUSerInfo)
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            currentOrgAllMembersList: res.data.users
-          }
-        })
-      }
-  },
-    //查询用户基本信息，用在更新操作，modelExtend此model的地方调用
-    * onlyGetUserInfo({ payload }, { select, call, put }) {
-      let res = yield call(getUSerInfo, {ss: '1'})
-      if(isApiResponseOk(res)) {
+        const current_org = res.data.current_org || {}//当前选中的组织
+        const current_org_id = current_org.id
+        // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
+        if(current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
+          yield put({
+            type: 'changeCurrentOrg',
+            payload: {
+              org_id: current_org_id
+            }
+          })
+          return
+        } 
+
         yield put({
           type: 'updateDatas',
           payload: {
             userInfo: res.data, //当前用户信息
-          }
-        })
-        //存储
-        localStorage.setItem('userInfo', JSON.stringify(res.data))
-      }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
-
-    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(getUSerInfo, payload)
-      // console.log(res, 'current user info includes origanition info----------------------------------------')
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            userInfo: res.data, //当前用户信息
-            currentSelectOrganize: res.data.current_org || {}//当前选中的组织
+            currentSelectOrganize: current_org
           }
         })
         //当前选中的组织
-        if(res.data.current_org ) {
-          localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
-          yield put({ //  获取当前成员在组织中的权限列表
-             type: 'getUserOrgPermissions',
-             payload: {}
-           })
-          yield put({
-            type: 'getUserBoardPermissions',
-            payload: {
+        localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
 
-            }
-          })
-        }
+        yield put({ //  获取当前成员在组织中的权限列表
+          type: 'getUserOrgPermissions',
+          payload: {}
+        })
+        yield put({
+         type: 'getUserBoardPermissions',
+         payload: {}
+         })
         localStorage.setItem('userInfo', JSON.stringify(res.data))
 
         //组织切换重新加载
@@ -232,31 +180,18 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * setcurrentSelectOrganizeByCookiesUSerInfo({ payload }, { select, call, put }) { //c从cookie中拿到当前组织
-      const { current_org } = JSON.parse(localStorage.getItem('userInfo'))
-      localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          currentSelectOrganize: current_org,
-        }
-      })
-    },
 
-    * logout({ payload }, { select, call, put }) { //提交表单
-      let res = yield call(logout, payload)
+    // 获取和存储全组织的全部项目
+    * getUserAllOrgsAllBoards({ payload }, { select, call, put }) {
+      let res = yield call(getUserAllOrgsAllBoards, payload)
       if(isApiResponseOk(res)) {
-        Cookies.remove('sdktoken')
-        Cookies.remove('uid')
-        Cookies.remove('Authorization')
-        Cookies.remove('userInfo', { path: '' })
-        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
+        localStorage.setItem('userAllOrgsAllBoards', JSON.stringify(res.data))
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    //组织 -----------
+    //组织 ----------- start
     * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
       let res = yield call(getCurrentUserOrganizes, {})
       // console.log(res, 'get current use organization list.+++++++++++++++++++++++++++++++++++')
@@ -291,11 +226,11 @@ export default {
       }
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
-      let res = yield call(changeCurrentOrg, payload)
+      const { org_id } = payload
+      // const org_id = '0'
+      let res = yield call(changeCurrentOrg, { org_id })
       if(isApiResponseOk(res)) {
-        const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
-        Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+        setOrganizationIdStorage(org_id)
         yield put({
           type: 'getUSerInfo',
           payload: {
@@ -388,26 +323,19 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-      //废弃
-    * getOrganizationMemberPermissions({ payload }, { select, call, put }) {
-      let res = yield call(getOrganizationMemberPermissions, payload)
-      if(isApiResponseOk(res)) {
-         yield put({
-           type: 'updateDatas',
-           payload: {
-             organizationMemberPermissions: res.data || [], //组织成员权限列表
-           }
-         })
-        localStorage.setItem('organizationMemberPermissions', JSON.stringify(res.data || []))
-      }else{
-        localStorage.setItem('organizationMemberPermissions', JSON.stringify([]))
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
-    //获取用户的全部组织和全部项目权限
+    //组织 -----------end
+
+    //权限---start获取用户的全部组织和全部项目权限
     * getUserOrgPermissions({ payload }, { select, call, put }) {
-      let res = yield call(getUserOrgPermissions, payload)
+      const res = yield call(getUserOrgPermissions, payload)
       if(isApiResponseOk(res)) {
+        const OrganizationId = localStorage.getItem('OrganizationId')
+        // 全组织的情况下，直接存【组织=》权限】列表
+        if(OrganizationId == '0') {
+          localStorage.setItem('userOrgPermissions', JSON.stringify(res.data))
+          return
+        }
+        // 非全组织的情况下需要过滤出对应的当前选择的组织，获取对应的权限
         const userInfo = localStorage.getItem('userInfo') || '{}'
         const { current_org = {} } = JSON.parse(userInfo)
         const current_org_id = current_org['id']
@@ -432,8 +360,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-
-    //组织 -----------
+    //权限---end
 
     //名词定义------start
     * getCurrentNounPlan({ payload }, { select, call, put }) {
@@ -446,11 +373,21 @@ export default {
     },
     //名词定义------end
 
-    * routingJump({ payload }, { call, put }) {
-      const { route } = payload
-      yield put(routerRedux.push(route));
+
+    * logout({ payload }, { select, call, put }) { //提交表单
+      let res = yield call(logout, payload)
+      if(isApiResponseOk(res)) {
+        Cookies.remove('sdktoken')
+        Cookies.remove('uid')
+        Cookies.remove('Authorization')
+        Cookies.remove('userInfo', { path: '' })
+        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
     },
 
+    // 侧边栏功能导航列表
     * getMenuList({payload}, {call, put}) {
       let res = yield call(getMenuList, payload)
       // console.log('this is model', res)
@@ -460,7 +397,52 @@ export default {
           menuList: res.data
         }
       })
-    }
+    },
+     // 左侧导航栏
+    * upDateNaviHeadTabIndex({ payload }, { select, call, put }) {
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          naviHeadTabIndex
+        }
+      })
+    },
+
+    // 视频会议集成---start
+    * initiateVideoMeeting({payload}, {call}) {
+      const res = yield call(createMeeting, payload)
+      return res
+    },
+    * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+      let res = yield call(getProjectList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgProjectList: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * fetchCurrentOrgAllMembers({ payload }, {call, put}) {
+      let res = yield call(getCurrentOrgAllMembers, {...payload})
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgAllMembersList: res.data.users
+          }
+        })
+      }
+    },
+    ///视频会议集成end
+
+    * routingJump({ payload }, { call, put }) {
+      const { route } = payload
+      yield put(routerRedux.push(route));
+    },
   },
 
   reducers: {

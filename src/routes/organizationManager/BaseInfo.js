@@ -9,6 +9,8 @@ import {
 import Cookies from 'js-cookie'
 import {validateEmail, validateEmailSuffix} from "../../utils/verify";
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../utils/businessFunction";
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+
 const RadioGroup = Radio.Group;
 //
 export default class BaseInfo extends React.Component {
@@ -107,6 +109,7 @@ export default class BaseInfo extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){

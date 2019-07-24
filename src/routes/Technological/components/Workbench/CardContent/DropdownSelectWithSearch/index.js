@@ -14,9 +14,12 @@ import {
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermission,
-  setStorage
+  setStorage,
+  setBoardIdStorage
 } from '../../../../../../utils/businessFunction';
 import { message } from 'antd/lib/index';
+import CreateProject from './../../../Project/components/CreateProject/index';
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 let cx = classNames.bind(styles);
 
@@ -64,7 +67,7 @@ class DropdownSelectWithSearch extends Component {
       return;
     }
     const { board_id } = item;
-    setStorage('board_id', board_id);
+    setBoardIdStorage( board_id);
     handleSelectedItem(item);
     this.setState({
       inputValue: '',
@@ -106,6 +109,7 @@ class DropdownSelectWithSearch extends Component {
                 <span className={styles.addNewProject__content_item_icon} />
                 <span className={styles.addNewProject__content_item_title}>
                   新建项目
+                  {/* 该组织无项目 */}
                 </span>
               </p>
             </div>
@@ -120,14 +124,14 @@ class DropdownSelectWithSearch extends Component {
       {
         addNewProjectModalVisible: true
       },
-      () => {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
+      // () => {
+      //   dispatch({
+      //     type: 'project/getAppsList',
+      //     payload: {
+      //       type: '2'
+      //     }
+      //   });
+      // }
     );
   };
   handleSubmitNewProject = data => {
@@ -157,6 +161,12 @@ class DropdownSelectWithSearch extends Component {
     //   type: "modal/hideModal"
     // });
   };
+  setAddProjectModalVisible = () => {
+    const { addNewProjectModalVisible } = this.state
+    this.setState({
+      addNewProjectModalVisible: !addNewProjectModalVisible
+    })
+  }
   componentWillReceiveProps(nextProps) {
     const { list } = nextProps;
     const { filteredList } = this.state;
@@ -174,7 +184,9 @@ class DropdownSelectWithSearch extends Component {
       return (<div></div>)
     }
     if (!list || !list.length) {
-      return <>{this.renderNoContent()}</>;
+      return <>
+      {this.renderNoContent()}
+      </>;
     }
     return (
       <div>
@@ -185,7 +197,7 @@ class DropdownSelectWithSearch extends Component {
             onChange={this.handleInputValueChange}
           />
         )}
-        <div>{this.renderNoContent()}</div>
+        {/* <div>{this.renderNoContent()}</div> */}
         <div className={styles.menuWrapper}>
           <Menu
             defaultSelectedKeys={
@@ -219,7 +231,8 @@ class DropdownSelectWithSearch extends Component {
     return condMap.get(param);
   };
   render() {
-    const { initSearchTitle, selectedItem, project, isShowIcon, isShouldDisableDropdown } = this.props;
+    const { initSearchTitle, selectedItem, project = {}, isShowIcon, isShouldDisableDropdown } = this.props;
+    const { datas: { appsList } } = project
     const { visible, addNewProjectModalVisible } = this.state;
     let titleClassName = cx({
       title: true,
@@ -235,7 +248,18 @@ class DropdownSelectWithSearch extends Component {
             onVisibleChange={this.handleVisibleChange}
           >
             <div className={titleClassName}>
-              <p style={{ marginBottom: 0 }}>
+              <div className={styles.org_selected_out}>
+                {isShowIcon && (
+                  <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe60a;</div>
+                )}
+                <div>
+                  {selectedItem && selectedItem.board_name
+                        ? selectedItem.board_name
+                        : initSearchTitle}
+                </div>
+                <div className={`${globalStyles.authTheme} ${styles.down_logo}`}>&#xe7ee;</div>
+              </div>
+              {/* <p style={{ marginBottom: 0 }}>
                 {isShowIcon ? <span /> : <span style={{ display: 'none' }} />}
                 <Tooltip
                   title={
@@ -259,12 +283,11 @@ class DropdownSelectWithSearch extends Component {
                   </span>
                 </Tooltip>
                 <span />
-                {/*{!isShouldDisableDropdown && <span />}*/}
-              </p>
+              </p> */}
             </div>
           </Dropdown>
         )}
-        {addNewProjectModalVisible && (
+        {/* {addNewProjectModalVisible && (
           <AddModalFormWithExplicitProps
             addNewProjectModalVisible={addNewProjectModalVisible}
             key="1"
@@ -272,6 +295,14 @@ class DropdownSelectWithSearch extends Component {
             showModal={this.showModal}
             project={project}
             handleSubmitNewProject={this.handleSubmitNewProject}
+          />
+        )} */}
+        {addNewProjectModalVisible && (
+          <CreateProject
+            setAddProjectModalVisible={this.setAddProjectModalVisible}
+            addProjectModalVisible={addNewProjectModalVisible}
+            _organization_id={this.props._organization_id}
+            addNewProject={this.handleSubmitNewProject}
           />
         )}
       </div>

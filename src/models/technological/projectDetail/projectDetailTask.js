@@ -95,6 +95,7 @@ export default modelExtend(projectDetail, {
             //     id: card_id
             //   }
             // })
+            
           } else {
             dispatch({
               type: 'getTaskGroupList',

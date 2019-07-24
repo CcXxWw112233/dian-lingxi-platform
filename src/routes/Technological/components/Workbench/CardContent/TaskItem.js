@@ -3,10 +3,20 @@ import indexstyles from "../index.less";
 import { Icon, Tooltip} from "antd";
 import Cookies from "js-cookie";
 import { timestampToTimeNormal2 } from './../../../../../utils/util'
-import { checkIsHasPermissionInBoard, setStorage, checkIsHasPermission } from './../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
 import {message} from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
+import {setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../../../utils/businessFunction";
+import { connect } from 'dva'
 
+@connect((
+  { 
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }, 
+    workbench: { datas: { projectTabCurrentSelectedProject } }
+  },
+) => ({
+  currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org
+}))
 export default class TaskItem extends React.Component {
   itemOneClick(e) {
     e.stopPropagation();
@@ -19,7 +29,7 @@ export default class TaskItem extends React.Component {
       card_id: id,
       is_realize: is_realize === "1" ? "0" : "1"
     };
-    setStorage('board_id', board_id)
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -28,10 +38,10 @@ export default class TaskItem extends React.Component {
     this.props.updateDatas({ responsibleTaskList });
     this.props.completeTask(obj);
   }
-  gotoBoardDetail({ id, board_id }, e) {
+  gotoBoardDetail({ id, board_id, org_id }, e) {
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
-    setStorage('board_id', board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    setBoardIdStorage(board_id)
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -41,7 +51,7 @@ export default class TaskItem extends React.Component {
   }
   itemClick(data, e) {
     const { id, board_id } = data;
-    setStorage('board_id', board_id)
+    setBoardIdStorage(board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -57,9 +67,16 @@ export default class TaskItem extends React.Component {
       }
     })
   }
+
+  componentDidMount() {
+    const { projectTabCurrentSelectedProject } = this.props
+    // console.log(projectTabCurrentSelectedProject, 'sss')
+  }
+
+
   render() {
-    const { itemValue = {}, isUsedInWorkbench } = this.props;
-    const { is_realize, board_id, board_name, name, id } = itemValue;
+    const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org} = this.props;
+    const { org_id, is_realize, board_id, board_name, name, id } = itemValue;
 
     //父级任务
     let parentCards = [];
@@ -103,8 +120,9 @@ export default class TaskItem extends React.Component {
         >
           <Tooltip title={name}>
           <div
-            className={indexstyles.taskItem__workbench_content_title}
+            className={`${indexstyles.taskItem__workbench_content_title} ${indexstyles.ellipsis}`}
             style={{
+              maxWidth: 100,
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
             onClick={this.itemClick.bind(this, { id, board_id })}
@@ -113,27 +131,53 @@ export default class TaskItem extends React.Component {
           </div>
           </Tooltip>
           <div className={indexstyles.taskItem__workbench_content_hier}>
-          {parentCards.map((value, key) => {
-            const { name, id, board_id } = value;
-            return (
-              <span
-                style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
-                key={key}
-                onClick={this.itemClick.bind(this, { id, board_id })}
-              >{`< ${name}`}</span>
-            );
-          })}
+            {parentCards.map((value, key) => {
+              const { name, id, board_id } = value;
+              return (
+                <span
+                  style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
+                  key={key}
+                  onClick={this.itemClick.bind(this, { id, board_id })}
+                >{`< ${name}`}</span>
+              );
+            })}
           </div>
-          <Tooltip title={board_name}>
-          <div
-          className={indexstyles.taskItem__workbench_content_projectname}
-            style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
-          >
-            #{board_name}
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
+          <Tooltip title={
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
+          }>
+            <div
+              className={indexstyles.taskItem__workbench_content_projectname}
+                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', textDecoration: is_realize === "1" ? "line-through" : "none" }}
+                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+              >
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span className={indexstyles.org_name}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span>
+                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                    </span>
+                  )
+                }
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={indexstyles.board_name}>{board_name}</span>
+                  )
+                }
+              </div>
+            </Tooltip>
           </div>
-          </Tooltip>
-        </div>
         <span className={indexstyles.taskItem__workbench_time}>
           {DateNoTimeStr}
         </span>
@@ -179,7 +223,7 @@ export default class TaskItem extends React.Component {
           })}
           <span
             style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id })}
+            onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
           >
             #{board_name}
           </span>

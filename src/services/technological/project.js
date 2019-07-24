@@ -71,6 +71,9 @@ export async function getProjectGroupSearchTree() {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
     method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+    }
   })
 }
 
@@ -86,16 +89,20 @@ export async function getCurrentProjectGroupProjectList(params) {
     params: {
       group_id,
       keyword,
-      org_id
+      org_id,
+      _organization_id: org_id
     }
   })
 }
 
 //获取项目分组树
-export async function getProjectGroupTree() {
+export async function getProjectGroupTree(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
@@ -190,12 +197,15 @@ export async function archivedProject(data) {
 }
 
 //取消收藏
-export async function cancelCollection(id) {
+export async function cancelCollection({org_id, board_id}) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${board_id}`,
     method: 'DELETE',
+    headers: {
+      OrganizationId: org_id
+    },
     data: {
-      id
+      id: board_id
     }
   });
 }
@@ -230,12 +240,13 @@ export async function quitProject(data) {
 }
 
 // 收藏项目
-export async function collectionProject(id) {
+export async function collectionProject({org_id, board_id}) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/star/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
     method: 'POST',
+    headers: { OrganizationId: org_id },
     data: {
-      id
+      id: board_id
     }
   }, { isNotLoading: true });
 }

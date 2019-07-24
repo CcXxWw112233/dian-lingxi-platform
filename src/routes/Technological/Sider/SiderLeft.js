@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Layout, Menu, Dropdown} from 'antd';
+import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal} from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
@@ -12,27 +12,40 @@ import {
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
+import NotificationSettingsModal from './comonent/notificationSettings/NotificationSettingsModal'
 import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
+import { connect, } from 'dva';
+import hobbyImg from '@/assets/sider_left/smile.png'
 
 const { Sider } = Layout;
+const { SubMenu  } = Menu;
 
+@connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
   state={
     collapsed: true,
     createOrganizationVisable: false,
-    ShowAddMenberModalVisibile: false,
+    ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
+    NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
+    is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
   }
   componentDidMount() {
-    // this.props.getMenuList()
+
   }
   setCollapsed(collapsed) {
     this.setState({
-      collapsed: collapsed
+      collapsed
     })
   }
   routingJump(route) {
-    this.props.routingJump(route)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/routingJump',
+      payload: {
+        route
+      }
+    })
   }
   menuClick({ key, code }) {
     const { dispatch } = this.props
@@ -66,13 +79,21 @@ export default class SiderLeft extends React.Component {
       default:
         break
     }
-    this.props.routingJump(`/technological/${route}`)
+    this.routingJump(`/technological/${route}`)
   }
 
   //创建或加入组织
   setCreateOrgnizationOModalVisable() {
     this.setState({
       createOrganizationVisable: !this.state.createOrganizationVisable
+    })
+  }
+
+  // 显示通知设置
+  setNotificationSettingsModalVisible() {
+    const { NotificationSettingsModalVisible } = this.state
+    this.setState({
+      NotificationSettingsModalVisible: !NotificationSettingsModalVisible
     })
   }
 
@@ -85,37 +106,121 @@ export default class SiderLeft extends React.Component {
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
+
   addMembers(data) {
     const { users } = data
-    const { datas = {} } = this.props.model
-    const { currentSelectOrganize = {} } = datas
+    const { currentSelectOrganize = {}, dispatch } = this.props
     const { id } = currentSelectOrganize
-    this.props.inviteJoinOrganization({
-      members: users,
-      org_id: id
+    dispatch({
+      type: 'technological/inviteJoinOrganization',
+      payload: {
+        members: users,
+        org_id: id
+      }
     })
   }
 
-  setCreateOrgnizationOModalVisable() {
-    this.setState({
-      createOrganizationVisable: !this.state.createOrganizationVisable
-    })
-  }
+  // 切换组织的点击事件
   handleOrgListMenuClick = (e) => {
+    // console.log(e, 'ssss')
     const { key } = e
-    if('10' == key) {
-      this.setCreateOrgnizationOModalVisable()
-      return
+    const { is_disabled } = this.state
+    const { currentUserOrganizes = [] } = this.props
+    const { dispatch, is_show_org_name } = this.props
+    //是否拥有查看成员入口
+    const isHasMemberView = () => {
+      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     }
-    const { datas: {currentUserOrganizes = []}} = this.props.model
-    for(let val of currentUserOrganizes) {
-      if(key === val['id']){
-        Cookies.set('org_id', val.id, {expires: 30, path: ''})
-        localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
-        this.props.updateDatas({currentSelectOrganize: val})
-        this.props.changeCurrentOrg({org_id: val.id})
-        break
+
+    //是否拥有管理后台入口
+    const isHasManagerBack = () => {
+      let flag = false
+      if(
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+      ) {
+        flag = true
       }
+      return flag
+    }
+
+    switch (key) {
+      case '24': // 匹配团队成员
+          isHasMemberView() && this.routingJump('/technological/organizationMember')
+          break
+      case '23': // 匹配成员管理后台
+          isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        break
+      case '22': // 匹配邀请成员加入弹框显示
+          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
+        break
+      case '20': // 匹配用户设置
+        this.routingJump('/technological/accoutSet')
+        break
+      case 'subShowOrgName':
+        // console.log('sss', 2222)
+        this.handleShowAllOrg
+        break
+      case 'subInfoSet':
+        this.setNotificationSettingsModalVisible()
+        break
+      case '10': // 创建或加入新组织
+          this.setCreateOrgnizationOModalVisable()
+        break
+      case '0': // 匹配全部组织
+          this.setState({
+            is_disabled: false
+          })
+          localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
+          dispatch({
+            type: 'technological/changeCurrentOrg',
+            payload: {
+              org_id: '0'
+            }
+          })
+          dispatch({
+            type: 'technological/updateDatas',
+            payload: {
+              currentSelectOrganize: {},
+              is_all_org: true,
+              is_show_org_name: is_show_org_name ? true : false,
+            }
+          })
+          
+        break
+      default: // 其他组织的切换
+      // console.log('sss', 11111)
+        this.setState({
+          is_disabled: true
+        })
+       for(let val of currentUserOrganizes) {
+         if(key === val['id']){
+           localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
+           dispatch({
+             type: 'technological/updateDatas',
+             payload: {
+               currentSelectOrganize: val
+             }
+           })
+           dispatch({
+             type: 'technological/changeCurrentOrg',
+             payload: {
+               org_id: val.id
+             }
+           })
+           break
+         }
+       }
+       dispatch({
+        type: 'technological/updateDatas',
+        payload: {
+          is_all_org: false,
+          is_show_org_name: is_show_org_name ? true : false
+        }
+      })
+       break
     }
   }
 
@@ -129,9 +234,45 @@ export default class SiderLeft extends React.Component {
       }
     })
   }
+
+  // 退出登录的操作
+  logout(e) {
+    e.stopPropagation()
+    const { dispatch } = this.props
+    Modal.confirm({
+      title: '确定退出登录？',
+      okText: '确认',
+      zIndex: 2000,
+      onOk() {
+        dispatch({
+          type: 'technological/logout',
+          payload: {
+
+          }
+        })
+      },
+      cancelText: '取消',
+    });
+
+  }
+
+  // 是否显示全部组织
+  handleShowAllOrg(checked) {
+    const { dispatch, is_show_org_name } = this.props
+    const { is_disabled } = this.state
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        is_show_org_name: !is_show_org_name
+      }
+    })
+  }
+
+
   render() {
+    const { menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
-    this.props.model.datas.menuList && this.props.model.datas.menuList.forEach((item) => {
+    menuList.forEach((item) => {
       if(item.status === '1') {
         temp.push(item)
       }
@@ -159,7 +300,7 @@ export default class SiderLeft extends React.Component {
       ]
     }, [])
 
-    const { collapsed } = this.state
+    const { collapsed, is_disabled } = this.state
     const navArray = [
       {
         theme: '&#xe6f7;',
@@ -174,30 +315,152 @@ export default class SiderLeft extends React.Component {
       ...res
     ]
 
-    const { datas = {} } = this.props.model
-    const { naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    const { current_org={}, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { current_org={}, name, avatar } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo } = currentSelectOrganize
-
+    
     const orgListMenu = (
-      <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} >
-        {currentUserOrganizes.map((value, key) => {
-          const { name, id, identity_type } = value
-          return (
-            <Menu.Item key={id} >
-              {name}
-              {identity_type == '0'? (<span style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6}}>访客</span>) : ('')}
+      <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
+          <Menu subMenuCloseDelay={1} onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
+            
+            {
+              identity_type == '1' && (
+                <Menu.Item key="24">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.team}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
+                      <span className={indexStyles.middle_text}>团队成员</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
+
+            {
+              identity_type == '1' && (
+                <Menu.Item key="23">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.bank}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
+                      <span className={indexStyles.middle_text}>组织管理后台</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
+
+            {
+              identity_type == '1' && (
+                <Menu.Item key="22">
+                  <div className={indexStyles.default_select_setting}>
+                    <div className={indexStyles.addUsers}>
+                      <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
+                      <span className={indexStyles.middle_text}>邀请成员加入</span>
+                    </div>
+                  </div>
+                </Menu.Item>
+              )
+            }
+          
+            {identity_type == '1' && <Menu.Divider />}
+
+            <Menu.Item key="20">
+              <div className={indexStyles.default_select_setting}>
+                <div className={indexStyles.account_setting}>
+                  {
+                    avatar ? <span className={indexStyles.left_img}><img src={avatar} className={indexStyles.avartarImg} /></span> : ''
+                  }
+                  <span className={indexStyles.middle_text}>账户设置</span>
+                  <Tooltip placement="top" title="退出登录">
+                    <div
+                      onClick={ (e) => { this.logout(e) } }
+                      className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
+                  </Tooltip>
+                </div>
+              </div>
             </Menu.Item>
-          )
-        })}
-        <Menu.Item key="10" >
-          <div className={indexStyles.itemDiv} style={{ color: color_4}}>
-            <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
-          </div>
-        </Menu.Item>
-      </Menu>
+
+            <SubMenu
+              key="21"
+              title={
+                <div className={indexStyles.default_select_setting}>
+                  <div className={indexStyles.hobby}>
+                    <img className={`${indexStyles.hobby_img} ${indexStyles.left_img}`} src={hobbyImg} />
+                    <span className={indexStyles.middle_text}>偏好设置</span>
+                    {/* <span><Icon type="right" /></span> */}
+                  </div>
+                </div>
+              }
+            >
+                <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName">
+                  <span>显示组织名称
+                    {
+                      is_show_org_name && is_all_org ? (
+                        <Switch
+                          disabled={is_disabled}
+                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                          defaultChecked={true}  
+                        ></Switch>
+                      ) : (
+                        <Switch
+                          disabled={is_disabled}
+                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          onClick={ (checked) => { this.handleShowAllOrg(checked) } }
+                          defaultChecked={false}  
+                        ></Switch>
+                      )
+                    } 
+                    
+                  </span>
+                </Menu.Item>
+                <Menu.Item key="subInfoSet">
+                  <span>通知设置</span>
+                </Menu.Item>
+                <Menu.Item key="subShowSimple">
+                  <span>
+                    极简模式
+                    <Switch 
+                      style={{ display: 'inline-block', marginLeft: 36 }}
+                      defaultChecked={false}
+                    ></Switch>
+                  </span>
+                </Menu.Item>
+            </SubMenu>
+
+            <Menu.Item key="10" >
+              <div className={indexStyles.itemDiv} style={{ color: color_4}}>
+                <Icon type="plus-circle" theme="outlined" style={{margin: 0, fontSize: 16}}/> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+              </div>
+            </Menu.Item>
+
+            <Menu.Divider />
+          </Menu>
+          <Menu
+            className={`${glabalStyles.global_vertical_scrollbar}`}
+            style={{maxHeight: 200, overflowY: 'auto'}}
+            onClick={this.handleOrgListMenuClick.bind(this)} selectable={true}  mode="vertical" >
+            <Menu.Item key="0" className={indexStyles.org_name}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  <img src={linxiLogo} className={indexStyles.org_img}/>
+                  <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
+                </div>
+            </Menu.Item>
+            {currentUserOrganizes.map((value, key) => {
+                const { name, id, identity_type, logo } = value
+                return (
+                  <Menu.Item key={id} className={indexStyles.org_name} >
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                      <img src={logo || linxiLogo} className={indexStyles.org_img}/>
+                      <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{name}</span>
+                    </div>
+                    {identity_type == '0'? (<span className={indexStyles.middle_bott} style={{display: 'inline-block', backgroundColor:'#e5e5e5', padding:'0 4px', borderRadius:40, marginLeft: 6, position: 'absolute', right: 34, top: 12}}>访客</span>) : ('')}
+                  </Menu.Item>
+                )
+              })}
+          </Menu>
+      </div>
     )
 
     //是否拥有管理后台入口
@@ -220,44 +483,43 @@ export default class SiderLeft extends React.Component {
     }
 
     return (
+      
       <Sider
         trigger={null}
         collapsible
-        onMouseOver={this.setCollapsed.bind(this, false)}
-        onMouseOut={this.setCollapsed.bind(this, true)}
+        onMouseEnter={this.setCollapsed.bind(this, false)}
+        onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
-        <div className={indexStyles.contain_1}>
-          <div className={indexStyles.left}>
-            <img src={logo || linxiLogo} className={indexStyles.left_img}/>
-          </div>
-          <div className={indexStyles.middle}>
-            <div className={indexStyles.middle_top}>{orgnizationName}</div>
-            {identity_type == '1'? (
-              <div className={indexStyles.middle_bott}>
-                {isHasMemberView() && (
-                  <div onClick={this.routingJump.bind(this, '/technological/organizationMember')}>{currentNounPlanFilterName(MEMBERS)}</div>
-                )}
-                {isHasManagerBack() && (
-                  <div onClick={this.routingJump.bind(this, `/organization?nextpath=${window.location.hash.replace('#', '')}`)} >管理后台</div>
-                )}
-                {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && <div onClick={this.setShowAddMenberModalVisibile.bind(this)}>邀请加入</div>}
-            </div>
-            ) : (
-              identity_type=='0'?(
-                <div className={indexStyles.middle_bott}>
-                  访客
-                </div>
-                ):('')
-            )}
 
-          </div>
           <Dropdown overlay={orgListMenu}>
-          <div className={`${indexStyles.right} ${glabalStyles.link_mouse}`}>
-            切换
-          </div>
+            <div className={indexStyles.contain_1} style={{position: 'relative'}}>
+              <div className={indexStyles.left}>
+                <img src={logo || linxiLogo} className={indexStyles.left_img}/>
+              </div>
+              <div className={indexStyles.middle}>
+                <div className={indexStyles.username}>
+                  {name}
+                </div>
+                {
+                  is_show_org_name && (
+                    <div className={indexStyles.middle_top}>
+                      {orgnizationName}
+                    </div>
+                  )
+                }
+                
+              </div>
+              {
+                identity_type == '0' && collapsed == false ? (
+                  <div className={indexStyles.middle_bott} style={{position: 'absolute', top:25,right: 30}}>
+                      访客
+                  </div>
+                ) : ('')
+              }
+            </div>
           </Dropdown>
-        </div>
+
 
         <div className={indexStyles.contain_2}>
           <div className={`${indexStyles.navItem}`} onClick={this.setGlobalSearchModalVisible.bind(this)} >
@@ -278,13 +540,20 @@ export default class SiderLeft extends React.Component {
           })}
         </div>
 
-        <CreateOrganizationModal {...this.props} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
+        <CreateOrganizationModal dispatch={this.props.dispatch} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)}/>
 
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
+        <NotificationSettingsModal dispatch={this.props.dispatch} notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
 
       </Sider>
-
+      
     )
   }
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ technological: { datas: {
+  menuList = [],  naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org
+}} }) {
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org }
 }

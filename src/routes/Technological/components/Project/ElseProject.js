@@ -8,24 +8,31 @@ import SearchTreeModal from './components/SearchTreeModal'
 import NoPermissionUserCard from './../../../../components/NoPermissionUserCard/index'
 import Cookies from 'js-cookie'
 import UserCard from './../../../../components/UserCard/index'
-import {connect} from 'dva'
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard,
   currentNounPlanFilterName, setStorage,
   isHasOrgMemberQueryPermission,
-  isHasOrgTeamBoardEditPermission,
+  isHasOrgTeamBoardEditPermission, setBoardIdStorage,
+  getOrgNameWithOrgIdFilter
 } from "../../../../utils/businessFunction";
 import {
   MEMBERS,
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   ORG_TEAM_BOARD_QUERY, PROJECTS, TASKS, PROJECT_TEAM_BOARD_DELETE
 } from "../../../../globalset/js/constant";
+import {connect} from 'dva'
 
 
 let is_starinit = null
 
-@connect(({}) => ({}))
-class ElseProject extends React.Component{
+@connect((
+  { 
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }, 
+  },
+) => ({
+  currentUserOrganizes, is_show_org_name, is_all_org
+}))
+export default class ElseProject extends React.Component{
   state = {
     ShowAddMenberModalVisibile: false,
     starOpacity: 0.6,
@@ -112,9 +119,10 @@ class ElseProject extends React.Component{
   }
 
   //菜单按钮点击
-  handleMenuClick(board_id, e ) {
+  handleMenuClick( {board_id, org_id}, e ) {
     e.domEvent.stopPropagation();
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
+    setBoardIdStorage(board_id)
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -165,8 +173,9 @@ class ElseProject extends React.Component{
       starOpacity: 0.6
     })
   }
-  starClick(id, e) {
+  starClick({org_id, board_id }, e) {
     e.stopPropagation();
+    setBoardIdStorage(board_id)
     const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo
     this.setState({
@@ -177,9 +186,19 @@ class ElseProject extends React.Component{
         starOpacity: 1
       }, function () {
         if(this.state.isCollection) {
-          this.props.collectionProject(id)
+          dispatch({
+            type: 'project/collectionProject',
+            payload: {
+              org_id, board_id
+            }
+          })
         }else{
-          this.props.cancelCollection(id)
+          dispatch({
+            type: 'project/cancelCollection',
+            payload: {
+              org_id, board_id
+            }
+          })
         }
       })
     })
@@ -206,18 +225,18 @@ class ElseProject extends React.Component{
   onDropdownVisibleChange(visible){
     const { itemDetailInfo = {}} = this.props
     const { board_id} = itemDetailInfo
-    setStorage('board_id', board_id)
+    setBoardIdStorage( board_id)
     this.setState({
       dropdownVisibleChangeValue: visible,
     })
   }
-  projectListItemClick(route, board_id, a) {
+  projectListItemClick({route, board_id, org_id}) {
     //暂时去掉访客限制
-    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY)){
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
-    Cookies.set('board_id', board_id, {expires: 30, path: ''})
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    // Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump(`${route}?board_id=${board_id}`)
   }
   handleRemoveProjectToGroupModalCancel = () => {
@@ -277,8 +296,9 @@ class ElseProject extends React.Component{
   render() {
 
     const { starType, starOpacity, ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, removePojectToGroupModalVisible, ShowAddMenberModalVisibile } = this.state
-    const { itemDetailInfo = {}} = this.props
-    const { data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
+    const { itemDetailInfo = {}, currentUserOrganizes, is_show_org_name, is_all_org} = this.props
+    const { org_id, data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
+    // console.log(getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes), 'sssss')
 
     is_starinit = is_star
 
@@ -294,7 +314,7 @@ class ElseProject extends React.Component{
 
     const menu = (board_id) => {
       return (
-        <Menu onClick={this.handleMenuClick.bind(this, board_id)}>
+        <Menu onClick={this.handleMenuClick.bind(this, {board_id, org_id})}>
           {cunrentUserIsInThisBoard && (
             <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyle.elseProjectMemu}>
@@ -341,24 +361,40 @@ class ElseProject extends React.Component{
       <i className={globalStyles.authTheme}
          onMouseOver={this.starMouseOver.bind(this)}
          onMouseLeave={this.starMouseLeave.bind(this)}
-         onClick={this.starClick.bind(this, board_id)}
+         onClick={this.starClick.bind(this, {org_id, board_id})}
          style={{margin: '0 0 0 8px', opacity: starOpacity, color: '#FAAD14 ', fontSize: 16}}>&#xe70e;</i>
     )
     const starProject = (
       <i className={globalStyles.authTheme}
          onMouseOver={this.starMouseOver.bind(this)}
          onMouseLeave={this.starMouseLeave.bind(this)}
-         onClick={this.starClick.bind(this, board_id)}
+         onClick={this.starClick.bind(this, { org_id, board_id })}
          style={{margin: '0 0 0 8px', opacity: starOpacity, color: '#FAAD14 ', fontSize: 16}}>&#xe6f8;</i>
     )
     return (
       <div>
         <Card style={{position: 'relative', height: 'auto', marginTop: 20}}>
           <div className={indexStyle.listOutmask}></div>
-          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, `/technological/projectDetail`, board_id)}>
+          <div className={indexStyle.listOut} onClick={this.projectListItemClick.bind(this, {route: `/technological/projectDetail`, board_id, org_id})}>
             <div className={indexStyle.left}>
               <div className = {indexStyle.top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
-                <span>{board_name}</span>
+              <span>{board_name}</span>
+              <span
+                  style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex' }}
+                >
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+                    )
+                  }
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span className={indexStyle.org_name}>
+                        {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                      </span>
+                    )
+                  }
+                </span>
                 <span className={indexStyle.nameHoverMenu} >
                   {isInitEntry ? (is_star === '1'? (starProject):(cancelStarProjet)):(isCollection? (starProject):(cancelStarProjet))}
                   {/*<Icon className={indexStyle.star}*/}
@@ -425,4 +461,3 @@ class ElseProject extends React.Component{
   }
 }
 
-export default ElseProject

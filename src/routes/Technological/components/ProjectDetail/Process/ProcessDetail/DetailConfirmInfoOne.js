@@ -50,15 +50,15 @@ export default class DetailConfirmInfoOne extends React.Component {
 
   //截止日期
   datePikerOnOpenChange(bool) {
-    //关闭后
     if(!bool) {
       const { due_time } = this.state
       if(!due_time) {
         return
       }
-      const { datas: { processEditDatas = [], projectDetailInfoData = [] } } = this.props.model
+      const { datas: { processEditDatas = [], projectDetailInfoData = [], currentProcessInstanceId } } = this.props.model
       const { itemKey, dispatch } = this.props
       const { id } = processEditDatas[itemKey]
+      // const { currentProcessInstanceId } = this.props.projectDetailProcess.datas
       processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(due_time)
       //业务逻辑修改deadline_value作废
       processEditDatas[itemKey]['deadline'] = timeToTimestamp(due_time)
@@ -69,7 +69,8 @@ export default class DetailConfirmInfoOne extends React.Component {
         type: 'projectDetailProcess/setDueTimeInFlowsNode',
         payload: {
           deadline: timeToTimestamp(due_time),
-          flow_node_instance_id: id
+          flow_node_instance_id: id,
+          flow_instance_id: currentProcessInstanceId
         }
       })
     }

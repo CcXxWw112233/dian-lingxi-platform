@@ -18,7 +18,7 @@ import classNames from "classnames/bind";
 import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
-
+import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
 let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;
@@ -595,7 +595,8 @@ class SiderRight extends React.Component {
               ) }
 
             </div>
-            <Popover
+            <VideoMeetingPopoverContent />
+            {/* <Popover
               visible={videoMeetingPopoverVisible}
               placement="leftBottom"
               content={videoMeetingPopoverContent}
@@ -607,7 +608,7 @@ class SiderRight extends React.Component {
                 onMouseEnter={this.handleShowVideoMeeting}
                 onClick={this.handleToggleVideoMeetingPopover}
               />
-            </Popover>
+            </Popover> */}
             {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
             {/*<div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>*/}
             {/*&#xe710;*/}
