@@ -716,7 +716,11 @@ export default modelExtend(projectDetail, {
       const res = yield call(setDueTimeInFlowsInstance, payload)
       // console.log('this is workflowEnd:', res)
       if (isApiResponseOk(res)) {
-        message.success('设置截止日期成功')
+        if(res.data && res.data.remind_code != '0') { //通知提醒专用
+          message.warn(`设置截止日期成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
+        } else {
+          message.success('设置截止日期成功', MESSAGE_DURATION_TIME)
+        }
       }else {
         message.success(res.message)
       }

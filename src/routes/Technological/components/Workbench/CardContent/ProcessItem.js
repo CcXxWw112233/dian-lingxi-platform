@@ -113,7 +113,11 @@ export default class ProcessItem extends React.Component {
           {/* <span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>
             #{this.state.value.board_name}
           </span> */}
-          <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
           <Tooltip placement="topLeft" title={
            is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {this.state.value.board_name}</span>)
             : (<span>{this.state.value.board_name}</span>)
@@ -136,7 +140,11 @@ export default class ProcessItem extends React.Component {
                     </span>
                   )
                 }
-                <span className={indexstyles.ellipsis}>{this.state.value.board_name}</span>
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={indexstyles.ellipsis}>{this.state.value.board_name}</span>
+                  )
+                }
               </span>
             </Tooltip>
         </div>

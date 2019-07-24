@@ -112,7 +112,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList } = this.props;
+    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [] } = this.props;
     const { datas = {} } = project;
     const { appsList = [] } = datas;
 
@@ -120,19 +120,21 @@ class MyWorkbenchBoxs extends Component {
     const menuItemList = this.getMenuItemList(projectList);
     console.log(menuItemList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
+    debugger
     return (
       <div className={indexStyles.mainContentWapper}>
         <div className={indexStyles.projectSelector}>
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
-          {myWorkbenchBoxList.map((item, key) => {
-            <div className={indexStyles.myWorkbenchBox}>
-              <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
-              <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
-
-            </div>
-          })}
+          {
+            myWorkbenchBoxList.map((item, key) => {
+              <div className={indexStyles.myWorkbenchBox}>
+                <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
+                <span className={indexStyles.myWorkbenchBox_title}>项目档案</span>
+              </div>
+            })
+          }
           {/*          
           <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe671;</i><br />

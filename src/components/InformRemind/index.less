@@ -31,19 +31,19 @@
         // padding-bottom: 16px;
         cursor: pointer;
         &:hover {
-            background: palegoldenrod;
+            // background: palegoldenrod;
             .slip_hover {
-                visibility: visible;
+                display: block;
             }
             .overdue {
-                visibility: hidden;
+                display: none;
             }
             .checked {
-                visibility: hidden;
+                display: none;
             }
         }
         .slip_hover {
-            visibility: hidden;
+            display: none;
         }
         .user_info {
             position: absolute;
@@ -63,11 +63,13 @@
         }
     }
     .overdue {
+        top: 16px;
         // display: block;
         color: #FAAD14;
         cursor: pointer;
     }
     .checked {
+        top: 16px;
         // display: block;
         color: #52C41A;
         cursor: pointer;

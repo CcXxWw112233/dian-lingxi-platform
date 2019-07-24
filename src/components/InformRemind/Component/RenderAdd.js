@@ -8,8 +8,8 @@ import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
 
-@connect(({informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [], historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers}}) => ({
-    triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_time_value, setInfoRemindList, message_consumers
+@connect(({informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [], historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers}}) => ({
+    triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers
   }))
 export default class RenderAdd extends Component {
 
@@ -55,6 +55,7 @@ export default class RenderAdd extends Component {
       payload: {
         setInfoRemindList: new_setInfoRemindList,
         remind_trigger: code,
+        remind_edit_type: type,
       }
     })
   }
@@ -125,6 +126,7 @@ export default class RenderAdd extends Component {
         remind_trigger: triggerList[0].type_code,
         remind_time_type: 'm',
         remind_time_value: '1',
+        remind_edit_type: triggerList[0].remind_edit_type
       }
     })
     dispatch({
@@ -138,7 +140,6 @@ export default class RenderAdd extends Component {
 
   // 时间戳转换日期格式
   getdate(timestamp) {
-    // console.log(timestamp, 'lll')
     var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
     var Y, M, D, H, MIN;
     Y = date.getFullYear();
@@ -175,8 +176,22 @@ export default class RenderAdd extends Component {
   /**
    * 成功确定的回调
    */
-  handleDatePickerOk(value) {
-    console.log(value)
+  handleDatePickerOk(date, value) {
+    const { dispatch, setInfoRemindList = [] } = this.props;
+    let new_set_info_list = [...setInfoRemindList]
+    new_set_info_list = new_set_info_list.map(item => {
+      let new_item = item
+      new_item = {...new_item, remind_time_type: 'datetime', remind_time_value: value, is_edit_status: true}
+      return new_item
+    })
+    dispatch({
+      type: 'informRemind/updateDatas',
+      payload: {
+        setInfoRemindList: new_set_info_list,
+        remind_time_type: 'datetime',
+        remind_time_value: value
+      }
+    })
   }
 
   // 用户信息的方法
@@ -184,7 +199,7 @@ export default class RenderAdd extends Component {
       const { dispatch, user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 通知提醒的用户列表的信息
       let new_message = [] // 传递过来的用户信息
-      console.log('sss', e)
+      // console.log('sss', e)
       const { selectedKeys = [] } = e
       new_message = selectedKeys.map(item => {
         for(let val of new_user_remind_info) {
@@ -206,9 +221,21 @@ export default class RenderAdd extends Component {
   render() {
       const {
           triggerList = [], diff_text_term = [], diff_remind_time = [], remind_trigger, remind_time_type, remind_time_value,
-          user_remind_info = [], message_consumers,
+          user_remind_info = [], message_consumers, rela_id, remind_edit_type
       } = this.props;
       const { is_show_date_picker, is_show_other_select } = this.state;
+
+      const button_disable = () => {
+        if(message_consumers && message_consumers.length > 0) {
+          if(remind_trigger == 'userdefined' && (!remind_time_value || remind_time_value.length < 10)) {
+            return true
+          }
+          return false
+        } else {
+          return true
+        }
+      }
+
       return (
           <div className={infoRemindStyle.slip}
           >
@@ -229,19 +256,19 @@ export default class RenderAdd extends Component {
               </Select>
               {/* 显示自定义时间 */}
               {
-                is_show_date_picker && (
+                remind_edit_type == 3 && (
 <DatePicker
                         showTime={true}
-                        defaultValue={ remind_time_value == 1 ? '' : moment(this.getdate(remind_time_value)) }
+                        defaultValue={ remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }
+                        onOk={ (value) => { this.handleDatePickerOk(value, remind_time_value) } }
                         onChange={ (date, dateString) => { this.handleDatePicker(date, dateString) } }
                   />
 )}
               {/* 显示1-60不同的时间段--选择框 */}
               {
-                is_show_other_select && (
+                remind_edit_type == 1 && (
 <Select
                     defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
@@ -259,7 +286,7 @@ export default class RenderAdd extends Component {
               }
               {/* 显示 分钟 小时 天数 的列表--选择框 */}
               {
-                  is_show_other_select && (
+                  remind_edit_type == 1 && (
 <Select
                     defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
@@ -300,7 +327,7 @@ export default class RenderAdd extends Component {
                 </div>
             </div>
               <Button
-                  disabled={message_consumers && message_consumers.length > 0 ? false : true}
+                  disabled={button_disable()}
                   onClick={ () => { this.handleSetInfoRemind() } }
                   className={infoRemindStyle.icon} type="primary">确定</Button>
           </div>

@@ -357,9 +357,13 @@ export default modelExtend(projectDetail, {
             taskGroupList
           }
         })
-        message.success('更新成功', MESSAGE_DURATION_TIME)
+        if(res.data && res.data.remind_code != '0') { //通知提醒专用
+          message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
+        } else {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }
       }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
+        message.error(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -537,10 +541,19 @@ export default modelExtend(projectDetail, {
           payload: {
             id: board_id,
             calback: function () {
-              message.success(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}`: `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
+              // const remind_message_str = res.data && res.data.remind_code !=  '0'? `${res.data.error_msg}`: ''
+              if(res.data && res.data.remind_code != '0') { //通知提醒专用
+                const remind_message_str = `，${res.data.error_msg}`
+                message.warn(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}${remind_message_str}`:
+                 `已将该${currentNounPlanFilterName(TASKS)}设置未完成${remind_message_str}`, MESSAGE_DURATION_TIME)
+              } else {
+                message.success(is_realize === '1'? `已完成该${currentNounPlanFilterName(TASKS)}`: 
+                `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
+              }
             }
           }
         })
+       
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

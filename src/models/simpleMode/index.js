@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getUserBoxs,getAllBoxs} from '@/services/technological/simplemode'
+import { getUserBoxs, getAllBoxs} from '@/services/technological/simplemode'
 
 export default {
     namespace: 'simplemode',
@@ -13,8 +13,8 @@ export default {
         wallpaperSelectModalVisiable: false,
         chatImVisiable: false,
         workbenchBoxContentWapperModalStyle: { width: '100%' },
-        myWorkbenchBoxList: [],//我的盒子列表
-        workbenchBoxList:[],//所有可以选择的盒子列表
+        myWorkbenchBoxList: [], //我的盒子列表
+        workbenchBoxList: [], //所有可以选择的盒子列表
         init: true
     },
     subscriptions: {
@@ -45,9 +45,9 @@ export default {
             yield put(routerRedux.push(route));
         },
         * getBoxs({ payload }, { call, put }) {
-            const myWorkbenchBoxList = yield call(getUserBoxs, {});
-            const workbenchBoxList = yield call(getAllBoxs, {});
-            put({
+            let myWorkbenchBoxList = yield call(getUserBoxs, {});
+            let workbenchBoxList = yield call(getAllBoxs, {});
+            yield put({
                 type: 'updateDatas',
                 payload: {
                     myWorkbenchBoxList: myWorkbenchBoxList,
@@ -58,7 +58,7 @@ export default {
     },
     reducers: {
         updateDatas(state, action) {
-        
+            
             return {
                 ...state, ...action.payload
             }

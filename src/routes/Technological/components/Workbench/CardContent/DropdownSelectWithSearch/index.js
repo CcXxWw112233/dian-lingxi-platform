@@ -124,14 +124,14 @@ class DropdownSelectWithSearch extends Component {
       {
         addNewProjectModalVisible: true
       },
-      () => {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
+      // () => {
+      //   dispatch({
+      //     type: 'project/getAppsList',
+      //     payload: {
+      //       type: '2'
+      //     }
+      //   });
+      // }
     );
   };
   handleSubmitNewProject = data => {
@@ -301,7 +301,7 @@ class DropdownSelectWithSearch extends Component {
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addNewProjectModalVisible}
-            appsList={appsList}
+            _organization_id={this.props._organization_id}
             addNewProject={this.handleSubmitNewProject}
           />
         )}

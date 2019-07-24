@@ -1,6 +1,6 @@
 import React from 'react'
 import indexstyles from '../index.less'
-import { Icon, Button, notification } from 'antd'
+import { Icon, Button, notification, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
@@ -14,11 +14,12 @@ import {
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 
-@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name } } }) => ({
+@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
   uploadedFileNotificationIdList:
     workbench.datas.uploadedFileNotificationIdList,
   uploadedFileList: workbench.datas.uploadedFileList,
-  currentUserOrganizes, is_show_org_name
+  projectTabCurrentSelectedProject: workbench.datas.projectTabCurrentSelectedProject,
+  currentUserOrganizes, is_show_org_name, is_all_org
 }))
 class FileItem extends React.Component {
   judgeFileType(fileName) {
@@ -206,7 +207,8 @@ class FileItem extends React.Component {
   }
 
   render() {
-    const { itemValue = {}, currentUserOrganizes, is_show_org_name } = this.props;
+    const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
+    console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
     const {
       board_id,
       org_id,
@@ -236,13 +238,41 @@ class FileItem extends React.Component {
         </div>
         <div className={indexstyles.file_text}>
           <span className={indexstyles.hoverUnderline}>{file_name}</span>
-          <span
-            style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', display: 'flex' }}
-            onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
-          >
-            #{board_name}
-            
-          </span>
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
+          <Tooltip placement="topLeft" title={
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
+          }>
+            <div
+                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
+                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+              >
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span className={indexstyles.org_name}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span>
+                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                    </span>
+                  )
+                }
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={indexstyles.ellipsis}>{board_name}</span>
+                  )
+                }
+                
+              </div>
+            </Tooltip>
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>

@@ -97,26 +97,24 @@ export default class RenderHistory extends Component {
       // console.log(id, 'sss')
       const { historyList = [], dispatch, rela_id } = this.props;
       let new_history_list = [...historyList]
+      // console.log(new_history_list, 'sss')
       let tempId = []
       for(var i in message_consumers) {
         tempId.push(message_consumers[i].user_id)
       }
-      new_history_list = new_history_list.filter(item => {
+      const result = new_history_list.find(item => {
         let new_item = item
-        if (new_item.id == id) {
+        if (new_item.is_edit_status && new_item.id == id) {
           return new_item = {...new_item, is_edit_status: false, message_consumers: [{...message_consumers, user_id: tempId}]}
         }
-        return new_history_list
       })
-
       dispatch({
         type: 'informRemind/updateRemindInformation',
         payload: {
-          new_history_list,
+          result,
           rela_id
         }
-      })
-
+      }) 
     }
 
     /**
@@ -156,15 +154,15 @@ export default class RenderHistory extends Component {
      */
     handleDatePicker(date, dateString, id, type) {
       const { dispatch, historyList = [] } = this.props;
-      console.log(dateString, 'sss')
+      // console.log(dateString, 'sss')
       let new_history_list = [...historyList]
       let userDefindDate = new Date(dateString)
       let time = userDefindDate.valueOf() / 1000 // 转换成时间戳
-      console.log(time, 'llll')
+      // console.log(time, 'llll')
         new_history_list = new_history_list.map(item => {
             let new_item = item
             if(id == new_item.id) {
-                new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type}
+                new_item = {...new_item, remind_time_value: time, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status: true}
             }
             return new_item
         })
@@ -178,9 +176,29 @@ export default class RenderHistory extends Component {
 
     /**
      * 成功确定的回调
+     * @param {String} date 时间日期 moment对象
+     * @param {String} id 当前对象对应的id
+     * @param {String} type 可编辑的类型
      */
-    handleDatePickerOk(value) {
-      console.log(value)
+    handleDatePickerOk(date, value, id, type) {
+      // console.log(date, value, 'ssss')
+      const { dispatch, historyList = [] } = this.props;
+      let new_history_list = [...historyList]
+      // let time = moment(date.format('YYYY-MM-DD HH:MM')).valueOf() / 1000
+      // console.log(time, 'sss')
+      new_history_list = new_history_list.map(item => {
+        let new_item = item
+        if(id == new_item.id) {
+            new_item = {...new_item, remind_time_value: value, remind_time_type: 'datetime', remind_edit_type: type, is_edit_status: true}
+        }
+          return new_item
+      })
+      dispatch({
+        type: 'informRemind/updateDatas',
+        payload: {
+          historyList: new_history_list,
+        }
+      })
     }
 
     /**
@@ -193,7 +211,7 @@ export default class RenderHistory extends Component {
       const { dispatch, historyList = [], user_remind_info = [] } = this.props;
       let new_user_remind_info = [...user_remind_info] // 用户列表的信息
       let new_message = [] // 传递过来的用户信息
-      console.log('sss', e)
+      // console.log('sss', e)
       const { selectedKeys = [] } = e
       new_message = selectedKeys.map(item => {
         for(let val of new_user_remind_info) {
@@ -202,25 +220,6 @@ export default class RenderHistory extends Component {
           }
         }
       })
-      // new_user_remind_info = new_user_remind_info.map((item, index) => {
-      //   let new_info_item = item
-      //   if (e.type == 'add') { // 如果是添加的操作我就给你追加一条,
-      //     if (new_info_item.user_id == e.key) {//判断当前的用户信息列表id与选中的id是否匹配
-      //       new_message = new_message.concat(new_info_item) // 如果匹配就给你追加进去
-      //     }
-      //   } else if(e.type == 'remove') { // 如果是删除, 就移出这一条,
-      //     if (new_info_item.user_id == e.key) {
-      //       new_message = new_message.map((item2, key) => {
-      //         const { user_id } = item2
-      //         if(user_id != e.key) {
-      //           return item2
-      //         }
-      //       })
-      //       // new_message.splice(index, 1)
-      //     }
-      //   }
-      //   return new_message
-      // })
       // 更新成员的信息
       let new_history_list = [...historyList]
       new_history_list = new_history_list.map(item => {
@@ -245,6 +244,7 @@ export default class RenderHistory extends Component {
             triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],
         } = this.props;
         const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status, message_consumers } = itemValue
+        // console.log(remind_trigger, 'sss')
 
         return (
           <>
@@ -253,6 +253,7 @@ export default class RenderHistory extends Component {
               <div className={infoRemindStyle.select}>
                 {/* 显示某种事件类型的列表--选择框 */}
                 <Select
+                    disabled={status == 2 ? true : false}
                     defaultValue={remind_trigger}
                     style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -269,17 +270,19 @@ export default class RenderHistory extends Component {
                 {
                   remind_edit_type == 3 && (
 <DatePicker
+                        disabled={status == 2 ? true : false}
                         showTime={true}
-                        defaultValue={ moment(this.getdate(remind_time_value)) }
+                        defaultValue={ remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value)) }
                         placeholder="请选择日期"
                         format="YYYY-MM-DD HH:mm"
-                        onOk={ (value) => { this.handleDatePickerOk(value) } }
+                        onOk={ (value) => { this.handleDatePickerOk(value, remind_time_value, id, remind_edit_type) } }
                         onChange={ (date, dateString) => { this.handleDatePicker(date, dateString, id, remind_edit_type) } } />
 )}
                 {/* 显示1-60不同的时间段--选择框 */}
                 {
                   remind_edit_type == 1 && (
 <Select
+                      disabled={status == 2 ? true : false}
                       defaultValue={remind_time_value.length <= 2 ? remind_time_value : 1}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -298,6 +301,7 @@ export default class RenderHistory extends Component {
                 {
                    remind_edit_type == 1 && (
 <Select
+                      disabled={status == 2 ? true : false}
                       defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
                       style={{ width: 122, height: 32, marginRight: 16 }}>
                     {
@@ -314,7 +318,7 @@ export default class RenderHistory extends Component {
                 }
                 {/* 显示用户信息头像 */}
                 <div className={infoRemindStyle.user_info}>
-                  <Dropdown overlay={
+                  <Dropdown disabled={status == 2 ? true : false} overlay={
                     <UserSearchAndSelectMutiple
                       listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                       keyCode={'user_id'} //值关键字
@@ -342,6 +346,7 @@ export default class RenderHistory extends Component {
               {
                 is_edit_status ? (
                     <Button
+                      disabled={ message_consumers && message_consumers.length ? false : true }
                       onClick={ () => { this.handleUpdateInfoRemind(id, message_consumers) } }
                       className={infoRemindStyle.icon} type="primary">确定</Button>
                 ) : (
