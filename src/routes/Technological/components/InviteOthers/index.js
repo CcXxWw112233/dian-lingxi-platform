@@ -492,6 +492,10 @@ class InviteOthers extends Component {
   }
   getGroupList = (payload = {}) => {
     const { dispatch } = this.props
+    const { _organization_id } = payload
+    if(!_organization_id || _organization_id == '0') {
+      return
+    }
     dispatch({
       type: 'organizationMember/getGroupList',
       payload: {

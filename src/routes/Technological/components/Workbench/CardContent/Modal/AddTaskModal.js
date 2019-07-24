@@ -528,7 +528,7 @@ class AddTaskModal extends Component {
       isInUploadFile,
       selectedOrg = {},
     } = this.state;
-    console.log('sssss',{currentSelectedProject, selectedOrg})
+    // console.log('sssss',{currentSelectedProject, selectedOrg})
     const {
       projectList,
       addTaskModalVisible,
@@ -723,6 +723,8 @@ class AddTaskModal extends Component {
       );
     });
 
+    // console.log('ssssss', {projectList, filteredNoThatTypeProject})
+
     return (
       <Modal
         visible={true} //addTaskModalVisible
@@ -756,6 +758,7 @@ class AddTaskModal extends Component {
                 ): (
                 <DropdownSelectWithSearch
                   list={filteredNoThatTypeProject}
+                  _organization_id={selectedOrg.org_id}
                   initSearchTitle="选择项目"
                   selectedItem={currentSelectedProject}
                   handleSelectedItem={this.handleSelectedItem}
