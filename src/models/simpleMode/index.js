@@ -2,6 +2,7 @@ import { routerRedux } from 'dva/router';
 import { getUserBoxs, getAllBoxs, boxSet, boxCancel } from '@/services/technological/simplemode'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
+import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
 export default {
     namespace: 'simplemode',
@@ -48,9 +49,9 @@ export default {
         },
         * getMyBoxs({ payload }, { call, put }) {
             let res = yield call(getUserBoxs, {});
-          
+
             if (isApiResponseOk(res)) {
-                let { data: workbenchBoxList } = res;
+                let { data: myWorkbenchBoxList } = res;
                 yield put({
                     type: 'updateDatas',
                     payload: {
@@ -60,10 +61,10 @@ export default {
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
-           
-            
+
+
         },
-        * getAllBoxs({ payload }, { call, put }){
+        * getAllBoxs({ payload }, { call, put }) {
             let res = yield call(getAllBoxs, {});
             if (isApiResponseOk(res)) {
                 let { data: workbenchBoxList } = res;
@@ -77,18 +78,37 @@ export default {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
-        * myboxSet({ payload }, { call, put }) {
+        * myboxSet({ payload }, { call, put, select }) {
+            const { id } = payload;
             let res = yield call(boxSet, payload);
+         
             if (isApiResponseOk(res)) {
-            
+                let myWorkbenchBoxList = yield select(getModelSelectState("simplemode", "myWorkbenchBoxList")) || [];
+                console.log(myWorkbenchBoxList);
+                console.log(myWorkbenchBoxList.push({ id:id }));
+                
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        myWorkbenchBoxList: myWorkbenchBoxList
+                    }
+                });
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
-        * myboxCancel({ payload }, { call, put }) {
+        * myboxCancel({ payload }, { call, put, select }) {
+            const { id } = payload;
             let res = yield call(boxCancel, payload);
-            if (isApiResponseOk(res)) {
             
+            if (isApiResponseOk(res)) {
+                let myWorkbenchBoxList = yield select(getModelSelectState("simplemode", "myWorkbenchBoxList")) || [];
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        myWorkbenchBoxList: myWorkbenchBoxList.filter(item => item.id !== id)
+                    }
+                });
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
