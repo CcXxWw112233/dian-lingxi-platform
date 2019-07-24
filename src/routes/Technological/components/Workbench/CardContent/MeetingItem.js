@@ -75,7 +75,11 @@ export default class MeetingItem extends React.Component {
               onClick={this.itemClick.bind(this)}
               style={{maxWidth: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
           </Tooltip>
-          <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
           <Tooltip placement="topLeft" title={
            is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {name}</span>)
             : (<span>{name}</span>)
@@ -98,7 +102,11 @@ export default class MeetingItem extends React.Component {
                     </span>
                   )
                 }
-                <span className={indexstyles.ellipsis}>{name}</span>
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={indexstyles.ellipsis}>{name}</span>
+                  )
+                }
               </div>
             </Tooltip>
         </div>
