@@ -5,6 +5,7 @@
 }
 .addTaskModalContent .addTaskModalSelectProject .addTaskModalSelectProject_and_groupList {
   display: flex;
+  flex-wrap: wrap;
 }
 .addTaskModalContent .addTaskModalSelectProject .addTaskModalSelectProject_and_groupList .groupList__wrapper {
   margin-left: 16px;

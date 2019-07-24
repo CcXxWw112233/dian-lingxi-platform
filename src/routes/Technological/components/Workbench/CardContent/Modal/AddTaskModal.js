@@ -14,7 +14,8 @@ import styles from './AddTaskModal.less';
 import { connect } from 'dva';
 import {
   REQUEST_DOMAIN_BOARD,
-  UPLOAD_FILE_SIZE
+  UPLOAD_FILE_SIZE,
+  ORG_TEAM_BOARD_CREATE
 } from './../../../../../../globalset/js/constant';
 import { deleteUploadFile, getCurrentSelectedProjectMembersList } from './../../../../../../services/technological/workbench';
 import DropdownSelectWithSearch from './../DropdownSelectWithSearch/index';
@@ -24,7 +25,8 @@ import Cookies from 'js-cookie';
 import {
   checkIsHasPermissionInBoard,
   setStorage,
-  setBoardIdStorage
+  setBoardIdStorage,
+  checkIsHasPermission
 } from '../../../../../../utils/businessFunction';
 import {
   MESSAGE_DURATION_TIME,
