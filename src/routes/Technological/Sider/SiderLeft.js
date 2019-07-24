@@ -217,6 +217,7 @@ export default class SiderLeft extends React.Component {
         type: 'technological/updateDatas',
         payload: {
           is_all_org: false,
+          is_show_org_name: is_show_org_name ? true : false
         }
       })
        break
