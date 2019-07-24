@@ -129,12 +129,22 @@ export default class Boundary extends Component {
         <div className={styles.form}>
           <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
 					{
-						inputList.map(item => {
-							return <InputExport inputList={inputList} />
+						inputList.map((item, index) => {
+							return <InputExport key={index} inputList={inputList} itemVal={item} index={index} />
 						})
 					}
-        </div>
-      </div>
+					<span className={styles.add_more}>+  添加更多...</span>
+					<div className={styles.code_wechat}>
+						<span></span>
+						<p>
+							<b className={styles.line}></b>
+							<i className={`${glabalStyles.authTheme} ${styles.wechat}`}>&#xe634;</i> 微信扫一扫直接邀请参与人
+							<b className={styles.line}></b>
+						</p>
+					</div>
+					<div className={styles.btn}><Button type="primary">开始协作</Button></div>
+				</div>
+			</div>
 		)
 	}
 
