@@ -10,6 +10,7 @@ import {
   getCurrentUserOrganizes,
   getUserOrgPermissions,
   getUserBoardPermissions,
+  getSetShowOrgName,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
 import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
@@ -321,6 +322,14 @@ export default {
         message.success(`已成功添加${currentNounPlanFilterName(ORGANIZATION)}${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 获取设置显示组织名称
+    * getSetShowOrgName({ payload }, { select, call, put }) {
+      let res = yield call(getSetShowOrgName, payload)
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
       }
     },
     //组织 -----------end
