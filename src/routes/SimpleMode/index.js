@@ -17,7 +17,7 @@ const getEffectOrReducerByName = name => `technological/${name}`
 
 class SimpleMode extends Component {
 
-  constructor(props) {
+  constructor(props){
     super(props);
   }
 
@@ -66,7 +66,7 @@ class SimpleMode extends Component {
         path: '/technological/simplemode/home',
         component: () => import('./Components/Home'),
       }, {
-        path: '/technological/simplemode/communication',
+        path: '/technological/simplemode/workbench',
         component: () => import('./Components/WorkbenchPage'),
       },
     ]

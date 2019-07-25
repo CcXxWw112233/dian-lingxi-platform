@@ -20,6 +20,7 @@ const WorkbenchBoxSelect = (props) => {
   }
   const selectOrCancelCurrWorkbenchBox = (e, data) => {
     e.stopPropagation();
+
     const { id } = data;
     if (!data.isSelected) {
       dispatch({
@@ -34,7 +35,6 @@ const WorkbenchBoxSelect = (props) => {
     }
 
   }
-  //console.log("workbenchBoxList", workbenchBoxList);
 
   return (
     <div onClick={(e) => { closeBoxManage(e) }}>
@@ -43,10 +43,11 @@ const WorkbenchBoxSelect = (props) => {
         <div className={indexStyles.workbenchBoxWapper}>
           {
             workbenchBoxList.map((boxItem, key) => {
-              let isSelected = myWorkbenchBoxList.filter(item => item.id === boxItem.id).length > 0 ? true : false;
-              return (
+              let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
+              //console.log("8888", isSelected);
+              return boxItem.status == 1 ? (
                 <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
-                  <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe670;</i><br />
+                  <i dangerouslySetInnerHTML={{__html:boxItem.icon}}  className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
                   {isSelected &&
                     <span>
@@ -55,8 +56,11 @@ const WorkbenchBoxSelect = (props) => {
                     </span>
                   }
 
-                </div>
-              )
+                  {!isSelected &&
+                    <div className={indexStyles.workbenchBoxSelectHover}></div>
+                  }
+
+                </div>) : '';
             })
           }
 

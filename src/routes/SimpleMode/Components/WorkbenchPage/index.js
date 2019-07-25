@@ -7,6 +7,7 @@ import WallpaperSelect from '../WallpaperSelect/index'
 import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
 import CreateNewBoard from '../CreateNewBoard/index'
 import WorkbenchBoxContentModal from '..//WorkbenchBoxContentModal/index'
+import { getLocationUrlQueryString } from '@/utils/util'
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
@@ -15,29 +16,36 @@ class WorkbenchPage extends Component {
 
     constructor(props) {
         super(props);
+        let boxid = getLocationUrlQueryString("box");
+        this.state = {
+            currentSelectedWorkbenchBoxId: boxid || 0
+        }
+    }
+
+    componentWillMount() {
+        const { dispatch } = this.props;
+        const { currentSelectedWorkbenchBoxId = 0 } = this.state;
+
+        if (currentSelectedWorkbenchBoxId === 0) {
+            dispatch({
+                type: 'simplemode/routingJump',
+                payload: {
+                    route: '/technological/simplemode/home'
+                }
+            });
+        }
     }
 
     render() {
-        const {
-            model, dispatch,
-            simpleHeaderVisiable,
-            myWorkbenchBoxsVisiable,
-            wallpaperSelectVisiable,
-            workbenchBoxSelectVisiable,
-            createNewBoardVisiable,
-            setWapperCenter,
-            chatImVisiable
-        } = this.props;
-
         return (
-            <WorkbenchBoxContentModal />
+            <WorkbenchBoxContentModal currentSelectedWorkbenchBoxId={this.state.currentSelectedWorkbenchBoxId} />
         )
     }
 };
 
 export default connect(({ simplemode: {
-   
+
 } }) => ({
-   
+
 
 }))(WorkbenchPage)

@@ -1,4 +1,3 @@
-
 .selectWorkbenchBoxWapperModalBg {
     width           : 100%;
     height          : 100%;
@@ -84,32 +83,17 @@
                 z-index      : 1;
             }
 
-            .workbenchBoxSelectHover{
-                position       : absolute;
-                top            : 14px;
-                right          : 14px;
-                width          : 22px;
-                height         : 22px;
-                line-height    : 22px;
-             
-                //background   :rgba(255, 255, 255, 1);
-                border-radius: 11px;
-                border       :1px #ffffff solid;
-                //font-size    : 22px;
-            }
-
-            .workbenchBoxSelectCircleHover{
-                position       : absolute;
-                top            : 14px;
-                right          : 14px;
-                width          : 22px;
-                height         : 22px;
-                line-height    : 22px;
-             
-                //background   :rgba(255, 255, 255, 1);
-                border-radius: 11px;
-                border       :1px #18B2FF solid;
-                //font-size    : 22px;
+            .workbenchBoxSelectHover {
+                visibility : hidden;
+                position   : absolute;
+                top        : 14px;
+                right      : 14px;
+                width      : 22px;
+                height     : 22px;
+                line-height: 22px;
+                border-radius  : 11px;
+                border         : 1px #ffffff solid;
+          
             }
 
             .workbenchBox_add {
@@ -122,6 +106,13 @@
 
         .workbenchBox:hover {
             background: rgba(255, 255, 255, 0.45) !important;
+
+            .workbenchBoxSelectHover {
+                visibility: visible
+            }
+            .workbenchBoxSelectHover:hover{
+                border         : 1px #18B2FF solid;
+            }
         }
 
 

@@ -100,14 +100,14 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = () => {
+  goWorkbenchBox = ({ id, code }) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'simplemode/routingJump',
       payload: {
-        route: '/technological/simplemode/communication'
+        route: '/technological/simplemode/workbench?box=' + id
       }
-    })
+    });
 
   }
 
@@ -118,9 +118,9 @@ class MyWorkbenchBoxs extends Component {
 
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    console.log("myWorkbenchBoxList",myWorkbenchBoxList);
+    console.log("myWorkbenchBoxListAAA", myWorkbenchBoxList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
-  
+
     return (
       <div className={indexStyles.mainContentWapper}>
         <div className={indexStyles.projectSelector}>
@@ -128,13 +128,13 @@ class MyWorkbenchBoxs extends Component {
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
-            myWorkbenchBoxList.length>0 && myWorkbenchBoxList.map((item, key) => {
-              return (
-                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox.bind(item.code)}>
-                  <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe670;</i><br />
+            myWorkbenchBoxList.map((item, key) => {
+              return item.status == 1 ? (
+                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item) }>
+                  <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
                 </div>
-              )
+              ) : ''
             })
           }
           {/*          

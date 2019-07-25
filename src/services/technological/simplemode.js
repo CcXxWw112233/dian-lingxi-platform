@@ -20,7 +20,7 @@ export async function boxSet(data){
   return request({
       url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/set`,
       method: 'POST',
-      data:{simple_model_id:data.id}
+      data:{id:data.id}
     });
 }
 
@@ -28,6 +28,6 @@ export async function boxCancel(data){
   return request({
       url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/cancel`,
       method: 'PUT',
-      data:{simple_model_id:data.id}
+      data:{id:data.id}
     });
 }

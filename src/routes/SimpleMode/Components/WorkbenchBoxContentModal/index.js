@@ -5,19 +5,18 @@ import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 
 const WorkbenchBoxContentModal = (props) => {
-    const { workbenchBoxContentWapperModalStyle } = props;
+    const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBoxId = 0 } = props;
     console.log(workbenchBoxContentWapperModalStyle);
     console.log("indexStyles", indexStyles.workbenchBoxContentModalWapper);
-
     return (
 
         <div className={indexStyles.workbenchBoxContentModalContainer}>
-            <MiniBoxNavigations />
+            <MiniBoxNavigations currentSelectedWorkbenchBoxId = {currentSelectedWorkbenchBoxId} />
             <div className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                 <div className={indexStyles.workbenchBoxContentWapper}>
 
-                    <BoardCommunication/>
-                    
+                    <BoardCommunication />
+
                 </div>
             </div>
         </div>

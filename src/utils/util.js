@@ -192,6 +192,12 @@ export const getUrlQueryString = (href, name) => {
   if(r!=null)return unescape(r[1]); return null;
 }
 
+export const getLocationUrlQueryString = (name) => {
+  const reg = new RegExp(name +"=([^&]*)");
+  const r = window.location.href.match(reg)//window.location.href.match(reg);
+  if(r!=null)return unescape(r[1]); return null;
+}
+
 //对象深拷贝
 export const deepClone = (obj) => {
   if(!obj) {

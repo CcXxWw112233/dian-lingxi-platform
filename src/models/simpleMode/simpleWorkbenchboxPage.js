@@ -5,20 +5,19 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
 export default {
-    namespace: 'simplemode',
+    namespace: 'simpleWorkbenchboxPage',
     state: {
-        simpleHeaderVisiable: true,//显示隐藏用
-        myWorkbenchBoxsVisiable: true,//显示隐藏用
-        wallpaperSelectVisiable: true,//显示隐藏用
-        workbenchBoxSelectVisiable: false,//显示隐藏用
-        createNewBoardVisiable: false,//显示隐藏用
-        setWapperCenter: false,//显示隐藏用
-        wallpaperSelectModalVisiable: false,//显示隐藏用
-        chatImVisiable: false,              //显示隐藏用
+        simpleHeaderVisiable: true,
+        myWorkbenchBoxsVisiable: true,
+        wallpaperSelectVisiable: true,
+        workbenchBoxSelectVisiable: false,
+        createNewBoardVisiable: false,
+        setWapperCenter: false,
+        wallpaperSelectModalVisiable: false,
+        chatImVisiable: false,
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
         workbenchBoxList: [], //所有可以选择的盒子列表
-        currentSelectedWorkbenchBoxId: null,//当然选中的工作台盒子ID
         init: true
     },
     subscriptions: {
@@ -31,7 +30,10 @@ export default {
                                 type: 'getProjectList',
                                 payload: {}
                             }),
-
+                            // dispatch({
+                            //   type: 'getBoxUsableList',
+                            //   payload: {}
+                            // })
                         ])
                     }
                     initData()
