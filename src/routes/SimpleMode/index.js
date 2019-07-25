@@ -8,7 +8,6 @@ import MyWorkbenchBoxs from './Components/MyWorkbenchBoxs/index'
 import WallpaperSelect from './Components/WallpaperSelect/index'
 import WorkbenchBoxSelect from './Components/WorkbenchBoxSelect/index'
 import CreateNewBoard from './Components/CreateNewBoard/index'
-import WorkbenchBoxContentModal from './Components/WorkbenchBoxContentModal/index'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import { LocaleProvider, Layout } from 'antd'
 const { Header, Sider, Content } = Layout;

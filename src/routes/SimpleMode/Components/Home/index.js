@@ -6,7 +6,6 @@ import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
 import WallpaperSelect from '../WallpaperSelect/index'
 import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
 import CreateNewBoard from '../CreateNewBoard/index'
-import WorkbenchBoxContentModal from '..//WorkbenchBoxContentModal/index'
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
