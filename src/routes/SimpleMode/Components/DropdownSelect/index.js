@@ -74,7 +74,7 @@ class DropdownSelect extends Component {
 
     renderContent() {
         const { fuctionMenuItemList = [], itemList = [], menuItemClick = () => { } } = this.state;
-        console.log('itemList', itemList);
+    
         return (
             <Menu className
                 onClick={menuItemClick}

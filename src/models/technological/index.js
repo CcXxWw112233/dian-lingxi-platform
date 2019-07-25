@@ -47,11 +47,11 @@ export default {
 
           let page_load_type = 0;
           if(location.pathname.indexOf('/simplemode') != -1){
-            console.log("subscriptions1");
+            //console.log("subscriptions1");
             page_load_type = 1;
           }else{
             page_load_type = 2;
-            console.log("subscriptions2");
+            //console.log("subscriptions2");
           }
           dispatch({
             type: 'updateDatas',

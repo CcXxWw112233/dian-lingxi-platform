@@ -16,6 +16,15 @@ const MiniBoxNavigations = (props) => {
             }
         })
     };
+
+    const goWorkbenchPage = ({ id }) => {
+        dispatch({
+            type: 'simplemode/routingJump',
+            payload: {
+                route: '/technological/simplemode/workbench?box='+id
+            }
+        })
+    }
     if (!myWorkbenchBoxList || myWorkbenchBoxList.lenght == 0) {
         message.warn("没有获取到您所选的工作台功能模块", MESSAGE_DURATION_TIME)
         setTimeout(() => {
@@ -33,7 +42,7 @@ const MiniBoxNavigations = (props) => {
                 {
                     myWorkbenchBoxList.map((item, key) => {
                         return (
-                            <Tooltip key={item.id} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBoxId == item.id ? indexStyles.selected : ''}`}>
+                            <Tooltip key={item.id} onClick={e => goWorkbenchPage(item)} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBoxId == item.id ? indexStyles.selected : ''}`}>
                                 <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
                                 <div className={indexStyles.text}>{item.name}</div>
                             </Tooltip>

@@ -124,7 +124,6 @@ export default {
     },
     reducers: {
         updateDatas(state, action) {
-            console.log("888888", action.payload);
             return {
                 ...state, ...action.payload
             }
