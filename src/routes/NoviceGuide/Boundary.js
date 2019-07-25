@@ -13,12 +13,17 @@ export default class Boundary extends Component {
 
 	state = {
 		is_show_cooperate_with: false, // 是否显示开始协作组件
+		initInputList: [
+			{ value: '' },
+			{ value: '' },
+			{ value: '' },
+		], // 初始化的input框
 		inputList: [
 			{ value: '' },
 			{ value: '' },
 			{ value: '' },
-			{ value: '' },
 		], // input框的
+		is_add_more: false, // 是否点击添加更多的操作 默认为false 没有点击
 	}
 
 	// 点击ok
@@ -26,6 +31,24 @@ export default class Boundary extends Component {
 		this.setState({
 			is_show_cooperate_with: true
 		})
+	}
+
+	// 点击添加更多
+	handleAddMore = () => {
+		console.log(1111, 'sss')
+		this.setState({
+			is_add_more: true,
+		}, () => {
+			const { inputList, is_add_more, initInputList } = this.state
+			let new_input_list = [...inputList]
+			// 每次拼接都连接三个初始的
+			new_input_list = new_input_list.concat([], ...initInputList)
+			this.setState({
+				inputList: new_input_list
+			})
+		})
+		
+
 	}
 
 	// 显示初始指引页面
@@ -123,18 +146,29 @@ export default class Boundary extends Component {
 	// 显示开始协作
 	renderCooperateWith() {
 		const { inputList } = this.state
+		let new_input_list = [...inputList]
 		return (
 			<div className={styles.introduce}>
         <h1 style={{textAlign: 'center', marginBottom: 88}}>是否现在就邀请其他人共同使用灵犀</h1>
         <div className={styles.form}>
           <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
 					{
-						inputList.map(item => {
-							return <InputExport inputList={inputList} />
+						new_input_list.map((item, index) => {
+							return <InputExport key={index} inputList={inputList} itemVal={item} index={index} />
 						})
 					}
-        </div>
-      </div>
+					<span onClick={ this.handleAddMore } className={styles.add_more}>+  添加更多...</span>
+					<div className={styles.code_wechat}>
+						<span></span>
+						<p>
+							<b className={styles.line}></b>
+							<i className={`${glabalStyles.authTheme} ${styles.wechat}`}>&#xe634;</i> 微信扫一扫直接邀请参与人
+							<b className={styles.line}></b>
+						</p>
+					</div>
+					<div className={styles.btn}><Button type="primary">开始协作</Button></div>
+				</div>
+			</div>
 		)
 	}
 

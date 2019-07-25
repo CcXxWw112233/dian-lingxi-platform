@@ -199,6 +199,7 @@
           font-weight:400;
           color:rgba(255,255,255,1);
           line-height:24px;
+          letter-spacing: 1px;
         }
       }
       .form {
@@ -212,15 +213,96 @@
         width: 528px;
         min-height: 200px;
         input {
+          position: relative;
           border: none;
           border-bottom: 1px solid;
           border-bottom-color: rgba(0,0,0,0.09);
           line-height: 62px;
-          margin-bottom: 32px;
+          // margin-bottom: 32px;
           border: none;
           outline: none;
+          box-shadow: none;
+          font-family:PingFangSC-Regular;
+          font-weight:400;
+          color:rgba(0,0,0,0.65);
+        }
+        .proof {
+          position: absolute;
+          right: 0;
+          min-width: 68px;
+          font-size:12px;
+          font-family:PingFangSC-Regular;
+          font-weight:400;
+          color:rgba(245,34,45,1);
+          line-height:20px;
+          margin-top: 8px;
+        }
+        .add_more {
+          font-family:PingFangSC-Regular;
+          font-weight:400;
+          color:rgba(0,0,0,0.25);
+          line-height:24px;
+          cursor: pointer;
+          &:hover {
+            color: #40A9FF;
+          }          
+        }
+        .code_wechat {
+          margin-bottom: 80px;
+          text-align: center;
+          .line {
+            display: inline-block;
+            width:130px;
+            height:1px;
+            background:rgba(0,0,0,0.09);
+          }
+          span {
+            display: block;
+            width:124px;
+            height:124px;
+            background:rgba(216,216,216,1);
+            margin: 64px auto 24px;
+          }
+          p {
+            text-align: center;
+            font-size:18px;
+            font-family:PingFangSC-Regular;
+            font-weight:400;
+            color:rgba(0,0,0,0.65);
+            line-height:26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            b:nth-child(1) {
+              margin-right: 8px;
+            }
+            b:nth-child(2) {
+              margin-left: 8px;
+            }
+            i {
+              margin-right: 5px;
+              font-size: 14px;
+              color: #52C41A;
+            }
+          }
+        }
+        .btn {
+          text-align: center;
+          button {
+            width:208px;
+            height:40px;
+            color: #fff;
+            border-radius:20px;
+            font-size:16px;
+            font-family:PingFangSC-Regular;
+            font-weight:400;
+            color:rgba(255,255,255,1);
+            line-height:24px;
+            letter-spacing: 1px;
+          }
         }
       }
+      
     }
   }
 }
