@@ -11,6 +11,7 @@ import {
 import { timestampToTimeNormal } from '../../../utils/util'
 import Cookies from "js-cookie";
 import {connect} from "dva/index";
+import { setBoardIdStorage } from '@/utils/businessFunction'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
