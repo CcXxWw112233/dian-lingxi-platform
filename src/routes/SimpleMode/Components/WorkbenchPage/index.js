@@ -19,7 +19,7 @@ class WorkbenchPage extends Component {
     }
 
     componentWillMount() {
-        const { dispatch, myWorkbenchBoxList} = this.props;
+        const { dispatch, myWorkbenchBoxList } = this.props;
         const { currentSelectedWorkbenchBoxId = 0 } = this.state;
 
         if (currentSelectedWorkbenchBoxId === 0) {

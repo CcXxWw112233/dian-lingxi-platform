@@ -26,13 +26,13 @@ const MiniBoxNavigations = (props) => {
         })
     }
 
-    if (myWorkbenchBoxList.length == 0) { 
-        message.warn("没有获取到您所选的工作台功能模块", MESSAGE_DURATION_TIME)
-        setTimeout(() => {
-            goHome();
-        }, 2000);
-        return null;
-    }
+    // if (myWorkbenchBoxList.length == 0) { 
+    //     message.warn("没有获取到您所选的工作台功能模块", MESSAGE_DURATION_TIME)
+    //     setTimeout(() => {
+    //         goHome();
+    //     }, 2000);
+    //     return null;
+    // }
     return (
         <div className={indexStyles.workbenchboxsNavsModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
             <div className={indexStyles.boxnavsWapper}>
