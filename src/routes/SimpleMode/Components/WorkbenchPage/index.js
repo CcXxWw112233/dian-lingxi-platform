@@ -1,12 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "dva/index"
 import indexStyles from './index.less'
-import SimpleHeader from '../SimpleHeader/index'
-import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
-import WallpaperSelect from '../WallpaperSelect/index'
-import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
-import CreateNewBoard from '../CreateNewBoard/index'
-import WorkbenchBoxContentModal from '..//WorkbenchBoxContentModal/index'
+import MiniBoxNavigations from '../MiniBoxNavigations/index'
+import BoardCommunication from '../WorkbenchBoxContentModal/BoardCommunication/index'
 import { getLocationUrlQueryString } from '@/utils/util'
 
 
@@ -37,15 +33,21 @@ class WorkbenchPage extends Component {
     }
 
     render() {
+        const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBoxId = 0 } = this.props;
         return (
-            <WorkbenchBoxContentModal currentSelectedWorkbenchBoxId={this.state.currentSelectedWorkbenchBoxId} />
+
+            <div className={indexStyles.workbenchBoxContentModalContainer}>
+                <MiniBoxNavigations currentSelectedWorkbenchBoxId={currentSelectedWorkbenchBoxId} />
+                <div className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
+                    <div className={indexStyles.workbenchBoxContentWapper}>
+
+                        <BoardCommunication />
+
+                    </div>
+                </div>
+            </div>
         )
     }
 };
 
-export default connect(({ simplemode: {
-
-} }) => ({
-
-
-}))(WorkbenchPage)
+export default connect(({ simplemode: { workbenchBoxContentWapperModalStyle } }) => ({ workbenchBoxContentWapperModalStyle }))(WorkbenchPage)
