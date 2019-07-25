@@ -1,7 +1,6 @@
 //项目归档
-import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
-import { func } from "prop-types";
 
 const createHeaderContentData = (contentType,contentId) => {
   if (contentType && contentId) {
