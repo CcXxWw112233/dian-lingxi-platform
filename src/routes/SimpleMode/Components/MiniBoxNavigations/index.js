@@ -25,7 +25,8 @@ const MiniBoxNavigations = (props) => {
             }
         })
     }
-    if (!myWorkbenchBoxList || myWorkbenchBoxList.lenght == 0) {
+
+    if (myWorkbenchBoxList.length == 0) { 
         message.warn("没有获取到您所选的工作台功能模块", MESSAGE_DURATION_TIME)
         setTimeout(() => {
             goHome();
@@ -49,13 +50,6 @@ const MiniBoxNavigations = (props) => {
                         )
                     })
                 }
-
-
-
-                {/* <Tooltip placement="bottom" title='项目交流' className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.selected}`}>
-                    <div className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }} >&#xe671;</div>
-                    <div className={indexStyles.text}>项目计划</div>
-                </Tooltip> */}
             </div>
 
         </div>

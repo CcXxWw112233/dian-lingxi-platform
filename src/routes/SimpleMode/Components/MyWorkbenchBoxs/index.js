@@ -137,20 +137,6 @@ class MyWorkbenchBoxs extends Component {
               ) : ''
             })
           }
-          {/*          
-          <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe671;</i><br />
-            <span className={indexStyles.myWorkbenchBox_title}>项目计划</span>
-          </div>
-          <div className={indexStyles.myWorkbenchBox} onClick={this.goWorkbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe672;</i><br />
-            <span className={indexStyles.myWorkbenchBox_title}>项目交流</span>
-          </div>
-          <div className={indexStyles.myWorkbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} >&#xe673;</i><br />
-            <span className={indexStyles.myWorkbenchBox_title}>项目文件</span>
-          </div>
-          */}
           <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>
             <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
           </div>

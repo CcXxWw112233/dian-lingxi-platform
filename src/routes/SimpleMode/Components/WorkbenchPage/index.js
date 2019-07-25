@@ -19,7 +19,7 @@ class WorkbenchPage extends Component {
     }
 
     componentWillMount() {
-        const { dispatch } = this.props;
+        const { dispatch, myWorkbenchBoxList} = this.props;
         const { currentSelectedWorkbenchBoxId = 0 } = this.state;
 
         if (currentSelectedWorkbenchBoxId === 0) {
@@ -33,16 +33,14 @@ class WorkbenchPage extends Component {
     }
 
     render() {
-        const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBoxId = 0 } = this.props;
+        const { workbenchBoxContentWapperModalStyle } = this.props;
+        const { currentSelectedWorkbenchBoxId } = this.state;
         return (
-
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBoxId={currentSelectedWorkbenchBoxId} />
                 <div className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                     <div className={indexStyles.workbenchBoxContentWapper}>
-
                         <BoardCommunication />
-
                     </div>
                 </div>
             </div>
@@ -50,4 +48,10 @@ class WorkbenchPage extends Component {
     }
 };
 
-export default connect(({ simplemode: { workbenchBoxContentWapperModalStyle } }) => ({ workbenchBoxContentWapperModalStyle }))(WorkbenchPage)
+export default connect(({ simplemode: {
+    workbenchBoxContentWapperModalStyle,
+    myWorkbenchBoxList
+} }) => ({
+    workbenchBoxContentWapperModalStyle,
+    myWorkbenchBoxList
+}))(WorkbenchPage)
