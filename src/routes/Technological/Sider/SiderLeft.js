@@ -127,16 +127,34 @@ export default class SiderLeft extends React.Component {
     const { is_disabled } = this.state
     const { currentUserOrganizes = [] } = this.props
     const { dispatch, is_show_org_name } = this.props
+     //是否拥有查看成员入口
+     const isHasMemberView = () => {
+      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
+    }
+
+    //是否拥有管理后台入口
+    const isHasManagerBack = () => {
+      let flag = false
+      if(
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+      ) {
+        flag = true
+      }
+      return flag
+    }
 
     switch (key) {
       case '24': // 匹配团队成员
-          this.routingJump('/technological/organizationMember')
+        isHasMemberView() && this.routingJump('/technological/organizationMember')
           break
       case '23': // 匹配成员管理后台
-          this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
         break
       case '22': // 匹配邀请成员加入弹框显示
-          this.setShowAddMenberModalVisibile()
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
         break
       case '20': // 匹配用户设置
         this.routingJump('/technological/accoutSet')
