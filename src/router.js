@@ -164,8 +164,8 @@ const Routers = function ({ history, app }) {
 
       import('./models/technological/xczNews'),
       import('./models/simpleMode'),
-
-        import('./models/technological/informRemind'),
+      import('./models/simpleMode/simpleWorkbenchbox'),
+      import('./models/technological/informRemind'),
 
 
       ],

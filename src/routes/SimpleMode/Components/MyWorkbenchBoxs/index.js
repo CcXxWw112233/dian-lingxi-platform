@@ -97,6 +97,7 @@ class MyWorkbenchBoxs extends Component {
       const { board_id: id, board_name: name } = board
       menuItemList.push({ id, name });
     });
+
     return menuItemList;
   }
 
@@ -118,13 +119,14 @@ class MyWorkbenchBoxs extends Component {
 
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
 
     return (
       <div className={indexStyles.mainContentWapper}>
         <div className={indexStyles.projectSelector}>
+ 
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
+   
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {

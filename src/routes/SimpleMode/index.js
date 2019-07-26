@@ -84,7 +84,7 @@ class SimpleMode extends Component {
               routes.map(({ path, ...dynamics }, key) => {
                 return (
 <Route key={key}
-                  //exact
+                  exact
                   path={path}
                   component={dynamic({
                     app,

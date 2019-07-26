@@ -9,12 +9,68 @@ const { TreeNode, DirectoryTree } = Tree;
 class BoardCommunication extends Component {
     state = {
         selectBoardFileModalVisible: false,
-        value: undefined,
+        selectBoardDropdownVisible: false,
+        selectBoardFileDropdownVisible: false,
+        boardTreeData: [
+            { title: 'Expand to load', key: '0' },
+            { title: 'Expand to load', key: '1' },
+            { title: 'Tree Node', key: '2', isLeaf: true },
+        ],
+        boardFileTreeData: [
+            { title: 'Expand to load', key: '0' },
+            { title: 'Expand to load', key: '1' },
+            { title: 'Tree Node', key: '2', isLeaf: true },
+        ]
     };
 
     constructor(props) {
         super(props)
+        const { dispatch } = this.props;
+
     }
+
+
+
+    componentWillReceiveProps(nextProps) {
+        const { dispatch, currentBoardDetail: oldCurrentBoardDetail } = this.props;
+        const { currentBoardDetail } = nextProps;
+
+        if (!oldCurrentBoardDetail || oldCurrentBoardDetail.board_id != currentBoardDetail.board_id) {
+            dispatch({
+                type: 'simpleWorkbenchbox/getFileList',
+                payload: {
+                    folder_id: currentBoardDetail.folder_id,
+                    board_id: currentBoardDetail.board_id
+                }
+            });
+        }
+
+    }
+
+    getBoardTreeData = (projectList) => {
+        let list = []
+        projectList.map((board, key) => {
+            list.push({ key: board.board_id, title: board.board_name, isLeaf: true });
+        });
+        return list;
+    }
+
+    getBoardFileTreeData = (data) => {
+        let list = []
+        let { folder_data = [], file_data = [] } = data;
+        folder_data.map((folder, key) => {
+            list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
+        });
+        file_data.map((file, key) => {
+            list.push({ key: file.file_id, title: file.file_name, type: 2, isLeaf: true });
+        });
+        return list;
+    }
+
+    componentWillMount() {
+
+    }
+
     selectBoardFile = () => {
         this.setState({
             selectBoardFileModalVisible: true
@@ -40,38 +96,53 @@ class BoardCommunication extends Component {
         this.setState({ value });
     };
 
-    treeData = [
-        {
-            title: 'Node1',
-            value: '0-0',
-            key: '0-0',
-            children: [
-                {
-                    title: 'Child Node1',
-                    value: '0-0-1',
-                    key: '0-0-1',
-                },
-                {
-                    title: 'Child Node2',
-                    value: '0-0-2',
-                    key: '0-0-2',
-                },
-            ],
-        },
-        {
-            title: 'Node2',
-            value: '0-1',
-            key: '0-1',
-        },
-    ];
+    onSelectBoard = (keys, event) => {
+        //console.log('Trigger Select', keys, event);
+        const { dispatch } = this.props;
+        console.log("boardid",keys[0]);
+        
+        dispatch({
+            type: 'simpleWorkbenchbox/getBoardDetail',
+            payload: {
+                id: keys[0]
+            }
+        });
+        this.setState({ selectBoardDropdownVisible: false });
+    };
 
-    onSelect = (keys, event) => {
-        console.log('Trigger Select', keys, event);
+    handleSelectBoardDropdownVisibleChange = flag => {
+        this.setState({ selectBoardDropdownVisible: flag });
+    };
+
+    handleSelectBoardFileDropdownVisibleChange = flag => {
+        this.setState({ selectBoardFileDropdownVisible: flag });
     };
 
     onExpand = () => {
         console.log('Trigger Expand');
     };
+
+    onLoadFileTreeData = treeNode => {
+  
+        return (new Promise(resolve => {
+            if (treeNode.props.children) {
+                resolve();
+                return;
+            }
+            setTimeout(() => {
+                treeNode.props.dataRef.children = [
+                    { title: 'Child Node', key: `${treeNode.props.eventKey}-0` },
+                    { title: 'Child Node', key: `${treeNode.props.eventKey}-1` },
+                ];
+                this.setState({
+                    boardFileTreeData: [...this.state.boardFileTreeData],
+                    boardTreeData: [...this.state.boardTreeData],
+                });
+                resolve();
+            }, 1000);
+        }));
+    }
+
 
     renderSelectBoardTreeList = () => {
         return (
@@ -87,31 +158,41 @@ class BoardCommunication extends Component {
             />
         );
     }
-    renderSelectBoardFileTreeList = () => {
-        // return(
-        //     <>
-        //     </>
-        // )
+    renderTreeNodes = data =>
+        data.map(item => {
+            if (item.children) {
+                return (
+                    <TreeNode title={item.title} key={item.key} dataRef={item} selectable={false} >
+                        {this.renderTreeNodes(item.children)}
+                    </TreeNode>
+                );
+            }
+            return <TreeNode {...item} dataRef={item} />;
+        });
+
+    renderSelectBoardTreeList = () => {
+        const { projectList = [] } = this.props;
+        const boardTreeData = this.getBoardTreeData(projectList);
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                    <DirectoryTree multiple defaultExpandAll onSelect={this.onSelect} onExpand={this.onExpand}>
-                        <TreeNode title="parent 0" key="0-0">
-                            <TreeNode title="leaf 0-0ffffffffffffffffffffffffffffffffffffffffffff" key="0-0-0" isLeaf />
-                            <TreeNode title="leaf 0-1" key="0-0-1" isLeaf />
-                        </TreeNode>
-                        <TreeNode title="parent 1" key="0-1">
-                            <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
-                            <TreeNode title="leaf 1-1" key="0-1-1" isLeaf />
-                        </TreeNode>
-                        <TreeNode title="parent 2" key="0-2">
-                            <TreeNode title="leaf 2-0" key="0-2-0" isLeaf />
-                            <TreeNode title="leaf 2-1" key="0-2-1" isLeaf />
-                        </TreeNode>
-                        <TreeNode title="parent 3" key="0-3">
-                            <TreeNode title="leaf 3-0" key="0-3-0" isLeaf />
-                            <TreeNode title="leaf 3-1" key="0-3-1" isLeaf />
-                        </TreeNode>
+                    <Tree loadData={this.onLoadFileTreeData} onSelect={this.onSelectBoard}>
+                        {this.renderTreeNodes(boardTreeData)}
+                    </Tree>
+                </div>
+            </>
+        );
+    }
+
+    renderSelectBoardFileTreeList = () => {
+        const { boardFileListData = {} } = this.props;
+        const boardFileTreeData = this.getBoardFileTreeData(boardFileListData);
+
+        return (
+            <>
+                <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+                    <DirectoryTree loadData={this.onLoadData} onSelect={this.onSelect}>
+                        {this.renderTreeNodes(boardFileTreeData)}
                     </DirectoryTree>
                 </div>
             </>
@@ -119,6 +200,8 @@ class BoardCommunication extends Component {
     }
 
     render() {
+        const { currentBoardDetail = {} } = this.props;
+
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 <div className={indexStyles.indexCoverWapper}>
@@ -147,17 +230,27 @@ class BoardCommunication extends Component {
                     onCancel={this.handleCancel}
                 >
                     <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
-                        <Dropdown overlay={this.renderSelectBoardFileTreeList} trigger={['click']} className={`${indexStyles.dropdownSelect}`}>
+                        <Dropdown
+                            overlay={this.renderSelectBoardTreeList}
+                            trigger={['click']}
+                            className={`${indexStyles.dropdownSelect}`}
+                            onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
+                            visible={this.state.selectBoardDropdownVisible}>
                             <div className={indexStyles.dropdownLinkWapper}>
                                 <span style={{ display: 'block', width: '28px' }}>项目</span>
                                 <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
-                                    请选择 <Icon type="down" />
+                                    {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
                                 </span>
                             </div>
                         </Dropdown>
                     </div>
                     <div className={indexStyles.selectWapper}>
-                        <Dropdown overlay={this.renderSelectBoardFileTreeList} trigger={['click']} className={`${indexStyles.dropdownSelect}`}>
+                        <Dropdown
+                            overlay={this.renderSelectBoardFileTreeList}
+                            trigger={['click']}
+                            className={`${indexStyles.dropdownSelect}`}
+                            onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
+                            visible={this.state.selectBoardFileDropdownVisible}>
                             <div className={indexStyles.dropdownLinkWapper}>
                                 <span style={{ display: 'block', width: '28px' }}>文件</span>
                                 <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
@@ -174,4 +267,17 @@ class BoardCommunication extends Component {
 
 }
 
-export default connect(({ }) => ({}))(BoardCommunication)
+export default connect(({
+    simpleWorkbenchbox: {
+        boardListData,
+        currentBoardDetail,
+        boardFileListData
+    },
+    workbench: {
+        datas: { projectList }
+    }, }) => ({
+        projectList,
+        boardListData,
+        currentBoardDetail,
+        boardFileListData
+    }))(BoardCommunication)

@@ -12,9 +12,7 @@ class DropdownSelect extends Component {
             visible: false,
             addNew: false,
             inputValue: '',
-            itemList: this.props.itemList,
             fuctionMenuItemList: this.props.fuctionMenuItemList,
-            filteredList: this.props.list ? this.props.list : [],
             menuItemClick: this.props.menuItemClick,
         };
     }
@@ -73,12 +71,11 @@ class DropdownSelect extends Component {
     }
 
     renderContent() {
-        const { fuctionMenuItemList = [], itemList = [], menuItemClick = () => { } } = this.state;
-    
+        const { fuctionMenuItemList = [], menuItemClick = () => { } } = this.state;
+        const { itemList =[]} = this.props;
         return (
             <Menu className
-                onClick={menuItemClick}
-            >
+                onClick={menuItemClick}>
                 {this.renderFunctionMenuItem(fuctionMenuItemList)}
                 {this.renderMenuItem(itemList)}
 
