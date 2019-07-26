@@ -127,8 +127,8 @@ export default class SiderLeft extends React.Component {
     const { is_disabled } = this.state
     const { currentUserOrganizes = [] } = this.props
     const { dispatch, is_show_org_name } = this.props
-    //是否拥有查看成员入口
-    const isHasMemberView = () => {
+     //是否拥有查看成员入口
+     const isHasMemberView = () => {
       return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     }
 
@@ -148,13 +148,13 @@ export default class SiderLeft extends React.Component {
 
     switch (key) {
       case '24': // 匹配团队成员
-          isHasMemberView() && this.routingJump('/technological/organizationMember')
+        isHasMemberView() && this.routingJump('/technological/organizationMember')
           break
       case '23': // 匹配成员管理后台
-          isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
         break
       case '22': // 匹配邀请成员加入弹框显示
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
         break
       case '20': // 匹配用户设置
         this.routingJump('/technological/accoutSet')
@@ -324,14 +324,33 @@ export default class SiderLeft extends React.Component {
     const { current_org={}, name, avatar } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
-    const { logo } = currentSelectOrganize
+    const { logo, id } = currentSelectOrganize
+
+    //是否拥有查看成员入口
+    const isHasMemberView = () => {
+      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
+    }
+
+    //是否拥有管理后台入口
+    const isHasManagerBack = () => {
+      let flag = false
+      if(
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+      ) {
+        flag = true
+      }
+      return flag
+    }
     
     const orgListMenu = (
       <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
           <Menu subMenuCloseDelay={1} onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
             
             {
-              identity_type == '1' && (
+              identity_type == '1' && isHasMemberView() &&  (
                 <Menu.Item key="24">
                   <div className={indexStyles.default_select_setting}>
                     <div className={indexStyles.team}>
@@ -344,7 +363,7 @@ export default class SiderLeft extends React.Component {
             }
 
             {
-              identity_type == '1' && (
+              identity_type == '1' && isHasManagerBack() && (
                 <Menu.Item key="23">
                   <div className={indexStyles.default_select_setting}>
                     <div className={indexStyles.bank}>
@@ -357,7 +376,7 @@ export default class SiderLeft extends React.Component {
             }
 
             {
-              identity_type == '1' && (
+              identity_type == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
                 <Menu.Item key="22">
                   <div className={indexStyles.default_select_setting}>
                     <div className={indexStyles.addUsers}>
@@ -452,6 +471,7 @@ export default class SiderLeft extends React.Component {
           <Menu
             className={`${glabalStyles.global_vertical_scrollbar}`}
             style={{maxHeight: 200, overflowY: 'auto'}}
+            selectedKeys={ id ? [id] : ['0'] }
             onClick={this.handleOrgListMenuClick.bind(this)} selectable={true}  mode="vertical" >
             <Menu.Item key="0" className={indexStyles.org_name}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
@@ -475,24 +495,24 @@ export default class SiderLeft extends React.Component {
       </div>
     )
 
-    //是否拥有管理后台入口
-    const isHasManagerBack = () => {
-      let flag = false
-      if(
-        checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
-        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
-        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
-        checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
-      ) {
-        flag = true
-      }
-      return flag
-    }
+    // //是否拥有管理后台入口
+    // const isHasManagerBack = () => {
+    //   let flag = false
+    //   if(
+    //     checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT) ||
+    //     checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_CREATE) ||
+    //     checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT) ||
+    //     checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_DELETE)
+    //   ) {
+    //     flag = true
+    //   }
+    //   return flag
+    // }
 
-    //是否拥有查看成员入口
-    const isHasMemberView = () => {
-      return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
-    }
+    // //是否拥有查看成员入口
+    // const isHasMemberView = () => {
+    //   return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
+    // }
 
     return (
       

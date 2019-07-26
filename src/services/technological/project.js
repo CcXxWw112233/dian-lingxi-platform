@@ -116,8 +116,9 @@ export async function createProjectGroupTreeNode(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/group`,
     method: 'POST',
     data: {
-      group_name,
-      parent_id
+      ...data
+      // group_name,
+      // parent_id
     }
   })
 }
