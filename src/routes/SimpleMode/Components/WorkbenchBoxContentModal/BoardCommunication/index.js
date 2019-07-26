@@ -20,7 +20,9 @@ class BoardCommunication extends Component {
             { title: 'Expand to load', key: '0' },
             { title: 'Expand to load', key: '1' },
             { title: 'Tree Node', key: '2', isLeaf: true },
-        ]
+        ],
+        currentfile:{}
+    
     };
 
     constructor(props) {
@@ -110,6 +112,18 @@ class BoardCommunication extends Component {
         this.setState({ selectBoardDropdownVisible: false });
     };
 
+    onSelectFile = (keys, event) => {
+        //console.log('Trigger Select', keys, event);
+        const { dispatch } = this.props;
+        console.log("fileid",keys[0]);
+        console.log("selectedNodes",event.selectedNodes[0].props.title);
+        
+        this.setState({ 
+            selectBoardFileDropdownVisible: false,
+            currentfile:{fileId:keys[0],fileName:event.selectedNodes[0].props.title}
+         });
+    };
+
     handleSelectBoardDropdownVisibleChange = flag => {
         this.setState({ selectBoardDropdownVisible: flag });
     };
@@ -191,7 +205,7 @@ class BoardCommunication extends Component {
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                    <DirectoryTree loadData={this.onLoadData} onSelect={this.onSelect}>
+                    <DirectoryTree loadData={this.onLoadData} onSelect={this.onSelectFile}>
                         {this.renderTreeNodes(boardFileTreeData)}
                     </DirectoryTree>
                 </div>
@@ -201,7 +215,7 @@ class BoardCommunication extends Component {
 
     render() {
         const { currentBoardDetail = {} } = this.props;
-
+        const { currentfile ={} } = this.state;
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 <div className={indexStyles.indexCoverWapper}>
@@ -254,7 +268,7 @@ class BoardCommunication extends Component {
                             <div className={indexStyles.dropdownLinkWapper}>
                                 <span style={{ display: 'block', width: '28px' }}>文件</span>
                                 <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
-                                    请选择 <Icon type="down" />
+                                {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
                                 </span>
                             </div>
                         </Dropdown>
