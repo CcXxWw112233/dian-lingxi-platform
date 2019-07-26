@@ -51,11 +51,10 @@ export default {
     // 登录成功重定向
     * loginRouteJump ({ payload }, {select, call, put}) {
       const res = yield call(getUSerInfo, payload)
-      const { user_set = {} } = res.data
-      const current_org_id = user_set['current_org']
-      //如果有重定向路径或者存在组织
+      const { has_org } = res.data
+      //如果存在组织， 否则跳到指引页面
       if(isApiResponseOk(res)) {
-        if(!!res.data['current_org']){
+        if(has_org == '1'){
           yield put(routerRedux.push(redirectLocation))
         } else {
           yield put(routerRedux.push('/noviceGuide'))

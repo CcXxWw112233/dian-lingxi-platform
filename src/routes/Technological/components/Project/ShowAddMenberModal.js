@@ -111,7 +111,7 @@ class ShowAddMenberModal extends React.Component {
           <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>发送邀请</Button>
         </FormItem> */}
         <div>
-        <InviteOthers isShowTitle={false} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
+        <InviteOthers isShowTitle={false}  _organization_id={localStorage.getItem('aboutBoardOrganizationId')} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
       </Form>
     )
