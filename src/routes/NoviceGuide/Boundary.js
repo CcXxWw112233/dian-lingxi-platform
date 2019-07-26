@@ -7,6 +7,7 @@ import glabalStyles from '@/globalset/css/globalClassName.less'
 import manager from '@/assets/noviceGuide/undraw_file_manager.png'
 import organizer from '@/assets/noviceGuide/undraw_online_organizer.png'
 import InputExport from './component/InputExport';
+import { validateTel, validateEmail } from '@/utils/verify.js'
 
 
 export default class Boundary extends Component {
@@ -20,10 +21,12 @@ export default class Boundary extends Component {
 		], // 初始化的input框
 		inputList: [
 			{ value: '' },
-			{ value: '' },
-			{ value: '' },
 		], // input框的
 		is_add_more: false, // 是否点击添加更多的操作 默认为false 没有点击
+		show_text: '', // 显示文案
+		inputVal: '', // 获取从子组件中传递过来的value值
+		pVerify: null, // 定义一个从子组件中获取的手机验证状态
+		eVerify: null, // 定义一个从子组件中获取的邮箱验证状态
 	}
 
 	// 点击ok
@@ -33,9 +36,49 @@ export default class Boundary extends Component {
 		})
 	}
 
+	// 子组件需调用该方法: 获取焦点追加一条输入框
+	handleAddOneTips = () => {
+		const { inputList } = this.state
+		let new_input_list = [...inputList]
+		// 追加一条
+		new_input_list = new_input_list.concat([{ value: '' }])
+		this.setState({
+			inputList: new_input_list
+		})
+	}
+
+	// 定义一个方法修改父组件中的状态
+  updateParentState = (value, index, phone, email) => {
+    const { inputList, pVerify, eVerify } = this.state
+    let new_list = [...inputList]
+    // console.log(value, inputList, index, 'sss')
+    new_list = new_list.map((item, i) => {
+      let new_item = item
+      if (index == i) {
+        new_item = {...new_item, value: value}
+      }
+      return new_item
+		})
+    if (value) { // 如果value存在, 就更新它
+      this.setState({
+				inputList: new_list,
+				inputVal: value,
+				pVerify: phone,
+				eVerify: email,
+			})
+    } else { // 不存在, 就保存为原来的状态
+			this.setState({
+				inputVal: '',
+				inputList: inputList,
+				pVerify: null,
+				eVerify: null,
+			})
+		}
+  }
+
 	// 点击添加更多
 	handleAddMore = () => {
-		console.log(1111, 'sss')
+		// console.log(1111, 'sss')
 		this.setState({
 			is_add_more: true,
 		}, () => {
@@ -47,8 +90,28 @@ export default class Boundary extends Component {
 				inputList: new_input_list
 			})
 		})
-		
+	}
 
+	/**
+	 * 开始协作或者发送邀请的点击事件
+	 * 需要将存在的value遍历找到,然后取出来,传给后台
+	 * 应该需要区分是手机号还是 邮箱号
+	 */
+	handleSubmit() {
+		const { inputList } = this.state
+		// console.log(inputList, 'ssss')
+		let new_input_list = [...inputList]
+		let phoneTemp = [] // 定义一个手机号的空数组
+		let emailTemp = [] // 定义一个邮箱的空数组
+		for (const val of new_input_list) {
+			let result = val['value']
+			if (validateTel(result)) { // 手机号
+				phoneTemp.push(result)
+			} else if (validateEmail(result)) { // 邮箱号
+				emailTemp.push(result)
+			}
+		}
+		// console.log(phoneTemp, emailTemp, 'ssss')
 	}
 
 	// 显示初始指引页面
@@ -145,7 +208,9 @@ export default class Boundary extends Component {
 
 	// 显示开始协作
 	renderCooperateWith() {
-		const { inputList } = this.state
+		const { inputList, inputVal, pVerify, eVerify } = this.state
+		// console.log(inputVal.length, 'sss')
+		// console.log(inputList, 'sss')
 		let new_input_list = [...inputList]
 		return (
 			<div className={styles.introduce}>
@@ -154,7 +219,7 @@ export default class Boundary extends Component {
           <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
 					{
 						new_input_list.map((item, index) => {
-							return <InputExport key={index} inputList={inputList} itemVal={item} index={index} />
+							return <InputExport key={index} inputList={inputList} itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
 						})
 					}
 					<span onClick={ this.handleAddMore } className={styles.add_more}>+  添加更多...</span>
@@ -166,7 +231,14 @@ export default class Boundary extends Component {
 							<b className={styles.line}></b>
 						</p>
 					</div>
-					<div className={styles.btn}><Button type="primary">开始协作</Button></div>
+					{/* 这里需要通过输入框的变化以及验证成功或者失败显示不同的文案 */}
+					{
+						inputVal && inputVal.length >= 7 ? (
+							<div className={`${styles.btn}  ${inputVal && (pVerify || eVerify) == false ? styles.disabled : ''}`}><Button disabled={pVerify || eVerify ? false : true} type="primary" onClick={ () => { this.handleSubmit() } }>发送邀请</Button></div>
+						) : (
+							<div className={styles.btn}><Button onClick={ () => { this.handleSubmit() } } type="primary">开始协作</Button></div>
+						)
+					}
 				</div>
 			</div>
 		)

@@ -38,8 +38,8 @@ const NoviceGuide = (options) => {
   }
   return(
     <div>
-      <GuideDetail {...GuideDetailProps} />
-      {/* <Boundary /> */}
+      {/* <GuideDetail {...GuideDetailProps} /> */}
+      <Boundary />
     </div>
   )
 };
