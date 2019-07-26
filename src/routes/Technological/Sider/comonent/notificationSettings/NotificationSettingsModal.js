@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Radio, Checkbox, Row, Col } from 'antd'
+import { Radio, Checkbox, Row, Col, message } from 'antd'
 import CustormModal from '@/components/CustormModal'
 import styles from './NotificationSettingsModal.less'
 import glabalStyles from '@/globalset/css/globalClassName.less'
 import RenderDetail from './component/renderDetail'
 import RenderSimple from './component/renderSimple'
+import { getNoticeSettingList } from '@/services/technological/notificationSetting'
+import {isApiResponseOk} from "@/utils/handleResponseData";
 
 export default class NotificationSettingsModal extends Component {
 
@@ -13,13 +15,33 @@ export default class NotificationSettingsModal extends Component {
         radio_checked_val: 'detail', // 选择详细提醒还是简要提醒, 默认为detail 详细提醒
         is_detail_none: 'none', // 是否显示还原 默认为none隐藏
         is_simple_none: 'none', // 是否显示还原 默认为none隐藏
+        notice_setting_list: [], // 通知设置的列表
+        default_options: [], // 默认列表选中的选项
     }
+
+    componentDidMount() {
+        this.getInitNoticeSettingList()
+    }   
+
+    // 获取初始设置列表信息
+    getInitNoticeSettingList = () => {
+        getNoticeSettingList().then((res) => {
+            if (isApiResponseOk(res)) {
+                this.setState({
+                    notice_setting_list: res.data.notice_list_data,
+                    default_options: res.data.default_option
+                })
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+
 
     // 关闭设置的回调
     onCancel = () => {
         this.props.setNotificationSettingsModalVisible()
     }
-
     /**
      * 详细提醒和简要提醒的回调
      * @param {Object} e 选中的事件对象
@@ -56,39 +78,63 @@ export default class NotificationSettingsModal extends Component {
 
     // 点击详细提醒的还原
     handleDetailRecover = () => {
-        console.log(this.refs, 'sss')
+        // console.log(this.refs, 'sss')
        this.refs.renderDetail.recoverDefault()
        this.setState({
         is_detail_none: 'none'
        })
     }
 
-
-    
-
     // 展示设置的内容
     renderSetOptions() {
-        const { radio_checked_val, is_detail_none, is_simple_none } = this.state
-        const projectOptions = [
-            { value: 'board.create', label: '新建项目', id: 'board.create', checked: false },
-            { value: 'board.update.description', label: '编辑项目信息', id: 'board.update.description', checked: true },
-            { value: 'board.update.user.add', label: '项目成员变更', id: 'board.update.user.add', checked: true },
-            { value: 'board.delete', label: '项目结束', id: 'board.delete', checked: true },
-            { value: 'board.lcb', label: '制定里程碑', id: 'board.create', checked: false },
-        ]
-        let defaultProjectValueArr = []
-
-        projectOptions.filter(item => {
-            if (item.checked) {
-                let newVal = item.value
-                defaultProjectValueArr.push(newVal)
-                return defaultProjectValueArr
+        const { radio_checked_val, is_detail_none, is_simple_none, notice_setting_list, default_options} = this.state
+        let projectOptions, taskOptions, processOptions, fileOptions, aboutOptions;
+        notice_setting_list.map(item => {
+            if (item.id == 1) { // 代表项目的选项
+               return projectOptions = [...item.child_data]
+            } else if (item.id == 7) { // 代表任务/日程的选项
+               return taskOptions = [...item.child_data]
+            } else if (item.id == 16) { // 代表流程的选项
+               return processOptions = [...item.child_data]
+            } else if (item.id == 22) { // 代表文件的选项
+               return fileOptions = [...item.child_data]
+            } else if (item.id == 27) { // 代表关于我的选项
+               return aboutOptions = [...item.child_data]
             }
+        })
+        let defaultProjectValueArr = [];
+        let defaultTaskValueArr = [];
+        let defaultProcessValueArr = []; 
+        let defaultFileValueArr = []; 
+        let defaultAboutValueArr = []; // 定义一个默认的项目选中的数组
+        // 将默认项目选中的选项取出来
+        projectOptions && projectOptions.map(item => {
+            for (let val of default_options.detailed) {
+                if (item.id == val) {
+                    defaultProjectValueArr.push(val)
+                }
+            }
+            return defaultProjectValueArr
+        })
+
+        // 将默认任务/日程选中的选项取出来
+        taskOptions && taskOptions.map(item => {
+            for (let val of default_options.detailed) {
+                if (item.id == val) {
+                    defaultTaskValueArr.push(val)
+                }
+            }
+            return defaultTaskValueArr
         })
 
         const datas = {
             projectOptions,
+            taskOptions, 
+            processOptions, 
+            fileOptions, 
+            aboutOptions,
             defaultProjectValueArr,
+            defaultTaskValueArr,
             is_detail_none,
         }
         if (radio_checked_val == 'detail') {
@@ -142,7 +188,7 @@ export default class NotificationSettingsModal extends Component {
                 <CustormModal
                     title={<div style={{textAlign:'center', fontSize: 16, fontWeight: 500, color: '#000'}}>通知设置</div>}
                     visible={notificationSettingsModalVisible}
-                    width={472}
+                    width={596}
                     zIndex={1006}
                     maskClosable={false}
                     destroyOnClose={true}
