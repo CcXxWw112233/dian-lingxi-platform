@@ -581,6 +581,8 @@ export default class NewsListNewDatas extends React.Component {
     const projectNews = (value, key) => {
       const { content = {}, action, created, org_id } = value
       const { board = {}, card = {}, card_list = {} } = content
+      const board_name = board['name']
+      const list_name = card_list['name']
 
       return (
         <div className={NewsListStyle.containr} key={key}>
@@ -592,7 +594,20 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain} </div>
-                <div>{timestampToTime(created)}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}：{board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''} */}
+                  {board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''}
+                </div>
+                {/* <div>{timestampToTime(created)}</div> */}
               </div>
             </div>
             <div className={NewsListStyle.right}>

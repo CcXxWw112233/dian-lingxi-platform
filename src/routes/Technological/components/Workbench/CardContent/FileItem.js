@@ -208,7 +208,7 @@ class FileItem extends React.Component {
 
   render() {
     const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
-    console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
+    // console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
     const {
       board_id,
       org_id,

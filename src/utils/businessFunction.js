@@ -56,9 +56,9 @@ export const checkIsHasPermission = (code, param_org_id) => {
 }
 
 //在当前项目中检查是否有权限操作
-export const checkIsHasPermissionInBoard = (code) => {
+export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
-  const board_id = localStorage.getItem('storageCurrentOperateBoardId')
+  const board_id = params_board_id || localStorage.getItem('storageCurrentOperateBoardId')
   if(!Array.isArray(userBoardPermissions)) {
     return false
   }

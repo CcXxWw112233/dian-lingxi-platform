@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'dva'
-import { Card, Icon, Input, Tooltip } from 'antd'
+import { Card, Icon, Input, Tooltip, message } from 'antd'
 import NewsListStyle from './NewsList.less'
 import styles from './index.css'
 import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToTimeNormal2} from '../../../../../../utils/util'
 // import Comment from './Comment'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter} from "../../../../../../utils/businessFunction";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, ORG_TEAM_BOARD_QUERY, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW} from "../../../../../../globalset/js/constant";
+import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermission, checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
 import double_right from '@/assets/workbench/double_right.png'
 
 
@@ -46,6 +46,15 @@ export default class InitialNews extends React.Component {
     })
   }
 
+  goToBoard(id) {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)
+    
+  }
+
   render() {
 
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
@@ -53,13 +62,21 @@ export default class InitialNews extends React.Component {
     // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
+      // console.log(messageValue, 'sss')
+      // console.log(activity_type, 'ssss')
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
-        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} 
+          // onClick={ this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`) }
+          onClick={ () => { this.goToBoard(ORG_TEAM_BOARD_QUERY, messageValue.org_id) } }
+        >{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
-        <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} 
+          onClick={ this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
       let jumpToFile = (
