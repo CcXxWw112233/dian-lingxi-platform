@@ -596,7 +596,6 @@ export default class NewsListNewDatas extends React.Component {
       const board_name = board['name']
       const list_name = card_list['name']
 
-
       return (
         <div className={NewsListStyle.containr} key={key}>
           <div className={NewsListStyle.top}>

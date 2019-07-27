@@ -1,5 +1,6 @@
 import request from "../../utils/requestAxios";
 import {REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN} from "../../globalset/js/constant";
+import { getGlobalData } from "../../utils/businessFunction";
 
 //开启关闭特权
 export async function toggleContentPrivilege(data) {
@@ -72,7 +73,7 @@ export async function getProjectGroupSearchTree() {
     url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+      _organization_id: getGlobalData('aboutBoardOrganizationId')
     }
   })
 }

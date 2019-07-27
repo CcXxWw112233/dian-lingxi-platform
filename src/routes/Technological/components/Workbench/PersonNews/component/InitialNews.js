@@ -96,6 +96,8 @@ export default class InitialNews extends React.Component {
     // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
+      // console.log(messageValue, 'sss')
+      // console.log(activity_type, 'ssss')
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
@@ -107,8 +109,12 @@ export default class InitialNews extends React.Component {
       let jumpToTask = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} 
+<<<<<<< HEAD
           onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content}) } }
         >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+=======
+          onClick={ this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+>>>>>>> fadbf0aa505195d0ae109ae0057db808c1eb62be
       )
 
       let jumpToFile = (

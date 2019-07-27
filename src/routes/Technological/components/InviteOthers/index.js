@@ -816,7 +816,7 @@ InviteOthers.defaultProps = {
   handleInviteMemberReturnResult: function() {
     message.info('邀请他人组件， 需要被提供一个回调函数')
   },
-  _organization_id: '', //localStorage.getItem('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
+  _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
   shouldNotGetGroupInDidMount: false, //false默认，true的时候在componentDidMount 里面做getGroupList请求
 }
 
