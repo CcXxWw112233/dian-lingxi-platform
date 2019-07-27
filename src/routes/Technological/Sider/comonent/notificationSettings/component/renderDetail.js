@@ -83,7 +83,7 @@ export default class renderDetail extends Component {
                                 <Checkbox.Group onChange={this.chgProjectOptions} defaultValue={new_default_project_arr}>
                                     <Row>
                                         {
-                                            projectOptions.map(item => {
+                                            projectOptions && projectOptions.map(item => {
                                                 return (
                                                     <Col style={{marginBottom: 8}} span={8}>
                                                         <Checkbox value={item.id}>{item.name}</Checkbox>
@@ -104,12 +104,12 @@ export default class renderDetail extends Component {
                         <span>任务/日程</span>
                     </div>
                     <div className={styles.contain}>
-                        {
+                        {/* {
                             show_task_down_arrow && (
                                 <Checkbox.Group onChange={this.chgProjectOptions} defaultValue={new_default_task_arr}>
                                     <Row>
                                         {
-                                            taskOptions.map(item => {
+                                           taskOptions && taskOptions.map(item => {
                                                 return (
                                                     <Col style={{marginBottom: 8}} span={8}>
                                                         <Checkbox value={item.id}>{item.name}</Checkbox>
@@ -121,7 +121,7 @@ export default class renderDetail extends Component {
                                     </Row>
                                 </Checkbox.Group>
                             )
-                        }
+                        } */}
                     </div>
                 </div>
                 <div className={styles.process}>

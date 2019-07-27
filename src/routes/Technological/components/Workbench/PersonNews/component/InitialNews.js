@@ -46,13 +46,13 @@ export default class InitialNews extends React.Component {
     })
   }
 
-  goToBoard(id) {
+  // 去到项目详情
+  goToBoard(id,content) {
     if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)
-    
+    this.routingJump.bind(this, `/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
   }
 
   render() {
@@ -69,8 +69,7 @@ export default class InitialNews extends React.Component {
       let jumpToBoard = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} 
-          // onClick={ this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`) }
-          onClick={ () => { this.goToBoard(ORG_TEAM_BOARD_QUERY, messageValue.org_id) } }
+          onClick={ () => { this.goToBoard(ORG_TEAM_BOARD_QUERY, messageValue.org_id, messageValue.content) } }
         >{messageValue.content.board.name}</span>
       )
       let jumpToTask = (

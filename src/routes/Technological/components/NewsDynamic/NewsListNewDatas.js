@@ -583,6 +583,10 @@ export default class NewsListNewDatas extends React.Component {
       const { board = {}, card = {}, card_list = {} } = content
       const board_name = board['name']
       const list_name = card_list['name']
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/weak_oganization
 
       return (
         <div className={NewsListStyle.containr} key={key}>
