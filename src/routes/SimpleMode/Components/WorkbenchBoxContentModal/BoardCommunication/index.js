@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -11,24 +12,17 @@ class BoardCommunication extends Component {
         selectBoardFileModalVisible: false,
         selectBoardDropdownVisible: false,
         selectBoardFileDropdownVisible: false,
-        boardTreeData: [
-            { title: 'Expand to load', key: '0' },
-            { title: 'Expand to load', key: '1' },
-            { title: 'Tree Node', key: '2', isLeaf: true },
-        ],
-        boardFileTreeData: [
-            { title: 'Expand to load', key: '0' },
-            { title: 'Expand to load', key: '1' },
-            { title: 'Tree Node', key: '2', isLeaf: true },
-        ],
-        currentfile:{}
-    
+        boardTreeData: [],
+        boardFileTreeData: [],
+        currentfile: {},
+        selectBoardFileCompleteDisabled: true,
+        previewFileModalVisibile: false
+
     };
 
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
-
     }
 
 
@@ -64,7 +58,8 @@ class BoardCommunication extends Component {
             list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
         });
         file_data.map((file, key) => {
-            list.push({ key: file.file_id, title: file.file_name, type: 2, isLeaf: true });
+            console.log(file);
+            list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
         });
         return list;
     }
@@ -101,8 +96,8 @@ class BoardCommunication extends Component {
     onSelectBoard = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
-        console.log("boardid",keys[0]);
-        
+        console.log("boardid", keys[0]);
+
         dispatch({
             type: 'simpleWorkbenchbox/getBoardDetail',
             payload: {
@@ -115,13 +110,14 @@ class BoardCommunication extends Component {
     onSelectFile = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
-        console.log("fileid",keys[0]);
-        console.log("selectedNodes",event.selectedNodes[0].props.title);
-        
-        this.setState({ 
+        console.log("fileid", keys[0]);
+        console.log("selectedNodes", event.selectedNodes[0].props.title);
+
+        this.setState({
             selectBoardFileDropdownVisible: false,
-            currentfile:{fileId:keys[0],fileName:event.selectedNodes[0].props.title}
-         });
+            currentfile: { fileId: keys[0], fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
+            selectBoardFileCompleteDisabled: false
+        });
     };
 
     handleSelectBoardDropdownVisibleChange = flag => {
@@ -132,12 +128,8 @@ class BoardCommunication extends Component {
         this.setState({ selectBoardFileDropdownVisible: flag });
     };
 
-    onExpand = () => {
-        console.log('Trigger Expand');
-    };
-
     onLoadFileTreeData = treeNode => {
-  
+
         return (new Promise(resolve => {
             if (treeNode.props.children) {
                 resolve();
@@ -213,9 +205,37 @@ class BoardCommunication extends Component {
         );
     }
 
+    openFileModal = () => {
+        //const { updateDatasFile } = this.props;
+        const { currentBoardDetail = {} } = this.props;
+        const { currentfile = {} } = this.state;
+        console.log(currentfile);
+        const { fileId, versionId, fileResourceId,folderId } = currentfile;
+
+        const { board_id } = currentBoardDetail;
+        this.setState({
+            previewFileModalVisibile: true
+        });
+        this.props.updateFileDatas({
+            seeFileInput: 'fileModule',
+            board_id,
+            filePreviewCurrentId: fileResourceId,
+            currentParrentDirectoryId: folderId,
+            filePreviewCurrentFileId: fileId,
+            filePreviewCurrentVersionId: versionId, //file_id,
+            pdfDownLoadSrc: '',
+        })
+    }
+    setPreviewFileModalVisibile() {
+        this.setState({
+            previewFileModalVisibile: !this.state.previewFileModalVisibile
+        })
+    }
+
+
     render() {
         const { currentBoardDetail = {} } = this.props;
-        const { currentfile ={} } = this.state;
+        const { currentfile = {} } = this.state;
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 <div className={indexStyles.indexCoverWapper}>
@@ -228,12 +248,13 @@ class BoardCommunication extends Component {
                     </div>
                 </div>
 
+
                 <Modal
                     width={248}
                     bodyStyle={{ padding: '0px' }}
                     footer={
                         <div style={{ width: '100%' }}>
-                            <Button type="primary" disabled style={{ width: '100%' }}>完成</Button>
+                            <Button type="primary" disabled={this.state.selectBoardFileCompleteDisabled} style={{ width: '100%' }} onClick={this.openFileModal}>完成</Button>
                         </div>
                     }
                     title={
@@ -268,20 +289,25 @@ class BoardCommunication extends Component {
                             <div className={indexStyles.dropdownLinkWapper}>
                                 <span style={{ display: 'block', width: '28px' }}>文件</span>
                                 <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
-                                {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
+                                    {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
                                 </span>
                             </div>
                         </Dropdown>
                     </div>
 
                 </Modal>
+
+
+                <FileDetailModal {...this.props} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
             </div>
         )
     }
 
 }
 
-export default connect(({
+
+function mapStateToProps({
+    workbenchFileDetail,
     simpleWorkbenchbox: {
         boardListData,
         currentBoardDetail,
@@ -289,9 +315,18 @@ export default connect(({
     },
     workbench: {
         datas: { projectList }
-    }, }) => ({
+    },
+}) {
+    const modelObj = {
+        datas: { ...workbenchFileDetail['datas'] }
+    }
+    return {
+        model: modelObj,
         projectList,
         boardListData,
         currentBoardDetail,
         boardFileListData
-    }))(BoardCommunication)
+    }
+}
+export default connect(mapStateToProps)(BoardCommunication)
+

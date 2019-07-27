@@ -22,7 +22,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname === '/technological/workbench') {
+        if (location.pathname === '/technological/workbench' || location.pathname === '/technological/simplemode') {
           const initialData = () => {
             dispatch({
               type: 'updateDatas',
