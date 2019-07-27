@@ -50,7 +50,10 @@ export async function getGlobalSearchResultList(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/comm/global_query`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   }, {isNotLoading: true});
 }
 //根据关键字获取条件列表
