@@ -52,7 +52,7 @@ export default class InitialNews extends React.Component {
 
   // 去到项目详情
   goToBoard({org_id, content}) {
-    console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
+    // console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
     if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -91,7 +91,7 @@ export default class InitialNews extends React.Component {
   render() {
 
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic }} = this.props.model
-    console.log(newsDynamicList, 'ssss')
+    // console.log(newsDynamicList, 'ssss')
     const { currentUserOrganizes = [], is_show_org_name } = this.props
     // console.log('this is issues model ---->>>', this.props.model.datas  )
     //过滤消息内容
@@ -109,7 +109,8 @@ export default class InitialNews extends React.Component {
       let jumpToTask = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} 
-          onClick={ this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content}) } }
+        >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
       let jumpToFile = (
