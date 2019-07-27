@@ -48,12 +48,29 @@
       margin-right: 8px;
     }
     .itemName {
+      display: flex;
       color: #262626;
       flex: 1;
       margin-right: 16px;
       word-break: break-all;
       word-wrap: break-word;
       white-space: pre-wrap;
+      .org_name {
+        display: block;
+        line-height: 21px;
+        color: #8c8c8c;
+        // margin-left: 8px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .board_name {
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
     .time{
       color: #8c8c8c;

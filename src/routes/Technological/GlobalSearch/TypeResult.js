@@ -34,6 +34,7 @@ export default class TypeResult extends React.Component {
   }
 
   filterTitle = (listType, value) => {
+    // console.log(value, 'sss')
     const { dispatch } = this.props
     let title = ''
     let ele = <div></div>

@@ -11,7 +11,7 @@ import {
 import { timestampToTimeNormal } from '../../../utils/util'
 import Cookies from "js-cookie";
 import {connect} from "dva/index";
-import { setBoardIdStorage } from '@/utils/businessFunction'
+import { setBoardIdStorage, getOrgNameWithOrgIdFilter } from '@/utils/businessFunction'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -79,8 +79,9 @@ export default class TaskItem extends React.Component {
     // this.props.completeTask(obj);
   }
   render() {
-    const { itemValue = {} } = this.props
-    const { is_realize, id, board_id, name, create_time } = itemValue
+    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
+    const { is_realize, id, board_id, name, create_time, org_id } = itemValue
+    // console.log(itemValue, 'sss')
 
     return(
       <div>
@@ -91,8 +92,34 @@ export default class TaskItem extends React.Component {
             <Icon type="check" style={{ color: "#FFFFFF", fontSize: 12, fontWeight: "bold" }}/>
           </div>
           <div className={indexstyles.itemName}>
-            <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
+            <div style={{marginRight: 8 ,textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
               {name}
+            </div>
+            <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              {
+                projectTabCurrentSelectedProject == '0' && (
+                  <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+                )
+              }
+              {
+                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                  <span className={indexstyles.org_name}>
+                    {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </span>
+                )
+              }
+              {
+                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                  <span>
+                    <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                  </span>
+                )
+              }
+              {
+                projectTabCurrentSelectedProject == '0' && (
+                  <span className={indexstyles.board_name}>{name}</span>
+                )
+              }
             </div>
           </div>
           <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
@@ -104,8 +131,16 @@ export default class TaskItem extends React.Component {
     )
   }
 }
-function mapStateToProps({ projectDetail: { datas: { board_id } } }) {
+function mapStateToProps(
+  { 
+    projectDetail: { datas: { board_id } }, 
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
+    workbench: { datas: { projectTabCurrentSelectedProject } }  
+  }
+) {
   return {
     model: { board_id },
+    currentUserOrganizes, is_show_org_name, is_all_org,
+    projectTabCurrentSelectedProject,
   }
 }
