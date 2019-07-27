@@ -119,13 +119,13 @@ export default {
         }
       })
       if(isApiResponseOk(res)) {
-        const data = res.data
+        const data = res.data.results
         if(defaultSearchType == '1') {
           let arr = []
           for(let i in data) {
             const obj = {
               listType: i,
-              lists: data[i],
+              lists: data[i]['records'],
             }
             arr.push(obj)
           }
@@ -145,7 +145,7 @@ export default {
             for(let i in data) {
               const obj = {
                 listType: i,
-                lists: data[i],
+                lists: data[i]['records'],
               }
               arr.push(obj)
               list = data[i]
@@ -153,9 +153,9 @@ export default {
           } else {
             arr = [...sigleTypeResultList]
             for(let i in data) {
-              const arr_list = [].concat(arr[0]['lists'], data[i])
+              const arr_list = [].concat(arr[0]['lists'], data[i]['records'])
               arr[0]['lists'] = arr_list
-              list = data[i]
+              list = data[i]['records']
             }
           }
 

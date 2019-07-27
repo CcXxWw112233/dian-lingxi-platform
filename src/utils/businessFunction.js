@@ -18,6 +18,16 @@ import { Base64 } from 'js-base64';
 //检查是否有操作权限(组织)
 // 当全组织状态下，如果调用方法不传确认的组织id则默认有权限。如果传递了组织id那就遍历相应的权限code来获取有无权限
 // 确认组织下，只需要传递code就可以遍历得到有无权限
+
+//设置 和 获取全局属性里面的数据
+global.globalData = {}
+export const setGlobalData = (name, value) => {
+    global.globalData[name] = value
+}
+export const getGlobalData = (name) => {
+  return global.globalData[name]
+}
+
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
@@ -58,7 +68,7 @@ export const checkIsHasPermission = (code, param_org_id) => {
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
-  const board_id = params_board_id || localStorage.getItem('storageCurrentOperateBoardId')
+  const board_id = params_board_id || getGlobalData('storageCurrentOperateBoardId')
   if(!Array.isArray(userBoardPermissions)) {
     return false
   }
@@ -133,12 +143,12 @@ export const setOrganizationIdStorage = (value) => {
 }
 //设置board_id localstorage缓存, 同时存储board_id对应的org_id
 export const setBoardIdStorage = (value) => {
-  localStorage.setItem('storageCurrentOperateBoardId', value)
+  setGlobalData('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId,
   // 如果当前组织确定（非全部组织），则返回当前组织
   const OrganizationId = localStorage.getItem('OrganizationId', value)
   if(OrganizationId && OrganizationId != '0') {
-    localStorage.setItem('aboutBoardOrganizationId', OrganizationId)
+    setGlobalData('aboutBoardOrganizationId', OrganizationId)
     return
   }
 
@@ -158,7 +168,7 @@ export const setBoardIdStorage = (value) => {
       break
     }
   }
-  localStorage.setItem('aboutBoardOrganizationId', org_id || '0')
+  setGlobalData('aboutBoardOrganizationId',  org_id || '0')
 }
 
 //是否有组织成员查看权限
@@ -172,7 +182,7 @@ export const isHasOrgTeamBoardEditPermission = () => checkIsHasPermission('org:t
 export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
 
   let header_base_info_orgid = localStorage.getItem('OrganizationId') || '0'
-  let header_base_info_board_id = localStorage.getItem('storageCurrentOperateBoardId') || '0'
+  let header_base_info_board_id = getGlobalData('storageCurrentOperateBoardId') || '0'
 
   if(data['_organization_id'] || params['_organization_id']) {
     header_base_info_orgid = data['_organization_id'] || params['_organization_id']
@@ -185,7 +195,7 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
   const header_base_info = Object.assign({
       orgId: header_base_info_orgid,
       boardId: header_base_info_board_id,
-      aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
+      aboutBoardOrganizationId: getGlobalData('aboutBoardOrganizationId') || '0' ,
   }, headers['BaseInfo'] || {})
   const header_base_info_str = JSON.stringify(header_base_info)
   const header_base_info_str_base64 = Base64.encode(header_base_info_str)
@@ -200,8 +210,8 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
 export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganizationId, contentDataId, contentDataType}) => {
 
   let header_base_info_orgid = orgId || localStorage.getItem('OrganizationId') || '0'
-  let header_base_info_board_id = boardId || localStorage.getItem('storageCurrentOperateBoardId') || '0'
-  let header_base_info_about_board_org_id = aboutBoardOrganizationId || localStorage.getItem('aboutBoardOrganizationId') || '0'
+  let header_base_info_board_id = boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
+  let header_base_info_about_board_org_id = aboutBoardOrganizationId || getGlobalData('aboutBoardOrganizationId') || '0'
   const header_base_info = {
     orgId: header_base_info_orgid,
     boardId: header_base_info_board_id,
