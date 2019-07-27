@@ -66,15 +66,9 @@ export const checkIsHasPermission = (code, param_org_id) => {
 }
 
 //在当前项目中检查是否有权限操作
-<<<<<<< HEAD
-export const checkIsHasPermissionInBoard = (code, param_board_id) => {
-  const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
-  const board_id = param_board_id || localStorage.getItem('storageCurrentOperateBoardId')
-=======
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
   const board_id = params_board_id || getGlobalData('storageCurrentOperateBoardId')
->>>>>>> fadbf0aa505195d0ae109ae0057db808c1eb62be
   if(!Array.isArray(userBoardPermissions)) {
     return false
   }
