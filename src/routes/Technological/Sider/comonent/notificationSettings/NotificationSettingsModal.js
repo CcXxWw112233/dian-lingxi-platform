@@ -19,9 +19,15 @@ export default class NotificationSettingsModal extends Component {
         default_options: [], // 默认列表选中的选项
     }
 
-    componentDidMount() {
-        this.getInitNoticeSettingList()
-    }   
+    // componentDidMount() {
+    //     this.getInitNoticeSettingList()
+    // }
+    
+    componentWillReceiveProps(nexProps) {
+        if (nexProps.notificationSettingsModalVisible) {
+            this.getInitNoticeSettingList()
+        }
+    }
 
     // 获取初始设置列表信息
     getInitNoticeSettingList = () => {
@@ -117,17 +123,8 @@ export default class NotificationSettingsModal extends Component {
             return defaultProjectValueArr
         })
 
-        // 将默认任务/日程选中的选项取出来
-        taskOptions && taskOptions.map(item => {
-            for (let val of default_options.detailed) {
-                if (item.id == val) {
-                    defaultTaskValueArr.push(val)
-                }
-            }
-            return defaultTaskValueArr
-        })
-
         const datas = {
+            notice_setting_list,
             projectOptions,
             taskOptions, 
             processOptions, 
