@@ -1,6 +1,7 @@
 //项目归档
 import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
+import { getGlobalData } from "../../utils/businessFunction";
 
 const createHeaderContentData = (contentType,contentId) => {
   if (contentType && contentId) {
@@ -58,7 +59,7 @@ export async function fileDownload(params) {
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE,params.fileIds),
     params: {
       ...params,
-      _organization_id: localStorage.getItem('aboutBoardOrganizationId')
+      _organization_id: getGlobalData('aboutBoardOrganizationId')
     },
   });
 }
@@ -230,7 +231,7 @@ export async function getFilePDFInfo(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('aboutBoardOrganizationId'),
+      _organization_id: getGlobalData('aboutBoardOrganizationId'),
     },
   });
 }
