@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Tooltip } from 'antd'
+import { Card, Icon, Input, Tooltip, message } from 'antd'
 import NewsListStyle from './NewsList.less'
 import styles from './index.css'
 import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter} from "../../../../utils/businessFunction";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, ORG_TEAM_BOARD_QUERY, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermission, checkIsHasPermissionInBoar} from "../../../../utils/businessFunction";
 import { connect } from 'dva'
 
 @connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
@@ -35,6 +35,15 @@ export default class NewsListNewDatas extends React.Component {
     })
   }
 
+ // 去到项目详情
+ goToBoard({org_id, content}) {
+  if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    return false
+  }
+  this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+}
+
   render() {
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic, newsList = [] }} = this.props.model
     const { currentUserOrganizes = [], is_show_org_name } = this.props
@@ -44,7 +53,10 @@ export default class NewsListNewDatas extends React.Component {
       let messageContain = (<div></div>)
       let jumpToBoard = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer'}} 
+          onClick={ () => { this.goToBoard({org_id: messageValue.org_id, content: messageValue.content}) } }
+        >{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
