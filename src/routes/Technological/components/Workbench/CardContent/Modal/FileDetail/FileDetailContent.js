@@ -546,7 +546,7 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{minWidth: '600px', minHeight: '600px', overflow: 'auto', textAlign: 'center'}}>
+      <div style={{minWidth: zommPictureComponentWidth+'px', minHeight: zommPictureComponentHeight+'px', overflow: 'auto', textAlign: 'center'}}>
       {filePreviewUrl && (
             <ZoomPicture
                 imgInfo={{url: filePreviewUrl}}
