@@ -79,7 +79,7 @@ export default class TaskItem extends React.Component {
     // this.props.completeTask(obj);
   }
   render() {
-    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
+    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, is_all_org } = this.props
     const { is_realize, id, board_id, name, create_time, org_id } = itemValue
     // console.log(itemValue, 'sss')
 
@@ -96,30 +96,22 @@ export default class TaskItem extends React.Component {
               {name}
             </div>
             <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
               {
-                projectTabCurrentSelectedProject == '0' && (
-                  <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
-                )
-              }
-              {
-                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                is_show_org_name && is_all_org && (
                   <span className={indexstyles.org_name}>
                     {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
                   </span>
                 )
               }
               {
-                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                is_show_org_name && is_all_org && (
                   <span>
                     <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
                   </span>
                 )
               }
-              {
-                projectTabCurrentSelectedProject == '0' && (
-                  <span className={indexstyles.board_name}>{name}</span>
-                )
-              }
+              <span className={indexstyles.board_name}>{name}</span>
             </div>
           </div>
           <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
@@ -135,12 +127,10 @@ function mapStateToProps(
   { 
     projectDetail: { datas: { board_id } }, 
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
-    workbench: { datas: { projectTabCurrentSelectedProject } }  
   }
 ) {
   return {
     model: { board_id },
     currentUserOrganizes, is_show_org_name, is_all_org,
-    projectTabCurrentSelectedProject,
   }
 }
