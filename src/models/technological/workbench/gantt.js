@@ -17,6 +17,7 @@ import {
 } from './selects'
 import {createMilestone} from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
+import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
 
 export default {
   namespace: 'gantt',
@@ -30,7 +31,7 @@ export default {
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
-      ceiHeight: 24, //单元格高度
+      ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
@@ -159,7 +160,7 @@ export default {
         for(let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
           const item = list_data[j]
           item.width = item.time_span * ceilWidth
-          item.height = 20
+          item.height = task_item_height
           //设置横坐标
           for(let k = 0; k < date_arr_one_level.length; k ++) {
             if(isSamDay (item['start_time'], date_arr_one_level[k]['timestamp'] )) { //是同一天

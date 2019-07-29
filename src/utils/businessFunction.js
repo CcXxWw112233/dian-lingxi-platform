@@ -188,8 +188,8 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
     header_base_info_orgid = data['_organization_id'] || params['_organization_id']
   }
 
-  if(data['boardId'] || params['boardId']) {
-    header_base_info_board_id = data['boardId'] || params['boardId']
+  if(data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']) {
+    header_base_info_board_id = data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']
   }
 
   const header_base_info = Object.assign({

@@ -3,7 +3,7 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
 import { Tooltip } from 'antd'
-import { date_area_height } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 80 //鼠标移动和拖拽的修正位置
@@ -15,7 +15,7 @@ export default class GetRowGantt extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentRect: { x: 0, y: 0, width: 0, height: 20 }, //当前操作的矩形属性
+      currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
       dasheRectShow: false, //虚线框是否显示
       isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
@@ -91,7 +91,7 @@ export default class GetRowGantt extends Component {
       x: px,
       y: py,
       width,
-      height: 20,
+      height: task_item_height,
     }
 
     this.setState({
@@ -153,7 +153,7 @@ export default class GetRowGantt extends Component {
       x: px,
       y: py,
       width: 40,
-      height: 20,
+      height: task_item_height,
     }
 
     this.setState({
@@ -324,7 +324,7 @@ export default class GetRowGantt extends Component {
             left: currentRect.x, top: currentRect.y,
             width: currentRect.width, height: currentRect.height,
             boxSizing: 'border-box',
-            margin: '4px 0 0 2px'
+            margin: task_item_margin_top
           }} />
         )}
         {list_group.map((value, key) => {
@@ -337,9 +337,10 @@ export default class GetRowGantt extends Component {
                 <div className={indexStyles.specific_example} data-targetclassname="specific_example"
                      style={{
                         left: left, top: top,
-                        width: (width || 6) - 6, height: (height || 20),
-                        margin: '4px 0 0 2px',
-                        backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
+                        width: (width || 6) - 6, height: (height || task_item_height),
+                        marginTop: task_item_margin_top
+                        // margin: '4px 0 0 2px',
+                        // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
                      }}
                      onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
                 />
