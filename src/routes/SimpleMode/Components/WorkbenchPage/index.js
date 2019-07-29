@@ -7,7 +7,9 @@ import { getLocationUrlQueryString } from '@/utils/util'
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
+const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 class WorkbenchPage extends Component {
 
     constructor(props) {
@@ -34,8 +36,14 @@ class WorkbenchPage extends Component {
     }
 
     getFileModuleProps() {
-        return FileModuleProps = {
-            model,
+        const { dispatch } = this.props;
+        return {
+            getBoardMembers(payload) {
+                dispatch({
+                  type: getEffectOrReducerByName_4('getBoardMembers'),
+                  payload: payload
+                })
+              },
             updateFileDatas(payload) {
                 dispatch({
                     type: getEffectOrReducerByName_5('updateDatas'),
@@ -147,16 +155,39 @@ class WorkbenchPage extends Component {
         }
     }
 
+    updateDatasFile = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+          type: getEffectOrReducerByName_5('updateDatas'),
+          payload: payload
+        })
+      }
+
+    updateDatas = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: payload
+        })
+    }
+    updatePublicDatas = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName_6('updateDatas'),
+            payload: payload
+        })
+    }
+
 
     render() {
         const { workbenchBoxContentWapperModalStyle } = this.props;
         const { currentSelectedWorkbenchBoxId } = this.state;
         return (
-            <div className={indexStyles.workbenchBoxContentModalContainer}>
+            <div  className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBoxId={currentSelectedWorkbenchBoxId} />
-                <div className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
+                <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                     <div className={indexStyles.workbenchBoxContentWapper}>
-                        <BoardCommunication updateDatasFile={this.updateDatasFile} {...this.FileModuleProps} />
+                        <BoardCommunication updateDatasFile={this.updateDatasFile} {...this.getFileModuleProps()} updatePublicDatas={this.updatePublicDatas}  />
                     </div>
                 </div>
             </div>
@@ -171,7 +202,7 @@ function mapStateToProps({
         myWorkbenchBoxList
     },
 }) {
-  
+
     return {
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList

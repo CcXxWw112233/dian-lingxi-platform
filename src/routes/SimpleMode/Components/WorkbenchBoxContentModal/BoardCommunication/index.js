@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
-import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
+import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
+import {
+    checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
+} from "../../../../../utils/businessFunction";
 
 class BoardCommunication extends Component {
     state = {
@@ -16,7 +19,7 @@ class BoardCommunication extends Component {
         boardFileTreeData: [],
         currentfile: {},
         selectBoardFileCompleteDisabled: true,
-        previewFileModalVisibile: false
+        previewFileModalVisibile: false,
 
     };
 
@@ -30,8 +33,8 @@ class BoardCommunication extends Component {
     componentWillReceiveProps(nextProps) {
         const { dispatch, currentBoardDetail: oldCurrentBoardDetail } = this.props;
         const { currentBoardDetail } = nextProps;
-
-        if (!oldCurrentBoardDetail || oldCurrentBoardDetail.board_id != currentBoardDetail.board_id) {
+        console.log(currentBoardDetail);
+        if ((!oldCurrentBoardDetail && currentBoardDetail) || (oldCurrentBoardDetail && oldCurrentBoardDetail.board_id != currentBoardDetail.board_id)) {
             dispatch({
                 type: 'simpleWorkbenchbox/getFileList',
                 payload: {
@@ -210,10 +213,25 @@ class BoardCommunication extends Component {
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
         console.log(currentfile);
-        const { fileId, versionId, fileResourceId,folderId } = currentfile;
-
+        const { fileId, versionId, fileResourceId, folderId, fileName } = currentfile;
+        const id = fileId;
         const { board_id } = currentBoardDetail;
+
+        this.props.dispatch({
+            type: 'workbenchFileDetail/getCardCommentListAll',
+            payload: {
+                id: id
+            }
+        });
+        this.props.dispatch({
+            type: 'workbenchFileDetail/getFileType',
+            payload: {
+                file_id: id
+            }
+        });
+
         this.setState({
+            selectBoardFileModalVisible: false,
             previewFileModalVisibile: true
         });
         this.props.updateFileDatas({
@@ -224,7 +242,25 @@ class BoardCommunication extends Component {
             filePreviewCurrentFileId: fileId,
             filePreviewCurrentVersionId: versionId, //file_id,
             pdfDownLoadSrc: '',
+        });
+        if (getSubfixName(fileName) == '.pdf') {
+            this.props.dispatch({
+                type: 'workbenchFileDetail/getFilePDFInfo',
+                payload: {
+                    id
+                }
+            })
+        } else {
+            this.props.filePreview({ id: fileResourceId, file_id: id })
+        }
+        this.props.fileVersionist({
+            version_id: versionId, //file_id,
+            isNeedPreviewFile: false,
         })
+        this.props.updatePublicDatas({ board_id })
+        this.props.getBoardMembers({ id: board_id })
+
+
     }
     setPreviewFileModalVisibile() {
         this.setState({
@@ -236,18 +272,26 @@ class BoardCommunication extends Component {
     render() {
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
+        console.log("previewFileModalVisibile", this.state.previewFileModalVisibile);
         return (
             <div className={indexStyles.boardCommunicationWapper}>
-                <div className={indexStyles.indexCoverWapper}>
-                    <div className={indexStyles.icon}>
-                        <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
-                    </div>
-                    <div className={indexStyles.descriptionWapper}>
-                        <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                        <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                    </div>
-                </div>
+                {
+                    this.state.previewFileModalVisibile &&
+                    <FileDetail {...this.props} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+                }
+                {
+                    !this.state.previewFileModalVisibile &&
 
+                    <div className={indexStyles.indexCoverWapper}>
+                        <div className={indexStyles.icon}>
+                            <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                        </div>
+                        <div className={indexStyles.descriptionWapper}>
+                            <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                            <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                        </div>
+                    </div>
+                }
 
                 <Modal
                     width={248}
@@ -298,7 +342,6 @@ class BoardCommunication extends Component {
                 </Modal>
 
 
-                <FileDetailModal {...this.props} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
             </div>
         )
     }
