@@ -54,24 +54,14 @@ class Home extends Component {
 };
 
 export default connect(({ simplemode: {
-  simpleHeaderVisiable,
   myWorkbenchBoxsVisiable,
   wallpaperSelectVisiable,
   workbenchBoxSelectVisiable,
-  createNewBoardVisiable,
-  setWapperCenter,
-  wallpaperSelectModalVisiable,
-  workbenchBoxContentWapperModalStyle,
-  chatImVisiable
+  createNewBoardVisiable
 } }) => ({
-  simpleHeaderVisiable,
   myWorkbenchBoxsVisiable,
   wallpaperSelectVisiable,
   workbenchBoxSelectVisiable,
-  createNewBoardVisiable,
-  setWapperCenter,
-  wallpaperSelectModalVisiable,
-  workbenchBoxContentWapperModalStyle,
-  chatImVisiable
+  createNewBoardVisiable
 
 }))(Home)
