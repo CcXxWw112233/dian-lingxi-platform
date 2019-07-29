@@ -104,8 +104,10 @@ class SimpleMode extends Component {
 
 export default connect(({ simplemode: {
   simpleHeaderVisiable,
-  setWapperCenter
+  setWapperCenter,
+  chatImVisiable
 } }) => ({
   simpleHeaderVisiable,
-  setWapperCenter
+  setWapperCenter,
+  chatImVisiable
 }))(SimpleMode)

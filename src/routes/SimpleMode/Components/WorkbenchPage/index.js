@@ -182,6 +182,7 @@ class WorkbenchPage extends Component {
     render() {
         const { workbenchBoxContentWapperModalStyle } = this.props;
         const { currentSelectedWorkbenchBoxId } = this.state;
+        console.log("workbenchBoxContentWapperModalStyle",workbenchBoxContentWapperModalStyle);
         return (
             <div  className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBoxId={currentSelectedWorkbenchBoxId} />
