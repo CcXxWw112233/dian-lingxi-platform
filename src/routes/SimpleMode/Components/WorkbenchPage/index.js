@@ -13,19 +13,12 @@ const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 class WorkbenchPage extends Component {
 
     constructor(props) {
-        super(props);
-        let boxid = getLocationUrlQueryString("box");
-        this.state = {
-            currentSelectedWorkbenchBoxId: boxid || 0
-        }
-
+        super(props); 
     }
 
     componentWillMount() {
-        const { dispatch, myWorkbenchBoxList } = this.props;
-        const { currentSelectedWorkbenchBoxId = 0 } = this.state;
-
-        if (currentSelectedWorkbenchBoxId === 0) {
+        const { dispatch, currentSelectedWorkbenchBoxId = 0} = this.props;
+        if (currentSelectedWorkbenchBoxId == 0) {
             dispatch({
                 type: 'simplemode/routingJump',
                 payload: {
@@ -181,7 +174,7 @@ class WorkbenchPage extends Component {
 
     render() {
         const { workbenchBoxContentWapperModalStyle } = this.props;
-        const { currentSelectedWorkbenchBoxId } = this.state;
+        const { currentSelectedWorkbenchBoxId } = this.props;
         console.log("workbenchBoxContentWapperModalStyle",workbenchBoxContentWapperModalStyle);
         return (
             <div  className={indexStyles.workbenchBoxContentModalContainer}>
@@ -200,13 +193,15 @@ class WorkbenchPage extends Component {
 function mapStateToProps({
     simplemode: {
         workbenchBoxContentWapperModalStyle,
-        myWorkbenchBoxList
+        myWorkbenchBoxList,
+        currentSelectedWorkbenchBoxId
     },
 }) {
 
     return {
         workbenchBoxContentWapperModalStyle,
-        myWorkbenchBoxList
+        myWorkbenchBoxList,
+        currentSelectedWorkbenchBoxId
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)
