@@ -29,6 +29,7 @@ export default {
       end_date: {}, //日期最后那一天
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
+      group_view_type: '0', //分组视图0x项目， 1成员
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距

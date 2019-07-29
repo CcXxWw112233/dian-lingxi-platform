@@ -1,3 +1,9 @@
+.button_nomal_background {
+  background: linear-gradient(90deg, #18a2ff 0%, #03c3f8 100%);
+}
+.button_nomal_background:hover {
+  background: linear-gradient(90deg, #0894ee 0%, #03bcf1 100%);
+}
 .cardDetail {
   position: relative;
   width: 100%;
@@ -44,10 +50,10 @@
 .dateArea {
   display: flex;
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   left: 0;
   width: auto;
-  height: 76px;
+  height: 64px;
   background-color: #ffffff;
   align-items: center;
 }
@@ -156,17 +162,16 @@
 .panel .listHead {
   position: absolute;
   left: 0;
-  top: -72px;
-  z-index: 6;
+  top: 0;
+  z-index: 1;
   background-color: #FFFFFF;
   box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
-  margin-top: 1px;
 }
 .panel .listHead .listHeadItem {
-  width: 132px;
+  padding-right: 20px;
+  width: 228px;
   border-bottom: 1px solid #E8E8E8;
   box-sizing: border-box;
-  padding: 10px 0;
 }
 .panel .listHead .listHeadItem .no_time_card_area_out {
   overflow: auto;
@@ -203,4 +208,57 @@
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   background: #EDEDED;
+}
+.groupHeadSet {
+  height: 64px;
+  width: 228px;
+  background-color: #ffffff;
+  position: absolute;
+  box-shadow: 1px -3px 4px 0px rgba(0, 0, 0, 0.15);
+  padding-right: 20px;
+  border-bottom: 1px solid #E8E8E8;
+  z-index: 2;
+}
+.groupHeadSet .set_content {
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.groupHeadSet .set_content .set_content_left {
+  display: flex;
+  justify-content: space-between;
+  width: 72px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #f7f7f7;
+  padding: 1px;
+}
+.groupHeadSet .set_content .set_content_left .set_content_left_left,
+.groupHeadSet .set_content .set_content_left .set_content_left_right {
+  line-height: 26px;
+  width: 35px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 16px;
+}
+.groupHeadSet .set_content .set_content_left .set_content_left_left {
+  border-radius: 4px 0 0 4px;
+}
+.groupHeadSet .set_content .set_content_left .set_content_left_right {
+  border-radius: 0 4px 4px 0 ;
+}
+.groupHeadSet .set_content .set_content_left .type_select {
+  color: #ffffff;
+}
+.groupHeadSet .set_content .set_content_right {
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.45);
+}
+.groupHeadSet .set_content .set_content_right .set_content_right_middle {
+  margin: 0 6px;
+}
+.groupHeadSet .set_content .set_content_right:hover {
+  color: #595959;
 }

@@ -321,10 +321,10 @@ export default class GetRowGantt extends Component {
            ref={'operateArea'}>
         {dasheRectShow && (
           <div className={indexStyles.dasheRect} style={{
-            left: currentRect.x, top: currentRect.y,
+            left: currentRect.x + 1, top: currentRect.y,
             width: currentRect.width, height: currentRect.height,
             boxSizing: 'border-box',
-            margin: task_item_margin_top
+            marginTop: task_item_margin_top
           }} />
         )}
         {list_group.map((value, key) => {

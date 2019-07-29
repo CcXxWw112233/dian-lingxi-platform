@@ -150,8 +150,8 @@ export default class DateList extends Component {
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
                       <div key={`${month}/${date_no}`}>
-                        <div className={`${indexStyles.dateDetailItem}`} key={key2}>{month}/{date_no}</div>
-                        {projectTabCurrentSelectedProject != '0' ? (
+                        <div className={`${indexStyles.dateDetailItem}`} key={key2}>{date_no}</div>
+                        {/* {projectTabCurrentSelectedProject != '0' ? (
                           <DateListLCBItem
                             has_lcb={has_lcb}
                             boardName={this.getBoardName(projectTabCurrentSelectedProject)}
@@ -162,7 +162,7 @@ export default class DateList extends Component {
                             set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
                         ):(
                           <div className={indexStyles.lcb_area}></div>
-                        )}
+                        )} */}
                       </div>
                     )
                   })}

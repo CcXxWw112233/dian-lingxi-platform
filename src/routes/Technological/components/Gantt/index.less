@@ -1,3 +1,13 @@
+@date_area_height: 64px;
+@group_head_padding: 20px;
+
+.button_nomal_background {
+  background:linear-gradient(90deg,rgba(24,162,255,1) 0%,rgba(3,195,248,1) 100%);
+}
+.button_nomal_background:hover{
+  background:linear-gradient(90deg,rgba(8,148,238,1) 0%,rgba(3,188,241,1) 100%);
+}
+
 .cardDetail {
   position: relative;
   width: 100%;
@@ -40,10 +50,10 @@
 .dateArea{
   display: flex;
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   left: 0;
   width: auto;
-  height: 76px;
+  height: @date_area_height;
   background-color: #ffffff;
   align-items: center;
   .dateAreaItem {
@@ -169,18 +179,16 @@
   .listHead{
     position: absolute;
     left: 0;
-    top: -72px;
-    z-index: 6;
+    top: 0;
+    z-index: 1;
     background-color: #FFFFFF;
     box-shadow:1px 0px 4px 0px rgba(0,0,0,0.15);
-    margin-top: 1px;
+    // margin-top: 1px;
     .listHeadItem{
-      //background-color: #0C68FF;
-      width: 132px;
-      //height: 168px;
+      padding-right: @group_head_padding;
+      width: 228px;
       border-bottom: 1px solid #E8E8E8;
       box-sizing: border-box;
-      padding: 10px 0;
       .no_time_card_area_out{
         overflow: auto;
         .no_time_card_area {
@@ -219,3 +227,58 @@
 }
 
 
+.groupHeadSet {
+   height: @date_area_height;
+   width: 228px;
+   background-color: #ffffff; 
+   position: absolute;
+   box-shadow:1px -3px 4px 0px rgba(0,0,0,0.15);
+   padding-right: @group_head_padding;
+   border-bottom: 1px solid #E8E8E8;
+   z-index: 2;
+   .set_content {
+     height: @date_area_height;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     .set_content_left {
+       display: flex;
+       justify-content: space-between;
+       width:72px;
+       height:28px;
+       border-radius:4px;
+       border:1px solid rgba(247,247,247,1);
+       padding: 1px;
+       .set_content_left_left, .set_content_left_right {
+         line-height: 26px;
+         width: 35px;
+         text-align: center;
+         color: rgba(0, 0, 0, .45);
+         font-size: 16px
+       }
+       .set_content_left_left{
+         border-radius: 4px 0 0 4px;
+       }
+       .set_content_left_right{
+         border-radius: 0 4px 4px 0 ;
+       }
+       .type_select {
+         color: #ffffff;
+       }
+     }
+     .set_content_right {
+        display: flex;
+        align-items: center;
+        color: rgba(0,0, 0, .45);
+        .set_content_right_left, .set_content_right_right {
+          
+        }
+        .set_content_right_middle{
+          margin: 0 6px;
+        }
+     }
+     .set_content_right:hover{
+       color: #595959;
+     }
+   }
+}

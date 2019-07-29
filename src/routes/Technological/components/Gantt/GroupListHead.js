@@ -7,14 +7,32 @@ import GroupListHeadItem from './GroupListHeadItem'
 export default class GroupListHead extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      offsetTop: 0,
+      offsetLeft: 0
+    }
+  }
 
+  componentDidMount = () => {
+    this.setHeaderPostion()
+  }
+  setHeaderPostion = () => {
+    const gantt_card_out = document.getElementById('gantt_card_out')
+    if(gantt_card_out) {
+      const offsetTop = gantt_card_out.offsetTop
+      const offsetLeft = gantt_card_out.offsetLeft
+      this.setState({
+        offsetTop,
+        offsetLeft
+      })
+    }
   }
 
   render () {
+    const { offsetTop, offsetLeft } = this.state
     const { datas: { list_group =[], group_rows = [], ceiHeight,target_scrollLeft }} = this.props.model
     return (
       <div className={indexStyles.listHead} style={{left: target_scrollLeft}}>
-        <div style={{height: 72, backgroundColor: 'red'}}></div>
         {list_group.map((value, key) =>{
           const { list_name, list_id, list_data = [] } = value
           return (
