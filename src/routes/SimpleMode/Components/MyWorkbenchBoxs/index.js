@@ -104,11 +104,18 @@ class MyWorkbenchBoxs extends Component {
   goWorkbenchBox = ({ id, code }) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'simplemode/routingJump',
+      type: 'simplemode/updateDatas',
       payload: {
-        route: '/technological/simplemode/workbench?box=' + id
+        currentSelectedWorkbenchBoxId: id
       }
     });
+    dispatch({
+      type: 'simplemode/routingJump',
+      payload: {
+        route: '/technological/simplemode/workbench'
+      }
+    });
+    
 
   }
 

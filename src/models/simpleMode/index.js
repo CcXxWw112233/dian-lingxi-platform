@@ -18,7 +18,7 @@ export default {
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
         workbenchBoxList: [], //所有可以选择的盒子列表
-        currentSelectedWorkbenchBoxId: null,//当然选中的工作台盒子ID
+        currentSelectedWorkbenchBoxId: 0,//当然选中的工作台盒子ID
         init: true
     },
     subscriptions: {
