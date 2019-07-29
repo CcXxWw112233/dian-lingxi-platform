@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon, Avatar } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Icon, Avatar, Tooltip } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
@@ -61,33 +61,41 @@ export default class AnotherItem extends React.Component {
   }
   render() {
     const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, is_all_org } = this.props
-    const { is_realize, id, board_id, name, create_time, org_id } = itemValue
+    const { is_realize, id, board_id, name, create_time, org_id, board_name } = itemValue
 
     return(
       <div>
         <div className={indexstyles.taskItem}>
           <div className={globalStyles.authTheme}>&#xe605;</div>
           <div className={indexstyles.itemName}>
-            <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
+            <div style={{textDecoration: is_realize === "1" ? "line-through" : "none", maxWidth: 120, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}} onClick={this.itemClick.bind(this, { id, board_id })}>
               {name}
             </div>
             <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
               <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
-              {
-                is_show_org_name && is_all_org && (
-                  <span className={indexstyles.org_name}>
-                    {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                  </span>
-                )
-              }
-              {
-                is_show_org_name && is_all_org && (
-                  <span>
-                    <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
-                  </span>
-                )
-              }
-              <span className={indexstyles.board_name}>{name}</span>
+              <Tooltip title={ is_all_org && is_show_org_name ? (
+                <span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>
+              ) : (
+                <span>{board_name}</span>
+              ) } placement="topLeft">
+                <div style={{display: 'flex'}}>
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span className={indexstyles.org_name}>
+                        {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                      </span>
+                    )
+                  }
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span>
+                        <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                      </span>
+                    )
+                  }
+                  <span className={indexstyles.board_name}>{board_name}</span>
+                </div>
+              </Tooltip>
             </div>
           </div>
           <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
