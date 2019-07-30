@@ -52,22 +52,7 @@ export default {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
-        * getBoardFileList({ payload }, { call, put }) {
-            //debugger
-            const { id } = payload;
-            const res = yield call(projectDetailInfo, id);
-            console.log(res);
-            if (isApiResponseOk(res)) {
-                yield put({
-                    type: 'updateDatas',
-                    payload: {
-                        currentBoardDetail: res.data
-                    }
-                });
-            } else {
-                message.warn(res.message, MESSAGE_DURATION_TIME)
-            }
-        },
+        
         
 
     },

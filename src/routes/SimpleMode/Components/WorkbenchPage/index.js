@@ -262,9 +262,11 @@ function mapStateToProps({
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox
     },
+    projectDetailFile,
 }) {
 
     return {
+        projectDetailFile,
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox
