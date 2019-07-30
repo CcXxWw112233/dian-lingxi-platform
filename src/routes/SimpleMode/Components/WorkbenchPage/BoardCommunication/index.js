@@ -301,9 +301,7 @@ class BoardCommunication extends Component {
                             <Button type="primary" disabled={this.state.selectBoardFileCompleteDisabled} style={{ width: '100%' }} onClick={this.openFileModal}>完成</Button>
                         </div>
                     }
-                    title={
-                        <div style={{ textAlign: 'center' }}>{'选择文件'}</div>
-                    }
+                    title={<div style={{ textAlign: 'center' }}>{'选择文件'}</div>}
                     visible={this.state.selectBoardFileModalVisible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}

@@ -6,16 +6,13 @@ import { Icon } from 'antd';
 
 const WorkbenchBoxSelect = (props) => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props;
-  const closeBoxManage = (e) => {
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
-        simpleHeaderVisiable: true,
-        myWorkbenchBoxsVisiable: true,
-        wallpaperSelectVisiable: true,
-        workbenchBoxSelectVisiable: false,
-        createProjectVisiable: false,
-      }
+  const closeBoxManage =() => {
+    props.setHomeVisible({
+      simpleHeaderVisiable: true,
+      myWorkbenchBoxsVisiable: true,
+      wallpaperSelectVisiable: true,
+      workbenchBoxSelectVisiable: false,
+      createProjectVisiable: false,
     });
   }
   const selectOrCancelCurrWorkbenchBox = (e, data) => {
@@ -47,7 +44,7 @@ const WorkbenchBoxSelect = (props) => {
               //console.log("8888", isSelected);
               return boxItem.status == 1 ? (
                 <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
-                  <i dangerouslySetInnerHTML={{__html:boxItem.icon}}  className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
+                  <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
                   {isSelected &&
                     <span>
@@ -63,50 +60,6 @@ const WorkbenchBoxSelect = (props) => {
                 </div>) : '';
             })
           }
-
-          {/* <div className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, {}) }} >
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe670;</i><br />
-            <span className={indexStyles.workbenchBox_title}>项目档案</span>
-            <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
-            <div className={indexStyles.workbenchBoxSelectedBg}></div>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe671;</i><br />
-            <span className={indexStyles.workbenchBox_title}>项目计划</span>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe672;</i><br />
-            <span className={indexStyles.workbenchBox_title}>项目交流</span>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe673;</i><br />
-            <span className={indexStyles.workbenchBox_title}>项目文件</span>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe670;</i><br />
-            <span className={indexStyles.workbenchBox_title}>我的展示</span>
-
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe671;</i><br />
-            <span className={indexStyles.workbenchBox_title}>我的任务</span>
-          </div>
-
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe671;</i><br />
-            <span className={indexStyles.workbenchBox_title}>我的流程</span>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe672;</i><br />
-            <span className={indexStyles.workbenchBox_title}>投资地图</span>
-            <div className={indexStyles.workbenchBoxSelectCircleHover}></div>
-          </div>
-          <div className={indexStyles.workbenchBox}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} >&#xe673;</i><br />
-            <span className={indexStyles.workbenchBox_title}>优秀案例</span>
-            <div className={indexStyles.workbenchBoxSelectHover}></div>
-          </div> */}
-
         </div>
 
       </div>

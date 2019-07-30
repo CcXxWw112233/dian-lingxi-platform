@@ -31,3 +31,5 @@ export async function boxCancel(data){
       data:{id:data.id}
     });
 }
+
+

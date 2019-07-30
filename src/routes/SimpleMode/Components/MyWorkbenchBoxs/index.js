@@ -16,17 +16,13 @@ class MyWorkbenchBoxs extends Component {
   }
 
   addMyWorkBoxs = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
+    this.props.setHomeVisible({
         simpleHeaderVisiable: false,
         myWorkbenchBoxsVisiable: false,
         wallpaperSelectVisiable: false,
         workbenchBoxSelectVisiable: true,
         createProjectVisiable: false,
-      }
-    });
+      });
   }
   createNewBoard = (data) => {
     if (data.key === 'add') {
@@ -35,8 +31,6 @@ class MyWorkbenchBoxs extends Component {
         addProjectModalVisible: true
       });
       return this.handleCreateProject();
-    } else {
-
     }
     const { dispatch } = this.props;
 
@@ -106,7 +100,7 @@ class MyWorkbenchBoxs extends Component {
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
-        currentSelectedWorkbenchBoxId: id
+        currentSelectedWorkbenchBox: { id, code }
       }
     });
     dispatch({
@@ -115,7 +109,7 @@ class MyWorkbenchBoxs extends Component {
         route: '/technological/simplemode/workbench'
       }
     });
-    
+
 
   }
 
@@ -131,15 +125,15 @@ class MyWorkbenchBoxs extends Component {
     return (
       <div className={indexStyles.mainContentWapper}>
         <div className={indexStyles.projectSelector}>
- 
+
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
-   
+
         </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
               return item.status == 1 ? (
-                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item) }>
+                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)}>
                   <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
                 </div>

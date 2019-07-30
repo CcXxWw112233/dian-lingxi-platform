@@ -74,10 +74,19 @@ export async function getFixedConditions(params) {
   }, {isNotLoading: true});
 }
 
-//获取和存储全组织的全部项目
+//获取和存储全组织的全部项目ID
 export async function getUserAllOrgsAllBoards(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/list/id`,
+    method: 'GET',
+    params
+  });
+}
+
+//获取全组织的全部项目列表
+export async function getUserAllOrgsBoardList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/board/list`,
     method: 'GET',
     params
   });

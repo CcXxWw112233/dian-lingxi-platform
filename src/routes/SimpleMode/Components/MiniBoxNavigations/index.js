@@ -6,7 +6,7 @@ import { Icon, Divider, Tooltip, message } from 'antd';
 import { MESSAGE_DURATION_TIME } from "@/globalset/js/constant";
 
 const MiniBoxNavigations = (props) => {
-    const { dispatch, myWorkbenchBoxList = [], workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBoxId = 0 } = props;
+    const { dispatch, myWorkbenchBoxList = [], workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox = {} } = props;
 
     const goHome = () => {
         dispatch({
@@ -17,13 +17,13 @@ const MiniBoxNavigations = (props) => {
         })
     };
 
-    const setWorkbenchPage = ({ id }) => {
-        // dispatch({
-        //     type: 'simplemode/routingJump',
-        //     payload: {
-        //         route: '/technological/simplemode/workbench?box='+id
-        //     }
-        // })
+    const setWorkbenchPage = (box) => {
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                currentSelectedWorkbenchBox: box
+            }
+        })
     }
 
     // if (myWorkbenchBoxList.length == 0) { 
@@ -33,7 +33,9 @@ const MiniBoxNavigations = (props) => {
     //     }, 2000);
     //     return null;
     // }
+
     return (
+
         <div className={indexStyles.workbenchboxsNavsModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
             <div className={indexStyles.boxnavsWapper}>
                 <Tooltip placement="bottom" title='首页' className={`${indexStyles.nav} ${indexStyles.home}`} onClick={goHome}>
@@ -43,7 +45,7 @@ const MiniBoxNavigations = (props) => {
                 {
                     myWorkbenchBoxList.map((item, key) => {
                         return (
-                            <Tooltip key={item.id} onClick={e => setWorkbenchPage(item)} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBoxId == item.id ? indexStyles.selected : ''}`}>
+                            <Tooltip key={item.id} onClick={e => setWorkbenchPage({ id: item.id, code: item.code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`}>
                                 <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
                                 <div className={indexStyles.text}>{item.name}</div>
                             </Tooltip>

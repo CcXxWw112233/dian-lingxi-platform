@@ -4,22 +4,20 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
+import { getUserAllOrgsBoardList } from '@/services/technological/index'
 export default {
     namespace: 'simplemode',
     state: {
         simpleHeaderVisiable: true,//显示隐藏用
-        myWorkbenchBoxsVisiable: true,//显示隐藏用
-        wallpaperSelectVisiable: true,//显示隐藏用
-        workbenchBoxSelectVisiable: false,//显示隐藏用
-        createNewBoardVisiable: false,//显示隐藏用
         setWapperCenter: false,//显示隐藏用
         wallpaperSelectModalVisiable: false,//显示隐藏用
         chatImVisiable: false,              //显示隐藏用
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
         workbenchBoxList: [], //所有可以选择的盒子列表
-        currentSelectedWorkbenchBoxId: 0,//当然选中的工作台盒子ID
-        init: true
+        currentSelectedWorkbenchBox: {},//当然选中的工作台盒子
+        init: true,
+        orgBoardList: []
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -118,7 +116,21 @@ export default {
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
-        }
+        },
+        * getOrgBoardData({ payload }, { call, put, select }) {
+            let res = yield call(getUserAllOrgsBoardList, payload);
+            if (isApiResponseOk(res)) {
+        
+                yield put({
+                    type: 'simplemode/updateDatas',
+                    payload: {
+                        orgBoardList: res.data
+                    }
+                });
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
     },
     reducers: {
         updateDatas(state, action) {
