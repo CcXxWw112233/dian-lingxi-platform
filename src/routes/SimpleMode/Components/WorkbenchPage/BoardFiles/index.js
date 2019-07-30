@@ -47,16 +47,16 @@ class BoardFiles extends Component {
             boardFileContentVisible: true
         });
 
-        initialget(board.id);
+        this.initialget(board.id);
 
     }
 
-    initialget(board_id) {
+    initialget(id) {
         const { dispatch } = this.props;
         dispatch({
             type: 'simpleWorkbenchbox/getBoardFileList',
             payload: {
-                board_id
+                id
             }
         });
     }
