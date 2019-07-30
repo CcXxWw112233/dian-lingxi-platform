@@ -1,8 +1,8 @@
 .button_nomal_background {
-  background: linear-gradient(90deg, #18a2ff 0%, #03c3f8 100%);
+  background: linear-gradient(90deg, #18a2ff 0%, #03c3f8 100%) !important;
 }
 .button_nomal_background:hover {
-  background: linear-gradient(90deg, #0894ee 0%, #03bcf1 100%);
+  background: linear-gradient(90deg, #0894ee 0%, #03bcf1 100%) !important;
 }
 .cardDetail {
   position: relative;
@@ -261,4 +261,59 @@
 }
 .groupHeadSet .set_content .set_content_right:hover {
   color: #595959;
+}
+.content_filter_out {
+  width: 248px;
+  height: autol;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+.content_filter_out .content_filter_top {
+  position: relative;
+  height: 56px;
+  border-bottom: 1px solid #E8E8E8;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+.content_filter_out .content_filter_top .content_filter_title {
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+}
+.content_filter_out .content_filter_top .content_filter_close {
+  position: absolute;
+  right: 12px;
+  top: 18px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 16px;
+}
+.content_filter_out .content_filter_top .content_filter_close:hover {
+  color: rgba(0, 0, 0, 0.8);
+}
+.content_filter_out .content_filter_bott {
+  padding: 0 12px;
+}
+.content_filter_out .content_filter_bott .filter_item {
+  margin-top: 12px;
+}
+.content_filter_out .content_filter_bott .filter_item .filter_item_top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+.content_filter_out .content_filter_bott .filter_item .filter_item_bott {
+  margin-top: 8px;
+}
+.content_filter_out .content_filter_footer {
+  border-top: 1px solid #E8E8E8;
+  margin-top: 12px;
+  padding: 12px;
+}
+.content_filter_out .content_filter_footer .check_button {
+  width: 100%;
+  height: 34px;
 }

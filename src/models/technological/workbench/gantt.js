@@ -29,7 +29,6 @@ export default {
       end_date: {}, //日期最后那一天
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
-      group_view_type: '0', //分组视图0x项目， 1成员
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
@@ -41,6 +40,11 @@ export default {
       target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
+
+      group_view_type: '0', //分组视图0x项目， 1成员
+      group_view_filter_boards: [], //内容过滤项目id 列表
+      group_view_filter_users: [], //内容过滤成员id 列表
+
     },
   },
   subscriptions: {

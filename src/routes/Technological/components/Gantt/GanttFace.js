@@ -81,6 +81,8 @@ export default class GanttFace extends Component {
 
   //左右拖动,日期会更新
   ganttScroll = (e) => {
+    e.stopPropagation();
+    if('gantt_card_out_middle' !=  e.target.getAttribute("id")) return
     const that = this
     const { searchTimer } = this.state
     if (searchTimer) {
