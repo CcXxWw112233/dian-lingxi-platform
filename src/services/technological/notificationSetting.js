@@ -10,3 +10,12 @@ export async function getNoticeSettingList(params) {
       params,
   })
 }
+
+// 获取通知设置用户的默认列表
+export async function getUsersNoticeSettingList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/notice_setting/`,
+    method: "GET",
+    params
+  })
+}

@@ -29,26 +29,28 @@ export default class CommonOptions extends Component {
   /**
    * 这是每一组的箭头点击事件
    */
-  handleArrow(id, index) {
-    // console.log(id, 'sssss')
-    this.props.handleArrow(id, index)
+  handleArrow(id) {
+    // console.log(isClick, 'sssss')
+    this.props.handleArrow(id)
   }
 
   
 
   render() {
-    const { itemVal, default_options, show_down_arrow, index} = this.props
-    const { child_option_val } = this.state
-    const { id } = itemVal
+    const { itemVal, default_options, index} = this.props
+    const { id, is_show_down_arrow } = itemVal
+    // console.log(itemVal, 'sss')
 
     return (
       <div>
         <div className={styles.project}>
-          <div id={id} onClick={ () => { this.handleArrow(id, index) } } style={{marginBottom: 12}}>
+          <div id={id} onClick={ () => { this.handleArrow(id) } } style={{marginBottom: 12}}>
             {
-              show_down_arrow ? (
+              is_show_down_arrow ? (
+                // 向下的箭头
                 <span className={`${glabalStyles.authTheme}`}>&#xe7ee;</span>
               ) : (
+                // 向右的箭头
                 <span className={`${glabalStyles.authTheme}`}>&#xe7eb;</span>
               )
             }
@@ -56,7 +58,7 @@ export default class CommonOptions extends Component {
           </div>
           <div className={styles.contain}>
             {
-              (
+              is_show_down_arrow && (
                 <Checkbox.Group key={id} defaultValue={default_options} style={{width: '100%'}}>
                   <Row>
                     {

@@ -5,7 +5,7 @@ import styles from './NotificationSettingsModal.less'
 import glabalStyles from '@/globalset/css/globalClassName.less'
 import RenderDetail from './component/renderDetail'
 import RenderSimple from './component/renderSimple'
-import { getNoticeSettingList } from '@/services/technological/notificationSetting'
+import { getNoticeSettingList, getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
 import {isApiResponseOk} from "@/utils/handleResponseData";
 
 export default class NotificationSettingsModal extends Component {
@@ -17,10 +17,16 @@ export default class NotificationSettingsModal extends Component {
             radio_checked_val: 'detailed', // 选择详细提醒还是简要提醒, 默认为detail 详细提醒
             is_detail_none: 'none', // 是否显示还原 默认为none隐藏
             is_simple_none: 'none', // 是否显示还原 默认为none隐藏
+            // 用户设置的接口列表中的数组
+            user_setting_list: [], // 用户设置的通知列表
+            is_notice_web: '', // 浏览器推送
+            is_notice_mail: '', // 邮件推送
+            is_notice_mp: '', // 微信公总号
+            notice_model: '', // 详细提醒还是简要提醒
+            // 默认设置列表的数据
             notice_setting_list: [], // 通知设置的列表
             default_options: [], // 默认列表选中的选项
             compare_options: [], // 用来做比较的数组
-            new_default_options: [],
         }
         // this.setState({
         //     local_notificationSettingsModalVisible: props.notificationSettingsModalVisible
@@ -31,8 +37,8 @@ export default class NotificationSettingsModal extends Component {
         this.getInitNoticeSettingList()
     }
     
-    componentWillReceiveProps(nexProps) {
-        // console.log(nexProps, 'ssss')
+    componentWillReceiveProps(nextProps) {
+        // console.log(nextProps, 'ssss')
         // const { local_notificationSettingsModalVisible } = this.state
         // const { notificationSettingsModalVisible } = nexProps
 
@@ -54,6 +60,31 @@ export default class NotificationSettingsModal extends Component {
                     notice_setting_list: res.data.notice_list_data,
                     default_options: res.data.default_option,
                     compare_options: {...res.data.default_option}
+                })
+                // 将拿回来的数据进行操作返回
+                let { notice_setting_list } = this.state
+                notice_setting_list = notice_setting_list.map(item => {
+                    let new_item = item
+                    new_item = {...item, is_show_down_arrow:true}// 1 代表开启的状态
+                    return new_item
+                })
+                this.setState({
+                    notice_setting_list,
+                })
+                
+            } else {
+                message.error(res.message)
+            }
+        })
+        getUsersNoticeSettingList().then((res) => {
+            if (isApiResponseOk(res)) {
+                // console.log(res, 'sssss')
+                this.setState({
+                    is_notice_web: res.data.is_notice_web,
+                    is_notice_mail: res.data.is_notice_mail,
+                    is_notice_mp: res.data.is_notice_mp,
+                    notice_model: res.data.notice_model,
+                    user_setting_list: res.data.notice_list_ids,
                 })
             } else {
                 message.error(res.message)
@@ -78,26 +109,30 @@ export default class NotificationSettingsModal extends Component {
         });
         if (e.target.value == 'detailed') {
             this.setState({
-                is_simple_none: 'none'
+                is_simple_none: 'none',
+                notice_model: '1',
             })
         } else if (e.target.value == 'briefly') {
             this.setState({
-                is_detail_none: 'none'
+                is_detail_none: 'none',
+                notice_model: '2',
             })
         }
+        this.getInitNoticeSettingList()
     };
 
     // 这是子组件修改父组件的数据的方法
-    updateParentList = (arr) => {
-        const { radio_checked_val, default_options } = this.state
-        for (let val in default_options) {
-            if (radio_checked_val == 'detailed') {
-                default_options[radio_checked_val] = arr
-            } else if(radio_checked_val == 'briefly') {
-                default_options[radio_checked_val] = arr
+    updateParentList = (arr, isClick) => {
+        if (arr) {
+            const { radio_checked_val, default_options } = this.state
+            for (let val in default_options) {
+                if (radio_checked_val == 'detailed') {
+                    default_options[radio_checked_val] = arr
+                } else if(radio_checked_val == 'briefly') {
+                    default_options[radio_checked_val] = arr
+                }
             }
         }
-
     }
 
     // 调用该方法改变state中详细提醒的还原显示
@@ -154,6 +189,23 @@ export default class NotificationSettingsModal extends Component {
        })
     }
 
+    // 改变选项的状态
+    chgParentSelectState = (id) => {
+        // console.log(current_id, 'ssss')
+        let { notice_setting_list } = this.state
+       
+        notice_setting_list = notice_setting_list && notice_setting_list.map(item => {
+            let new_item = item
+            if (item.id == id) {
+                new_item = {...item, is_show_down_arrow: !item.is_show_down_arrow}
+            }
+            return new_item
+        })
+        this.setState({
+            notice_setting_list: notice_setting_list
+        })
+        
+    }
    
 
     // 展示设置的内容
@@ -162,6 +214,7 @@ export default class NotificationSettingsModal extends Component {
         let new_notice_list = [...notice_setting_list] // 将数据中的列表重新解构出来进行数据操作 任务日程与我相关
         let new_all_options = {...default_options} // 将数据中的默认选中的列表重新解构出来进行数据操作
         let new_default_options = []; // 定义一个空数组来保存详细还是简要选中的选项
+
         // 进行区分详细还是简要
         for (let val in new_all_options) {
             if (radio_checked_val == 'detailed') {
@@ -180,7 +233,11 @@ export default class NotificationSettingsModal extends Component {
             radio_checked_val,
         }
         if (radio_checked_val == 'detailed') {
-            return <RenderDetail {...datas} ref="renderDetail" updateParentList={ this.updateParentList } chgDetailDisplayBlock={ this.chgDisplayBlock } handleDetailRecover={ () => { this.handleRecover() } }  />
+            return <RenderDetail {...datas} ref="renderDetail" 
+                        updateParentList={ this.updateParentList } 
+                        chgDetailDisplayBlock={ this.chgDisplayBlock } 
+                        handleDetailRecover={ () => { this.handleRecover() } } 
+                        chgParentSelectState= { this.chgParentSelectState } />
         } else {
             return <RenderSimple {...datas} />
         }
@@ -189,18 +246,42 @@ export default class NotificationSettingsModal extends Component {
     render() {
 
         const { notificationSettingsModalVisible } = this.props
-        const { radio_checked_val, is_detail_none, is_simple_none } = this.state
+        const { radio_checked_val, is_detail_none, is_simple_none, notice_model, is_notice_web, is_notice_mail, is_notice_mp } = this.state
         const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
         const { wechat } = userInfo
+
+        const options = [
+            { label: '浏览器推送', value: 'is_notice_web' },
+            { label: '邮件', value: 'is_notice_mail' },
+            { label: '微信', value: 'is_notice_mp' },
+        ]
+
+        const temp_val = [
+            is_notice_web == '1' ? 'is_notice_web' : '', 
+            is_notice_mail == '1' ? 'is_notice_mail' : '', 
+            is_notice_mp == '1' ? 'is_notice_mp' : '',
+        ]
+
+        // console.log(temp_val, 'ssssss')
 
         const settingContain = (
             <div className={styles.wrapper}>
                 <div className={styles.top}>
                     <p>提醒方式</p>
                     <div className={styles.checkbox}>
-                        <Checkbox defaultChecked={true}>浏览器推送</Checkbox>
-                        <Checkbox>邮件</Checkbox>
-                        <Checkbox defaultChecked={ wechat ? true : false}>微信</Checkbox>
+                        <Checkbox.Group style={{width: '100%'}} defaultValue={temp_val}>
+                            <Row>
+                                {
+                                   options && options.map(item => {
+                                        return (
+                                            <Col span={8}>
+                                                <Checkbox value={item.value}>{item.label}</Checkbox>
+                                            </Col>
+                                        )
+                                    })
+                                }
+                            </Row>
+                        </Checkbox.Group>
                     </div>
                 </div>
                 <div className={styles.contant}>

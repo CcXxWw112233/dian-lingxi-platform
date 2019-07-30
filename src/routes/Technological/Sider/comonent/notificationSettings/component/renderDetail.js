@@ -6,24 +6,16 @@ import CommonOptions from './CommonOptions'
 
 export default class renderDetail extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            show_down_arrow: true, //展示项目向下的箭头 默认为true 显示
-        }
+    state = {
+        show_down_arrow: true, //展示项目向下的箭头 默认为true 显示
+        is_current_id: '', // 显示当前选中的id
     }
 
     // 改变箭头的状态
-    handleArrow = (id, index) => {
-        const { show_down_arrow } = this.state
-        const { new_notice_list } = this.props
-        new_notice_list && new_notice_list.map((item, i) => {
-            if (index == i) {
-                this.setState({
-                    show_down_arrow: !show_down_arrow,
-                })
-            }
-        })
+     handleArrow = (id) => {
+ 
+        // 需要调用父组件的方法修改父组件中的数据
+        this.props.chgParentSelectState(id)
     }
 
     // 点击还原事件
@@ -70,11 +62,11 @@ export default class renderDetail extends Component {
 
 
     render() {
-        const { show_down_arrow, show_task_down_arrow } = this.state
-        // console.log(temp_options, 'ssss')
+        const { show_down_arrow, show_task_down_arrow, is_current_id } = this.state
         const { new_notice_list, new_default_options} = this.props
         const datas = {
             show_down_arrow,
+            is_current_id,
         }
 
         return (
@@ -82,7 +74,11 @@ export default class renderDetail extends Component {
                 {
                     new_notice_list && new_notice_list.map((item, index) => {
                         return (
-                           <CommonOptions {...datas} key={item.id} index={index} itemVal={item} default_options={new_default_options} chgEveryOptions={this.chgEveryOptions} handleArrow={ this.handleArrow } />
+                           <CommonOptions {...datas} key={item.id} index={index} itemVal={item} 
+                                default_options={new_default_options} 
+                                chgEveryOptions={this.chgEveryOptions} 
+                                handleArrow={ this.handleArrow } 
+                            />
                         )
                     })
                 }
