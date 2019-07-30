@@ -10,32 +10,50 @@ import {isApiResponseOk} from "@/utils/handleResponseData";
 
 export default class NotificationSettingsModal extends Component {
 
-    state = {
-        projectOptions: [], // 项目的选项
-        radio_checked_val: 'detail', // 选择详细提醒还是简要提醒, 默认为detail 详细提醒
-        is_detail_none: 'none', // 是否显示还原 默认为none隐藏
-        is_simple_none: 'none', // 是否显示还原 默认为none隐藏
-        notice_setting_list: [], // 通知设置的列表
-        default_options: [], // 默认列表选中的选项
+    constructor(props) {
+        super(props) 
+        // console.log('ssssss', props.notificationSettingsModalVisible)
+        this.state = {
+            radio_checked_val: 'detailed', // 选择详细提醒还是简要提醒, 默认为detail 详细提醒
+            is_detail_none: 'none', // 是否显示还原 默认为none隐藏
+            is_simple_none: 'none', // 是否显示还原 默认为none隐藏
+            notice_setting_list: [], // 通知设置的列表
+            default_options: [], // 默认列表选中的选项
+            compare_options: [], // 用来做比较的数组
+            new_default_options: [],
+        }
+        // this.setState({
+        //     local_notificationSettingsModalVisible: props.notificationSettingsModalVisible
+        // })
     }
 
-    // componentDidMount() {
-    //     this.getInitNoticeSettingList()
-    // }
+    componentDidMount() {
+        this.getInitNoticeSettingList()
+    }
     
     componentWillReceiveProps(nexProps) {
-        if (nexProps.notificationSettingsModalVisible) {
-            this.getInitNoticeSettingList()
-        }
+        // console.log(nexProps, 'ssss')
+        // const { local_notificationSettingsModalVisible } = this.state
+        // const { notificationSettingsModalVisible } = nexProps
+
+        // if (notificationSettingsModalVisible && local_notificationSettingsModalVisible != notificationSettingsModalVisible) {
+        //     // console.log('ssssssssssssss', '进来查询啦')
+        //     this.setState({
+        //         local_notificationSettingsModalVisible: notificationSettingsModalVisible
+        //     })
+        //     // this.getInitNoticeSettingList()
+        // }
     }
 
+  
     // 获取初始设置列表信息
     getInitNoticeSettingList = () => {
         getNoticeSettingList().then((res) => {
             if (isApiResponseOk(res)) {
                 this.setState({
                     notice_setting_list: res.data.notice_list_data,
-                    default_options: res.data.default_option
+                    default_options: res.data.default_option,
+                    compare_options: {...res.data.default_option}
                 })
             } else {
                 message.error(res.message)
@@ -48,6 +66,7 @@ export default class NotificationSettingsModal extends Component {
     onCancel = () => {
         this.props.setNotificationSettingsModalVisible()
     }
+    
     /**
      * 详细提醒和简要提醒的回调
      * @param {Object} e 选中的事件对象
@@ -57,85 +76,111 @@ export default class NotificationSettingsModal extends Component {
         this.setState({
             radio_checked_val: e.target.value,
         });
-        if (e.target.value == 'detail') {
+        if (e.target.value == 'detailed') {
             this.setState({
                 is_simple_none: 'none'
             })
-        } else if (e.target.value == 'simple') {
+        } else if (e.target.value == 'briefly') {
             this.setState({
                 is_detail_none: 'none'
             })
         }
     };
 
-    // 调用该方法改变state中详细提醒的还原显示
-    chgDetailDisplayBlock = () => {
-        this.setState({
-            is_detail_none: 'inline-block'
-        })
+    // 这是子组件修改父组件的数据的方法
+    updateParentList = (arr) => {
+        const { radio_checked_val, default_options } = this.state
+        for (let val in default_options) {
+            if (radio_checked_val == 'detailed') {
+                default_options[radio_checked_val] = arr
+            } else if(radio_checked_val == 'briefly') {
+                default_options[radio_checked_val] = arr
+            }
+        }
+
     }
 
-    // 调用该方法改变state中详细提醒的还原隐藏
-    chgDetailDisplayNone = () => {
-        this.setState({
-            is_detail_none: 'none'
-        })
+    // 调用该方法改变state中详细提醒的还原显示
+    chgDisplayBlock = (val, optionArr) => {
+        const { radio_checked_val, compare_options } = this.state
+        // console.log(val ,'sssss')
+        // console.log(optionArr, 'sssss_2')
+        // 获取来自子组件修改父组件的数据
+        let childLength = optionArr && optionArr.length
+        for (let val in compare_options) {
+            if (radio_checked_val == 'detailed') {// 如果是详细提醒的组件
+                let dLength = compare_options[radio_checked_val].length
+                if (dLength != childLength) { // 如果长度不相等, 则有变化, 则显示还原
+                    this.setState({
+                        is_detail_none: 'inline-block'
+                    })
+                } else { // 长度相等的情况, 还需要判断值是否相等
+                   let compare_flag = this.compareDiffArr(optionArr, compare_options[radio_checked_val])
+                   if (!compare_flag) { // 如果值不相等, 那么要显示
+                       this.setState({
+                           is_detail_none: 'inline-block'
+                       })
+                   } else {
+                        this.setState({ // 如果值相等, 那么不显示
+                            is_detail_none: 'none'
+                        })
+                   }
+                }
+            } else if(radio_checked_val == 'briefly') {
+                
+            }
+        }
+    }
+
+    // 对比两个数组的值是否相等的方法
+    compareDiffArr(arr, brr) {
+        if (!(arr instanceof Array) || !(brr instanceof Array)) return false;
+        if (arr.length != brr.length) return false;
+        for(var i = 0, len = brr.length; i < len; i++) {
+            if (arr.indexOf(brr[i]) == -1 && brr.indexOf(arr[i]) == -1) {
+                return false
+            } else {
+                return true
+            }
+        }
     }
 
     // 点击详细提醒的还原
-    handleDetailRecover = () => {
+    handleRecover = (val) => {
         // console.log(this.refs, 'sss')
-       this.refs.renderDetail.recoverDefault()
+    //    this.refs.renderDetail.recoverDefault()
        this.setState({
         is_detail_none: 'none'
        })
     }
 
+   
+
     // 展示设置的内容
     renderSetOptions() {
         const { radio_checked_val, is_detail_none, is_simple_none, notice_setting_list, default_options} = this.state
-        let projectOptions, taskOptions, processOptions, fileOptions, aboutOptions;
-        notice_setting_list.map(item => {
-            if (item.id == 1) { // 代表项目的选项
-               return projectOptions = [...item.child_data]
-            } else if (item.id == 7) { // 代表任务/日程的选项
-               return taskOptions = [...item.child_data]
-            } else if (item.id == 16) { // 代表流程的选项
-               return processOptions = [...item.child_data]
-            } else if (item.id == 22) { // 代表文件的选项
-               return fileOptions = [...item.child_data]
-            } else if (item.id == 27) { // 代表关于我的选项
-               return aboutOptions = [...item.child_data]
+        let new_notice_list = [...notice_setting_list] // 将数据中的列表重新解构出来进行数据操作 任务日程与我相关
+        let new_all_options = {...default_options} // 将数据中的默认选中的列表重新解构出来进行数据操作
+        let new_default_options = []; // 定义一个空数组来保存详细还是简要选中的选项
+        // 进行区分详细还是简要
+        for (let val in new_all_options) {
+            if (radio_checked_val == 'detailed') {
+                new_default_options = new_all_options[radio_checked_val]
+            } else if(radio_checked_val == 'briefly') {
+                new_default_options = new_all_options[radio_checked_val]
             }
-        })
-        let defaultProjectValueArr = [];
-        let defaultTaskValueArr = [];
-        let defaultProcessValueArr = []; 
-        let defaultFileValueArr = []; 
-        let defaultAboutValueArr = []; // 定义一个默认的项目选中的数组
-        // 将默认项目选中的选项取出来
-        projectOptions && projectOptions.map(item => {
-            for (let val of default_options.detailed) {
-                if (item.id == val) {
-                    defaultProjectValueArr.push(val)
-                }
-            }
-            return defaultProjectValueArr
-        })
+        }
+        let temp_options = [...new_default_options]
 
         const datas = {
-            notice_setting_list,
-            projectOptions,
-            taskOptions, 
-            processOptions, 
-            fileOptions, 
-            aboutOptions,
-            defaultProjectValueArr,
-            defaultTaskValueArr,
+            new_notice_list,
+            new_default_options,
+            temp_options,
             is_detail_none,
+            radio_checked_val,
         }
-        if (radio_checked_val == 'detail') {
-            return <RenderDetail {...datas} ref="renderDetail" chgDetailDisplayBlock={this.chgDetailDisplayBlock} chgDetailDisplayNone={this.chgDetailDisplayNone} handleDetailRecover={this.handleDetailRecover}  />
+        if (radio_checked_val == 'detailed') {
+            return <RenderDetail {...datas} ref="renderDetail" updateParentList={ this.updateParentList } chgDetailDisplayBlock={ this.chgDisplayBlock } handleDetailRecover={ () => { this.handleRecover() } }  />
         } else {
             return <RenderSimple {...datas} />
         }
@@ -162,11 +207,11 @@ export default class NotificationSettingsModal extends Component {
                     <p>提醒内容</p>
                     <div className={styles.radio}>
                         <Radio.Group onChange={this.onChange} defaultValue={radio_checked_val}>
-                            <Radio value="detail">
+                            <Radio value="detailed">
                                 详细提醒
                                 <span style={{display: is_detail_none}}>&nbsp;(<span onClick={this.handleDetailRecover} className={styles.detail_recover}>还原</span>)</span>
                             </Radio>
-                            <Radio value="simple">
+                            <Radio value="briefly">
                                 简要提醒
                                 <span style={{display:is_simple_none}}>&nbsp;(<span className={styles.simple_recover}>还原</span>)</span>
                             </Radio>

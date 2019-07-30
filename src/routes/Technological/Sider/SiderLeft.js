@@ -576,7 +576,9 @@ export default class SiderLeft extends React.Component {
 
         <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
-        <NotificationSettingsModal dispatch={this.props.dispatch} notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
+        {this.state.NotificationSettingsModalVisible && (
+          <NotificationSettingsModal dispatch={this.props.dispatch} notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
+        )} 
 
       </Sider>
       
