@@ -27,6 +27,13 @@ const treeData = [
           title: 'Child Node3',
           value: '0-1-0',
           key: '0-1-0',
+          children: [
+            {
+              title: 'Child Node1',
+              value: '0-0-0-0',
+              key: '0-0-0-0',
+            },
+          ],
         },
         {
           title: 'Child Node4',
@@ -110,7 +117,7 @@ export default class ContentFilter extends Component {
     resetTreeSelected = ({treeType}) => {
         const local_gold_name = treeType == 'boards'? 'local_group_view_filter_boards' : 'local_group_view_filter_users'
         this.setState({
-            [local_gold_name]: value
+            [local_gold_name]: []
         })
     }
 
@@ -177,14 +184,17 @@ export default class ContentFilter extends Component {
                 group_view_filter_users: local_group_view_filter_users
             }
         })
+        this.closeContent(false)
     }
-
+    closeContent = () => {
+        this.props.setDropdownVisible(false)
+    }
     render() {
         return (
             <div className={`${indexStyles.content_filter_out} ${globalStyles.global_card}`}>
                <div className={`${indexStyles.content_filter_top}`}>
                    <div className={`${indexStyles.content_filter_title}`}>内容过滤</div>
-                   <div className={`${globalStyles.authTheme} ${indexStyles.content_filter_close}`}>&#xe7fe;</div>
+                   <div className={`${globalStyles.authTheme} ${indexStyles.content_filter_close}`} onClick={this.closeContent}>&#xe7fe;</div>
                </div>
                <div className={`${indexStyles.content_filter_bott}`}>
                   {this.renderFilter('boards')}

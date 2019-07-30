@@ -25,6 +25,9 @@ export default class GroupListHeadSet extends Component {
         })
     }
     onVisibleChange = (bool) => {
+        this.setDropdownVisible(bool)
+    }
+    setDropdownVisible = (bool) => {
         this.setState({
             dropdownVisible: bool
         })
@@ -41,7 +44,7 @@ export default class GroupListHeadSet extends Component {
                       <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '1' && selected}`}>&#xe7b2;</div>
                    </div>
                    <Dropdown
-                         overlay={<ContentFilter  dropdownVisible={dropdownVisible} />} 
+                         overlay={<ContentFilter  dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />} 
                          trigger={['click']} 
                          visible={dropdownVisible}
                          onVisibleChange={this.onVisibleChange}>
