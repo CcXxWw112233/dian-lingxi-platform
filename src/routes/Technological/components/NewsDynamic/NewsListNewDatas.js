@@ -1,12 +1,15 @@
 import React from 'react';
-import { Card, Icon, Input, Tooltip } from 'antd'
+import { Card, Icon, Input, Tooltip, message } from 'antd'
 import NewsListStyle from './NewsList.less'
 import styles from './index.css'
 import QueueAnim from 'rc-queue-anim'
 import {newsDynamicHandleTime, timestampToTime, timestampToHM} from '../../../../utils/util'
 import Comment from './Comment'
-import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter} from "../../../../utils/businessFunction";
+import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, ORG_TEAM_BOARD_QUERY, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW,
+  PROJECT_FILES_FILE_INTERVIEW,
+  PROJECT_FLOW_FLOW_ACCESS,
+} from "../../../../globalset/js/constant";
+import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermission, checkIsHasPermissionInBoard} from "../../../../utils/businessFunction";
 import { connect } from 'dva'
 
 @connect(({technological: { datas: { currentUserOrganizes = [], is_show_org_name } }}) => ({
@@ -35,6 +38,43 @@ export default class NewsListNewDatas extends React.Component {
     })
   }
 
+  // 去到项目详情
+  goToBoard({org_id, content}) {
+    console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+  }
+
+  // 去任务详情
+  goToTask({board_id, content}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW, board_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+  }
+
+  // 去文件详情
+  goToFile({board_id, content}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, board_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+  }
+
+  // 去流程详情
+  goToProcess({board_id, content}) {
+    if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+  }
+
   render() {
     const { datas: { newsDynamicList = [], next_id, isHasMore = true, isHasNewDynamic, newsList = [] }} = this.props.model
     const { currentUserOrganizes = [], is_show_org_name } = this.props
@@ -44,21 +84,33 @@ export default class NewsListNewDatas extends React.Component {
       let messageContain = (<div></div>)
       let jumpToBoard = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer'}} 
+          onClick={ () => { this.goToBoard({org_id: messageValue.org_id, content: messageValue.content}) } }
+        >{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer'}} 
+          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content}) } }
+        >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
       
       let jumpToFile = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer'}} 
+          onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content}) } }
+        >{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
-        <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer'}} 
+          onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
+        >{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
       // 会议
       // let jumpToMeeting = (
@@ -581,6 +633,8 @@ export default class NewsListNewDatas extends React.Component {
     const projectNews = (value, key) => {
       const { content = {}, action, created, org_id } = value
       const { board = {}, card = {}, card_list = {} } = content
+      const board_name = board['name']
+      const list_name = card_list['name']
 
       return (
         <div className={NewsListStyle.containr} key={key}>
@@ -592,7 +646,20 @@ export default class NewsListNewDatas extends React.Component {
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain} </div>
-                <div>{timestampToTime(created)}</div>
+                <div>
+                  {
+                    is_show_org_name && (
+                      <div className={NewsListStyle.news_orgName}>
+                        {/* <span>组织:</span> */}
+                        <span style={{marginRight: 5}}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                        <Icon type="caret-right" style={{fontSize: 8}}/>
+                      </div>
+                    )
+                  }
+                  {/* {currentNounPlanFilterName(PROJECTS)}：{board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''} */}
+                  {board_name}<Icon type="caret-right" style={{fontSize: 8}}/> 分组 {list_name || ''}
+                </div>
+                {/* <div>{timestampToTime(created)}</div> */}
               </div>
             </div>
             <div className={NewsListStyle.right}>

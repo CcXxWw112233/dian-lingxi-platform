@@ -4,11 +4,11 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
-const { Option } = Select;
-const { TreeNode, DirectoryTree } = Tree;
 import {
     checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
+const { Option } = Select;
+const { TreeNode, DirectoryTree } = Tree;
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
@@ -426,12 +426,11 @@ class BoardCommunication extends Component {
             <div className={indexStyles.boardCommunicationWapper}>
                 {
                     this.state.previewFileModalVisibile &&
-                    <FileDetail {...this.props} updateDatasFile={this.updateDatasFile}  updatePublicDatas={this.updatePublicDatas} {...this.getFileModuleProps()} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+                    <FileDetail {...this.props} updateDatasFile={this.updateDatasFile} updatePublicDatas={this.updatePublicDatas} {...this.getFileModuleProps()} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
                 }
                 {
-                    !this.state.previewFileModalVisibile &&
-
-                    <div className={indexStyles.indexCoverWapper}>
+                    !this.state.previewFileModalVisibile && (
+<div className={indexStyles.indexCoverWapper}>
                         <div className={indexStyles.icon}>
                             <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
                         </div>
@@ -440,7 +439,7 @@ class BoardCommunication extends Component {
                             <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                         </div>
                     </div>
-                }
+)}
 
                 <Modal
                     width={248}

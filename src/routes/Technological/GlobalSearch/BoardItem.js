@@ -1,9 +1,9 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon, Avatar } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Icon, Avatar, Tooltip } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermissionInBoard, checkIsHasPermission, setBoardIdStorage} from "../../../utils/businessFunction";
+import {checkIsHasPermissionInBoard, checkIsHasPermission, setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_COMPLETE, ORG_TEAM_BOARD_QUERY, APP_KEY
@@ -61,8 +61,8 @@ export default class AnotherItem extends React.Component {
     e.stopPropagation();
   }
   render() {
-    const { itemValue = {} } = this.props
-    const { is_realize, id, name, create_time } = itemValue
+    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, is_all_org } = this.props
+    const { is_realize, id, name, create_time, org_id } = itemValue
 
     return(
       <div>
@@ -71,6 +71,20 @@ export default class AnotherItem extends React.Component {
           <div className={indexstyles.itemName}>
             <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id })}>
               {name}
+              {/* <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}> */}
+                {
+                  is_show_org_name && is_all_org && (
+                    <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+                  )
+                }
+                {
+                  is_show_org_name && is_all_org && (
+                    <span className={indexstyles.org_name} style={{color: '#8C8C8C'}}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+              {/* </div> */}
             </div>
           </div>
           <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
@@ -82,8 +96,14 @@ export default class AnotherItem extends React.Component {
     )
   }
 }
-function mapStateToProps({ projectDetail: { datas: { board_id } } }) {
+function mapStateToProps(
+  { 
+    projectDetail: { datas: { board_id } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
+  }
+) {
   return {
     model: { board_id },
+    currentUserOrganizes, is_show_org_name, is_all_org,
   }
 }

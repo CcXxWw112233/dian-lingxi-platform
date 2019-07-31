@@ -5,13 +5,13 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileIndex from '@/routes/Technological/components/ProjectDetail/FileModule'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
-
-const { Option } = Select;
-const { TreeNode, DirectoryTree } = Tree;
 import {
     checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import { height } from 'window-size';
+
+const { Option } = Select;
+const { TreeNode, DirectoryTree } = Tree;
 
 class BoardFiles extends Component {
     state = {
@@ -76,8 +76,8 @@ class BoardFiles extends Component {
         return (
             <div className={indexStyles.boardFilesContainer}>
                 {
-                    boardSelectVisible &&
-                    <div className={indexStyles.boardSelectOutWapper} style={{ maxHeight: contentHeight + 'px' }}>
+                    boardSelectVisible && (
+<div className={indexStyles.boardSelectOutWapper} style={{ maxHeight: contentHeight + 'px' }}>
                         <div className={indexStyles.boardSelectWapper}>
                             {
                                 orgBoardList.map((org, orgkey) => {
@@ -104,15 +104,15 @@ class BoardFiles extends Component {
 
                         </div>
                     </div>
-                }
+)}
 
 
                 {
-                    boardFileContentVisible &&
-                    <div className={indexStyles.boardFileContentWapper}>
+                    boardFileContentVisible && (
+<div className={indexStyles.boardFileContentWapper}>
                         <FileIndex {...this.props}/>
                     </div>
-                }
+)}
 
             </div>
         );
@@ -138,7 +138,7 @@ function mapStateToProps({
       }
 
     return {
-        modal, model: modelObj,loading,
+        modal, model: modelObj, loading,
         boardListData,
         currentBoardDetail,
         boardFileListData,

@@ -46,18 +46,19 @@ const WorkbenchBoxSelect = (props) => {
                 <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
                   <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
-                  {isSelected &&
-                    <span>
+                  {isSelected && (
+<span>
                       <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
                       <div className={indexStyles.workbenchBoxSelectedBg}></div>
                     </span>
-                  }
+)}
 
                   {!isSelected &&
                     <div className={indexStyles.workbenchBoxSelectHover}></div>
                   }
 
-                </div>) : '';
+                </div>
+) : '';
             })
           }
         </div>

@@ -143,11 +143,11 @@ export async function fillFormComplete(data) {
 }
 //流程文件上传
 export async function processFileUpload(data) {
-  debugger
+  //debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
     method: 'POST',
-    headers: createHeaderContentDataByFlowInstantId(id),
+    headers: createHeaderContentDataByFlowInstantId(data.id),
     data,
   });
 }

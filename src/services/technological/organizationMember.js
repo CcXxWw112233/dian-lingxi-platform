@@ -124,7 +124,7 @@ export async function getCurrentUserOrganizes(params) {
   }, { isNotLoading: true} );
 }
 
-//
+// 切换组织
 export async function changeCurrentOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/changecurrentorg/${data.org_id}`,
@@ -255,4 +255,13 @@ export async function getUserBoardPermissions(params) {
     method: 'GET',
     params
   }, {isNotLoading: true});
+}
+
+// 用户设置是否显示组织名称
+export async function getSetShowOrgName(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/set`,
+    method: 'PUT',
+    data
+  });
 }

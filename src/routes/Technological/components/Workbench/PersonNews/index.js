@@ -225,7 +225,7 @@ export default class PersonNews extends React.Component {
             zIndex: !isShowBottDetail ? 1 : 100
           }}
         >
-          <div className={indexStyles.contain1}>
+          {/* <div className={indexStyles.contain1}>
             <div className={indexStyles.contain1_one}>
               <Avatar size={32} src={avatar}>
                 u
@@ -255,7 +255,7 @@ export default class PersonNews extends React.Component {
             >
               退出
             </div>
-          </div>
+          </div> */}
           <div
             id={"dynamicsContainer"}
             onScroll={this.newsOutScroll.bind(this)}

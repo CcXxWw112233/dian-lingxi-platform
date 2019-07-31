@@ -10,6 +10,7 @@ import {
   getCurrentUserOrganizes,
   getUserOrgPermissions,
   getUserBoardPermissions,
+  getSetShowOrgName,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
 import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
@@ -92,7 +93,14 @@ export default {
             type: 'getUSerInfo',
             payload: {}
           })
-
+          await dispatch({ //  获取当前成员在组织中的权限列表
+            type: 'getUserOrgPermissions',
+            payload: {}
+          })
+          await dispatch({ //  获取当前成员所以项目的权限列表
+           type: 'getUserBoardPermissions',
+           payload: {}
+           })
 
           //获取当前的用户当前组织的项目列表,
           await dispatch({
@@ -168,14 +176,14 @@ export default {
         //当前选中的组织
         localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
 
-        yield put({ //  获取当前成员在组织中的权限列表
-          type: 'getUserOrgPermissions',
-          payload: {}
-        })
-        yield put({
-         type: 'getUserBoardPermissions',
-         payload: {}
-         })
+        // yield put({ //  获取当前成员在组织中的权限列表
+        //   type: 'getUserOrgPermissions',
+        //   payload: {}
+        // })
+        // yield put({
+        //  type: 'getUserBoardPermissions',
+        //  payload: {}
+        //  })
         localStorage.setItem('userInfo', JSON.stringify(res.data))
 
         //组织切换重新加载
@@ -338,11 +346,21 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    // 获取设置显示组织名称
+    * getSetShowOrgName({ payload }, { select, call, put }) {
+      let res = yield call(getSetShowOrgName, payload)
+      if(!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
+    },
+
     //组织 -----------end
 
     //权限---start获取用户的全部组织和全部项目权限
     * getUserOrgPermissions({ payload }, { select, call, put }) {
       const res = yield call(getUserOrgPermissions, payload)
+      // debugger
       if(isApiResponseOk(res)) {
         const OrganizationId = localStorage.getItem('OrganizationId')
         // 全组织的情况下，直接存【组织=》权限】列表

@@ -1,9 +1,9 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon, Avatar } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Icon, Avatar, Tooltip } from 'antd'
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage} from "../../../utils/businessFunction";
+import {checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../utils/businessFunction";
 import { timestampToTimeNormal } from '../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
@@ -59,8 +59,8 @@ export default class AnotherItem extends React.Component {
     e.stopPropagation();
   }
   render() {
-    const { itemValue = {} } = this.props
-    const { is_realize, id, board_id, file_name, file_id, create_time } = itemValue
+    const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, is_all_org } = this.props
+    const { is_realize, id, board_id, file_name, file_id, create_time, org_id, board_name } = itemValue
 
     return(
       <div>
@@ -69,6 +69,24 @@ export default class AnotherItem extends React.Component {
           <div className={indexstyles.itemName}>
             <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
               {file_name}
+              {/* <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}> */}
+                <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+                {
+                  is_show_org_name && is_all_org && (
+                    <span className={indexstyles.org_name}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+                {
+                  is_show_org_name && is_all_org && (
+                    <span>
+                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                    </span>
+                  )
+                }
+                <span className={indexstyles.board_name} style={{color: '#8C8C8C'}}>{board_name}</span>
+              {/* </div> */}
             </div>
           </div>
           <div className={indexstyles.time}>{timestampToTimeNormal(create_time)}</div>
@@ -80,8 +98,14 @@ export default class AnotherItem extends React.Component {
     )
   }
 }
-function mapStateToProps({ projectDetail: { datas: { board_id } } }) {
+function mapStateToProps(
+  { 
+    projectDetail: { datas: { board_id } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
+  }
+) {
   return {
     model: { board_id },
+    currentUserOrganizes, is_show_org_name, is_all_org,
   }
 }

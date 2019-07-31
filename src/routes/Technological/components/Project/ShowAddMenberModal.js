@@ -4,7 +4,7 @@ import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
 import {validateEmail, validateTel} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import {currentNounPlanFilterName, getGlobalData} from "../../../../utils/businessFunction";
 import CustormModal from '../../../../components/CustormModal'
 import InviteOthers from './../InviteOthers/index'
 
@@ -111,7 +111,7 @@ class ShowAddMenberModal extends React.Component {
           <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>发送邀请</Button>
         </FormItem> */}
         <div>
-        <InviteOthers isShowTitle={false} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
+        <InviteOthers isShowTitle={false} _organization_id={getGlobalData('aboutBoardOrganizationId')} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
       </Form>
     )

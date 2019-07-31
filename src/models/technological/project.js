@@ -180,6 +180,7 @@ export default {
     },
 
     * getProjectList({ payload }, { select, call, put }) {
+      return
       const { type = '1', calback } = payload
       let res = yield call(getProjectList, {type})
       if(isApiResponseOk(res)) {

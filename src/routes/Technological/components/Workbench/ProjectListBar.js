@@ -19,7 +19,8 @@ class ProjectListBar extends Component {
     this.listRef = React.createRef();
     this.state = {
       dropDownMenuItemList: [],
-      addProjectModalVisible: false
+      addProjectModalVisible: false,
+      is_show_new_project: false, // 是否显示新建项目
     };
   }
   handleClickProjectItem = id => {
@@ -207,6 +208,23 @@ class ProjectListBar extends Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWinResize, false);
   }
+  componentWillReceiveProps(nextProps) {
+    const { projectList } = this.props
+    // console.log(nextProps, 'ssssss')
+    // console.log(projectList, 'sss')
+    const that = this
+    if (projectList.length != nextProps.projectList.length) {
+      setTimeout(() => {
+        // console.log('ssssss', 1111111111111)
+        that.handleWinResize()
+        this.setState({
+          is_show_new_project: true
+        })
+      }, 200)
+    }
+    
+    
+  }
   handleWinResize = () => {
     const { projectList } = this.props;
     const listRefChildren = this.listRef.current.children;
@@ -214,8 +232,10 @@ class ProjectListBar extends Component {
       const childNodeOffsetTopList = [...listRefChildren].map(childNode => {
         return childNode.offsetTop;
       });
+      // console.log('sssss',{listRefChildren})
       const shouldPushInDropDownMenuItem = childNodeOffsetTopList.reduce(
         (acc, curr, ind) => {
+          // console.log('sssss',{acc, curr, ind})
           if (curr !== 0) {
             return [...acc, projectList[ind]];
           }
@@ -225,6 +245,8 @@ class ProjectListBar extends Component {
       );
       this.setState({
         dropDownMenuItemList: shouldPushInDropDownMenuItem
+      }, () => {
+        // console.info('ssssss',this.state.dropDownMenuItemList)
       });
     }
   };
@@ -232,7 +254,7 @@ class ProjectListBar extends Component {
     const { project, projectList, projectTabCurrentSelectedProject } = this.props;
     const { datas = { }} = project
     const { appsList = [] } = datas
-    const { dropDownMenuItemList, addNewProjectModalVisible, addProjectModalVisible } = this.state;
+    const { dropDownMenuItemList, addNewProjectModalVisible, addProjectModalVisible, is_show_new_project } = this.state;
     let projectListBarAllClass = cx({
       [styles.projectListBarAll]: true,
       [styles.projectListBarCellActive]:
@@ -287,7 +309,7 @@ class ProjectListBar extends Component {
             ))}
         </ul>
         {dropDownMenuItemList.length === 0 ? (
-        !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
+          is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
         ) : (
           <Dropdown placement='bottomCenter' overlay={dropDownMenu} style={{ zIndex: '9999' }}>
             <div className={styles.projectListBarExpand}>

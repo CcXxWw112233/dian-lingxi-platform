@@ -4,8 +4,8 @@ import DragValidation from '../../../../../../components/DragValidation'
 import indexStyles from './index.less'
 import StepTwoListItem from './StepTwoListItem'
 import { validateTel, validateEmail } from '../../../../../../utils/verify'
-import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
+import {MESSAGE_DURATION_TIME, PROJECTS, ORG_TEAM_BOARD_CREATE, NOT_HAS_PERMISION_COMFIRN} from "../../../../../../globalset/js/constant";
+import {currentNounPlanFilterName, checkIsHasPermission} from "../../../../../../utils/businessFunction";
 import CustormModal from '../../../../../../components/CustormModal'
 import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
@@ -56,26 +56,13 @@ class CreateProject extends React.Component {
     let params = {
       type: '2'
     }
-    if(OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
-      // dispatch({
-      //   type: 'project/getAppsList',
-      //   payload: {
-      //     type: '2',
-      //   }
-      // })
+    if(OrganizationId != '0') { //如果是初始化和非全组织状态时才调用
+      params = Object.assign(params, { _organization_id: OrganizationId })
     } else {
-      // if(_organization_id) {
-      //   dispatch({
-      //     type: 'project/getAppsList',
-      //     payload: {
-      //       type: '2',
-      //       _organization_id: _organization_id,
-      //     }
-      //   })
-      // }
       params = Object.assign(params, { _organization_id })
+      if(!_organization_id || _organization_id == '0') return
     }
-    if(!_organization_id || _organization_id == '0') return
+   
     getAppsList(params).then(res => {
       if(isApiResponseOk(res)) {
         this.setState({
@@ -88,6 +75,10 @@ class CreateProject extends React.Component {
   }
   //表单输入时记录值
   orgOnChange = (id) => {
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE, id)){
+      message.warn('您在该组织没有创建项目权限')
+      return false
+    }
     this.setState({
       _organization_id: id
     }, () => {
@@ -362,7 +353,7 @@ class CreateProject extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && !_organization_id)} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
         </FormItem>
       </Form>
     )

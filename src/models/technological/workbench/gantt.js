@@ -16,6 +16,7 @@ import {
   workbench_date_arr_one_level
 } from './selects'
 import {createMilestone} from "../../../services/technological/prjectDetail";
+import { getGlobalData } from '../../../utils/businessFunction';
 
 export default {
   namespace: 'gantt',
@@ -218,7 +219,7 @@ export default {
         end_time: end_date['timestamp'],
       }
 
-      if(localStorage.getItem('aboutBoardOrganizationId') == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+      if(getGlobalData('aboutBoardOrganizationId') == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
         return
       }
 

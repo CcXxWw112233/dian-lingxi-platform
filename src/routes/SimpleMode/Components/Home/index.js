@@ -14,7 +14,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      simpleHeaderVisiable:true,
+      simpleHeaderVisiable: true,
       myWorkbenchBoxsVisiable: true,
       wallpaperSelectVisiable: true,
       workbenchBoxSelectVisiable: false,
@@ -53,9 +53,9 @@ class Home extends Component {
       <div>
         {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />}
 
-        {wallpaperSelectVisiable && <WallpaperSelect  {...this.state} setHomeVisible={this.setHomeVisible}/>}
+        {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible}/>}
 
-        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect  {...this.state} setHomeVisible={this.setHomeVisible}/>}
+        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible}/>}
 
       </div>
     )

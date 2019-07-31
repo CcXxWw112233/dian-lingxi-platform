@@ -8,14 +8,14 @@ import { getUserAllOrgsBoardList } from '@/services/technological/index'
 export default {
     namespace: 'simplemode',
     state: {
-        simpleHeaderVisiable: true,//显示隐藏用
-        setWapperCenter: false,//显示隐藏用
-        wallpaperSelectModalVisiable: false,//显示隐藏用
-        chatImVisiable: false,              //显示隐藏用
+        simpleHeaderVisiable: true, //显示隐藏用
+        setWapperCenter: false, //显示隐藏用
+        wallpaperSelectModalVisiable: false, //显示隐藏用
+        chatImVisiable: false, //显示隐藏用
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
         workbenchBoxList: [], //所有可以选择的盒子列表
-        currentSelectedWorkbenchBox: {},//当然选中的工作台盒子
+        currentSelectedWorkbenchBox: {}, //当然选中的工作台盒子
         init: true,
         orgBoardList: []
     },

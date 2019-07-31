@@ -194,6 +194,7 @@ class ProjectMenu extends Component {
     return treeNodeProjectNum
   };
   handleClickedProjectMenuTreeNodeMenuItem = ({ item, key }) => {
+    // debugger
     const caseMap = new Map([
       [/edit-/, () => this.handEditTreeNodeName(key)],
       [/create-child-/, () => this.handleCreateTreeNode(key)],
@@ -406,7 +407,7 @@ class ProjectMenu extends Component {
       projectGroupTree
     } = this.props;
     const NoContent = <div className={styles.projectGather__wrapper} />;
-    if (!projectList) return NoContent;
+    // if (!projectList) return NoContent;
     if (!projectGroupTree.participate_count) return NoContent;
     const { participate_count, star_count } = projectGroupTree;
     let participateWrapperClass = cx({
@@ -499,12 +500,20 @@ class ProjectMenu extends Component {
       return;
     }
     const isOrg = create_tree_node.split('-')[0] === 'org' ? true : false
+    const arr = create_tree_node.split('-')
+    let params = {
+      group_name: new_tree_node_name,
+      parent_id: isOrg ? arr[1] : create_tree_node,
+    }
+    if(isOrg) {
+      params['_organization_id'] = arr[1]
+    }
+    // debugger
     Promise.resolve(
       dispatch({
         type: 'project/createProjectGroupTreeNode',
         payload: {
-          group_name: new_tree_node_name,
-          parent_id: isOrg ? create_tree_node.split('-')[1] : create_tree_node
+          ...params
         }
       })
     ).then(res => this.createTreeNodeGetResponse(res));
@@ -652,6 +661,7 @@ class ProjectMenu extends Component {
     this.focusCreateTreeNode();
   }
   render() {
+    console.log('sssss', this.state.create_tree_node)
     return (
       <div className={styles.wrapper}>
         {this.renderProjectGather()}
