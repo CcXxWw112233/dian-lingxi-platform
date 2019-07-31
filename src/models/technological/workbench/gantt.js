@@ -299,8 +299,8 @@ export default {
               const { name, id } = item_group_member
               const new_item_group_member = {
                 title: name,
-                value: id,
-                key: id,
+                value: `${org_id}_${id}`,
+                key: `${org_id}_${id}`,
               }
               
               return new_item_group_member
