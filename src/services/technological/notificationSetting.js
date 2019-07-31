@@ -19,3 +19,12 @@ export async function getUsersNoticeSettingList(params) {
     params
   })
 }
+
+// 调用获取设置的列表接口
+export async function setNoticeSettingList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/notice_setting/`,
+    method: "POST",
+    data
+  })
+}

@@ -1,51 +1,37 @@
 import React, { Component } from 'react'
-import { Radio, Checkbox, Row, Col } from 'antd'
-import styles from '../NotificationSettingsModal.less'
-import glabalStyles from '@/globalset/css/globalClassName.less'
 import CommonOptions from './CommonOptions'
 
 export default class renderDetail extends Component {
 
-    state = {
-        show_down_arrow: true, //展示项目向下的箭头 默认为true 显示
-        is_current_id: '', // 显示当前选中的id
-    }
-
-    // 改变箭头的状态
+    /**
+     * 改变箭头的状态
+     * @param {String} id 传递过来的对应当前选项的id
+     * */ 
      handleArrow = (id) => {
- 
         // 需要调用父组件的方法修改父组件中的数据
         this.props.chgParentSelectState(id)
-    }
-
-    // 点击还原事件
-    recoverDefault = () => {
-        
     }
 
      /**
      * 项目的选项改变事件
      * 这是子组件要调用父组件的方法
      * @param {Object} e 选中的事件对象选项
-     * @param {String} id 每一组对应的id
      */
-    chgEveryOptions = (e, id) => {
-        const { new_default_options, temp_options } = this.props
+    chgEveryOptions = (e) => {
+        const { new_detail_default_options = [] } = this.props
+        // console.log(new_detail_default_options, 'ssss')
         let val = e.target.value
-        // console.log(val, id, 'sss')
-        
-        if (temp_options.indexOf(val) != -1) { // 表示存在
-            const arr = this.removeByValue(temp_options, val)
+        if (new_detail_default_options.indexOf(val) != -1) { // 表示存在
+            const arr = this.removeByValue(new_detail_default_options, val)
             // 这里调用父组件的方法
             this.props.updateParentList(arr)
         } else {
-            temp_options.push(val)
+            new_detail_default_options.push(val)
             // 这里调用父组件的方法
-            this.props.updateParentList(temp_options)
+            this.props.updateParentList(new_detail_default_options)
         }
         // 在这里调用父组件的方法控制还原显示的方法
-        this.props.chgDetailDisplayBlock(val, temp_options)
-        // console.log(temp_options, 'sssss_1')
+        this.props.chgDetailDisplayBlock(new_detail_default_options)
     }
 
     //删除数组中指定元素
@@ -60,22 +46,16 @@ export default class renderDetail extends Component {
         return arr
     }
 
-
     render() {
-        const { show_down_arrow, show_task_down_arrow, is_current_id } = this.state
-        const { new_notice_list, new_default_options} = this.props
-        const datas = {
-            show_down_arrow,
-            is_current_id,
-        }
-
+        const { new_notice_list, new_detail_default_options} = this.props
+        // console.log(new_detail_default_options, 'sssss_detailed')
         return (
             <div>
                 {
                     new_notice_list && new_notice_list.map((item, index) => {
                         return (
-                           <CommonOptions {...datas} key={item.id} index={index} itemVal={item} 
-                                default_options={new_default_options} 
+                            <CommonOptions key={item.id} index={index} itemVal={item} 
+                                default_options={new_detail_default_options} 
                                 chgEveryOptions={this.chgEveryOptions} 
                                 handleArrow={ this.handleArrow } 
                             />
