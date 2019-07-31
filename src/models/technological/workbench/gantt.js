@@ -1,4 +1,4 @@
-import { getGanttData, getGttMilestoneList } from '../../../services/technological/gantt'
+import { getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree } from '../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -44,7 +44,8 @@ export default {
       group_view_type: '0', //分组视图0x项目， 1成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤成员id 列表
-
+      group_view_boards_tree: [], //内容过滤项目分组树
+      group_view_users_tree: [], //内容过滤成员分组树
     },
   },
   subscriptions: {
@@ -242,7 +243,82 @@ export default {
         message.error(res.message)
       }
     },
-
+    * getContentFiterBoardTree({payload}, {select, call, put}) {
+        const res = yield call(getContentFiterBoardTree, {})
+        if(isApiResponseOk) {
+          const data = res.data
+          const treeData = data.map(item => {
+            const { org_name, org_id, boards = [] } = item
+            let new_item = {
+              title: org_name,
+              value: org_id,
+              key: org_id,
+              children: []
+            }
+            const children = boards.map(item_board => {
+              const { name, id } = item_board
+              const new_item_board = {
+                title: name,
+                value: id,
+                key: id,
+              }
+              return new_item_board
+            })
+            new_item['children'] = children
+            return new_item
+          })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              group_view_boards_tree: treeData
+            }
+          })
+        }
+    },
+    * getContentFiterUserTree({payload}, {select, call, put}) {
+      const res = yield call(getContentFiterUserTree, {})
+      if(isApiResponseOk) {
+        const data = res.data
+        const treeData = data.map(item => {
+          const { org_name, org_id, groups = [] } = item
+          let new_item = {
+            title: org_name,
+            value: org_id,
+            key: org_id,
+            children: []
+          }
+          const children = groups.map(item_group => {
+            const { name, id, members = [] } = item_group
+            const new_item_group = {
+              title: name,
+              value: id,
+              key: id,
+              children: []
+            }
+            const members_children = members.map(item_group_member => {
+              const { name, id } = item_group_member
+              const new_item_group_member = {
+                title: name,
+                value: id,
+                key: id,
+              }
+              
+              return new_item_group_member
+            })
+            new_item_group['children'] = members_children
+            return new_item_group
+          })
+          new_item['children'] = children
+          return new_item
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            group_view_users_tree: treeData
+          }
+        })
+      }
+    }
   },
 
   reducers: {

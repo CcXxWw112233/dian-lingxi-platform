@@ -90,13 +90,32 @@ export default class ContentFilter extends Component {
     }
 
     componentDidMount() {
+        this.getBoardsTreeData()
+        this.getUsersTreeData()
         const { group_view_filter_boards, group_view_filter_users  } = this.props
         this.setState({
             local_group_view_filter_boards: group_view_filter_boards,
             local_group_view_filter_users: group_view_filter_users
         })
     }
+    getBoardsTreeData = () =>{
+       const { dispatch } = this.props
+       dispatch({
+           type: 'gantt/getContentFiterBoardTree',
+           payload: {
 
+           }
+       })
+    }
+    getUsersTreeData = () =>{
+        const { dispatch } = this.props
+       dispatch({
+           type: 'gantt/getContentFiterUserTree',
+           payload: {
+               
+           }
+       })
+    }
     componentWillReceiveProps(nextProps) {
         const { dropdownVisible, group_view_filter_boards, group_view_filter_users  } = nextProps
         if(!dropdownVisible) { //当触发关闭的时候，保存下当前选中的值，作为button disabled的比较
@@ -122,16 +141,23 @@ export default class ContentFilter extends Component {
     }
 
     renderTreeSelect = ({ treeType }) => {
-        const { local_group_view_filter_boards,  local_group_view_filter_users } = this.state
+        const { local_group_view_filter_boards,  local_group_view_filter_users, } = this.state
+        const { group_view_users_tree = [], group_view_boards_tree = [] } = this.props
 
         const value = treeType == 'boards'? local_group_view_filter_boards : local_group_view_filter_users
+        const treeDatas = treeType == 'boards'? group_view_boards_tree: group_view_users_tree
         return (
             <TreeSelect 
-                treeData={treeData}
+                treeData={treeDatas}
                 value={value}
                 treeCheckable={true}
                 showCheckedStrategy= {SHOW_PARENT}
                 size={'large'}
+                dropdownStyle={{ maxHeight: 300, 
+                    overflowX: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'}}
+                dropdownClassName={`${indexStyles.treeSelectDropDown} ${globalStyles.global_vertical_scrollbar}`}
                 style={{ width: '100%' }}
                 searchPlaceholder={`选择${ treeType == 'boards'? '项目': '成员'}`}
                 onChange={(value) => this.handleTreeSelectChange({treeType}, value)}    />
@@ -207,6 +233,6 @@ export default class ContentFilter extends Component {
         )
     }
 }
-function mapStateToProps({ gantt: { datas: { group_view_filter_boards = [], group_view_filter_users = [] } }, }) {
-    return { group_view_filter_boards, group_view_filter_users }
+function mapStateToProps({ gantt: { datas: { group_view_filter_boards = [], group_view_filter_users = [], group_view_boards_tree = [], group_view_users_tree, } }, }) {
+    return { group_view_filter_boards, group_view_filter_users, group_view_boards_tree, group_view_users_tree }
 }

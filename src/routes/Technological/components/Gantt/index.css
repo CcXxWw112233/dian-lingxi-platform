@@ -321,3 +321,7 @@
   width: 100%;
   height: 34px;
 }
+.treeSelectDropDown {
+  max-width: 250px;
+  max-height: 300px;
+}

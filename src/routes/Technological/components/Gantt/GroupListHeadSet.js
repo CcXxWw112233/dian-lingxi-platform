@@ -12,6 +12,7 @@ export default class GroupListHeadSet extends Component {
            dropdownVisible: false
         }
     }
+
     setGroupViewType = (group_view_type_new) => {
         const { dispatch, group_view_type } = this.props
         if(group_view_type == group_view_type_new) {
