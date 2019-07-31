@@ -121,6 +121,9 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove(e) {
+    const { dataAreaRealHeight } = this.props
+    if(e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
+
     if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
       return false
     }
@@ -172,6 +175,9 @@ export default class GetRowGantt extends Component {
 
   //记录起始时间，做创建任务工作
   handleCreateTask({start_end, top}) {
+    const { dataAreaRealHeight } = this.props
+    if(top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
+
     const { dispatch } = this.props
     const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] }} = this.props.model
     const { currentRect = {} } = this.state
