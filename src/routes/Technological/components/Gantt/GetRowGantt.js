@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
+import GetRowGanttItemElse from './GetRowGanttItemElse'
+
 import { Tooltip } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 
@@ -357,7 +359,7 @@ export default class GetRowGantt extends Component {
             <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]}/>
           )
         })}
-
+        <GetRowGanttItemElse  gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
     )
   }

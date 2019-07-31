@@ -189,12 +189,26 @@ export default class GanttFace extends Component {
     }, 300)
   }
 
+  // 获取到实际有数据的区域总高度，为了和最后一行区分开
+  getDataAreaRealHeight = () => {
+    const { datas: { list_group = [], group_rows = [], ceiHeight }} = this.props.model
+    const item_height_arr = list_group.map((item, key) => {
+       return group_rows[key] * ceiHeight
+    })
+    // console.log('sssss_1', item_height_arr)
+    if(!item_height_arr.length) return 0
+
+    const height = item_height_arr.reduce((total, num) => (total + num))
+    return height
+  }
+
   render () {
-    const { datas: { target_scrollLeft, target_scrollTop }} = this.props.model
     const { gantt_card_out_middle_max_height } = this.state
+    const { gantt_card_height } = this.props
+    const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <div className={indexStyles.cardDetail} id={'gantt_card_out'}>
+      <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{height: gantt_card_height}}>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
              id={'gantt_card_out_middle'}
@@ -208,8 +222,10 @@ export default class GanttFace extends Component {
           />
           <DateList />
           <div className={indexStyles.panel}>
-            <GroupListHead />
+            <GroupListHead gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight}/>
             <GetRowGantt
+              gantt_card_height={gantt_card_height}
+              dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
               addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
             />
@@ -224,4 +240,7 @@ export default class GanttFace extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, gantt, loading }) {
   return { modal, model: gantt, loading }
+}
+GanttFace.defaultProps = {
+  gantt_card_height: 600, //甘特图卡片总高度
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
-
+import GroupListHeadElse from './GroupListHeadElse'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -31,8 +31,9 @@ export default class GroupListHead extends Component {
   render () {
     const { offsetTop, offsetLeft } = this.state
     const { datas: { list_group =[], group_rows = [], ceiHeight,target_scrollLeft }} = this.props.model
+    const { gantt_card_height } = this.props
     return (
-      <div className={indexStyles.listHead} style={{left: target_scrollLeft}}>
+      <div className={indexStyles.listHead} style={{left: target_scrollLeft,}}>
         {list_group.map((value, key) =>{
           const { list_name, list_id, list_data = [] } = value
           return (
@@ -42,6 +43,7 @@ export default class GroupListHead extends Component {
             </div>
           )
         })}
+        <GroupListHeadElse  gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
     )
   }

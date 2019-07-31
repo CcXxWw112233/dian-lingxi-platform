@@ -110,6 +110,8 @@
 .gantt_operate_top {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .gantt_operate_top .dasheRect {
   position: absolute;
@@ -166,6 +168,8 @@
   z-index: 1;
   background-color: #FFFFFF;
   box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
 }
 .panel .listHead .listHeadItem {
   padding-right: 20px;
