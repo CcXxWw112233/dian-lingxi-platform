@@ -10,6 +10,12 @@ import {
     checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 
+
+const getEffectOrReducerByName = name => `technological/${name}`
+const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
+const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
+
 class BoardCommunication extends Component {
     state = {
         selectBoardFileModalVisible: false,
@@ -209,7 +215,7 @@ class BoardCommunication extends Component {
     }
 
     openFileModal = () => {
-        //const { updateDatasFile } = this.props;
+        const { dispatch } = this.props;
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
         console.log(currentfile);
@@ -217,13 +223,13 @@ class BoardCommunication extends Component {
         const id = fileId;
         const { board_id } = currentBoardDetail;
 
-        this.props.dispatch({
+       dispatch({
             type: 'workbenchFileDetail/getCardCommentListAll',
             payload: {
                 id: id
             }
         });
-        this.props.dispatch({
+        dispatch({
             type: 'workbenchFileDetail/getFileType',
             payload: {
                 file_id: id
@@ -234,7 +240,7 @@ class BoardCommunication extends Component {
             selectBoardFileModalVisible: false,
             previewFileModalVisibile: true
         });
-        this.props.updateFileDatas({
+        this.getFileModuleProps().updateFileDatas({
             seeFileInput: 'fileModule',
             board_id,
             filePreviewCurrentId: fileResourceId,
@@ -244,21 +250,21 @@ class BoardCommunication extends Component {
             pdfDownLoadSrc: '',
         });
         if (getSubfixName(fileName) == '.pdf') {
-            this.props.dispatch({
+            dispatch({
                 type: 'workbenchFileDetail/getFilePDFInfo',
                 payload: {
                     id
                 }
             })
         } else {
-            this.props.filePreview({ id: fileResourceId, file_id: id })
+            this.getFileModuleProps().filePreview({ id: fileResourceId, file_id: id })
         }
-        this.props.fileVersionist({
+        this.getFileModuleProps().fileVersionist({
             version_id: versionId, //file_id,
             isNeedPreviewFile: false,
         })
-        this.props.updatePublicDatas({ board_id })
-        this.props.getBoardMembers({ id: board_id })
+        this.updatePublicDatas({ board_id })
+        this.getFileModuleProps().getBoardMembers({ id: board_id })
 
 
     }
@@ -268,6 +274,149 @@ class BoardCommunication extends Component {
         })
     }
 
+    getFileModuleProps() {
+        const { dispatch } = this.props;
+        return {
+
+            getBoardMembers (payload) {
+                dispatch({
+                    type: getEffectOrReducerByName_4('getBoardMembers'),
+                    payload: payload
+                })
+            },        
+            updateFileDatas(payload) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('updateDatas'),
+                    payload: payload
+                })
+            },
+            getFileList(params) {
+                dispatch({
+                    type: getEffectOrReducerByName('getFileList'),
+                    payload: params
+                })
+            },
+            fileCopy(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileCopy'),
+                    payload: data
+                })
+            },
+            fileDownload(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileDownload'),
+                    payload: params
+                })
+            },
+            fileRemove(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileRemove'),
+                    payload: data
+                })
+            },
+            fileMove(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileMove'),
+                    payload: data
+                })
+            },
+            fileUpload(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileUpload'),
+                    payload: data
+                })
+            },
+            fileVersionist(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileVersionist'),
+                    payload: params
+                })
+            },
+            recycleBinList(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('recycleBinList'),
+                    payload: params
+                })
+            },
+            deleteFile(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('deleteFile'),
+                    payload: data
+                })
+            },
+            restoreFile(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('restoreFile'),
+                    payload: data
+                })
+            },
+            getFolderList(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('getFolderList'),
+                    payload: params
+                })
+            },
+            addNewFolder(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('addNewFolder'),
+                    payload: data
+                })
+            },
+            updateFolder(data) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('updateFolder'),
+                    payload: data
+                })
+            },
+            filePreview(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('filePreview'),
+                    payload: params
+                })
+            },
+            getPreviewFileCommits(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('getPreviewFileCommits'),
+                    payload: params
+                })
+            },
+            addFileCommit(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('addFileCommit'),
+                    payload: params
+                })
+            },
+            deleteCommit(params) {
+                dispatch({
+                    type: getEffectOrReducerByName_5('deleteCommit'),
+                    payload: params
+                })
+            },
+        }
+    }
+
+    updateDatasFile = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName_5('updateDatas'),
+            payload: payload
+        })
+    }
+
+    updateDatas = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: payload
+        })
+    }
+    updatePublicDatas = (payload) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName_6('updateDatas'),
+            payload: payload
+        })
+    }
 
     render() {
         const { currentBoardDetail = {} } = this.props;
@@ -277,7 +426,7 @@ class BoardCommunication extends Component {
             <div className={indexStyles.boardCommunicationWapper}>
                 {
                     this.state.previewFileModalVisibile &&
-                    <FileDetail {...this.props} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+                    <FileDetail {...this.props} updateDatasFile={this.updateDatasFile}  updatePublicDatas={this.updatePublicDatas} {...this.getFileModuleProps()} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
                 }
                 {
                     !this.state.previewFileModalVisibile &&

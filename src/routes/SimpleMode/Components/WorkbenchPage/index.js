@@ -7,10 +7,7 @@ import BoardFiles from './BoardFiles/index'
 import { getLocationUrlQueryString } from '@/utils/util'
 
 
-const getEffectOrReducerByName = name => `technological/${name}`
-const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
-const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
-const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
+
 class WorkbenchPage extends Component {
     constructor(props) {
         super(props);
@@ -84,148 +81,6 @@ class WorkbenchPage extends Component {
         }
     }
 
-    getFileModuleProps() {
-        const { dispatch } = this.props;
-        return {
-            getBoardMembers(payload) {
-                dispatch({
-                    type: getEffectOrReducerByName_4('getBoardMembers'),
-                    payload: payload
-                })
-            },
-            updateFileDatas(payload) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('updateDatas'),
-                    payload: payload
-                })
-            },
-            getFileList(params) {
-                dispatch({
-                    type: getEffectOrReducerByName('getFileList'),
-                    payload: params
-                })
-            },
-            fileCopy(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileCopy'),
-                    payload: data
-                })
-            },
-            fileDownload(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileDownload'),
-                    payload: params
-                })
-            },
-            fileRemove(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileRemove'),
-                    payload: data
-                })
-            },
-            fileMove(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileMove'),
-                    payload: data
-                })
-            },
-            fileUpload(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileUpload'),
-                    payload: data
-                })
-            },
-            fileVersionist(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('fileVersionist'),
-                    payload: params
-                })
-            },
-            recycleBinList(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('recycleBinList'),
-                    payload: params
-                })
-            },
-            deleteFile(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('deleteFile'),
-                    payload: data
-                })
-            },
-            restoreFile(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('restoreFile'),
-                    payload: data
-                })
-            },
-            getFolderList(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('getFolderList'),
-                    payload: params
-                })
-            },
-            addNewFolder(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('addNewFolder'),
-                    payload: data
-                })
-            },
-            updateFolder(data) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('updateFolder'),
-                    payload: data
-                })
-            },
-            filePreview(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('filePreview'),
-                    payload: params
-                })
-            },
-            getPreviewFileCommits(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('getPreviewFileCommits'),
-                    payload: params
-                })
-            },
-            addFileCommit(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('addFileCommit'),
-                    payload: params
-                })
-            },
-            deleteCommit(params) {
-                dispatch({
-                    type: getEffectOrReducerByName_5('deleteCommit'),
-                    payload: params
-                })
-            },
-        }
-    }
-
-    updateDatasFile = (payload) => {
-        const { dispatch } = this.props;
-        dispatch({
-            type: getEffectOrReducerByName_5('updateDatas'),
-            payload: payload
-        })
-    }
-
-    updateDatas = (payload) => {
-        const { dispatch } = this.props;
-        dispatch({
-            type: getEffectOrReducerByName('updateDatas'),
-            payload: payload
-        })
-    }
-    updatePublicDatas = (payload) => {
-        const { dispatch } = this.props;
-        dispatch({
-            type: getEffectOrReducerByName_6('updateDatas'),
-            payload: payload
-        })
-    }
 
 
     render() {
@@ -240,12 +95,12 @@ class WorkbenchPage extends Component {
 
                         {
                             this.state.BoardCommunicationVisible &&
-                            <BoardCommunication updateDatasFile={this.updateDatasFile} {...this.getFileModuleProps()} updatePublicDatas={this.updatePublicDatas} />
+                            <BoardCommunication />
                         }
 
                         {
                             this.state.BoardFilesVisible &&
-                            <BoardFiles updateDatasFile={this.updateDatasFile} {...this.getFileModuleProps()} updatePublicDatas={this.updatePublicDatas} />
+                            <BoardFiles />
                         }
 
                     </div>
@@ -261,12 +116,10 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox
-    },
-    projectDetailFile,
+    }
 }) {
 
     return {
-        projectDetailFile,
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox

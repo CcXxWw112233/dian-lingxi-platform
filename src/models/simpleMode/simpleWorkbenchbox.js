@@ -52,8 +52,19 @@ export default {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
-        
-        
+
+        * loadBoardFileInitData({ payload }, { call, put }) {
+            console.log("初始化数据");
+            const { id } = payload;
+            yield put({
+                type: 'projectDetailFile/initialget',
+                payload: {
+                    id: id
+                }
+            })
+        }
+
+
 
     },
     reducers: {

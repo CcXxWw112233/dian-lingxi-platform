@@ -54,16 +54,21 @@ class BoardFiles extends Component {
     initialget(id) {
         const { dispatch } = this.props;
         dispatch({
-            type: 'simpleWorkbenchbox/getBoardFileList',
+            type: 'simpleWorkbenchbox/loadBoardFileInitData',
             payload: {
                 id
             }
         });
     }
 
-
-
     render() {
+        const { dispatch } = this.props
+        const updateDatasFile = (payload) => {
+            dispatch({
+                type: 'projectDetailFile/updateDatas',
+                payload
+            })
+        }
         const { boardSelectVisible, boardFileContentVisible } = this.state;
         const { orgBoardList = [] } = this.props;
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
@@ -105,7 +110,7 @@ class BoardFiles extends Component {
                 {
                     boardFileContentVisible &&
                     <div className={indexStyles.boardFileContentWapper}>
-                        <FileIndex {...this.props} />
+                        <FileIndex {...this.props}/>
                     </div>
                 }
 
@@ -117,25 +122,23 @@ class BoardFiles extends Component {
 
 
 function mapStateToProps({
-    workbenchFileDetail,
+    modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,
     simpleWorkbenchbox: {
         boardListData,
         currentBoardDetail,
         boardFileListData
     },
-    workbench: {
-        datas: { projectList }
-    },
     simplemode: {
         orgBoardList
     }
 }) {
+
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'] }
-    }
+        datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
+      }
+
     return {
-        model: modelObj,
-        projectList,
+        modal, model: modelObj,loading,
         boardListData,
         currentBoardDetail,
         boardFileListData,
@@ -143,4 +146,5 @@ function mapStateToProps({
     }
 }
 export default connect(mapStateToProps)(BoardFiles)
+
 
