@@ -121,7 +121,7 @@ class MyWorkbenchBoxs extends Component {
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
-
+ 
     return (
       <div className={indexStyles.mainContentWapper}>
       

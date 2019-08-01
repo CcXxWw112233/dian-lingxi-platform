@@ -103,9 +103,10 @@ export default {
                 //我的盒子列表
                 let myWorkbenchBoxList = yield select(getModelSelectState("simplemode", "myWorkbenchBoxList")) || [];
                 //所有的盒子列表
+                
                 let workbenchBoxList = yield select(getModelSelectState("simplemode", "workbenchBoxList")) || [];
                 let newMyboxArray = workbenchBoxList.filter(item => item.id == id);
-                if (newMyboxArray.lenght > 0) {
+                if (newMyboxArray.length > 0) {
                     myWorkbenchBoxList.push(newMyboxArray[0]);
                 } else {
                     let newMybox = { id };
@@ -113,7 +114,7 @@ export default {
                 }
 
                 yield put({
-                    type: 'simplemode/updateDatas',
+                    type: 'updateDatas',
                     payload: {
                         myWorkbenchBoxList: [...myWorkbenchBoxList]
                     }
@@ -129,7 +130,7 @@ export default {
             if (isApiResponseOk(res)) {
                 let myWorkbenchBoxList = yield select(getModelSelectState("simplemode", "myWorkbenchBoxList")) || [];
                 yield put({
-                    type: 'simplemode/updateDatas',
+                    type: 'updateDatas',
                     payload: {
                         myWorkbenchBoxList: myWorkbenchBoxList.filter(item => item.id !== id)
                     }
@@ -143,7 +144,7 @@ export default {
             if (isApiResponseOk(res)) {
 
                 yield put({
-                    type: 'simplemode/updateDatas',
+                    type: 'updateDatas',
                     payload: {
                         allOrgBoardTreeList: res.data
                     }
