@@ -15,7 +15,7 @@ const getEffectOrReducerByName = name => `technological/${name}`
 
 class SimpleMode extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
   }
 
@@ -56,6 +56,16 @@ class SimpleMode extends Component {
     });
   }
 
+  handleHiddenNav = () => {
+    const { dispatch, leftMainNavVisible } = this.props;
+    dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+          leftMainNavVisible: false
+      }
+  });
+  }
+
   render() {
     const app = dva();
 
@@ -75,21 +85,21 @@ class SimpleMode extends Component {
     } = this.props;
 
     return (
-      <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`}>
+      <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav}>
         {simpleHeaderVisiable && <SimpleHeader />}
         <LocaleProvider locale={zh_CN}>
-          <div style={{width: '100%', height: '100%'}}>
+          <div style={{ width: '100%', height: '100%' }}>
             {
               routes.map(({ path, ...dynamics }, key) => {
                 return (
-<Route key={key}
-                  exact
-                  path={path}
-                  component={dynamic({
-                    app,
-                    ...dynamics,
-                  })}
-                />
+                  <Route key={key}
+                    exact
+                    path={path}
+                    component={dynamic({
+                      app,
+                      ...dynamics,
+                    })}
+                  />
                 )
               })
             }
@@ -104,9 +114,11 @@ class SimpleMode extends Component {
 export default connect(({ simplemode: {
   simpleHeaderVisiable,
   setWapperCenter,
-  chatImVisiable
+  chatImVisiable,
+  leftMainNavVisible
 } }) => ({
   simpleHeaderVisiable,
   setWapperCenter,
-  chatImVisiable
+  chatImVisiable,
+  leftMainNavVisible
 }))(SimpleMode)

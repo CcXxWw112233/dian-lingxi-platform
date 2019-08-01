@@ -26,7 +26,8 @@ const SimpleHeader = (props) => {
         });
 
     }
-    const OpenOrCloseMainNav = () => {
+    const openOrCloseMainNav = (e) => {
+        e.stopPropagation();
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
@@ -39,14 +40,14 @@ const SimpleHeader = (props) => {
     const { chatImVisiable = false, leftMainNavVisible = false } = props;
     return (
         <div className={indexStyles.headerWapper}>
-            <div className={indexStyles.miniNavigation} onClick={OpenOrCloseMainNav}>
+            <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe7f4;</i>
             </div>
             <div className={indexStyles.miniImMessage} onClick={openOrCloseImChatModal}>
                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>
             </div>
             {leftMainNavVisible &&
-                <SiderLeft />
+                <SiderLeft is_simplemode={true} collapsed={false} />
             }
             {chatImVisiable && (
                 <div className={indexStyles.chatWapper}>

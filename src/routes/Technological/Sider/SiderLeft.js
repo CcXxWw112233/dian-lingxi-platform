@@ -23,20 +23,33 @@ const { SubMenu } = Menu;
 
 @connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
-  state={
-    collapsed: true,
-    createOrganizationVisable: false,
-    ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
-    NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
-    is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
+ 
+  constructor(props){
+    super(props);
+    const { is_simplemode = false, collapsed=true } = props;
+    this.state={
+      collapsed: collapsed,
+      createOrganizationVisable: false,
+      ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
+      NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
+      is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
+      is_simplemode:is_simplemode,
+    }
   }
   componentDidMount() {
 
   }
   setCollapsed(collapsed) {
-    this.setState({
-      collapsed
-    })
+    if(this.state.is_simplemode){
+      this.setState({
+        collapsed:false
+      })
+    }else{
+      this.setState({
+        collapsed
+      })
+    }
+   
   }
   routingJump(route) {
     const { dispatch } = this.props
