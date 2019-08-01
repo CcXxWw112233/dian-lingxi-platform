@@ -231,7 +231,7 @@ class BoardFiles extends Component {
             <div className={indexStyles.boardSelectOutWapper} style={{ maxHeight: contentHeight + 'px' }}>
               <div className={indexStyles.boardSelectWapper}>
                 {
-                  orgBoardList.map((org, orgkey) => {
+                  allOrgBoardTreeList.map((org, orgkey) => {
 
                     return org.board_list && org.board_list.length > 0 && (
                       <div key={org.org_id}>
