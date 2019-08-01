@@ -1,10 +1,15 @@
 import { routerRedux } from 'dva/router';
-import { getFileList } from '@/services/technological/file'
+import { getFileList,getBoardFileList} from '@/services/technological/file'
 import { projectDetailInfo } from '@/services/technological/prjectDetail'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
+import {
+    checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName,
+    setBoardIdStorage
+} from "@/utils/businessFunction";
 import { message } from 'antd'
+
 export default {
     namespace: 'simpleWorkbenchbox',
     state: {
@@ -14,23 +19,46 @@ export default {
 
     },
     subscriptions: {
+        setup({ dispatch, history }) {
+            history.listen(async (location) => {
+                message.destroy()
+                //头部table key
+                if (location.pathname.indexOf('technological/simplemode/workbench') !== -1) {
+                }
+            });
+        }
 
-    }
-    ,
+
+    },
     effects: {
         * routingJump({ payload }, { call, put }) {
             const { route } = payload
             yield put(routerRedux.push(route));
         },
+        * initSimpleWorkbenchboxCommData({ payload }, { call, put }) {
+            const { route } = payload
+            
+        },
         * getFileList({ payload }, { call, put }) {
             const { folder_id, board_id } = payload;
-            const res = yield call(getFileList, { folder_id, boardId: board_id });
-            console.log("res", res);
+            const res = yield call(getBoardFileList, { folder_id, board_id: board_id });
+            //console.log("res", res);
             if (isApiResponseOk(res)) {
+
+                let list = []
+                let { folder_data = [], file_data = [] } = res.data;
+                folder_data.map((folder, key) => {
+                    list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
+                });
+                file_data.map((file, key) => {
+                    console.log(file);
+                    list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
+                });
+
                 yield put({
-                    type: 'updateDatas',
+                    type: 'simpleBoardCommunication/updateDatas',
                     payload: {
-                        boardFileListData: res.data
+                        boardFileTreeData: list
                     }
                 });
             } else {
@@ -62,10 +90,70 @@ export default {
                     id: id
                 }
             })
-        }
+        },
+
+        //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
+        * initProjectDetailAndprojectDetailFile({ payload }, { select, call, put }) {
+            const { id, entry } = payload //input 调用该方法入口
+            setBoardIdStorage(id)
+            yield put({
+                type: 'projectDetail/updateDatas',
+                payload: {
+                    board_id: id
+                }
+            })
+            let res = yield call(projectDetailInfo, id)
+
+            if (isApiResponseOk(res)) {
+
+                yield put({ //查询项目角色列表
+                    type: 'projectDetail/getProjectRoles',
+                    payload: {
+                        type: '2',
+                        board_id: id
+                    }
+                })
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        currentBoardDetail: res.data
+                    }
+                });
+                yield put({
+                    type: 'projectDetail/updateDatas',
+                    payload: {
+                        projectDetailInfoData: res.data,
+                        appsSelectKey: 4, //默认文件
+                        appsSelectKeyIsAreadyClickArray: 4,//设置默认
+                    }
+                })
+                yield put({
+                    type: 'projectDetail/getAppsList',
+                    payload: {
+                        type: '2',
+                        _organization_id: res.data.org_id
+                    }
+                })
+
+                yield put({
+                    type: 'getMilestoneList',
+                    payload: {
+                        id
+                    }
+                })
+
+                yield put({
+                    type: 'projectDetailFile/initialget',
+                    payload: {
+                        id
+                    }
+                })
 
 
-
+                //缓存下来当前项目的权限
+                // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
+            }
+        },
     },
     reducers: {
         updateDatas(state, action) {

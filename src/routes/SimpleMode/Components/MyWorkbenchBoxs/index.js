@@ -124,11 +124,11 @@ class MyWorkbenchBoxs extends Component {
 
     return (
       <div className={indexStyles.mainContentWapper}>
-        <div className={indexStyles.projectSelector}>
-
+      
+        {/* <div className={indexStyles.projectSelector}>
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
+        </div> */}
 
-        </div>
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {

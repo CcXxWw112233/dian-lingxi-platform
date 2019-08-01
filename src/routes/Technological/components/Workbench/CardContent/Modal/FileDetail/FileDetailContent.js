@@ -519,8 +519,8 @@ class FileDetailContent extends React.Component {
   render() {
      
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
-    const zommPictureComponentHeight = container_workbenchBoxContent.offsetHeight - 60 - 10; //60为文件内容组件头部高度 50为容器padding
-    const zommPictureComponentWidth= container_workbenchBoxContent.offsetWidth - 419 - 50 -5; //60为文件内容组件评论等区域宽带   50为容器padding  
+    const {componentHeight = 600,componentWidth = 600 } = this.props
+
     const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
@@ -546,11 +546,11 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{minWidth: zommPictureComponentWidth+'px', minHeight: zommPictureComponentHeight+'px', overflow: 'auto', textAlign: 'center'}}>
+      <div style={{minWidth: componentWidth+'px', minHeight: componentHeight+'px', overflow: 'auto', textAlign: 'center'}}>
       {filePreviewUrl && (
             <ZoomPicture
                 imgInfo={{url: filePreviewUrl}}
-                componentInfo={{width: zommPictureComponentWidth+'px', height: zommPictureComponentHeight+'px'}}
+                componentInfo={{width: componentWidth+'px', height: componentHeight+'px'}}
                 commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
                 handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
                 currentSelectedCommentItemDetail={filePreviewPointNumCommits}

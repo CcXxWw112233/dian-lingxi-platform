@@ -34,7 +34,7 @@ export default class Technological extends React.Component {
   render() {
 
     const { page_load_type } = this.props;
-    
+
     const app = dva();
 
     const routes = [
@@ -106,20 +106,20 @@ export default class Technological extends React.Component {
 
     const simpleLayout = (
       <Layout >
-        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>        
           <Content style={{ height: '100vh' }} >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
                 routes.map(({ path, ...dynamics }, key) => {
                   return (
                     <Route key={key}
-                    //exact
-                    path={path}
-                    component={dynamic({
-                      app,
-                      ...dynamics,
-                    })}
-                  />
+                      //exact
+                      path={path}
+                      component={dynamic({
+                        app,
+                        ...dynamics,
+                      })}
+                    />
                   )
                 })
               }
@@ -132,19 +132,19 @@ export default class Technological extends React.Component {
 
     let layout = <div></div>
     switch (page_load_type) {
-      case 0:       
+      case 0:
         layout = '<div>page_load_type:0</div>'
         break;
-      case 1:      
+      case 1:
         layout = simpleLayout
         break;
-      case 2:      
+      case 2:
         layout = defaultLayout
         break;
       default:
         break;
     }
-    
+
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
@@ -156,7 +156,7 @@ export default class Technological extends React.Component {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({technological: {
+function mapStateToProps({ technological: {
   datas: {
     page_load_type
   }

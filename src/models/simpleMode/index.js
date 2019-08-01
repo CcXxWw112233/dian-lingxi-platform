@@ -8,16 +8,19 @@ import { getUserAllOrgsBoardList } from '@/services/technological/index'
 export default {
     namespace: 'simplemode',
     state: {
+        initFlag: true,
         simpleHeaderVisiable: true, //显示隐藏用
         setWapperCenter: false, //显示隐藏用
         wallpaperSelectModalVisiable: false, //显示隐藏用
+        leftMainNavVisible: false,
         chatImVisiable: false, //显示隐藏用
+
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
         workbenchBoxList: [], //所有可以选择的盒子列表
         currentSelectedWorkbenchBox: {}, //当然选中的工作台盒子
         init: true,
-        orgBoardList: []
+        allOrgBoardTreeList: []
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -26,10 +29,9 @@ export default {
                     const initData = async () => {
                         await Promise.all([
                             await dispatch({
-                                type: 'getProjectList',
+                                type: 'initSimplemodeCommData',
                                 payload: {}
                             }),
-
                         ])
                     }
                     initData()
@@ -39,6 +41,25 @@ export default {
     }
     ,
     effects: {
+        * initSimplemodeCommData({ payload }, { call, put,select }){
+            const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
+            if(initFlag){
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        initFlag: false
+                    }
+                })
+                yield put({
+                    type: 'getProjectList',
+                    payload: {}
+                });
+                yield put({
+                    type: 'getOrgBoardData'
+                });
+            }
+           
+        },
         * routingJump({ payload }, { call, put }) {
             const { route } = payload
             yield put(routerRedux.push(route));
@@ -120,11 +141,11 @@ export default {
         * getOrgBoardData({ payload }, { call, put, select }) {
             let res = yield call(getUserAllOrgsBoardList, payload);
             if (isApiResponseOk(res)) {
-        
+
                 yield put({
                     type: 'simplemode/updateDatas',
                     payload: {
-                        orgBoardList: res.data
+                        allOrgBoardTreeList: res.data
                     }
                 });
             } else {

@@ -5,6 +5,7 @@ import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
 import { getLocationUrlQueryString } from '@/utils/util'
+import simpleWorkbenchbox from "../../../../models/simpleMode/simpleWorkbenchbox";
 
 
 
@@ -37,6 +38,13 @@ class WorkbenchPage extends Component {
             this.setWorkbenchVisible(newCurrentSelectedWorkbenchBox);
         }
 
+    }
+
+    initSimpleWorkbenchboxCommData(dispatch){
+        dispatch({
+            type: 'simpleWorkbenchbox/initSimpleWorkbenchboxCommData',
+            payload:{}
+        });
     }
 
     setWorkbenchVisible(currentSelectedWorkbenchBox) {

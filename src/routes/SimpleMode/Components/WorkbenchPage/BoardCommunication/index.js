@@ -5,8 +5,11 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 import {
-    checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
-} from "../../../../../utils/businessFunction";
+    checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
+    setBoardIdStorage, getOrgNameWithOrgIdFilter
+} from "@/utils/businessFunction";
+import { isApiResponseOk } from "@/utils/handleResponseData";
+import { getFileList, getBoardFileList } from '@/services/technological/file'
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
 
@@ -22,7 +25,6 @@ class BoardCommunication extends Component {
         selectBoardDropdownVisible: false,
         selectBoardFileDropdownVisible: false,
         boardTreeData: [],
-        boardFileTreeData: [],
         currentfile: {},
         selectBoardFileCompleteDisabled: true,
         previewFileModalVisibile: false,
@@ -34,31 +36,24 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
     }
 
-
-
-    componentWillReceiveProps(nextProps) {
-        const { dispatch, currentBoardDetail: oldCurrentBoardDetail } = this.props;
-        const { currentBoardDetail } = nextProps;
-        console.log(currentBoardDetail);
-        if ((!oldCurrentBoardDetail && currentBoardDetail) || (oldCurrentBoardDetail && oldCurrentBoardDetail.board_id != currentBoardDetail.board_id)) {
-            dispatch({
-                type: 'simpleWorkbenchbox/getFileList',
-                payload: {
-                    folder_id: currentBoardDetail.folder_id,
-                    board_id: currentBoardDetail.board_id
-                }
-            });
-        }
-
-    }
-
-    getBoardTreeData = (projectList) => {
+    getBoardTreeData = (allOrgBoardTreeList) => {
         let list = []
-        projectList.map((board, key) => {
-            list.push({ key: board.board_id, title: board.board_name, isLeaf: true });
+        allOrgBoardTreeList.map((org, orgKey) => {
+            //children
+            //isLeaf: true
+            let children = []
+            if (org.board_list && org.board_list.length > 0) {
+                org.board_list.map((board, boardKey) => {
+                    children.push({ key: board.board_id, title: board.board_name, isLeaf: true });
+                });
+                list.push({ key: org.org_id, title: org.org_name, children });
+
+            }
+
         });
         return list;
     }
+
 
     getBoardFileTreeData = (data) => {
         let list = []
@@ -71,10 +66,6 @@ class BoardCommunication extends Component {
             list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
         });
         return list;
-    }
-
-    componentWillMount() {
-
     }
 
     selectBoardFile = () => {
@@ -105,26 +96,42 @@ class BoardCommunication extends Component {
     onSelectBoard = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
-        console.log("boardid", keys[0]);
+        if (keys.length > 0) {
+            const boardId = keys[0]
+            setBoardIdStorage(boardId);
 
-        dispatch({
-            type: 'simpleWorkbenchbox/getBoardDetail',
-            payload: {
-                id: keys[0]
-            }
-        });
-        this.setState({ selectBoardDropdownVisible: false });
+            dispatch({
+                type: 'simpleWorkbenchbox/updateDatas',
+                payload: {
+                    currentBoardDetail: this.getSelectBoardBaseInfo(boardId)
+                }
+            });
+            dispatch({
+                type: 'simpleWorkbenchbox/getFileList',
+                payload: {
+                    board_id: boardId
+
+                }
+            });
+            this.setState({
+                selectBoardDropdownVisible: false,
+                currentfile: {}
+            });
+        }
+
+        //设置baseinfo中需要的boardId
+
     };
 
     onSelectFile = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
-        console.log("fileid", keys[0]);
+        const fileId = keys[0]
         console.log("selectedNodes", event.selectedNodes[0].props.title);
 
         this.setState({
             selectBoardFileDropdownVisible: false,
-            currentfile: { fileId: keys[0], fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
+            currentfile: { fileId: fileId, fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
             selectBoardFileCompleteDisabled: false
         });
     };
@@ -137,42 +144,60 @@ class BoardCommunication extends Component {
         this.setState({ selectBoardFileDropdownVisible: flag });
     };
 
-    onLoadFileTreeData = treeNode => {
-
-        return (new Promise(resolve => {
-            if (treeNode.props.children) {
-                resolve();
-                return;
+    getSelectBoardBaseInfo(boardId) {
+        const { allOrgBoardTreeList = [] } = this.props;
+        let currentBoard
+        allOrgBoardTreeList.map((org, orgKey) => {
+            if (org.board_list && org.board_list.length > 0) {
+                let newBoardList = org.board_list.filter(item => item.board_id == boardId);
+                if (newBoardList.length > 0) {
+                    currentBoard = newBoardList[0];
+                };
             }
-            setTimeout(() => {
-                treeNode.props.dataRef.children = [
-                    { title: 'Child Node', key: `${treeNode.props.eventKey}-0` },
-                    { title: 'Child Node', key: `${treeNode.props.eventKey}-1` },
-                ];
-                this.setState({
-                    boardFileTreeData: [...this.state.boardFileTreeData],
-                    boardTreeData: [...this.state.boardTreeData],
-                });
-                resolve();
-            }, 1000);
-        }));
+        });
+        return currentBoard;
+    }
+
+    async onLoadFileTreeData(treeNode) {
+
+        const { dispatch, currentBoardDetail = {}, simpleBoardCommunication = {} } = this.props;
+        const { boardFileTreeData = {}} = simpleBoardCommunication;
+
+        const res = await getBoardFileList({ board_id: currentBoardDetail.board_id, folder_id: treeNode.props.eventKey });
+        if (isApiResponseOk(res)) {
+            console.log(res);
+            const childTreeData = this.getBoardFileTreeData(res.data);
+            treeNode.props.dataRef.children = [...childTreeData];
+            dispatch({
+                type:'simpleBoardCommunication/updateDatas',
+                payload:{
+                    boardFileTreeData: boardFileTreeData
+                }
+            });
+            
+        }
+        // return (new Promise(resolve => {
+        //     if (treeNode.props.children) {
+        //         resolve();
+        //         return;
+        //     }
+        //     setTimeout(() => {
+        //         treeNode.props.dataRef.children = [
+        //             { title: 'Child Node', key: `${treeNode.props.eventKey}-0` },
+        //             { title: 'Child Node', key: `${treeNode.props.eventKey}-1` },
+        //         ];
+        //         this.setState({
+        //             boardFileTreeData: [...this.state.boardFileTreeData],
+        //         });
+        //         resolve();
+        //     }, 1000);
+        // }));
+
+
     }
 
 
-    renderSelectBoardTreeList = () => {
-        return (
-            <TreeSelect
-                style={{ width: 196 }}
-                value={this.state.value}
-                dropdownClassName={indexStyles.dropdownClass}
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto', border: '0px' }}
-                treeData={this.treeData}
-                placeholder="Please select"
-                treeDefaultExpandAll
-                onChange={this.onChange}
-            />
-        );
-    }
+
     renderTreeNodes = data =>
         data.map(item => {
             if (item.children) {
@@ -186,12 +211,18 @@ class BoardCommunication extends Component {
         });
 
     renderSelectBoardTreeList = () => {
-        const { projectList = [] } = this.props;
-        const boardTreeData = this.getBoardTreeData(projectList);
+        const { allOrgBoardTreeList = [] } = this.props;
+        const boardTreeData = this.getBoardTreeData(allOrgBoardTreeList);
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                    <Tree loadData={this.onLoadFileTreeData} onSelect={this.onSelectBoard}>
+                    <Tree
+                        blockNode={true}
+
+                        defaultExpandAll
+                        //defaultSelectedKeys={['0-0-0']}
+
+                        onSelect={this.onSelectBoard}>
                         {this.renderTreeNodes(boardTreeData)}
                     </Tree>
                 </div>
@@ -200,13 +231,13 @@ class BoardCommunication extends Component {
     }
 
     renderSelectBoardFileTreeList = () => {
-        const { boardFileListData = {} } = this.props;
-        const boardFileTreeData = this.getBoardFileTreeData(boardFileListData);
+        const { boardFileTreeData = {} } = this.props.simpleBoardCommunication;
+        //const boardFileTreeData = this.getBoardFileTreeData(boardFileListData);
 
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                    <DirectoryTree loadData={this.onLoadData} onSelect={this.onSelectFile}>
+                    <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile}>
                         {this.renderTreeNodes(boardFileTreeData)}
                     </DirectoryTree>
                 </div>
@@ -223,7 +254,7 @@ class BoardCommunication extends Component {
         const id = fileId;
         const { board_id } = currentBoardDetail;
 
-       dispatch({
+        dispatch({
             type: 'workbenchFileDetail/getCardCommentListAll',
             payload: {
                 id: id
@@ -278,12 +309,12 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         return {
 
-            getBoardMembers (payload) {
+            getBoardMembers(payload) {
                 dispatch({
                     type: getEffectOrReducerByName_4('getBoardMembers'),
                     payload: payload
                 })
-            },        
+            },
             updateFileDatas(payload) {
                 dispatch({
                     type: getEffectOrReducerByName_5('updateDatas'),
@@ -421,25 +452,37 @@ class BoardCommunication extends Component {
     render() {
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
-        console.log("previewFileModalVisibile", this.state.previewFileModalVisibile);
+        console.log(currentBoardDetail, "SSSSS");
+        const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
+        const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
+        const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 {
                     this.state.previewFileModalVisibile &&
-                    <FileDetail {...this.props} updateDatasFile={this.updateDatasFile} updatePublicDatas={this.updatePublicDatas} {...this.getFileModuleProps()} offsetTopDeviation={85} modalTop={0} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+                    <FileDetail
+                        {...this.props}
+                        updateDatasFile={this.updateDatasFile}
+                        updatePublicDatas={this.updatePublicDatas}
+                        {...this.getFileModuleProps()}
+                        offsetTopDeviation={85}
+                        modalTop={0}
+                        setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
+                        componentHeight={zommPictureComponentHeight}
+                        componentWidth={zommPictureComponentWidth} />
                 }
                 {
                     !this.state.previewFileModalVisibile && (
-<div className={indexStyles.indexCoverWapper}>
-                        <div className={indexStyles.icon}>
-                            <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                        <div className={indexStyles.indexCoverWapper}>
+                            <div className={indexStyles.icon}>
+                                <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                            </div>
+                            <div className={indexStyles.descriptionWapper}>
+                                <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                            </div>
                         </div>
-                        <div className={indexStyles.descriptionWapper}>
-                            <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                            <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                        </div>
-                    </div>
-)}
+                    )}
 
                 <Modal
                     width={248}
@@ -502,6 +545,10 @@ function mapStateToProps({
         currentBoardDetail,
         boardFileListData
     },
+    simplemode: {
+        allOrgBoardTreeList
+    },
+    simpleBoardCommunication,
     workbench: {
         datas: { projectList }
     },
@@ -511,10 +558,12 @@ function mapStateToProps({
     }
     return {
         model: modelObj,
+        allOrgBoardTreeList,
         projectList,
         boardListData,
         currentBoardDetail,
-        boardFileListData
+        boardFileListData,
+        simpleBoardCommunication
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

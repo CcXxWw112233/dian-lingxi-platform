@@ -40,6 +40,16 @@ export async function getFileList(params) {
   });
 }
 
+//文件列表包括文件夹
+export async function getBoardFileList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/list`,
+    method: 'GET',
+    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
+    params,
+  });
+}
+
 // 复制文件到某一个文件夹
 export async function fileCopy(data) {
   return request({
