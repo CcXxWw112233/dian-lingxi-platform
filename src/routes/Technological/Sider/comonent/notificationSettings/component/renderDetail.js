@@ -18,17 +18,17 @@ export default class renderDetail extends Component {
      * @param {Object} e 选中的事件对象选项
      */
     chgEveryOptions = (e) => {
-        const { new_detail_default_options = [] } = this.props
+        const { new_detail_default_options = [], radio_checked_val } = this.props
         // console.log(new_detail_default_options, 'ssss')
         let val = e.target.value
-        if (new_detail_default_options.indexOf(val) != -1) { // 表示存在
+        if (new_detail_default_options && new_detail_default_options.indexOf(val) != -1) { // 表示存在
             const arr = this.removeByValue(new_detail_default_options, val)
             // 这里调用父组件的方法
-            this.props.updateParentList(arr)
+            this.props.updateParentList(arr, radio_checked_val)
         } else {
-            new_detail_default_options.push(val)
+            new_detail_default_options && new_detail_default_options.push(val)
             // 这里调用父组件的方法
-            this.props.updateParentList(new_detail_default_options)
+            this.props.updateParentList(new_detail_default_options, radio_checked_val)
         }
         // 在这里调用父组件的方法控制还原显示的方法
         this.props.chgDetailDisplayBlock(new_detail_default_options)

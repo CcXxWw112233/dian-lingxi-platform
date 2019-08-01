@@ -20,6 +20,7 @@ import hobbyImg from '@/assets/sider_left/smile.png'
 
 const { Sider } = Layout;
 const { SubMenu  } = Menu;
+let timer;
 
 @connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
@@ -164,7 +165,13 @@ export default class SiderLeft extends React.Component {
         this.handleShowAllOrg
         break
       case 'subInfoSet':
-        this.setNotificationSettingsModalVisible()
+        if (!timer) {
+          clearTimeout(timer)
+        }
+       timer = setTimeout(() => {
+          this.setNotificationSettingsModalVisible()
+        }, 300)
+        
         break
       case '10': // 创建或加入新组织
           this.setCreateOrgnizationOModalVisable()
@@ -577,7 +584,7 @@ export default class SiderLeft extends React.Component {
         <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
 
         {this.state.NotificationSettingsModalVisible && (
-          <NotificationSettingsModal dispatch={this.props.dispatch} notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
+          <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
         )} 
 
       </Sider>

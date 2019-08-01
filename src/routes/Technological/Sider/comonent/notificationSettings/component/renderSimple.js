@@ -18,17 +18,18 @@ export default class renderSimple extends Component {
      * @param {Object} e 选中的事件对象选项
      */
     chgEveryOptions = (e) => {
-        const { new_simple_default_options = [] } = this.props
-        // console.log(new_simple_default_options, 'ssss')
+        const { new_simple_default_options = [], radio_checked_val } = this.props
+        // console.log(new_simple_default_options, 'ssss_simple')
+        // console.log(radio_checked_val, 'sssss')
         let val = e.target.value
-        if (new_simple_default_options.indexOf(val) != -1) { // 表示存在
+        if (new_simple_default_options && new_simple_default_options.indexOf(val) != -1) { // 表示存在
             const arr = this.removeByValue(new_simple_default_options, val)
             // 这里调用父组件的方法
-            this.props.updateParentList(arr)
+            this.props.updateParentList(arr, radio_checked_val)
         } else {
-            new_simple_default_options.push(val)
+            new_simple_default_options && new_simple_default_options.push(val)
             // 这里调用父组件的方法
-            this.props.updateParentList(new_simple_default_options)
+            this.props.updateParentList(new_simple_default_options, radio_checked_val)
         }
         // 在这里调用父组件的方法控制还原显示的方法
         this.props.chgSimpleDisplayBlock(new_simple_default_options)
