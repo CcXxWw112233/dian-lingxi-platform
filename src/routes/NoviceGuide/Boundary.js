@@ -8,6 +8,7 @@ import manager from '@/assets/noviceGuide/undraw_file_manager.png'
 import organizer from '@/assets/noviceGuide/undraw_online_organizer.png'
 import InputExport from './component/InputExport';
 import { validateTel, validateEmail } from '@/utils/verify.js'
+import { createDefaultOrg, } from '@/services/technological/noviceGuide'
 
 
 export default class Boundary extends Component {
@@ -29,11 +30,15 @@ export default class Boundary extends Component {
 		eVerify: null, // 定义一个从子组件中获取的邮箱验证状态
 	}
 
+
 	// 点击ok
 	handleNext = () => {
 		this.setState({
 			is_show_cooperate_with: true
 		})
+		// createDefaultOrg().then((res) => {
+		// 	console.log(res, 'sssss')
+		// })
 	}
 
 	// 子组件需调用该方法: 获取焦点追加一条输入框
@@ -233,7 +238,7 @@ export default class Boundary extends Component {
 					</div>
 					{/* 这里需要通过输入框的变化以及验证成功或者失败显示不同的文案 */}
 					{
-						inputVal && inputVal.length >= 7 ? (
+						inputVal ? (
 							<div className={`${styles.btn}  ${inputVal && (pVerify || eVerify) == false ? styles.disabled : ''}`}><Button disabled={pVerify || eVerify ? false : true} type="primary" onClick={ () => { this.handleSubmit() } }>发送邀请</Button></div>
 						) : (
 							<div className={styles.btn}><Button onClick={ () => { this.handleSubmit() } } type="primary">开始协作</Button></div>
