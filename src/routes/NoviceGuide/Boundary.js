@@ -44,10 +44,10 @@ export default class Boundary extends Component {
 		if (isApiResponseOk(res)) {
 			this.setState({
 				is_show_cooperate_with: true,
-				new_user_board_id: res.data.data.boardId,
-				new_user_org_id: res.data.data.orgId
+				new_user_board_id: res.data.data.board_id,
+				new_user_org_id: res.data.data.org_id
 			}, () => {
-				this.getRoutineCode({boardId: res.data.data.boardId})
+				this.getRoutineCode({boardId: res.data.data.board_id})
 			})
 		} else {
 			message.error(res.message)
@@ -140,29 +140,34 @@ export default class Boundary extends Component {
 			return
 		}
 
-		const { inputList, new_user_board_id } = this.state
+		const { inputList, new_user_board_id, new_user_org_id } = this.state
 		let new_input_list = [...inputList]
 		// let phoneTemp = [] // 定义一个手机号的空数组
 		// let emailTemp = [] // 定义一个邮箱的空数组
-		let allTemp = [] // 所有的数组列表
+		let allTemp = new Array(); // 所有的数组列表
+		// console.log(allTemp, 'ssss')
 		for (const val of new_input_list) {
 			const result = val['value']
-			allTemp.push(result)
+			if (val['value'] != '') {
+				allTemp.push(result)
+			}
 			// if (validateTel(result)) { // 手机号
 			// 	phoneTemp.push(result)
 			// } else if (validateEmail(result)) { // 邮箱号
 			// 	emailTemp.push(result)
 			// }
 		}
+		// console.log(allTemp, 'ssss')
 		const allTempStr = allTemp.join(',')
+		// console.log(allTempStr, 'ssss')
 		const data = {
-			new_user_board_id,
+			board_id:new_user_board_id,
 			users: allTemp
 		}
 		// allTemp = [].concat(phoneTemp, emailTemp)
-		inviteMemberJoinOrg({members: allTempStr}).then((res) => {
+		inviteMemberJoinOrg({members: allTempStr, _organization_id: new_user_org_id}).then((res) => {
 			if (isApiResponseOk(res)) {
-				inviteMemberJoinBoard({joinBoardVo: data}).then((res) => {
+				inviteMemberJoinBoard({...data}).then((res) => {
 					if (isApiResponseOk(res)) {
 						dispatch(routerRedux.push('/technological/workbench'))
 					} else {

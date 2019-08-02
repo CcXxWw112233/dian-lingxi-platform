@@ -369,19 +369,19 @@ export default class NotificationSettingsModal extends Component {
 				// 判断显示是详细组件还是简要组件
         if (radio_checked_val == '1') {
             return (
-<RenderDetail {...datas} ref="renderDetail" 
+									<RenderDetail {...datas} ref="renderDetail" 
                         updateParentList={ this.updateParentList } 
                         chgDetailDisplayBlock={ this.chgDisplayBlock } 
                         chgParentSelectState= { this.chgParentSelectState } />
-)
+									)
         } else {
             return (
-<RenderSimple {...datas} 
+									<RenderSimple {...datas} 
 												updateParentList={ this.updateParentList } 
 												chgSimpleDisplayBlock={ this.chgDisplayBlock } 
 												chgParentSelectState= { this.chgParentSelectState }
 											/>
-)
+									)
         }
     }
 
@@ -423,11 +423,11 @@ export default class NotificationSettingsModal extends Component {
                         <Radio.Group onChange={this.onChange} value={radio_checked_val == '1' ? '1' : '2'}>
                             <Radio value="1">
                                 详细提醒
-                                <span style={{display: is_detail_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 1) }} className={styles.detail_recover}>还原</span>)</span>
+                                <span style={{display: is_detail_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 1) }} className={styles.detail_recover}>恢复默认设置</span>)</span>
                             </Radio>
                             <Radio value="2">
                                 简要提醒
-                                <span style={{display: is_simple_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 2) }} className={styles.simple_recover}>还原</span>)</span>
+                                <span style={{display: is_simple_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 2) }} className={styles.simple_recover}>恢复默认设置</span>)</span>
                             </Radio>
                         </Radio.Group>
                     </div>
