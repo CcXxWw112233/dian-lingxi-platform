@@ -36,7 +36,10 @@ export async function getProjectRoles(params) {
   return request({
     url: `${REQUEST_DOMAIN}/role/query`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 
