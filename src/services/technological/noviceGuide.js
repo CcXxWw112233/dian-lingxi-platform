@@ -24,7 +24,10 @@ export async function inviteMemberJoinOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite`,
     method: "PUT",
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   })
 }
 

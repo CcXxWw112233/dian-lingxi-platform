@@ -27,7 +27,7 @@ export default class HeaderNav extends React.Component{
     const { id } = currentSelectOrganize
     this.props.inviteJoinOrganization({
       members: users,
-      org_id: id
+      // org_id: id
     })
   }
   queryTeamListWithType(id) {
