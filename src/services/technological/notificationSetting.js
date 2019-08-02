@@ -10,3 +10,21 @@ export async function getNoticeSettingList(params) {
       params,
   })
 }
+
+// 获取通知设置用户的默认列表
+export async function getUsersNoticeSettingList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/notice_setting/`,
+    method: "GET",
+    params
+  })
+}
+
+// 调用获取设置的列表接口
+export async function setNoticeSettingList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/notice_setting/`,
+    method: "POST",
+    data
+  })
+}

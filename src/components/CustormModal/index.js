@@ -66,7 +66,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle={}, style={}, onCancel, bodyStyle={}, closable = true, title} = this.props;
+    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle={}, style={}, onOk, onCancel, bodyStyle={}, closable = true, title} = this.props;
     const { clientWidth, siderRightWidth, clientHeight }= this.state
     const maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
     // console.log(overInner, 'sss')
@@ -85,6 +85,7 @@ class CustormModal extends React.Component {
         style={{width: maskWidth, ...style}}
         bodyStyle={{...bodyStyle}}
         onCancel={onCancel}
+        onOk={onOk}
       >
         {overInner}
       </Modal>
