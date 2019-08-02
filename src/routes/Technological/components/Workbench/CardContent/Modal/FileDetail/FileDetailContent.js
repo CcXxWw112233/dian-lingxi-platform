@@ -519,7 +519,7 @@ class FileDetailContent extends React.Component {
   render() {
      
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
-    const {componentHeight = 600,componentWidth = 600 } = this.props
+    const {componentHeight = 600, componentWidth = 600 } = this.props
 
     const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state

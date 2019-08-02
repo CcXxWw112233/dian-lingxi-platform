@@ -52,7 +52,7 @@ export default class CommonOptions extends Component {
                         return (
                             <Col style={{marginBottom: 8}} span={8}>
                                 <Checkbox 
-                                onChange={(e) =>  this.handleChildOption(e, id) } 
+                                onChange={(e) => this.handleChildOption(e, id) } 
                                 value={val.id}>{val.name}</Checkbox>
                             </Col>
                         )

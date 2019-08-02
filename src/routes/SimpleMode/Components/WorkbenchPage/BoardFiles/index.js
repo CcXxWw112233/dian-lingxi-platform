@@ -167,7 +167,7 @@ class BoardFiles extends Component {
         })
       },
       addFileCommit(params) {
-        console.log("addFileCommit",params);
+        console.log("addFileCommit", params);
         dispatch({
           type: getEffectOrReducerByNameFile('addFileCommit'),
           payload: params

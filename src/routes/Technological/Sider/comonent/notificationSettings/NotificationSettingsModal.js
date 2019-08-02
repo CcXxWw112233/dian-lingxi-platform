@@ -80,7 +80,7 @@ export default class NotificationSettingsModal extends Component {
                 let { notice_setting_list } = this.state
                 notice_setting_list = notice_setting_list.map(item => {
                     let new_item = item
-                    new_item = {...item, is_show_down_arrow:true}// 1 代表开启的状态
+                    new_item = {...item, is_show_down_arrow: true}// 1 代表开启的状态
                     return new_item
                 })
                 this.setState({
@@ -101,7 +101,7 @@ export default class NotificationSettingsModal extends Component {
     // 点击确定的回调
     hideOkModal = () => {
         // console.log('进来了' , 'ssss')
-				const {  is_way_status, radio_checked_val, default_detail_options, default_simple_options, user_detail_setting_options, user_simple_setting_options, notice_model } = this.state
+				const { is_way_status, radio_checked_val, default_detail_options, default_simple_options, user_detail_setting_options, user_simple_setting_options, notice_model } = this.state
 				let new_notice_list_ids;
 				if (notice_model == '1' && radio_checked_val != '2') {
 					new_notice_list_ids = [...user_detail_setting_options]
@@ -113,7 +113,7 @@ export default class NotificationSettingsModal extends Component {
 				} else if (radio_checked_val == '2') {
 					new_notice_list_ids = [...default_simple_options]
 				}
-        const data = {  notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids}
+        const data = { notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids}
         // console.log(data, 'sssss')
         setNoticeSettingList(data).then((res) => {
             // console.log(res, 'ssss')
@@ -206,7 +206,7 @@ export default class NotificationSettingsModal extends Component {
 			// 判断取得是哪一个数组
 			let temp_options = []
 			if (radio_checked_val == '1') {
-				 temp_options =  notice_model == '1' && !is_click_recover ? compare_options : default_copy_options['detailed']
+				 temp_options = notice_model == '1' && !is_click_recover ? compare_options : default_copy_options['detailed']
 			} else if (radio_checked_val == '2') {
 				 temp_options = notice_model == '2' && !is_click_recover ? compare_options : default_copy_options['briefly']
 			}
@@ -269,7 +269,7 @@ export default class NotificationSettingsModal extends Component {
 				let compare_flag = true
         for(let i = 0; i < len; i++) {
 						if (arr.indexOf(brr[i]) == -1 ) { // 表示两个数组的值不相等
-							compare_flag =  false
+							compare_flag = false
 							break;
             } 
 				}
@@ -368,16 +368,20 @@ export default class NotificationSettingsModal extends Component {
 				}
 				// 判断显示是详细组件还是简要组件
         if (radio_checked_val == '1') {
-            return <RenderDetail {...datas} ref="renderDetail" 
+            return (
+<RenderDetail {...datas} ref="renderDetail" 
                         updateParentList={ this.updateParentList } 
                         chgDetailDisplayBlock={ this.chgDisplayBlock } 
                         chgParentSelectState= { this.chgParentSelectState } />
+)
         } else {
-            return <RenderSimple {...datas} 
+            return (
+<RenderSimple {...datas} 
 												updateParentList={ this.updateParentList } 
 												chgSimpleDisplayBlock={ this.chgDisplayBlock } 
 												chgParentSelectState= { this.chgParentSelectState }
 											/>
+)
         }
     }
 
@@ -423,7 +427,7 @@ export default class NotificationSettingsModal extends Component {
                             </Radio>
                             <Radio value="2">
                                 简要提醒
-                                <span style={{display:is_simple_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 2) }} className={styles.simple_recover}>还原</span>)</span>
+                                <span style={{display: is_simple_none}}>&nbsp;(<span onClick={(e) => { this.handleRecover(e, 2) }} className={styles.simple_recover}>还原</span>)</span>
                             </Radio>
                         </Radio.Group>
                     </div>
@@ -438,7 +442,7 @@ export default class NotificationSettingsModal extends Component {
         return (
             <div>
                 <CustormModal
-                    title={<div style={{textAlign:'center', fontSize: 16, fontWeight: 500, color: '#000'}}>通知设置</div>}
+                    title={<div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>通知设置</div>}
                     visible={notificationSettingsModalVisible}
                     width={596}
                     zIndex={1006}

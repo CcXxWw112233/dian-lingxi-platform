@@ -169,8 +169,8 @@ class BoardCommunication extends Component {
             const childTreeData = this.getBoardFileTreeData(res.data);
             treeNode.props.dataRef.children = [...childTreeData];
             dispatch({
-                type:'simpleBoardCommunication/updateDatas',
-                payload:{
+                type: 'simpleBoardCommunication/updateDatas',
+                payload: {
                     boardFileTreeData: boardFileTreeData
                 }
             });
@@ -458,8 +458,8 @@ class BoardCommunication extends Component {
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 {
-                    this.state.previewFileModalVisibile &&
-                    <FileDetail
+                    this.state.previewFileModalVisibile && (
+<FileDetail
                         {...this.props}
                         updateDatasFile={this.updateDatasFile}
                         updatePublicDatas={this.updatePublicDatas}
@@ -469,7 +469,7 @@ class BoardCommunication extends Component {
                         setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
                         componentHeight={zommPictureComponentHeight}
                         componentWidth={zommPictureComponentWidth} />
-                }
+)}
                 {
                     !this.state.previewFileModalVisibile && (
                         <div className={indexStyles.indexCoverWapper}>

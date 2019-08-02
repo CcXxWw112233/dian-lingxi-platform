@@ -41,7 +41,7 @@ export default {
     }
     ,
     effects: {
-        * initSimplemodeCommData({ payload }, { call, put,select }){
+        * initSimplemodeCommData({ payload }, { call, put, select }){
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
             if(initFlag){
                 yield put({

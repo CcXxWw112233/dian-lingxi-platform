@@ -65,7 +65,7 @@ export default class NotificationSettingsModal extends Component {
                 let { notice_setting_list } = this.state
                 notice_setting_list = notice_setting_list.map(item => {
                     let new_item = item
-                    new_item = {...item, is_show_down_arrow:true}// 1 代表开启的状态
+                    new_item = {...item, is_show_down_arrow: true}// 1 代表开启的状态
                     return new_item
                 })
                 this.setState({
@@ -233,11 +233,13 @@ export default class NotificationSettingsModal extends Component {
             radio_checked_val,
         }
         if (radio_checked_val == 'detailed') {
-            return <RenderDetail {...datas} ref="renderDetail" 
+            return (
+<RenderDetail {...datas} ref="renderDetail" 
                         updateParentList={ this.updateParentList } 
                         chgDetailDisplayBlock={ this.chgDisplayBlock } 
                         handleDetailRecover={ () => { this.handleRecover() } } 
                         chgParentSelectState= { this.chgParentSelectState } />
+)
         } else {
             return <RenderSimple {...datas} />
         }
@@ -294,7 +296,7 @@ export default class NotificationSettingsModal extends Component {
                             </Radio>
                             <Radio value="briefly">
                                 简要提醒
-                                <span style={{display:is_simple_none}}>&nbsp;(<span className={styles.simple_recover}>还原</span>)</span>
+                                <span style={{display: is_simple_none}}>&nbsp;(<span className={styles.simple_recover}>还原</span>)</span>
                             </Radio>
                         </Radio.Group>
                     </div>
@@ -309,7 +311,7 @@ export default class NotificationSettingsModal extends Component {
         return (
             <div>
                 <CustormModal
-                    title={<div style={{textAlign:'center', fontSize: 16, fontWeight: 500, color: '#000'}}>通知设置</div>}
+                    title={<div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>通知设置</div>}
                     visible={notificationSettingsModalVisible}
                     width={596}
                     zIndex={1006}

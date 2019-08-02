@@ -43,7 +43,7 @@ class WorkbenchPage extends Component {
     initSimpleWorkbenchboxCommData(dispatch){
         dispatch({
             type: 'simpleWorkbenchbox/initSimpleWorkbenchboxCommData',
-            payload:{}
+            payload: {}
         });
     }
 

@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getFileList,getBoardFileList} from '@/services/technological/file'
+import { getFileList, getBoardFileList} from '@/services/technological/file'
 import { projectDetailInfo } from '@/services/technological/prjectDetail'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -124,7 +124,7 @@ export default {
                     payload: {
                         projectDetailInfoData: res.data,
                         appsSelectKey: 4, //默认文件
-                        appsSelectKeyIsAreadyClickArray: 4,//设置默认
+                        appsSelectKeyIsAreadyClickArray: 4, //设置默认
                     }
                 })
                 yield put({
