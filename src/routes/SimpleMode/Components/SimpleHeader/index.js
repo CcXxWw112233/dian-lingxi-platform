@@ -11,12 +11,7 @@ const SimpleHeader = (props) => {
     const { dispatch } = props;
     const openOrCloseImChatModal = () => {
         const width = document.body.scrollWidth;
-        let workbenchBoxContentWapperModalStyle = {};
-        if (!chatImVisiable) {
-            workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
-        } else {
-            workbenchBoxContentWapperModalStyle = { width: '100%' }
-        }
+        let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {

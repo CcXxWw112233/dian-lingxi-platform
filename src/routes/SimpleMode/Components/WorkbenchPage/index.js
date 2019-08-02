@@ -30,7 +30,6 @@ class WorkbenchPage extends Component {
     }
 
     componentDidMount() {
-     
         const { currentSelectedWorkbenchBox = {} } = this.props;
         this.setWorkbenchVisible(currentSelectedWorkbenchBox);
     }
@@ -50,7 +49,19 @@ class WorkbenchPage extends Component {
     }
 
     setWorkbenchVisible(currentSelectedWorkbenchBox) {
+        const { dispatch, chatImVisiable } = this.props;
         if (currentSelectedWorkbenchBox.id && currentSelectedWorkbenchBox.code) {
+            if(currentSelectedWorkbenchBox.code != 'board:chat'){
+                const width = document.body.scrollWidth;
+                let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
+                dispatch({
+                    type: 'simplemode/updateDatas',
+                    payload: {
+                        workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
+                    }
+                });
+            }
+
             switch (currentSelectedWorkbenchBox.code) {
                 case 'board:archives': {
                     this.setState({
@@ -70,6 +81,15 @@ class WorkbenchPage extends Component {
                     this.setState({
                         BoardCommunicationVisible: true,
                         BoardFilesVisible: false
+                    });
+                    const width = document.body.scrollWidth;
+                    let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
+                    dispatch({
+                        type: 'simplemode/updateDatas',
+                        payload: {
+                            chatImVisiable: true,
+                            workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
+                        }
                     });
                 }
                     break;
@@ -125,14 +145,16 @@ function mapStateToProps({
     simplemode: {
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
-        currentSelectedWorkbenchBox
+        currentSelectedWorkbenchBox,
+        chatImVisiable
     }
 }) {
 
     return {
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
-        currentSelectedWorkbenchBox
+        currentSelectedWorkbenchBox,
+        chatImVisiable
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

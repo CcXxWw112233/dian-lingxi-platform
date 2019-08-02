@@ -519,13 +519,20 @@ class FileDetailContent extends React.Component {
   render() {
      
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
-    const {componentHeight = 600, componentWidth = 600 } = this.props
-
     const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
+
+    let {componentHeight, componentWidth } = this.props
+    if(!componentHeight && !componentWidth){
+      const container_fileDetailOut = document.getElementById('container_fileDetailOut');
+      const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;
+      componentWidth = fileDetailOutWidth - 419;
+      componentHeight = fileDetailContentOutHeight - 20;
+    }
+
     const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const getIframe = (src) => {

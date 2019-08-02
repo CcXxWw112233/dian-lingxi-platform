@@ -33,6 +33,12 @@ class Home extends Component {
       type: 'simplemode/getAllBoxs',
       payload: {}
     });
+    dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+          chatImVisiable: false
+      }
+  });
   }
 
   setHomeVisible = (data) => {

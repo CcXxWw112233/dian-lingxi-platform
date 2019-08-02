@@ -33,7 +33,7 @@ export default class FileDetail extends React.Component {
     const { modalTop } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
     return (
-      <div className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
+      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
         {/*<Header {...this.props}/>*/}
         <FileDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
       </div>
