@@ -40,13 +40,17 @@
 .wrapper {
   background: #fff;
   min-height: 1000px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
   .container {
     margin: 0 auto;
     padding: 27px 35px;
     margin-bottom: 50px;
+    flex-shrink: 0;
     .logo {
       margin-bottom: 38px;
-      margin-left: 35px;
+      // margin-left: 35px;
       img {
         width: 48px;
         height: 48px;
@@ -106,7 +110,7 @@
             top: 0;
             right: 0;
             left: 0;
-            bottom: 0;
+            bottom: 36px;
             margin: auto;
           }
           p {
@@ -119,6 +123,14 @@
             position: absolute;
             width: 100%;
             bottom: 56px;
+            span {
+              display: block;
+              font-size:18px;
+              font-family:PingFangSC-Medium;
+              font-weight:500;
+              color:rgba(0,0,0,0.65);
+              line-height:24px;
+            }
           }
         }
         .list {
@@ -269,7 +281,13 @@
             display: block;
             width:124px;
             height:124px;
-            background:rgba(216,216,216,1);
+            // background:rgba(216,216,216,1);
+            margin: 64px auto 24px;
+          }
+          img {
+            display: block;
+            width:124px;
+            height:124px;
             margin: 64px auto 24px;
           }
           p {

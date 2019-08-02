@@ -12,7 +12,6 @@ export default class InputExport extends Component {
     email_val_verify: '', // 邮箱的验证
     is_show_ok_tips: 'none', // 是否显示小图标 默认为none不显示
     is_show_error_tips: 'none', // 是否显示小图标 默认为none不显示
-    is_verify_tips: false, // 验证提示小图标是否成功, 默认为false,验证失败 true 表示成功
   }
 
   /**
@@ -26,7 +25,7 @@ export default class InputExport extends Component {
    * @param {Object} e 事件对象
    */
   chgVal(e, index) {
-    // console.log(e.target.value, 'sss')
+    //console.log(e.target.value, 'ssssss')
     let val = e.target.value
     let phone_val_verify = validateTel(val)
     let email_val_verify = validateEmail(val)
@@ -36,15 +35,15 @@ export default class InputExport extends Component {
         phone_val_verify: phone_val_verify,
         email_val_verify: email_val_verify,
       })
-      if (phone_val_verify || email_val_verify) {
+      if (phone_val_verify || email_val_verify) { // 如果验证成功,
         this.setState({
           is_show_ok_tips: 'block',
-          is_show_error_tips: 'none'
+          is_show_error_tips: 'none',
         })
-      } else {
+      } else { // 验证失败
         this.setState({
           is_show_error_tips: 'block',
-          is_show_ok_tips: 'none'
+          is_show_ok_tips: 'none',
         })
       }
     } else {
@@ -53,6 +52,7 @@ export default class InputExport extends Component {
         is_show_ok_tips: 'none'
       })
     }
+  
     // 调用该方法修改父组件中inputList中的对应输入框的value值
     this.props.updateParentState(val, index, phone_val_verify, email_val_verify)
    
@@ -77,8 +77,10 @@ export default class InputExport extends Component {
 
   render() {
     // console.log(this.props, 'sssss')
-    const { index } = this.props
+    const { index, all_input_val } = this.props
     const { is_show_ok_tips, is_show_error_tips, phone_val_verify, email_val_verify } = this.state
+    // console.log(all_phone_verify, 'sssss_phone')
+    // console.log(all_email_verify, 'sssss_email')
 
     return (
       <div style={{borderBottom: 1, borderBottomStyle: 'solid', borderColor: 'rgba(0,0,0,0.25)', marginBottom: 32}}>

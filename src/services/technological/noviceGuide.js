@@ -11,11 +11,11 @@ export async function createDefaultOrg(data) {
 }
 
 // 生成项目相关小程序二维码
-export async function generateBoardCode(data) {
+export async function generateBoardCode(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/mini/QRCode/board/${data.id}`,
-    method: "POST",
-    data
+    url: `${REQUEST_DOMAIN}/mini/QRCode/board/${params.boardId}`,
+    method: "GET",
+    params
   })
 }
 

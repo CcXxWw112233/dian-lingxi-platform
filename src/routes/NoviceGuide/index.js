@@ -39,7 +39,7 @@ const NoviceGuide = (options) => {
   return(
     <div>
       {/* <GuideDetail {...GuideDetailProps} /> */}
-      <Boundary />
+      <Boundary dispatch={dispatch} />
     </div>
   )
 };
