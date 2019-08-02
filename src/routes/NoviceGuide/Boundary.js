@@ -1,6 +1,7 @@
 // 指引界面
 import React, { Component } from 'react'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
+import { routerRedux } from "dva/router";
 import logo from '@/assets/library/lingxi_logo.png'
 import styles from './index.less'
 import glabalStyles from '@/globalset/css/globalClassName.less'
@@ -8,7 +9,8 @@ import manager from '@/assets/noviceGuide/undraw_file_manager.png'
 import organizer from '@/assets/noviceGuide/undraw_online_organizer.png'
 import InputExport from './component/InputExport';
 import { validateTel, validateEmail } from '@/utils/verify.js'
-import { createDefaultOrg, } from '@/services/technological/noviceGuide'
+import { createDefaultOrg, generateBoardCode, inviteMemberJoinOrg, inviteMemberJoinBoard} from '@/services/technological/noviceGuide'
+import {isApiResponseOk} from "@/utils/handleResponseData";
 
 
 export default class Boundary extends Component {
@@ -28,17 +30,41 @@ export default class Boundary extends Component {
 		inputVal: '', // 获取从子组件中传递过来的value值
 		pVerify: null, // 定义一个从子组件中获取的手机验证状态
 		eVerify: null, // 定义一个从子组件中获取的邮箱验证状态
+		new_user_board_id: '', // 新用户默认创建的id
+		new_user_org_id: '', // 新用户默认创建的组织id
+		img_src: '', // 小程序二维码链接
+		all_input_val: '', // 所有的inputValue
 	}
 
 
 	// 点击ok
-	handleNext = () => {
-		this.setState({
-			is_show_cooperate_with: true
+	 handleNext = async() => {
+		// 获取新用户默认创建组织和项目
+		const res = await createDefaultOrg()
+		if (isApiResponseOk(res)) {
+			this.setState({
+				is_show_cooperate_with: true,
+				new_user_board_id: res.data.data.boardId,
+				new_user_org_id: res.data.data.orgId
+			}, () => {
+				this.getRoutineCode({boardId: res.data.data.boardId})
+			})
+		} else {
+			message.error(res.message)
+		}
+	}
+
+	// 获取小程序生成二维码
+	getRoutineCode = (data) => {
+		generateBoardCode(data).then((res) => {
+			if (isApiResponseOk(res)) {
+				this.setState({
+					img_src: res.message
+				})
+			} else {
+				message.error(res.message)
+			}
 		})
-		// createDefaultOrg().then((res) => {
-		// 	console.log(res, 'sssss')
-		// })
 	}
 
 	// 子组件需调用该方法: 获取焦点追加一条输入框
@@ -54,7 +80,8 @@ export default class Boundary extends Component {
 
 	// 定义一个方法修改父组件中的状态
   updateParentState = (value, index, phone, email) => {
-    const { inputList, pVerify, eVerify } = this.state
+		const { inputList } = this.state
+		// console.log(all_input_val, 'sssss')
     let new_list = [...inputList]
     // console.log(value, inputList, index, 'sss')
     new_list = new_list.map((item, i) => {
@@ -74,11 +101,14 @@ export default class Boundary extends Component {
     } else { // 不存在, 就保存为原来的状态
 			this.setState({
 				inputVal: '',
-				inputList: inputList,
+				inputList: new_list,
 				pVerify: null,
 				eVerify: null,
 			})
 		}
+		this.setState({
+			all_input_val: value
+		})
   }
 
 	// 点击添加更多
@@ -87,7 +117,7 @@ export default class Boundary extends Component {
 		this.setState({
 			is_add_more: true,
 		}, () => {
-			const { inputList, is_add_more, initInputList } = this.state
+			const { inputList, initInputList } = this.state
 			let new_input_list = [...inputList]
 			// 每次拼接都连接三个初始的
 			new_input_list = new_input_list.concat([], ...initInputList)
@@ -101,22 +131,48 @@ export default class Boundary extends Component {
 	 * 开始协作或者发送邀请的点击事件
 	 * 需要将存在的value遍历找到,然后取出来,传给后台
 	 * 应该需要区分是手机号还是 邮箱号
+	 * @param {Boolean} all_val 判断是不是开始协作 为true的时候 表示不用调用接口
 	 */
-	handleSubmit() {
-		const { inputList } = this.state
-		// console.log(inputList, 'ssss')
-		let new_input_list = [...inputList]
-		let phoneTemp = [] // 定义一个手机号的空数组
-		let emailTemp = [] // 定义一个邮箱的空数组
-		for (const val of new_input_list) {
-			let result = val['value']
-			if (validateTel(result)) { // 手机号
-				phoneTemp.push(result)
-			} else if (validateEmail(result)) { // 邮箱号
-				emailTemp.push(result)
-			}
+	handleSubmit(all_val) {
+		const { dispatch } = this.props
+		if (!all_val) {
+			dispatch(routerRedux.push('/technological/workbench'))
+			return
 		}
-		// console.log(phoneTemp, emailTemp, 'ssss')
+
+		const { inputList, new_user_board_id } = this.state
+		let new_input_list = [...inputList]
+		// let phoneTemp = [] // 定义一个手机号的空数组
+		// let emailTemp = [] // 定义一个邮箱的空数组
+		let allTemp = [] // 所有的数组列表
+		for (const val of new_input_list) {
+			const result = val['value']
+			allTemp.push(result)
+			// if (validateTel(result)) { // 手机号
+			// 	phoneTemp.push(result)
+			// } else if (validateEmail(result)) { // 邮箱号
+			// 	emailTemp.push(result)
+			// }
+		}
+		const allTempStr = allTemp.join(',')
+		const data = {
+			new_user_board_id,
+			users: allTemp
+		}
+		// allTemp = [].concat(phoneTemp, emailTemp)
+		inviteMemberJoinOrg({members: allTempStr}).then((res) => {
+			if (isApiResponseOk(res)) {
+				inviteMemberJoinBoard({joinBoardVo: data}).then((res) => {
+					if (isApiResponseOk(res)) {
+						dispatch(routerRedux.push('/technological/workbench'))
+					} else {
+						message.error(res.message)
+					}
+				})
+			} else {
+				message.error(res.message)
+			}
+		})
 	}
 
 	// 显示初始指引页面
@@ -161,7 +217,10 @@ export default class Boundary extends Component {
 							</div>
 							<div className={`${styles.organizer} ${styles.border}`}>
 								<img src={organizer} />
-								<p>项目进度、任务、文件实时协作</p>
+								<p>
+									<span>轻松管理工作项目</span>
+									<span>简单直接的项目管理</span>
+								</p>
 							</div>
 						</div>
 						<div className={styles.right}>
@@ -200,7 +259,10 @@ export default class Boundary extends Component {
 							</div>
 							<div className={`${styles.manager} ${styles.border}`}>
 								<img src={manager} />
-								<p>项目进度、任务、文件实时协作</p>
+								<p>
+									<span>个性化定制专属使用场景</span>
+									<span>全方位服务你的工作场景</span>
+								</p>
 							</div>
 						</div>
 					</div>
@@ -213,10 +275,23 @@ export default class Boundary extends Component {
 
 	// 显示开始协作
 	renderCooperateWith() {
-		const { inputList, inputVal, pVerify, eVerify } = this.state
-		// console.log(inputVal.length, 'sss')
+		const { inputList, inputVal, img_src, all_input_val, pVerify, eVerify } = this.state
 		// console.log(inputList, 'sss')
 		let new_input_list = [...inputList]
+		// console.log(new_input_list, 'sssss')
+		let disabled = false
+		let all_val = false
+		for(let val of new_input_list) {
+			const value = val['value']
+      if(value) {
+				all_val = true
+				if (!validateEmail(value) && !validateTel(value)) {
+					disabled = true
+					break
+				}
+			}
+		}
+
 		return (
 			<div className={styles.introduce}>
         <h1 style={{textAlign: 'center', marginBottom: 88}}>是否现在就邀请其他人共同使用灵犀</h1>
@@ -224,12 +299,14 @@ export default class Boundary extends Component {
           <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
 					{
 						new_input_list.map((item, index) => {
-							return <InputExport key={index} inputList={inputList} itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
+							return <InputExport key={index} inputList={inputList} all_input_val={all_input_val}  itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
 						})
 					}
 					<span onClick={ this.handleAddMore } className={styles.add_more}>+  添加更多...</span>
 					<div className={styles.code_wechat}>
-						<span></span>
+						<span>
+							{ img_src && <img src={img_src} />}
+						</span>
 						<p>
 							<b className={styles.line}></b>
 							<i className={`${glabalStyles.authTheme} ${styles.wechat}`}>&#xe634;</i> 微信扫一扫直接邀请参与人
@@ -238,10 +315,12 @@ export default class Boundary extends Component {
 					</div>
 					{/* 这里需要通过输入框的变化以及验证成功或者失败显示不同的文案 */}
 					{
-						inputVal ? (
-							<div className={`${styles.btn}  ${inputVal && (pVerify || eVerify) == false ? styles.disabled : ''}`}><Button disabled={pVerify || eVerify ? false : true} type="primary" onClick={ () => { this.handleSubmit() } }>发送邀请</Button></div>
+						all_val ? (
+							<div className={`${styles.btn}  ${disabled ? styles.disabled : ''}`}>
+								<Button disabled={disabled} type="primary" onClick={ () => { this.handleSubmit(all_val) } }>发送邀请</Button>
+							</div>
 						) : (
-							<div className={styles.btn}><Button onClick={ () => { this.handleSubmit() } } type="primary">开始协作</Button></div>
+							<div className={styles.btn}><Button onClick={ () => { this.handleSubmit(all_val) } } type="primary">开始协作</Button></div>
 						)
 					}
 				</div>
