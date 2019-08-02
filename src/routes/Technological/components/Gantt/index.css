@@ -196,7 +196,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow: hidden;
 }
 .panel .listHead .listHeadItem .list_head_body .no_time_card_area_out .no_time_card_area {
   cursor: pointer;
