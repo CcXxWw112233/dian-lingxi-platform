@@ -4,20 +4,19 @@ import indexStyles from './index.less'
 import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
-import { getLocationUrlQueryString } from '@/utils/util'
-import simpleWorkbenchbox from "../../../../models/simpleMode/simpleWorkbenchbox";
+
 
 
 
 class WorkbenchPage extends Component {
     constructor(props) {
+        console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
             BoardCommunicationVisible: false,
             BoardFilesVisible: false
         }
     }
-
     componentWillMount() {
         const { dispatch, currentSelectedWorkbenchBox = {} } = this.props;
         if (!currentSelectedWorkbenchBox.id) {
@@ -27,9 +26,13 @@ class WorkbenchPage extends Component {
                     route: '/technological/simplemode/home'
                 }
             });
-        } else {
-            this.setWorkbenchVisible(currentSelectedWorkbenchBox);
         }
+    }
+
+    componentDidMount() {
+     
+        const { currentSelectedWorkbenchBox = {} } = this.props;
+        this.setWorkbenchVisible(currentSelectedWorkbenchBox);
     }
     componentWillReceiveProps(nextProps) {
         const { currentSelectedWorkbenchBox } = this.props;
@@ -39,8 +42,7 @@ class WorkbenchPage extends Component {
         }
 
     }
-
-    initSimpleWorkbenchboxCommData(dispatch){
+    initSimpleWorkbenchboxCommData(dispatch) {
         dispatch({
             type: 'simpleWorkbenchbox/initSimpleWorkbenchboxCommData',
             payload: {}

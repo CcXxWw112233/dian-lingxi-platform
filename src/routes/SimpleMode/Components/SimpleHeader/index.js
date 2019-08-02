@@ -49,22 +49,22 @@ const SimpleHeader = (props) => {
             {leftMainNavVisible &&
                 <SiderLeft is_simplemode={true} collapsed={false} />
             }
-            {chatImVisiable && (
-                <div className={indexStyles.chatWapper}>
-                    <div className={indexStyles.chatHeader}>
-                        <div className={indexStyles.menu} onClick={openOrCloseImChatModal}>
-                            <i className={`${globalStyles.authTheme}`} style={{ color: '#1890FF', fontSize: '24px' }}>&#xe7f4;</i>
-                        </div>
-                    </div>
-                    {/* <SiderRight outInputSiderRightStyle={{ position: "absolute", top: 0, right: 0 }} collapsed={true} /> */}
-                    <div className={indexStyles.imWapper}>
-                        <iframe src='/im/index.html'></iframe>
-                    </div>
-                    <div className={indexStyles.videoMeetingWapper}>
-                        <VideoMeeting />
+
+            <div className={indexStyles.chatWapper} style={{ display: `${chatImVisiable ? 'inline' : 'none'}` }}>
+                <div className={indexStyles.chatHeader}>
+                    <div className={indexStyles.menu} onClick={openOrCloseImChatModal}>
+                        <i className={`${globalStyles.authTheme}`} style={{ color: '#1890FF', fontSize: '24px' }}>&#xe7f4;</i>
                     </div>
                 </div>
-            )}
+                {/* <SiderRight outInputSiderRightStyle={{ position: "absolute", top: 0, right: 0 }} collapsed={true} /> */}
+                <div className={indexStyles.imWapper}>
+                    <iframe src='/im/index.html'></iframe>
+                </div>
+                <div className={indexStyles.videoMeetingWapper}>
+                    <VideoMeeting />
+                </div>
+            </div>
+
 
         </div>
     );

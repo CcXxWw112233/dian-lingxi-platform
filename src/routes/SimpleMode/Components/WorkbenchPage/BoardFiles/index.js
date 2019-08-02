@@ -32,6 +32,10 @@ class BoardFiles extends Component {
   }
 
 
+  componentDidMount() {
+    console.log('sssss',112)
+  }
+
 
   componentWillReceiveProps(nextProps) {
 
@@ -221,6 +225,8 @@ class BoardFiles extends Component {
       })
     }
     const { boardSelectVisible, boardFileContentVisible } = this.state;
+    // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
+    
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
@@ -228,7 +234,7 @@ class BoardFiles extends Component {
       <div className={indexStyles.boardFilesContainer}>
         {
           boardSelectVisible && (
-            <div className={indexStyles.boardSelectOutWapper} style={{ maxHeight: contentHeight + 'px' }}>
+            <div className={indexStyles.boardSelectOutWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {

@@ -1,15 +1,10 @@
 import React, { Component } from "react";
-import dva, { connect } from "dva/index"
-import { Route, Router, Switch, Link } from 'dva/router'
-import dynamic from "dva/dynamic";
+import { connect } from "dva/index"
+import { Route, Switch,  } from 'dva/router'
 import indexStyles from './index.less'
 import SimpleHeader from './Components/SimpleHeader/index'
-import MyWorkbenchBoxs from './Components/MyWorkbenchBoxs/index'
-import WallpaperSelect from './Components/WallpaperSelect/index'
-import WorkbenchBoxSelect from './Components/WorkbenchBoxSelect/index'
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import { LocaleProvider, Layout } from 'antd'
-const { Header, Sider, Content } = Layout;
+import WorkbenchPage from './Components/WorkbenchPage'
+import Home from './Components/Home'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -17,6 +12,7 @@ class SimpleMode extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {}
   }
 
   componentDidMount() {
@@ -61,24 +57,27 @@ class SimpleMode extends Component {
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
-          leftMainNavVisible: false
+        leftMainNavVisible: false
       }
-  });
+    });
   }
 
+  setSSS = () => {
+    const { SSS } = this.state
+    this.setState({
+      SSS: !SSS
+    })
+  }
+
+  renderRoutes = () => {
+    return (
+      <Switch>
+        <Route path="/technological/simplemode/home" component={Home} />
+        <Route path="/technological/simplemode/workbench" component={WorkbenchPage} />
+      </Switch>
+    )
+  }
   render() {
-    const app = dva();
-
-    const routes = [
-      {
-        path: '/technological/simplemode/home',
-        component: () => import('./Components/Home'),
-      }, {
-        path: '/technological/simplemode/workbench',
-        component: () => import('./Components/WorkbenchPage'),
-      },
-    ]
-
     const {
       simpleHeaderVisiable,
       setWapperCenter,
@@ -87,24 +86,7 @@ class SimpleMode extends Component {
     return (
       <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav}>
         {simpleHeaderVisiable && <SimpleHeader />}
-        <LocaleProvider locale={zh_CN}>
-          <div style={{ width: '100%', height: '100%' }}>
-            {
-              routes.map(({ path, ...dynamics }, key) => {
-                return (
-                  <Route key={key}
-                    exact
-                    path={path}
-                    component={dynamic({
-                      app,
-                      ...dynamics,
-                    })}
-                  />
-                )
-              })
-            }
-          </div>
-        </LocaleProvider>
+        {this.renderRoutes()}
       </div>
 
     )

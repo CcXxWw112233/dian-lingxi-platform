@@ -13,17 +13,17 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
+    console.log("home组件初始化");
     this.state = {
       simpleHeaderVisiable: true,
       myWorkbenchBoxsVisiable: true,
       wallpaperSelectVisiable: true,
       workbenchBoxSelectVisiable: false,
       createNewBoardVisiable: false,
-
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
       type: 'simplemode/getMyBoxs',
@@ -46,7 +46,6 @@ class Home extends Component {
       myWorkbenchBoxsVisiable,
       wallpaperSelectVisiable,
       workbenchBoxSelectVisiable,
-      createNewBoardVisiable,
     } = this.state;
 
     return (
