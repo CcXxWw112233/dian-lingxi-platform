@@ -8,6 +8,9 @@ export async function getMenuList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization_app/menu/query`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   })
 }

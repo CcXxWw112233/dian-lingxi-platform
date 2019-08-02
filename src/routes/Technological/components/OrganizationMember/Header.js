@@ -18,7 +18,7 @@ export default class Header extends React.Component {
     const { users } = data
     this.props.inviteJoinOrganization({
       members: users,
-      org_id: Cookies.get('org_id')
+      // org_id: Cookies.get('org_id')
     })
   }
   setShowAddMenberModalVisibile() {

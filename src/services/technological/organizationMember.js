@@ -7,7 +7,10 @@ export async function CreateGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -16,7 +19,10 @@ export async function getGroupTreeList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group/tree`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 
@@ -25,7 +31,10 @@ export async function removeMembersWithGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/remove`,
     method: 'DELETE',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -34,7 +43,10 @@ export async function joinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/visitor/invite`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 //将访客移除
@@ -51,7 +63,10 @@ export async function setMemberWitchGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/member/set`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 //分组列表
@@ -59,7 +74,10 @@ export async function getGroupList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 //更新分组
@@ -93,7 +111,10 @@ export async function approvalMember(data) {
   return request({
     url: `${REQUEST_DOMAIN}/member/approval`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 
@@ -102,7 +123,10 @@ export async function discontinueMember(data) {
   return request({
     url: `${REQUEST_DOMAIN}/member/discontinue`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -111,7 +135,10 @@ export async function inviteMemberToGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/invite`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -138,7 +165,10 @@ export async function getCurrentOrgRole(params) {
   return request({
     url: `${REQUEST_DOMAIN}/role/query`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 //给成员设置角色
@@ -174,7 +204,10 @@ export async function updateOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -192,7 +225,10 @@ export async function inviteJoinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -210,7 +246,10 @@ export async function getMemberInfo(params) {
   return request({
     url: `${REQUEST_DOMAIN}/member`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 

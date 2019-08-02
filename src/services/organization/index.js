@@ -18,7 +18,10 @@ export async function updateOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -52,7 +55,10 @@ export async function createRole(data) {
   return request({
     url: `${REQUEST_DOMAIN}/role`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 //更新角色
@@ -84,7 +90,10 @@ export async function setDefaultRole(data) {
   return request({
     url: `${REQUEST_DOMAIN}/role/default`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -93,7 +102,10 @@ export async function getPermissions(params) {
   return request({
     url: `${REQUEST_DOMAIN}/permissions`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   });
 }
 //保存权限
@@ -110,7 +122,10 @@ export async function getNounList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/noun`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 //保存名词列表
@@ -118,7 +133,10 @@ export async function saveNounList(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/noun`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
   });
 }
 
@@ -127,7 +145,10 @@ export async function getCurrentNounPlan(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/current_noun`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }   
   });
 }
 
@@ -136,7 +157,10 @@ export async function getFnManagementList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization_app`,
     method: 'GET',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }      
   })
 }
 
