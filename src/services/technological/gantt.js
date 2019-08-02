@@ -4,13 +4,13 @@ import Cookies from 'js-cookie'
 import { getGlobalData } from '../../utils/businessFunction';
 
 //获取工作台甘特图数据
-export async function getGanttData(params) {
+export async function getGanttData(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt`,
-    method: 'GET',
-    params: {
-      ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
     }
   })
 }

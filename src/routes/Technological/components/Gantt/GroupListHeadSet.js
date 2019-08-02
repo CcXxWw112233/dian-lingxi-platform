@@ -35,14 +35,14 @@ export default class GroupListHeadSet extends Component {
     }
     render() {
         const { dropdownVisible } = this.state
-        const { target_scrollLeft, target_scrollTop, group_view_type='0' } = this.props
+        const { target_scrollLeft, target_scrollTop, group_view_type='1' } = this.props
         const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
         return (
             <div className={indexStyles.groupHeadSet} style={{ left: target_scrollLeft, top: target_scrollTop}}>
                 <div className={indexStyles.set_content}>
                    <div className={indexStyles.set_content_left}>
-                      <div onClick={() => this.setGroupViewType('0')} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '0' && selected}`}>&#xe604;</div>
-                      <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '1' && selected}`}>&#xe7b2;</div>
+                      <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '1' && selected}`}>&#xe604;</div>
+                      <div onClick={() => this.setGroupViewType('2')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}>&#xe7b2;</div>
                    </div>
                    <Dropdown
                          overlay={<ContentFilter  dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />} 

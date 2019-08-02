@@ -18,6 +18,7 @@ import {
 import {createMilestone} from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
+import { getModelSelectDatasState } from '../../utils'
 
 export default {
   namespace: 'gantt',
@@ -41,7 +42,7 @@ export default {
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
 
-      group_view_type: '0', //分组视图0x项目， 1成员
+      group_view_type: '1', //分组视图1项目， 2成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤成员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -68,20 +69,69 @@ export default {
     * getGanttData({payload}, {select, call, put}){
       const { tab_board_id } = payload
       let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
-
+      
       if(tab_board_id) {
         projectTabCurrentSelectedProject = tab_board_id
       }
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
+      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      const group_view_filter_boards = yield select(getModelSelectDatasState('gantt', 'group_view_filter_boards'))
+      const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
+
+      console.log('ssssssssss', {
+        group_view_filter_boards,
+        group_view_filter_users
+      })
+      //内容过滤处理
+      const setContentFilterParams = () => {
+        let  query_board_ids =  []
+        let  query_user_ids =  []
+        let  query_board_org_ids =  []
+        let  query_user_org_ids =  []
+ 
+        for(let val of group_view_filter_boards) {
+          if(val.indexOf('board_org_') != -1) { //项目组织id
+            const board_org_id = val.replace('board_org_','')
+            query_board_org_ids.push(board_org_id)
+          } else { //项目id
+            const board_id = val.replace('board_','')
+            query_board_ids.push(board_id)
+          }
+        }
+
+        for(let val of group_view_filter_users) {
+          if(val.indexOf('user_org_') != -1) { //用户组织id
+            const user_org_id = val.replace('user_org_','')
+            query_user_org_ids.push(user_org_id)
+          } else if(val.indexOf('user_group_') != -1) { //分组id
+            const org_groupr_id_arr = val.replace('user_group_','').split('_')
+            const group_org_id = org_groupr_id_arr[0]
+            const group_id = org_groupr_id_arr[1]
+          } else {//用户id
+            const user_id = val.replace('user_','').split('_')[2]
+            query_user_ids.push(user_id)
+          }
+        }
+
+        return {
+          query_board_ids,
+          query_user_ids,
+          query_board_org_ids,
+          query_user_org_ids,
+        }
+      }
+
       const params = {
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
+        chart_type: group_view_type,
       }
       if(projectTabCurrentSelectedProject != '0' && projectTabCurrentSelectedProject) {
         params.board_id = projectTabCurrentSelectedProject
       }
       const res = yield call(getGanttData, params)
+      console.log('sssss', {res})
       if(isApiResponseOk(res)){
         yield put({
           type: 'handleListGroup',
@@ -116,18 +166,20 @@ export default {
           list_data: [],
           list_no_time_data: val['lane_data']['card_no_time'] || []
         }
-        for(let val_1 of val['lane_data']['card']) {
-          const due_time = getDigit(val_1['due_time'])
-          const start_time = getDigit(val_1['start_time'])
-          const create_time = getDigit(val_1['create_time'])
-          let list_data_item = {
-            ...val_1,
-            start_time,
-            end_time: due_time,
-            create_time,
-            time_span: (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+        if(val['lane_data']['cards']) {
+          for(let val_1 of val['lane_data']['cards']) {
+            const due_time = getDigit(val_1['due_time'])
+            const start_time = getDigit(val_1['start_time'])
+            const create_time = getDigit(val_1['create_time'])
+            let list_data_item = {
+              ...val_1,
+              start_time,
+              end_time: due_time,
+              create_time,
+              time_span: (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+            }
+            list_group_item.list_data.push(list_data_item)
           }
-          list_group_item.list_data.push(list_data_item)
         }
         list_group.push(list_group_item)
       }
@@ -248,19 +300,19 @@ export default {
         if(isApiResponseOk) {
           const data = res.data
           const treeData = data.map(item => {
-            const { org_name, org_id, boards = [] } = item
+            const { org_name, org_id, board_list = [] } = item
             let new_item = {
               title: org_name,
-              value: org_id,
-              key: org_id,
+              value: `board_org_${org_id}`,
+              key: `board_org_${org_id}`,
               children: []
             }
-            const children = boards.map(item_board => {
-              const { name, id } = item_board
+            const children = board_list.map(item_board => {
+              const { board_name, board_id } = item_board
               const new_item_board = {
-                title: name,
-                value: id,
-                key: id,
+                title: board_name,
+                value: `board_${board_id}`,
+                key: `board_${board_id}`,
               }
               return new_item_board
             })
@@ -283,24 +335,24 @@ export default {
           const { org_name, org_id, groups = [] } = item
           let new_item = {
             title: org_name,
-            value: org_id,
-            key: org_id,
+            value: `user_org_${org_id}`,
+            key: `user_org_${org_id}`,
             children: []
           }
           const children = groups.map(item_group => {
             const { name, id, members = [] } = item_group
             const new_item_group = {
               title: name,
-              value: id,
-              key: id,
+              value: `user_group_${org_id}_${id}`,
+              key: `user_group_${id}`,
               children: []
             }
             const members_children = members.map(item_group_member => {
               const { name, id } = item_group_member
               const new_item_group_member = {
                 title: name,
-                value: `${org_id}_${id}`,
-                key: `${org_id}_${id}`,
+                value: `user_${org_id}_${item_group['id']}_${id}`,
+                key: `user_${org_id}_${item_group['id']}_${id}`,
               }
               
               return new_item_group_member
