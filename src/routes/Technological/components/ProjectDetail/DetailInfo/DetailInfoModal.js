@@ -25,8 +25,9 @@ class DetailInfoModal extends React.Component {
 
     return(
       <CustormModal
+        title={<div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>项目信息</div>} 
         visible={modalVisible}
-        width={472}
+        width={614}
         zIndex={1006}
         maskClosable={false}
         footer={null}

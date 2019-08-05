@@ -9,9 +9,6 @@ import {
 import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "../../../../../utils/businessFunction";
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 import UserCard from './../../../../../components/UserCard/index'
-import globalsetStyles from '@/globalset/css/globalClassName.less'
-import DynamicContain from './component/DynamicContain'
-
 const TextArea = Input.TextArea
 
 
@@ -233,35 +230,31 @@ export default class DrawDetailInfo extends React.Component {
     )
     return (
       <div className={DrawDetailInfoStyle.detailInfoOut}>
-        <div className={DrawDetailInfoStyle.brief}>
-          <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7f6;</span>
-          <span>项目简介</span>
-        </div>
-        {!editDetaiDescription?(
-            <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
-              {description || detaiDescriptionValue}
+        <div className={projectInfoDisplay?DrawDetailInfoStyle.detailInfo : DrawDetailInfoStyle.detailInfo_2} style={{display: isInitEntry ? 'block': 'none'}}>
+          <div className={DrawDetailInfoStyle.top}>
+            <div className={DrawDetailInfoStyle.topItem}>
+              <div>{residue_quantity || '0'}</div>
+              <div>剩余任务</div>
             </div>
-          ) : ( EditArea)}
-          <div className={DrawDetailInfoStyle.member}> 
-            <span style={{fontSize: 16}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
-            <span>项目成员</span>
+            <div className={DrawDetailInfoStyle.topItem}>
+              <div style={{color: '#8c8c8c'}}>{realize_quantity || '0'}</div>
+              <div>已完成</div>
+            </div>
+            {/*<div className={DrawDetailInfoStyle.topItem}>*/}
+              {/*<div >0</div>*/}
+              {/*<div>距离下一节点</div>*/}
+            {/*</div>*/}
           </div>
           <div className={DrawDetailInfoStyle.manImageList}>
-            {
-              checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
-                <Tooltip title="邀请新成员" placement="top">
-                  <div className={DrawDetailInfoStyle.addManImageItem} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                    <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8, color: '#40A9FF'}}/>
-                  </div>
-                </Tooltip>
-                )
-            }
             {
               avatarList.map((value, key) => {
                 if(key < avatarList.length - 1) {
                   const { avatar, user_id } = value
                   return(
                     <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
+                      {/*<div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>*/}
+                        {/*<Icon type="close" />*/}
+                      {/*</div>*/}
                       <Dropdown overlay={manImageDropdown(value)}>
                         {avatar?(<img src={avatar} />): (
                           <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
@@ -272,24 +265,22 @@ export default class DrawDetailInfo extends React.Component {
                       </Dropdown>
                     </div>
                   )
+                }else{
+                  return checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+                    <div className={DrawDetailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                      <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8}}/>
+                    </div>
+                  )
                 }
               })
             }
           </div>
-          <div className={DrawDetailInfoStyle.dynamic}>
-            <div style={{width: '100%', display: 'flex', alignItems:'center'}} className={DrawDetailInfoStyle.dynamic_header}>
-              <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
-              <span>项目动态</span>
-              <Tooltip title="过滤动态" placement="top">
-                <div className={DrawDetailInfoStyle.filter}>
-                  <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
-                </div>
-              </Tooltip>
+          {!editDetaiDescription?(
+            <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
+              {description || detaiDescriptionValue}
             </div>
-            <div className={DrawDetailInfoStyle.dynamic_contain}>
-              <DynamicContain />
-            </div>
-          </div>
+          ) : ( EditArea)}
+        </div>
         <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
