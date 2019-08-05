@@ -76,7 +76,7 @@ export async function getGroupList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      // _organization_id: localStorage.getItem('OrganizationId'),
     }      
   });
 }

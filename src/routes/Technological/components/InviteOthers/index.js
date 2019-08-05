@@ -739,7 +739,7 @@ class InviteOthers extends Component {
                         alt=""
                       />
                       <span className={styles.invite__select_member_item_title}>
-                        {item.full_name}
+                        {item.full_name || item.name}
                       </span>
                     </span>
                     <span
