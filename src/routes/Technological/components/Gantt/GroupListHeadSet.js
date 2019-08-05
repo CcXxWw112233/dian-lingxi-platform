@@ -24,6 +24,10 @@ export default class GroupListHeadSet extends Component {
                 group_view_type: group_view_type_new
             }
         })
+        dispatch({
+            type: 'gantt/getGanttData',
+            payload: {}
+        })
     }
     onVisibleChange = (bool) => {
         this.setDropdownVisible(bool)
