@@ -130,7 +130,7 @@ export default class SiderLeft extends React.Component {
       type: 'technological/inviteJoinOrganization',
       payload: {
         members: users,
-        org_id: id
+        // org_id: id
       }
     })
   }

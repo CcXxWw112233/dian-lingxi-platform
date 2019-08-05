@@ -1,6 +1,6 @@
 //该组件用来作为message组件全局配置
 import React from 'react';
-import { message } from 'antd'
+import { message, notification } from 'antd'
 
 message.config({
   top: 50,
@@ -9,4 +9,6 @@ message.config({
   // getContainer:() => document.getElementsByClassName('page_style_1'),
 });
 
-
+notification.config({
+  duration: 3,
+});
