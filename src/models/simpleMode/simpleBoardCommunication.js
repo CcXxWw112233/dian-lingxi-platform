@@ -13,6 +13,7 @@ export default {
     namespace: 'simpleBoardCommunication',
     state: {
         boardFileTreeData: [],
+        boardFolderTreeData: []
     },
     subscriptions: {
       
