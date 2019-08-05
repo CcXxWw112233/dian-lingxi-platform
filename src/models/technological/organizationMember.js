@@ -1,5 +1,5 @@
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import {
   MEMBERS, MESSAGE_DURATION_TIME, ORG_TEAM_BOARD_QUERY, ORG_UPMS_ORGANIZATION_MEMBER_QUERY,
   ORGANIZATION
@@ -54,12 +54,35 @@ export default modelExtend(technological, {
                 type: '1'
               }
             })
+          } else{
+            dispatch({
+              type: 'noLookPermissionsHandle',
+            })
           }
         }
       })
     },
   },
   effects: {
+    * noLookPermissionsHandle({ payload }, { select, call, put }) {
+      const openNotification = () => {
+        notification.open({
+          message: '提示',
+          description:
+            '您所在当前组织没有查看组织团队成员权限。',
+          onClick: () => {
+            // console.log('Notification Clicked!');
+          },
+        });
+      };
+      openNotification()
+      const delay = (ms) => new Promise(resolve => {
+        setTimeout(resolve, ms)
+      })
+      yield call(delay, 3000)
+      yield put(routerRedux.push('/technological/workbench'))
+    },
+
     * getGroupList({ payload }, { select, call, put }) {
       let res = yield call(getGroupList, {...payload})
       if(isApiResponseOk(res)) {
