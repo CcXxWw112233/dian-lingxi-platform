@@ -186,6 +186,7 @@ export default class GanttFace extends Component {
         type: getEffectOrReducerByName('getGanttData'),
         payload: {}
       })
+      that.getHoliday()
     }, 300)
   }
 
@@ -202,6 +203,14 @@ export default class GanttFace extends Component {
     return height
   }
 
+  // 获取节假日
+  getHoliday = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getHoliday',
+      payload: {}
+    })
+  }
   render () {
     const { gantt_card_out_middle_max_height } = this.state
     const { gantt_card_height } = this.props

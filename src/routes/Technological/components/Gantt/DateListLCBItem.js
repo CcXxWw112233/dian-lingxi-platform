@@ -14,25 +14,6 @@ export default class DateListLCBItem extends Component {
 
   }
 
-  getDate = () => {
-    const DateArray = []
-    for(let i = 1; i < 13; i++) {
-      const obj = {
-        dateTop: `${i}月`,
-        dateInner: []
-      }
-      for(let j = 1; j < 32; j++) {
-        const obj2 = {
-          name: `${i}/${j}`,
-          is_daily: j % 6 || j % 7 == 0 ? '1' : '0'
-        }
-        obj.dateInner.push(obj2)
-      }
-      DateArray.push(obj)
-    }
-    return DateArray
-  }
-
   checkLCB = ({has_lcb}) => {
 
   }

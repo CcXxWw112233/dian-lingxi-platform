@@ -319,7 +319,7 @@ export default class GetRowGantt extends Component {
   }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
-    const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [] }} = this.props.model
+    const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [], ceiHeight }} = this.props.model
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -332,8 +332,12 @@ export default class GetRowGantt extends Component {
             left: currentRect.x + 1, top: currentRect.y,
             width: currentRect.width, height: currentRect.height,
             boxSizing: 'border-box',
-            marginTop: task_item_margin_top
-          }} />
+            marginTop: task_item_margin_top,
+            color: 'rgba(0,0,0,0.45)',
+            textAlign: 'right',
+            lineHeight: `${ceiHeight - task_item_margin_top}px`,
+            paddingRight: 8,
+          }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
           const { list_data = [] } = value

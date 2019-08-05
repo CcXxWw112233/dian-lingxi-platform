@@ -18,7 +18,7 @@ export async function getGanttData(data) {
 //获取节假日
 export async function getHoliday(params) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/calendar/holiday`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/calendar`,
     method: 'GET',
     params
   })

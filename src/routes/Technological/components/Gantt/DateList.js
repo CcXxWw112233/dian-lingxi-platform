@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
-import { Tooltip } from 'antd'
+import { Tooltip, Dropdown, Menu } from 'antd'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
 import MilestoneDetail from './components/milestoneDetail'
+const MenuItem = Menu.Item
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -28,30 +29,46 @@ export default class DateList extends Component {
       miletone_detail_modal_visible: !miletone_detail_modal_visible
     })
   }
-
-  getDate = () => {
-    const DateArray = []
-    for(let i = 1; i < 13; i++) {
-      const obj = {
-        dateTop: `${i}月`,
-        dateInner: []
-      }
-      for(let j = 1; j < 32; j++) {
-        const obj2 = {
-          name: `${i}/${j}`,
-          is_daily: j % 6 || j % 7 == 0 ? '1' : '0'
-        }
-        obj.dateInner.push(obj2)
-      }
-      DateArray.push(obj)
+ 
+  // 里程碑详情和列表
+  renderLCBList = (current_date_miletones, timestamp) => {
+    return (
+      <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
+         <MenuItem key={'0'}>新建里程碑</MenuItem>
+        {current_date_miletones.map((value, key) => {
+          const { id, name } = value
+          return (
+            <MenuItem
+              className={globalStyles.global_ellipsis}
+              style={{width: 216}}
+              key={id}>
+              {name}
+            </MenuItem>
+          )
+        })}
+      </Menu>
+    )
+  }
+  // 选择里程碑
+  selectLCB = (e, timestamp) => {
+    const id = e.key
+    if(id == '0') {
+      this.setAddLCBModalVisibile()
+      this.setCreateLcbTime(timestamp)
+      return
     }
-    return DateArray
+    this.set_miletone_detail_modal_visible()
+    // this.getMilestoneDetail(id)
+    //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/updateDatas',
+      payload: {
+        milestone_id: id
+      }
+    })
   }
-
-  checkLCB = ({has_lcb}) => {
-
-  }
-
+  
   componentDidMount() {
     this.getGttMilestoneList()
   }
@@ -66,7 +83,7 @@ export default class DateList extends Component {
       })
     }, 500)
   }
-
+  // 创建里程碑
   submitCreatMilestone = (data) => {
     const { dispatch } = this.props
     const { users, currentSelectedProject, due_time, add_name } = data
@@ -86,7 +103,7 @@ export default class DateList extends Component {
       add_lcb_modal_visible: !this.state.add_lcb_modal_visible
     });
   }
-
+  // 设置创建里程碑的时间
   setCreateLcbTime = (timestamp) => {
     this.setState({
       create_lcb_time: timestamp
@@ -145,25 +162,23 @@ export default class DateList extends Component {
                 <div className={indexStyles.dateTitle}>{date_top}</div>
                 <div className={indexStyles.dateDetail} >
                   {date_inner.map((value2, key2) => {
-                    const { month, date_no, date_string, timestamp } = value2
+                    const { month, date_no, week_day, timestamp } = value2
                     const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
-                      <div key={`${month}/${date_no}`}>
-                        <div className={`${indexStyles.dateDetailItem}`} key={key2}>{date_no}</div>
-                        {/* {projectTabCurrentSelectedProject != '0' ? (
-                          <DateListLCBItem
-                            has_lcb={has_lcb}
-                            boardName={this.getBoardName(projectTabCurrentSelectedProject)}
-                            current_date_miletones={current_date_miletones}
-                            timestamp={new Date(`${date_string} 23:59:59`).getTime()}
-                            setCreateLcbTime={this.setCreateLcbTime}
-                            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
-                            set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
-                        ):(
-                          <div className={indexStyles.lcb_area}></div>
-                        )} */}
-                      </div>
+                      <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}>
+                        <div key={`${month}/${date_no}`}>
+                          <div className={`${indexStyles.dateDetailItem}`} key={key2}>
+                            <div className={`${indexStyles.dateDetailItem_date_no} 
+                                  ${indexStyles.nomal_date_no}
+                                  ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
+                                  ${true && indexStyles.holiday_date_no}
+                                  ${has_lcb && indexStyles.has_moletones_date_no}`}>
+                              {date_no}
+                            </div>
+                          </div>
+                        </div>
+                      </Dropdown>
                     )
                   })}
                 </div>
@@ -201,3 +216,16 @@ function mapStateToProps(
   }){
   return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneMap }
 }
+
+//  {/* {projectTabCurrentSelectedProject != '0' ? (
+//                           <DateListLCBItem
+//                             has_lcb={has_lcb}
+//                             boardName={this.getBoardName(projectTabCurrentSelectedProject)}
+//                             current_date_miletones={current_date_miletones}
+//                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
+//                             setCreateLcbTime={this.setCreateLcbTime}
+//                             setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
+//                             set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
+//                         ):(
+//                           <div className={indexStyles.lcb_area}></div>
+//                         )} */}

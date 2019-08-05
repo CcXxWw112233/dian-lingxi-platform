@@ -1,4 +1,4 @@
-import { getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree } from '../../../services/technological/gantt'
+import { getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -15,7 +15,7 @@ import {
   workbench_ceilWidth,
   workbench_date_arr_one_level
 } from './selects'
-import {createMilestone} from "../../../services/technological/prjectDetail";
+import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
@@ -47,6 +47,7 @@ export default {
       group_view_filter_users: [], //内容过滤成员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
       group_view_users_tree: [], //内容过滤成员分组树
+      holiday_list: [], //日历列表（包含节假日农历）
     },
   },
   subscriptions: {
@@ -387,6 +388,25 @@ export default {
           type: 'updateDatas',
           payload: {
             group_view_users_tree: treeData
+          }
+        })
+      }
+    },
+    // 获取日历（农历节假日）
+    * getHoliday({payload}, {select, call, put}) {
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      const params = {
+        start_time: Number(start_date['timestamp']) / 1000,
+        end_time: Number(end_date['timestamp']) / 1000,
+      }
+      const res = yield call(getHoliday, {...params})
+      console.log('ssssss', res)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            holiday_list: res.data,
           }
         })
       }
