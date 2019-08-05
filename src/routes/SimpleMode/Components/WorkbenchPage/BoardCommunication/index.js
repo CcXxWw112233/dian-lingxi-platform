@@ -4,7 +4,6 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
-const { Dragger } = Upload;
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -14,8 +13,10 @@ import {
 } from "@/utils/businessFunction";
 import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
+
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
+const { Dragger } = Upload;
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
@@ -637,7 +638,7 @@ class BoardCommunication extends Component {
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
         // console.log(zommPictureComponentWidth,zommPictureComponentHeight);
-        
+
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 {
