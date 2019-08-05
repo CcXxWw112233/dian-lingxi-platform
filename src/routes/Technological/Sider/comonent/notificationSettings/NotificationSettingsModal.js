@@ -23,10 +23,7 @@ export default class NotificationSettingsModal extends Component {
 						user_setting_options: [],
             user_detail_setting_options: [], // 用户设置的通知列表
             user_simple_setting_options: [], // 用户设置的通知列表
-            is_notice_web: '', // 浏览器推送
-            is_notice_mail: '', // 邮件推送
-            is_notice_mp: '', // 微信公总号
-						notice_model: '1', // 详细提醒还是简要提醒
+						notice_model: '', // 详细提醒还是简要提醒
 						compare_options: [], // 用来做比较的数组
             // 默认设置列表的数据
             notice_setting_list: [], // 通知设置的列表
@@ -50,9 +47,6 @@ export default class NotificationSettingsModal extends Component {
             if (isApiResponseOk(res)) {
                 // console.log(res, 'sssss')
                 this.setState({
-                    is_notice_web: res.data.is_notice_web,
-                    is_notice_mail: res.data.is_notice_mail,
-										is_notice_mp: res.data.is_notice_mp,
 										is_way_status: res.data.notice_way_data,
 										notice_model: res.data.notice_model,
 										radio_checked_val: res.data.notice_model && res.data.notice_model,
@@ -77,14 +71,44 @@ export default class NotificationSettingsModal extends Component {
 										notice_way_data: res.data.notice_way_data
                 })
                 // 将拿回来的数据进行操作返回
-                let { notice_setting_list } = this.state
+								let { notice_setting_list, notice_way_data, notice_model, user_detail_setting_options, user_simple_setting_options, default_detail_options, default_simple_options } = this.state
+								const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+								const { email, wechat } = userInfo
+								let new_way_data = [...notice_way_data]
+								// 对任务, 流程等默认设置的状态进行操作
                 notice_setting_list = notice_setting_list.map(item => {
                     let new_item = item
                     new_item = {...item, is_show_down_arrow: true}// 1 代表开启的状态
                     return new_item
-                })
+								})
+								// 对推送进行的判断操作
+								new_way_data = new_way_data.map(item => {
+									let new_item = item
+									if (item.key == 'is_notice_mail') {
+										new_item = {...item, disabled: email ? false : true}
+									} else if (item.key == 'is_notice_mp') {
+										new_item = {...item, disabled: wechat ? false : true}
+									} else {
+										new_item = {...item, disabled: false}
+									}
+									return new_item
+								})
+								// 比较用户设置和默认设置是否相等, 不相等要显示还原的操作
+								if (notice_model == '1') {
+									let flag = this.compareDiffArr(user_detail_setting_options, default_detail_options)
+									console.log(flag, 'sssss')
+									this.setState({
+										is_detail_none: flag ? 'none' : 'inline-block' 
+									})
+								} else if (notice_model == '2') {
+									let flag = this.compareDiffArr(user_simple_setting_options, default_simple_options)
+									this.setState({
+										is_simple_none: flag ? 'none' : 'inline-block'
+									})
+								}
                 this.setState({
-                    notice_setting_list,
+										notice_setting_list,
+										notice_way_data: new_way_data,
                 })
                 
             } else {
@@ -395,7 +419,7 @@ export default class NotificationSettingsModal extends Component {
 					}
 					// return status_val
 				}
-				// console.log(is_way_status, status_val, 'sssss')
+				// console.log(notice_way_data, 'sssss')
 
         const settingContain = (
             <div className={styles.wrapper}>
@@ -408,7 +432,9 @@ export default class NotificationSettingsModal extends Component {
 															notice_way_data && notice_way_data.map(item => {
 																return (
 																	<Col span={8}>
-																		<Checkbox onChange={this.chgMovemenet} value={item.key}>{item.name}</Checkbox>
+																		<Checkbox disabled={item.disabled} onChange={this.chgMovemenet} value={item.key}>
+																			{item.name}
+																		</Checkbox>
 																	</Col>
 																)
 															})
