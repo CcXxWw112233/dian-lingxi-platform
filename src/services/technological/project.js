@@ -91,7 +91,7 @@ export async function getCurrentProjectGroupProjectList(params) {
       group_id,
       keyword,
       org_id,
-      _organization_id: org_id
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
