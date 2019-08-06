@@ -38,7 +38,7 @@ export default class GroupListHead extends Component {
           const { list_name, list_id, list_data = [] } = value
           return (
             <div key={list_id}>
-              <GroupListHeadItem itemValue={value} itemKey={key} />
+              <GroupListHeadItem itemValue={value} itemKey={key}  rows={group_rows[key]}/>
               {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
             </div>
           )

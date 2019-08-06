@@ -21,28 +21,23 @@ export default class GanttFace extends Component {
       viewModal: '2', //视图模式1周，2月，3年
       target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
-      local_project_tab_current_selected_project: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
+      local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
     }
     this.ganttScroll = this.ganttScroll.bind(this)
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
 
   componentDidMount() {
-    const { projectTabCurrentSelectedProject } = this.props
+    const { gantt_board_id } = this.props
     this.setState({
-      local_project_tab_current_selected_project: projectTabCurrentSelectedProject
+      local_gantt_board_id: gantt_board_id
     })
     this.setGoldDateArr({init: true})
-    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.initSetScrollPosition()
     this.setGanTTCardHeight()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
-  componentWillReceiveProps (nextProps) {
-    const { projectTabCurrentSelectedProject } = nextProps
-    const { local_project_tab_current_selected_project } = this.state
-  }
-
+ 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setGanTTCardHeight, false)
   }

@@ -37,13 +37,32 @@ export default class GroupListHeadSet extends Component {
             dropdownVisible: bool
         })
     }
+    //返回
+    backClick = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                gantt_board_id: '0'
+            }
+        })
+        dispatch({
+            type: 'gantt/getGanttData',
+            payload: {
+
+            }
+        })
+    }
     render() {
         const { dropdownVisible } = this.state
-        const { target_scrollLeft, target_scrollTop, group_view_type='1' } = this.props
+        const { target_scrollLeft, target_scrollTop, group_view_type='1', gantt_board_id = '0' } = this.props
         const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
         return (
             <div className={indexStyles.groupHeadSet} style={{ left: target_scrollLeft, top: target_scrollTop}}>
                 <div className={indexStyles.set_content}>
+                   {gantt_board_id != '0' && (
+                       <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
+                   )}                 
                    <div className={indexStyles.set_content_left}>
                       <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '1' && selected}`}>&#xe604;</div>
                       <div onClick={() => this.setGroupViewType('2')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}>&#xe7b2;</div>
@@ -64,6 +83,6 @@ export default class GroupListHeadSet extends Component {
         )
     }
 }
-function mapStateToProps({ gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type } }, }) {
-    return { target_scrollLeft, target_scrollTop, group_view_type }
+function mapStateToProps({ gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id } }, }) {
+    return { target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id }
 }

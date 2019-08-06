@@ -42,12 +42,14 @@ export default {
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
 
+      gantt_board_id: '0', //甘特图查看的项目id
       group_view_type: '1', //分组视图1项目， 2成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤成员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
+      get_gantt_data_loading: false, //是否在请求甘特图数据状态
     },
   },
   subscriptions: {
@@ -69,12 +71,6 @@ export default {
   effects: {
     * getGanttData({payload}, {select, call, put}){
       // 参数处理
-      const { tab_board_id } = payload
-      let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
-      
-      if(tab_board_id) {
-        projectTabCurrentSelectedProject = tab_board_id
-      }
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
@@ -82,8 +78,8 @@ export default {
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
       const group_view_boards_tree = yield select(getModelSelectDatasState('gantt', 'group_view_boards_tree'))
       const group_view_users_tree = yield select(getModelSelectDatasState('gantt', 'group_view_users_tree'))
+      const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
-      
       //内容过滤处理
       const setContentFilterParams = () => {
         let  query_board_ids =  []
@@ -148,10 +144,22 @@ export default {
         chart_type: group_view_type,
         ...setContentFilterParams(),
       }
-      if(projectTabCurrentSelectedProject != '0' && projectTabCurrentSelectedProject) {
-        params.board_id = projectTabCurrentSelectedProject
+      if(gantt_board_id != '0' && gantt_board_id) {
+        params.board_id = gantt_board_id
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          get_gantt_data_loading: true,
+        }
+      })
       const res = yield call(getGanttData, params)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          get_gantt_data_loading: false,
+        }
+      })
       // console.log('sssss', {res})
       if(isApiResponseOk(res)){
         yield put({
@@ -185,7 +193,7 @@ export default {
           list_name: val['lane_name'],
           list_id: val['lane_id'],
           list_data: [],
-          list_no_time_data: val['lane_data']['card_no_time'] || []
+          list_no_time_data: val['lane_data']['card_no_times'] || []
         }
         if(val['lane_data']['cards']) {
           for(let val_1 of val['lane_data']['cards']) {
@@ -286,20 +294,16 @@ export default {
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 
-      const { tab_board_id } = payload
-      let projectTabCurrentSelectedProject = yield select(workbench_projectTabCurrentSelectedProject)
+      const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
-      if(tab_board_id) {
-        projectTabCurrentSelectedProject = tab_board_id
-      }
       const params = {
-        board_id: projectTabCurrentSelectedProject,
+        board_id: gantt_board_id,
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
       }
 
-      if(getGlobalData('aboutBoardOrganizationId') == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+      if(gantt_board_id == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
         return
       }
 

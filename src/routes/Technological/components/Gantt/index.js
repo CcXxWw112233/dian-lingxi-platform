@@ -74,9 +74,9 @@ class Gantt extends Component{
   };
   addTaskModalVisibleChange = flag => {
     const { projectGroupListsIsRequest } = this.state
-    const { datas: { projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
-    if(projectTabCurrentSelectedProject !== '0') {
-      this.setBoardUsers(projectTabCurrentSelectedProject)
+    const { datas: { gantt_board_id, current_list_group_id } } = this.props.model
+    if(gantt_board_id !== '0') {
+      this.setBoardUsers(gantt_board_id)
     } else {
       this.setBoardUsers(current_list_group_id)
     }
@@ -115,7 +115,7 @@ class Gantt extends Component{
       .catch(err => console.log(err));
   }
   handleGetNewTaskParams(data) {
-    const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+    const { datas: { create_start_time, create_end_time, current_list_group_id } } = this.props.model
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -129,11 +129,11 @@ class Gantt extends Component{
       name: data['name'],
       type: data['type'],
     }
-    if(projectTabCurrentSelectedProject == '0') {
+    if(gantt_board_id == '0') {
       param.board_id = current_list_group_id
       param.list_id = data['list_id']
     } else {
-      param.board_id = projectTabCurrentSelectedProject
+      param.board_id = gantt_board_id
       param.list_id = current_list_group_id
     }
     this.addNewTask(param)
@@ -145,9 +145,9 @@ class Gantt extends Component{
   //修改某一个任务
   handleChangeCard({card_id,drawContent}) {
     const { dispatch } = this.props
-    const { datas: { list_group = [], projectTabCurrentSelectedProject, current_list_group_id, board_id }} = this.props.model
+    const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id }} = this.props.model
     const list_group_new = [...list_group]
-    if(projectTabCurrentSelectedProject == '0') {
+    if(gantt_board_id == '0') {
       for(let i = 0; i < list_group_new.length; i++ ) {
         if(board_id == list_group_new[i].list_id) {
           for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
@@ -191,7 +191,7 @@ class Gantt extends Component{
     const { datas = {} } = model;
     const {
       projectList = [],
-      projectTabCurrentSelectedProject,
+      gantt_board_id,
       current_list_group_id,
       currentSelectedProjectMembersList = []
     } = datas;
@@ -509,7 +509,7 @@ class Gantt extends Component{
         <GanttFace
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          gantt_board_id={gantt_board_id}
         />
         <FileDetailModal
           {...this.props}
@@ -546,15 +546,15 @@ class Gantt extends Component{
               this
             )}
             isUseInGantt
-            projectIdWhenUseInGantt={projectTabCurrentSelectedProject=='0'?current_list_group_id:projectTabCurrentSelectedProject}
+            projectIdWhenUseInGantt={gantt_board_id=='0'?current_list_group_id:gantt_board_id}
             projectMemberListWhenUseInGantt={currentSelectedProjectMembersList}
-            projectGroupListId={projectTabCurrentSelectedProject=='0'?'':current_list_group_id}
+            projectGroupListId={gantt_board_id=='0'?'':current_list_group_id}
 
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
             modalTitle="添加任务"
             taskType="RESPONSIBLE_TASK"
             getNewTaskInfo={this.getNewTaskInfo}
-            projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+            projectTabCurrentSelectedProject={gantt_board_id}
             projectList={projectList}
             addTaskModalVisible={addTaskModalVisible}
             addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}

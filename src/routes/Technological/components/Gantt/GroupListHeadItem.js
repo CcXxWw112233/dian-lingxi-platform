@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { Tooltip, Icon } from 'antd'
+import { Avatar, Icon } from 'antd'
 import { getOrgNameWithOrgIdFilter } from '../../../../utils/businessFunction';
 import globalStyles from  '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
@@ -37,17 +37,7 @@ export default class GroupListHeadItem extends Component {
       isShowBottDetail: new_isShowBottDetail
     })
   }
-  funTransitionHeight = function(element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle === "undefined") return;
-      const height = window.getComputedStyle(element).height;
-      element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
-      element.style.height = "auto";
-      const targetHeight = window.getComputedStyle(element).height;
-      element.style.height = height;
-      element.offsetWidth;
-      if (time) element.style.transition = "height "+ time +"ms";
-      element.style.height = type ? targetHeight : 0;
-  };
+  
   renderTaskItem = () => {
     const { itemValue = {} } = this.props
     const { list_no_time_data = [] } = itemValue
@@ -59,39 +49,74 @@ export default class GroupListHeadItem extends Component {
         <div className={indexStyles.no_time_card_area}>
           {
             list_no_time_data.map((value, key) => {
-              const { name, id, is_realize } = value || {}
+              const { name, id, is_realize, executors=[] } = value || {}
               const users = [{name: '111', avatar: '', user_id: '1111'},{name: '11321', avatar: '', user_id: '121111'},{name: '111', avatar: '', user_id: '11311'},{name: '111', avatar: '', user_id: '11211'}]
               return (
-               
                 <div className={indexStyles.no_time_card_area_card_item} key={id}>
-                  <div className={` ${indexStyles.card_item_status} `}>
+                  <div className={`${indexStyles.card_item_status}`}>
                     <CheckItem is_realize={is_realize} />
                   </div>
-                  <div  className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}>{name}</div>
-                  <div><AvatarList users={users} size={'small'}/></div>
+                  <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}>{name}</div>
+                  <div>
+                    <AvatarList users={executors} size={'small'}/>
+                  </div>
                 </div>
               )
             })
           }
         </div>
       </div>
-
     )
+  }
+  //分组名点击
+  listNameClick = () => {
+    const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
+    // console.log('sssss', {itemValue, gantt_board_id, group_view_type})
+
+    if(group_view_type != '1' || gantt_board_id != '0') { //必须要在项目视图才能看
+      return
+    }
+    const { list_id } = itemValue
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        gantt_board_id: list_id
+      }
+    })
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+        
+      }
+    })
+    dispatch({
+      type: 'gantt/getGanttData',
+      payload: {
+
+      }
+    })
   }
   render() {
     
-    const { currentUserOrganizes = [], group_rows = [], ceiHeight, is_show_org_name, is_all_org } = this.props
+    const { currentUserOrganizes = [], group_rows = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name,  org_id, list_no_time_data = [] } = itemValue
+    const { list_name,  org_id, list_no_time_data = [], list_id, lane_icon } = itemValue
     const { isShowBottDetail } = this.state 
 
+    // console.log('sssss',{itemKey, group_rows, row: group_rows[itemKey], list_id })
+
     return (
-      <div className={indexStyles.listHeadItem} style={{ height: (group_rows[itemKey] || 2) * ceiHeight }}>
+      <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight }}>
         <div className={indexStyles.list_head_top}>
-          <span className={indexStyles.list_name}>{list_name}</span>
+          {
+            group_view_type == '2' && !get_gantt_data_loading &&  (
+              <Avatar src={lane_icon} icon="user" style={{marginTop: '-4px',marginRight: 8}}></Avatar>
+            )
+          }
+          <span className={indexStyles.list_name} onClick={this.listNameClick}>{list_name}</span>
           <span className={indexStyles.org_name}>
             {
-              is_show_org_name && is_all_org && (
+              is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && (
                 <span className={indexStyles.org_name}>
                   #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
                 </span>
@@ -116,8 +141,8 @@ export default class GroupListHeadItem extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  gantt: { datas: { group_rows = [], ceiHeight, } },
-  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
+  gantt: { datas: { group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading } },
+  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,  } },
 }) {
-  return { ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, }
+  return { ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading }
 }
