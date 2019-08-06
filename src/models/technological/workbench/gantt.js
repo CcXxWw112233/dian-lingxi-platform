@@ -136,11 +136,11 @@ export default {
         }
       }
 
-      console.log('ssssssssss', {
-        group_view_filter_boards,
-        group_view_filter_users,
-        ...setContentFilterParams()
-      })
+      // console.log('ssssssssss', {
+      //   group_view_filter_boards,
+      //   group_view_filter_users,
+      //   ...setContentFilterParams()
+      // })
 
       const params = {
         start_time: start_date['timestamp'],
@@ -401,7 +401,7 @@ export default {
         end_time: Number(end_date['timestamp']) / 1000,
       }
       const res = yield call(getHoliday, {...params})
-      console.log('ssssss', res)
+      // console.log('ssssss', res)
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

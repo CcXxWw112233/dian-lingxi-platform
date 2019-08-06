@@ -15,13 +15,16 @@ export default class DateList extends Component {
 
   constructor(props) {
     super(props)
-
+    this.state = {
+      add_lcb_modal_visible: false,
+      create_lcb_time: '',
+      miletone_detail_modal_visible: false
+    }
   }
 
-  state = {
-    add_lcb_modal_visible: false,
-    create_lcb_time: '',
-    miletone_detail_modal_visible: false
+
+  componentDidMount() {
+    this.getGttMilestoneList()
   }
   set_miletone_detail_modal_visible = () => {
     const { miletone_detail_modal_visible } = this.state
@@ -69,9 +72,6 @@ export default class DateList extends Component {
     })
   }
   
-  componentDidMount() {
-    this.getGttMilestoneList()
-  }
 
   //获取和日期对应上的里程碑列表
   getGttMilestoneList = () => {
@@ -140,6 +140,24 @@ export default class DateList extends Component {
     }
   }
 
+  // 获取某一天的农历或者节假日
+  getDateNoHolidaylunar = (timestamp) => {
+    const { holiday_list = [] } = this.props
+    let holiday = ''
+    let lunar = ''
+    for(let val of holiday_list) {
+      if(isSamDay(timestamp, Number(val['timestamp'] * 1000))) {
+        holiday = val['holiday']
+        lunar = val['lunar'] 
+        break
+      }
+    }
+    return {
+      holiday,
+      lunar: lunar || ' '
+    }
+  }
+
   render () {
     const {
       gold_date_arr = [],
@@ -167,17 +185,19 @@ export default class DateList extends Component {
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
                       <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}>
-                        <div key={`${month}/${date_no}`}>
-                          <div className={`${indexStyles.dateDetailItem}`} key={key2}>
-                            <div className={`${indexStyles.dateDetailItem_date_no} 
-                                  ${indexStyles.nomal_date_no}
-                                  ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
-                                  ${true && indexStyles.holiday_date_no}
-                                  ${has_lcb && indexStyles.has_moletones_date_no}`}>
-                              {date_no}
+                        <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
+                          <div key={`${month}/${date_no}`}>
+                            <div className={`${indexStyles.dateDetailItem}`} key={key2}>
+                              <div className={`${indexStyles.dateDetailItem_date_no} 
+                                    ${indexStyles.nomal_date_no}
+                                    ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
+                                    ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}
+                                    ${has_lcb && indexStyles.has_moletones_date_no}`}>
+                                {date_no}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </Tooltip>
                       </Dropdown>
                     )
                   })}
@@ -211,10 +231,10 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneMap = [] } },
+    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [] } },
     workbench: { datas: { projectList = [], projectTabCurrentSelectedProject, currentSelectedProjectMembersList = [] }}
   }){
-  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneMap }
+  return { gold_date_arr, list_group, target_scrollTop, projectList, projectTabCurrentSelectedProject, currentSelectedProjectMembersList, milestoneMap, holiday_list }
 }
 
 //  {/* {projectTabCurrentSelectedProject != '0' ? (
