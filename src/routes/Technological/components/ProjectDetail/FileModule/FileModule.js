@@ -9,12 +9,13 @@ import FileDetailModal from './FileDetail/FileDetailModal'
 
 export default class FileIndex extends React.Component {
   render() {
-    const { datas: { isInOpenFile }= false} = this.props.model
+    const { datas: { isInOpenFile } = false } = this.props.model;
+    const { marginTop = '20px' } = this.props;
     return (
       <div>
         {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
-        <div className={indexStyles.fileOut}>
-          <BreadCrumbFileNav {...this.props }/>
+        <div className={indexStyles.fileOut} style={{ marginTop: marginTop }}>
+          <BreadCrumbFileNav {...this.props} />
           <FileList {...this.props} />
           <MoveToDirectory {...this.props} />
         </div>
