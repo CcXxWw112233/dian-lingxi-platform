@@ -116,7 +116,6 @@ class WorkbenchPage extends Component {
     render() {
         const { workbenchBoxContentWapperModalStyle } = this.props;
         const { currentSelectedWorkbenchBox } = this.props;
-        console.log("workbenchBoxContentWapperModalStyle", workbenchBoxContentWapperModalStyle);
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
@@ -125,12 +124,12 @@ class WorkbenchPage extends Component {
 
                         {
                             this.state.BoardCommunicationVisible &&
-                            <BoardCommunication />
+                            <BoardCommunication/>
                         }
 
                         {
                             this.state.BoardFilesVisible &&
-                            <BoardFiles />
+                            <BoardFiles/>
                         }
 
                     </div>

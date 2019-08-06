@@ -595,7 +595,9 @@ class SiderRight extends React.Component {
               ) }
 
             </div>
-            <VideoMeetingPopoverContent />
+            <div className={indexStyles.videoMeetingWapper}>
+              <VideoMeetingPopoverContent />
+            </div>
             {/* <Popover
               visible={videoMeetingPopoverVisible}
               placement="leftBottom"

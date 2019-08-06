@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getFileList, getBoardFileList} from '@/services/technological/file'
+import { getFileList, getBoardFileList,getFolderList } from '@/services/technological/file'
 import { projectDetailInfo } from '@/services/technological/prjectDetail'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -37,7 +37,7 @@ export default {
         },
         * initSimpleWorkbenchboxCommData({ payload }, { call, put }) {
             const { route } = payload
-            
+
         },
         * getFileList({ payload }, { call, put }) {
             const { folder_id, board_id } = payload;
@@ -63,6 +63,23 @@ export default {
                 });
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+        * getFolderList({ payload }, { select, call, put }) {
+            const { board_id, calback } = payload
+            let res = yield call(getFolderList, { board_id })
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'simpleBoardCommunication/updateDatas',
+                    payload: {
+                        boardFolderTreeData: res.data
+                    }
+                })
+                if (typeof calback === 'function') {
+                    calback()
+                }
+            } else {
+
             }
         },
         * getBoardDetail({ payload }, { call, put }) {
@@ -92,7 +109,7 @@ export default {
             })
         },
 
-        //初始化进来 , 先根据项目详情获取默认 appsSelectKey，再根据这个appsSelectKey，查询操作相应的应用 ‘任务、流程、文档、招标、日历’等
+
         * initProjectDetailAndprojectDetailFile({ payload }, { select, call, put }) {
             const { id, entry } = payload //input 调用该方法入口
             setBoardIdStorage(id)
@@ -143,12 +160,18 @@ export default {
                 })
 
                 yield put({
+                    type: 'projectDetailFile/getFolderList',
+                    payload: {
+                        board_id: id
+                    }
+                })
+
+                yield put({
                     type: 'projectDetailFile/initialget',
                     payload: {
                         id
                     }
                 })
-
 
                 //缓存下来当前项目的权限
                 // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))

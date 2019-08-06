@@ -45,7 +45,7 @@ const SimpleHeader = (props) => {
                 <SiderLeft is_simplemode={true} collapsed={false} />
             }
 
-            <div className={indexStyles.chatWapper} style={{ display: `${chatImVisiable ? 'inline' : 'none'}` }}>
+            <div className={indexStyles.chatWapper} style={{ display: `${chatImVisiable ? '' : 'none'}` }}>
                 <div className={indexStyles.chatHeader}>
                     <div className={indexStyles.menu} onClick={openOrCloseImChatModal}>
                         <i className={`${globalStyles.authTheme}`} style={{ color: '#1890FF', fontSize: '24px' }}>&#xe7f4;</i>

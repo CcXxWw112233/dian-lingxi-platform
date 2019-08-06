@@ -526,6 +526,7 @@ class FileDetailContent extends React.Component {
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
     let {componentHeight, componentWidth } = this.props
+
     if(!componentHeight && !componentWidth){
       const container_fileDetailOut = document.getElementById('container_fileDetailOut');
       const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;

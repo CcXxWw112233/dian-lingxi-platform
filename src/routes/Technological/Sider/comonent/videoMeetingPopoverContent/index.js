@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import indexStyles from '../../index.less'
+import indexStyles from './index.less'
 import {
     Popover,
     Select,

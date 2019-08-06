@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
-import dva, { connect } from "dva/index"
+import { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
-import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
+import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
+import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
+import axios from 'axios'
+import Cookies from 'js-cookie'
 import {
     checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
-    setBoardIdStorage, getOrgNameWithOrgIdFilter
+    setBoardIdStorage, getOrgNameWithOrgIdFilter, setUploadHeaderBaseInfo
 } from "@/utils/businessFunction";
 import { isApiResponseOk } from "@/utils/handleResponseData";
-import { getFileList, getBoardFileList } from '@/services/technological/file'
+import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
+
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
+const { Dragger } = Upload;
 
 
 const getEffectOrReducerByName = name => `technological/${name}`
@@ -28,6 +33,8 @@ class BoardCommunication extends Component {
         currentfile: {},
         selectBoardFileCompleteDisabled: true,
         previewFileModalVisibile: false,
+        is_selectFolder: false,
+        awaitUploadFile: {}
 
     };
 
@@ -68,9 +75,19 @@ class BoardCommunication extends Component {
         return list;
     }
 
-    selectBoardFile = () => {
+    selectBoardFile = (e) => {
+        e.stopPropagation();
         this.setState({
-            selectBoardFileModalVisible: true
+            selectBoardFileModalVisible: true,
+            is_selectFolder: false
+        });
+    }
+
+    uploadToBoardFolder = (e) => {
+        e.stopPropagation();
+        this.setState({
+            selectBoardFileModalVisible: true,
+            is_selectFolder: true
         });
     }
 
@@ -96,6 +113,7 @@ class BoardCommunication extends Component {
     onSelectBoard = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
+        const { is_selectFolder } = this.state;
         if (keys.length > 0) {
             const boardId = keys[0]
             setBoardIdStorage(boardId);
@@ -106,13 +124,23 @@ class BoardCommunication extends Component {
                     currentBoardDetail: this.getSelectBoardBaseInfo(boardId)
                 }
             });
-            dispatch({
-                type: 'simpleWorkbenchbox/getFileList',
-                payload: {
-                    board_id: boardId
+            if (is_selectFolder) {
+                dispatch({
+                    type: 'simpleWorkbenchbox/getFolderList',
+                    payload: {
+                        board_id: boardId
+                    }
+                });
+            } else {
+                dispatch({
+                    type: 'simpleWorkbenchbox/getFileList',
+                    payload: {
+                        board_id: boardId
 
-                }
-            });
+                    }
+                });
+            }
+
             this.setState({
                 selectBoardDropdownVisible: false,
                 currentfile: {}
@@ -125,6 +153,19 @@ class BoardCommunication extends Component {
 
     onSelectFile = (keys, event) => {
         //console.log('Trigger Select', keys, event);
+        const { dispatch } = this.props;
+        const fileId = keys[0]
+        console.log("selectedNodes", event.selectedNodes[0].props.title);
+
+        this.setState({
+            selectBoardFileDropdownVisible: false,
+            currentfile: { fileId: fileId, fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
+            selectBoardFileCompleteDisabled: false
+        });
+    };
+
+    onSelectFolder = (keys, event) => {
+        console.log('文件夹', keys, event);
         const { dispatch } = this.props;
         const fileId = keys[0]
         console.log("selectedNodes", event.selectedNodes[0].props.title);
@@ -161,7 +202,7 @@ class BoardCommunication extends Component {
     async onLoadFileTreeData(treeNode) {
 
         const { dispatch, currentBoardDetail = {}, simpleBoardCommunication = {} } = this.props;
-        const { boardFileTreeData = {}} = simpleBoardCommunication;
+        const { boardFileTreeData = {} } = simpleBoardCommunication;
 
         const res = await getBoardFileList({ board_id: currentBoardDetail.board_id, folder_id: treeNode.props.eventKey });
         if (isApiResponseOk(res)) {
@@ -174,32 +215,14 @@ class BoardCommunication extends Component {
                     boardFileTreeData: boardFileTreeData
                 }
             });
-            
+
         }
-        // return (new Promise(resolve => {
-        //     if (treeNode.props.children) {
-        //         resolve();
-        //         return;
-        //     }
-        //     setTimeout(() => {
-        //         treeNode.props.dataRef.children = [
-        //             { title: 'Child Node', key: `${treeNode.props.eventKey}-0` },
-        //             { title: 'Child Node', key: `${treeNode.props.eventKey}-1` },
-        //         ];
-        //         this.setState({
-        //             boardFileTreeData: [...this.state.boardFileTreeData],
-        //         });
-        //         resolve();
-        //     }, 1000);
-        // }));
-
-
     }
 
 
 
-    renderTreeNodes = data =>
-        data.map(item => {
+    renderTreeNodes = data => {
+        return data.map(item => {
             if (item.children) {
                 return (
                     <TreeNode title={item.title} key={item.key} dataRef={item} selectable={false} >
@@ -209,6 +232,20 @@ class BoardCommunication extends Component {
             }
             return <TreeNode {...item} dataRef={item} />;
         });
+    }
+
+    renderFolderTreeNodes = data => {
+        return data.map(item => {
+            if (item.child_data) {
+                return (
+                    <TreeNode title={item.folder_name} key={item.folder_id} dataRef={item} >
+                        {this.renderFolderTreeNodes(item.child_data)}
+                    </TreeNode>
+                );
+            }
+            return <TreeNode {...item} dataRef={item} />;
+        });
+    }
 
     renderSelectBoardTreeList = () => {
         const { allOrgBoardTreeList = [] } = this.props;
@@ -231,15 +268,22 @@ class BoardCommunication extends Component {
     }
 
     renderSelectBoardFileTreeList = () => {
-        const { boardFileTreeData = {} } = this.props.simpleBoardCommunication;
-        //const boardFileTreeData = this.getBoardFileTreeData(boardFileListData);
-
+        const { boardFileTreeData = [], boardFolderTreeData = [] } = this.props.simpleBoardCommunication;
+        const { is_selectFolder } = this.state;
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                    <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile}>
-                        {this.renderTreeNodes(boardFileTreeData)}
-                    </DirectoryTree>
+                    {
+                        is_selectFolder ?
+                            <DirectoryTree onSelect={this.onSelectFolder}>
+                                {this.renderFolderTreeNodes([boardFolderTreeData])}
+                            </DirectoryTree>
+                            :
+                            <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
+                                {this.renderTreeNodes(boardFileTreeData)}
+                            </DirectoryTree>
+                    }
+
                 </div>
             </>
         );
@@ -449,38 +493,181 @@ class BoardCommunication extends Component {
         })
     }
 
+    onBeforeUpload = (file, fileList) => {
+        console.log("上车前");
+        this.setState(state => ({
+            awaitUploadFile: file,
+            selectBoardFileModalVisible: true,
+            is_selectFolder: true
+        }));
+        return false;
+    }
+
+    handleUpload = () => {
+        const { awaitUploadFile, currentfile = {} } = this.state;
+        const { currentBoardDetail = {} } = this.props;
+        console.log(currentfile);
+        const formData = new FormData();
+        formData.append("file", awaitUploadFile);
+        this.setState({
+            selectBoardFileModalVisible: false,
+        });
+        // You can use any AJAX library you like
+        axios({
+            url: `${REQUEST_DOMAIN_FILE}/file/upload`,
+            method: 'post',
+            //processData: false,
+            data: formData,
+            headers: {
+                Authorization: Cookies.get('Authorization'),
+                refreshToken: Cookies.get('refreshToken'),
+                ...setUploadHeaderBaseInfo({}),
+            },
+            params: {
+                board_id: currentBoardDetail.board_id,
+                folder_id: currentfile.fileId,
+                type: '1',
+                upload_type: '1'
+            }
+        }).then(res => {
+            console.log(res);
+            this.setState({
+                awaitUploadFile: {},
+                uploading: false,
+            });
+            const apiResult = res.data;
+            if (isApiResponseOk(apiResult)) {
+                const { dispatch, currentBoardDetail } = this.props;
+                const fileId = apiResult.data.id
+                axios({
+                    url: `${REQUEST_DOMAIN_FILE}/file/info/${fileId}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: Cookies.get('Authorization'),
+                        refreshToken: Cookies.get('refreshToken'),
+                        ...setUploadHeaderBaseInfo({}),
+                    }
+                }).then(fileInfoRes => {
+
+                    const fileInfoApiResult = fileInfoRes.data
+                    if (isApiResponseOk(fileInfoApiResult)) {
+                        const id = fileId;
+                        const { board_id } = currentBoardDetail;
+                        const { base_info } = fileInfoApiResult.data;
+                        dispatch({
+                            type: 'workbenchFileDetail/getCardCommentListAll',
+                            payload: {
+                                id: id
+                            }
+                        });
+                        dispatch({
+                            type: 'workbenchFileDetail/getFileType',
+                            payload: {
+                                file_id: id
+                            }
+                        });
+
+                        this.setState({
+                            selectBoardFileModalVisible: false,
+                            previewFileModalVisibile: true
+                        });
+                        this.getFileModuleProps().updateFileDatas({
+                            seeFileInput: 'fileModule',
+                            board_id,
+                            filePreviewCurrentId: base_info.file_resource_id,
+                            currentParrentDirectoryId: base_info.folder_id,
+                            filePreviewCurrentFileId: fileId,
+                            filePreviewCurrentVersionId: base_info.file_id, //file_id,
+                            pdfDownLoadSrc: '',
+                        });
+                        if (getSubfixName(base_info.file_name) == '.pdf') {
+                            dispatch({
+                                type: 'workbenchFileDetail/getFilePDFInfo',
+                                payload: {
+                                    id
+                                }
+                            })
+                        } else {
+                            this.getFileModuleProps().filePreview({ id: base_info.file_resource_id, file_id: id })
+                        }
+                        this.getFileModuleProps().fileVersionist({
+                            version_id: base_info.file_id, //file_id,
+                            isNeedPreviewFile: false,
+                        })
+                        this.updatePublicDatas({ board_id })
+                        this.getFileModuleProps().getBoardMembers({ id: board_id })
+                    }
+                }).catch((error, e) => {
+                    console.log(error);
+
+                    this.setState({
+                        uploading: false,
+                    });
+                    message.error('upload failed.');
+                })
+
+                this.setState({
+                    selectBoardFileCompleteDisabled: false
+                });
+                message.success('upload successfully.');
+            }
+
+        }).catch((error, e) => {
+            console.log(error);
+
+            this.setState({
+                uploading: false,
+            });
+            message.error('upload failed.');
+        });
+    }
+
+    getDraggerProps = () => {
+        return {
+            name: 'file',
+            multiple: false,
+            withCredentials: true,
+        };
+    }
+
+
     render() {
         const { currentBoardDetail = {} } = this.props;
-        const { currentfile = {} } = this.state;
+        const { currentfile = {}, is_selectFolder } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
+        // console.log(zommPictureComponentWidth,zommPictureComponentHeight);
+
         return (
             <div className={indexStyles.boardCommunicationWapper}>
                 {
                     this.state.previewFileModalVisibile && (
-<FileDetail
-                        {...this.props}
-                        updateDatasFile={this.updateDatasFile}
-                        updatePublicDatas={this.updatePublicDatas}
-                        {...this.getFileModuleProps()}
-                        offsetTopDeviation={85}
-                        modalTop={0}
-                        setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
-                        componentHeight={zommPictureComponentHeight}
-                        componentWidth={zommPictureComponentWidth} />
-)}
+                        <FileDetail
+                            {...this.props}
+                            updateDatasFile={this.updateDatasFile}
+                            updatePublicDatas={this.updatePublicDatas}
+                            {...this.getFileModuleProps()}
+                            offsetTopDeviation={85}
+                            modalTop={0}
+                            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
+                            componentHeight={zommPictureComponentHeight}
+                            componentWidth={zommPictureComponentWidth} />
+                    )}
                 {
                     !this.state.previewFileModalVisibile && (
-                        <div className={indexStyles.indexCoverWapper}>
-                            <div className={indexStyles.icon}>
-                                <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                        <Dragger {...this.getDraggerProps()}
+                            beforeUpload={this.onBeforeUpload}>
+                            <div className={indexStyles.indexCoverWapper}>
+                                <div className={indexStyles.icon}>
+                                    <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                                </div>
+                                <div className={indexStyles.descriptionWapper}>
+                                    <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                    <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                                </div>
                             </div>
-                            <div className={indexStyles.descriptionWapper}>
-                                <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                                <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                            </div>
-                        </div>
+                        </Dragger>
                     )}
 
                 <Modal
@@ -488,10 +675,16 @@ class BoardCommunication extends Component {
                     bodyStyle={{ padding: '0px' }}
                     footer={
                         <div style={{ width: '100%' }}>
-                            <Button type="primary" disabled={this.state.selectBoardFileCompleteDisabled} style={{ width: '100%' }} onClick={this.openFileModal}>完成</Button>
+                            {
+                                !is_selectFolder && <Button type="primary" disabled={this.state.selectBoardFileCompleteDisabled} style={{ width: '100%' }} onClick={this.openFileModal}>完成</Button>
+                            }
+                            {
+                                is_selectFolder && <Button type="primary" disabled={this.state.selectBoardFileCompleteDisabled} style={{ width: '100%' }} onClick={this.handleUpload}>开始上传</Button>
+                            }
+
                         </div>
                     }
-                    title={<div style={{ textAlign: 'center' }}>{'选择文件'}</div>}
+                    title={<div style={{ textAlign: 'center' }}>{is_selectFolder ? '选择上传文件夹' : '选择文件'}</div>}
                     visible={this.state.selectBoardFileModalVisible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
@@ -505,7 +698,7 @@ class BoardCommunication extends Component {
                             visible={this.state.selectBoardDropdownVisible}>
                             <div className={indexStyles.dropdownLinkWapper}>
                                 <span style={{ display: 'block', width: '28px' }}>项目</span>
-                                <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
+                                <span className={indexStyles.dropdownLink}>
                                     {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
                                 </span>
                             </div>
@@ -519,8 +712,13 @@ class BoardCommunication extends Component {
                             onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
                             visible={this.state.selectBoardFileDropdownVisible}>
                             <div className={indexStyles.dropdownLinkWapper}>
-                                <span style={{ display: 'block', width: '28px' }}>文件</span>
-                                <span className="ant-dropdown-link" style={{ display: 'block', width: '196px' }}>
+                                {is_selectFolder ?
+                                    <span style={{ display: 'block', width: '44px' }}>文件夹</span>
+                                    :
+                                    <span style={{ display: 'block', width: '28px' }}>文件</span>
+                                }
+
+                                <span className={indexStyles.dropdownLink}>
                                     {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
                                 </span>
                             </div>
