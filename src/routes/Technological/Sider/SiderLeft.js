@@ -39,8 +39,16 @@ export default class SiderLeft extends React.Component {
     }
   }
   componentDidMount() {
-
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        is_all_org: localStorage.getItem('OrganizationId') == '0',
+        // is_show_org_name: false,
+      }
+    })
   }
+
   setCollapsed(collapsed) {
     if(this.state.is_simplemode){
       this.setState({
@@ -141,6 +149,7 @@ export default class SiderLeft extends React.Component {
     const { key } = e
     const { is_disabled } = this.state
     const { currentUserOrganizes = [] } = this.props
+    const { id } = currentUserOrganizes
     const { dispatch, is_show_org_name } = this.props
      //是否拥有查看成员入口
      const isHasMemberView = () => {
@@ -279,7 +288,7 @@ export default class SiderLeft extends React.Component {
 
   // 是否显示全部组织
   handleShowAllOrg(checked) {
-    const { dispatch, is_show_org_name } = this.props
+    const { dispatch, is_show_org_name, is_all_org } = this.props
     const { is_disabled } = this.state
     dispatch({
       type: 'technological/updateDatas',
@@ -290,7 +299,7 @@ export default class SiderLeft extends React.Component {
     dispatch({
       type: 'technological/getSetShowOrgName',
       payload: {
-        preference_show_org_name: checked ? '1' : '0'
+        preference_show_org_name: is_all_org && checked ? '1' : '0'
       }
     })
   }
@@ -298,6 +307,7 @@ export default class SiderLeft extends React.Component {
 
   render() {
     const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    console.log(is_all_org, 'sssss')
     let temp = []
     menuList.forEach((item) => {
       if(item.status === '1') {
@@ -445,7 +455,7 @@ export default class SiderLeft extends React.Component {
                   <Switch
                       style={{ display: 'inline-block', marginLeft: 8 }} 
                       onClick={ (checked) => { this.handleShowAllOrg(checked) } }
-                      defaultChecked={is_show_org_name}  
+                      checked={is_show_org_name}  
                     ></Switch>
                     {/* 这是控制禁用的状态逻辑(保留) */}
                     {/* {
