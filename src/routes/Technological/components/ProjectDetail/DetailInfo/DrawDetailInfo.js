@@ -11,6 +11,7 @@ import NoPermissionUserCard from './../../../../../components/NoPermissionUserCa
 import UserCard from './../../../../../components/UserCard/index'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import DynamicContain from './component/DynamicContain'
+import { getProjectDynamicsList } from '@/services/technological/newsDynamic.js'
 
 const TextArea = Input.TextArea
 
@@ -19,12 +20,42 @@ const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使
 
 export default class DrawDetailInfo extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.onScroll = this.onScroll.bind(this)
+  }
+
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
     isSoundsEvrybody_2: false, //edit是否通知项目所有人
     editDetaiDescription: false, //是否处于编辑状态
     detaiDescriptionValue: detaiDescription,
-    ShowAddMenberModalVisibile: false
+    ShowAddMenberModalVisibile: false, 
+    dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
+  }
+
+  onScroll(e) {
+    window.addEventListener('scroll', this.dynamicScroll(e))
+  }
+
+  dynamicScroll = (e) => {
+    let infoTop = e && e.target.scrollTop // 滚动的距离
+    let dynamicTop = this.refs.dynamic_header.offsetTop // 导航条距离顶部的距离
+    console.log(infoTop, dynamicTop, infoTop >= dynamicTop - 66, 'ssssss')
+    // 当滚动的距离大于导航条距离顶部的距离, 就固定
+    if (infoTop > 200) {
+      this.setState({
+        dynamic_header_sticky: true,
+      })
+    } else {
+      this.setState({
+        dynamic_header_sticky: false,
+      })
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.dynamicScroll())
   }
 
   handleSetRoleMenuClick(props, { key }) {
@@ -122,8 +153,7 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   render() {
-
-    const { editDetaiDescription, detaiDescriptionValue } = this.state
+    const { editDetaiDescription, detaiDescriptionValue, dynamic_header_sticky } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
@@ -232,7 +262,7 @@ export default class DrawDetailInfo extends React.Component {
       </div>
     )
     return (
-      <div className={DrawDetailInfoStyle.detailInfoOut}>
+      <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`}  onScrollCapture={(e) => { this.onScroll(e) }} >
         <div className={DrawDetailInfoStyle.brief}>
           <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7f6;</span>
           <span>项目简介</span>
@@ -277,17 +307,22 @@ export default class DrawDetailInfo extends React.Component {
             }
           </div>
           <div className={DrawDetailInfoStyle.dynamic}>
-            <div style={{width: '100%', display: 'flex', alignItems:'center'}} className={DrawDetailInfoStyle.dynamic_header}>
-              <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
-              <span>项目动态</span>
-              <Tooltip title="过滤动态" placement="top">
-                <div className={DrawDetailInfoStyle.filter}>
-                  <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
-                </div>
-              </Tooltip>
+            <div  className={ dynamic_header_sticky ? DrawDetailInfoStyle.positionStyles : '' }>
+              <div 
+                style={{width: '100%', display: 'flex', alignItems:'center'}} 
+                ref="dynamic_header"
+                className={DrawDetailInfoStyle.dynamic_header}>
+                <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
+                <span>项目动态</span>
+                <Tooltip title="过滤动态" placement="top">
+                  <div className={DrawDetailInfoStyle.filter}>
+                    <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
+                  </div>
+                </Tooltip>
+              </div>
             </div>
             <div className={DrawDetailInfoStyle.dynamic_contain}>
-              <DynamicContain />
+              <DynamicContain {...this.props} board_id={board_id} />
             </div>
           </div>
         <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
