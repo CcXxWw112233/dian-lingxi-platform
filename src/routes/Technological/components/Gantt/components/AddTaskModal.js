@@ -3,89 +3,47 @@ import {
   Modal,
   Input,
   Button,
-  message,
-  Upload,
-  Cascader,
-  Tooltip,
-  notification,
-  Dropdown
 } from 'antd';
 import styles from './../../Workbench/CardContent/Modal/AddTaskModal.less';
 import { connect } from 'dva';
-import {
-  REQUEST_DOMAIN_BOARD,
-  UPLOAD_FILE_SIZE,
-  ORG_TEAM_BOARD_CREATE
-} from '@/globalset/js/constant';
-import { deleteUploadFile, getCurrentSelectedProjectMembersList } from '@/services/technological/workbench';
+import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench';
 import DropdownSelectWithSearch from './../../Workbench/CardContent/DropdownSelectWithSearch/index';
 import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
-import DateRangePicker from './../../Workbench/CardContent/DateRangePicker/index';
-import Cookies from 'js-cookie';
-import {
-  checkIsHasPermissionInBoard,
-  setStorage,
-  setBoardIdStorage,
-  checkIsHasPermission
-} from '@/utils/businessFunction';
-import {
-  MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FLOWS_FLOW_CREATE,
-  PROJECT_TEAM_CARD_CREATE
-} from '@/globalset/js/constant';
-import globalStyles from '@/globalset/css/globalClassName.less'
-
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 
 /* eslint-disable */
-@connect(({ workbench }) => ({ workbench }))
+@connect(({ gantt: { datas: { list_group }} }) => ({ list_group }))
 class AddTaskModal extends Component {
   constructor(props) {
     super(props);
     const {
-      projectList,
-      gantt_board_id,
-      isUseInGantt,
-      projectIdWhenUseInGantt,
-      projectGroupListId,
-      projectGroupLists,
-      currentSelectedprojectMemberListWhenUseInGantt,
+      about_apps_boards,
+      current_operate_board_id,
+      board_card_group_id,
+      about_group_boards,
     } = this.props;
     const findAndCheckCurrentSelectedProject = where => {
-      const result = projectList.find(
+      const result = about_apps_boards.find(
         item =>
           item.board_id === where &&
-          item.apps &&
-          item.apps.find(i => i.code === 'Tasks')
+          item.apps 
+          //  && item.apps.find(i => i.code === 'Tasks')
       );
       return result ? result : {};
     };
     const getCurrentSelectedProject = (
-      isUseInGantt,
-      projectIdWhenUseInGantt,
-      gantt_board_id
+      current_operate_board_id,
     ) => {
-      if (isUseInGantt) {
-        return findAndCheckCurrentSelectedProject(projectIdWhenUseInGantt);
-      }
-      return findAndCheckCurrentSelectedProject(
-        gantt_board_id
-      );
+        return findAndCheckCurrentSelectedProject(current_operate_board_id);
     };
-    const getCurrentSelectedProjectGroupListItem = (isUseInGantt, projectGroupListId, projectGroupLists, projectIdWhenUseInGantt) => {
-      if (!isUseInGantt) return {}
-      if (!projectGroupListId || !(projectGroupLists && projectGroupLists.length)) return {}
-      let list_data = (projectGroupLists.find(i => i.board_id == projectIdWhenUseInGantt) || {}).list_data || []
-      const list_data_item = list_data.find(i => i.list_id == projectGroupListId) || {}
+    const getCurrentSelectedProjectGroupListItem = (board_card_group_id, about_group_boards, current_operate_board_id) => {
+      if (!board_card_group_id || !(about_group_boards && about_group_boards.length)) return {}
+      let list_data = (about_group_boards.find(i => i.board_id == current_operate_board_id) || {}).list_data || []
+      const list_data_item = list_data.find(i => i.list_id == board_card_group_id) || {}
       return list_data_item
     }
 
-    const getCurrentSelectedProjectMember = (isUseInGantt, currentSelectedprojectMemberListWhenUseInGantt) => {
-      if(isUseInGantt) {
-        return currentSelectedprojectMemberListWhenUseInGantt
-      }
-      return []
-    }
+   
     this.state = {
       addTaskTitle: '',
       selectedOrg: {
@@ -93,55 +51,48 @@ class AddTaskModal extends Component {
         org_id: '',
       }, //选择的组织
       currentSelectedProject: getCurrentSelectedProject(
-        isUseInGantt,
-        projectIdWhenUseInGantt,
-        gantt_board_id
+        current_operate_board_id,
       ),
-      currentSelectedProjectMember: getCurrentSelectedProjectMember(isUseInGantt, currentSelectedprojectMemberListWhenUseInGantt),
-      currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(isUseInGantt, projectGroupListId, projectGroupLists, projectIdWhenUseInGantt)
+      currentSelectedProjectMembersList: [], //所选项目的成员列表
+      currentSelectedProjectMember: [], //已选项目的已选成员列表
+      currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(board_card_group_id, about_group_boards, current_operate_board_id)
     };
   }
   handleAddTaskModalOk = () => {};
   handleAddTaskModalCancel = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'workbench/emptyCurrentSelectedProjectMembersList'
-    });
-    dispatch({
-      type: 'workbench/emptyCurrentSelectedProjectFileFolderList'
-    });
     const { setAddTaskModalVisible } = this.props;
     setAddTaskModalVisible(false);
   };
+  // 选择分组
   handleSelectedProjectGroupItem = item => {
     this.setState({
       currentSelectedProjectGroupListItem: item
     });
   };
+  // 选择项目
   handleSelectedItem = item => {
-    const {
-      dispatch,
-      projectGroupLists,
-      handleShouldUpdateProjectGroupList
-    } = this.props;
-
+    console.log('ssssss', {item})
     this.setState(
       {
         currentSelectedProject: item,
         currentSelectedProjectGroupListItem: {}
       },
       () => {
-        dispatch({
-          type: 'workbench/fetchCurrentSelectedProjectMembersList',
-          payload: {
-            projectId: item.board_id
-          }
-        });
-        //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
-        handleShouldUpdateProjectGroupList();
+      this.getCurrentSelectedProjectMembersList({ projectId: item.board_id})
+      //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
       }
     );
   };
+  // 获取项目成员
+  getCurrentSelectedProjectMembersList = (data) => {
+    getCurrentSelectedProjectMembersList(data).then(res => {
+      if(isApiResponseOk(res)){
+        this.setState({
+          currentSelectedProjectMembersList: res.data
+        })
+      }
+     })
+  }
   getNewTaskParams = () => {
     const {
       addTaskTitle,
@@ -181,29 +132,32 @@ class AddTaskModal extends Component {
     });
   };
 
- 
-  componentWillReceiveProps(nextProps) {
-    const { addTaskModalVisible: nextAddTaskModalVisible } = nextProps;
-    const { addTaskModalVisible } = this.props;
-    if (addTaskModalVisible === false && nextAddTaskModalVisible) {
-      //如果是显示modal,那么就初始化当前的项目
-      const {
-        projectList,
-        gantt_board_id
-      } = this.props;
-      //如果当前的项目选择不是 "所有参与的项目", 并且用户的项目列表，有当前选择的项目，那么就去拉取当前项目的所有用户
-      const isProjectListExistCurrentSelectedProject = projectList.find(
-        item => item.board_id === gantt_board_id
-      );
-      if (
-        isProjectListExistCurrentSelectedProject &&
-        gantt_board_id !== '0'
-      ) {
-        this.setState({
-          currentSelectedProject: isProjectListExistCurrentSelectedProject
-        });
-      }
+  componentDidMount() {
+    const { current_operate_board_id, group_view_type } = this.props
+    if(group_view_type == '1') { //在项目视图下创建任务才会去主动拉取用户列表
+      this.getCurrentSelectedProjectMembersList({projectId: current_operate_board_id})
+    } else { 
+      this.setDefaultExcuser()
     }
+  }
+ 
+  // 如果是成员视图，则默认设置已选用户
+  setDefaultExcuser = () => {
+    const { list_group, group_view_type, current_list_group_id } = this.props
+    if(group_view_type == '2') {
+      const group = list_group.find(item => current_list_group_id == item.lane_id)
+      const user = {
+        full_name: group['lane_name'],
+        name: group['lane_name'],
+        id: group['lane_id'],
+        avatar: group['lane_icon']
+      }
+      this.handleSelectedItemChange([user])
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+  
   }
 
   render() {
@@ -213,19 +167,16 @@ class AddTaskModal extends Component {
       currentSelectedProjectMember,
       currentSelectedProjectGroupListItem,
       selectedOrg = {},
+      currentSelectedProjectMembersList,
     } = this.state;
     const {
-      projectList,
-      workbench: {
-        datas: {
-          currentSelectedProjectMembersList,
-        }
-      },
-      projectGroupLists,
-      isUseInGantt,
-      projectIdWhenUseInGantt,
-      projectMemberListWhenUseInGantt,
-      projectGroupListId
+      about_apps_boards,
+      about_group_boards,
+      about_user_boards,
+      group_view_type,
+      current_operate_board_id,
+      board_card_group_id,
+      current_list_group_id
     } = this.props;
 
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
@@ -237,8 +188,8 @@ class AddTaskModal extends Component {
       isHasTaskTitle() && isHasSelectedProject();
 
     const board_id = currentSelectedProject.board_id;
-    const findAndTransProjectGroupList = (projectGroupLists = [], board_id) => {
-      const isFinded = projectGroupLists.find(
+    const findAndTransProjectGroupList = (about_group_boards = [], board_id) => {
+      const isFinded = about_group_boards.find(
         item => item.board_id === board_id
       );
       if (!isFinded) return [];
@@ -249,17 +200,25 @@ class AddTaskModal extends Component {
       }));
     };
     const currentSelectedProjectGroupList = findAndTransProjectGroupList(
-      projectGroupLists,
+      about_group_boards,
       board_id
     );
    
     //有的项目没有开启目前的内容类型，将其过滤出去
-    const filteredNoThatTypeProject = projectList.filter(item => {
+    let filteredNoThatTypeProject = about_apps_boards.filter(item => {
       return (
-        item.apps && item.apps.find(i => i.code === 'Tasks')
+        item.apps //&& item.apps.find(i => i.code === 'Tasks')
       );
-    });
+    });   
+    if(group_view_type == '2') { //如果是用户视图，则需要过滤掉没有该操作 用户id的项目
+      filteredNoThatTypeProject = about_user_boards.filter(item => {
+        return(
+          item.users && item.users.find(i => i.id == current_list_group_id)
+        )
+      })
+    }
 
+    console.log('ssss', {filteredNoThatTypeProject})
 
     return (
       <Modal
@@ -275,8 +234,8 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
-              {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
-              {(isUseInGantt && projectMemberListWhenUseInGantt != '0')? (
+              {/*在项目视图下，必须选择了具体的项目*/}
+              {(group_view_type == '1' && !!current_operate_board_id)? (
                   <div className={styles.groupList__wrapper}>
                     {currentSelectedProject.board_name}
                   </div>
@@ -287,11 +246,11 @@ class AddTaskModal extends Component {
                     initSearchTitle="选择项目"
                     selectedItem={currentSelectedProject}
                     handleSelectedItem={this.handleSelectedItem}
-                    isShouldDisableDropdown={isUseInGantt && projectIdWhenUseInGantt}
+                    isShouldDisableDropdown={false}
                   />
               )}
-              {/*在甘特图中传递了项目id和任务分组id的情况下，会固定不允许选择*/}
-              {(isUseInGantt && projectMemberListWhenUseInGantt != '0' && !!projectGroupListId)?(
+              {/*在项目视图下，必须选择了具体的项目,在任务分组下创建任务*/}
+              {(group_view_type == '1'  && !!current_operate_board_id && !!board_card_group_id) ?(
                 <div className={styles.groupList__wrapper}>
                   {currentSelectedProjectGroupListItem.list_name}
                 </div>
@@ -306,7 +265,7 @@ class AddTaskModal extends Component {
                     isSearch={false}
                     isCanCreateNew={false}
                     isProjectGroupMode={true}
-                    isShouldDisableDropdown={isUseInGantt && currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                    isShouldDisableDropdown={currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
                   />
                 </div>
                )}
@@ -323,10 +282,7 @@ class AddTaskModal extends Component {
               <div className={styles.addTaskModalOperator}>
                 <DropdownMultipleSelectWithSearch
                   itemTitle={'执行人' }
-                  list={
-                    currentSelectedProject.board_id && !isUseInGantt
-                      ? currentSelectedProjectMembersList : isUseInGantt && projectMemberListWhenUseInGantt ? projectMemberListWhenUseInGantt : []
-                  }
+                  list = {currentSelectedProjectMembersList}
                   handleSelectedItemChange={this.handleSelectedItemChange}
                   currentSelectedProjectMember={currentSelectedProjectMember}
                 />
@@ -348,15 +304,13 @@ class AddTaskModal extends Component {
 }
 
 AddTaskModal.defaultProps = {
-  isUseInGantt: false, //是否是在甘特图使用
-  projectIdWhenUseInGantt: '', //如果是在甘特图中使用，那么传项目 id
-  projectGroupListId: '', //项目分组id
-  projectGroupLists: [], //当前选择项目任务分组列表
+  current_operate_board_id: '', //如果是在甘特图中使用，那么传项目 id
+  board_card_group_id: '', //项目的任务分组id
+  about_group_boards: [], //当前选择项目任务分组列表
   handleGetNewTaskParams: function() { //返回当前新建 modal 用户提交的所有参数
 
   },
   projectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，需要将当前选中的项目成员列表传入
-  currentSelectedprojectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，所有需要提前选中的人员列表
 };
 
 export default AddTaskModal;

@@ -1,4 +1,5 @@
 import { getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../services/technological/gantt'
+import { getProjectList, getProjectUserList }  from '../../../services/technological/workbench'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -19,6 +20,7 @@ import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
+import { getProjectGoupList } from '../../../services/technological/task';
 
 export default {
   namespace: 'gantt',
@@ -41,6 +43,11 @@ export default {
       target_scrollTop: 0 ,//总体滚动条偏离顶部滑动位置
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
+
+      about_apps_boards: [], //带app的项目列表
+      about_group_boards: [], //带分组的项目列表
+      about_user_boards: [], //带用户的项目列表
+
 
       gantt_board_id: '0', //甘特图查看的项目id
       group_view_type: '1', //分组视图1项目， 2成员
@@ -295,16 +302,17 @@ export default {
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+
+      if(gantt_board_id == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+        return
+      }
+
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const params = {
         board_id: gantt_board_id,
-        start_time: start_date['timestamp'],
-        end_time: end_date['timestamp'],
-      }
-
-      if(gantt_board_id == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
-        return
+        start_time: Number(start_date['timestamp'])/ 1000,
+        end_time: Number(end_date['timestamp']) / 1000,
       }
 
       const res = yield call(getGttMilestoneList, params)
@@ -414,7 +422,46 @@ export default {
           }
         })
       }
-    }
+    },
+    * getAboutAppsBoards({ payload }, { select, call, put }) {
+      let res = yield call(getProjectList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            about_apps_boards: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getAboutGroupBoards({ payload }, { select, call, put }) {
+      let res = yield call(getProjectGoupList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            about_group_boards: res.data
+          }
+        })
+      }else{
+
+      }
+    },
+    * getAboutUsersBoards({ payload }, { select, call, put }) {
+      let res = yield call(getProjectUserList, payload)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            about_user_boards: res.data
+          }
+        })
+      }else{
+
+      }
+    },
   },
 
   reducers: {
