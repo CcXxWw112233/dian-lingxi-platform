@@ -4,7 +4,7 @@ import {connect} from "dva/index";
 import GanttFace from './GanttFace'
 import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
-import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
+import AddTaskModal from './components/AddTaskModal';
 import {getProjectGoupList} from "../../../../services/technological/task";
 
 const getEffectOrReducerByName = name => `workbench/${name}`
@@ -88,10 +88,13 @@ class Gantt extends Component{
       })
       return false
     }
+    this.setAddTaskModalVisible(flag)
+  };
+  setAddTaskModalVisible = (flag) => {
     this.setState({
       addTaskModalVisible: flag
     });
-  };
+  }
   addNewTask(data) {
     const { dispatch } = this.props
     Promise.resolve(
@@ -115,7 +118,7 @@ class Gantt extends Component{
       .catch(err => console.log(err));
   }
   handleGetNewTaskParams(data) {
-    const { datas: { create_start_time, create_end_time, current_list_group_id } } = this.props.model
+    const { datas: { create_start_time, create_end_time, current_list_group_id, gantt_board_id } } = this.props.model
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -545,18 +548,18 @@ class Gantt extends Component{
             setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
               this
             )}
-            isUseInGantt
+            isUseInGantt={true}
             projectIdWhenUseInGantt={gantt_board_id=='0'?current_list_group_id:gantt_board_id}
             projectMemberListWhenUseInGantt={currentSelectedProjectMembersList}
             projectGroupListId={gantt_board_id=='0'?'':current_list_group_id}
 
             handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
-            modalTitle="添加任务"
-            taskType="RESPONSIBLE_TASK"
+           
             getNewTaskInfo={this.getNewTaskInfo}
-            projectTabCurrentSelectedProject={gantt_board_id}
+            gantt_board_id={gantt_board_id}
             projectList={projectList}
             addTaskModalVisible={addTaskModalVisible}
+            setAddTaskModalVisible={this.setAddTaskModalVisible}
             addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
             projectGroupLists={projectGroupLists}
             handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
