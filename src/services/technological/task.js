@@ -152,7 +152,7 @@ export async function archivedTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/archived`,
     method: 'PUT',
-    headers: createHeaderContentDataByCardId(data),
+    headers: createHeaderContentDataByCardId(data.card_id),
     data,
   });
 }
