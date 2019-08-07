@@ -1,4 +1,4 @@
-import { getNewsDynamicList, addCardNewComment, getNewsDynamicListActivity, getProjectDynamicsList } from '../../services/technological/newsDynamic'
+import { getNewsDynamicList, addCardNewComment, getNewsDynamicListActivity } from '../../services/technological/newsDynamic'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, notification } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
@@ -28,7 +28,6 @@ export default {
               newsList: [], //动态消息列表
               isHasMore: true, //是否还可以查询更多
               isHasNewDynamic: false, //是否有新消息
-              projectDynamicsList: [], // 项目动态消息列表
             }
           })
           dispatch({
@@ -156,7 +155,7 @@ export default {
     * getNewsDynamicListActivity({ payload }, { select, call, put }) { //获取评论列表
       const { next_id } = payload
       let res = yield call(getNewsDynamicListActivity, { next_id })
-      console.log(res, 'sssss')
+      // console.log(res, 'sssss')
       if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
         yield put({
           type: 'updateDatas',
@@ -178,7 +177,7 @@ export default {
           dateArray.push(timestampToTime(data[i]['created']))
         }
         dateArray = Array.from(new Set(dateArray))
-        console.log(dateArray, 'sssssss')
+        // console.log(dateArray, 'sssssss')
         for (let i = 0; i < dateArray.length; i++) {
           const obj = {
             date: dateArray[i],
@@ -191,12 +190,12 @@ export default {
           }
           newDataArray.push(obj)
         }
-        console.log(obj, 'ssssss')
+        // console.log(obj, 'ssssss')
         newsDynamicList.push(...newDataArray)
         // console.log('eeee', 2, newsDynamicList)
         //-------------2018.10.18修改合并相邻相近任务
         let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
-        console.log(newsDynamicListTransform, 'ssssssss')
+        // console.log(newsDynamicListTransform, 'ssssssss')
         //将相邻且activity_type_id相同而且type等于固定类型的归为一条
         const removeEmptyArrayEle = (arr) => {
           for(var i = 0; i < arr.length; i++) {
@@ -369,16 +368,6 @@ export default {
         }
       })
     },
-
-    * getProjectDynamicsList({ payload }, { select, call, put }) { // 获取项目动态列表
-      let res = yield call(getProjectDynamicsList, {...payload})
-      if(!isApiResponseOk(res)) {
-        message.error(res.message)
-        return
-      }
-      // console.log(res, 'sssss')
-    },
-
 
     * addCardNewComment({ payload }, { select, call, put }) { //
       const { card_id, comment, parentKey, childrenKey, valueItem } = payload

@@ -11,7 +11,6 @@ import NoPermissionUserCard from './../../../../../components/NoPermissionUserCa
 import UserCard from './../../../../../components/UserCard/index'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import DynamicContain from './component/DynamicContain'
-import { getProjectDynamicsList } from '@/services/technological/newsDynamic.js'
 
 const TextArea = Input.TextArea
 
@@ -34,16 +33,29 @@ export default class DrawDetailInfo extends React.Component {
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
   }
 
+  // 子组件调用父组件的方法
+  getDispatchDynamicList = (board_id) => {
+    // console.log('进来了', 'sssss')
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/getProjectDynamicsList',
+      payload: {
+        next_id: '0',
+        board_id
+      }
+    })
+  }
+
+
   onScroll(e) {
     window.addEventListener('scroll', this.dynamicScroll(e))
   }
 
   dynamicScroll = (e) => {
     let infoTop = e && e.target.scrollTop // 滚动的距离
-    let dynamicTop = this.refs.dynamic_header.offsetTop // 导航条距离顶部的距离
-    console.log(infoTop, dynamicTop, infoTop >= dynamicTop - 66, 'ssssss')
+    let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
     // 当滚动的距离大于导航条距离顶部的距离, 就固定
-    if (infoTop > 200) {
+    if (infoTop > manImageListTop) {
       this.setState({
         dynamic_header_sticky: true,
       })
@@ -230,7 +242,7 @@ export default class DrawDetailInfo extends React.Component {
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
-                  <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
+                  <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 5}}>
                     <div className={DrawDetailInfoStyle.elseProjectMemu}>
                       {value.name}
                     </div>
@@ -276,7 +288,7 @@ export default class DrawDetailInfo extends React.Component {
             <span style={{fontSize: 16}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
             <span>项目成员</span>
           </div>
-          <div className={DrawDetailInfoStyle.manImageList}>
+          <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
             {
               checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
                 <Tooltip title="邀请新成员" placement="top">
@@ -322,7 +334,7 @@ export default class DrawDetailInfo extends React.Component {
               </div>
             </div>
             <div className={DrawDetailInfoStyle.dynamic_contain}>
-              <DynamicContain {...this.props} board_id={board_id} />
+              <DynamicContain {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
             </div>
           </div>
         <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>

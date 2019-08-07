@@ -123,7 +123,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: pink;
+        // background: pink;
       }
     }
   }
@@ -254,6 +254,7 @@
         color: #262626;
         font-size: 14px;
         line-height: 14px;
+        max-width: 100px;
       }
       .percent{
         width: 100%;
@@ -323,4 +324,13 @@
 }
 .elseProjectDangerMenu:hover ,.elseProjectDangerMenu:active{
   background: #FFE7E8;
+}
+
+:global {
+  .ant-dropdown-menu-submenu-title {
+    .ant-dropdown-menu-submenu-arrow {
+      display: none;
+    }
+  }
+  
 }
