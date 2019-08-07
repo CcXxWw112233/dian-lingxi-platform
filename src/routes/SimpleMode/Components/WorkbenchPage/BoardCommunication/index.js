@@ -503,7 +503,6 @@ class BoardCommunication extends Component {
     }
 
     onBeforeUpload = (file, fileList) => {
-        console.log("上车前");
         this.setState(state => ({
             awaitUploadFile: file,
             selectBoardFileModalVisible: true,
@@ -804,9 +803,10 @@ function mapStateToProps({
     workbench: {
         datas: { projectList }
     },
+    workbenchPublicDatas
 }) {
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'] }
+        datas: { ...workbenchFileDetail['datas'],...workbenchPublicDatas['datas'] }
     }
     return {
         model: modelObj,
