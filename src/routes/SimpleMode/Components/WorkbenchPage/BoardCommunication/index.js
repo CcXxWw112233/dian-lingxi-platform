@@ -685,24 +685,24 @@ class BoardCommunication extends Component {
                             beforeUpload={this.onBeforeUpload}>
                             <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
-                            {
-                                dragEnterCaptureFlag ?
-                                <div className={indexStyles.iconDescription}>
-                                    <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
-                                    <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
-                                </div>
-                                :
-                                <>
-                                <div className={indexStyles.icon}>
-                                    <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
-                                </div>
-                                <div className={indexStyles.descriptionWapper}>
-                                    <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                                    <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                                </div>
-                                </>
-                            }
-                                
+                                {
+                                    dragEnterCaptureFlag ?
+                                        <div className={indexStyles.iconDescription}>
+                                            <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
+                                            <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
+                                        </div>
+                                        :
+                                        <>
+                                            <div className={indexStyles.icon}>
+                                                <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
+                                            </div>
+                                            <div className={indexStyles.descriptionWapper}>
+                                                <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                                <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                                            </div>
+                                        </>
+                                }
+
                             </div>
                         </Dragger>
                     )}
@@ -743,41 +743,44 @@ class BoardCommunication extends Component {
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                 >
-                    <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
-                        <Dropdown
-                            overlay={this.renderSelectBoardTreeList}
-                            trigger={['click']}
-                            className={`${indexStyles.dropdownSelect}`}
-                            onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
-                            visible={this.state.selectBoardDropdownVisible}>
-                            <div className={indexStyles.dropdownLinkWapper}>
-                                <span style={{ display: 'block', width: '28px' }}>项目</span>
-                                <span className={indexStyles.dropdownLink}>
-                                    {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
-                                </span>
-                            </div>
-                        </Dropdown>
-                    </div>
-                    <div className={indexStyles.selectWapper}>
-                        <Dropdown
-                            overlay={this.renderSelectBoardFileTreeList}
-                            trigger={['click']}
-                            className={`${indexStyles.dropdownSelect}`}
-                            onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
-                            visible={this.state.selectBoardFileDropdownVisible}>
-                            <div className={indexStyles.dropdownLinkWapper}>
-                                {is_selectFolder ?
-                                    <span style={{ display: 'block', width: '44px' }}>文件夹</span>
-                                    :
-                                    <span style={{ display: 'block', width: '28px' }}>文件</span>
-                                }
+                    <div>
+                        <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
+                            <Dropdown
+                                overlay={this.renderSelectBoardTreeList}
+                                trigger={['click']}
+                                className={`${indexStyles.dropdownSelect}`}
+                                onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
+                                visible={this.state.selectBoardDropdownVisible}>
+                                <div className={indexStyles.dropdownLinkWapper}>
+                                    <span style={{ display: 'block', width: '28px' }}>项目</span>
+                                    <span className={indexStyles.dropdownLink}>
+                                        {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
+                                    </span>
+                                </div>
+                            </Dropdown>
+                        </div>
+                        <div className={indexStyles.selectWapper}>
+                            <Dropdown
+                                overlay={this.renderSelectBoardFileTreeList}
+                                trigger={['click']}
+                                className={`${indexStyles.dropdownSelect}`}
+                                onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
+                                visible={this.state.selectBoardFileDropdownVisible}>
+                                <div className={indexStyles.dropdownLinkWapper}>
+                                    {is_selectFolder ?
+                                        <span style={{ display: 'block', width: '44px' }}>文件夹</span>
+                                        :
+                                        <span style={{ display: 'block', width: '28px' }}>文件</span>
+                                    }
 
-                                <span className={indexStyles.dropdownLink}>
-                                    {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
-                                </span>
-                            </div>
-                        </Dropdown>
+                                    <span className={indexStyles.dropdownLink}>
+                                        {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
+                                    </span>
+                                </div>
+                            </Dropdown>
+                        </div>
                     </div>
+
 
                 </Modal>
 
@@ -806,7 +809,7 @@ function mapStateToProps({
     workbenchPublicDatas
 }) {
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'],...workbenchPublicDatas['datas'] }
+        datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'] }
     }
     return {
         model: modelObj,
