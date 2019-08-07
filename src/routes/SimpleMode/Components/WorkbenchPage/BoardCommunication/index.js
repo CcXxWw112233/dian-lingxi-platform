@@ -13,6 +13,9 @@ import {
 } from "@/utils/businessFunction";
 import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
+import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
+import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
+
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -34,7 +37,8 @@ class BoardCommunication extends Component {
         selectBoardFileCompleteDisabled: true,
         previewFileModalVisibile: false,
         is_selectFolder: false,
-        awaitUploadFile: {}
+        awaitUploadFile: {},
+        dragEnterCaptureFlag: false
 
     };
 
@@ -235,6 +239,11 @@ class BoardCommunication extends Component {
     }
 
     renderFolderTreeNodes = data => {
+        if (!data || data.length == 0) {
+            return (
+                <div>该项目没有任何文件</div>
+            );
+        }
         return data.map(item => {
             if (item.child_data) {
                 return (
@@ -494,11 +503,11 @@ class BoardCommunication extends Component {
     }
 
     onBeforeUpload = (file, fileList) => {
-        console.log("上车前");
         this.setState(state => ({
             awaitUploadFile: file,
             selectBoardFileModalVisible: true,
-            is_selectFolder: true
+            is_selectFolder: true,
+            dragEnterCaptureFlag: false,
         }));
         return false;
     }
@@ -630,17 +639,33 @@ class BoardCommunication extends Component {
         };
     }
 
+    onDragEnterCapture = (e) => {
+        console.log("ssssss");
+        this.setState({
+            dragEnterCaptureFlag: true
+        });
+    }
+
+
+    onDragLeaveCapture = (e) => {
+        this.setState({
+            dragEnterCaptureFlag: false
+        });
+    }
 
     render() {
         const { currentBoardDetail = {} } = this.props;
-        const { currentfile = {}, is_selectFolder } = this.state;
+        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
         // console.log(zommPictureComponentWidth,zommPictureComponentHeight);
 
         return (
-            <div className={indexStyles.boardCommunicationWapper}>
+            <div className={`${indexStyles.boardCommunicationWapper}`}
+                onDragOverCapture={this.onDragEnterCapture.bind(this)}
+                onDragLeaveCapture={this.onDragLeaveCapture.bind(this)}
+                onDragEndCapture={this.onDragLeaveCapture.bind(this)}>
                 {
                     this.state.previewFileModalVisibile && (
                         <FileDetail
@@ -656,19 +681,48 @@ class BoardCommunication extends Component {
                     )}
                 {
                     !this.state.previewFileModalVisibile && (
-                        <Dragger {...this.getDraggerProps()}
+                        <Dragger {...this.getDraggerProps()} className={indexStyles.dragStyle}
                             beforeUpload={this.onBeforeUpload}>
-                            <div className={indexStyles.indexCoverWapper}>
+                            <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+
+                            {
+                                dragEnterCaptureFlag ?
+                                <div className={indexStyles.iconDescription}>
+                                    <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
+                                    <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
+                                </div>
+                                :
+                                <>
                                 <div className={indexStyles.icon}>
-                                    <img src='/src/assets/simplemode/communication_cover_icon@2x.png' style={{ width: '80px', height: '84px' }} />
+                                    <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
                                 </div>
                                 <div className={indexStyles.descriptionWapper}>
                                     <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
                                     <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                                 </div>
+                                </>
+                            }
+                                
                             </div>
                         </Dragger>
                     )}
+
+
+                {
+                    false &&
+                    <div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+                        <div className={indexStyles.dragOverArea} style={{ height: container_workbenchBoxContent.offsetHeight + 'px' }}>
+                            {
+                                dragEnterCaptureFlag &&
+                                <div className={indexStyles.iconDescription}>
+                                    <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
+                                    <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
 
                 <Modal
                     width={248}
@@ -728,7 +782,7 @@ class BoardCommunication extends Component {
                 </Modal>
 
 
-            </div>
+            </div >
         )
     }
 
@@ -749,9 +803,10 @@ function mapStateToProps({
     workbench: {
         datas: { projectList }
     },
+    workbenchPublicDatas
 }) {
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'] }
+        datas: { ...workbenchFileDetail['datas'],...workbenchPublicDatas['datas'] }
     }
     return {
         model: modelObj,

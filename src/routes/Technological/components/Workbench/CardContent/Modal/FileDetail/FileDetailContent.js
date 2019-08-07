@@ -537,7 +537,7 @@ class FileDetailContent extends React.Component {
     const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="'+src+'"></iframe>'
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
     }
 

@@ -172,7 +172,12 @@ export default {
                         id
                     }
                 })
-
+                yield put({
+                    type:'projectDetail/getRelationsSelectionPre',
+                    payload:{
+                        
+                    }
+                })
                 //缓存下来当前项目的权限
                 // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
             }
