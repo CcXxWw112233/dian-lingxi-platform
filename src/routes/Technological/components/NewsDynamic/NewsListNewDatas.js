@@ -40,7 +40,7 @@ export default class NewsListNewDatas extends React.Component {
 
   // 去到项目详情
   goToBoard({org_id, content}) {
-    console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
+    // console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
     if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -409,11 +409,6 @@ export default class NewsListNewDatas extends React.Component {
             messageContain = (
               <div className={NewsListStyle.news_3}>
                 <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 删除了标签「{messageValue.content.rela_data.name}」「{jumpToTask}」</div>
-                {
-                  is_show_org_name && (
-                    <div className={NewsListStyle.news_3_orgName}># {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}&nbsp;&nbsp;>></div>
-                  )
-                }
                 {/* <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
                 <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
                 <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div> */}

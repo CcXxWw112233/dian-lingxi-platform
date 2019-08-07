@@ -276,7 +276,7 @@ export default class DrawDetailInfo extends React.Component {
     return (
       <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`}  onScrollCapture={(e) => { this.onScroll(e) }} >
         <div className={DrawDetailInfoStyle.brief}>
-          <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7f6;</span>
+          <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
           <span>项目简介</span>
         </div>
         {!editDetaiDescription?(
@@ -285,7 +285,7 @@ export default class DrawDetailInfo extends React.Component {
             </div>
           ) : ( EditArea)}
           <div className={DrawDetailInfoStyle.member}> 
-            <span style={{fontSize: 16}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
+            <span style={{fontSize: 18}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
             <span>项目成员</span>
           </div>
           <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
