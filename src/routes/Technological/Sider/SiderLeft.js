@@ -36,7 +36,7 @@ export default class SiderLeft extends React.Component {
       NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
       is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
       is_simplemode: is_simplemode,
-      
+
     }
   }
   componentDidMount() {
@@ -221,7 +221,7 @@ export default class SiderLeft extends React.Component {
               is_show_org_name: is_show_org_name ? true : false,
             }
           })
-          
+
         break
       default: // 其他组织的切换
       // console.log('sss', 11111)
@@ -383,7 +383,7 @@ export default class SiderLeft extends React.Component {
     // 去除空数组
     let new_arr = removeEmptyArrayEle(navArray)
 
-    const { current_org={}, name, avatar, user_set } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { current_org={}, name, avatar, user_set = {} } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { is_simple_model } = user_set
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
@@ -407,11 +407,11 @@ export default class SiderLeft extends React.Component {
       }
       return flag
     }
-    
+
     const orgListMenu = (
       <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
           <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode={ !collapsed ? 'vertical' : 'inline'} >
-            
+
             {
               identity_type == '1' && isHasMemberView() && (
                 <Menu.Item key="24">
@@ -450,7 +450,7 @@ export default class SiderLeft extends React.Component {
                 </Menu.Item>
               )
             }
-          
+
             {identity_type == '1' && <Menu.Divider />}
 
             <Menu.Item key="20">
@@ -485,25 +485,25 @@ export default class SiderLeft extends React.Component {
                 <Menu.Item key="subShowOrgName">
                   <span>显示组织名称
                   <Switch
-                      style={{ display: 'inline-block', marginLeft: 8 }} 
+                      style={{ display: 'inline-block', marginLeft: 8 }}
                       onClick={ (checked) => { this.handleShowAllOrg(checked) } }
-                      checked={is_show_org_name}  
+                      checked={is_show_org_name}
                     ></Switch>
                     {/* 这是控制禁用的状态逻辑(保留) */}
                     {/* {
                       is_show_org_name && is_all_org ? (
                         <Switch
                           disabled={is_disabled}
-                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          style={{ display: 'inline-block', marginLeft: 8 }}
                           onClick={ (checked) => { this.handleShowAllOrg(checked) } }
-                          defaultChecked={true}  
+                          defaultChecked={true}
                         ></Switch>
                       ) : (
                         <Switch
                           disabled={is_disabled}
-                          style={{ display: 'inline-block', marginLeft: 8 }} 
+                          style={{ display: 'inline-block', marginLeft: 8 }}
                           onClick={ (checked) => { this.handleShowAllOrg(checked) } }
-                          defaultChecked={false}  
+                          defaultChecked={false}
                         ></Switch>
                       )
                     }  */}
@@ -515,7 +515,7 @@ export default class SiderLeft extends React.Component {
                 {/* <Menu.Item key="subShowSimple">
                   <span>
                     极简模式
-                    <Switch 
+                    <Switch
                       style={{ display: 'inline-block', marginLeft: 36 }}
                       // defaultChecked={false}
                       checked={is_simple_model == '1' ? true : false}
@@ -580,7 +580,7 @@ export default class SiderLeft extends React.Component {
     // }
 
     return (
-      
+
       <Sider
         id={'siderLeft'}
         trigger={null}
@@ -606,7 +606,7 @@ export default class SiderLeft extends React.Component {
                     </div>
                   )
                 }
-                
+
               </div>
               {
                 identity_type == '0' && collapsed == false ? (
@@ -647,7 +647,7 @@ export default class SiderLeft extends React.Component {
         )}
 
       </Sider>
-      
+
     )
   }
 }
