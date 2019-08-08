@@ -36,6 +36,7 @@ export default class SiderLeft extends React.Component {
       NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
       is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
       is_simplemode: is_simplemode,
+      
     }
   }
   componentDidMount() {
@@ -44,7 +45,6 @@ export default class SiderLeft extends React.Component {
       type: 'technological/updateDatas',
       payload: {
         is_all_org: localStorage.getItem('OrganizationId') == '0',
-        // is_show_org_name: false,
       }
     })
   }
@@ -86,9 +86,9 @@ export default class SiderLeft extends React.Component {
       case 'Projects':
         route = 'project'
         break
-      case 'Shows':
-        route='teamShow/teamList'
-        break
+      // case 'Shows':
+      //   route='teamShow/teamList'
+        // break
       case 'Case':
         window.open('https://www.di-an.com/zhichengshe')
         return
@@ -195,6 +195,9 @@ export default class SiderLeft extends React.Component {
           this.setNotificationSettingsModalVisible()
         }, 300)
 
+        break
+      case 'subShowSimple':
+        this.handleMode
         break
       case '10': // 创建或加入新组织
           this.setCreateOrgnizationOModalVisable()
@@ -304,10 +307,24 @@ export default class SiderLeft extends React.Component {
     })
   }
 
+  // 是否显示极简模式
+  handleMode(checked) {
+    // console.log(checked, 'sssss')
+    const { user_set } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { is_simple_model } = user_set
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/getSetShowSimple',
+      payload: {
+        is_simple_model: checked ? '1' : '0',
+        checked
+      }
+    })
+  }
+
 
   render() {
-    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    console.log(is_all_org, 'sssss')
+    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
     menuList.forEach((item) => {
       if(item.status === '1') {
@@ -323,9 +340,9 @@ export default class SiderLeft extends React.Component {
         case '政策法规':
           _c = { ...c, theme: '&#xe6c9;' }
           break
-        case '我的展示':
-          _c = {...c, theme: '&#xe60b;'}
-          break
+        // case '我的展示':
+        //   _c = {...c, theme: '&#xe60b;'}
+          // break
         case '投资地图':
           _c = { ...c, theme: '&#xe676;'}
         default:
@@ -338,6 +355,7 @@ export default class SiderLeft extends React.Component {
     }, [])
 
     const { collapsed, is_disabled } = this.state
+
     const navArray = [
       {
         theme: '&#xe6f7;',
@@ -351,8 +369,22 @@ export default class SiderLeft extends React.Component {
       },
       ...res
     ]
+    const removeEmptyArrayEle = (arr) => {
+      for(var i = 0; i < arr.length; i++) {
+          if(arr[i] == undefined) {
+              arr.splice(i, 1);
+              i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+              // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+          }
+      }
+      return arr;
+    };
 
-    const { current_org={}, name, avatar } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    // 去除空数组
+    let new_arr = removeEmptyArrayEle(navArray)
+
+    const { current_org={}, name, avatar, user_set } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { is_simple_model } = user_set
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo, id } = currentSelectOrganize
@@ -378,7 +410,7 @@ export default class SiderLeft extends React.Component {
     
     const orgListMenu = (
       <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
-          <Menu subMenuCloseDelay={1} onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode="vertical" >
+          <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{marginTop: -20}} mode={ !collapsed ? 'vertical' : 'inline'} >
             
             {
               identity_type == '1' && isHasMemberView() && (
@@ -440,9 +472,9 @@ export default class SiderLeft extends React.Component {
             <SubMenu
               key="21"
               title={
-                <div className={indexStyles.default_select_setting}>
+                <div id="default_select_setting" className={indexStyles.default_select_setting}>
                   <div className={indexStyles.hobby}>
-                    <img className={`${indexStyles.hobby_img} ${indexStyles.left_img}`} src={hobbyImg} />
+                    <span className={`${glabalStyles.authTheme} ${indexStyles.hobby_icon}`}>&#xe783;</span>
                     <span className={indexStyles.middle_text}>偏好设置</span>
                     {/* <span><Icon type="right" /></span> */}
                   </div>
@@ -480,15 +512,17 @@ export default class SiderLeft extends React.Component {
                 <Menu.Item key="subInfoSet">
                   <span>通知设置</span>
                 </Menu.Item>
-                <Menu.Item key="subShowSimple">
+                {/* <Menu.Item key="subShowSimple">
                   <span>
                     极简模式
                     <Switch 
                       style={{ display: 'inline-block', marginLeft: 36 }}
-                      defaultChecked={false}
+                      // defaultChecked={false}
+                      checked={is_simple_model == '1' ? true : false}
+                      onClick={ (checked) => { this.handleMode(checked) } }
                     ></Switch>
                   </span>
-                </Menu.Item>
+                </Menu.Item> */}
             </SubMenu>
 
             <Menu.Item key="10" >
@@ -548,14 +582,15 @@ export default class SiderLeft extends React.Component {
     return (
       
       <Sider
+        id={'siderLeft'}
         trigger={null}
-        collapsible
+        collapsible={true}
         onMouseEnter={this.setCollapsed.bind(this, false)}
         onMouseLeave={this.setCollapsed.bind(this, true)}
         className={`${indexStyles.siderLeft} ${collapsed?indexStyles.siderLeft_state_min:indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
       >
 
-          <Dropdown overlay={orgListMenu}>
+          <Dropdown getPopupContainer={() => document.getElementById('siderLeft') } overlay={orgListMenu}>
             <div className={indexStyles.contain_1} style={{position: 'relative'}}>
               <div className={indexStyles.left}>
                 <img src={logo || linxiLogo} className={indexStyles.left_img}/>
@@ -592,7 +627,7 @@ export default class SiderLeft extends React.Component {
         </div>
 
         <div className={indexStyles.contain_2}>
-          {navArray.map((value, key) => {
+          {new_arr.map((value, key) => {
             const { theme, name, code } = value
             return (
               <div key={key} className={`${indexStyles.navItem} ${code== naviHeadTabIndex?indexStyles.navItemSelected: ''}`} onClick={this.menuClick.bind(this, {key, code})}>
@@ -618,7 +653,7 @@ export default class SiderLeft extends React.Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: { datas: {
-  menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org
+  menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple
 }} }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org }
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple }
 }

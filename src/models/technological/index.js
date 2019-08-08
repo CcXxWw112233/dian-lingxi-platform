@@ -11,6 +11,7 @@ import {
   getUserOrgPermissions,
   getUserBoardPermissions,
   getSetShowOrgName,
+  getSetShowSimple,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
 import {getProjectList, getCurrentOrgAllMembers, createMeeting} from './../../services/technological/workbench'
@@ -352,6 +353,30 @@ export default {
       if(!isApiResponseOk(res)) {
         message.error(res.message)
         return
+      }
+    },
+    // 获取显示是否是极简模式
+    * getSetShowSimple({ payload }, { select, call, put }) {
+      const { checked, is_simple_model } = payload
+      let res = yield call(getSetShowSimple, is_simple_model)
+      if (!isApiResponseOk(res)) {
+        message.error(res.message)
+        return
+      }
+      if (checked) {
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: '/technological/simplemode/home',
+          }
+        })
+      } else {
+        yield put({
+          type: 'routingJump',
+          payload: {
+            route: '/technological/workbench',
+          }
+        })
       }
     },
 

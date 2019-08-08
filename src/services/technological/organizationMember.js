@@ -304,3 +304,14 @@ export async function getSetShowOrgName(data) {
     data
   });
 }
+
+// 用户设置是否显示极简模式
+export async function getSetShowSimple(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/set`,
+    method: 'PUT',
+    data: {
+      is_simple_model: data
+    }
+  })
+}

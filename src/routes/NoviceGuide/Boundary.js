@@ -136,7 +136,7 @@ export default class Boundary extends Component {
 	handleSubmit(all_val) {
 		const { dispatch } = this.props
 		if (!all_val) {
-			dispatch(routerRedux.push('/technological/workbench'))
+			dispatch(routerRedux.push('/technological/simplemode/home'))
 			return
 		}
 
@@ -169,7 +169,7 @@ export default class Boundary extends Component {
 			if (isApiResponseOk(res)) {
 				inviteMemberJoinBoard({...data}).then((res) => {
 					if (isApiResponseOk(res)) {
-						dispatch(routerRedux.push('/technological/workbench'))
+						dispatch(routerRedux.push('/technological/simplemode/home'))
 					} else {
 						message.error(res.message)
 					}
