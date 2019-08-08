@@ -68,12 +68,13 @@ export async function moveProjectToProjectGroup(data) {
 }
 
 //获取当前组织搜索树
-export async function getProjectGroupSearchTree() {
+export async function getProjectGroupSearchTree(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
     method: 'GET',
     params: {
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+      _organization_id: getGlobalData('aboutBoardOrganizationId'),
+      ...params
     }
   })
 }
@@ -91,7 +92,7 @@ export async function getCurrentProjectGroupProjectList(params) {
       group_id,
       keyword,
       org_id,
-      _organization_id: localStorage.getItem('OrganizationId')
+      _organization_id: org_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -204,7 +205,7 @@ export async function cancelCollection({org_id, board_id}) {
     url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${board_id}`,
     method: 'DELETE',
     headers: {
-      OrganizationId: org_id
+      BaseInfo: {orgId: org_id} 
     },
     data: {
       id: board_id
@@ -246,7 +247,7 @@ export async function collectionProject({org_id, board_id}) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
     method: 'POST',
-    headers: { OrganizationId: org_id },
+    headers: { BaseInfo: {orgId: org_id} },
     data: {
       id: board_id
     }
