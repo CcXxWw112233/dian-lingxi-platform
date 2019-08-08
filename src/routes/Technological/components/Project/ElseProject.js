@@ -175,6 +175,10 @@ export default class ElseProject extends React.Component{
   }
   starClick({org_id, board_id }, e) {
     e.stopPropagation();
+    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     setBoardIdStorage(board_id)
     const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo

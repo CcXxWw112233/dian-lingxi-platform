@@ -205,7 +205,7 @@ export async function cancelCollection({org_id, board_id}) {
     url: `${REQUEST_DOMAIN_BOARD}/board/cancel/${board_id}`,
     method: 'DELETE',
     headers: {
-      OrganizationId: org_id
+      BaseInfo: {orgId: org_id} 
     },
     data: {
       id: board_id
@@ -247,7 +247,7 @@ export async function collectionProject({org_id, board_id}) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
     method: 'POST',
-    headers: { OrganizationId: org_id },
+    headers: { BaseInfo: {orgId: org_id} },
     data: {
       id: board_id
     }
