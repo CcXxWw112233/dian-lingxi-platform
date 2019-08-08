@@ -110,8 +110,8 @@ export default {
         })
       }
     },
-    * fetchProjectGroupSearchTree(_, {call, put}) {
-      let res = yield call(getProjectGroupSearchTree)
+    * fetchProjectGroupSearchTree({payload}, {call, put}) {
+      let res = yield call(getProjectGroupSearchTree, {...payload})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

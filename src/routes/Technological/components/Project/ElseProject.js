@@ -146,7 +146,7 @@ export default class ElseProject extends React.Component{
         this.confirm(board_id )
         break
       case 'remove':
-        this.handleToggleRemoveProjectModalVisible(true)
+        this.handleToggleRemoveProjectModalVisible(true, {org_id})
         break
       default:
         return
@@ -269,10 +269,13 @@ export default class ElseProject extends React.Component{
       this.shutRemoveProjectToGroupModal()
     })
   }
-  handleOpenRemoveProjectModal = () => {
+  handleOpenRemoveProjectModal = ({org_id}) => {
     const {dispatch} = this.props
     Promise.resolve(dispatch({
-      type: 'project/fetchProjectGroupSearchTree'
+      type: 'project/fetchProjectGroupSearchTree',
+      payload: {
+        _organization_id: org_id
+      }
     })).then(res => {
       if(res === 'error') {
         message.error('获取项目分组信息失败')
@@ -283,11 +286,11 @@ export default class ElseProject extends React.Component{
       })
     })
   }
-  handleToggleRemoveProjectModalVisible = (flag) => {
+  handleToggleRemoveProjectModalVisible = (flag, {org_id}) => {
 
     //如果是打开移动项目 modal
     if(flag) {
-      return this.handleOpenRemoveProjectModal()
+      return this.handleOpenRemoveProjectModal({org_id})
     }
     this.setState({
       removePojectToGroupModalVisible: flag,
