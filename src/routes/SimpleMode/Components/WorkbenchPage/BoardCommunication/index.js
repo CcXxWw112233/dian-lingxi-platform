@@ -14,7 +14,7 @@ import {
 import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
 import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
-import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png' 
+import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
 
 
 const { Option } = Select;
@@ -252,11 +252,22 @@ class BoardCommunication extends Component {
     }
 
     onBeforeUpload = (file, fileList) => {
+        const { dispatch, currentBoardDetail = {} } = this.props;
+        if (currentBoardDetail.board_id) {
+            dispatch({
+                type: 'simpleWorkbenchbox/getFolderList',
+                payload: {
+                    board_id: currentBoardDetail.board_id
+                }
+            });
+
+        }
         this.setState(state => ({
             awaitUploadFile: file,
             selectBoardFileModalVisible: true,
             is_selectFolder: true,
             dragEnterCaptureFlag: false,
+            currentfile: {}
         }));
         return false;
     }
@@ -415,33 +426,27 @@ class BoardCommunication extends Component {
 
     selectBoardFile = (e) => {
         e.stopPropagation();
-        const { dispatch, currentBoardDetail = {}} = this.props;
-        if(currentBoardDetail.board_id){
+        const { dispatch, currentBoardDetail = {} } = this.props;
+        if (currentBoardDetail.board_id) {
             dispatch({
                 type: 'simpleWorkbenchbox/getFileList',
                 payload: {
                     board_id: currentBoardDetail.board_id
-    
+
                 }
             });
+
         }
-       
+
         this.setState({
             selectBoardFileModalVisible: true,
             is_selectFolder: false,
-            currentfile:{}
+            currentfile: {}
         });
-       
+
     }
 
-    uploadToBoardFolder = (e) => {
-        e.stopPropagation();
-        this.setState({
-            selectBoardFileModalVisible: true,
-            is_selectFolder: true,
-            currentfile:{}
-        });
-    }
+
 
     handleOk = e => {
         console.log(e);
@@ -499,8 +504,6 @@ class BoardCommunication extends Component {
             });
         }
 
-        //设置baseinfo中需要的boardId
-
     };
 
     onSelectFile = (keys, event) => {
@@ -534,6 +537,7 @@ class BoardCommunication extends Component {
     };
 
     handleSelectBoardFileDropdownVisibleChange = flag => {
+        console.log('sddddff');
         this.setState({ selectBoardFileDropdownVisible: flag });
     };
 
@@ -577,33 +581,31 @@ class BoardCommunication extends Component {
         return data.map(item => {
             if (item.children) {
                 return (
-                    <TreeNode title={item.title} key={item.key} dataRef={item} selectable={false} >
+                    <TreeNode key={item.key}  {...item} dataRef={item} selectable={false}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
                 );
+            } else {
+                return <TreeNode key={item.key}  {...item} dataRef={item} />;
             }
-            return <TreeNode {...item} dataRef={item} />;
+
         });
     }
 
     renderFolderTreeNodes = data => {
-        if (!data || data.length == 0) {
-            return (
-                <div>该项目没有任何文件</div>
-            );
-        }
         return data.map(item => {
             if (item.child_data) {
                 return (
-                    <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
-                        <TreeNode title={item.folder_name} key={item.folder_id} dataRef={item} >
-                            {this.renderFolderTreeNodes(item.child_data)}
-                        </TreeNode>
-                    </div>
+                    <TreeNode title={item.folder_name} key={item.folder_id} dataRef={item} >
+                        {this.renderFolderTreeNodes(item.child_data)}
+                    </TreeNode>
                 );
+            } else {
+                return <TreeNode title={item.folder_name} key={item.folder_id} dataRef={item} />;
             }
-            return <TreeNode {...item} dataRef={item} />;
+
         });
+
     }
 
     renderSelectBoardTreeList = () => {
@@ -677,7 +679,7 @@ class BoardCommunication extends Component {
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
-        // console.log(zommPictureComponentWidth,zommPictureComponentHeight);
+        console.log(currentBoardDetail,"sssss");
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
@@ -779,6 +781,7 @@ class BoardCommunication extends Component {
                         </div>
                         <div className={indexStyles.selectWapper}>
                             <Dropdown
+                                disabled={!currentBoardDetail || !currentBoardDetail.board_id}
                                 overlay={this.renderSelectBoardFileTreeList}
                                 trigger={['click']}
                                 className={`${indexStyles.dropdownSelect}`}
