@@ -11,6 +11,22 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/') {
+          // const { user_set: { is_simple_model } } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+          // if (is_simple_model == '1') {
+          //   dispatch({
+          //     type: 'routingJump',
+          //     payload: {
+          //       route: '/technological/simplemode/home'
+          //     }
+          //   })
+          // } else {
+          //   dispatch({
+          //     type: 'routingJump',
+          //     payload: {
+          //       route: '/technological/workbench'
+          //     }
+          //   })
+          // }
           dispatch({
             type: 'routingJump',
             payload: {

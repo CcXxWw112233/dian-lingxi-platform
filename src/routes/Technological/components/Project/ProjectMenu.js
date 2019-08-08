@@ -138,11 +138,13 @@ class ProjectMenu extends Component {
     })
   }
   comfirmedDeleteGroup = id => {
+    const { org_id } = this.state
     const {dispatch} = this.props
     Promise.resolve(dispatch({
       type: 'project/deleteProjectGroupTreeNode',
       payload: {
-        id
+        id,
+        _organization_id: org_id,
       }
     })).then(res => {
       if(res === 'error') {
@@ -195,12 +197,22 @@ class ProjectMenu extends Component {
   };
   handleClickedProjectMenuTreeNodeMenuItem = ({ item, key }) => {
     // debugger
+    // 处理org_id
+    const arr = key.split('-')
+    const org_id = arr[arr.length - 1]
+    this.setState({
+      org_id
+    })
+    let new_key_arr = arr.slice()
+    new_key_arr.pop ()
+    const new_key = new_key_arr.join('-')
+
     const caseMap = new Map([
-      [/edit-/, () => this.handEditTreeNodeName(key)],
-      [/create-child-/, () => this.handleCreateTreeNode(key)],
-      [/delete-/, () => this.handleDeleteTreeNode(key)]
+      [/edit-/, () => this.handEditTreeNodeName(new_key)],
+      [/create-child-/, () => this.handleCreateTreeNode(new_key)],
+      [/delete-/, () => this.handleDeleteTreeNode(new_key)]
     ]);
-    const getCaseKey = [...caseMap].find(([k]) => k.test(key));
+    const getCaseKey = [...caseMap].find(([k]) => k.test(new_key));
     if (getCaseKey) {
       const [, callback] = getCaseKey;
       callback();
@@ -270,6 +282,7 @@ class ProjectMenu extends Component {
         title: org_name,
         key: `org-${org_id}`,
         board_count,
+        org_id,
         archived_count,
         children: genTreeTopDataWithArchivedNode()
       };
@@ -290,7 +303,7 @@ class ProjectMenu extends Component {
     );
   };
   genTreeNodeTitle = ops => {
-    const { title, layer, board_count, key, parentkey } = ops;
+    const { title, layer, board_count, key, parentkey,org_id } = ops;
     const { edit_tree_node } = this.state;
     //生成修改名称的 tree node
     if (edit_tree_node === key) {
@@ -298,12 +311,12 @@ class ProjectMenu extends Component {
     }
     //第一层，组织
     const editGroupName = (
-      <Item key={`edit-${title}-${key}`}>修改分组名称</Item>
+      <Item key={`edit-${title}-${key}-${org_id}`}>修改分组名称</Item>
     );
     const createChildGroup = (
-      <Item key={`create-child-${key}`}>新建子分组</Item>
+      <Item key={`create-child-${key}-${org_id}`}>新建子分组</Item>
     );
-    const deleteGroup = <Item key={`delete-${key}`}>删除分组</Item>;
+    const deleteGroup = <Item key={`delete-${key}-${org_id}`}>删除分组</Item>;
     const isArchived = layer === 1 && title === '已归档项目';
     const isOrg = layer === 0;
     const isLastLayer = layer === 6;
@@ -472,7 +485,7 @@ class ProjectMenu extends Component {
   };
   handleSubmitEditTreeNode = () => {
     const { dispatch } = this.props;
-    const { edit_tree_node_name, edit_tree_node } = this.state;
+    const { edit_tree_node_name, edit_tree_node, org_id } = this.state;
     if (this.hasNotChangeEditTreeNodeName()) {
       return;
     }
@@ -486,13 +499,14 @@ class ProjectMenu extends Component {
         type: 'project/editProjectGroupTreeNodeName',
         payload: {
           id: edit_tree_node,
-          group_name: edit_tree_node_name
+          group_name: edit_tree_node_name,
+          _organization_id: org_id
         }
       })
     ).then(res => this.createTreeNodeGetResponse(res));
   };
   handleSubmitCreateTreeNode = () => {
-    const { new_tree_node_name, create_tree_node } = this.state;
+    const { new_tree_node_name, create_tree_node, org_id } = this.state;
     const { dispatch } = this.props;
     if (!new_tree_node_name.trim()) {
       message.destroy();
@@ -507,7 +521,10 @@ class ProjectMenu extends Component {
     }
     if(isOrg) {
       params['_organization_id'] = arr[1]
+    } else {
+      params['_organization_id'] = org_id
     }
+    console.log('sssss_1', { org_id })
     // debugger
     Promise.resolve(
       dispatch({
@@ -537,7 +554,7 @@ class ProjectMenu extends Component {
       message.error('创建分组失败');
       return;
     }
-    message.success('创建分组成功')
+    message.success('success')
     this.initEidtTreeNode();
   };
   initEidtTreeNode = () => {
@@ -571,7 +588,18 @@ class ProjectMenu extends Component {
   renderTreeNodes = (nodes = [], parentkey = null) => {
     const { create_tree_node } = this.state;
     return nodes.map(node => {
-      const { title, key, board_count, children, layer } = node;
+      const { title, key, board_count, children, layer, org_id } = node;
+
+      let new_children = []
+      if (children && children.length) {
+        new_children = children.map(item => {
+          return {
+            ...item,
+            org_id
+          }
+        })
+      }
+     
       if (children && children.length) {
         return (
           <TreeNode
@@ -583,7 +611,8 @@ class ProjectMenu extends Component {
               layer,
               board_count,
               key,
-              parentkey
+              parentkey,
+              org_id,
             })}
             key={key}
             dataRef={node}
@@ -591,11 +620,11 @@ class ProjectMenu extends Component {
             {key === create_tree_node && (
               <TreeNode
                 style={{ width: '100%', marginLeft: `${(-18) * (layer + 1)}px` }}
-                key={`create_input_${create_tree_node}`}
+                key={`create_input_${create_tree_node}_${org_id}`}
                 title={this.renderCreateNode()}
               />
             )}
-            {this.renderTreeNodes(node.children, key)}
+            {this.renderTreeNodes(new_children, key)}
           </TreeNode>
         );
       }
@@ -610,13 +639,14 @@ class ProjectMenu extends Component {
             layer,
             board_count,
             key,
-            parentkey
+            parentkey,
+            org_id,
           })}
         >
           {key === create_tree_node && (
             <TreeNode
               style={{ marginLeft: `${(-18 * (layer + 1))}px` }}
-              key={`create_input_${create_tree_node}`}
+              key={`create_input_${create_tree_node}_${org_id}`}
               title={this.renderCreateNode()}
             />
           )}
@@ -661,7 +691,7 @@ class ProjectMenu extends Component {
     this.focusCreateTreeNode();
   }
   render() {
-    console.log('sssss', this.state.create_tree_node)
+    // console.log('sssss', this.state.create_tree_node)
     return (
       <div className={styles.wrapper}>
         {this.renderProjectGather()}

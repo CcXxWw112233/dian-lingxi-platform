@@ -1217,7 +1217,7 @@ export default class InitialNews extends React.Component {
                       onClick={() => this.props.dispatch({
                         type: 'newsDynamic/routingJump',
                         payload: {
-                          route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=4&file_id=${val.content.board_file && val.content.board_file.id}`
+                          route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3`
                         }
                       })}>{val.content && val.content.board && val.content.board.name}</span>} > 
                     </div>

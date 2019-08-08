@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 
 //获取团队秀列表
 export async function getTeamShowList(params) {
+  return
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/list`,
     method: 'GET',
