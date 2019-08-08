@@ -156,7 +156,7 @@ export default {
     },
     * deleteProjectGroupTreeNode({payload}, {call, put}) {
       const {id} = payload
-      let res = yield call(deleteProjectGroupTreeNode, id)
+      let res = yield call(deleteProjectGroupTreeNode, {...payload})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'fetchProjectGroupTree'

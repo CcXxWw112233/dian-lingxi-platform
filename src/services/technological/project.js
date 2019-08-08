@@ -134,16 +134,17 @@ export async function updateProjectGroupTreeNodeName(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/group/${id}`,
     method: 'PUT',
     data: {
-      group_name
+      ...data
     }
   })
 }
 
 //删除项目分组树节点
-export async function deleteProjectGroupTreeNode(id) {
+export async function deleteProjectGroupTreeNode(data) {
    return request({
-     url: `${REQUEST_DOMAIN_BOARD}/board/group/${id}`,
-     method: 'DELETE'
+     url: `${REQUEST_DOMAIN_BOARD}/board/group/${data.id}`,
+     method: 'DELETE',
+     data
    })
 }
 
