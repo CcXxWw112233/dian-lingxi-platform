@@ -48,10 +48,10 @@ export default class MeetingItem extends React.Component {
   gotoBoardDetail({ id, board_id, org_id }, e) {
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     this.props.routingJump(
       `/technological/projectDetail?board_id=${board_id}&appsSelectKey=3&card_id=${id}`
     );
