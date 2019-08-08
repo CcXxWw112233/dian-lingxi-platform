@@ -139,10 +139,10 @@ class Gantt extends Component{
     if(gantt_board_id == '0') {
       for(let i = 0; i < list_group_new.length; i++ ) {
         if(board_id == list_group_new[i].list_id) {
-          for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-            if(card_id == list_group_new[i].lane_data.card[j].id) {
-              list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-              list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+          for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+            if(card_id == list_group_new[i].lane_data.cards[j].id) {
+              list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
+              list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
               break
             }
           }
@@ -153,10 +153,10 @@ class Gantt extends Component{
     } else {
       for(let i = 0; i < list_group_new.length; i++ ) {
         let flag = false
-        for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-          if(card_id == list_group_new[i].lane_data.card[j].id) {
-            list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-            list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+        for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+          if(card_id == list_group_new[i].lane_data.cards[j].id) {
+            list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
+            list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
             break
           }
         }

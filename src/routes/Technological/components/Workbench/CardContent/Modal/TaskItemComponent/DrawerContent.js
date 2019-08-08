@@ -267,7 +267,7 @@ class DrawContent extends React.Component {
       card_id,
       users: selectedKeys.join(',')
     })
-
+    this.handleChangeCard({drawContent, card_id})
   }
   setChargeManIsSelf() {
     const { datas: { drawContent = {} } } = this.props.model
@@ -552,6 +552,8 @@ class DrawContent extends React.Component {
     })
     drawContent['label_data'].splice(key, 1)
     this.props.updateTaskDatas({drawContent})
+    this.handleChangeCard({drawContent, card_id})
+
   }
   addTag() {
     this.setState({
@@ -584,6 +586,8 @@ class DrawContent extends React.Component {
       label_name: e.target.value,
       length: label_data.length
     })
+    this.handleChangeCard({drawContent, card_id})
+
   }
   tagDropItemClick(data) {
     this.setState({
@@ -603,6 +607,8 @@ class DrawContent extends React.Component {
       label_name: name,
       length: label_data.length
     })
+    this.handleChangeCard({drawContent, card_id})
+
   }
   setTagInputValue(e) {
     this.setState({

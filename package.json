@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "set port=8000 && cross-env ESLINT=none roadhog server",
+    "start": "set port=9000 && cross-env ESLINT=none roadhog server",
     "build": "roadhog build",
     "lint": "eslint --fix --ext .js src test",
     "precommit": "npm run lint"
@@ -9,7 +9,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
     "antd": "^3.11.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "babel-plugin-import": "^1.11.0",
     "babel-polyfill": "^6.26.0",
     "braft-editor": "^2.1.26",

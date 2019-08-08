@@ -3,7 +3,9 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
-
+import globalStyles from  '@/globalset/css/globalClassName.less'
+import CheckItem from '@/components/CheckItem'
+import AvatarList from '@/components/avatarList'
 import { Tooltip } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 
@@ -343,19 +345,29 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id, is_realize } = value2
+              const { left, top, width, height, name, id, board_id, is_realize, executors=[], label_data = [] } = value2
               return (
                 <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
-                <div className={indexStyles.specific_example} data-targetclassname="specific_example"
-                     style={{
-                        left: left, top: top,
-                        width: (width || 6) - 6, height: (height || task_item_height),
-                        marginTop: task_item_margin_top
-                        // margin: '4px 0 0 2px',
-                        // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
-                     }}
-                     onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
-                />
+                  <div className={indexStyles.specific_example} data-targetclassname="specific_example"
+                      style={{
+                          left: left, top: top,
+                          width: (width || 6) - 6, height: (height || task_item_height),
+                          marginTop: task_item_margin_top,
+                          backgroundImage: 'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                          // margin: '4px 0 0 2px',
+                          // backgroundImage: 'liner-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)'
+                          // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
+                      }}
+                      onClick={this.setSpecilTaskExample.bind(this,{ id, top, board_id})}
+                  >
+                      <div className={`${indexStyles.card_item_status}`} onClick={(e)=>e.preventDefault()}>
+                        <CheckItem is_realize={is_realize} />
+                      </div>
+                      <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onClick={(e)=>e.preventDefault()}>{name}</div>
+                      <div onClick={(e)=>e.preventDefault()}>
+                        <AvatarList users={executors} size={'small'}/>
+                      </div>
+                  </div>
                 </Tooltip>
               )
             })
