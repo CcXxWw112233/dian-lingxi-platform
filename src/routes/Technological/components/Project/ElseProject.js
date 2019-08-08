@@ -122,10 +122,10 @@ export default class ElseProject extends React.Component{
   handleMenuClick( {board_id, org_id}, e ) {
     e.domEvent.stopPropagation();
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     this.setState({
       ellipsisShow: false,
       dropdownVisibleChangeValue: false
@@ -175,10 +175,10 @@ export default class ElseProject extends React.Component{
   }
   starClick({org_id, board_id }, e) {
     e.stopPropagation();
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     setBoardIdStorage(board_id)
     const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo
@@ -236,10 +236,10 @@ export default class ElseProject extends React.Component{
   }
   projectListItemClick({route, board_id, org_id}) {
     //暂时去掉访客限制
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump(`${route}?board_id=${board_id}`)
   }
