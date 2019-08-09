@@ -37,7 +37,7 @@ export default {
       is_all_org: true, //是否全部组织
       menuList: [], // 侧边栏功能导航列表
       page_load_type: 0,
-      currentUserWallpaperUrl:null
+      currentUserWallpaperContent:null
     }
   },
   subscriptions: {

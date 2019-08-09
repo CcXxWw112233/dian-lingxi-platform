@@ -5,6 +5,7 @@ import indexStyles from './index.less'
 import SimpleHeader from './Components/SimpleHeader/index'
 import WorkbenchPage from './Components/WorkbenchPage'
 import Home from './Components/Home'
+import { isColor } from '@/utils/util'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -62,13 +63,6 @@ class SimpleMode extends Component {
     });
   }
 
-  setSSS = () => {
-    const { SSS } = this.state
-    this.setState({
-      SSS: !SSS
-    })
-  }
-
   renderRoutes = () => {
     return (
       <Switch>
@@ -81,14 +75,20 @@ class SimpleMode extends Component {
     const {
       simpleHeaderVisiable,
       setWapperCenter,
-      currentUserWallpaperUrl,
+      currentUserWallpaperContent,
       userInfo = {},
     } = this.props;
 
     const { wallpaper = '' } = userInfo;
-    const wallpaperUrl = currentUserWallpaperUrl ? currentUserWallpaperUrl : wallpaper;
+    const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
+    let bgStyle = {}
+    if (isColor(wallpaperContent)) {
+      bgStyle = { backgroundColor: wallpaperContent};
+    } else {
+      bgStyle = { backgroundImage: `url(${wallpaperContent})` };
+    }
     return (
-      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={{ backgroundImage: `url(${wallpaperUrl})` }}>
+      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
         {simpleHeaderVisiable && <SimpleHeader />}
         {this.renderRoutes()}
       </div>
@@ -102,7 +102,7 @@ export default connect(({ simplemode: {
   setWapperCenter,
   chatImVisiable,
   leftMainNavVisible,
-  currentUserWallpaperUrl,
+  currentUserWallpaperContent,
 }, technological: {
   datas: { userInfo }
 } }) => ({
@@ -110,6 +110,6 @@ export default connect(({ simplemode: {
   setWapperCenter,
   chatImVisiable,
   leftMainNavVisible,
-  currentUserWallpaperUrl,
+  currentUserWallpaperContent,
   userInfo
 }))(SimpleMode)

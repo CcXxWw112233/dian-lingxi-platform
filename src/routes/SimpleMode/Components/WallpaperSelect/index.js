@@ -3,6 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less'
 import { Icon } from 'antd';
 import React, { Component } from "react";
+import { isColor } from '@/utils/util'
 
 class WallpaperSelect extends Component {
 
@@ -41,9 +42,9 @@ class WallpaperSelect extends Component {
         });
     }
 
-    selectMyWallpaper = (wallpaperId, wallpaperUrl) => {
+    selectMyWallpaper = (wallpaperId, wallpaperContent,wallpaperType) => {
         const { dispatch } = this.props;
-        //console.log(wallpaperUrl);
+        //console.log(wallpaperContent);
         this.setState({
             usersetWallpaperId: wallpaperId
         });
@@ -56,20 +57,20 @@ class WallpaperSelect extends Component {
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                currentUserWallpaperUrl: wallpaperUrl
+                currentUserWallpaperContent: wallpaperContent
             }
         });
     }
 
     selectPreviousWallpaper = () => {
         //获取当前壁纸index
-        const { allWallpaperList = [], currentUserWallpaperUrl, userInfo = {} } = this.props;
+        const { allWallpaperList = [], currentUserWallpaperContent, userInfo = {} } = this.props;
         const { wallpaper = '' } = userInfo;
-        const wallpaperUrl = currentUserWallpaperUrl ? currentUserWallpaperUrl : wallpaper;
+        const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
         if (allWallpaperList.length === 0) {
             return;
         }
-        let currentIndex = allWallpaperList.findIndex((value) => value.url === wallpaperUrl);
+        let currentIndex = allWallpaperList.findIndex((value) => value.content === wallpaperContent);
         if (currentIndex === 0) {
             currentIndex = allWallpaperList.length - 1;
         } else {
@@ -77,7 +78,7 @@ class WallpaperSelect extends Component {
         }
         const currentWallpaper = allWallpaperList[currentIndex];
         if (currentWallpaper) {
-            this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.url);
+            this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.content);
         }
 
         console.log("上一张")
@@ -85,13 +86,13 @@ class WallpaperSelect extends Component {
 
     selectNextWallpaper = () => {
         //获取当前壁纸index
-        const { allWallpaperList = [], currentUserWallpaperUrl, userInfo = {} } = this.props;
+        const { allWallpaperList = [], currentUserWallpaperContent, userInfo = {} } = this.props;
         const { wallpaper = '' } = userInfo;
-        const wallpaperUrl = currentUserWallpaperUrl ? currentUserWallpaperUrl : wallpaper;
+        const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
         if (allWallpaperList.length === 0) {
             return;
         }
-        let currentIndex = allWallpaperList.findIndex((value) => value.url === wallpaperUrl);
+        let currentIndex = allWallpaperList.findIndex((value) => value.content === wallpaperContent);
         if (currentIndex === allWallpaperList.length - 1) {
             currentIndex = -0;
         } else {
@@ -99,16 +100,16 @@ class WallpaperSelect extends Component {
         }
         const currentWallpaper = allWallpaperList[currentIndex];
         if (currentWallpaper) {
-            this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.url);
+            this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.content);
         }
 
         console.log("下一张")
     }
     render() {
         const { wallpaperSelectModalVisiable } = this.state;
-        const { allWallpaperList = [], currentUserWallpaperUrl, userInfo = {} } = this.props;
+        const { allWallpaperList = [], currentUserWallpaperContent, userInfo = {} } = this.props;
         const { wallpaper = '' } = userInfo;
-        const wallpaperUrl = currentUserWallpaperUrl ? currentUserWallpaperUrl : wallpaper;
+        const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
 
         return (
             <div>
@@ -129,12 +130,18 @@ class WallpaperSelect extends Component {
                         <div className={indexStyles.wallpaperBoxs}>
                             {
                                 allWallpaperList.map((wallpaperItem, index) => {
+                                    let bgStyle = {}
+                                    if (isColor(wallpaperItem.content)) {
+                                      bgStyle = { backgroundColor: wallpaperItem.content };
+                                    } else {
+                                      bgStyle = { backgroundImage: `url(${wallpaperItem.content})` };
+                                    }
                                     return (
-                                        <div id={wallpaperItem.id} key={wallpaperItem.id} className={`${indexStyles.wallpaperItem}`} style={{ backgroundImage: `url(${wallpaperItem.url})` }} onClick={e => this.selectMyWallpaper(wallpaperItem.id, wallpaperItem.url)}>
+                                        <div id={wallpaperItem.id} key={wallpaperItem.id} className={`${indexStyles.wallpaperItem}`} style={bgStyle} onClick={e => this.selectMyWallpaper(wallpaperItem.id, wallpaperItem.content)}>
 
-                                            <div className={`${indexStyles.wallpaperItemCover} ${wallpaperUrl === wallpaperItem.url ? indexStyles.selected : ''}`}>
+                                            <div className={`${indexStyles.wallpaperItemCover} ${wallpaperContent === wallpaperItem.content ? indexStyles.selected : ''}`}>
                                                 {
-                                                    wallpaperUrl === wallpaperItem.url &&
+                                                    wallpaperContent === wallpaperItem.content &&
                                                     <div className={indexStyles.wallpaperItemSelected_icon}><Icon type="check-circle" theme="filled" style={{ fontSize: '16px' }} /></div>
                                                 }
                                             </div>
@@ -156,8 +163,8 @@ class WallpaperSelect extends Component {
 
 
 export default connect(({
-    simplemode: { wallpaperSelectModalVisiable, allWallpaperList, currentUserWallpaperUrl },
+    simplemode: { wallpaperSelectModalVisiable, allWallpaperList, currentUserWallpaperContent },
     technological: {
         datas: { userInfo }
     }
-}) => ({ wallpaperSelectModalVisiable, allWallpaperList, currentUserWallpaperUrl, userInfo }))(WallpaperSelect)
+}) => ({ wallpaperSelectModalVisiable, allWallpaperList, currentUserWallpaperContent, userInfo }))(WallpaperSelect)

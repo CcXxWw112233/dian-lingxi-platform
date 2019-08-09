@@ -22,7 +22,7 @@ export default {
         init: true,
         allOrgBoardTreeList: [],
         allWallpaperList: [],//可选的壁纸列表
-        currentUserWallpaperUrl: null
+        currentUserWallpaperContent: null
     },
     subscriptions: {
         setup({ dispatch, history }) {

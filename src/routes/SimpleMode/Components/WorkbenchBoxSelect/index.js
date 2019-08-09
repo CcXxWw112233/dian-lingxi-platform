@@ -3,10 +3,11 @@ import dva, { connect } from "dva/index"
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon } from 'antd';
+import { isColor } from '@/utils/util'
 
 const WorkbenchBoxSelect = (props) => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props;
-  const closeBoxManage =() => {
+  const closeBoxManage = () => {
     props.setHomeVisible({
       simpleHeaderVisiable: true,
       myWorkbenchBoxsVisiable: true,
@@ -33,9 +34,18 @@ const WorkbenchBoxSelect = (props) => {
 
   }
 
+  const { allWallpaperList = [], currentUserWallpaperContent, userInfo = {} } = props;
+  const { wallpaper = '' } = userInfo;
+  const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
+  let bgStyle = {}
+  if (isColor(wallpaperContent)) {
+    bgStyle = { backgroundColor: wallpaperContent };
+  } else {
+    bgStyle = { backgroundImage: `url(${wallpaperContent})` };
+  }
   return (
     <div onClick={(e) => { closeBoxManage(e) }}>
-      <div className={indexStyles.selectWorkbenchBoxWapperModalBg}></div>
+      <div className={indexStyles.selectWorkbenchBoxWapperModalBg} style={bgStyle}></div>
       <div className={indexStyles.selectWorkbenchBoxWapperModal}>
         <div className={indexStyles.workbenchBoxWapper}>
           {
@@ -47,18 +57,18 @@ const WorkbenchBoxSelect = (props) => {
                   <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
                   <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
                   {isSelected && (
-<span>
+                    <span>
                       <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
                       <div className={indexStyles.workbenchBoxSelectedBg}></div>
                     </span>
-)}
+                  )}
 
                   {!isSelected &&
                     <div className={indexStyles.workbenchBoxSelectHover}></div>
                   }
 
                 </div>
-) : '';
+              ) : '';
             })
           }
         </div>
@@ -67,4 +77,8 @@ const WorkbenchBoxSelect = (props) => {
     </div>
   );
 }
-export default connect(({ simplemode: { workbenchBoxList, myWorkbenchBoxList } }) => ({ workbenchBoxList, myWorkbenchBoxList }))(WorkbenchBoxSelect)
+export default connect(({
+  simplemode: { workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent },
+  technological: {
+    datas: { userInfo }
+  } }) => ({ workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, userInfo }))(WorkbenchBoxSelect)
