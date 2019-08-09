@@ -10,6 +10,8 @@ import {getGanttData} from "../../../../services/technological/gantt";
 import {isApiResponseOk} from "../../../../utils/handleResponseData";
 import { date_area_height } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
+import ShowFileSlider from './components/boardFile/ShowFileSlider'
+import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -236,6 +238,8 @@ export default class GanttFace extends Component {
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>
+        <ShowFileSlider />
+        <BoardsFilesArea />
       </div>
     )
   }

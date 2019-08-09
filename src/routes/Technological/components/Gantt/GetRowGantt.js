@@ -360,11 +360,11 @@ export default class GetRowGantt extends Component {
                       }}
                       onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id})}
                   >
-                      <div className={`${indexStyles.card_item_status}`} onClick={(e)=>e.preventDefault()}>
+                      <div className={`${indexStyles.card_item_status}`} onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>
                         <CheckItem is_realize={is_realize} />
                       </div>
-                      <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onClick={(e)=>e.preventDefault()}>{name}</div>
-                      <div onClick={(e)=>e.preventDefault()}>
+                      <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>{name}</div>
+                      <div onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>
                         <AvatarList users={executors} size={'small'}/>
                       </div>
                   </div>
