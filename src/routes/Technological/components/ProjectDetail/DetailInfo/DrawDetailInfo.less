@@ -136,12 +136,32 @@
     }
   }
 }
-.more {
-  font-size: 40px;
-  margin-right: 24px;
+
+.back {
+  &:hover {
+    color: rgba(0,0,0,0.65)
+  }
+}
+
+.show_member {
   align-self: center;
-  color: #E6F7FF;
+  width: 40px;
+  height: 40px;
+  // margin-top: 4px;
+  margin-right: 12px;
   cursor: pointer;
+  background: url('@/assets/projectDetail/boardInfo/default_more.png');
+  &:hover {
+    background: url('@/assets/projectDetail/boardInfo/hover_more.png')
+  }
+ img {
+   display: block;
+   width: 40px;
+   height: 40px;
+   margin-right: 24px;
+   align-self: center;
+   cursor: pointer;
+ }
 }
 
 .dynamic .dynamic_contain {

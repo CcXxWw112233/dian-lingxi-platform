@@ -34,6 +34,7 @@ export default class DrawDetailInfo extends React.Component {
     ShowAddMenberModalVisibile: false, 
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
     textArea_val: '', // 用来判断是否有用户输入
+    is_show_dot: true, // 是否显示点点点, 默认为true 显示
 
   }
 
@@ -50,11 +51,12 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-
+  // 监听滚动事件
   onScroll(e) {
     window.addEventListener('scroll', this.dynamicScroll(e))
   }
 
+  // 动态的滚动事件
   dynamicScroll = (e) => {
     let infoTop = e && e.target.scrollTop // 滚动的距离
     let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
@@ -70,6 +72,7 @@ export default class DrawDetailInfo extends React.Component {
     }
   }
 
+  // 销毁滚动事件
   componentWillUnmount() {
     window.removeEventListener('scroll', this.dynamicScroll())
   }
@@ -135,6 +138,7 @@ export default class DrawDetailInfo extends React.Component {
       isSoundsEvrybody_2: e.target.checked
     })
   }
+  // 简介文本的输入框事件
   textAreaChange(e) {
     this.setState({
       detaiDescriptionValue: e.target.value || detaiDescription,
@@ -215,8 +219,16 @@ export default class DrawDetailInfo extends React.Component {
     }
   }
 
+  // 是否显示全部成员
+  handdleTriggerModal() {
+    this.setState({
+      is_show_dot: false,
+    })
+    this.props.handleTriggetModalTitle()
+  }
+
   render() {
-    const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky } = this.state
+    const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
     data = data || []
@@ -377,9 +389,16 @@ export default class DrawDetailInfo extends React.Component {
                   })
                 }
               </div>
-              {/* <Tooltip title="全部成员" placement="top">
-                <div className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.more}`}>&#xe635;</div>
-              </Tooltip> */}
+              
+              {
+                avatarList && avatarList.length > 8 && is_show_dot && (
+                  <Tooltip title="全部成员" placement="top">
+                    <div 
+                      onClick={ () => { this.handdleTriggerModal() } }
+                      className={DrawDetailInfoStyle.show_member}></div>
+                  </Tooltip>
+                )
+              }
             </div>
             <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
