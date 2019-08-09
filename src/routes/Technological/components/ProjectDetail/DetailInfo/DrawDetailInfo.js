@@ -30,9 +30,11 @@ export default class DrawDetailInfo extends React.Component {
     isSoundsEvrybody_2: false, //edit是否通知项目所有人
     editDetaiDescription: false, //是否处于编辑状态
     detaiDescriptionValue: detaiDescription,
+    defaultDescriptionVal: detaiDescription, // 默认的描述数据
     ShowAddMenberModalVisibile: false, 
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
     textArea_val: '', // 用来判断是否有用户输入
+
   }
 
   // 子组件调用父组件的方法
@@ -214,10 +216,9 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   render() {
-    const { editDetaiDescription, detaiDescriptionValue, dynamic_header_sticky } = this.state
+    const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
-
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
@@ -330,76 +331,92 @@ export default class DrawDetailInfo extends React.Component {
       </div>
     )
     return (
-      <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e) }} >
-        <div className={DrawDetailInfoStyle.brief}>
-          <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
-          <span>项目简介</span>
-        </div>
-        {!editDetaiDescription?(
-            <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
-              {description || detaiDescriptionValue}
-            </div>
-          ) : ( EditArea)}
-          <div className={DrawDetailInfoStyle.member}> 
-            <span style={{fontSize: 18}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
-            <span>项目成员</span>
+      <>
+        <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e) }} >
+          <div className={DrawDetailInfoStyle.brief}>
+            <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
+            <span>项目简介</span>
           </div>
-          <div style={{display:'flex'}}>
-            <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
-              {
-                checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
-                  <Tooltip title="邀请新成员" placement="top">
-                    <div className={DrawDetailInfoStyle.addManImageItem} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                      <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8, color: '#40A9FF'}}/>
+          {!editDetaiDescription?(
+              <div className={`${DrawDetailInfoStyle.Bottom} ${ defaultDescriptionVal != description && description != '' && DrawDetailInfoStyle.editColor}`} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
+                {description || detaiDescriptionValue}
+              </div>
+            ) : ( EditArea)}
+            <div className={DrawDetailInfoStyle.member}> 
+              <span style={{fontSize: 18}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
+              <span>项目成员</span>
+            </div>
+            <div style={{display:'flex'}}>
+              <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
+                {
+                  checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+                    <Tooltip title="邀请新成员" placement="top">
+                      <div className={DrawDetailInfoStyle.addManImageItem} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                        <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8, color: '#40A9FF'}}/>
+                      </div>
+                    </Tooltip>
+                    )
+                }
+                {
+                  avatarList.map((value, key) => {
+                    if(key < avatarList.length - 1) {
+                      const { avatar, user_id } = value
+                      return(
+                        <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
+                          <Dropdown overlay={manImageDropdown(value)}>
+                            {avatar?(<img src={avatar} />): (
+                              <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                                <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
+                              </div>
+                            )
+                            }
+                          </Dropdown>
+                        </div>
+                      )
+                    }
+                  })
+                }
+              </div>
+              {/* <Tooltip title="全部成员" placement="top">
+                <div className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.more}`}>&#xe635;</div>
+              </Tooltip> */}
+            </div>
+            <div className={DrawDetailInfoStyle.dynamic}>
+              <div className={ DrawDetailInfoStyle.dy_title }>
+                <div 
+                  style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}} 
+                  ref="dynamic_header"
+                  className={DrawDetailInfoStyle.dynamic_header}>
+                  <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
+                  <span>项目动态</span>
+                  <Tooltip title="过滤动态" placement="top">
+                    <div className={DrawDetailInfoStyle.filter}>
+                      <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
                     </div>
                   </Tooltip>
-                  )
-              }
-              {
-                avatarList.map((value, key) => {
-                  if(key < avatarList.length - 1) {
-                    const { avatar, user_id } = value
-                    return(
-                      <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
-                        <Dropdown overlay={manImageDropdown(value)}>
-                          {avatar?(<img src={avatar} />): (
-                            <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
-                              <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
-                            </div>
-                          )
-                          }
-                        </Dropdown>
-                      </div>
-                    )
-                  }
-                })
-              }
-            </div>
-            {/* <Tooltip title="全部成员" placement="top">
-              <div className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.more}`}>&#xe635;</div>
-            </Tooltip> */}
-          </div>
-          <div className={DrawDetailInfoStyle.dynamic}>
-            <div className={ dynamic_header_sticky ? DrawDetailInfoStyle.positionStyles : '' }>
-              <div 
-                style={{width: '100%', display: 'flex', alignItems: 'center'}} 
-                ref="dynamic_header"
-                className={DrawDetailInfoStyle.dynamic_header}>
-                <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
-                <span>项目动态</span>
-                <Tooltip title="过滤动态" placement="top">
-                  <div className={DrawDetailInfoStyle.filter}>
-                    <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
-                  </div>
-                </Tooltip>
+                </div>
+              </div>
+              <div className={DrawDetailInfoStyle.dynamic_contain}>
+                <DynamicContain {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
               </div>
             </div>
-            <div className={DrawDetailInfoStyle.dynamic_contain}>
-              <DynamicContain {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
-            </div>
+          <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        </div>
+        <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
+          <div 
+            style={{width: '100%', display: 'flex', alignItems: 'center'}} 
+            ref="dynamic_header"
+            className={DrawDetailInfoStyle.dynamic_header}>
+            <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
+            <span>项目动态</span>
+            <Tooltip title="过滤动态" placement="top">
+              <div className={DrawDetailInfoStyle.filter}>
+                <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7c7;</span>
+              </div>
+            </Tooltip>
           </div>
-        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
-      </div>
+        </div>
+      </>
     )
   }
 }

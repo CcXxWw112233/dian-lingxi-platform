@@ -42,7 +42,7 @@
 }
 //项目详细信息
 .detailInfoOut{
-  max-width: 586px;
+  width: 586px;
   max-height: 706px;
   overflow-y: auto;
 }
@@ -56,6 +56,27 @@
   max-height: 530px;
   //padding: 20px;
   box-sizing: border-box;
+}
+
+:global {
+  .ant-modal-body {
+    position: relative;
+  }
+}
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 46px;
+  background: pink;
+  padding: 0 24px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 1px 2px 0px rgba(0,0,0,0.15);
+}
+
+.dy_title {
+  padding-right: 14px;
 }
 
 // 项目信息的弹窗样式
@@ -91,7 +112,7 @@
   color:rgba(0,0,0,0.45);
   margin-right: 12px;
   position: absolute;
-  right: 22px;
+  right: 0px;
   width: 24px;
   height: 24px;
   margin: auto;
@@ -276,6 +297,9 @@
   &:focus {
     box-shadow:0px 0px 8px 0px rgba(0,0,0,0.15);
   }
+}
+.editColor {
+  color:rgba(0,0,0,0.65);
 }
 //hover头像出现的内容
 .manImageDropdown {
