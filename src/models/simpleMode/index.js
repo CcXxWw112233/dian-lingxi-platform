@@ -21,7 +21,7 @@ export default {
         currentSelectedWorkbenchBox: {}, //当然选中的工作台盒子
         init: true,
         allOrgBoardTreeList: [],
-        allWallpaperList: [],//可选的壁纸列表
+        allWallpaperList: [], //可选的壁纸列表
         currentUserWallpaperContent: null
     },
     subscriptions: {

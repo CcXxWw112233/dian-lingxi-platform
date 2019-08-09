@@ -162,7 +162,7 @@ export default class Boundary extends Component {
 		const allTempStr = allTemp.join(',')
 		// console.log(allTempStr, 'ssss')
 		const data = {
-			board_id:new_user_board_id,
+			board_id: new_user_board_id,
 			users: allTemp
 		}
 		// allTemp = [].concat(phoneTemp, emailTemp)
@@ -306,7 +306,7 @@ export default class Boundary extends Component {
           <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
 					{
 						new_input_list.map((item, index) => {
-							return <InputExport key={index} inputList={inputList} all_input_val={all_input_val}  itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
+							return <InputExport key={index} inputList={inputList} all_input_val={all_input_val} itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
 						})
 					}
 					<span onClick={ this.handleAddMore } className={styles.add_more}>+  添加更多...</span>

@@ -13,6 +13,23 @@ class WallpaperSelect extends Component {
             wallpaperSelectModalVisiable: false
         }
     }
+    componentDidMount() {
+        window.addEventListener('keydown', this.handleLeftOrRightKeypress.bind(this))
+
+    }
+
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.handleLeftOrRightKeypress.bind(this))
+    }
+
+    handleLeftOrRightKeypress = (e) => {
+        if (e.which == 37) {
+            this.selectPreviousWallpaper();
+        } else if (e.which == 39) {
+            this.selectNextWallpaper();
+        }
+    }
 
 
     openWallpaper = () => {
@@ -42,7 +59,7 @@ class WallpaperSelect extends Component {
         });
     }
 
-    selectMyWallpaper = (wallpaperId, wallpaperContent,wallpaperType) => {
+    selectMyWallpaper = (wallpaperId, wallpaperContent, wallpaperType) => {
         const { dispatch } = this.props;
         //console.log(wallpaperContent);
         this.setState({
@@ -132,9 +149,9 @@ class WallpaperSelect extends Component {
                                 allWallpaperList.map((wallpaperItem, index) => {
                                     let bgStyle = {}
                                     if (isColor(wallpaperItem.content)) {
-                                      bgStyle = { backgroundColor: wallpaperItem.content };
+                                        bgStyle = { backgroundColor: wallpaperItem.content };
                                     } else {
-                                      bgStyle = { backgroundImage: `url(${wallpaperItem.content})` };
+                                        bgStyle = { backgroundImage: `url(${wallpaperItem.content})` };
                                     }
                                     return (
                                         <div id={wallpaperItem.id} key={wallpaperItem.id} className={`${indexStyles.wallpaperItem}`} style={bgStyle} onClick={e => this.selectMyWallpaper(wallpaperItem.id, wallpaperItem.content)}>
