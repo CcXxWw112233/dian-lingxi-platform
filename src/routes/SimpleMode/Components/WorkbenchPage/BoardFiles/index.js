@@ -33,7 +33,7 @@ class BoardFiles extends Component {
 
 
   componentDidMount() {
-    console.log('sssss',112)
+    console.log('sssss', 112)
   }
 
 

@@ -274,7 +274,7 @@ export default class DrawDetailInfo extends React.Component {
       </div>
     )
     return (
-      <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`}  onScrollCapture={(e) => { this.onScroll(e) }} >
+      <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e) }} >
         <div className={DrawDetailInfoStyle.brief}>
           <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
           <span>项目简介</span>
@@ -319,9 +319,9 @@ export default class DrawDetailInfo extends React.Component {
             }
           </div>
           <div className={DrawDetailInfoStyle.dynamic}>
-            <div  className={ dynamic_header_sticky ? DrawDetailInfoStyle.positionStyles : '' }>
+            <div className={ dynamic_header_sticky ? DrawDetailInfoStyle.positionStyles : '' }>
               <div 
-                style={{width: '100%', display: 'flex', alignItems:'center'}} 
+                style={{width: '100%', display: 'flex', alignItems: 'center'}} 
                 ref="dynamic_header"
                 className={DrawDetailInfoStyle.dynamic_header}>
                 <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>

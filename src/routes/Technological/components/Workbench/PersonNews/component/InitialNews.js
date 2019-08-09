@@ -1341,7 +1341,7 @@ export default class InitialNews extends React.Component {
         {/*): ('')}*/}
         {newsDynamicList && newsDynamicList.length ? newsDynamicList.map((value, parentkey)=> {
           const { date, dataList = [], newDataList = []} = value
-          console.log(value, 'ssss')
+          // console.log(value, 'ssss')
           return (
             <div className={NewsListStyle.itemOut} key={parentkey}>
               {newDataList.map((value, childrenKey) => {

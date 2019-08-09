@@ -77,7 +77,7 @@ export default class DynamicContain extends Component {
       let messageContain = (<div></div>)
       let jumpToBoard = (
         <span 
-          style={{color:'rgba(0,0,0,0.65)'}} 
+          style={{color: 'rgba(0,0,0,0.65)'}} 
           // onClick={ () => { this.goToBoard({org_id: messageValue.org_id, content: messageValue.content}) } }
         >{messageValue.content.board.name}</span>
       )
@@ -104,9 +104,23 @@ export default class DynamicContain extends Component {
         >{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
 
+      let jumpToMilestone = (
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
+          // onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
+        >{messageValue.content && messageValue.content.milestone && messageValue.content.milestone.name}</span>
+      )
+
+      let jumpToMeeting = (
+        <span 
+          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
+          // onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
+        >{messageValue.content && messageValue.content.meeting && messageValue.content.meeting.meetingName}</span>
+      )
+
       switch (activity_type) {
         //项目 ----------------------------------------
-        case 'board.create':
+        case 'board.create': // 创建项目
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -115,7 +129,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.name':
+        case 'board.update.name': // 修改项目名称
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -124,7 +138,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.description':
+        case 'board.update.description': // 修改项目详情
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了项目描述 为「{jumpToBoard}」</div>
@@ -132,7 +146,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.archived':
+        case 'board.update.archived': // 归档
           contain = `${currentNounPlanFilterName(PROJECTS)}归档`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -141,7 +155,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.user.quit':
+        case 'board.update.user.quit': // 用户退出项目
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -150,7 +164,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.flow.task.attach.upload':
+        case 'board.flow.task.attach.upload': // 在流程上传文件
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
@@ -164,7 +178,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.flow.cc.notice':
+        case 'board.flow.cc.notice': // 在流程抄送通知
             messageContain = (
               <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
                 <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
@@ -178,7 +192,7 @@ export default class DynamicContain extends Component {
               </div>
             )
           break
-        case 'board.delete':
+        case 'board.delete': // 删除项目
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -187,7 +201,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.user.add':
+        case 'board.update.user.add': // 项目中添加用户
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -196,7 +210,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.content.link.add':
+        case 'board.content.link.add': // 关联内容添加
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 新增了关联内容「{messageValue.content.link_name}」</div>
@@ -204,7 +218,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.content.link.remove':
+        case 'board.content.link.remove': // 关联内容移除
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 移除了关联内容「{messageValue.content.link_name}」</div>
@@ -212,7 +226,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.content.link.update':
+        case 'board.content.link.update': // 关联内容名称修改
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了关联内容「{messageValue.content.link_name}」</div>
@@ -220,8 +234,17 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.card.update.executor.remove':
-          // console.log({messageValue})
+        case 'board.update.app.add': // 添加项目功能
+
+          break
+        case 'board.update.contentprivilege': // 设置项目内容特权
+            
+          break
+        case 'board.update.user.role': // 设置用户在项目的角色
+
+          break
+        // case 'board.card.update.executor.remove':
+        case 'board.update.user.remove': // 用户被移出项目
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -231,7 +254,7 @@ export default class DynamicContain extends Component {
           )
           break
         // 任务 ----------------------------------------------------
-        case 'board.card.create':
+        case 'board.card.create': // 创建任务
           messageContain = (
               <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
                 <span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 创建了{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 
@@ -239,26 +262,8 @@ export default class DynamicContain extends Component {
               </div>
            )
            contain = `创建${currentNounPlanFilterName(TASKS)}`
-           break;
-        case 'createChildCard':
-          messageContain = (
-            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>创建了子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
-            </div>
-          )
-          contain = `创建子${currentNounPlanFilterName(TASKS)}`
-          break
-        case 'updCard':
-          messageContain = (
-            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>更新了{currentNounPlanFilterName(TASKS)}信息「{jumpToTask}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
-            </div>
-          )
-          contain = `更新${currentNounPlanFilterName(TASKS)}信息`
-          break
-        case 'board.card.update.archived':
+           break
+        case 'board.card.update.archived': // 归档任务
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>归档了{currentNounPlanFilterName(TASKS)}「{jumpToBoard}」 </div>
@@ -267,7 +272,7 @@ export default class DynamicContain extends Component {
           )
           contain = `${currentNounPlanFilterName(TASKS)}归档`
           break
-        case 'board.card.update.finish':
+        case 'board.card.update.finish': // 任务标记完成
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>完成了{currentNounPlanFilterName(TASKS)}「{jumpToBoard}」 </div>
@@ -276,7 +281,7 @@ export default class DynamicContain extends Component {
           )
           contain = `完成${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.cancel.finish':
+        case 'board.card.update.cancel.finish': // 取消完成
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>取消完成{currentNounPlanFilterName(TASKS)}「{jumpToBoard}」 </div>
@@ -285,7 +290,7 @@ export default class DynamicContain extends Component {
           )
           contain = `取消完成${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.delete':
+        case 'board.card.delete': // 删除任务
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>删除了{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
@@ -294,7 +299,7 @@ export default class DynamicContain extends Component {
           )
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.name':
+        case 'board.card.update.name': // 修改任务名称
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>修改卡片名称为{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
@@ -303,7 +308,7 @@ export default class DynamicContain extends Component {
           )
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.startTime':
+        case 'board.card.update.startTime': // 修改任务开始时间
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>修改了开始时间在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
@@ -312,7 +317,7 @@ export default class DynamicContain extends Component {
           )
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.dutTime':
+        case 'board.card.update.dutTime': // 修改任务结束时间
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>修改结束时间在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
@@ -321,7 +326,7 @@ export default class DynamicContain extends Component {
           )
           contain = `删除${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.description':
+        case 'board.card.update.description': // 修改任务描述
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>修改了{currentNounPlanFilterName(TASKS)}描述「{jumpToTask}」 </div>
@@ -329,7 +334,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.card.update.executor.add':
+        case 'board.card.update.executor.add': // 添加执行人
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>把{currentNounPlanFilterName(TASKS)}指派给 {messageValue.content.rela_data && messageValue.content.rela_data.name}「{jumpToTask}」 </div>
@@ -338,21 +343,20 @@ export default class DynamicContain extends Component {
           )
           contain = `添加任${currentNounPlanFilterName(TASKS)}执行人`
           break
-        case 'board.card.update.label.add':
-        if(messageValue.content.rela_data !==undefined) {
-          messageContain = (
-            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>添加了标签「{messageValue.content.rela_data.name}」「{jumpToTask}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
-            </div>
-          )
-        } else {
-          messageContain = (<div></div>)
-        }
-
+        case 'board.card.update.label.add': // 添加标签
+          if(messageValue.content.rela_data !==undefined) {
+            messageContain = (
+              <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+                <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>添加了标签「{messageValue.content.rela_data.name}」「{jumpToTask}」</div>
+                <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+              </div>
+            )
+          } else {
+            messageContain = (<div></div>)
+          }
           contain = `添加${currentNounPlanFilterName(TASKS)}标签`
           break
-        case 'board.card.update.label.remove':
+        case 'board.card.update.label.remove': // 移除标签
           if(messageValue.content.rela_data !==undefined) {
             messageContain = (
               <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -365,23 +369,52 @@ export default class DynamicContain extends Component {
             }
           contain = `移除${currentNounPlanFilterName(TASKS)}标签`
           break
-        case 'createLabel':
-          contain = '添加标签'
+        case 'board.card.update.finish.child': // 标记子任务完成
           break
-        case 'updLabel':
-          contain = '更新标签信息'
+        case 'board.card.update.cancel.finish.child': // 取消子任务完成
           break
-        // 评论 ---------------------------------------
-        case 'addComment':
-          contain = '新评论'
+        case 'board.card.update.executor.remove': // 移除执行人
           break
-        case 'deleteComment':
-          contain = '删除评论'
+        case 'board.card.update.file.add': // 添加附件
+          break
+        case 'board.card.update.file.remove': // 移除附件
+          break
+        case 'board.card.update.contentprivilege': // 设置任务内容特权
+          break
+        case 'board.card.add.to.milestone': // 添加任务到里程碑
+          break
+        case 'board.card.remove.to.milestone': // 把任务从里程碑中移除
+          break
+        case 'board.card.list.group.add': // 新增分组
+          break
+        case 'board.card.list.group.remove': // 移除分组
+          break
+        case 'board.card.list.group.update.name': // 更新分组名
+          break
+        case 'board.card.list.group.update.contentprivilege': // 设置任务分组内容特权
+          break
+        // 评论 ---------------------------------------------
+        case 'board.card.update.comment.add': // 添加任务评论
+          break
+        case 'board.card.update.comment.remove': // 移除任务评论
+          break
+        case 'board.file.comment.add': // 添加文件评论
+          break
+        case 'board.file.comment.remove': // 移除文件评论
+          break
+        case 'board.flow.comment.add': // 添加流程评论
+          break
+        case 'board.flow.comment.remove': // 流程评论的删除
+          break
+        case 'board.card.comment.at.notice': // 任务评论@通知
+          break
+        case 'board.file.comment.at.notice': // 文件评论@通知
+          break
         // 流程 ----------------------------------------
-        case 'createWrokflowTpl':
+        case 'board.flow.tpl.add.or.delete': // 创建或删除流程模板
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
-        case 'board.flow.instance.initiate':
+        case 'board.flow.instance.initiate': // 启动流程
           contain = `启动${currentNounPlanFilterName(FLOWS)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -390,7 +423,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.update.user.remove':
+        case 'board.update.user.remove': // 删除
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -399,7 +432,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.flow.task.recall':
+        case 'board.flow.task.recall': // 流程撤回
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 撤回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
@@ -408,7 +441,7 @@ export default class DynamicContain extends Component {
           )
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'board.flow.task.reject':
+        case 'board.flow.task.reject': // 流程驳回
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 驳回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
@@ -417,7 +450,7 @@ export default class DynamicContain extends Component {
           )
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'board.flow.task.reassign':
+        case 'board.flow.task.reassign': // 流程重新指审批人
           contain = '重新指派审批人'
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -426,7 +459,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'uploadWorkflowFile':
+        case 'board.flow.task.attach.upload': // 流程附件上传
           contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
@@ -435,7 +468,7 @@ export default class DynamicContain extends Component {
             </div>
           )
           break
-        case 'board.flow.task.pass':
+        case 'board.flow.task.pass': // 流程通过
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 中完成了任务「{messageValue.content.flow_node_instance.name}」</div>
@@ -444,7 +477,7 @@ export default class DynamicContain extends Component {
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'board.flow.instance.discontinue':
+        case 'board.flow.instance.discontinue': // 中止流程
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div> 
@@ -463,56 +496,59 @@ export default class DynamicContain extends Component {
           )
           contain = `${currentNounPlanFilterName(FLOWS)}待处理任务通知`
           break
+        case 'board.flow.instance.delete': // 删除流程
+          break
+        case 'board.flow.node.deadline.set': // 设置流程节点截止时间
+          break
+        case 'board.flow.update.contentprivilege': // 设置流程内容特权
+          break
         // 文件 ------------------------------------------------
-        case 'board.folder.add':
+        case 'board.folder.add': // 添加文件夹
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 创建了文件夹「{messageValue.content.board_folder.name}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           contain = `创建文件夹`
           break
-        case 'updFolder':
-          contain = `更新文件夹`
-          break
-        case 'board.file.upload':
+        case 'board.file.upload': // 文件上传
           contain = `上传${currentNounPlanFilterName(FILES)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 上传了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'board.file.version.upload':
+        case 'board.file.version.upload': // 文件版本更新上传
           contain = `${currentNounPlanFilterName(FILES)}版本更新`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 更新了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'board.folder.remove.recycle':
+        case 'board.folder.remove.recycle': // 文件夹移除到回收站
           contain = '移除文件夹到回收站'
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 移动文件夹「{messageValue.content.board_folder.name}」到回收站</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'board.file.remove.recycle':
+        case 'board.file.remove.recycle': // 文件移除到回收站
           contain = `移除${currentNounPlanFilterName(FILES)}到回收站`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 移动{currentNounPlanFilterName(FILES)}「{jumpToFile}」到回收站</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'board.file.move.to.folder':
+        case 'board.file.move.to.folder': // 移动文件
           contain = `移动${currentNounPlanFilterName(FILES)}到某个文件夹中`
           let showList = []
           let hideList = []
@@ -531,11 +567,11 @@ export default class DynamicContain extends Component {
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideList}</div>}>
                 <span className={styles.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'board.file.copy.to.folder':
+        case 'board.file.copy.to.folder': // 复制文件
           contain = `复制${currentNounPlanFilterName(FILES)}到某个文件夹中`
           let showCopyList = []
           let hideCopyList = []
@@ -553,17 +589,54 @@ export default class DynamicContain extends Component {
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideCopyList}</div>}>
                 <span className={styles.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
-              <div className={DrawDetailInfoStyle.news_time}>{timestampToHM(messageValue.created)}</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
-        case 'restoreFile':
-          contain = `还原${currentNounPlanFilterName(FILES)}`
+        case 'board.file.update.contentprivilege': // 设置文件内容特权
           break
-        case 'restoreFolder':
-          contain = '还原文件夹'
+        case 'board.folder.update.contentprivilege': // 设置文件内容特权
+          break
+        case 'meeting.create': // 会议----------------------------
+          contain = '创建会议'
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发起了会议「{jumpToMeeting}」</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          break
+        // 里程碑 --------------------------------------------
         case 'board.milestone.add':
+          contain = `创建里程碑`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 创建了里程碑「{jumpToMilestone}」</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.milestone.upd':
+          contain = `修改里程碑`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了原里程碑名「{messageValue.content.rela_data}」为「{jumpToMilestone}」里程碑名称。</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.milestone.principal.add': // 设置里程碑负责人
+          break
+        case 'board.milestone.principal.remove': // 移除负责人
+          break
+        case 'board.milestone.content.add': // 添加内容到里程碑
           break    
+        case 'board.milestone.content.remove': // 从里程碑当中移除内容
+          break
+        case 'board.milestone.comment.add': // 添加里程碑评论
+          break
+        case 'board.milestone.commetn.del': // 删除里程碑评论
+          break
         default:
           break;
       }
@@ -578,7 +651,7 @@ export default class DynamicContain extends Component {
       const list_name = lists['name']
       const board_name = board['name']
       return (
-        <div style={{display:'flex'}}>
+        <div style={{display: 'flex'}}>
             <div className={DrawDetailInfoStyle.left}>
              {
                avatar ? (
@@ -608,7 +681,7 @@ export default class DynamicContain extends Component {
       const board_name = board['name']
       const board_id = board['id']
       return (
-        <div style={{display:'flex'}}>
+        <div style={{display: 'flex'}}>
             <div className={DrawDetailInfoStyle.left}>
              {
                avatar ? (
@@ -635,7 +708,7 @@ export default class DynamicContain extends Component {
       const list_name = lists['name']
       const board_name = board['name']
       return (
-        <div style={{display:'flex'}}>
+        <div style={{display: 'flex'}}>
             <div className={DrawDetailInfoStyle.left}>
              {
                avatar ? (
@@ -662,7 +735,7 @@ export default class DynamicContain extends Component {
       const board_name = board['name']
       const board_id = board['id']
       return (
-        <div style={{display:'flex'}}>
+        <div style={{display: 'flex'}}>
             <div className={DrawDetailInfoStyle.left}>
              {
                avatar ? (
@@ -689,7 +762,61 @@ export default class DynamicContain extends Component {
       const board_name = board['name']
       const board_id = board['id']
       return (
-        <div style={{display:'flex'}}>
+        <div style={{display: 'flex'}}>
+            <div className={DrawDetailInfoStyle.left}>
+             {
+               avatar ? (
+                 <img src={avatar} />
+               ) : (
+                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                  <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 5}}/>
+                </div>
+               )
+             }
+            </div>
+            <div className={DrawDetailInfoStyle.right}>
+              {filterTitleContain(action, value).messageContain}
+            </div>
+        </div>
+      )
+    }
+
+    // 里程碑动态
+    const milestoneNews = (value) => {
+      const { content = {}, action, org_id, creator} = value
+      const { avatar } = creator
+      const { board = {}, milestone = {} } = content
+      const board_name = board['name']
+      const board_id = board['id']
+      return (
+        <div style={{display: 'flex'}}>
+            <div className={DrawDetailInfoStyle.left}>
+             {
+               avatar ? (
+                 <img src={avatar} />
+               ) : (
+                <div style={{width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                  <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 5}}/>
+                </div>
+               )
+             }
+            </div>
+            <div className={DrawDetailInfoStyle.right}>
+              {filterTitleContain(action, value).messageContain}
+            </div>
+        </div>
+      )
+    }
+
+    // 会议动态
+    const meetingNews = (value) => {
+      const { content = {}, action, org_id, creator} = value
+      const { avatar } = creator
+      const { board = {}, metting = {} } = content
+      const board_name = board['name']
+      const board_id = board['id']
+      return (
+        <div style={{display: 'flex'}}>
             <div className={DrawDetailInfoStyle.left}>
              {
                avatar ? (
@@ -711,7 +838,7 @@ export default class DynamicContain extends Component {
 
 
      //具体详细信息
-     const filterNewsType = (type, value,childrenKey) => {
+     const filterNewsType = (type, value, childrenKey) => {
       //  console.log(type, value, 'ssssss')
       let containner = (<div></div>)
       switch (type) {
@@ -724,15 +851,20 @@ export default class DynamicContain extends Component {
         case '12':
             containner = ( processNews(value) )
             break
-          case '13':
-            containner = ( fileNews(value) )
-            break
-          case '14':
-            containner = ( commentNews(value) )
-            break
-          case '6':
-            containner = ( processNews(value) )
-            break
+        case '13':
+          containner = ( fileNews(value) )
+          break
+        case '14':
+          containner = ( commentNews(value) )
+          break
+        case '6':
+          containner = ( processNews(value) )
+          break
+        case '18':
+          containner = ( milestoneNews(value) )
+          break
+        case '20':
+          containner = (meetingNews(value))
         default:
           break
       }

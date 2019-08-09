@@ -274,15 +274,15 @@ class BoardCommunication extends Component {
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
                     {
-                        is_selectFolder ?
-                            <DirectoryTree onSelect={this.onSelectFolder}>
+                        is_selectFolder ? (
+<DirectoryTree onSelect={this.onSelectFolder}>
                                 {this.renderFolderTreeNodes([boardFolderTreeData])}
                             </DirectoryTree>
-                            :
-                            <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
+): (
+<DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
                                 {this.renderTreeNodes(boardFileTreeData)}
                             </DirectoryTree>
-                    }
+)}
 
                 </div>
             </>

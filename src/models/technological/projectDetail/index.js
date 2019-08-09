@@ -295,7 +295,7 @@ export default {
         new_projectDynamicsList = [...removeEmptyArrayEle(projectDynamicsList)]
         // console.log(new_projectDynamicsList, 'sssss')
         yield put({
-          type:'updateDatas',
+          type: 'updateDatas',
           payload: {
             projectDynamicsList: new_projectDynamicsList,
             p_next_id: res.data.next_id,
