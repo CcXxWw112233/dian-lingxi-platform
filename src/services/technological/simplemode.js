@@ -1,5 +1,5 @@
 import request from "../../utils/requestAxios";
-import {REQUEST_DOMAIN_WORK_BENCH} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_WORK_BENCH,REQUEST_DOMAIN} from "../../globalset/js/constant";
 
 export async function getUserBoxs(){
     return request({
@@ -32,4 +32,9 @@ export async function boxCancel(data){
     });
 }
 
-
+export async function getWallpaperList(data){
+  return request({
+      url: `${REQUEST_DOMAIN}/wallpaper`,
+      method: 'GET'
+    });
+}

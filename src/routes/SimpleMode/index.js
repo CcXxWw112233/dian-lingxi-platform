@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "dva/index"
-import { Route, Switch,  } from 'dva/router'
+import { Route, Switch, } from 'dva/router'
 import indexStyles from './index.less'
 import SimpleHeader from './Components/SimpleHeader/index'
 import WorkbenchPage from './Components/WorkbenchPage'
@@ -81,10 +81,14 @@ class SimpleMode extends Component {
     const {
       simpleHeaderVisiable,
       setWapperCenter,
+      currentUserWallpaperUrl,
+      userInfo = {},
     } = this.props;
 
+    const { wallpaper = '' } = userInfo;
+    const wallpaperUrl = currentUserWallpaperUrl ? currentUserWallpaperUrl : wallpaper;
     return (
-      <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav}>
+      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={{ backgroundImage: `url(${wallpaperUrl})` }}>
         {simpleHeaderVisiable && <SimpleHeader />}
         {this.renderRoutes()}
       </div>
@@ -97,10 +101,15 @@ export default connect(({ simplemode: {
   simpleHeaderVisiable,
   setWapperCenter,
   chatImVisiable,
-  leftMainNavVisible
+  leftMainNavVisible,
+  currentUserWallpaperUrl,
+}, technological: {
+  datas: { userInfo }
 } }) => ({
   simpleHeaderVisiable,
   setWapperCenter,
   chatImVisiable,
-  leftMainNavVisible
+  leftMainNavVisible,
+  currentUserWallpaperUrl,
+  userInfo
 }))(SimpleMode)
