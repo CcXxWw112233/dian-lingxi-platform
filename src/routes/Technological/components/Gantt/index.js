@@ -4,8 +4,7 @@ import {connect} from "dva/index";
 import GanttFace from './GanttFace'
 import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
-import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
-import {getProjectGoupList} from "../../../../services/technological/task";
+import AddTaskModal from './components/AddTaskModal';
 
 const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
@@ -15,29 +14,18 @@ class Gantt extends Component{
   state = {
     TaskDetailModalVisibile: false,
     previewFileModalVisibile: false,
-    projectGroupLists: [],
-    board_users: [],
-    projectGroupListsIsRequest: false
   }
 
   componentDidMount() {
     this.getProjectGoupLists()
-    // this.setBoardUsers()
+    this.getProjectAppsLists()
+    this.getAboutUsersBoards()
   }
 
   componentWillReceiveProps(nextProps) {
 
   }
 
-  setBoardUsers(projectId) {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'workbench/fetchCurrentSelectedProjectMembersList',
-      payload: {
-        projectId
-      }
-    });
-  }
 
   //弹窗
   setPreviewFileModalVisibile() {
@@ -52,46 +40,45 @@ class Gantt extends Component{
   }
 
   //用来实现创建任务弹窗方法
-  handleShouldUpdateProjectGroupList = () => {
-    this.getProjectGoupLists()
-  }
-  async getProjectGoupLists() {
-    const res = await getProjectGoupList()
-    const isResOk = res => res && res.code === '0'
-    if(!isResOk(res)) {
-      message.error('获取项目分组信息失败')
-      return
-    }
-    return await this.setState({
-      projectGroupLists: res.data,
-      projectGroupListsIsRequest: true
+  // 获取带app的项目列表
+  getProjectAppsLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutAppsBoards',
+      payload: {
+
+      }
     })
   }
-  getNewTaskInfo = obj => {
-    this.setState({
-      newTask: obj
-    });
-  };
-  addTaskModalVisibleChange = flag => {
-    const { projectGroupListsIsRequest } = this.state
-    const { datas: { projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
-    if(projectTabCurrentSelectedProject !== '0') {
-      this.setBoardUsers(projectTabCurrentSelectedProject)
-    } else {
-      this.setBoardUsers(current_list_group_id)
-    }
+  // 获取带分组的项目列表
+  getProjectGoupLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutGroupBoards',
+      payload: {
 
-    if(!projectGroupListsIsRequest) {
-      const that = this
-      message.info('您所需要的数据正在赶来的路上，请稍候...', 2, function () {
-        that.getProjectGoupLists()
-      })
-      return false
-    }
+      }
+    })
+  }
+  // 获取带用户的项目列表
+  getAboutUsersBoards = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
+
+      }
+    })
+  }
+
+  addTaskModalVisibleChange = flag => {
+    this.setAddTaskModalVisible(flag)
+  };
+  setAddTaskModalVisible = (flag) => {
     this.setState({
       addTaskModalVisible: flag
     });
-  };
+  }
   addNewTask(data) {
     const { dispatch } = this.props
     Promise.resolve(
@@ -115,7 +102,7 @@ class Gantt extends Component{
       .catch(err => console.log(err));
   }
   handleGetNewTaskParams(data) {
-    const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+    const { datas: { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } } = this.props.model
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -128,32 +115,34 @@ class Gantt extends Component{
       users: data['users'],
       name: data['name'],
       type: data['type'],
+      board_id: data['board_id']
     }
-    if(projectTabCurrentSelectedProject == '0') {
-      param.board_id = current_list_group_id
-      param.list_id = data['list_id']
-    } else {
-      param.board_id = projectTabCurrentSelectedProject
-      param.list_id = current_list_group_id
-    }
+    if(group_view_type == '1') {
+      if(gantt_board_id == '0') {
+        param.board_id = current_list_group_id
+        param.list_id = data['list_id']
+      } else {
+        param.board_id = gantt_board_id
+        param.list_id = current_list_group_id
+      }    
+    } 
+    
     this.addNewTask(param)
-    this.setState({
-      addTaskModalVisible: false
-    })
+    this.setAddTaskModalVisible(false)
   }
 
   //修改某一个任务
   handleChangeCard({card_id, drawContent}) {
     const { dispatch } = this.props
-    const { datas: { list_group = [], projectTabCurrentSelectedProject, current_list_group_id, board_id }} = this.props.model
+    const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id }} = this.props.model
     const list_group_new = [...list_group]
-    if(projectTabCurrentSelectedProject == '0') {
+    if(gantt_board_id == '0') {
       for(let i = 0; i < list_group_new.length; i++ ) {
         if(board_id == list_group_new[i].list_id) {
-          for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-            if(card_id == list_group_new[i].lane_data.card[j].id) {
-              list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-              list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+          for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+            if(card_id == list_group_new[i].lane_data.cards[j].id) {
+              list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
+              list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
               break
             }
           }
@@ -164,10 +153,10 @@ class Gantt extends Component{
     } else {
       for(let i = 0; i < list_group_new.length; i++ ) {
         let flag = false
-        for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-          if(card_id == list_group_new[i].lane_data.card[j].id) {
-            list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-            list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
+        for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+          if(card_id == list_group_new[i].lane_data.cards[j].id) {
+            list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
+            list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
             break
           }
         }
@@ -187,13 +176,15 @@ class Gantt extends Component{
 
   render() {
     const { dispatch, model = {}, modal } = this.props
-    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [], board_users = [] } = this.state
+    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, } = this.state
     const { datas = {} } = model;
     const {
-      projectList = [],
-      projectTabCurrentSelectedProject,
+      about_apps_boards = [],
+      gantt_board_id,
+      group_view_type,
       current_list_group_id,
-      currentSelectedProjectMembersList = []
+      about_group_boards = [],
+      about_user_boards = []
     } = datas;
 
     const CreateTaskProps = {
@@ -509,7 +500,7 @@ class Gantt extends Component{
         <GanttFace
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          gantt_board_id={gantt_board_id}
         />
         <FileDetailModal
           {...this.props}
@@ -541,25 +532,17 @@ class Gantt extends Component{
 
         {addTaskModalVisible && (
           <AddTaskModal
-            {...this.props}
-            setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-              this
-            )}
-            isUseInGantt
-            projectIdWhenUseInGantt={projectTabCurrentSelectedProject=='0'?current_list_group_id:projectTabCurrentSelectedProject}
-            projectMemberListWhenUseInGantt={currentSelectedProjectMembersList}
-            projectGroupListId={projectTabCurrentSelectedProject=='0'?'':current_list_group_id}
-
-            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
-            modalTitle="添加任务"
-            taskType="RESPONSIBLE_TASK"
-            getNewTaskInfo={this.getNewTaskInfo}
-            projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
-            projectList={projectList}
+            board_card_group_id={gantt_board_id=='0'?'':current_list_group_id}
+            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}        
+            current_operate_board_id={gantt_board_id=='0'?current_list_group_id: gantt_board_id}
+            current_list_group_id={current_list_group_id}
+            group_view_type={group_view_type}
+            gantt_board_id={gantt_board_id}
+            about_apps_boards={about_apps_boards}
             addTaskModalVisible={addTaskModalVisible}
-            addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-            projectGroupLists={projectGroupLists}
-            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
+            setAddTaskModalVisible={this.setAddTaskModalVisible}
+            about_group_boards={about_group_boards}
+            about_user_boards={about_user_boards}
           />
         )}
       </div>
@@ -571,7 +554,7 @@ class Gantt extends Component{
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas }) {
   const modelObj = {
-    datas: { ...workbench['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas']}
+    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas']}
   }
   return { model: modelObj }
 }

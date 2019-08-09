@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "dva/index"
-import { Route, Switch,  } from 'dva/router'
+import { Route, Switch, } from 'dva/router'
 import indexStyles from './index.less'
 import SimpleHeader from './Components/SimpleHeader/index'
 import WorkbenchPage from './Components/WorkbenchPage'

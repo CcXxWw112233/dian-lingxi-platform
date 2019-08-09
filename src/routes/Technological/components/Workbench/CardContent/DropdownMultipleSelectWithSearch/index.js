@@ -10,13 +10,13 @@ class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)
     const currentUser = this.getCurrentUserFromLocalStorage('userInfo')
-    const { list, handleSelectedItemChange } = props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember } = props;
     const findUserInList = list.find(item => item.id === currentUser.id)
     if(findUserInList) {
       handleSelectedItemChange([findUserInList])
     }
     this.state = {
-      selectedList: findUserInList ? [findUserInList] : [],
+      selectedList: currentSelectedProjectMember? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
      dropdownOptionVisible: false
     }
@@ -295,7 +295,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     return true;
   };
   componentWillReceiveProps(nextProps) {
-    const { list, handleSelectedItemChange } = this.props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
     const isReceiveSameListFromProps = this.comparePropsList(
       nextProps.list,
       list
@@ -306,13 +306,15 @@ class DropdownMultipleSelectWithSearch extends Component {
         const currentUserId = currentUserFromCookie.id;
           const currentUserInList = nextProps.list.find(
             item => item.id === currentUserId
-          );
+          );    
+          let new_new_selectedList =  currentUserInList ? [currentUserInList] : []
+          let new_selectedList = currentSelectedProjectMember.length? currentSelectedProjectMember : new_new_selectedList
           this.setState({
-            selectedList: currentUserInList ? [currentUserInList] : [],
+            selectedList: new_selectedList,//currentUserInList ? [currentUserInList] : [],
             searchValue: ""
           }, () => {
             if(currentUserInList) {
-              handleSelectedItemChange([currentUserInList])
+              handleSelectedItemChange(new_selectedList)
             }
           });
       } else {

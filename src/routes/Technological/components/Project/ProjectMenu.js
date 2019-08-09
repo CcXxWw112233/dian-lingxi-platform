@@ -303,7 +303,7 @@ class ProjectMenu extends Component {
     );
   };
   genTreeNodeTitle = ops => {
-    const { title, layer, board_count, key, parentkey,org_id } = ops;
+    const { title, layer, board_count, key, parentkey, org_id } = ops;
     const { edit_tree_node } = this.state;
     //生成修改名称的 tree node
     if (edit_tree_node === key) {

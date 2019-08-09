@@ -4,13 +4,13 @@ import Cookies from 'js-cookie'
 import { getGlobalData } from '../../utils/businessFunction';
 
 //获取工作台甘特图数据
-export async function getGanttData(params) {
+export async function getGanttData(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt`,
-    method: 'GET',
-    params: {
-      ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId'),
     }
   })
 }
@@ -18,7 +18,7 @@ export async function getGanttData(params) {
 //获取节假日
 export async function getHoliday(params) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/calendar/holiday`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/calendar`,
     method: 'GET',
     params
   })
@@ -27,13 +27,34 @@ export async function getHoliday(params) {
 //获取甘特图里程碑列表
 export async function getGttMilestoneList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/milestone`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/milestone`,
     method: 'GET',
     params: {
       ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+      // _organization_id: getGlobalData('aboutBoardOrganizationId')
     }
   }, { isNotLoading: true});
 }
 
-
+//获取内容过滤项目分组树
+export async function getContentFiterBoardTree(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/board/list `,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('_organization_id')
+    }
+  })
+}
+//获取内容过滤成员分组树
+export async function getContentFiterUserTree(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/user/list `,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('_organization_id')
+    }
+  })
+}

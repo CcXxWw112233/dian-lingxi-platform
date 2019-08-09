@@ -581,12 +581,12 @@ class BoardCommunication extends Component {
         return data.map(item => {
             if (item.children) {
                 return (
-                    <TreeNode key={item.key}  {...item} dataRef={item} selectable={false}>
+                    <TreeNode key={item.key} {...item} dataRef={item} selectable={false}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
                 );
             } else {
-                return <TreeNode key={item.key}  {...item} dataRef={item} />;
+                return <TreeNode key={item.key} {...item} dataRef={item} />;
             }
 
         });
@@ -635,15 +635,15 @@ class BoardCommunication extends Component {
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
                     {
-                        is_selectFolder ?
-                            <DirectoryTree onSelect={this.onSelectFolder}>
+                        is_selectFolder ? (
+<DirectoryTree onSelect={this.onSelectFolder}>
                                 {this.renderFolderTreeNodes([boardFolderTreeData])}
                             </DirectoryTree>
-                            :
-                            <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
+): (
+<DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
                                 {this.renderTreeNodes(boardFileTreeData)}
                             </DirectoryTree>
-                    }
+)}
 
                 </div>
             </>
@@ -679,7 +679,7 @@ class BoardCommunication extends Component {
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
-        console.log(currentBoardDetail,"sssss");
+        console.log(currentBoardDetail, "sssss");
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
@@ -706,12 +706,12 @@ class BoardCommunication extends Component {
                             <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
                                 {
-                                    dragEnterCaptureFlag ?
-                                        <div className={indexStyles.iconDescription}>
+                                    dragEnterCaptureFlag ? (
+<div className={indexStyles.iconDescription}>
                                             <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
                                             <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
                                         </div>
-                                        :
+):
                                         <>
                                             <div className={indexStyles.icon}>
                                                 <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
@@ -729,19 +729,19 @@ class BoardCommunication extends Component {
 
 
                 {
-                    false &&
-                    <div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+                    false && (
+<div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
                         <div className={indexStyles.dragOverArea} style={{ height: container_workbenchBoxContent.offsetHeight + 'px' }}>
                             {
-                                dragEnterCaptureFlag &&
-                                <div className={indexStyles.iconDescription}>
+                                dragEnterCaptureFlag && (
+<div className={indexStyles.iconDescription}>
                                     <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
                                     <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
                                 </div>
-                            }
+)}
                         </div>
                     </div>
-                }
+)}
 
 
                 <Modal
