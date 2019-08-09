@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "dva/index"
-import { Route, Switch,  } from 'dva/router'
+import { Route, Switch, } from 'dva/router'
 import indexStyles from './index.less'
 import SimpleHeader from './Components/SimpleHeader/index'
 import WorkbenchPage from './Components/WorkbenchPage'
 import Home from './Components/Home'
+import { isColor } from '@/utils/util'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -62,13 +63,6 @@ class SimpleMode extends Component {
     });
   }
 
-  setSSS = () => {
-    const { SSS } = this.state
-    this.setState({
-      SSS: !SSS
-    })
-  }
-
   renderRoutes = () => {
     return (
       <Switch>
@@ -81,10 +75,20 @@ class SimpleMode extends Component {
     const {
       simpleHeaderVisiable,
       setWapperCenter,
+      currentUserWallpaperContent,
+      userInfo = {},
     } = this.props;
 
+    const { wallpaper = '' } = userInfo;
+    const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
+    let bgStyle = {}
+    if (isColor(wallpaperContent)) {
+      bgStyle = { backgroundColor: wallpaperContent};
+    } else {
+      bgStyle = { backgroundImage: `url(${wallpaperContent})` };
+    }
     return (
-      <div className={`${indexStyles.wapper} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav}>
+      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
         {simpleHeaderVisiable && <SimpleHeader />}
         {this.renderRoutes()}
       </div>
@@ -97,10 +101,15 @@ export default connect(({ simplemode: {
   simpleHeaderVisiable,
   setWapperCenter,
   chatImVisiable,
-  leftMainNavVisible
+  leftMainNavVisible,
+  currentUserWallpaperContent,
+}, technological: {
+  datas: { userInfo }
 } }) => ({
   simpleHeaderVisiable,
   setWapperCenter,
   chatImVisiable,
-  leftMainNavVisible
+  leftMainNavVisible,
+  currentUserWallpaperContent,
+  userInfo
 }))(SimpleMode)

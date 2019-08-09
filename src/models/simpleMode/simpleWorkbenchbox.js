@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getFileList, getBoardFileList,getFolderList } from '@/services/technological/file'
+import { getFileList, getBoardFileList, getFolderList } from '@/services/technological/file'
 import { projectDetailInfo } from '@/services/technological/prjectDetail'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -172,8 +172,8 @@ export default {
                     }
                 })
                 yield put({
-                    type:'projectDetail/getRelationsSelectionPre',
-                    payload:{
+                    type: 'projectDetail/getRelationsSelectionPre',
+                    payload: {
                         
                     }
                 })

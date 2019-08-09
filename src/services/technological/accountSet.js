@@ -68,3 +68,11 @@ export async function unBindWechat(data) {
     method: 'PUT'
   })
 }
+
+export async function updateUserSet(data){
+  return request({
+    url: `${REQUEST_DOMAIN}/user/set`,
+    method: 'PUT',
+    data
+  })
+}

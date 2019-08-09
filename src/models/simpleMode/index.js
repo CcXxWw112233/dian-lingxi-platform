@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getUserBoxs, getAllBoxs, boxSet, boxCancel } from '@/services/technological/simplemode'
+import { getUserBoxs, getAllBoxs, boxSet, boxCancel, getWallpaperList } from '@/services/technological/simplemode'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
@@ -20,7 +20,9 @@ export default {
         workbenchBoxList: [], //所有可以选择的盒子列表
         currentSelectedWorkbenchBox: {}, //当然选中的工作台盒子
         init: true,
-        allOrgBoardTreeList: []
+        allOrgBoardTreeList: [],
+        allWallpaperList: [], //可选的壁纸列表
+        currentUserWallpaperContent: null
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -41,9 +43,9 @@ export default {
     }
     ,
     effects: {
-        * initSimplemodeCommData({ payload }, { call, put, select }){
+        * initSimplemodeCommData({ payload }, { call, put, select }) {
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
-            if(initFlag){
+            if (initFlag) {
                 yield put({
                     type: 'updateDatas',
                     payload: {
@@ -59,9 +61,12 @@ export default {
                 });
                 yield put({
                     type: 'workbenchPublicDatas/getRelationsSelectionPre'
-                });   
+                });
+                yield put({
+                    type: 'getWallpaperList'
+                });
             }
-           
+
         },
         * routingJump({ payload }, { call, put }) {
             const { route } = payload
@@ -106,7 +111,7 @@ export default {
                 //我的盒子列表
                 let myWorkbenchBoxList = yield select(getModelSelectState("simplemode", "myWorkbenchBoxList")) || [];
                 //所有的盒子列表
-                
+
                 let workbenchBoxList = yield select(getModelSelectState("simplemode", "workbenchBoxList")) || [];
                 let newMyboxArray = workbenchBoxList.filter(item => item.id == id);
                 if (newMyboxArray.length > 0) {
@@ -156,6 +161,19 @@ export default {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
+        * getWallpaperList({ payload }, { call, put, select }) {
+            let res = yield call(getWallpaperList, payload);
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        allWallpaperList: res.data
+                    }
+                });
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        }
     },
     reducers: {
         updateDatas(state, action) {
