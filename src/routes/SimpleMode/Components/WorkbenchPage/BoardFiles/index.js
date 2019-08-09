@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
-import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileModule from '@/routes/Technological/components/ProjectDetail/FileModule'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 import {
@@ -42,7 +41,7 @@ class BoardFiles extends Component {
   }
 
   openBoardFiles = (board) => {
-    console.log(board);
+    //console.log(board);
     this.setState({
       boardSelectVisible: false,
       boardFileContentVisible: true
@@ -216,6 +215,13 @@ class BoardFiles extends Component {
       payload: payload
     })
   }
+
+  fileModuleBack = () => {
+    this.setState({
+      boardSelectVisible: true,
+      boardFileContentVisible: false
+    });
+  }
   render() {
     const { dispatch } = this.props
     const updateDatasFile = (payload) => {
@@ -226,7 +232,7 @@ class BoardFiles extends Component {
     }
     const { boardSelectVisible, boardFileContentVisible } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
-    
+
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
@@ -265,9 +271,12 @@ class BoardFiles extends Component {
 
         {
           boardFileContentVisible && (
-            <div className={indexStyles.boardFileContentWapper}>
+            <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
               <FileModule
                 {...this.getFileModuleProps()}
+                marginTop={'0px'}
+                fileModuleBack={this.fileModuleBack}
+                showBackBtn={true}
                 updateDatas={this.updateDatas}
                 updateDatasTask={this.updateDatasTask}
                 updateDatasFile={this.updateDatasFile}

@@ -35,7 +35,7 @@ export default modelExtend(technological, {
               menuSearchSingleSpinning: false, //获取分组负责人转转转
             }
           })
-          if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)){
+          if(checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && localStorage.getItem('OrganizationId') != '0'){
             //获取分组列表
             dispatch({
               type: 'getGroupList',
@@ -79,12 +79,12 @@ export default modelExtend(technological, {
       const delay = (ms) => new Promise(resolve => {
         setTimeout(resolve, ms)
       })
-      yield call(delay, 3000)
+      yield call(delay, 2000)
       yield put(routerRedux.push('/technological/workbench'))
     },
 
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {...payload})
+      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'),...payload,})
       if(isApiResponseOk(res)) {
         const groupList = res.data.data
         //将角色信息数据包裹

@@ -76,7 +76,7 @@ export async function getGroupList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      // _organization_id: localStorage.getItem('OrganizationId'),
     }      
   });
 }
@@ -303,4 +303,15 @@ export async function getSetShowOrgName(data) {
     method: 'PUT',
     data
   });
+}
+
+// 用户设置是否显示极简模式
+export async function getSetShowSimple(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/set`,
+    method: 'PUT',
+    data: {
+      is_simple_model: data
+    }
+  })
 }

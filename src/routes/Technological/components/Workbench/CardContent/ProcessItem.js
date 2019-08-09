@@ -35,10 +35,10 @@ export default class ProcessItem extends React.Component {
   async gotoBoardDetail(obj) {
     // debugger
     setBoardIdStorage(obj.board)
-    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, obj.org_id)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, obj.org_id)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     await this.props.dispatch({
       type: 'workbenchDetailProcess/getWorkFlowComment',
       payload: {flow_instance_id: obj.flow}

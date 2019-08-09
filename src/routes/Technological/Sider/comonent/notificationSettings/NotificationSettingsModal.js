@@ -73,7 +73,7 @@ export default class NotificationSettingsModal extends Component {
                 // 将拿回来的数据进行操作返回
 								let { notice_setting_list, notice_way_data, notice_model, user_detail_setting_options, user_simple_setting_options, default_detail_options, default_simple_options } = this.state
 								const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-								const { email, wechat } = userInfo
+								const { email, open_id } = userInfo
 								let new_way_data = [...notice_way_data]
 								// 对任务, 流程等默认设置的状态进行操作
                 notice_setting_list = notice_setting_list.map(item => {
@@ -87,7 +87,7 @@ export default class NotificationSettingsModal extends Component {
 									if (item.key == 'is_notice_mail') {
 										new_item = {...item, disabled: email ? false : true}
 									} else if (item.key == 'is_notice_mp') {
-										new_item = {...item, disabled: wechat ? false : true}
+										new_item = {...item, disabled: open_id ? false : true}
 									} else {
 										new_item = {...item, disabled: false}
 									}
@@ -96,7 +96,7 @@ export default class NotificationSettingsModal extends Component {
 								// 比较用户设置和默认设置是否相等, 不相等要显示还原的操作
 								if (notice_model == '1') {
 									let flag = this.compareDiffArr(user_detail_setting_options, default_detail_options)
-									console.log(flag, 'sssss')
+									// console.log(flag, 'sssss')
 									this.setState({
 										is_detail_none: flag ? 'none' : 'inline-block' 
 									})

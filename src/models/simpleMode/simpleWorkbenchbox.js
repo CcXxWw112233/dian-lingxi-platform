@@ -51,7 +51,6 @@ export default {
                     list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
                 });
                 file_data.map((file, key) => {
-                    console.log(file);
                     list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
                 });
 
@@ -172,7 +171,12 @@ export default {
                         id
                     }
                 })
-
+                yield put({
+                    type:'projectDetail/getRelationsSelectionPre',
+                    payload:{
+                        
+                    }
+                })
                 //缓存下来当前项目的权限
                 // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
             }

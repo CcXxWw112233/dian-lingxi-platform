@@ -57,6 +57,9 @@ export default {
                 yield put({
                     type: 'getOrgBoardData'
                 });
+                yield put({
+                    type: 'workbenchPublicDatas/getRelationsSelectionPre'
+                });   
             }
            
         },

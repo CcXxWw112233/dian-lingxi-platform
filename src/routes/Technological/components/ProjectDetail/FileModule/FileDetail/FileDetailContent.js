@@ -700,7 +700,7 @@ class FileDetailContent extends React.Component {
     const { is_privilege, privileges } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
 
     const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%" class="multi-download"  src="' + src + '"></iframe>'
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
     }
     const getVersionItem = (value, key) => {
