@@ -205,7 +205,7 @@ export default class DynamicContain extends Component {
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 邀请 「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.rela_users}</span>」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 邀请 「<span className={DrawDetailInfoStyle.news_name}>{`${messageValue.content.rela_users},`}</span>」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -877,10 +877,10 @@ export default class DynamicContain extends Component {
           projectDynamicsList && projectDynamicsList.length ? projectDynamicsList.map((item, childrenKey) => {
             const { rela_type } = item
             return (
-              <li key={childrenKey}>{filterNewsType(rela_type, item, childrenKey)}</li>
+              <li style={{marginBottom: '8'}} key={childrenKey}>{filterNewsType(rela_type, item, childrenKey)}</li>
             )
           }) : (
-            <li>
+            <li style={{marginBottom: '8'}}>
               <div style={{margin: 'auto', textAlign: 'center'}}>
                 <div style={{fontSize: 48, color: 'rgba(0,0,0,0.15)'}} className={`${globalStyles.authTheme}`}>&#xe683;</div>
                 <span style={{color: 'rgba(217,217,217,1)'}}>暂无动态</span>

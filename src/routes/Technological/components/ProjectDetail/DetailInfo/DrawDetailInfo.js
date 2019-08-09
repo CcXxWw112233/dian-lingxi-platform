@@ -15,7 +15,8 @@ import DynamicContain from './component/DynamicContain'
 const TextArea = Input.TextArea
 
 
-const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。如果使用中需要问题，可以随时联系我们进行交流或反馈：https://lingxi.di-an.com'
+// const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。如果使用中需要问题，可以随时联系我们进行交流或反馈：https://lingxi.di-an.com'
+const detaiDescription = '添加简介'
 
 export default class DrawDetailInfo extends React.Component {
 
@@ -31,6 +32,7 @@ export default class DrawDetailInfo extends React.Component {
     detaiDescriptionValue: detaiDescription,
     ShowAddMenberModalVisibile: false, 
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
+    textArea_val: '', // 用来判断是否有用户输入
   }
 
   // 子组件调用父组件的方法
@@ -133,24 +135,26 @@ export default class DrawDetailInfo extends React.Component {
   }
   textAreaChange(e) {
     this.setState({
-      detaiDescriptionValue: e.target.value || detaiDescription
+      detaiDescriptionValue: e.target.value || detaiDescription,
+      textArea_val: e.target.value
     })
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     projectDetailInfoData['description'] = e.target.value
   }
-  editSave(board_id, e) {
-    const {datas: { projectDetailInfoData = {} } } = this.props.model
+  // 点击保存按钮
+  // editSave(board_id, e) {
+  //   const {datas: { projectDetailInfoData = {} } } = this.props.model
 
-    const obj = {
-      isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
-      description: projectDetailInfoData['description'],
-      board_id
-    }
-    this.props.updateProject(obj)
-    this.setState({
-      editDetaiDescription: false
-    })
-  }
+  //   const obj = {
+  //     isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
+  //     description: projectDetailInfoData['description'],
+  //     board_id
+  //   }
+  //   this.props.updateProject(obj)
+  //   this.setState({
+  //     editDetaiDescription: false
+  //   })
+  // }
   //点击区域描述可编辑区域-----------end
 
   //点击添加成员操作
@@ -162,6 +166,51 @@ export default class DrawDetailInfo extends React.Component {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
+  }
+
+  // 修改文本框的事件
+  setTextAreaDescription(board_id) {
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+      const obj = {
+        isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
+        description: projectDetailInfoData['description'],
+        board_id
+      }
+      this.props.updateProject(obj)
+      this.setState({
+        editDetaiDescription: false,
+        textArea_val: ''
+      })
+  }
+
+  // 获取文本域的键盘事件
+  handleKeyDown(e, board_id) {
+    const { textArea_val } = this.state
+    let code = e.keyCode
+    if (code == '13') {
+      if (textArea_val != '') {
+        this.setTextAreaDescription(board_id)
+      } else {
+        this.setState({
+          editDetaiDescription: false,
+          textArea_val: ''
+        })
+      }
+      
+    }
+  }
+
+  // 获取文本框失去焦点的事件
+  handleOnBlur(e, board_id) {
+    const { textArea_val } = this.state
+    if (textArea_val != '') {
+      this.setTextAreaDescription(board_id)
+    } else {
+      this.setState({
+        editDetaiDescription: false,
+        textArea_val: ''
+      })
+    }
   }
 
   render() {
@@ -264,13 +313,20 @@ export default class DrawDetailInfo extends React.Component {
     }
     const EditArea = (
       <div>
-        <TextArea defaultValue={description || detaiDescriptionValue} autosize={true} className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)}/>
-        <div style={{ textAlign: 'right'}}>
+        <TextArea
+          autoFocus
+          onBlur={ (e) => { this.handleOnBlur(e, board_id) } } 
+          defaultValue={description || detaiDescriptionValue} 
+          autosize={true} 
+          onKeyDown={ (e) => { this.handleKeyDown(e, board_id) } } 
+          className={DrawDetailInfoStyle.editTextArea} 
+          onChange={this.textAreaChange.bind(this)}/>
+        {/* <div style={{ textAlign: 'right'}}> */}
           {/*<div>*/}
             {/*<Checkbox style={{color: 'rgba(0,0,0, .8)', fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
           {/*</div>*/}
-          <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this, board_id)}>保存</Button>
-        </div>
+          {/* <Button type={'primary'} style={{fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this, board_id)}>保存</Button> */}
+        {/* </div> */}
       </div>
     )
     return (
@@ -288,35 +344,40 @@ export default class DrawDetailInfo extends React.Component {
             <span style={{fontSize: 18}} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
             <span>项目成员</span>
           </div>
-          <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
-            {
-              checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
-                <Tooltip title="邀请新成员" placement="top">
-                  <div className={DrawDetailInfoStyle.addManImageItem} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                    <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8, color: '#40A9FF'}}/>
-                  </div>
-                </Tooltip>
-                )
-            }
-            {
-              avatarList.map((value, key) => {
-                if(key < avatarList.length - 1) {
-                  const { avatar, user_id } = value
-                  return(
-                    <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
-                      <Dropdown overlay={manImageDropdown(value)}>
-                        {avatar?(<img src={avatar} />): (
-                          <div style={{width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
-                            <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
-                          </div>
-                        )
-                        }
-                      </Dropdown>
+          <div style={{display:'flex'}}>
+            <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
+              {
+                checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+                  <Tooltip title="邀请新成员" placement="top">
+                    <div className={DrawDetailInfoStyle.addManImageItem} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                      <Icon type="plus" style={{color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8, color: '#40A9FF'}}/>
                     </div>
+                  </Tooltip>
                   )
-                }
-              })
-            }
+              }
+              {
+                avatarList.map((value, key) => {
+                  if(key < avatarList.length - 1) {
+                    const { avatar, user_id } = value
+                    return(
+                      <div className={DrawDetailInfoStyle.manImageItem} key={ key }>
+                        <Dropdown overlay={manImageDropdown(value)}>
+                          {avatar?(<img src={avatar} />): (
+                            <div style={{width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center'}}>
+                              <Icon type={'user'} style={{fontSize: 20, color: '#8c8c8c', marginTop: 9}}/>
+                            </div>
+                          )
+                          }
+                        </Dropdown>
+                      </div>
+                    )
+                  }
+                })
+              }
+            </div>
+            {/* <Tooltip title="全部成员" placement="top">
+              <div className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.more}`}>&#xe635;</div>
+            </Tooltip> */}
           </div>
           <div className={DrawDetailInfoStyle.dynamic}>
             <div className={ dynamic_header_sticky ? DrawDetailInfoStyle.positionStyles : '' }>
