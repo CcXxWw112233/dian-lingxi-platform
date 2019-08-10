@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { message } from 'antd'
-import {connect} from "dva/index";
+import { connect } from "dva/index";
 import GanttFace from './GanttFace'
 import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
@@ -10,7 +10,7 @@ const getEffectOrReducerByName = name => `workbench/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 
-class Gantt extends Component{
+class Gantt extends Component {
   state = {
     TaskDetailModalVisibile: false,
     previewFileModalVisibile: false,
@@ -90,7 +90,7 @@ class Gantt extends Component{
       })
     )
       .then(res => {
-        if(res) {
+        if (res) {
           dispatch({
             type: 'gantt/getGanttData',
             payload: {}
@@ -117,55 +117,65 @@ class Gantt extends Component{
       type: data['type'],
       board_id: data['board_id']
     }
-    if(group_view_type == '1') {
-      if(gantt_board_id == '0') {
+    if (group_view_type == '1') {
+      if (gantt_board_id == '0') {
         param.board_id = current_list_group_id
         param.list_id = data['list_id']
       } else {
         param.board_id = gantt_board_id
         param.list_id = current_list_group_id
-      }    
-    } 
-    
+      }
+    }
+
     this.addNewTask(param)
     this.setAddTaskModalVisible(false)
   }
 
   //修改某一个任务
-  handleChangeCard({card_id, drawContent}) {
+  handleChangeCard({ card_id, drawContent }) {
     const { dispatch } = this.props
-    const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id }} = this.props.model
+    const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id, group_view_type } } = this.props.model
     const list_group_new = [...list_group]
-    if(gantt_board_id == '0') {
-      for(let i = 0; i < list_group_new.length; i++ ) {
-        if(board_id == list_group_new[i].list_id) {
-          for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
-            if(card_id == list_group_new[i].lane_data.cards[j].id) {
-              list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
+    if (group_view_type == '1') { //项目视图
+      if (gantt_board_id == '0') {
+        for (let i = 0; i < list_group_new.length; i++) {
+          if (board_id == list_group_new[i].list_id) {
+            for (let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+              if (card_id == list_group_new[i].lane_data.cards[j].id) {
+                list_group_new[i].lane_data.cards[j] = { ...list_group_new[i].lane_data.cards[j], ...drawContent }
+                list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
+                break
+              }
+            }
+            break
+          }
+        }
+
+      } else {
+        for (let i = 0; i < list_group_new.length; i++) {
+          let flag = false
+          for (let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
+            if (card_id == list_group_new[i].lane_data.cards[j].id) {
+              list_group_new[i].lane_data.cards[j] = { ...list_group_new[i].lane_data.cards[j], ...drawContent }
               list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
               break
             }
           }
-          break
-        }
-      }
-
-    } else {
-      for(let i = 0; i < list_group_new.length; i++ ) {
-        let flag = false
-        for(let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
-          if(card_id == list_group_new[i].lane_data.cards[j].id) {
-            list_group_new[i].lane_data.cards[j] = {...list_group_new[i].lane_data.cards[j], ...drawContent}
-            list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
+          if (flag) {
             break
           }
         }
-        if(flag) {
-          break
-        }
+
       }
+    } else if (group_view_type == '2') { //成员视图
+      const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+      const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+      list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...drawContent }
+      list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
+    } else {
 
     }
+
     dispatch({
       type: 'gantt/handleListGroup',
       payload: {
@@ -196,7 +206,7 @@ class Gantt extends Component{
           payload: payload
         })
       },
-      getCardDetail(payload){
+      getCardDetail(payload) {
         dispatch({
           type: getEffectOrReducerByName_4('getCardDetail'),
           payload: payload
@@ -232,25 +242,25 @@ class Gantt extends Component{
           payload: data,
         })
       },
-      getTaskGroupList(data){
+      getTaskGroupList(data) {
         dispatch({
           type: getEffectOrReducerByName_4('getTaskGroupList'),
           payload: data
         })
       },
-      addTask(data){
+      addTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('addTask'),
           payload: data
         })
       },
-      updateTask(data){
+      updateTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('updateTask'),
           payload: data
         })
       },
-      deleteTask(id){
+      deleteTask(id) {
         dispatch({
           type: getEffectOrReducerByName_4('deleteTask'),
           payload: {
@@ -258,68 +268,68 @@ class Gantt extends Component{
           }
         })
       },
-      updateChirldTask(data){
+      updateChirldTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('updateChirldTask'),
           payload: data
         })
       },
-      deleteChirldTask(data){
+      deleteChirldTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('deleteChirldTask'),
           payload: data
         })
       },
 
-      archivedTask(data){
+      archivedTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('archivedTask'),
           payload: data
         })
       },
-      changeTaskType(data){
+      changeTaskType(data) {
         dispatch({
           type: getEffectOrReducerByName_4('changeTaskType'),
           payload: data
         })
       },
-      addChirldTask(data){
+      addChirldTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('addChirldTask'),
           payload: data
         })
       },
-      addTaskExecutor(data){
+      addTaskExecutor(data) {
         dispatch({
           type: getEffectOrReducerByName_4('addTaskExecutor'),
           payload: data
         })
       },
-      removeTaskExecutor(data){
+      removeTaskExecutor(data) {
         dispatch({
           type: getEffectOrReducerByName_4('removeTaskExecutor'),
           payload: data
         })
       },
-      completeTask(data){
+      completeTask(data) {
         dispatch({
           type: getEffectOrReducerByName_4('completeTask'),
           payload: data
         })
       },
-      addTaskTag(data){
+      addTaskTag(data) {
         dispatch({
           type: getEffectOrReducerByName_4('addTaskTag'),
           payload: data
         })
       },
-      removeTaskTag(data){
+      removeTaskTag(data) {
         dispatch({
           type: getEffectOrReducerByName_4('removeTaskTag'),
           payload: data
         })
       },
-      removeProjectMenbers(data){
+      removeProjectMenbers(data) {
         dispatch({
           type: getEffectOrReducerByName_4('removeProjectMenbers'),
           payload: data
@@ -379,79 +389,79 @@ class Gantt extends Component{
           payload: payload
         })
       },
-      getFileList(params){
+      getFileList(params) {
         dispatch({
           type: getEffectOrReducerByName('getFileList'),
           payload: params
         })
       },
-      fileCopy(data){
+      fileCopy(data) {
         dispatch({
           type: getEffectOrReducerByName_5('fileCopy'),
           payload: data
         })
       },
-      fileDownload(params){
+      fileDownload(params) {
         dispatch({
           type: getEffectOrReducerByName_5('fileDownload'),
           payload: params
         })
       },
-      fileRemove(data){
+      fileRemove(data) {
         dispatch({
           type: getEffectOrReducerByName_5('fileRemove'),
           payload: data
         })
       },
-      fileMove(data){
+      fileMove(data) {
         dispatch({
           type: getEffectOrReducerByName_5('fileMove'),
           payload: data
         })
       },
-      fileUpload(data){
+      fileUpload(data) {
         dispatch({
           type: getEffectOrReducerByName_5('fileUpload'),
           payload: data
         })
       },
-      fileVersionist(params){
+      fileVersionist(params) {
         dispatch({
           type: getEffectOrReducerByName_5('fileVersionist'),
           payload: params
         })
       },
-      recycleBinList(params){
+      recycleBinList(params) {
         dispatch({
           type: getEffectOrReducerByName_5('recycleBinList'),
           payload: params
         })
       },
-      deleteFile(data){
+      deleteFile(data) {
         dispatch({
           type: getEffectOrReducerByName_5('deleteFile'),
           payload: data
         })
       },
-      restoreFile(data){
+      restoreFile(data) {
         dispatch({
           type: getEffectOrReducerByName_5('restoreFile'),
           payload: data
         })
       },
-      getFolderList(params){
+      getFolderList(params) {
         dispatch({
           type: getEffectOrReducerByName_5('getFolderList'),
           payload: params
         })
       },
-      addNewFolder(data){
+      addNewFolder(data) {
         dispatch({
           type: getEffectOrReducerByName_5('addNewFolder'),
           payload: data
         })
       },
-      updateFolder(data){
+      updateFolder(data) {
         dispatch({
           type: getEffectOrReducerByName_5('updateFolder'),
           payload: data
@@ -533,9 +543,9 @@ class Gantt extends Component{
 
         {addTaskModalVisible && (
           <AddTaskModal
-            board_card_group_id={gantt_board_id=='0'?'':current_list_group_id}
-            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}        
-            current_operate_board_id={gantt_board_id=='0'?current_list_group_id: gantt_board_id}
+            board_card_group_id={gantt_board_id == '0' ? '' : current_list_group_id}
+            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
+            current_operate_board_id={gantt_board_id == '0' ? current_list_group_id : gantt_board_id}
             current_list_group_id={current_list_group_id}
             group_view_type={group_view_type}
             gantt_board_id={gantt_board_id}
@@ -555,7 +565,7 @@ class Gantt extends Component{
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas }) {
   const modelObj = {
-    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas']}
+    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas'] }
   }
   return { model: modelObj }
 }

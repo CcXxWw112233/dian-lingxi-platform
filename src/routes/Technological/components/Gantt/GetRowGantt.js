@@ -358,6 +358,8 @@ export default class GetRowGantt extends Component {
                           // backgroundImage: 'liner-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)'
                           // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
                       }}
+                      onMouseDown={(e)=>e.stopPropagation()}
+                      onMouseMove={(e)=>e.stopPropagation()}
                       onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id})}
                   >
                       <div className={`${indexStyles.card_item_status}`} onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>
