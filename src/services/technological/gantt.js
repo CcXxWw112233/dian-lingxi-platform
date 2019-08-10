@@ -39,7 +39,7 @@ export async function getGttMilestoneList(params) {
 //获取内容过滤项目分组树
 export async function getContentFiterBoardTree(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/board/list `,
+    url: `${REQUEST_DOMAIN}/organization/board/list`,
     method: 'GET',
     params: {
       _organization_id: localStorage.getItem('OrganizationId'),
@@ -50,7 +50,7 @@ export async function getContentFiterBoardTree(params) {
 //获取内容过滤成员分组树
 export async function getContentFiterUserTree(params) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/user/list `,
+    url: `${REQUEST_DOMAIN}/organization/user/list`,
     method: 'GET',
     params: {
       _organization_id: localStorage.getItem('OrganizationId'),

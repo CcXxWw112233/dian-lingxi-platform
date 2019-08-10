@@ -343,7 +343,7 @@ export default {
     * getContentFiterBoardTree({payload}, {select, call, put}) {
         const res = yield call(getContentFiterBoardTree, {})
         if(isApiResponseOk) {
-          const data = res.data
+          const data = res.data || []
           const treeData = data.map(item => {
             const { org_name, org_id, board_list = [] } = item
             let new_item = {
@@ -375,7 +375,7 @@ export default {
     * getContentFiterUserTree({payload}, {select, call, put}) {
       const res = yield call(getContentFiterUserTree, {})
       if(isApiResponseOk) {
-        const data = res.data
+        const data = res.data || []
         const treeData = data.map(item => {
           const { org_name, org_id, groups = [] } = item
           let new_item = {

@@ -5,18 +5,29 @@ import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard } from '.
 import { Input, Menu, Dropdown, message } from 'antd'
 import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
 import { connect } from 'dva';
-import { fileRemove } from '../../../../../../../services/technological/file';
+import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 
 @connect()
 export default class FolderItem extends Component {
+
+    constructor(props) {
+        super(props)
+        const { itemValue = {} } = this.props
+        const { name } = itemValue
+        this.state = {
+            input_folder_value: '',
+            local_name: name,
+        }
+    }
+
     // 过滤名字logo
-    judgeFileType({ type, name }) {
+    judgeFileType({ type, local_name }) {
         if (type == '1') {//文件夹
             return '&#xe6c4;'
         }
         let themeCode = '&#xe691;'
-        const file_type = getSubfixName(name)
+        const file_type = getSubfixName(local_name)
         switch (file_type) {
             case '.xls':
                 themeCode = '&#xe6d5;'
@@ -65,11 +76,11 @@ export default class FolderItem extends Component {
 
         const params = {
             board_id,
-            arrays: JSON.stringify([{type, id}])
+            arrays: JSON.stringify([{ type, id }])
         }
 
         const res = await fileRemove(params)
-        if(isApiResponseOk(res)) {
+        if (isApiResponseOk(res)) {
             getFolderFileList({ id: current_folder_id })
         }
     }
@@ -80,6 +91,7 @@ export default class FolderItem extends Component {
         const { key } = e
         switch (key) {
             case '1':
+                this.setIsShowChange(true)
                 break
             case '2':
                 this.requestRemoveItem()
@@ -112,9 +124,12 @@ export default class FolderItem extends Component {
 
     // 点击一整个item
     itemClick = (itemValue) => {
+        const { local_name } = this.state
         const { type } = itemValue
+
         if (type == '1') {
-            this.props.setBreadPaths && this.props.setBreadPaths({ path_item: itemValue })
+            const new_item_value = {...itemValue, name: local_name}
+            this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
         } else if (type == '2') {
             this.previewFile(itemValue)
         }
@@ -208,17 +223,70 @@ export default class FolderItem extends Component {
 
     }
 
-    
+    // 更改名称
+    inputOnPressEnter = (e) => {
+        this.requestUpdateFolder()
+        this.setIsShowChange(false)
+    }
+    inputOnBlur = (e) => {
+        this.setIsShowChange(false)
+    }
+    inputOnchange = (e) => {
+        const { value } = e.target
+        this.setState({
+            input_folder_value: value
+        })
+    }
+    setIsShowChange = (flag) => {
+        this.setState({
+            is_show_change: flag,
+            input_folder_value: '',
+        })
+    }
+    requestUpdateFolder = async () => {
+        const { input_folder_value } = this.state
+        const { itemValue = {}, board_id } = this.props
+        const { id } = itemValue
+        const params = {
+            board_id,
+            folder_id: id,
+            folder_name: input_folder_value
+        }
+        const res = await updateFolder(params)
+        if(isApiResponseOk(res)) {
+            this.setState({
+                local_name: input_folder_value
+            })
+        }
+    }
+
     render() {
         const { itemValue = {} } = this.props
         const { name, id, type } = itemValue
+        const { is_show_change, input_folder_value, local_name } = this.state
         return (
-            <div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
-                <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType({ type, name }) }}></div>
-                <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{name}</div>
-                <Dropdown overlay={this.renderOperateItemDropMenu()}>
-                    <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
-                </Dropdown>
+            <div>
+                {
+                    is_show_change ? (
+                        <div className={`${styles.folder_item} ${styles.add_item}`} style={{ height: 38 }}>
+                            <Input style={{ height: 38 }}
+                                autoFocus
+                                value={input_folder_value}
+                                onChange={this.inputOnchange}
+                                onPressEnter={this.inputOnPressEnter}
+                                onBlur={this.inputOnBlur} />
+                        </div>
+                    ) : (
+                            <div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
+                                <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType({ type, local_name }) }}></div>
+                                <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{local_name}</div>
+
+                                <Dropdown overlay={this.renderOperateItemDropMenu()}>
+                                    <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
+                                </Dropdown>
+                            </div>
+                        )
+                }
             </div>
         )
     }
