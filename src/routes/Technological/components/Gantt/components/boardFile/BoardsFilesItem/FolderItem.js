@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getSubfixName } from '../../../../../../../utils/businessFunction';
-import { Input, Menu, Dropdown } from 'antd'
+import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { Input, Menu, Dropdown, message } from 'antd'
+import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
+import { connect } from 'dva';
+import { fileRemove } from '../../../../../../../services/technological/file';
+import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
+
+@connect()
 export default class FolderItem extends Component {
-    judgeFileType(fileName) {
-        let themeCode = '&#xe6c4;'//文件夹
-        const type = getSubfixName(fileName)
-        switch (type) {
+    // 过滤名字logo
+    judgeFileType({ type, name }) {
+        if (type == '1') {//文件夹
+            return '&#xe6c4;'
+        }
+        let themeCode = '&#xe691;'
+        const file_type = getSubfixName(name)
+        switch (file_type) {
             case '.xls':
                 themeCode = '&#xe6d5;'
                 break
@@ -42,35 +52,169 @@ export default class FolderItem extends Component {
                 themeCode = '&#xe6cb;'
                 break
             default:
-                themeCode = '&#xe6c4;'
+                themeCode = '&#xe691;'
                 break
         }
         return themeCode
     }
-    menuItemClick = () => {
 
+    // 删除某一项
+    requestRemoveItem = async () => { //
+        const { board_id, current_folder_id, getFolderFileList, itemValue = {} } = this.props
+        const { id, type } = itemValue
+
+        const params = {
+            board_id,
+            arrays: JSON.stringify([{type, id}])
+        }
+
+        const res = await fileRemove(params)
+        if(isApiResponseOk(res)) {
+            getFolderFileList({ id: current_folder_id })
+        }
     }
+
+    // 菜单点击
+    menuItemClick = (e) => {
+        e.domEvent.stopPropagation()
+        const { key } = e
+        switch (key) {
+            case '1':
+                break
+            case '2':
+                this.requestRemoveItem()
+                break
+            default:
+                break
+        }
+    }
+
+    // 渲染菜单
     renderOperateItemDropMenu = () => {
+        const { itemValue = {} } = this.props
+        const { type } = itemValue
+
         return (
             <Menu onClick={this.menuItemClick}>
-                <Menu.Item key={1} style={{ width: 248}}>
-                   <span  style={{fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248}}><i className={`${globalStyles.authTheme}`} style={{fontSize: 16}}>&#xe666;</i> 重命名</span>
-                </Menu.Item>
+                {
+                    type == '1' && (
+                        <Menu.Item key={1} style={{ width: 248 }}>
+                            <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}><i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe666;</i> 重命名</span>
+                        </Menu.Item>
+                    )
+                }
                 <Menu.Item key={2}>
-                   <span style={{fontSize: 14, color: `rgba(0,0,0,0.65)`,  width: 248}}><i className={`${globalStyles.authTheme}`} style={{fontSize: 16}}>&#xe68d;</i> 移入回收站</span>
+                    <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}><i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe68d;</i> 移入回收站</span>
                 </Menu.Item>
             </Menu>
         )
     }
+
+    // 点击一整个item
     itemClick = (itemValue) => {
-        this.props.setBreadPaths && this.props.setBreadPaths({ path_item: itemValue})
+        const { type } = itemValue
+        if (type == '1') {
+            this.props.setBreadPaths && this.props.setBreadPaths({ path_item: itemValue })
+        } else if (type == '2') {
+            this.previewFile(itemValue)
+        }
     }
+
+    // 预览文件
+    previewFile = (data, e) => {
+        const { board_id } = this.props
+        const {
+            file_name,
+            file_resource_id,
+            file_id,
+            id,
+            folder_id,
+            version_id
+        } = data;
+        const { dispatch } = this.props
+        setBoardIdStorage(board_id)
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+            return false;
+        }
+
+        dispatch({
+            type: 'workbenchFileDetail/getCardCommentListAll',
+            payload: {
+                id: id
+            }
+        });
+        dispatch({
+            type: 'workbenchFileDetail/getFileType',
+            payload: {
+                file_id: id
+            }
+        });
+        this.props.setPreviewFileModalVisibile();
+        dispatch({
+            type: 'workbenchFileDetail/updateDatas',
+            payload: {
+                seeFileInput: 'fileModule',
+                board_id,
+                filePreviewCurrentId: file_resource_id,
+                currentParrentDirectoryId: folder_id,
+                filePreviewCurrentFileId: id,
+                filePreviewCurrentVersionId: version_id, //file_id,
+                pdfDownLoadSrc: '',
+            }
+        })
+
+        dispatch({
+            type: 'workbenchFileDetail/',
+            payload: {
+
+            }
+        })
+
+        if (getSubfixName(file_name) == '.pdf') {
+            this.props.dispatch({
+                type: 'workbenchFileDetail/getFilePDFInfo',
+                payload: {
+                    id
+                }
+            })
+        } else {
+            dispatch({
+                type: 'workbenchFileDetail/filePreview',
+                payload: {
+                    id: file_resource_id, file_id: id
+                }
+            })
+        }
+        dispatch({
+            type: 'workbenchFileDetail/fileVersionist',
+            payload: {
+                version_id: version_id, //file_id,
+                isNeedPreviewFile: false,
+            }
+        })
+        dispatch({
+            type: 'workbenchTaskDetail/getBoardMembers',
+            payload: {
+                id: board_id
+            }
+        })
+        dispatch({
+            type: 'workbenchPublicDatas/updateDatas',
+            payload: {
+                board_id
+            }
+        })
+
+    }
+
+    
     render() {
         const { itemValue = {} } = this.props
         const { name, id, type } = itemValue
         return (
             <div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
-                <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType('') }}></div>
+                <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType({ type, name }) }}></div>
                 <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{name}</div>
                 <Dropdown overlay={this.renderOperateItemDropMenu()}>
                     <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>

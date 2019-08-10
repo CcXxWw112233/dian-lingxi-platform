@@ -239,7 +239,7 @@ export default class GanttFace extends Component {
         </div>
         <div className={indexStyles.cardDetail_right}></div>
         <ShowFileSlider />
-        <BoardsFilesArea />
+        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}/>
       </div>
     )
   }

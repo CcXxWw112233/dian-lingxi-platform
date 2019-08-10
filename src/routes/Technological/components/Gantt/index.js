@@ -28,7 +28,7 @@ class Gantt extends Component{
 
 
   //弹窗
-  setPreviewFileModalVisibile() {
+  setPreviewFileModalVisibile = () => {
     this.setState({
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     });
@@ -500,6 +500,7 @@ class Gantt extends Component{
         <GanttFace
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
+          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           gantt_board_id={gantt_board_id}
         />
         <FileDetailModal
