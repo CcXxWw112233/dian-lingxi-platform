@@ -1,4 +1,4 @@
-import { getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../services/technological/gantt'
+import { getGanttBoardsFiles, getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../services/technological/gantt'
 import { getProjectList, getProjectUserList } from '../../../services/technological/workbench'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -58,6 +58,7 @@ export default {
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
       is_show_board_file_area: '1', //显示文件区域 0默认不显示 1滑入 2滑出
+      boards_flies: [], //带根目录文件列表的项目列表
     },
   },
   subscriptions: {
@@ -161,6 +162,16 @@ export default {
           get_gantt_data_loading: true,
         }
       })
+
+      // 查询文件列表
+      yield put({
+        type: 'getGanttBoardsFiles',
+        payload: {
+          query_board_ids: setContentFilterParams().query_board_ids,
+          board_id: gantt_board_id == '0'? '': gantt_board_id
+        }
+      })
+
       const res = yield call(getGanttData, params)
       yield put({
         type: 'updateDatas',
@@ -463,6 +474,21 @@ export default {
 
       }
     },
+    
+    * getGanttBoardsFiles({ payload }, { select, call, put }) {
+      const res = yield call(getGanttBoardsFiles, payload)
+      console.log('sssssssss', { boards_flies: res.data })
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            boards_flies: res.data
+          }
+        })
+      }else{
+
+      }
+    }
   },
 
   reducers: {

@@ -3,7 +3,6 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { getSubfixName } from '../../../../../../../utils/businessFunction';
 import { Input, Menu, Dropdown } from 'antd'
-
 export default class FolderItem extends Component {
     judgeFileType(fileName) {
         let themeCode = '&#xe6c4;'//文件夹
@@ -63,11 +62,16 @@ export default class FolderItem extends Component {
             </Menu>
         )
     }
+    itemClick = (itemValue) => {
+        this.props.setBreadPaths && this.props.setBreadPaths({ path_item: itemValue})
+    }
     render() {
+        const { itemValue = {} } = this.props
+        const { name, id, type } = itemValue
         return (
-            <div className={styles.folder_item} >
+            <div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
                 <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType('') }}></div>
-                <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>名字名字名字名字名字名字名字名字名字名字名字名字名字名字名字名字名字名字名字</div>
+                <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{name}</div>
                 <Dropdown overlay={this.renderOperateItemDropMenu()}>
                     <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
                 </Dropdown>

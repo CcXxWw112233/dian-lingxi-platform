@@ -7,8 +7,7 @@ import BoardsFilesItem from './BoardsFilesItem'
 @connect(mapStateToProps)
 export default class BoardsFilesArea extends Component {
     render() {
-        const { is_show_board_file_area } = this.props
-        const arr = [1, 2, 3, 4, 5 ]
+        const { is_show_board_file_area, boards_flies = [] } = this.props
         return (
             <div className={` ${globalStyles.global_vertical_scrollbar} ${styles.boards_files_area}
             ${is_show_board_file_area == '1' && styles.boards_files_area_show}
@@ -16,10 +15,11 @@ export default class BoardsFilesArea extends Component {
             `}>
                 <div>
                     {
-                        arr.map((item, key) => {
+                        boards_flies.map((item, key) => {
+                            const { id, board_name } = item
                             return (
-                                <div key={key}>
-                                    <BoardsFilesItem itemValue={item} itemKey={key}/>
+                                <div key={id}>
+                                    <BoardsFilesItem itemValue={item} item={key} board_id={id} board_name={board_name} />
                                 </div>
                             )
                         })
@@ -29,6 +29,6 @@ export default class BoardsFilesArea extends Component {
         )
     }
 }
-function mapStateToProps({ gantt: { datas: { is_show_board_file_area } } }) {
-    return { is_show_board_file_area }
+function mapStateToProps({ gantt: { datas: { is_show_board_file_area, boards_flies = [] } } }) {
+    return { is_show_board_file_area, boards_flies }
 }

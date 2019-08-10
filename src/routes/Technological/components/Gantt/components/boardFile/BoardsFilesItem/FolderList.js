@@ -8,10 +8,17 @@ export default class FolderList extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            folder_list: [1, 2, 3, 4, 5, 6, 7, 8],
+            folder_list: [],
             is_show_add_item: false,
             add_folder_value: ''
         }
+    }
+
+    componentDidMount() {
+        const { file_data = [] } = this.props
+        this.setState({
+            folder_list: file_data
+        })
     }
 
     addItemClick = ({ key }) => {
@@ -51,12 +58,16 @@ export default class FolderList extends Component {
     }
     render() {
         const { folder_list = [], is_show_add_item, add_folder_value } = this.state
+        const { board_id } = this.props
         return (
             <div className={styles.folder_list}>
                 {
                     folder_list.map(item => {
+                        const { id } = item
                         return (
-                            <FolderItem />
+                            <div key={id}>
+                                <FolderItem itemValue={item} board_id={board_id} setBreadPaths={this.props.setBreadPaths}/>
+                            </div>
                         )
                     })
                 }

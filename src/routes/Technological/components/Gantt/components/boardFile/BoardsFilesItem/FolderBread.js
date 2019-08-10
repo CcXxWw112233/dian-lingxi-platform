@@ -10,27 +10,28 @@ export default class FolderBread extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            folder_breads: [1, 2, 3, 4, 5, 6], //文件夹面包屑
         }
     }
 
     renderSeparator = () => {
         return (
-            <span className={`${globalStyles.authTheme}`}>&#xe7ed;</span>
+            <span className={`${globalStyles.authTheme}`} style={{color: '#8c8c8c', fontSize: 10}}>&#xe61f;</span>
         )
     }
-
+    chooseBreadItem = (item) => {
+        this.props.setBreadPaths && this.props.setBreadPaths({ path_item: item })
+    }
     render() {
-       const { folder_breads = [] } = this.state
-
+        const { bread_paths = [] } = this.props
         return (
             <div>
-                <Breadcrumb separator={'>'}>
+                <Breadcrumb separator={this.renderSeparator()}>
                     {
-                        folder_breads.map((item, index) => {
+                        bread_paths.map((item, index) => {
+                            const { name, id, type } = item
                             return (
-                                <BreadcrumbItem>
-                                   <span>{index}</span>
+                                <BreadcrumbItem key={id} onClick={() => this.chooseBreadItem(item)}>
+                                   <span style={{color: 'rgba(0,0,0,.65)'}}>{name}</span>
                                 </BreadcrumbItem>
                             )
                         })

@@ -9,8 +9,8 @@ export async function getGanttData(data) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart`,
     method: 'POST',
     data: {
-      ...data,
       _organization_id: localStorage.getItem('OrganizationId'),
+      ...data,
     }
   })
 }
@@ -42,8 +42,8 @@ export async function getContentFiterBoardTree(params) {
     url: `${REQUEST_DOMAIN}/organization/board/list `,
     method: 'GET',
     params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
       ...params,
-      _organization_id: localStorage.getItem('_organization_id')
     }
   })
 }
@@ -53,8 +53,20 @@ export async function getContentFiterUserTree(params) {
     url: `${REQUEST_DOMAIN}/organization/user/list `,
     method: 'GET',
     params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
       ...params,
-      _organization_id: localStorage.getItem('_organization_id')
+    }
+  })
+}
+
+//获取甘特图带根目录文件的项目列表
+export async function getGanttBoardsFiles(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/file`,
+    method: 'POST',
+    data: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...data,
     }
   })
 }
