@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
+import GetRowGanttItemElse from './GetRowGanttItemElse'
+import globalStyles from '@/globalset/css/globalClassName.less'
+import CheckItem from '@/components/CheckItem'
+import AvatarList from '@/components/avatarList'
 import { Tooltip } from 'antd'
-import { date_area_height } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 80 //鼠标移动和拖拽的修正位置
@@ -15,7 +19,7 @@ export default class GetRowGantt extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentRect: { x: 0, y: 0, width: 0, height: 20 }, //当前操作的矩形属性
+      currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
       dasheRectShow: false, //虚线框是否显示
       isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
@@ -91,7 +95,7 @@ export default class GetRowGantt extends Component {
       x: px,
       y: py,
       width,
-      height: 20,
+      height: task_item_height,
     }
 
     this.setState({
@@ -119,6 +123,9 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove(e) {
+    const { dataAreaRealHeight } = this.props
+    if(e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
+
     if(e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
       return false
     }
@@ -153,7 +160,7 @@ export default class GetRowGantt extends Component {
       x: px,
       y: py,
       width: 40,
-      height: 20,
+      height: task_item_height,
     }
 
     this.setState({
@@ -170,6 +177,9 @@ export default class GetRowGantt extends Component {
 
   //记录起始时间，做创建任务工作
   handleCreateTask({start_end, top}) {
+    const { dataAreaRealHeight } = this.props
+    if(top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
+
     const { dispatch } = this.props
     const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] }} = this.props.model
     const { currentRect = {} } = this.state
@@ -311,7 +321,7 @@ export default class GetRowGantt extends Component {
   }
   render () {
     const { currentRect = {}, dasheRectShow } = this.state
-    const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [] }} = this.props.model
+    const { datas: { gold_date_arr = [], list_group =[], ceilWidth, group_rows = [], ceiHeight }} = this.props.model
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -321,28 +331,45 @@ export default class GetRowGantt extends Component {
            ref={'operateArea'}>
         {dasheRectShow && (
           <div className={indexStyles.dasheRect} style={{
-            left: currentRect.x, top: currentRect.y,
+            left: currentRect.x + 1, top: currentRect.y,
             width: currentRect.width, height: currentRect.height,
             boxSizing: 'border-box',
-            margin: '4px 0 0 2px'
-          }} />
+            marginTop: task_item_margin_top,
+            color: 'rgba(0,0,0,0.45)',
+            textAlign: 'right',
+            lineHeight: `${ceiHeight - task_item_margin_top}px`,
+            paddingRight: 8,
+          }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id, is_realize } = value2
+              const { left, top, width, height, name, id, board_id, is_realize, executors=[], label_data = [] } = value2
               return (
                 <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
-                <div className={indexStyles.specific_example} data-targetclassname="specific_example"
-                     style={{
-                        left: left, top: top,
-                        width: (width || 6) - 6, height: (height || 20),
-                        margin: '4px 0 0 2px',
-                        backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
-                     }}
-                     onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id})}
-                />
+                  <div className={indexStyles.specific_example} data-targetclassname="specific_example"
+                      style={{
+                          left: left, top: top,
+                          width: (width || 6) - 6, height: (height || task_item_height),
+                          marginTop: task_item_margin_top,
+                          backgroundImage: 'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                          // margin: '4px 0 0 2px',
+                          // backgroundImage: 'liner-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)'
+                          // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
+                      }}
+                      onMouseDown={(e)=>e.stopPropagation()}
+                      onMouseMove={(e)=>e.stopPropagation()}
+                      onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id})}
+                  >
+                      <div className={`${indexStyles.card_item_status}`} onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>
+                        <CheckItem is_realize={is_realize} />
+                      </div>
+                      <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>{name}</div>
+                      <div onMouseDown={(e)=>e.stopPropagation()} onMouseMove={(e)=>e.stopPropagation()}>
+                        <AvatarList users={executors} size={'small'}/>
+                      </div>
+                  </div>
                 </Tooltip>
               )
             })
@@ -356,7 +383,7 @@ export default class GetRowGantt extends Component {
             <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]}/>
           )
         })}
-
+        <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
     )
   }

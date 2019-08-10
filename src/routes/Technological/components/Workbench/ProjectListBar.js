@@ -167,9 +167,9 @@ class ProjectListBar extends Component {
     })
   }
   handleGanttData(id) {
+    return
     const { dispatch, workbench_show_gantt_card } = this.props
     const { projectTabCurrentSelectedProject } = this.props
-
     if(workbench_show_gantt_card != '1') {
       return
     }

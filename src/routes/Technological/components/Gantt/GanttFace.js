@@ -9,6 +9,9 @@ import {INPUT_CHANGE_SEARCH_TIME} from "../../../../globalset/js/constant";
 import {getGanttData} from "../../../../services/technological/gantt";
 import {isApiResponseOk} from "../../../../utils/handleResponseData";
 import { date_area_height } from './constants'
+import GroupListHeadSet from './GroupListHeadSet.js'
+import ShowFileSlider from './components/boardFile/ShowFileSlider'
+import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -20,28 +23,23 @@ export default class GanttFace extends Component {
       viewModal: '2', //视图模式1周，2月，3年
       target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
-      local_project_tab_current_selected_project: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
+      local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
     }
     this.ganttScroll = this.ganttScroll.bind(this)
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
 
   componentDidMount() {
-    const { projectTabCurrentSelectedProject } = this.props
+    const { gantt_board_id } = this.props
     this.setState({
-      local_project_tab_current_selected_project: projectTabCurrentSelectedProject
+      local_gantt_board_id: gantt_board_id
     })
     this.setGoldDateArr({init: true})
-    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     this.initSetScrollPosition()
     this.setGanTTCardHeight()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
-  componentWillReceiveProps (nextProps) {
-    const { projectTabCurrentSelectedProject } = nextProps
-    const { local_project_tab_current_selected_project } = this.state
-  }
-
+ 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setGanTTCardHeight, false)
   }
@@ -80,6 +78,8 @@ export default class GanttFace extends Component {
 
   //左右拖动,日期会更新
   ganttScroll = (e) => {
+    e.stopPropagation();
+    if('gantt_card_out_middle' != e.target.getAttribute("id")) return
     const that = this
     const { searchTimer } = this.state
     if (searchTimer) {
@@ -183,15 +183,38 @@ export default class GanttFace extends Component {
         type: getEffectOrReducerByName('getGanttData'),
         payload: {}
       })
+      that.getHoliday()
     }, 300)
   }
 
+  // 获取到实际有数据的区域总高度，为了和最后一行区分开
+  getDataAreaRealHeight = () => {
+    const { datas: { list_group = [], group_rows = [], ceiHeight }} = this.props.model
+    const item_height_arr = list_group.map((item, key) => {
+       return group_rows[key] * ceiHeight
+    })
+    // console.log('sssss_1', item_height_arr)
+    if(!item_height_arr.length) return 0
+
+    const height = item_height_arr.reduce((total, num) => (total + num))
+    return height
+  }
+
+  // 获取节假日
+  getHoliday = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getHoliday',
+      payload: {}
+    })
+  }
   render () {
-    const { datas: { gold_date_arr = [], list_group =[] }} = this.props.model
     const { gantt_card_out_middle_max_height } = this.state
+    const { gantt_card_height } = this.props
+    const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <div className={indexStyles.cardDetail} id={'gantt_card_out'}>
+      <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{height: gantt_card_height}}>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
              id={'gantt_card_out_middle'}
@@ -199,19 +222,24 @@ export default class GanttFace extends Component {
              onScroll={this.ganttScroll}
              style={{maxHeight: gantt_card_out_middle_max_height}}
         >
+          <GroupListHeadSet />
           <div
             style={{height: date_area_height}} //撑住DateList相同高度的底部
           />
           <DateList />
           <div className={indexStyles.panel}>
-            <GroupListHead />
+            <GroupListHead gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight}/>
             <GetRowGantt
+              gantt_card_height={gantt_card_height}
+              dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
               addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
             />
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>
+        <ShowFileSlider />
+        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}/>
       </div>
     )
   }
@@ -220,4 +248,7 @@ export default class GanttFace extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, gantt, loading }) {
   return { modal, model: gantt, loading }
+}
+GanttFace.defaultProps = {
+  gantt_card_height: 600, //甘特图卡片总高度
 }
