@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import DrawDetailInfoStyle from '../DrawDetailInfo.less'
 import { connect } from 'dva'
-import { Icon } from 'antd'
+import { Icon, Tooltip } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermission, checkIsHasPermissionInBoard} from "@/utils/businessFunction";
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, ORG_TEAM_BOARD_QUERY, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW,
@@ -133,7 +133,7 @@ export default class DynamicContain extends Component {
           contain = `更新${currentNounPlanFilterName(PROJECTS)}信息`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了原项目名 「{messageValue.content.rela_data}」为「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}名称。</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了原项目名 「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.rela_data}</span>」为「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}名称。</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -141,7 +141,7 @@ export default class DynamicContain extends Component {
         case 'board.update.description': // 修改项目详情
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了项目描述 为「{jumpToBoard}」</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了「{jumpToBoard}」看板的描述</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -205,7 +205,7 @@ export default class DynamicContain extends Component {
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 邀请 「<span className={DrawDetailInfoStyle.news_name}>{`${messageValue.content.rela_users},`}</span>」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 邀请 「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.rela_users.join(',')}</span>」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -248,7 +248,7 @@ export default class DynamicContain extends Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 将 「{ messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 将 「<span className={DrawDetailInfoStyle.news_name}>{ messageValue.content.rela_users && messageValue.content.rela_users.join(',')}</span>」 移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -266,7 +266,7 @@ export default class DynamicContain extends Component {
         case 'board.card.update.archived': // 归档任务
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>归档了{currentNounPlanFilterName(TASKS)}「{jumpToBoard}」 </div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>归档了{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -370,8 +370,22 @@ export default class DynamicContain extends Component {
           contain = `移除${currentNounPlanFilterName(TASKS)}标签`
           break
         case 'board.card.update.finish.child': // 标记子任务完成
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>完成了子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          contain = `完成${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.cancel.finish.child': // 取消子任务完成
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span>取消完成子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          contain = `完成${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.executor.remove': // 移除执行人
           break
@@ -399,12 +413,40 @@ export default class DynamicContain extends Component {
         case 'board.card.update.comment.remove': // 移除任务评论
           break
         case 'board.file.comment.add': // 添加文件评论
+          contain = `发表了一条${currentNounPlanFilterName(FILES)}的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条{currentNounPlanFilterName(FILES)}「{jumpToFile}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.file.comment.remove': // 移除文件评论
+          contain = `删除了一条${currentNounPlanFilterName(FILES)}的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条{currentNounPlanFilterName(FILES)}「{jumpToFile}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.flow.comment.add': // 添加流程评论
+          contain = `发表了一条${currentNounPlanFilterName(FLOWS)}的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.flow.comment.remove': // 流程评论的删除
+          contain = `删除了一条${currentNounPlanFilterName(FLOWS)}的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.card.comment.at.notice': // 任务评论@通知
           break
@@ -415,10 +457,10 @@ export default class DynamicContain extends Component {
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
         case 'board.flow.instance.initiate': // 启动流程
-          contain = `启动${currentNounPlanFilterName(FLOWS)}`
+          contain = `启动了一个${currentNounPlanFilterName(FLOWS)}`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div>{messageValue.creator.name} 启动{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」</div>
+              <div>{messageValue.creator.name} 启动了一个{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -427,7 +469,7 @@ export default class DynamicContain extends Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 将「{messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}。</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 将「{messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -499,8 +541,17 @@ export default class DynamicContain extends Component {
         case 'board.flow.instance.delete': // 删除流程
           break
         case 'board.flow.node.deadline.set': // 设置流程节点截止时间
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」设置了截止时间</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          contain = `${currentNounPlanFilterName(FLOWS)}待处理任务通知`
           break
         case 'board.flow.update.contentprivilege': // 设置流程内容特权
+          break
+        case '"board.flow.instance.deadline.set': // 设置流程实例的截止时间
           break
         // 文件 ------------------------------------------------
         case 'board.folder.add': // 添加文件夹
@@ -562,11 +613,10 @@ export default class DynamicContain extends Component {
           if(messageValue.content.board_file_list.length > 1){
             showList.push('...')
           }
-
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideList}</div>}>
-                <span className={styles.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
+              <div>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip>
+                <span className={DrawDetailInfoStyle.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「{messageValue.content.target_folder.name}」</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -587,8 +637,8 @@ export default class DynamicContain extends Component {
           }
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip title={<div>{hideCopyList}</div>}>
-                <span className={styles.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+              <div>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip>
+                <span className={DrawDetailInfoStyle.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -620,12 +670,19 @@ export default class DynamicContain extends Component {
           contain = `修改里程碑`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了原里程碑名「{messageValue.content.rela_data}」为「{jumpToMilestone}」里程碑名称。</div>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 修改了原里程碑名「{messageValue.content.rela_data}」为「{jumpToMilestone}」里程碑名称</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
           break
         case 'board.milestone.principal.add': // 设置里程碑负责人
+          contain = `设置了里程碑负责人`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 添加了里程碑负责人为「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.relaUser.name}</span>」</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.milestone.principal.remove': // 移除负责人
           break
@@ -636,6 +693,24 @@ export default class DynamicContain extends Component {
         case 'board.milestone.comment.add': // 添加里程碑评论
           break
         case 'board.milestone.commetn.del': // 删除里程碑评论
+          break
+        case 'board.common.comment.add': // 添加里程碑的评论
+          contain = `发表了一条里程碑的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条里程碑「{messageValue.content.relaContent && messageValue.content.relaContent.name}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.common.comment.del':
+          contain = `删除了一条里程碑的评论`
+          messageContain = (
+            <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条里程碑「{jumpToMilestone}」的评论</div>
+              <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
+            </div>
+          )
           break
         default:
           break;
@@ -857,6 +932,12 @@ export default class DynamicContain extends Component {
         case '14':
           containner = ( commentNews(value) )
           break
+        case '15':
+          containner = (commentNews(value))
+          break
+        case '22':
+          containner = (commentNews(value))
+          break
         case '6':
           containner = ( processNews(value) )
           break
@@ -865,6 +946,9 @@ export default class DynamicContain extends Component {
           break
         case '20':
           containner = (meetingNews(value))
+        case '23':
+          containner = (commentNews(value))
+          break
         default:
           break
       }
@@ -888,17 +972,6 @@ export default class DynamicContain extends Component {
             </li>
           )
         }
-        {/* <li>
-          <div className={DrawDetailInfoStyle.left}>
-            <img />
-          </div>
-          <div className={DrawDetailInfoStyle.right}>
-            <div className={DrawDetailInfoStyle.news_text}>
-              xxx 修改了原项目名 「xxx」为「xxx」名称。
-            </div>
-            <div className={DrawDetailInfoStyle.news_time}>xxxx时间</div>
-          </div>
-        </li> */}
       </ul>
     )
   }

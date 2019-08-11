@@ -138,6 +138,8 @@
 }
 
 .back {
+  color: rgba(0,0,0,0.45);
+  cursor: pointer;
   &:hover {
     color: rgba(0,0,0,0.65)
   }
@@ -147,6 +149,7 @@
   align-self: center;
   width: 40px;
   height: 40px;
+  flex-shrink: 0; 
   // margin-top: 4px;
   margin-right: 12px;
   cursor: pointer;
@@ -154,14 +157,6 @@
   &:hover {
     background: url('@/assets/projectDetail/boardInfo/hover_more.png')
   }
- img {
-   display: block;
-   width: 40px;
-   height: 40px;
-   margin-right: 24px;
-   align-self: center;
-   cursor: pointer;
- }
 }
 
 .dynamic .dynamic_contain {
@@ -228,7 +223,7 @@
 .manImageList{
   display: flex;
   flex-wrap:  wrap;
-  max-height: 75px;
+  max-height: 70px;
   overflow: hidden;
   // padding: 0 12px;
   .manImageItem{
@@ -410,6 +405,31 @@
     }
   }
 }
+
+// 显示全部成员
+.input_search {
+  margin-bottom: 32px;
+  position: relative;
+  .select_search {
+    height: 38px;
+    line-height: 38px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.search_icon {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  right: 12px;
+}
+
+.detail_member {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
 //menu
 .elseProjectMemu{
   padding: 4px 10px;

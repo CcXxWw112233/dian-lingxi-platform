@@ -52,12 +52,14 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   // 监听滚动事件
-  onScroll(e) {
-    window.addEventListener('scroll', this.dynamicScroll(e))
+  onScroll(e, board_id) {
+    window.addEventListener('scroll', this.dynamicScroll(e, board_id))
   }
 
   // 动态的滚动事件
-  dynamicScroll = (e) => {
+  dynamicScroll = (e, board_id) => {
+    const {datas: { p_next_id, } } = this.props.model
+    const { dispatch } = this.props
     let infoTop = e && e.target.scrollTop // 滚动的距离
     let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
     // 当滚动的距离大于导航条距离顶部的距离, 就固定
@@ -70,6 +72,16 @@ export default class DrawDetailInfo extends React.Component {
         dynamic_header_sticky: false,
       })
     }
+
+    // if (infoTop) {
+    //   // dispatch({
+    //   //   type: 'projectDetail/getProjectDynamicsList',
+    //   //   payload: {
+    //   //     next_id: p_next_id,
+    //   //     board_id
+    //   //   }
+    //   // })
+    // }
   }
 
   // 销毁滚动事件
@@ -344,7 +356,7 @@ export default class DrawDetailInfo extends React.Component {
     )
     return (
       <>
-        <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e) }} >
+        <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
             <span>项目简介</span>

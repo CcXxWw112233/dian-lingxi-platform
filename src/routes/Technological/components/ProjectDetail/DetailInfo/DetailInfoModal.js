@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message, Icon } from 'antd'
 import DrawDetailInfo from './DrawDetailInfo'
+import DetailMember from './DetailMember'
 import {min_page_width} from "../../../../../globalset/js/styles";
 import CustormModal from '../../../../../components/CustormModal'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
@@ -17,15 +18,27 @@ class DetailInfoModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {}
 
+  // 点击取消的事件
   onCancel(){
     this.props.updateDatas({
       projectInfoDisplay: false
     })
+    this.setState({
+      is_show_all_member: false,
+    })
   }
 
+  // 切换头部的标题
   handleTriggetModalTitle = () => {
     this.setState({
       is_show_all_member: true
+    })
+  }
+
+  // 点击返回按钮
+  handleBack() {
+    this.setState({
+      is_show_all_member: false,
     })
   }
 
@@ -36,7 +49,7 @@ class DetailInfoModal extends React.Component {
       <CustormModal
         title={is_show_all_member ? (
           <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color:'rgba(0,0,0,0.85)', display: 'flex'}}>
-            <span><Icon className={DrawDetailInfoStyle.back} style={{color:'rgba(0,0,0,0.45)', cursor: 'pointer'}} type="left" /></span>
+            <span><Icon onClick={ () => { this.handleBack() } } className={DrawDetailInfoStyle.back} type="left" /></span>
             <span style={{flex: '1'}}>全部成员</span>
           </div>
         ) : (
@@ -49,7 +62,13 @@ class DetailInfoModal extends React.Component {
         footer={null}
         destroyOnClose
         onCancel={this.onCancel.bind(this)}
-        overInner={<DrawDetailInfo {...this.props} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />}
+        overInner={
+          is_show_all_member ? (
+            <DetailMember {...this.props} is_show_all_member={is_show_all_member} />
+          ) : (
+            <DrawDetailInfo {...this.props} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />
+          )
+        }
       />
     )
   }
