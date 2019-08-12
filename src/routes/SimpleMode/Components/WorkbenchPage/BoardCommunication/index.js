@@ -378,7 +378,7 @@ class BoardCommunication extends Component {
                 this.setState({
                     selectBoardFileCompleteDisabled: false
                 });
-                message.success('upload successfully.');
+                message.success('上传成功');
             }
 
         }).catch((error, e) => {
