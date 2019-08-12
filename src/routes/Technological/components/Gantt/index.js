@@ -512,6 +512,7 @@ class Gantt extends Component {
           addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           gantt_board_id={gantt_board_id}
+          gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
         />
         <FileDetailModal
           {...this.props}
