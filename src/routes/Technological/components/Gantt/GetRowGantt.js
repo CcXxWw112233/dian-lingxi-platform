@@ -10,7 +10,7 @@ import { Tooltip } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
-const coperatedX = 80 //鼠标移动和拖拽的修正位置
+const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -44,7 +44,24 @@ export default class GetRowGantt extends Component {
   }
 
   componentDidMount() {
+    this.setGanttCardOutOffsetLeft()
+  }
 
+  // 设置甘特图卡片距离页面文档左边距
+  setGanttCardOutOffsetLeft = () => {
+    const getPoint = (obj, e) => { //获取某元素以浏览器左上角为原点的坐标
+      let left_to_body = obj.offsetLeft; //对应父容器的上边距
+      //判断是否有父容器，如果存在则累加其边距
+      while (obj = obj.offsetParent) {//等效 obj = obj.offsetParent;while (obj != undefined)
+        left_to_body += obj.offsetLeft; //叠加父容器的左边距
+      } 
+      return left_to_body
+    } 
+    const element = document.getElementById('gantt_card_out')
+    const card_offset_left = getPoint(element)
+    this.setState({
+      coperatedX: card_offset_left
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,7 +97,7 @@ export default class GetRowGantt extends Component {
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
     const target = this.refs.operateArea//event.target || event.srcElement;
-
+    const { coperatedX } = this.state
     // 取得鼠标位置
     const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
     const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
@@ -133,7 +150,7 @@ export default class GetRowGantt extends Component {
     if (this.isMouseDown) { //按下的情况不处理
       return false
     }
-    const { dasheRectShow } = this.state
+    const { dasheRectShow, coperatedX } = this.state
     if (!dasheRectShow) {
       this.setState({
         dasheRectShow: true
