@@ -36,6 +36,7 @@ export default {
       milestoneList: [],
       projectDynamicsList: [], // 项目动态消息列表
       p_next_id: '', // 项目动态的id
+      is_dynamic_scroll: true, // 判断项目动态列表是否在滚动, 默认为true
     }
   },
   subscriptions: {
@@ -92,7 +93,8 @@ export default {
               projectDetailInfoData: {},
               milestoneList: [],
               projectDynamicsList: [], // 项目动态消息列表
-              p_next_id: '', // 项目动态的id
+              p_next_id: '', // 项目动态的id,
+              is_dynamic_scroll: true, // 判断项目动态列表是否在滚动, 默认为true
             }
           })
         }
@@ -269,7 +271,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            projectDynamicsList: []
+            projectDynamicsList: [],
           }
         })
       }
@@ -301,6 +303,18 @@ export default {
             p_next_id: res.data.next_id,
           }
         })
+        // const delay = (ms) => new Promise(resolve => {
+        //   setTimeout(resolve, ms)
+        // })
+        // yield call(delay, 500)
+
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     is_dynamic_scroll: res.data.next_id ? true : false
+        //   }
+        // })
+
       } else {
         message.error(res.message)
       }

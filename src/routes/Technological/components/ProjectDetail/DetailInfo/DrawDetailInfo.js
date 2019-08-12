@@ -35,6 +35,7 @@ export default class DrawDetailInfo extends React.Component {
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
     textArea_val: '', // 用来判断是否有用户输入
     is_show_dot: true, // 是否显示点点点, 默认为true 显示
+    is_scroll: true, // 判断是否滚动, 默认为true, 滚动
 
   }
 
@@ -58,10 +59,11 @@ export default class DrawDetailInfo extends React.Component {
 
   // 动态的滚动事件
   dynamicScroll = (e, board_id) => {
-    const {datas: { p_next_id, } } = this.props.model
+    const {datas: { p_next_id, is_dynamic_scroll } } = this.props.model
     const { dispatch } = this.props
     let infoTop = e && e.target.scrollTop // 滚动的距离
     let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
+    let detail_wrapper_height = this.refs.detail_wrapper.clientHeight
     // 当滚动的距离大于导航条距离顶部的距离, 就固定
     if (infoTop > manImageListTop) {
       this.setState({
@@ -73,14 +75,19 @@ export default class DrawDetailInfo extends React.Component {
       })
     }
 
-    // if (infoTop) {
-    //   // dispatch({
-    //   //   type: 'projectDetail/getProjectDynamicsList',
-    //   //   payload: {
-    //   //     next_id: p_next_id,
-    //   //     board_id
-    //   //   }
-    //   // })
+    // if (p_next_id) {
+    //   if (!is_dynamic_scroll) {
+    //     return false
+    //   }
+    //   dispatch({
+    //     type: 'projectDetail/getProjectDynamicsList',
+    //     payload: {
+    //       board_id,
+    //       next_id: p_next_id
+    //     }
+    //   })
+    // }
+      
     // }
   }
 
@@ -355,7 +362,7 @@ export default class DrawDetailInfo extends React.Component {
       </div>
     )
     return (
-      <>
+      <div ref="detail_wrapper">
         <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
@@ -447,7 +454,7 @@ export default class DrawDetailInfo extends React.Component {
             </Tooltip>
           </div>
         </div>
-      </>
+      </div>
     )
   }
 }
