@@ -15,7 +15,7 @@ import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
 import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
 import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
-
+import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -51,7 +51,7 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
-        console.log(currentfile);
+        //console.log(currentfile);
         const { fileId, versionId, fileResourceId, folderId, fileName } = currentfile;
         const id = fileId;
         const { board_id } = currentBoardDetail;
@@ -252,7 +252,32 @@ class BoardCommunication extends Component {
     }
 
     onBeforeUpload = (file, fileList) => {
+        this.setState(state => ({
+            awaitUploadFile: file,
+            selectBoardFileModalVisible: true,
+            is_selectFolder: true,
+            dragEnterCaptureFlag: false,
+            currentfile: {}
+        }));
+        if (fileList.length > 1) {
+            message.warn("项目交流一次只能上传一个文件");
+        }
         const { dispatch, currentBoardDetail = {} } = this.props;
+        if (file.size == 0) {
+            message.error(`不能上传空文件`)
+            return false
+        } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+            message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+            return false
+        }
+        const lastIndex = file.name.lastIndexOf('.');
+        //console.log(file.name.substr(lastIndex) + 1);
+        if (!file.name || FILE_TYPE_UPLOAD_WHITELISTED.indexOf(file.name.substr(lastIndex + 1)) == -1) {
+            message.error('暂不支持该文件格式上传')
+            return false
+        }
+
+
         if (currentBoardDetail.board_id) {
             dispatch({
                 type: 'simpleWorkbenchbox/getFolderList',
@@ -262,26 +287,20 @@ class BoardCommunication extends Component {
             });
 
         }
-        this.setState(state => ({
-            awaitUploadFile: file,
-            selectBoardFileModalVisible: true,
-            is_selectFolder: true,
-            dragEnterCaptureFlag: false,
-            currentfile: {}
-        }));
         return false;
     }
 
     handleUpload = () => {
         const { awaitUploadFile, currentfile = {} } = this.state;
         const { currentBoardDetail = {} } = this.props;
-        console.log(currentfile);
+        //console.log(currentfile);
         const formData = new FormData();
         formData.append("file", awaitUploadFile);
         this.setState({
             selectBoardFileModalVisible: false,
         });
-        // You can use any AJAX library you like
+        let loading = message.loading('文件正在上传中...', 0)
+
         axios({
             url: `${REQUEST_DOMAIN_FILE}/file/upload`,
             method: 'post',
@@ -299,7 +318,7 @@ class BoardCommunication extends Component {
                 upload_type: '1'
             }
         }).then(res => {
-            console.log(res);
+            //console.log(res);
             this.setState({
                 awaitUploadFile: {},
                 uploading: false,
@@ -368,26 +387,23 @@ class BoardCommunication extends Component {
                     }
                 }).catch((error, e) => {
                     console.log(error);
-
-                    this.setState({
-                        uploading: false,
-                    });
-                    message.error('upload failed.');
+                    message.destroy()
+                    message.error('上传失败');
                 })
 
                 this.setState({
                     selectBoardFileCompleteDisabled: false
                 });
+                message.destroy()
                 message.success('上传成功');
+
             }
 
         }).catch((error, e) => {
             console.log(error);
+            message.destroy()
 
-            this.setState({
-                uploading: false,
-            });
-            message.error('upload failed.');
+            message.error('上传失败');
         });
     }
 
@@ -400,9 +416,9 @@ class BoardCommunication extends Component {
             let children = []
             if (org.board_list && org.board_list.length > 0) {
                 org.board_list.map((board, boardKey) => {
-                    children.push({ key: board.board_id, title: board.board_name, isLeaf: true });
+                    children.push({ key: board.board_id, title: board.board_name, isLeaf: true, selectable: true });
                 });
-                list.push({ key: org.org_id, title: org.org_name, children });
+                list.push({ key: org.org_id, title: org.org_name, children, selectable: false });
 
             }
 
@@ -415,11 +431,11 @@ class BoardCommunication extends Component {
         let list = []
         let { folder_data = [], file_data = [] } = data;
         folder_data.map((folder, key) => {
-            list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
+            list.push({ key: folder.folder_id, title: folder.folder_name, type: 1,selectable:false });
         });
         file_data.map((file, key) => {
-            console.log(file);
-            list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
+            //console.log(file);
+            list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true,selectable:true });
         });
         return list;
     }
@@ -448,19 +464,7 @@ class BoardCommunication extends Component {
 
 
 
-    handleOk = e => {
-        console.log(e);
-        this.setState({
-            selectBoardFileModalVisible: false,
-        });
-    };
 
-    handleCancel = e => {
-        console.log(e);
-        this.setState({
-            selectBoardFileModalVisible: false,
-        });
-    };
 
     onChange = value => {
         console.log(value);
@@ -468,7 +472,7 @@ class BoardCommunication extends Component {
     };
 
     onSelectBoard = (keys, event) => {
-        //console.log('Trigger Select', keys, event);
+        console.log(event, "event");
         const { dispatch } = this.props;
         const { is_selectFolder } = this.state;
         if (keys.length > 0) {
@@ -510,8 +514,11 @@ class BoardCommunication extends Component {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
         const fileId = keys[0]
-        console.log("selectedNodes", event.selectedNodes[0].props.title);
-
+        //console.log("selectedNodes", event.selectedNodes[0].props);
+        if (event.selectedNodes[0].props.type === 1) {
+            message.warn('文件夹不能被选择');
+            return;
+        }
         this.setState({
             selectBoardFileDropdownVisible: false,
             currentfile: { fileId: fileId, fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
@@ -520,10 +527,10 @@ class BoardCommunication extends Component {
     };
 
     onSelectFolder = (keys, event) => {
-        console.log('文件夹', keys, event);
+        //console.log('文件夹', keys, event);
         const { dispatch } = this.props;
         const fileId = keys[0]
-        console.log("selectedNodes", event.selectedNodes[0].props.title);
+        //console.log("selectedNodes", event.selectedNodes[0].props.title);
 
         this.setState({
             selectBoardFileDropdownVisible: false,
@@ -556,15 +563,21 @@ class BoardCommunication extends Component {
     }
 
     async onLoadFileTreeData(treeNode) {
-
         const { dispatch, currentBoardDetail = {}, simpleBoardCommunication = {} } = this.props;
         const { boardFileTreeData = {} } = simpleBoardCommunication;
-
         const res = await getBoardFileList({ board_id: currentBoardDetail.board_id, folder_id: treeNode.props.eventKey });
         if (isApiResponseOk(res)) {
-            console.log(res);
+            //console.log(treeNode.props);
             const childTreeData = this.getBoardFileTreeData(res.data);
             treeNode.props.dataRef.children = [...childTreeData];
+            if (!childTreeData || childTreeData.length == 0) {
+                treeNode.props.dataRef.title = (
+                    <span>
+                        {treeNode.props.dataRef.title}
+                        <span style={{ color: 'rgb(24, 144, 255)' }}>&nbsp;(没有可选文件)</span>
+                    </span>
+                )
+            }
             dispatch({
                 type: 'simpleBoardCommunication/updateDatas',
                 payload: {
@@ -581,12 +594,12 @@ class BoardCommunication extends Component {
         return data.map(item => {
             if (item.children) {
                 return (
-                    <TreeNode key={item.key} {...item} dataRef={item} selectable={false}>
+                    <TreeNode key={item.key} {...item} dataRef={item} selectable={item.selectable == true ? true : false}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
                 );
             } else {
-                return <TreeNode key={item.key} {...item} dataRef={item} />;
+                return <TreeNode key={item.key} {...item} dataRef={item} selectable={item.selectable == true ? true : false} />;
             }
 
         });
@@ -631,19 +644,20 @@ class BoardCommunication extends Component {
     renderSelectBoardFileTreeList = () => {
         const { boardFileTreeData = [], boardFolderTreeData = [] } = this.props.simpleBoardCommunication;
         const { is_selectFolder } = this.state;
+        console.log(boardFileTreeData);
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
                     {
                         is_selectFolder ? (
-<DirectoryTree onSelect={this.onSelectFolder}>
+                            <DirectoryTree onSelect={this.onSelectFolder}>
                                 {this.renderFolderTreeNodes([boardFolderTreeData])}
                             </DirectoryTree>
-): (
-<DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
-                                {this.renderTreeNodes(boardFileTreeData)}
-                            </DirectoryTree>
-)}
+                        ) : (
+                                <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
+                                    {this.renderTreeNodes(boardFileTreeData)}
+                                </DirectoryTree>
+                            )}
 
                 </div>
             </>
@@ -673,13 +687,27 @@ class BoardCommunication extends Component {
         });
     }
 
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+            selectBoardFileModalVisible: false,
+        });
+    };
+
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+            selectBoardFileModalVisible: false,
+        });
+    };
+
     render() {
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
-        console.log(currentBoardDetail, "sssss");
+        //console.log(currentBoardDetail, "sssss");
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
@@ -701,48 +729,31 @@ class BoardCommunication extends Component {
                     )}
                 {
                     !this.state.previewFileModalVisibile && (
-                        <Dragger {...this.getDraggerProps()} className={indexStyles.dragStyle}
+                        <Dragger multiple={false} {...this.getDraggerProps()} className={indexStyles.dragStyle}
                             beforeUpload={this.onBeforeUpload}>
                             <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
                                 {
                                     dragEnterCaptureFlag ? (
-<div className={indexStyles.iconDescription}>
+                                        <div className={indexStyles.iconDescription}>
                                             <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
                                             <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
                                         </div>
-): (
-<>
-                                            <div className={indexStyles.icon}>
-                                                <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
-                                            </div>
-                                            <div className={indexStyles.descriptionWapper}>
-                                                <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                                                <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                                            </div>
-                                        </>
-)}
+                                    ) : (
+                                            <>
+                                                <div className={indexStyles.icon}>
+                                                    <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
+                                                </div>
+                                                <div className={indexStyles.descriptionWapper}>
+                                                    <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                                    <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                                                </div>
+                                            </>
+                                        )}
 
                             </div>
                         </Dragger>
                     )}
-
-
-                {
-                    false && (
-<div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
-                        <div className={indexStyles.dragOverArea} style={{ height: container_workbenchBoxContent.offsetHeight + 'px' }}>
-                            {
-                                dragEnterCaptureFlag && (
-<div className={indexStyles.iconDescription}>
-                                    <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
-                                    <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
-                                </div>
-)}
-                        </div>
-                    </div>
-)}
-
 
                 <Modal
                     width={248}

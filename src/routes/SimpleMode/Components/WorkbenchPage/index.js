@@ -128,7 +128,6 @@ class WorkbenchPage extends Component {
                 <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                     <div className={indexStyles.workbenchBoxContentWapper}>
 
-
                         {
                             this.state.BoardPlanVisible &&
                             <BoardPlan/>

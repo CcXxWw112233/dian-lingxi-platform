@@ -48,10 +48,10 @@ export default {
                 let list = []
                 let { folder_data = [], file_data = [] } = res.data;
                 folder_data.map((folder, key) => {
-                    list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
+                    list.push({ key: folder.folder_id, title: folder.folder_name, type: 1,selectable:false });
                 });
                 file_data.map((file, key) => {
-                    list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
+                    list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true,selectable:true });
                 });
 
                 yield put({
