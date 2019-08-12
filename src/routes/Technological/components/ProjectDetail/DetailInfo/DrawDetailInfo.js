@@ -17,6 +17,7 @@ const TextArea = Input.TextArea
 
 // const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。如果使用中需要问题，可以随时联系我们进行交流或反馈：https://lingxi.di-an.com'
 const detaiDescription = '添加简介'
+let timer;
 
 export default class DrawDetailInfo extends React.Component {
 
@@ -35,7 +36,8 @@ export default class DrawDetailInfo extends React.Component {
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
     textArea_val: '', // 用来判断是否有用户输入
     is_show_dot: true, // 是否显示点点点, 默认为true 显示
-    is_scroll: true, // 判断是否滚动, 默认为true, 滚动
+    is_dynamic_scroll: false, // 判断项目动态列表是否在滚动, 默认为false
+    is_show_more: false, // 是否显示没有更多了, 默认为false
 
   }
 
@@ -59,12 +61,11 @@ export default class DrawDetailInfo extends React.Component {
 
   // 动态的滚动事件
   dynamicScroll = (e, board_id) => {
-    const {datas: { p_next_id, is_dynamic_scroll } } = this.props.model
+    const {datas: { p_next_id } } = this.props.model
+    const { is_dynamic_scroll } = this.state
     const { dispatch } = this.props
     let infoTop = e && e.target.scrollTop // 滚动的距离
     let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
-    let detail_wrapper_height = this.refs.detail_wrapper.clientHeight
-    // 当滚动的距离大于导航条距离顶部的距离, 就固定
     if (infoTop > manImageListTop) {
       this.setState({
         dynamic_header_sticky: true,
@@ -74,26 +75,42 @@ export default class DrawDetailInfo extends React.Component {
         dynamic_header_sticky: false,
       })
     }
-
-    // if (p_next_id) {
-    //   if (!is_dynamic_scroll) {
-    //     return false
-    //   }
-    //   dispatch({
-    //     type: 'projectDetail/getProjectDynamicsList',
-    //     payload: {
-    //       board_id,
-    //       next_id: p_next_id
-    //     }
-    //   })
-    // }
+    // 距离底部20的时候触发加载
+    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+      console.log('ssssss', 'tobottom')
+        if(timer) {
+          clearTimeout(timer)
+        }
+        this.setState({
+          is_dynamic_scroll: true
+        })
+        timer = setTimeout(() => {
+          this.setState({
+            is_dynamic_scroll: false
+          })
+        }, 500)
+        if (!p_next_id) {
+          this.setState({
+            is_show_more: true
+          })
+        }
+        if (is_dynamic_scroll && p_next_id) {
+          dispatch({
+            type: 'projectDetail/getProjectDynamicsList',
+            payload: {
+              board_id,
+              next_id: p_next_id
+            }
+          })
+        }
+    }
       
     // }
   }
 
   // 销毁滚动事件
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.dynamicScroll())
+    window.removeEventListener('scroll', this.dynamicScroll)
   }
 
   handleSetRoleMenuClick(props, { key }) {
@@ -247,7 +264,7 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   render() {
-    const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot } = this.state
+    const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
     data = data || []
@@ -437,6 +454,7 @@ export default class DrawDetailInfo extends React.Component {
               <div className={DrawDetailInfoStyle.dynamic_contain}>
                 <DynamicContain {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
               </div>
+              <div style={{ textAlign: 'center', color:'rgba(0,0,0,0.45)', marginBottom: '15', display: is_show_more ? 'block' : 'none' }}>没有更多动态啦~</div>
             </div>
           <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         </div>

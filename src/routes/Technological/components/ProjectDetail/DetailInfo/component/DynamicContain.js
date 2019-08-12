@@ -29,15 +29,6 @@ export default class DynamicContain extends Component {
     this.props.getDispatchDynamicList(board_id)
   }
 
-  routingJump(path) {
-    this.props.dispatch({
-      type: 'projectDetail/routingJump',
-      payload: {
-        route: path
-      }
-    })
-  }
-
   // 去到项目详情
   goToBoard({org_id, content}) {
     // console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')

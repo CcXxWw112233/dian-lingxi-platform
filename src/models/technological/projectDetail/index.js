@@ -36,7 +36,6 @@ export default {
       milestoneList: [],
       projectDynamicsList: [], // 项目动态消息列表
       p_next_id: '', // 项目动态的id
-      is_dynamic_scroll: true, // 判断项目动态列表是否在滚动, 默认为true
     }
   },
   subscriptions: {
@@ -94,7 +93,6 @@ export default {
               milestoneList: [],
               projectDynamicsList: [], // 项目动态消息列表
               p_next_id: '', // 项目动态的id,
-              is_dynamic_scroll: true, // 判断项目动态列表是否在滚动, 默认为true
             }
           })
         }
