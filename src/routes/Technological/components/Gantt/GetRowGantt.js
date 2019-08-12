@@ -319,6 +319,30 @@ export default class GetRowGantt extends Component {
       this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
     }
   }
+
+  // 设置任务标签颜色
+  setLableColor = (label_data) => {
+    let bgColor = ''
+    let b = ''
+    if(label_data && label_data.length) {     
+      const color_arr = label_data.map(item => {
+        return `rgb(${item.label_color})`
+      })
+      const color_arr_length = color_arr.length
+      const color_percent_arr = color_arr.map((item, index) => {
+        return (index + 1) / color_arr_length * 100
+      })
+      bgColor = color_arr.reduce((total, color_item, current_index) => {
+        return `${total},  ${color_item} ${color_percent_arr[current_index - 1] || 0}%, ${color_item} ${color_percent_arr[current_index]}%`
+      }, '')
+      
+      b = `linear-gradient(to right${bgColor})`
+    } else {
+      bgColor = '#ffffff 100%'
+    }
+    return b
+  }
+
   render() {
     const { currentRect = {}, dasheRectShow } = this.state
     const { datas: { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } } = this.props.model
@@ -346,6 +370,7 @@ export default class GetRowGantt extends Component {
           return (
             list_data.map((value2, key) => {
               const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [] } = value2
+            
               return (
                 <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
                   <div className={indexStyles.specific_example} data-targetclassname="specific_example"
@@ -353,10 +378,7 @@ export default class GetRowGantt extends Component {
                       left: left, top: top,
                       width: (width || 6) - 6, height: (height || task_item_height),
                       marginTop: task_item_margin_top,
-                      backgroundImage: 'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                      // margin: '4px 0 0 2px',
-                      // backgroundImage: 'liner-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)'
-                      // backgroundColor: is_realize == '0'? '#1890FF': '#9AD0FE'
+                      background: this.setLableColor(label_data),// 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
                     onMouseMove={(e) => e.stopPropagation()}
