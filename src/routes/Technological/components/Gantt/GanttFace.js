@@ -12,6 +12,7 @@ import { date_area_height } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import ShowFileSlider from './components/boardFile/ShowFileSlider'
 import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
+import { Spin } from 'antd'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -58,7 +59,7 @@ export default class GanttFace extends Component {
 
   //  初始化设置滚动横向滚动条位置
   initSetScrollPosition() {
-    const { datas: { ceilWidth } } = this.props.model
+    const { ceilWidth } = this.props
     const date = new Date().getDate()
     //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复
     this.setScrollPosition({delay: 300, position: ceilWidth * (30 - 3 + date - 1)})
@@ -90,7 +91,7 @@ export default class GanttFace extends Component {
     const scrollLeft = e.target.scrollLeft
     const scrollWidth = e.target.scrollWidth
     const clientWidth = e.target.clientWidth
-    const { datas: { ceilWidth, gold_date_arr = [], date_total } } = this.props.model
+    const { ceilWidth, gold_date_arr = [], date_total } = this.props
     let delX = target_scrollLeft - scrollLeft //判断向左还是向右
 
     if(scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
@@ -123,7 +124,7 @@ export default class GanttFace extends Component {
       }
     })
 
-    const { datas: { target_scrollTop }} = this.props.model
+    const { target_scrollTop } = this.props
     if(target_scrollTop != scrollTop ) {
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
@@ -137,7 +138,7 @@ export default class GanttFace extends Component {
   //更新日期,日期更新后做相应的数据请求
   setGoldDateArr({timestamp, to_right, init}) {
     const { dispatch } = this.props
-    const { datas: { gold_date_arr = [], isDragging }} = this.props.model
+    const { gold_date_arr = [], isDragging } = this.props
     let date_arr = []
     if(!!to_right && isDragging ) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
       date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
@@ -189,7 +190,7 @@ export default class GanttFace extends Component {
 
   // 获取到实际有数据的区域总高度，为了和最后一行区分开
   getDataAreaRealHeight = () => {
-    const { datas: { list_group = [], group_rows = [], ceiHeight }} = this.props.model
+    const { list_group = [], group_rows = [], ceiHeight } = this.props
     const item_height_arr = list_group.map((item, key) => {
        return group_rows[key] * ceiHeight
     })
@@ -210,10 +211,11 @@ export default class GanttFace extends Component {
   }
   render () {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height } = this.props
+    const { gantt_card_height, get_gantt_data_loading } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
+      <Spin spinning={get_gantt_data_loading} tip={'数据正在加载中...'}>
       <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{height: gantt_card_height}}>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
@@ -241,13 +243,32 @@ export default class GanttFace extends Component {
         <ShowFileSlider />
         <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}/>
       </div>
+      </Spin>
     )
   }
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps({ gantt: { datas: {
+  ceilWidth, 
+  date_total, 
+  target_scrollTop, 
+  gold_date_arr = [], 
+  isDragging ,
+  list_group = [], 
+  group_rows = [], 
+  get_gantt_data_loading,
+}} }) {
+  return {
+    ceilWidth, 
+    date_total, 
+    target_scrollTop, 
+    gold_date_arr, 
+    isDragging ,
+    list_group, 
+    group_rows, 
+    get_gantt_data_loading,
+  }
 }
 GanttFace.defaultProps = {
   gantt_card_height: 600, //甘特图卡片总高度

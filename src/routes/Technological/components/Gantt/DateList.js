@@ -185,7 +185,7 @@ export default class DateList extends Component {
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
                       gantt_board_id == '0' || group_view_type != '1' ? (
-                        <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
+                        <Tooltip key={`${month}/${date_no}` } title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                           <div key={`${month}/${date_no}`}>
                             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                               <div className={`${indexStyles.dateDetailItem_date_no} 
