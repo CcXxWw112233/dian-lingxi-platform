@@ -39,7 +39,7 @@ export default class ShowFileSlider extends Component {
     }
     render() {
         const { is_show_board_file_area } = this.props
-        console.log('sssss', { is_show_board_file_area })
+        // console.log('sssss', { is_show_board_file_area })
         return (
             <div className={`${styles.show_file_button}
                 ${is_show_board_file_area == '1' && styles.show_file_button_show}

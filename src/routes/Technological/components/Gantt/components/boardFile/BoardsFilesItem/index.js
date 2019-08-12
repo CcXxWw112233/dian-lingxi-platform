@@ -5,8 +5,12 @@ import FolderBread from './FolderBread'
 import FolderList from './FolderList'
 import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
-import { message } from 'antd';
-
+import { message, Upload } from 'antd';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
+import Cookies from 'js-cookie'
+import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+const { Dragger } = Upload
 export default class Index extends Component {
     constructor(props) {
         super(props)
@@ -24,6 +28,7 @@ export default class Index extends Component {
             current_folder_id: folder_id,
             file_data,
             bread_paths: [first_paths_item], //面包屑路径
+            show_drag: false, //是否显示上传
         }
     }
     setBreadPaths = ({ path_item = {} }) => {
@@ -79,12 +84,113 @@ export default class Index extends Component {
         }
     }
 
-    render() {
-        const { bread_paths = [], file_data = [], current_folder_id } = this.state
+    setShowDrag = (bool) => {
+        this.setState({
+            show_drag: bool
+        })
+    }
+
+    onDragEnterCapture = (e) => {
+        console.log('ssssss_3_enter', e.target)
+        this.setShowDrag(true)
+    }
+    onDragLeaveCapture = (e) => {
+        console.log('ssssss_3_leave', e.target)
+
+        // this.setShowDrag(false)
+    }
+
+    onDragEnterCaptureChild = (e) => {
+        e.stopPropagation()
+        // console.log('ssssss_2_enter', e.target)
+        this.setShowDrag(true)
+    }
+    onDragLeaveCaptureChild = (e) => {
+        e.stopPropagation()
+        this.setShowDrag(false)
+    }
+
+    onDragEnterCaptureChildChild = (e) => {
+        e.stopPropagation()
+        // console.log('ssssss_1_enter', e.target)
+        this.setShowDrag(true)
+    }
+    onDragLeaveCaptureChildChild = (e) => {
+        e.stopPropagation()
+        this.setShowDrag(true)
+    }
+
+    uploadProps = () => {
+        const that = this
         const { board_id } = this.props
-       
+        const { current_folder_id } = this.state
+
+        const props = {
+            name: 'file',
+            showUploadList: false,
+            withCredentials: true,
+            multiple: true,
+            action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+            data: {
+                board_id,
+                folder_id: current_folder_id,
+                type: '1',
+                upload_type: '1'
+            },
+            headers: {
+                Authorization: Cookies.get('Authorization'),
+                refreshToken: Cookies.get('refreshToken'),
+                ...setUploadHeaderBaseInfo({ boardId: board_id }),
+            },
+            beforeUpload(e) {
+                that.setShowDrag(false)
+                if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
+                    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                    return false
+                }
+                if (e.size == 0) {
+                    message.error(`不能上传空文件`)
+                    return false
+                } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+                    message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+                    return false
+                }
+                let loading = message.loading('正在上传...', 0)
+            },
+            onChange({ file, fileList, event }) {
+                if (file.status === 'uploading') {
+
+                } else {
+                    // message.destroy()
+                }
+                if (file.status === 'done') {
+
+                    if (file.response && file.response.code == '0') {
+                        message.success(`上传成功。`);
+                        that.getFolderFileList({ id: current_folder_id })
+                    } else {
+                        message.error(file.response && file.response.message || '上传失败');
+                    }
+                } else if (file.status === 'error') {
+                    message.error(`上传失败。`);
+                    setTimeout(function () {
+                        message.destroy()
+                    }, 2000)
+                }
+            },
+        };
+        return props
+    }
+    render() {
+        const { bread_paths = [], file_data = [], current_folder_id, show_drag } = this.state
+        const { board_id } = this.props
+
         return (
-            <div className={`${styles.board_file_area_item}`}>
+            <div
+                // style={{ background: 'red', height: 300, }}
+                className={`${styles.board_file_area_item}`}
+                onDragEnterCapture={this.onDragEnterCapture}
+                onDragLeaveCapture={this.onDragLeaveCapture}>
                 <FolderBread bread_paths={bread_paths} setBreadPaths={this.setBreadPaths} />
                 <FolderList
                     file_data={file_data}
@@ -94,7 +200,23 @@ export default class Index extends Component {
                     setBreadPaths={this.setBreadPaths}
                     getFolderFileList={this.getFolderFileList}
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
+                {/* {show_drag && ( */}
+                <div className={styles.drag_out}
+                    style={{ display: show_drag ? 'block' : 'none' }}
+                    onDragEnterCapture={this.onDragEnterCaptureChild}
+                    onDragLeaveCapture={this.onDragLeaveCaptureChild}>
+                    <Dragger {...this.uploadProps()} className={styles.drag}>
+                        <div className={styles.drag_inner}
+                          onDragEnterCapture={this.onDragEnterCaptureChildChild}
+                          onDragLeaveCapture={this.onDragLeaveCaptureChildChild}>
+                            <div className={`${globalStyles.authTheme} ${styles.upload_logo}`}>&#xe692;</div>
+                            <div className={styles.upload_des}>松开鼠标左键即可上传文件到此项目</div>
+                        </div>
+                    </Dragger>
+                </div>
+                {/* )} */}
             </div>
         )
     }
 }
+

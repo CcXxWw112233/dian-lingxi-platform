@@ -401,7 +401,7 @@ export default class GetRowGantt extends Component {
                     onMouseMove={(e) => e.stopPropagation()}
                     onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
                   >
-                    <div  className={indexStyles.specific_example_content} >
+                    <div  className={indexStyles.specific_example_content} onMouseDown={(e) => e.stopPropagation()} >
                       <div className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                         <CheckItem is_realize={is_realize} />
                       </div>
