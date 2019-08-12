@@ -8,6 +8,7 @@ import {
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
 } from "@/globalset/js/constant";
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
+let timer;
 
 export default class DetailMember extends Component {
 
@@ -15,9 +16,19 @@ export default class DetailMember extends Component {
      super(props)
      this.state = {
        inputVal: '', 
-       fetching: false,
-       ShowAddMenberModalVisibile: false, 
+       ShowAddMenberModalVisibile: false,
+       new_avatar_list: [], // 用来保存头像的新数组 
      }
+   }
+
+   componentDidMount() {
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    let {data = []} = projectDetailInfoData //data是参与人列表
+    data = data || []
+    const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+    this.setState({
+      new_avatar_list: avatarList
+    })
    }
 
     //点击添加成员操作
@@ -74,21 +85,70 @@ export default class DetailMember extends Component {
     });
   }
 
-   // 输入框搜索
-   handleChange(value) {
+  //模糊查询
+  fuzzyQuery = (list, searchName, keyWord) => {
+      var arr = [];
+      for (let i = 0; i < list.length; i++) {
+        if (list[i][searchName] && list[i][searchName].indexOf(keyWord) !== -1) {
+          arr.push(list[i]);
+        }
+      }
+      console.log(arr, 'ssss')
+      return arr;
+  }
+
+  // 输入框的chg事件
+  handleChange(e) {
+    // console.log('sssss', e.target.value)
+   
+    let val = e.target.value
+    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    let {data = []} = projectDetailInfoData //data是参与人列表
+    data = data || []
+    const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+    let new_list = [...avatarList]
     this.setState({
-      inputVal: value,
-      fetching: true
+      inputVal: val
     })
-   }
+    if (!val) {
+      this.setState({
+        new_avatar_list: new_list
+      })
+      return
+    }
+    new_list.map(item => {
+      if (item.name) {
+        let resultArr = this.fuzzyQuery(avatarList, 'name', val)
+        this.setState({
+          new_avatar_list: resultArr
+        })
+      }
+      // if (item.email) {
+      //   let resultArr = this.fuzzyQuery(avatarList, 'email', val)
+      //   this.setState({
+      //     new_avatar_list: resultArr
+      //   })
+      // }
+      // if (item.mobile) {
+      //   let resultArr = this.fuzzyQuery(avatarList, 'mobile', val)
+      //   this.setState({
+      //     new_avatar_list: resultArr
+      //   })
+      // }
+    })
+    
+  }
 
 
   render() {
-    const { inputVal, fetching } = this.state
+    let { inputVal, new_avatar_list = [] } = this.state
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     let { board_id, board_name, data = [], projectRoles = []} = projectDetailInfoData //data是参与人列表
-    data = data || []
-    const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+    // console.log(inputVal, 'ssss')
+    // data = data || []
+    // const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+    // console.log(new_avatar_list, 'ssss')
+    // console.log(data, 'sssss')
 
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
@@ -176,19 +236,12 @@ export default class DetailMember extends Component {
       <div style={{minHeight: 600}}>
         <div className={DrawDetailInfoStyle.input_search}>
           {/* <span className={DrawDetailInfoStyle.search_icon}><Icon type="search" /></span> */}
-          <Select
-            className={DrawDetailInfoStyle.select_search}
-            placeholder="搜索成员"
-            showArrow={false}
-            showSearch={true}
-            // value={inputVal}
-            notFoundContent={fetching ? <Spin size="small" /> : null}
-            filterOption={false}
-            onSearch={(value) => { this.handleChange(value) } }
-            // onChange={ (value) => { this.handleChange(value) } }
-            style={{ width: '100%', position: 'relative', cursor:'pointer'}}
-          >
-          </Select>
+          <Input 
+            style={{width: '100%'}}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.45)' }} />}
+            value={inputVal}
+            onChange={ (e) => { this.handleChange(e) } }
+          />
         </div>
         <div className={`${DrawDetailInfoStyle.manImageList} ${DrawDetailInfoStyle.detail_member}`}>
           {
@@ -201,8 +254,8 @@ export default class DetailMember extends Component {
               )
           }
           {
-            avatarList.map((value, key) => {
-              if(key < avatarList.length - 1) {
+            new_avatar_list && new_avatar_list.map((value, key) => {
+              if(key < new_avatar_list.length - 1) {
                 const { avatar, user_id } = value
                 return(
                   <div className={`${DrawDetailInfoStyle.manImageItem}`} key={ key }>
