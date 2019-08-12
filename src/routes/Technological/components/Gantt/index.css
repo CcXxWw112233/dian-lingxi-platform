@@ -153,16 +153,24 @@
   cursor: pointer;
   box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
   border-radius: 4px;
-  padding: 0 10px;
+  padding: 2px 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
 }
+.gantt_operate_top .specific_example .specific_example_content {
+  background-color: #ffffff;
+  padding: 0 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .gantt_operate_top .specific_example .card_item_name {
   flex: 1;
-  height: 40px;
-  line-height: 40px;
+  height: 36px;
+  line-height: 36px;
 }
 .ganttArea {
   display: flex;

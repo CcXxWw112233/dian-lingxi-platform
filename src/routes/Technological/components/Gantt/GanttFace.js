@@ -215,8 +215,10 @@ export default class GanttFace extends Component {
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <Spin spinning={get_gantt_data_loading} tip={'数据正在加载中...'}>
       <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{height: gantt_card_height}}>
+        {/* <Spin spinning={get_gantt_data_loading} tip={'数据正在加载中...'}>
+          <div style={{height: gantt_card_height, width: '1000px', zIndex: 6, position: 'absolute'}}></div>
+        </Spin> */}
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
              id={'gantt_card_out_middle'}
@@ -243,7 +245,6 @@ export default class GanttFace extends Component {
         <ShowFileSlider />
         <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}/>
       </div>
-      </Spin>
     )
   }
 
