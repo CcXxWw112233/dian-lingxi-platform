@@ -6,8 +6,9 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
-import { Tooltip } from 'antd'
+import { Tooltip, Dropdown } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
+import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -360,6 +361,11 @@ export default class GetRowGantt extends Component {
     return b
   }
 
+  // 任务单项拖拽
+  onCardItemDrag = (e) => {
+    // console.log('sssss', e)
+  }
+
   render() {
     const { currentRect = {}, dasheRectShow } = this.state
     const { datas: { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } } = this.props.model
@@ -389,10 +395,11 @@ export default class GetRowGantt extends Component {
               const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
 
               return (
-                <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
+                <Dropdown overlay={<CardDropDetail {...value2} />}>
                   <div
                     className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
+                    onDrag={this.onCardItemDrag}
                     style={{
                       left: left, top: top,
                       width: (width || 6) - 6, height: (height || task_item_height),
@@ -405,7 +412,6 @@ export default class GetRowGantt extends Component {
                   >
                     <div
                       data-targetclassname="specific_example"
-
                       className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       onMouseDown={(e) => e.stopPropagation()} >
                       <div data-targetclassname="specific_example"
@@ -420,7 +426,7 @@ export default class GetRowGantt extends Component {
                       </div>
                     </div>
                   </div>
-                </Tooltip>
+                </Dropdown>
               )
             })
           )
