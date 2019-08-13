@@ -79,7 +79,7 @@ export default class DrawDetailInfo extends React.Component {
 
     // 距离底部20的时候触发加载
     if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
-      console.log('ssssss', 'tobottom')
+      // console.log('ssssss', 'tobottom')
         if(timer) {
           clearTimeout(timer)
         }

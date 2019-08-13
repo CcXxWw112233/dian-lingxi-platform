@@ -11,7 +11,7 @@ import {
 } from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
-import {getProcessListByType} from "../../../../../../../services/technological/process";
+import { getProcessListByType } from "../../../../../../../services/technological/process";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
 import ProccessDetailModal from '../../../../Workbench/CardContent/Modal/ProccessDetailModal'
 import FlowsInstanceItem from './FlowsInstanceItem'
@@ -51,7 +51,18 @@ export default class PagingnationContent extends React.Component {
     //   [listName]: [],
     // })
   }
-    //分页逻辑
+
+  componentWillReceiveProps(nextProps) {
+    const { processDetailModalVisible } = nextProps.model.datas
+    const { processDetailModalVisible : old_processDetailModalVisible } = this.props.model.datas
+    if(old_processDetailModalVisible !== processDetailModalVisible ){
+      this.setState({
+        previewProccessModalVisibile: processDetailModalVisible
+      })
+    }
+   
+  }
+  //分页逻辑
   async getProcessListByType() {
     const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
     const { page_number, page_size, } = this.state
@@ -67,11 +78,11 @@ export default class PagingnationContent extends React.Component {
     })
     const res = await getProcessListByType(obj)
     // console.log('this is getProcessListByType s result:', res)
-    if(res.code === '0') {
+    if (res.code === '0') {
       const data = res.data
       let listName
       let selectList = []
-      switch (status ) {
+      switch (status) {
         case '1':
           listName = 'processDoingList'
           selectList = processDoingList
@@ -90,23 +101,23 @@ export default class PagingnationContent extends React.Component {
           break
       }
       this.props.updateDatasProcess({
-        [listName]: page_number == 1?data: [].concat(listData, data)
+        [listName]: page_number == 1 ? data : [].concat(listData, data)
       })
       this.setState({
         scrollBlock: !(data.length < page_size),
       }, () => {
         this.setState({
           loadMoreDisplay: listData.length ? 'block' : 'none',
-          loadMoreText: (data.length < page_size)?'暂无更多数据': '加载更多',
+          loadMoreText: (data.length < page_size) ? '暂无更多数据' : '加载更多',
         })
       })
     }
   }
 
   contentBodyScroll(e) {
-    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+    if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
       const { scrollBlock } = this.state
-      if(!scrollBlock) {
+      if (!scrollBlock) {
         return false
       }
       this.setState({
@@ -121,7 +132,7 @@ export default class PagingnationContent extends React.Component {
     this.setState({
       previewProccessModalVisibile: false
     })
-    this.props.updateDatas({
+    this.props.updateDatasProcess({
       processDetailModalVisible: false
     })
   }
@@ -132,7 +143,7 @@ export default class PagingnationContent extends React.Component {
       return false
     }
 
-    await this.props.getWorkFlowComment({flow_instance_id: obj.flow})
+    await this.props.getWorkFlowComment({ flow_instance_id: obj.flow })
 
     await this.props.dispatch({
       type: 'projectDetailProcess/getProcessInfo',
@@ -149,7 +160,7 @@ export default class PagingnationContent extends React.Component {
       totalId: obj
     })
 
-    await this.props.getProjectDetailInfo({id: obj.board})
+    await this.props.getProjectDetailInfo({ id: obj.board })
 
 
     await this.setState({
@@ -162,56 +173,56 @@ export default class PagingnationContent extends React.Component {
     const { loadMoreDisplay, loadMoreText } = this.state
     const maxContentHeight = clientHeight - 108 - 150
     const allStep = []
-    for(let i = 0; i < 20; i ++) {
+    for (let i = 0; i < 20; i++) {
       allStep.push(i)
     }
 
     return (
       <div
         className={indexStyles.paginationContent}
-        style={{maxHeight: maxContentHeight}}
+        style={{ maxHeight: maxContentHeight }}
         onScroll={this.contentBodyScroll.bind(this)}>
         <Collapse
-            bordered={false}
-            style={{backgroundColor: '#f5f5f5', marginTop: 4}}>
-            {listData.map((value, key) => {
-              const { id } = value
-              return (
-                <Panel key={id}
-                       style={customPanelStyle}
-                       header={
+          bordered={false}
+          style={{ backgroundColor: '#f5f5f5', marginTop: 4 }}>
+          {listData.map((value, key) => {
+            const { id } = value
+            return (
+              <Panel key={id}
+                style={customPanelStyle}
+                header={
                   <FlowsInstanceItem
-                   itemValue={value}
-                   status={status}
-                   dispatch={this.props.dispatch}
-                   listDataObj={{
-                     processDoingList,
-                     processStopedList,
-                     processComepletedList
-                   }}
-                   processItemClick={this.processItemClick.bind(this)}/>}/>
-              )
-            })}
-          </Collapse>
+                    itemValue={value}
+                    status={status}
+                    dispatch={this.props.dispatch}
+                    listDataObj={{
+                      processDoingList,
+                      processStopedList,
+                      processComepletedList
+                    }}
+                    processItemClick={this.processItemClick.bind(this)} />} />
+            )
+          })}
+        </Collapse>
         {/*{listData.map((value, key) => {*/}
-          {/*return (*/}
-            {/*<FlowsInstanceItem itemValue={value} processItemClick={this.processItemClick.bind(this)}/>*/}
-          {/*)*/}
+        {/*return (*/}
+        {/*<FlowsInstanceItem itemValue={value} processItemClick={this.processItemClick.bind(this)}/>*/}
+        {/*)*/}
         {/*})}*/}
-        {!listData.length || !listData?(
-          <div className={indexStyles.nodata} style={{height: maxContentHeight - 30}} >
+        {!listData.length || !listData ? (
+          <div className={indexStyles.nodata} style={{ height: maxContentHeight - 30 }} >
             <div className={indexStyles.nodata_inner}>
               <img src={nodataImg} />
               <div>暂无数据</div>
             </div>
           </div>
-        ): ('')}
-        <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
+        ) : ('')}
+        <div className={indexStyles.Loading} style={{ display: loadMoreDisplay }}>{loadMoreText}</div>
         <ProccessDetailModal
           {...this.props}
-          status = {this.props.status}
-          getProcessListByType = {this.getProcessListByType.bind(this)}
-          close = {this.close.bind(this)}
+          status={this.props.status}
+          getProcessListByType={this.getProcessListByType.bind(this)}
+          close={this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
         />
       </div>

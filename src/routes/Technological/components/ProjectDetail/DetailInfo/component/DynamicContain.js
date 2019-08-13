@@ -29,12 +29,37 @@ export default class DynamicContain extends Component {
     this.props.getDispatchDynamicList(board_id)
   }
 
+  // 获取任务中当前分组的的下标列表
+  getTaskGroupList = (card_id) => {
+    const { datas: { taskGroupList = [] } } = this.props.model
+    // console.log(taskGroupList, 'sssss')
+    let taskGroupListIndex = 0
+    let taskGroupListIndex_index = 0
+    for(let i = 0; i < taskGroupList.length; i ++) {
+      for(let j = 0; j < taskGroupList[i]['card_data'].length; j ++) {
+        if (card_id === taskGroupList[i]['card_data'][j]['card_id']) {
+          taskGroupListIndex = i
+          taskGroupListIndex_index = j
+          break
+        }
+      }
+    }
+    this.props.dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupListIndex,
+        taskGroupListIndex_index,
+      }
+    })
+  }
+
   // 显示任务弹框
   setDrawerVisibleOpen(card_id) {
     //不需要及时更新drawcontent
     this.props.updateDatasTask({
       drawerVisible: true,
     })
+    this.getTaskGroupList(card_id)
     this.props.dispatch({
       type: 'projectDetailTask/getCardCommentList',
       payload: {
@@ -63,34 +88,178 @@ export default class DynamicContain extends Component {
 
   }
 
-   // 去任务详情
-   goToTask({board_id, content, card_id}) {
+  // 流程的任务弹窗数据的调用
+  processItemClick = async(board_id, flow_instance_id) => {
+    await this.props.dispatch({
+      type: 'projectDetailProcess/getWorkFlowComment',
+      payload: {
+        flow_instance_id: flow_instance_id
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'projectDetailProcess/getProcessInfo',
+      payload: {
+        id: flow_instance_id
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'projectDetailProcess/updateDatasProcess',
+      payload: {
+        currentProcessInstanceId: flow_instance_id
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        totalId: {
+          flow: flow_instance_id,
+          board: board_id
+        }
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'projectDetailProcess/getProjectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+
+    await this.props.dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        processDetailModalVisible: !this.props.model.datas.processDetailModalVisible
+      }
+    });
+  }
+
+  //文件名类型
+  // judgeFileType(fileName) {
+  //   let themeCode = ''
+  //   const type = getSubfixName(fileName)
+  //   switch (type) {
+  //     case '.xls':
+  //       themeCode = '&#xe6d5;'
+  //       break
+  //     case '.png':
+  //       themeCode = '&#xe6d4;'
+  //       break
+  //     case '.xlsx':
+  //       themeCode = '&#xe6d3;'
+  //       break
+  //     case '.ppt':
+  //       themeCode = '&#xe6d2;'
+  //       break
+  //     case '.gif':
+  //       themeCode = '&#xe6d1;'
+  //       break
+  //     case '.jpeg':
+  //       themeCode = '&#xe6d0;'
+  //       break
+  //     case '.pdf':
+  //       themeCode = '&#xe6cf;'
+  //       break
+  //     case '.docx':
+  //       themeCode = '&#xe6ce;'
+  //       break
+  //     case '.txt':
+  //       themeCode = '&#xe6cd;'
+  //       break
+  //     case '.doc':
+  //       themeCode = '&#xe6cc;'
+  //       break
+  //     case '.jpg':
+  //       themeCode = '&#xe6cb;'
+  //       break
+  //     default:
+  //       themeCode = ''
+  //       break
+  //   }
+  //   return themeCode
+  // }
+
+  // 文件任务弹窗
+  getFileDrawerOpen = (file_id) => {
+    this.props.dispatch({
+      type: 'projectDetailFile/getCardCommentListAll',
+      payload: {
+        id: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/getFileType',
+      payload: {
+        fileList: this.props.model.datas.fileList,
+        file_id
+      }
+    })
+    this.props.updateDatasFile({
+      isInOpenFile: true,
+      seeFileInput: 'fileModule',
+      filePreviewCurrentFileId: file_id,
+      pdfDownLoadSrc: '',
+    })
+    // if(getSubfixName(file_name) == '.pdf') {
+    //   this.props.dispatch({
+    //     type: 'projectDetailFile/getFilePDFInfo',
+    //     payload: {
+    //       id: file_id
+    //     }
+    //   })
+    // } else {
+    //   this.props.dispatch({
+    //     type: 'projectDetailFile/filePreview',
+    //     payload: {
+    //       // id: file_resource_id, file_id
+    //       id: file_id
+    //     }
+    //   })
+    //   // this.props.filePreview({id: file_resource_id, file_id})
+    // }
+    // this.props.dispatch({
+    //   type: 'projectDetailFile/fileVersionist',
+    //   payload: {
+    //     version_id: version_id
+    //   }
+    // })
+    // this.props.fileVersionist({version_id: version_id})
+  }
+
+  // 去任务详情
+  goToTask({board_id, content, card_id}) {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW, board_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    // this.props.getCardCommentList(card_id)
-    console.log(this.props, 'sssss')
     this.setDrawerVisibleOpen(card_id)
-
   }
 
   // 去文件详情
-  goToFile({board_id, content}) {
+  goToFile({board_id, content, board_file}) {
     if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, board_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    
+    this.getFileDrawerOpen(board_file)
   }
 
   // 去流程详情
-  goToProcess({board_id, content}) {
+  goToProcess({board_id, content, flow_instance_id}) {
     if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    console.log(this.props, 'sssss')
+    this.processItemClick(board_id, flow_instance_id)
+    // console.log(this.props, 'sssss')
   }
 
   // 去到里程碑
@@ -127,11 +296,12 @@ export default class DynamicContain extends Component {
     const { projectDynamicsList } = this.props
     const { datas: { projectDetailInfoData = [], } } = this.props.model
     const { data } = projectDetailInfoData
-    const { drawerVisible } = this.state
+    // console.log(this.props.model.datas.processDetailModalVisible, 'sssss')
     //过滤消息内容
     const filterTitleContain = (activity_type, messageValue) => {
       let contain = ''
       let messageContain = (<div></div>)
+      // console.log(messageValue, 'ssss')
       let jumpToBoard = (
         <span 
           style={{color: 'rgba(0,0,0,0.65)'}} 
@@ -148,14 +318,14 @@ export default class DynamicContain extends Component {
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
         <span 
           style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content}) } }
+          onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content, board_file: messageValue.content.board_file.id}) } }
         >{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
+          onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content, flow_instance_id: messageValue.content.flow_instance.id }) } }
         >{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
 
@@ -169,7 +339,7 @@ export default class DynamicContain extends Component {
       let jumpToMeeting = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          // onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
+          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
         >{messageValue.content && messageValue.content.meeting && messageValue.content.meeting.meetingName}</span>
       )
 
