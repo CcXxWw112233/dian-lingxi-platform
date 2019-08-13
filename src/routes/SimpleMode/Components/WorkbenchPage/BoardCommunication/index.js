@@ -38,8 +38,8 @@ class BoardCommunication extends Component {
         previewFileModalVisibile: false,
         is_selectFolder: false,
         awaitUploadFile: {},
-        dragEnterCaptureFlag: false
-
+        dragEnterCaptureFlag: false,
+        showFileSelectDropdown: false,
     };
 
     constructor(props) {
@@ -443,6 +443,12 @@ class BoardCommunication extends Component {
     selectBoardFile = (e) => {
         e.stopPropagation();
         const { dispatch, currentBoardDetail = {} } = this.props;
+        dispatch({
+            type: 'simpleBoardCommunication/updateDatas',
+            payload: {
+                is_file_tree_loading: true
+            }
+        });
         if (currentBoardDetail.board_id) {
             dispatch({
                 type: 'simpleWorkbenchbox/getFileList',
@@ -451,7 +457,6 @@ class BoardCommunication extends Component {
 
                 }
             });
-
         }
 
         this.setState({
@@ -478,7 +483,12 @@ class BoardCommunication extends Component {
         if (keys.length > 0) {
             const boardId = keys[0]
             setBoardIdStorage(boardId);
-
+            dispatch({
+                type: 'simpleBoardCommunication/updateDatas',
+                payload: {
+                    is_file_tree_loading: true
+                }
+            });
             dispatch({
                 type: 'simpleWorkbenchbox/updateDatas',
                 payload: {
@@ -489,7 +499,12 @@ class BoardCommunication extends Component {
                 dispatch({
                     type: 'simpleWorkbenchbox/getFolderList',
                     payload: {
-                        board_id: boardId
+                        board_id: boardId,
+                        calback: ()=>{
+                            dispatch({
+                                type: 'simpleBoardCommunication/updateDatas' 
+                            });
+                        }
                     }
                 });
             } else {
@@ -497,13 +512,13 @@ class BoardCommunication extends Component {
                     type: 'simpleWorkbenchbox/getFileList',
                     payload: {
                         board_id: boardId
-
                     }
                 });
             }
 
             this.setState({
                 selectBoardDropdownVisible: false,
+                showFileSelectDropdown: true,
                 currentfile: {}
             });
         }
@@ -652,9 +667,16 @@ class BoardCommunication extends Component {
     }
 
     renderSelectBoardFileTreeList = () => {
-        const { boardFileTreeData = [], boardFolderTreeData = [] } = this.props.simpleBoardCommunication;
+        const { boardFileTreeData = [], boardFolderTreeData = [], is_file_tree_loading} = this.props.simpleBoardCommunication;
         const { is_selectFolder } = this.state;
-        console.log(boardFileTreeData);
+        console.log('is_selectFolder', { boardFolderTreeData, boardFileTreeData });
+        if(is_file_tree_loading){
+            return (
+                <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+                    数据加载中
+                </div>
+            )
+        }
         if (boardFileTreeData.length == 0 && boardFolderTreeData.length == 0) {
             return (
                 <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
@@ -720,11 +742,11 @@ class BoardCommunication extends Component {
 
     render() {
         const { currentBoardDetail = {} } = this.props;
-        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag } = this.state;
+        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
-        //console.log(currentBoardDetail, "sssss");
+        console.log(showFileSelectDropdown, "sssss");
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
@@ -807,6 +829,7 @@ class BoardCommunication extends Component {
                                 </div>
                             </Dropdown>
                         </div>
+
                         <div className={indexStyles.selectWapper}>
                             <Dropdown
                                 disabled={!currentBoardDetail || !currentBoardDetail.board_id}

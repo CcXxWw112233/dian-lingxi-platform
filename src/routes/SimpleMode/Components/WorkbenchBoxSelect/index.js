@@ -76,11 +76,11 @@ const WorkbenchBoxSelect = (props) => {
               let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
               //console.log("8888", isSelected);
               return (
-                boxItem.status == 0 ?
-                  <Tooltip title="功能开发中，请耐心等待">
+                boxItem.status == 0 ? (
+<Tooltip title="功能开发中，请耐心等待">
                     {renderBoxItem(boxItem, isSelected)}
                   </Tooltip>
-                  :
+):
                   renderBoxItem(boxItem, isSelected)
               )
             })

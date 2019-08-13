@@ -146,11 +146,11 @@ class MyWorkbenchBoxs extends Component {
           {
             myWorkbenchBoxList.map((item, key) => {
               return (
-                item.status == 0 ?
-                  <Tooltip title="功能开发中，请耐心等待">
+                item.status == 0 ? (
+<Tooltip title="功能开发中，请耐心等待">
                     {this.renderBoxItem(item)}
                   </Tooltip>
-                  :
+):
                   this.renderBoxItem(item)
               )
             })
