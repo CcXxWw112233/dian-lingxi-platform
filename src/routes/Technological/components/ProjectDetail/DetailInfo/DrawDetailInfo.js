@@ -37,7 +37,7 @@ export default class DrawDetailInfo extends React.Component {
     textArea_val: '', // 用来判断是否有用户输入
     is_show_dot: true, // 是否显示点点点, 默认为true 显示
     is_dynamic_scroll: false, // 判断项目动态列表是否在滚动, 默认为false
-    is_show_more: false, // 是否显示没有更多了, 默认为false
+    temp_top: '',
 
   }
 
@@ -62,10 +62,11 @@ export default class DrawDetailInfo extends React.Component {
   // 动态的滚动事件
   dynamicScroll = (e, board_id) => {
     const {datas: { p_next_id } } = this.props.model
-    const { is_dynamic_scroll } = this.state
+    const { is_dynamic_scroll, temp_top } = this.state
     const { dispatch } = this.props
     let infoTop = e && e.target.scrollTop // 滚动的距离
     let manImageListTop = this.refs.manImageList.offsetTop // 获取成员列表的距离
+    // 导航栏固定事件
     if (infoTop > manImageListTop) {
       this.setState({
         dynamic_header_sticky: true,
@@ -75,23 +76,27 @@ export default class DrawDetailInfo extends React.Component {
         dynamic_header_sticky: false,
       })
     }
+
     // 距离底部20的时候触发加载
     if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
       console.log('ssssss', 'tobottom')
         if(timer) {
           clearTimeout(timer)
         }
+        timer = setTimeout(() => {
+          this.setState({
+            is_dynamic_scroll: false,
+            temp_top: infoTop,
+          })
+        }, 500)
         this.setState({
           is_dynamic_scroll: true
         })
-        timer = setTimeout(() => {
-          this.setState({
-            is_dynamic_scroll: false
-          })
-        }, 500)
+
+        // 如果说next_id不存在, 那么久不能滚动加载, 显示没有更多了
         if (!p_next_id) {
           this.setState({
-            is_show_more: true
+            is_dynamic_scroll: false
           })
         }
         if (is_dynamic_scroll && p_next_id) {
@@ -102,6 +107,9 @@ export default class DrawDetailInfo extends React.Component {
               next_id: p_next_id
             }
           })
+          this.setState({
+            is_dynamic_scroll: false,
+          })   
         }
     }
       
@@ -265,10 +273,13 @@ export default class DrawDetailInfo extends React.Component {
 
   render() {
     const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
-    const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
+    const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+    // 是否存在动态列表
+    let is_show_dynamic = this.refs.dynamic_contain && this.refs.dynamic_contain.props.model.datas.projectDynamicsList.length != 0 ? true : false
+    // console.log('ssss', this.refs.dynamic_contain)
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
       if(!isHasOrgMemberQueryPermission()) {
@@ -452,9 +463,16 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </div>
               <div className={DrawDetailInfoStyle.dynamic_contain}>
-                <DynamicContain {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
+                <DynamicContain ref="dynamic_contain" {...this.props} board_id={board_id} getDispatchDynamicList={this.getDispatchDynamicList} />
               </div>
-              <div style={{ textAlign: 'center', color:'rgba(0,0,0,0.45)', marginBottom: '15', display: is_show_more ? 'block' : 'none' }}>没有更多动态啦~</div>
+              {
+                is_show_dynamic ? (
+                  <div style={{ textAlign: 'center', color:'rgba(0,0,0,0.45)', marginBottom: '15', display: !p_next_id ? 'block' : 'none'}}>没有更多动态啦~</div>
+                ) :(
+                  null
+                )
+              }
+             
             </div>
           <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         </div>

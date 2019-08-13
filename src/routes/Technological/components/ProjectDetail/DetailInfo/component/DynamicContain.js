@@ -5,7 +5,7 @@ import { connect } from 'dva'
 import { Icon, Tooltip } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from '../../../../components/Gantt/components/milestoneDetail'
-import DrawContentModal from '../../TaskItemComponent/DrawerContent'
+import DrawContentModal from '../../TaskItemComponent/components/DrawContentModal'
 import {currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermission, checkIsHasPermissionInBoard} from "@/utils/businessFunction";
 import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, ORG_TEAM_BOARD_QUERY, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW,
   PROJECT_FILES_FILE_INTERVIEW,
@@ -21,7 +21,7 @@ import {newsDynamicHandleTime, timestampToTime, timestampToHM, timestampToTimeNo
 export default class DynamicContain extends Component {
 
   state = {
-    drawerVisible: false,
+    miletone_detail_modal_visible: false, // 里程碑的弹窗
   }
 
   componentDidMount() {
@@ -29,23 +29,50 @@ export default class DynamicContain extends Component {
     this.props.getDispatchDynamicList(board_id)
   }
 
-  // 去到项目详情
-  goToBoard({org_id, content}) {
-    // console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
-    // this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+  // 显示任务弹框
+  setDrawerVisibleOpen(card_id) {
+    //不需要及时更新drawcontent
+    this.props.updateDatasTask({
+      drawerVisible: true,
+    })
+    this.props.dispatch({
+      type: 'projectDetailTask/getCardCommentList',
+      payload: {
+        id: card_id
+      }
+    })
+    // this.props.getCardDetail({id: card_id})
+    this.props.dispatch({
+      type: 'projectDetailTask/getCardDetail',
+      payload: {
+        id: card_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailTask/getCardCommentListAll',
+      payload: {
+        id: card_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        card_id
+      }
+    })
+
   }
 
    // 去任务详情
-   goToTask({board_id, content}) {
+   goToTask({board_id, content, card_id}) {
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW, board_id)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    // this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+    // this.props.getCardCommentList(card_id)
+    console.log(this.props, 'sssss')
+    this.setDrawerVisibleOpen(card_id)
+
   }
 
   // 去文件详情
@@ -54,7 +81,7 @@ export default class DynamicContain extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    // this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+    
   }
 
   // 去流程详情
@@ -63,7 +90,7 @@ export default class DynamicContain extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    // this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+    console.log(this.props, 'sssss')
   }
 
   // 去到里程碑
@@ -96,7 +123,6 @@ export default class DynamicContain extends Component {
     })
   }
 
-
   render() {
     const { projectDynamicsList } = this.props
     const { datas: { projectDetailInfoData = [], } } = this.props.model
@@ -109,13 +135,12 @@ export default class DynamicContain extends Component {
       let jumpToBoard = (
         <span 
           style={{color: 'rgba(0,0,0,0.65)'}} 
-          // onClick={ () => { this.goToBoard({org_id: messageValue.org_id, content: messageValue.content}) } }
         >{messageValue.content.board.name}</span>
       )
       let jumpToTask = (
         <span 
           style={{color: '#1890FF', cursor: 'pointer'}} 
-          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content}) } }
+          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
         >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
@@ -128,7 +153,6 @@ export default class DynamicContain extends Component {
       )
 
       let jumpToProcess = (
-        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.id}`)}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
         <span 
           style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
           onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content }) } }
@@ -616,10 +640,10 @@ export default class DynamicContain extends Component {
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'waitingWorkflowTaskNotice':
+        case 'board.flow.task.assignee.notice':
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div>您有一个{currentNounPlanFilterName(FLOWS)}任务待处理</div>
+              <div>您有一个{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」任务待处理</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -1005,7 +1029,6 @@ export default class DynamicContain extends Component {
     }
 
 
-
      //具体详细信息
      const filterNewsType = (type, value, childrenKey) => {
       //  console.log(type, value, 'ssssss')
@@ -1051,33 +1074,28 @@ export default class DynamicContain extends Component {
 
     return (
       <>
-      <ul>   
-        {
-          projectDynamicsList && projectDynamicsList.length ? projectDynamicsList.map((item, childrenKey) => {
-            const { rela_type } = item
-            return (
-              <li style={{marginBottom: '8'}} key={childrenKey}>{filterNewsType(rela_type, item, childrenKey)}</li>
+        <ul>   
+          {
+            projectDynamicsList && projectDynamicsList.length ? projectDynamicsList.map((item, childrenKey) => {
+              const { rela_type } = item
+              return (
+                <li style={{marginBottom: '8'}} key={childrenKey}>{filterNewsType(rela_type, item, childrenKey)}</li>
+              )
+            }) : (
+              <li style={{marginBottom: '8'}}>
+                <div style={{margin: 'auto', textAlign: 'center'}}>
+                  <div style={{fontSize: 48, color: 'rgba(0,0,0,0.15)'}} className={`${globalStyles.authTheme}`}>&#xe683;</div>
+                  <span style={{color: 'rgba(217,217,217,1)'}}>暂无动态</span>
+                </div>
+              </li>
             )
-          }) : (
-            <li style={{marginBottom: '8'}}>
-              <div style={{margin: 'auto', textAlign: 'center'}}>
-                <div style={{fontSize: 48, color: 'rgba(0,0,0,0.15)'}} className={`${globalStyles.authTheme}`}>&#xe683;</div>
-                <span style={{color: 'rgba(217,217,217,1)'}}>暂无动态</span>
-              </div>
-            </li>
-          )
-        }
-      </ul>
-      <MilestoneDetail
-        users={data}
-        miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
-        set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
-      />
-      {/*任务详细弹窗*/}
-      {/* <DrawContentModal
-        {...this.props}
-        visible={drawerVisible}
-        setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} /> */}
+          }
+        </ul>
+        <MilestoneDetail
+          users={data}
+          miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
+          set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
+        />
       </>
     )
   }

@@ -86,21 +86,25 @@ export default class DetailMember extends Component {
   }
 
   //模糊查询
-  fuzzyQuery = (list, searchName, keyWord) => {
+  fuzzyQuery = (list, keyWord) => {
       var arr = [];
-      for (let i = 0; i < list.length; i++) {
-        if (list[i][searchName] && list[i][searchName].indexOf(keyWord) !== -1) {
-          arr.push(list[i]);
+      list.map(item => {
+        if (item.name && item.name.indexOf(keyWord) != -1) {
+          arr.push(item)
+          return
+        } else if ( item.email && item.email.indexOf(keyWord) != -1) {
+          arr.push(item)
+          return
+        } else if (item.mobile && item.mobile.indexOf(keyWord) != -1) {
+          arr.push(item)
+          return
         }
-      }
-      console.log(arr, 'ssss')
+      })
       return arr;
   }
 
   // 输入框的chg事件
   handleChange(e) {
-    // console.log('sssss', e.target.value)
-   
     let val = e.target.value
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     let {data = []} = projectDetailInfoData //data是参与人列表
@@ -117,24 +121,10 @@ export default class DetailMember extends Component {
       return
     }
     new_list.map(item => {
-      if (item.name) {
-        let resultArr = this.fuzzyQuery(avatarList, 'name', val)
-        this.setState({
-          new_avatar_list: resultArr
-        })
-      }
-      // if (item.email) {
-      //   let resultArr = this.fuzzyQuery(avatarList, 'email', val)
-      //   this.setState({
-      //     new_avatar_list: resultArr
-      //   })
-      // }
-      // if (item.mobile) {
-      //   let resultArr = this.fuzzyQuery(avatarList, 'mobile', val)
-      //   this.setState({
-      //     new_avatar_list: resultArr
-      //   })
-      // }
+      let resultArr = this.fuzzyQuery(avatarList, val)
+      this.setState({
+        new_avatar_list: resultArr.concat([1])
+      })
     })
     
   }
@@ -144,11 +134,6 @@ export default class DetailMember extends Component {
     let { inputVal, new_avatar_list = [] } = this.state
     const {datas: { projectDetailInfoData = {} } } = this.props.model
     let { board_id, board_name, data = [], projectRoles = []} = projectDetailInfoData //data是参与人列表
-    // console.log(inputVal, 'ssss')
-    // data = data || []
-    // const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
-    // console.log(new_avatar_list, 'ssss')
-    // console.log(data, 'sssss')
 
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
@@ -238,7 +223,7 @@ export default class DetailMember extends Component {
           {/* <span className={DrawDetailInfoStyle.search_icon}><Icon type="search" /></span> */}
           <Input 
             style={{width: '100%'}}
-            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.45)' }} />}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.45)'}} />}
             value={inputVal}
             onChange={ (e) => { this.handleChange(e) } }
           />

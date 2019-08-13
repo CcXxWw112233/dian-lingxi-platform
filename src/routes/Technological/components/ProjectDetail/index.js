@@ -684,7 +684,7 @@ const ProjectDetail = (props) => {
     //overflow: 'hidden', 03/20
     <div style={{ height: 'auto', position: 'relative', width: '100%', minHeight: '100vh', margin: '0 auto'}}>
       <div className={indexStyles.headerMaskDown}></div>
-      <Header {...DetailInfoProps} {...HeaderListProps} {...FileModuleProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask}
+      <Header {...DetailInfoProps} {...HeaderListProps} {...FileModuleProps}  {...CreateTaskProps} routingJump={routingJump} updateDatas={updateDatas} updateDatasTask={updateDatasTask} 
               updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} />
 
       {/*应用界面*/}
