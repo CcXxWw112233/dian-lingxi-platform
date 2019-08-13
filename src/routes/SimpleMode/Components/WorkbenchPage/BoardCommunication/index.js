@@ -777,7 +777,7 @@ class BoardCommunication extends Component {
                     <div>
                         <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
                             <Dropdown
-                                overlay={this.renderSelectBoardTreeList}
+                                overlay={this.renderSelectBoardTreeList()}
                                 trigger={['click']}
                                 className={`${indexStyles.dropdownSelect}`}
                                 onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
@@ -793,7 +793,7 @@ class BoardCommunication extends Component {
                         <div className={indexStyles.selectWapper}>
                             <Dropdown
                                 disabled={!currentBoardDetail || !currentBoardDetail.board_id}
-                                overlay={this.renderSelectBoardFileTreeList}
+                                overlay={this.renderSelectBoardFileTreeList()}
                                 trigger={['click']}
                                 className={`${indexStyles.dropdownSelect}`}
                                 onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
