@@ -513,9 +513,12 @@ class BoardCommunication extends Component {
     onSelectFile = (keys, event) => {
         //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
+        if (!event.selectedNodes[0]) {
+            return;
+        }
         const fileId = keys[0]
-        //console.log("selectedNodes", event.selectedNodes[0].props);
-        if (event.selectedNodes[0].props.type === 1) {
+        //console.log("selectedNodes", event.selectedNodes[0]);
+        if (!event.selectedNodes[0] && event.selectedNodes[0].props.type === 1) {
             message.warn('文件夹不能被选择');
             return;
         }
