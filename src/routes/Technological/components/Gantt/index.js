@@ -193,6 +193,28 @@ class Gantt extends Component {
     })
   }
 
+  // 删除某一条任务
+  handleDeleteCard = ({ card_id }) => {
+    const { dispatch } = this.props
+    const { datas: { list_group = [], current_list_group_id } } = this.props.model
+    const list_group_new = [...list_group]
+    let belong_group_name = ''
+    if (this.card_time_type == 'no_schedule') {
+      belong_group_name = 'card_no_times'
+    } else {
+      belong_group_name = 'cards'
+    }
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
+    list_group_new[group_index].lane_data[belong_group_name].splice(group_index_cards_index, 1)
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
+  }
+
   render() {
     const { dispatch, model = {}, modal } = this.props
     const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, } = this.state
@@ -549,6 +571,8 @@ class Gantt extends Component {
           updateFileDatas={updateDatasFile}
           handleChangeCard={this.handleChangeCard.bind(this)}
           updateDatas={updateDatasTask}
+          needDelete={true}
+          handleDeleteCard={this.handleDeleteCard}
         />
 
         {addTaskModalVisible && (
