@@ -153,15 +153,16 @@
   cursor: pointer;
   box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
   border-radius: 4px;
-  padding: 2px 0px;
+  padding: 2px 2px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
 }
 .gantt_operate_top .specific_example .specific_example_content {
+  overflow: hidden;
   background-color: #ffffff;
-  padding: 0 10px;
+  padding: 0 8px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -171,6 +172,12 @@
   flex: 1;
   height: 36px;
   line-height: 36px;
+}
+.gantt_operate_top .specific_example_no_start_time {
+  border-radius: 40px 0 0 40px;
+}
+.gantt_operate_top .specific_example_no_due_time {
+  border-radius: 0 40px 40px 0;
 }
 .ganttArea {
   display: flex;

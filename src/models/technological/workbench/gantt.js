@@ -57,7 +57,7 @@ export default {
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
-      is_show_board_file_area: '1', //显示文件区域 0默认不显示 1滑入 2滑出
+      is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
     },
   },
@@ -196,7 +196,7 @@ export default {
       let list_group = []
       const getDigit = (timestamp) => {
         if(!timestamp) {
-          return 1
+          return 0
         }
         let new_timestamp = timestamp.toString()
         if(new_timestamp.length == 10) {
@@ -217,14 +217,16 @@ export default {
         if(val['lane_data']['cards']) {
           for(let val_1 of val['lane_data']['cards']) {
             const due_time = getDigit(val_1['due_time'])
-            const start_time = getDigit(val_1['start_time'])
+            const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
             let list_data_item = {
               ...val_1,
               start_time,
               end_time: due_time,
               create_time,
-              time_span: (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+              time_span: (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+              is_has_start_time: !!getDigit(val_1['start_time']),
+              is_has_end_time: !!getDigit(val_1['due_time'])
             }
             list_group_item.list_data.push(list_data_item)
           }
@@ -286,6 +288,8 @@ export default {
           list_group[i]['list_data'][j] = item
         }
       }
+
+      console.log('sssssss_list_group', list_group)
 
       yield put({
         type: 'updateDatas',

@@ -91,31 +91,32 @@ export default class Index extends Component {
     }
 
     onDragEnterCapture = (e) => {
-        console.log('ssssss_3_enter', e.target)
+        // console.log('ssssss_3_enter', e.currentTarget.dataset)
         this.setShowDrag(true)
     }
     onDragLeaveCapture = (e) => {
-        console.log('ssssss_3_leave', e.target)
+        // console.log('ssssss_3_leave', e.currentTarget.dataset)
 
         // this.setShowDrag(false)
     }
 
     onDragEnterCaptureChild = (e) => {
         e.stopPropagation()
-        // console.log('ssssss_2_enter', e.target)
+        // console.log('ssssss_2_enter',  e.currentTarget.dataset)
         this.setShowDrag(true)
     }
     onDragLeaveCaptureChild = (e) => {
         e.stopPropagation()
-        this.setShowDrag(false)
+        this.setShowDrag(true)
     }
 
     onDragEnterCaptureChildChild = (e) => {
         e.stopPropagation()
-        // console.log('ssssss_1_enter', e.target)
+        // console.log('ssssss_1_enter',  e.currentTarget.dataset)
         this.setShowDrag(true)
     }
     onDragLeaveCaptureChildChild = (e) => {
+        // console.log('ssssss_1_leave',  e.currentTarget.dataset)
         e.stopPropagation()
         this.setShowDrag(true)
     }
@@ -181,12 +182,14 @@ export default class Index extends Component {
         };
         return props
     }
+
     render() {
         const { bread_paths = [], file_data = [], current_folder_id, show_drag } = this.state
         const { board_id } = this.props
 
         return (
             <div
+                data-drag_area={'area_top'}
                 // style={{ background: 'red', height: 300, }}
                 className={`${styles.board_file_area_item}`}
                 onDragEnterCapture={this.onDragEnterCapture}
@@ -202,15 +205,19 @@ export default class Index extends Component {
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                 {/* {show_drag && ( */}
                 <div className={styles.drag_out}
-                    style={{ display: show_drag ? 'block' : 'none' }}
+                    data-drag_area={'area_inner'}
+                    style={{ display: false ? 'block' : 'none' }}
                     onDragEnterCapture={this.onDragEnterCaptureChild}
                     onDragLeaveCapture={this.onDragLeaveCaptureChild}>
                     <Dragger {...this.uploadProps()} className={styles.drag}>
                         <div className={styles.drag_inner}
-                          onDragEnterCapture={this.onDragEnterCaptureChildChild}
-                          onDragLeaveCapture={this.onDragLeaveCaptureChildChild}>
-                            <div className={`${globalStyles.authTheme} ${styles.upload_logo}`}>&#xe692;</div>
-                            <div className={styles.upload_des}>松开鼠标左键即可上传文件到此项目</div>
+                            data-drag_area={'area_inner'}
+                            onDragEnterCapture={this.onDragEnterCaptureChildChild}
+                            onDragLeaveCapture={this.onDragLeaveCaptureChildChild}>
+                            <div className={`${globalStyles.authTheme} ${styles.upload_logo}`} data-drag_area={'area_inner'}
+                            >&#xe692;</div>
+                            <div className={styles.upload_des} data-drag_area={'area_inner'}
+                            >松开鼠标左键即可上传文件到此项目</div>
                         </div>
                     </Dragger>
                 </div>

@@ -54,9 +54,9 @@ export default class GetRowGantt extends Component {
       //判断是否有父容器，如果存在则累加其边距
       while (obj = obj.offsetParent) {//等效 obj = obj.offsetParent;while (obj != undefined)
         left_to_body += obj.offsetLeft; //叠加父容器的左边距
-      } 
+      }
       return left_to_body
-    } 
+    }
     const element = document.getElementById('gantt_card_out')
     const card_offset_left = getPoint(element)
     this.setState({
@@ -341,7 +341,7 @@ export default class GetRowGantt extends Component {
   setLableColor = (label_data) => {
     let bgColor = ''
     let b = ''
-    if(label_data && label_data.length) {     
+    if (label_data && label_data.length) {
       const color_arr = label_data.map(item => {
         return `rgb(${item.label_color})`
       })
@@ -352,10 +352,10 @@ export default class GetRowGantt extends Component {
       bgColor = color_arr.reduce((total, color_item, current_index) => {
         return `${total},  ${color_item} ${color_percent_arr[current_index - 1] || 0}%, ${color_item} ${color_percent_arr[current_index]}%`
       }, '')
-      
+
       b = `linear-gradient(to right${bgColor})`
     } else {
-      bgColor = '#ffffff 100%'
+      b = '#ffffff'
     }
     return b
   }
@@ -386,11 +386,13 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [] } = value2
-            
+              const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
+
               return (
                 <Tooltip title={name} key={`${id}_${name}_${width}_${left}`}>
-                  <div className={indexStyles.specific_example} data-targetclassname="specific_example"
+                  <div
+                    className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                    data-targetclassname="specific_example"
                     style={{
                       left: left, top: top,
                       width: (width || 6) - 6, height: (height || task_item_height),
@@ -401,12 +403,19 @@ export default class GetRowGantt extends Component {
                     onMouseMove={(e) => e.stopPropagation()}
                     onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
                   >
-                    <div  className={indexStyles.specific_example_content} onMouseDown={(e) => e.stopPropagation()} >
-                      <div className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                    <div
+                      data-targetclassname="specific_example"
+
+                      className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                      onMouseDown={(e) => e.stopPropagation()} >
+                      <div data-targetclassname="specific_example"
+                        className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                         <CheckItem is_realize={is_realize} />
                       </div>
-                      <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
-                      <div onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                      <div data-targetclassname="specific_example"
+                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
+                      <div data-targetclassname="specific_example"
+                        onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                         <AvatarList users={executors} size={'small'} />
                       </div>
                     </div>

@@ -142,6 +142,7 @@
     border: 2px dashed #E8E8E8;
     background-color: #ffffff;
   }
+  
   .specific_example {
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     position: absolute;
@@ -152,7 +153,7 @@
     // background:rgba(255,255,255,1);
     box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.09);
     border-radius:4px;
-    padding: 2px 0px;
+    padding: 2px 2px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -160,8 +161,9 @@
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
     .specific_example_content {
+      overflow: hidden;
       background-color: #ffffff;
-      padding: 0 10px;
+      padding: 0 8px;
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -173,6 +175,12 @@
       line-height:36px;
     }
 
+  }
+  .specific_example_no_start_time {
+    border-radius: 40px 0 0 40px;
+  }
+  .specific_example_no_due_time {
+    border-radius: 0 40px 40px 0;
   }
 }
 
