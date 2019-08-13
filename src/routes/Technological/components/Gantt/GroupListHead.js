@@ -39,6 +39,7 @@ export default class GroupListHead extends Component {
           return (
             <div key={list_id}>
               <GroupListHeadItem
+                list_id={list_id}
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 itemValue={value} itemKey={key} rows={group_rows[key]} />
               {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}

@@ -61,8 +61,14 @@ export default class GroupListHeadItem extends Component {
 
   // 未分组任务点击事件
   noTimeCardClick = ({id, board_id}) => {
-    const { dispatch, setTaskDetailModalVisibile } = this.props
-    setTaskDetailModalVisibile && setTaskDetailModalVisibile()
+    const { dispatch, setTaskDetailModalVisibile, list_id } = this.props
+    setTaskDetailModalVisibile && setTaskDetailModalVisibile('no_schedule')
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        current_list_group_id: list_id
+      }
+    })
     dispatch({
       type: 'workbenchTaskDetail/getCardDetail',
       payload: {

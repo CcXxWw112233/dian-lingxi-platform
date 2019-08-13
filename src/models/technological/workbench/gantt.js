@@ -289,7 +289,7 @@ export default {
         }
       }
 
-      console.log('sssssss_list_group', list_group)
+      // console.log('sssssss_list_group', list_group)
 
       yield put({
         type: 'updateDatas',
