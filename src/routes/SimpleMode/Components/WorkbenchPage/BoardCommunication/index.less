@@ -144,10 +144,13 @@
 .dropdownLinkWapper {
     padding        : 0px 12px;
     display        : flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
-
+    overflow: hidden;
     .dropdownLink {
+        height: 52px;
         display: inline-block;
         flex   : 1;
+        
     }
 }

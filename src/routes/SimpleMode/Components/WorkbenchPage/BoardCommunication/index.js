@@ -431,11 +431,11 @@ class BoardCommunication extends Component {
         let list = []
         let { folder_data = [], file_data = [] } = data;
         folder_data.map((folder, key) => {
-            list.push({ key: folder.folder_id, title: folder.folder_name, type: 1,selectable:false });
+            list.push({ key: folder.folder_id, title: folder.folder_name, type: 1, selectable: false });
         });
         file_data.map((file, key) => {
             //console.log(file);
-            list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true,selectable:true });
+            list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true, selectable: true });
         });
         return list;
     }
@@ -574,7 +574,7 @@ class BoardCommunication extends Component {
                 treeNode.props.dataRef.title = (
                     <span>
                         {treeNode.props.dataRef.title}
-                        <span style={{ color: 'rgb(24, 144, 255)' }}>&nbsp;(没有可选文件)</span>
+                        <span style={{ color: 'rgba(0, 0, 0, 0.25)' }}>&nbsp;(没有可选文件)</span>
                     </span>
                 )
             }
@@ -624,6 +624,13 @@ class BoardCommunication extends Component {
     renderSelectBoardTreeList = () => {
         const { allOrgBoardTreeList = [] } = this.props;
         const boardTreeData = this.getBoardTreeData(allOrgBoardTreeList);
+        if (boardTreeData.length == 0) {
+            return (
+                <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+                    没有可选项目
+                </div>
+            )
+        }
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
@@ -645,6 +652,13 @@ class BoardCommunication extends Component {
         const { boardFileTreeData = [], boardFolderTreeData = [] } = this.props.simpleBoardCommunication;
         const { is_selectFolder } = this.state;
         console.log(boardFileTreeData);
+        if (boardFileTreeData.length == 0 && boardFolderTreeData.length == 0) {
+            return (
+                <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+                    没有可选文件
+                </div>
+            )
+        }
         return (
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
