@@ -1,6 +1,28 @@
 .board_file_area_item {
   margin-top: 24px;
   cursor: pointer;
+  position: relative;
+}
+.board_file_area_item .drag_out {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+.board_file_area_item .drag_out .drag_inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.board_file_area_item .drag_out .drag_inner .upload_logo {
+  color: #1890FF;
+  font-size: 22px;
+  margin-right: 8px;
+}
+.board_file_area_item .drag_out .drag_inner .upload_des {
+  color: #1890FF;
+  font-size: 16px;
 }
 .board_file_area_item .folder_list {
   display: flex;
@@ -47,4 +69,7 @@
   color: #18cdff;
   justify-content: center;
   padding: 0;
+}
+:global .ant-upload-drag {
+  background: rgba(230, 247, 255, 0.8) !important;
 }

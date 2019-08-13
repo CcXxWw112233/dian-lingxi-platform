@@ -18,7 +18,7 @@ export default class GroupListHead extends Component {
   }
   setHeaderPostion = () => {
     const gantt_card_out = document.getElementById('gantt_card_out')
-    if(gantt_card_out) {
+    if (gantt_card_out) {
       const offsetTop = gantt_card_out.offsetTop
       const offsetLeft = gantt_card_out.offsetLeft
       this.setState({
@@ -28,17 +28,20 @@ export default class GroupListHead extends Component {
     }
   }
 
-  render () {
+  render() {
     const { offsetTop, offsetLeft } = this.state
-    const { datas: { list_group =[], group_rows = [], ceiHeight, target_scrollLeft }} = this.props.model
+    const { datas: { list_group = [], group_rows = [], ceiHeight, target_scrollLeft } } = this.props.model
     const { gantt_card_height } = this.props
     return (
-      <div className={indexStyles.listHead} style={{left: target_scrollLeft, }}>
-        {list_group.map((value, key) =>{
+      <div className={indexStyles.listHead} style={{ left: target_scrollLeft, }}>
+        {list_group.map((value, key) => {
           const { list_name, list_id, list_data = [] } = value
           return (
             <div key={list_id}>
-              <GroupListHeadItem itemValue={value} itemKey={key} rows={group_rows[key]}/>
+              <GroupListHeadItem
+                list_id={list_id}
+                setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                itemValue={value} itemKey={key} rows={group_rows[key]} />
               {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
             </div>
           )

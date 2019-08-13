@@ -196,7 +196,7 @@ export default {
       let list_group = []
       const getDigit = (timestamp) => {
         if(!timestamp) {
-          return 1
+          return 0
         }
         let new_timestamp = timestamp.toString()
         if(new_timestamp.length == 10) {
@@ -217,14 +217,16 @@ export default {
         if(val['lane_data']['cards']) {
           for(let val_1 of val['lane_data']['cards']) {
             const due_time = getDigit(val_1['due_time'])
-            const start_time = getDigit(val_1['start_time'])
+            const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
             let list_data_item = {
               ...val_1,
               start_time,
               end_time: due_time,
               create_time,
-              time_span: (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+              time_span: (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+              is_has_start_time: !!getDigit(val_1['start_time']),
+              is_has_end_time: !!getDigit(val_1['due_time'])
             }
             list_group_item.list_data.push(list_data_item)
           }
@@ -286,6 +288,8 @@ export default {
           list_group[i]['list_data'][j] = item
         }
       }
+
+      // console.log('sssssss_list_group', list_group)
 
       yield put({
         type: 'updateDatas',
@@ -477,7 +481,7 @@ export default {
     
     * getGanttBoardsFiles({ payload }, { select, call, put }) {
       const res = yield call(getGanttBoardsFiles, payload)
-      console.log('sssssssss', { boards_flies: res.data })
+      // console.log('sssssssss', { boards_flies: res.data })
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
