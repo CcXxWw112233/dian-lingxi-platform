@@ -261,6 +261,8 @@ class BoardCommunication extends Component {
         }));
         if (fileList.length > 1) {
             message.warn("项目交流一次只能上传一个文件");
+            //console.log(fileList);
+            
         }
         const { dispatch, currentBoardDetail = {} } = this.props;
         if (file.size == 0) {
