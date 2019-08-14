@@ -3,6 +3,7 @@ import { Icon, Modal, message } from 'antd'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import headerStyles from './headerContent.less'
 import { connect } from 'dva'
+import InformRemind from '@/components/InformRemind'
 
 @connect(mapStateToProps)
 export default class Header extends React.Component {
@@ -19,7 +20,6 @@ export default class Header extends React.Component {
             <div className={`${headerStyles.header_out_flag_logo} ${globalStyles.authTheme}`}>&#xe633;</div>
             <div className={`${headerStyles.header_out_flag_name}`}>里程碑</div>
           </div>
-
           <div className={headerStyles.header_out_detail}>
             <div className={headerStyles.header_out_detail_1}>{board_name}</div>
             {/*<div className={headerStyles.header_out_detail_2}>#阿斯顿</div>*/}
@@ -34,6 +34,6 @@ export default class Header extends React.Component {
   }
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} } }) {
-  return { milestone_detail }
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { milestone_detail, projectDetailInfoData }
 }
