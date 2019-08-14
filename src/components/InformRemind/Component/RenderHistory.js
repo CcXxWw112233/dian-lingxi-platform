@@ -4,7 +4,7 @@ import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
-import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
+import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
 

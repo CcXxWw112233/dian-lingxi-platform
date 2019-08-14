@@ -20,6 +20,7 @@ class DrawerInformContent extends Component {
     //     let all_member = {
     //         avatar: "",
     //         id: "0",
+    //         user_id: '0',
     //         name: "项目全体成员",
     //     }
     //     switch (type) {
@@ -27,6 +28,7 @@ class DrawerInformContent extends Component {
     //             var obj = {
     //                 avatar: "",
     //                 id: "1",
+    //                 user_id: '1',
     //                 name: "执行人",
     //             }
     //             temp_info_list.unshift(obj, ...new_info_list)
@@ -35,6 +37,7 @@ class DrawerInformContent extends Component {
     //             var obj = {
     //                 avatar: "",
     //                 id: "1",
+    //                 user_id: '1',
     //                 name: "动作推进人",
     //             }
     //             temp_info_list.unshift(obj, ...new_info_list)
@@ -43,6 +46,7 @@ class DrawerInformContent extends Component {
     //             var obj = {
     //                 avatar: "",
     //                 id: "1",
+    //                 user_id: '1',
     //                 name: "负责人",
     //             }
     //             temp_info_list.unshift(obj, ...new_info_list)
