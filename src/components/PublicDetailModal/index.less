@@ -144,12 +144,13 @@
 
 .header_out {
   height: 40px;
-  line-height: 40px;
+  // line-height: 40px;
   background: rgba(255,255,255,1);
   border-bottom: 1px solid rgba(0,0,0,.04);
   // borderBottom: 1px solid #E8E8E8,
   border-radius: 4px 4px 0px 0px;
   display: flex;
+  align-items: center;
   .header_out_left {
     flex: 1;
   }
@@ -158,5 +159,9 @@
     font-size: 16px;
     cursor: pointer;
     line-height: 0px;
+  }
+  span {
+    display: inline-block;
+    margin-right: 10px;
   }
 }
