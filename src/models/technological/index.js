@@ -45,10 +45,15 @@ export default {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
+        // const { user_set } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+        // const { is_simple_model } = user_set
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
 
           let page_load_type = 0;
+          // if (location.pathname.indexOf('/workbench') != -1 && is_simple_model == '1') {
+          //   page_load_type = 1;
+          // }
           if(location.pathname.indexOf('/simplemode') != -1){
             //console.log("subscriptions1");
             page_load_type = 1;

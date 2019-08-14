@@ -17,8 +17,13 @@ const { Header, Sider, Content } = Layout;
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
 
+  componentWillReceiveProps(nextProps) {
+    
+  }
 
   render() {
+
+    
 
     const { page_load_type } = this.props;
 
