@@ -11,9 +11,14 @@ const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 
 class Gantt extends Component {
-  state = {
-    TaskDetailModalVisibile: false,
-    previewFileModalVisibile: false,
+  
+  constructor(props) {
+    super(props)
+    this.state = {
+      TaskDetailModalVisibile: false,
+      previewFileModalVisibile: false,
+    }
+    this.card_time_type = undefined
   }
 
   componentDidMount() {
@@ -33,7 +38,9 @@ class Gantt extends Component {
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     });
   }
-  setTaskDetailModalVisibile() {
+  setTaskDetailModalVisibile(card_time_type) {
+    //card_time_type为是否排期卡片
+    this.card_time_type = card_time_type
     this.setState({
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
@@ -132,50 +139,74 @@ class Gantt extends Component {
   }
 
   //修改某一个任务
-  handleChangeCard({ card_id, drawContent }) {
+  handleChangeCard = ({ card_id, drawContent }) => {
+    if (this.card_time_type == 'no_schedule') {
+      this.handleNoHasScheduleCard({ card_id, drawContent })
+    } else {
+      this.handleHasScheduleCard({ card_id, drawContent })
+    }
+  }
+  // 修改没有排期的任务
+  handleNoHasScheduleCard = ({ card_id, drawContent = {} }) => {
     const { dispatch } = this.props
+    const { start_time, due_time } = drawContent
+    const { datas: { list_group = [], current_list_group_id } } = this.props.model
+    const list_group_new = [...list_group]
+
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
+
+    if (!!start_time || !!due_time) { //如果有截至时间或者开始时间
+      // 排期了则过滤掉当前
+      list_group_new[group_index].lane_data.cards.push(
+        { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+      )
+      list_group_new[group_index].lane_data.card_no_times.splice(group_index_cards_index, 1) //[group_index_cards_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+    } else {
+      list_group_new[group_index].lane_data.card_no_times[group_index_cards_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+      list_group_new[group_index].lane_data.card_no_times[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_cards_index]['card_name']  
+    }
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
+  }
+
+  // 修改有排期的任务
+  handleHasScheduleCard = ({ card_id, drawContent }) => {
+    const { dispatch } = this.props
+
     const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id, group_view_type } } = this.props.model
     const list_group_new = [...list_group]
-    if (group_view_type == '1') { //项目视图
-      if (gantt_board_id == '0') {
-        for (let i = 0; i < list_group_new.length; i++) {
-          if (board_id == list_group_new[i].list_id) {
-            for (let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
-              if (card_id == list_group_new[i].lane_data.cards[j].id) {
-                list_group_new[i].lane_data.cards[j] = { ...list_group_new[i].lane_data.cards[j], ...drawContent }
-                list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
-                break
-              }
-            }
-            break
-          }
-        }
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+    list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...drawContent }
+    list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
 
-      } else {
-        for (let i = 0; i < list_group_new.length; i++) {
-          let flag = false
-          for (let j = 0; j < list_group_new[i].lane_data.cards.length; j++) {
-            if (card_id == list_group_new[i].lane_data.cards[j].id) {
-              list_group_new[i].lane_data.cards[j] = { ...list_group_new[i].lane_data.cards[j], ...drawContent }
-              list_group_new[i].lane_data.cards[j]['name'] = list_group_new[i].lane_data.cards[j]['card_name']
-              break
-            }
-          }
-          if (flag) {
-            break
-          }
-        }
-
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
       }
-    } else if (group_view_type == '2') { //成员视图
-      const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
-      const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
-      list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...drawContent }
-      list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
+    })
+  }
+
+  // 删除某一条任务
+  handleDeleteCard = ({ card_id }) => {
+    const { dispatch } = this.props
+    const { datas: { list_group = [], current_list_group_id } } = this.props.model
+    const list_group_new = [...list_group]
+    let belong_group_name = ''
+    if (this.card_time_type == 'no_schedule') {
+      belong_group_name = 'card_no_times'
     } else {
-
+      belong_group_name = 'cards'
     }
-
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
+    list_group_new[group_index].lane_data[belong_group_name].splice(group_index_cards_index, 1)
     dispatch({
       type: 'gantt/handleListGroup',
       payload: {
@@ -540,6 +571,8 @@ class Gantt extends Component {
           updateFileDatas={updateDatasFile}
           handleChangeCard={this.handleChangeCard.bind(this)}
           updateDatas={updateDatasTask}
+          needDelete={true}
+          handleDeleteCard={this.handleDeleteCard}
         />
 
         {addTaskModalVisible && (

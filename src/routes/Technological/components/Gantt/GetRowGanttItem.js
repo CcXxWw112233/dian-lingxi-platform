@@ -56,7 +56,7 @@ export default class GetRowGanttItem extends Component {
                     return (
                       <div className={`${indexStyles.ganttDetailItem}`}
                            key={key2}
-                           style={{backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp)? 'rgb(242, 251, 255)': '')}}
+                           style={{backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp)? 'rgb(242, 251, 255)': 'rgba(0,0,0,.02)')}}
                       >
                       </div>
                     )

@@ -166,7 +166,9 @@ class DrawContent extends React.Component {
       cancelText: '取消',
       zIndex: 2000,
       onOk() {
-        that.props.setDrawerVisibleClose()
+        that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id }) //gantt
+        that.props.setTaskDetailModalVisibile && that.props.setTaskDetailModalVisibile() // gantt
+        that.props.setDrawerVisibleClose && that.props.setDrawerVisibleClose()
         that.props.deleteTask(card_id)
       }
     });
@@ -1080,11 +1082,11 @@ class DrawContent extends React.Component {
 
     const topRightMenu = (
       <Menu onClick={this.topRightMenuClick.bind(this)}>
-        <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+        {/* <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
           <div className={DrawerContentStyles.elseProjectMemu}>
             归档{currentNounPlanFilterName(TASKS)}
           </div>
-        </Menu.Item>
+        </Menu.Item> */}
         {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE) && (
           <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             <div className={DrawerContentStyles.elseProjectDangerMenu}>
@@ -1246,6 +1248,13 @@ class DrawContent extends React.Component {
                 />
                 )}
               </span>
+              {this.props.needDelete && (
+                <Dropdown overlay={topRightMenu}>
+                <span style={{position: 'absolute', right: 80, top: -2}} >
+                  <Icon type="ellipsis" style={{fontSize: 20,marginTop:2}} />
+                </span>
+              </Dropdown>
+              )}
           </div>
 
           {/*标题*/}
