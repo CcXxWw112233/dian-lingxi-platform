@@ -78,6 +78,7 @@ export default class ContentFilter extends Component {
             <TreeSelect 
                 treeData={treeDatas}
                 value={value}
+                showSearch={false}
                 treeCheckable={true}
                 showCheckedStrategy= {SHOW_PARENT}
                 size={'large'}

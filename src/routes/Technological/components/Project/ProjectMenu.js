@@ -536,8 +536,8 @@ class ProjectMenu extends Component {
     ).then(res => this.createTreeNodeGetResponse(res));
   };
   createTreeNodeGetResponse = res => {
-    if (res === 'error') {
-      message.error('创建子分组失败');
+    if (res != 'success') {
+      message.error(res);
       return;
     }
     message.success('创建子分组成功')
@@ -550,8 +550,8 @@ class ProjectMenu extends Component {
     });
   };
   createTreeNodeGetResponse = res => {
-    if (res === 'error') {
-      message.error('创建分组失败');
+    if (res != 'success') {
+      message.error(res);
       return;
     }
     message.success('success')

@@ -72,8 +72,10 @@ export default class GroupListHeadSet extends Component {
                          overlay={<ContentFilter dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />} 
                          trigger={['click']} 
                          visible={dropdownVisible}
-                         onVisibleChange={this.onVisibleChange}>
-                        <div className={indexStyles.set_content_right}>
+                         zIndex={500}
+                        //  onVisibleChange={this.onVisibleChange}
+                         >
+                        <div className={indexStyles.set_content_right} onClick={() => this.setDropdownVisible(true)} >
                             <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme}`}>&#xe8bd;</div>
                             <div className={`${indexStyles.set_content_right_middle} ${globalStyles.authTheme}`}>内容过滤</div>
                             <div className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}`}>&#xe7ee;</div>

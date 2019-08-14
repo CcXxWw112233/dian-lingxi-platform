@@ -194,6 +194,9 @@ export default {
     * handleListGroup({payload}, {select, call, put}){
       const { data } = payload
       let list_group = []
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+
       const getDigit = (timestamp) => {
         if(!timestamp) {
           return 0
@@ -219,12 +222,22 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
+            let time_span =  (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+            if(due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+              time_span = (Math.floor(( end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+            } else if(start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+              time_span = (Math.floor(( due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            } else if(due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+              time_span = (Math.floor(( end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            }
+            // console.log('sssssss', val_1.name, time_span)
+            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             let list_data_item = {
               ...val_1,
               start_time,
               end_time: due_time,
               create_time,
-              time_span: (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1,
+              time_span,
               is_has_start_time: !!getDigit(val_1['start_time']),
               is_has_end_time: !!getDigit(val_1['due_time'])
             }
@@ -269,12 +282,17 @@ export default {
           const item = list_data[j]
           item.width = item.time_span * ceilWidth
           item.height = task_item_height
+
           //设置横坐标
-          for(let k = 0; k < date_arr_one_level.length; k ++) {
-            if(isSamDay (item['start_time'], date_arr_one_level[k]['timestamp'] )) { //是同一天
-              item.left = k * ceilWidth
-              break
-            }
+          if(item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+            item.left == 0
+          } else {
+            for(let k = 0; k < date_arr_one_level.length; k ++) {
+              if(isSamDay (item['start_time'], date_arr_one_level[k]['timestamp'] )) { //是同一天
+                item.left = k * ceilWidth
+                break
+              }
+            }  
           }
 
           //设置纵坐标

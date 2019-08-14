@@ -293,7 +293,7 @@ class CreateProject extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     // console.log('sssssss', {
-    //   _organization_id,
+    //   _organization_id: !_organization_id,
     //   _organization_id_: this.props._organization_id
     // })
     //编辑第一步
@@ -310,9 +310,9 @@ class CreateProject extends React.Component {
                 // })(
                   <Select
                     size={'large'}
-                    value={_organization_id}
+                    value={_organization_id == '0' || !_organization_id?undefined:_organization_id}
                     style={{height: 40, marginBottom: 24}}
-                    placeholder="请选择组织（单位）"
+                    placeholder={"请选择组织（单位）"}
                     onChange={this.orgOnChange}
                   >
                     {

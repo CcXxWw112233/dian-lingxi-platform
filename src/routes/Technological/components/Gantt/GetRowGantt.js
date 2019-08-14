@@ -402,11 +402,11 @@ export default class GetRowGantt extends Component {
               const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
 
               return (
-                <Dropdown overlay={<CardDropDetail {...value2} />}>
+                <Dropdown  placement="bottomRight" overlay={<CardDropDetail {...value2} />}>
                   <div
                     className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
-                    onDrag={this.onCardItemDrag}
+                    // onDrag={this.onCardItemDrag}
                     style={{
                       left: left, top: top,
                       width: (width || 6) - 6, height: (height || task_item_height),

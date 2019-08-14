@@ -6,6 +6,7 @@ import CreateProject from './../Project/components/CreateProject/index';
 import { Input, message } from 'antd'
 import { addTaskGroup } from '../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
+import { beforeCreateBoardUpdateGantt } from './ganttBusiness';
 
 @connect(mapStateToProps)
 export default class GroupListHeadElse extends Component {
@@ -35,12 +36,7 @@ export default class GroupListHeadElse extends Component {
         });
       })
       .then(() => {
-        dispatch({
-          type: 'gantt/getGanttData',
-          payload: {
-
-          }
-        })
+        beforeCreateBoardUpdateGantt(dispatch)
       });
   };
   getElseHeight = () => {
