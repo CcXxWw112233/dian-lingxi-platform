@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SiderLeft from '@/routes/Technological/Sider/SiderLeft'
 import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Icon } from 'antd';
+import { Tooltip } from 'antd';
 
 const SimpleHeader = (props) => {
 
@@ -22,28 +22,33 @@ const SimpleHeader = (props) => {
 
     }
     const openOrCloseMainNav = (e) => {
-        e.stopPropagation();
-        dispatch({
-            type: 'simplemode/updateDatas',
-            payload: {
-                leftMainNavVisible: !leftMainNavVisible
-            }
-        });
-
+        // e.stopPropagation();
+        // dispatch({
+        //     type: 'simplemode/updateDatas',
+        //     payload: {
+        //         leftMainNavVisible: !leftMainNavVisible
+        //     }
+        // });
+        
+        window.open("/#/technological/workbench");
     }
 
     const { chatImVisiable = false, leftMainNavVisible = false } = props;
     return (
         <div className={indexStyles.headerWapper}>
+            <Tooltip placement="bottom" title={'进入高效模式|管理后台'}>
             <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe7f4;</i>
             </div>
+            </Tooltip>
+          
             <div className={indexStyles.miniImMessage} onClick={openOrCloseImChatModal}>
                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>
             </div>
-            {leftMainNavVisible &&
+
+            {/* {leftMainNavVisible &&
                 <SiderLeft is_simplemode={true} collapsed={false} />
-            }
+            } */}
 
             <div className={indexStyles.chatWapper} style={{ display: `${chatImVisiable ? '' : 'none'}` }}>
                 <div className={indexStyles.chatHeader}>
