@@ -19,12 +19,12 @@ export default class BreadCrumbFileNav extends React.Component {
   render() {
     const { datas = {} } = this.props.model
     const { breadcrumbList = [] } = datas;
-    const { showBackBtn = false, fileModuleBack = () => { } } = this.props;
+    const { showBackBtn = false, showBackBtnTitle, fileModuleBack = () => { } } = this.props;
 
     return (
       <div className={indexStyles.BreadCrumbFileNavOut}>
         {
-          showBackBtn && <div className={indexStyles.backBtn} onClick={this.props.fileModuleBack}><Icon type="left" />&nbsp;返回</div>
+          showBackBtn && <div className={indexStyles.backBtn} onClick={this.props.fileModuleBack}><Icon type="left" />&nbsp;项目列表</div>
         }
 
         {breadcrumbList.length > 1 && (

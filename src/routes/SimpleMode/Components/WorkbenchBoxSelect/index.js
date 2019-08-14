@@ -2,7 +2,7 @@ import React from "react";
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Icon } from 'antd';
+import { Icon, message, Tooltip } from 'antd';
 import { isColor } from '@/utils/util'
 
 const WorkbenchBoxSelect = (props) => {
@@ -18,7 +18,10 @@ const WorkbenchBoxSelect = (props) => {
   }
   const selectOrCancelCurrWorkbenchBox = (e, data) => {
     e.stopPropagation();
-
+    if (data.status == 0 && !data.isSelected) {
+      message.warn("功能开发中，请耐心等待");
+      return;
+    }
     const { id } = data;
     if (!data.isSelected) {
       dispatch({
@@ -43,6 +46,26 @@ const WorkbenchBoxSelect = (props) => {
   } else {
     bgStyle = { backgroundImage: `url(${wallpaperContent})` };
   }
+
+  const renderBoxItem = (boxItem, isSelected) => {
+    return (
+      <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected, status: boxItem.status }) }} disabled={boxItem.status == 0 ? true : false}>
+        <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
+        <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
+        {isSelected && (
+          <span>
+            <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
+            <div className={indexStyles.workbenchBoxSelectedBg}></div>
+          </span>
+        )}
+
+        {!isSelected &&
+          <div className={indexStyles.workbenchBoxSelectHover}></div>
+        }
+
+      </div>
+    )
+  }
   return (
     <div onClick={(e) => { closeBoxManage(e) }}>
       <div className={indexStyles.selectWorkbenchBoxWapperModalBg} style={bgStyle}></div>
@@ -52,23 +75,14 @@ const WorkbenchBoxSelect = (props) => {
             workbenchBoxList.map((boxItem, key) => {
               let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
               //console.log("8888", isSelected);
-              return boxItem.status == 1 ? (
-                <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
-                  <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
-                  <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
-                  {isSelected && (
-                    <span>
-                      <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
-                      <div className={indexStyles.workbenchBoxSelectedBg}></div>
-                    </span>
-                  )}
-
-                  {!isSelected &&
-                    <div className={indexStyles.workbenchBoxSelectHover}></div>
-                  }
-
-                </div>
-              ) : '';
+              return (
+                boxItem.status == 0 ? (
+<Tooltip title="功能开发中，请耐心等待">
+                    {renderBoxItem(boxItem, isSelected)}
+                  </Tooltip>
+):
+                  renderBoxItem(boxItem, isSelected)
+              )
             })
           }
         </div>

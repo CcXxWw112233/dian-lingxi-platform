@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Icon } from 'antd';
+import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
@@ -17,12 +17,12 @@ class MyWorkbenchBoxs extends Component {
 
   addMyWorkBoxs = () => {
     this.props.setHomeVisible({
-        simpleHeaderVisiable: false,
-        myWorkbenchBoxsVisiable: false,
-        wallpaperSelectVisiable: false,
-        workbenchBoxSelectVisiable: true,
-        createProjectVisiable: false,
-      });
+      simpleHeaderVisiable: false,
+      myWorkbenchBoxsVisiable: false,
+      wallpaperSelectVisiable: false,
+      workbenchBoxSelectVisiable: true,
+      createProjectVisiable: false,
+    });
   }
   createNewBoard = (data) => {
     if (data.key === 'add') {
@@ -95,7 +95,11 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = ({ id, code }) => {
+  goWorkbenchBox = ({ id, code, status }) => {
+    if (status == 0) {
+      message.warn("功能开发中，请耐心等待");
+      return;
+    }
     const { dispatch } = this.props;
     dispatch({
       type: 'simplemode/updateDatas',
@@ -113,6 +117,15 @@ class MyWorkbenchBoxs extends Component {
 
   }
 
+  renderBoxItem = (item) => {
+    return (
+      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
+        <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
+        <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+      </div>
+    );
+  }
+
   render() {
     const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [] } = this.props;
     const { datas = {} } = project;
@@ -121,10 +134,10 @@ class MyWorkbenchBoxs extends Component {
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
- 
+
     return (
       <div className={indexStyles.mainContentWapper}>
-      
+
         {/* <div className={indexStyles.projectSelector}>
           <DropdownSelect itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.createNewBoard}></DropdownSelect>
         </div> */}
@@ -132,12 +145,14 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
-              return item.status == 1 ? (
-                <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)}>
-                  <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
-                  <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
-                </div>
-              ) : ''
+              return (
+                item.status == 0 ? (
+<Tooltip title="功能开发中，请耐心等待">
+                    {this.renderBoxItem(item)}
+                  </Tooltip>
+):
+                  this.renderBoxItem(item)
+              )
             })
           }
           <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>

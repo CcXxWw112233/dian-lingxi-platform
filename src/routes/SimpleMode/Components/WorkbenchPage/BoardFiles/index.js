@@ -9,6 +9,7 @@ import {
   openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import { height } from 'window-size';
+import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/BoarderfilesHeader'
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -23,7 +24,7 @@ class BoardFiles extends Component {
   state = {
     boardSelectVisible: true,
     boardFileContentVisible: false,
-
+    currentBoardId:0
   };
 
   constructor(props) {
@@ -44,7 +45,8 @@ class BoardFiles extends Component {
     //console.log(board);
     this.setState({
       boardSelectVisible: false,
-      boardFileContentVisible: true
+      boardFileContentVisible: true,
+      currentBoardId:board.board_id
     });
     this.initialget(board.board_id);
   }
@@ -224,13 +226,14 @@ class BoardFiles extends Component {
   }
   render() {
     const { dispatch } = this.props
+    const { datas: { selectedRowKeys = [] } } = this.props.model
     const updateDatasFile = (payload) => {
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload
       })
     }
-    const { boardSelectVisible, boardFileContentVisible } = this.state;
+    const { boardSelectVisible, boardFileContentVisible, currentBoardId} = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
 
     const { allOrgBoardTreeList = [] } = this.props;
@@ -272,6 +275,10 @@ class BoardFiles extends Component {
         {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
+              <div style={{display:'flex',justifyContent:'flex-end'}}>
+                <BoarderfilesHeader board_id={currentBoardId} updateDatasFile={updateDatasFile} {...this.getFileModuleProps()} selectedRowKeys={selectedRowKeys} />
+              </div>
+              
               <FileModule
                 {...this.getFileModuleProps()}
                 marginTop={'0px'}
