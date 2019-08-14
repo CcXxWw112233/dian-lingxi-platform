@@ -56,12 +56,12 @@ export default {
       //如果存在组织， 否则跳到指引页面
       if(isApiResponseOk(res)) {
         if(has_org == '1'){
-          // if (is_simple_model == '1' && !redirectLocation) {
-          //   yield put(routerRedux.push('/technological/simplemode/home'))
-          // } else {  
-          //   yield put(routerRedux.push(redirectLocation))
-          // }
-          yield put(routerRedux.push(redirectLocation))
+          if (is_simple_model == '1' && !redirectLocation) {
+            yield put(routerRedux.push('/technological/simplemode/home'))
+          } else {  
+            yield put(routerRedux.push(redirectLocation))
+          }
+          // yield put(routerRedux.push(redirectLocation))
           
         } else {
           yield put(routerRedux.push('/noviceGuide'))

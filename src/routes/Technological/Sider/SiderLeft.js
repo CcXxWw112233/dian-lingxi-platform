@@ -512,7 +512,7 @@ export default class SiderLeft extends React.Component {
                 <Menu.Item key="subInfoSet">
                   <span>通知设置</span>
                 </Menu.Item>
-                {/* <Menu.Item key="subShowSimple">
+                <Menu.Item key="subShowSimple">
                   <span>
                     极简模式
                     <Switch
@@ -522,7 +522,7 @@ export default class SiderLeft extends React.Component {
                       onClick={ (checked) => { this.handleMode(checked) } }
                     ></Switch>
                   </span>
-                </Menu.Item> */}
+                </Menu.Item>
             </SubMenu>
 
             <Menu.Item key="10" >
