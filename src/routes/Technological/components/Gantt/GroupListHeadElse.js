@@ -3,11 +3,15 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import CreateProject from './../Project/components/CreateProject/index';
+import { Input, message } from 'antd'
+import { addTaskGroup } from '../../../../services/technological/task';
+import { isApiResponseOk } from '../../../../utils/handleResponseData';
 
 @connect(mapStateToProps)
 export default class GroupListHeadElse extends Component {
   state = {
-
+    add_new_board_group: false,
+    add_new_board_group_value: '', //分组名
   }
   setAddProjectModalVisible = (data) => {
     const { addProjectModalVisible } = this.state
@@ -34,7 +38,7 @@ export default class GroupListHeadElse extends Component {
         dispatch({
           type: 'gantt/getGanttData',
           payload: {
-            
+
           }
         })
       });
@@ -55,11 +59,81 @@ export default class GroupListHeadElse extends Component {
     }
     return rows * ceiHeight
   }
+
+  // 新增分组
+  addNew = () => {
+    const { gantt_board_id } = this.props
+    if (gantt_board_id == '0') {
+      this.setAddProjectModalVisible()
+    } else {
+      this.setAddNewBoardGroup(true)
+    }
+  }
+
+  setAddNewBoardGroup = (bool) => {
+    this.setState({
+      add_new_board_group: bool,
+      add_new_board_group_value: '',
+    })
+  }
+  // 更改名称
+  inputOnPressEnter = (e) => {
+    this.requestAddNewGroup()
+    this.setAddNewBoardGroup(false)
+  }
+  inputOnBlur = (e) => {
+    this.setAddNewBoardGroup(false)
+  }
+  inputOnchange = (e) => {
+    const { value } = e.target
+    this.setState({
+      add_new_board_group_value: value
+    })
+  }
+  requestAddNewGroup = async () => {
+    const { add_new_board_group_value } = this.state
+    const { gantt_board_id, dispatch } = this.props
+    const params = {
+      board_id: gantt_board_id,
+      name: add_new_board_group_value,
+    }
+    const res = await addTaskGroup(params)
+    if (isApiResponseOk(res)) {
+      message.success('添加成功')
+      setTimeout(() => {
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
+      }, 1000)
+    }
+  }
   render() {
-    const { addProjectModalVisible } = this.state
+    const { addProjectModalVisible, add_new_board_group, add_new_board_group_value } = this.state
+    const { gantt_board_id, group_view_type } = this.props
+
     return (
       <div style={{ height: this.getElseHeight() }} className={`${indexStyles.listHeadItem}`}>
-        <div onClick={this.setAddProjectModalVisible} className={globalStyles.link_mouse} style={{marginTop: 20}}><i className={globalStyles.authTheme}>&#xe8fe;</i> 新建项目</div>
+        {
+          group_view_type == '1' && !add_new_board_group && (
+            <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
+              <i className={globalStyles.authTheme}>&#xe8fe;</i>
+              {gantt_board_id == '0' ? '新建项目' : '新增分组'}
+            </div>
+          )
+        }
+        {
+          add_new_board_group && (
+            <Input
+              style={{ marginTop: 10 }}
+              autoFocus
+              value={add_new_board_group_value}
+              onChange={this.inputOnchange}
+              onPressEnter={this.inputOnPressEnter}
+              onBlur={this.inputOnBlur}
+            />
+          )
+        }
         {addProjectModalVisible && (
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
@@ -73,6 +147,6 @@ export default class GroupListHeadElse extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight } } }) {
-  return { gold_date_arr, ceiHeight }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type } } }) {
+  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id }
 }

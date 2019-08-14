@@ -195,7 +195,7 @@ export default class GroupContent extends React.Component {
         {workbench_show_gantt_card == '0'? (
           filterContain(cardGroupKey)
         ): (
-          <Gantt />
+          <Gantt  is_need_calculate_left_dx />
         )}
       </div>
     );

@@ -50,6 +50,13 @@ export default class GetRowGantt extends Component {
 
   // 设置甘特图卡片距离页面文档左边距
   setGanttCardOutOffsetLeft = () => {
+    const { is_need_calculate_left_dx } = this.props
+    if(!is_need_calculate_left_dx) { //如果不需要计算做边距，从引用甘特图组件的地方设置
+      this.setState({
+        coperatedX: 0
+      })
+      return
+    }
     const getPoint = (obj, e) => { //获取某元素以浏览器左上角为原点的坐标
       let left_to_body = obj.offsetLeft; //对应父容器的上边距
       //判断是否有父容器，如果存在则累加其边距
