@@ -307,40 +307,41 @@ export default class DynamicContain extends Component {
           style={{color: 'rgba(0,0,0,0.65)'}} 
         >{messageValue.content.board.name}</span>
       )
+      // 如果需要点击, 则需要加上手势  cursor: 'pointer'
       let jumpToTask = (
         <span 
-          style={{color: '#1890FF', cursor: 'pointer'}} 
-          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
+          style={{color: '#1890FF'}} 
+          // onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
         >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
       let jumpToFile = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content && messageValue.content.board_file && messageValue.content.board_file.id}`)}>{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
         <span 
-          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content, board_file: messageValue.content.board_file.id}) } }
+          style={{color: '#1890FF', display: 'inline-block'}} 
+          // onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content, board_file: messageValue.content.board_file.id}) } }
         >{messageValue.content && messageValue.content.board_file && messageValue.content.board_file.name}</span>
       )
 
       let jumpToProcess = (
         <span 
-          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content, flow_instance_id: messageValue.content.flow_instance.id }) } }
+          style={{color: '#1890FF', display: 'inline-block'}} 
+          // onClick={ () => { this.goToProcess({ board_id: messageValue.content.board.id, content: messageValue.content, flow_instance_id: messageValue.content.flow_instance.id }) } }
         >{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>
       )
 
       let jumpToMilestone = (
         <span 
-          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.milestone.id }) } }
+          style={{color: '#1890FF', display: 'inline-block'}} 
+          // onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.milestone.id }) } }
         >{messageValue.content && messageValue.content.milestone && messageValue.content.milestone.name}</span>
       )
 
       let jumpToMeeting = (
         <span 
-          style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}} 
-          onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
-        >{messageValue.content && messageValue.content.meeting && messageValue.content.meeting.meetingName}</span>
+          style={{color: '#1890FF', display: 'inline-block'}} 
+          // onClick={ () => { this.goToTask({board_id: messageValue.content.board.id, content: messageValue.content, card_id: messageValue.content.card.id}) } }
+        >{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       )
 
       switch (activity_type) {
@@ -392,12 +393,12 @@ export default class DynamicContain extends Component {
         case 'board.flow.task.attach.upload': // 在流程上传文件
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程【{jumpToProcess}】上传了文件「{<span style={{color: '#1890FF'}} 
               onClick={() => this.props.dispatch({
-                type: 'newsDynamic/routingJump',
-                payload: {
-                  route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data.id}`
-                }
+                // type: 'newsDynamic/routingJump',
+                // payload: {
+                //   route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data.id}`
+                // }
               })}>{messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」#{jumpToBoard} #{jumpToProcess} #{messageValue.content.flow_node_instance.name}</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
@@ -406,12 +407,12 @@ export default class DynamicContain extends Component {
         case 'board.flow.cc.notice': // 在流程抄送通知
             messageContain = (
               <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-                <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程「{<span style={{color: '#1890FF', cursor: 'pointer'}} 
+                <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 在流程「{<span style={{color: '#1890FF'}} 
                 onClick={() => this.props.dispatch({
-                  type: 'newsDynamic/routingJump',
-                  payload: {
-                    route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flowInstance.id}`
-                  }
+                  // type: 'newsDynamic/routingJump',
+                  // payload: {
+                  //   route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flowInstance.id}`
+                  // }
                 })}>{messageValue.content && messageValue.content.flowInstance && messageValue.content.flowInstance.name}</span>}」中 {messageValue.title}</div>
                 <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
               </div>
@@ -897,7 +898,7 @@ export default class DynamicContain extends Component {
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}「{<Tooltip>
-                <span style={{color: '#1890FF', cursor: 'pointer'}} className={DrawDetailInfoStyle.fileName} onClick={() => console.log('hello')}>{showList}</span></Tooltip>}」到文件夹「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.target_folder.name}</span>」中</div>
+                <span style={{color: '#1890FF'}} className={DrawDetailInfoStyle.fileName}>{showList}</span></Tooltip>}」到文件夹「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content.target_folder.name}</span>」中</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -919,7 +920,7 @@ export default class DynamicContain extends Component {
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
               <div>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{<Tooltip>
-                <span style={{color: '#1890FF', cursor: 'pointer'}} className={DrawDetailInfoStyle.fileName} onClick={() => console.log('hello')}>{showCopyList}</span></Tooltip>}」到文件夹「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}</span>」中</div>
+                <span style={{color: '#1890FF'}} className={DrawDetailInfoStyle.fileName}>{showCopyList}</span></Tooltip>}」到文件夹「<span className={DrawDetailInfoStyle.news_name}>{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}</span>」中</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -986,7 +987,8 @@ export default class DynamicContain extends Component {
           contain = `发表了一条里程碑的评论`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条里程碑「<span onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.rela_content && messageValue.content.rela_content.id }) } } style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div>
+              {/* <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条里程碑「<span onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.rela_content && messageValue.content.rela_content.id }) } } style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div> */}
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 发表了一条里程碑「<span style={{color: '#1890FF', display: 'inline-block'}}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
@@ -995,7 +997,8 @@ export default class DynamicContain extends Component {
           contain = `删除了一条里程碑的评论`
           messageContain = (
             <div style={{maxWidth: 500}} className={DrawDetailInfoStyle.news_text}>
-              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条里程碑「<span onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.rela_content && messageValue.content.rela_content.id }) } } style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}}>{ messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div>
+              {/* <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条里程碑「<span onClick={ () => { this.goToMilestone({ board_id: messageValue.content.board.id, content: messageValue.content, milestone_id: messageValue.content.rela_content && messageValue.content.rela_content.id }) } } style={{color: '#1890FF', cursor: 'pointer', display: 'inline-block'}}>{ messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div> */}
+              <div><span className={DrawDetailInfoStyle.news_name}>{messageValue.creator.name}</span> 删除了一条里程碑「<span style={{color: '#1890FF', display: 'inline-block'}}>{ messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」的评论</div>
               <div className={DrawDetailInfoStyle.news_time}>{timestampToTime(messageValue.created)}</div>
             </div>
           )
