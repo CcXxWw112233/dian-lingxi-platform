@@ -211,7 +211,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -237,6 +237,7 @@ export default class GanttFace extends Component {
               gantt_card_height={gantt_card_height}
               dataAreaRealHeight={dataAreaRealHeight} />
             <GetRowGantt
+              is_need_calculate_left_dx={is_need_calculate_left_dx}
               gantt_card_height={gantt_card_height}
               dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}

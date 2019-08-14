@@ -544,6 +544,7 @@ class Gantt extends Component {
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
           gantt_board_id={gantt_board_id}
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
+          is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
         />
         <FileDetailModal
           {...this.props}
@@ -603,5 +604,11 @@ function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileD
   }
   return { model: modelObj }
 }
+
+Gantt.defaultProps = {
+  gantt_card_height: 600, //甘特图卡片默认高度
+  is_need_calculate_left_dx: false, //是否需要计算甘特图左边距
+}
+
 export default connect(mapStateToProps)(Gantt)
 
