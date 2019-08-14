@@ -218,7 +218,7 @@ class AddTaskModal extends Component {
       })
     }
 
-    console.log('ssss', {filteredNoThatTypeProject})
+    // console.log('ssss', {filteredNoThatTypeProject})
 
     return (
       <Modal

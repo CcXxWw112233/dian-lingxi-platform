@@ -194,7 +194,8 @@ export default {
     * handleListGroup({payload}, {select, call, put}){
       const { data } = payload
       let list_group = []
-      const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
 
       const getDigit = (timestamp) => {
         if(!timestamp) {
@@ -221,8 +222,16 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
-            let time_span =  (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
-            time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
+            let time_span =  (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+            if(due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+              time_span = (Math.floor(( end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+            } else if(start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+              time_span = (Math.floor(( due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            } else if(due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+              time_span = (Math.floor(( end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            }
+            // console.log('sssssss', val_1.name, time_span)
+            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             let list_data_item = {
               ...val_1,
               start_time,

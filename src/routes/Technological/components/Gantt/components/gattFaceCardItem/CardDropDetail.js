@@ -5,7 +5,7 @@ import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import {timestampToTime} from '@/utils/util.js'
 const CardDropDetail = (props) => {
-    const { name, is_realize, executors = [], start_time, due_time } = props
+    const { name, is_realize, executors = [], start_time, due_time, time_span, width } = props
     const is_out_due_time = () => {
         if(!due_time) {
             return false
@@ -22,7 +22,7 @@ const CardDropDetail = (props) => {
                     <CheckItem is_realize={is_realize} />
                 </div>
                 <div className={`${styles.card_item_name}`}>
-                  {name}
+                  {`${name}`}
                 </div>
                 <div>
                     <AvatarList users={executors} size={'small'} />
