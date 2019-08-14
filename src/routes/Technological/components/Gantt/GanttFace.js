@@ -194,9 +194,10 @@ export default class GanttFace extends Component {
     const item_height_arr = list_group.map((item, key) => {
       return group_rows[key] * ceiHeight
     })
-    // console.log('sssss_1', item_height_arr)
+    // console.log('sssssss_1', { list_group, group_rows, ceiHeight})
     if (!item_height_arr.length) return 0
 
+    // console.log('sssssss_2', {height})
     const height = item_height_arr.reduce((total, num) => (total + num))
     return height
   }
@@ -263,6 +264,7 @@ function mapStateToProps({ gantt: { datas: {
   list_group = [],
   group_rows = [],
   get_gantt_data_loading,
+  ceiHeight
 } } }) {
   return {
     ceilWidth,
@@ -273,6 +275,7 @@ function mapStateToProps({ gantt: { datas: {
     list_group,
     group_rows,
     get_gantt_data_loading,
+    ceiHeight
   }
 }
 GanttFace.defaultProps = {

@@ -82,6 +82,8 @@ export default class FolderItem extends Component {
         const res = await fileRemove(params)
         if (isApiResponseOk(res)) {
             getFolderFileList({ id: current_folder_id })
+        } else {
+            message.error(res.message)
         }
     }
 
