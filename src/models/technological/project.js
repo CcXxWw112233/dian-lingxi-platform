@@ -142,7 +142,7 @@ export default {
         })
         return 'success'
       }
-      return 'error'
+      return res.message
     },
     * editProjectGroupTreeNodeName({payload}, {call, put}) {
       let res = yield call(updateProjectGroupTreeNodeName, payload)
@@ -152,7 +152,7 @@ export default {
         })
         return 'success'
       }
-      return 'error'
+      return res.message
     },
     * deleteProjectGroupTreeNode({payload}, {call, put}) {
       const {id} = payload
