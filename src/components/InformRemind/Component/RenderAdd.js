@@ -239,10 +239,10 @@ export default class RenderAdd extends Component {
       return (
           <div className={infoRemindStyle.slip}
           >
-            <div className={infoRemindStyle.select}>
+            <div className={`${infoRemindStyle.select}`}>
               {/* 显示某种事件类型的列表--选择框 */}
               <Select
-                  className={infoRemindStyle.trigger_select}
+                  className={`${infoRemindStyle.trigger_select}`}
                   defaultValue={remind_trigger}
                   style={{ width: 122, height: 32, marginRight: 16 }}>
                   {
