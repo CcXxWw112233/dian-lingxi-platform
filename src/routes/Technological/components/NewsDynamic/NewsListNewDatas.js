@@ -40,11 +40,11 @@ export default class NewsListNewDatas extends React.Component {
 
   // 去到项目详情
   goToBoard({org_id, content}) {
-    console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // console.log(checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id), 'sss')
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
   }
 
