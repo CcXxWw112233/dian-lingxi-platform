@@ -12,6 +12,7 @@ import { date_area_height } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import ShowFileSlider from './components/boardFile/ShowFileSlider'
 import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
+import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -61,11 +62,11 @@ export default class GanttFace extends Component {
   initSetScrollPosition() {
     const { ceilWidth } = this.props
     const date = new Date().getDate()
-    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复
-    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 3 + date - 1) })
+    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
   }
   //设置滚动条位置
-  setScrollPosition({ delay = 300, position = 200 }) {
+  setScrollPosition = ({ delay = 300, position = 200 }) => {
     const that = this
     const target = this.refs.gantt_card_out_middle
     setTimeout(function () {
@@ -137,7 +138,7 @@ export default class GanttFace extends Component {
   }
 
   //更新日期,日期更新后做相应的数据请求
-  setGoldDateArr({ timestamp, to_right, init }) {
+  setGoldDateArr = ({ timestamp, to_right, init }) => {
     const { dispatch } = this.props
     const { gold_date_arr = [], isDragging } = this.props
     let date_arr = []
@@ -248,6 +249,7 @@ export default class GanttFace extends Component {
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>
+        <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         <ShowFileSlider />
         <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
       </div>
