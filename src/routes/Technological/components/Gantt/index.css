@@ -4,6 +4,10 @@
 .button_nomal_background:hover {
   background: linear-gradient(90deg, #0894ee 0%, #03bcf1 100%) !important;
 }
+.cardDetail *::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
 .cardDetail {
   position: relative;
   width: 100%;

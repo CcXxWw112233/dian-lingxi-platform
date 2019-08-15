@@ -133,6 +133,7 @@ export default class GanttFace extends Component {
         }
       })
     }
+    // console.log('sssssss', scrollLeft)
   }
 
   //更新日期,日期更新后做相应的数据请求

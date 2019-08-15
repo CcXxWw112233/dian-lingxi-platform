@@ -38,7 +38,11 @@ export default class DateList extends Component {
   renderLCBList = (current_date_miletones, timestamp) => {
     return (
       <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
-        <MenuItem key={'0'}>新建里程碑</MenuItem>
+        <MenuItem key={'0'} style={{color: '#1890FF'}}>
+          <i className={globalStyles.authTheme}>&#xe8fe;</i>
+          &nbsp;
+           新建里程碑
+          </MenuItem>
         {current_date_miletones.map((value, key) => {
           const { id, name } = value
           return (
