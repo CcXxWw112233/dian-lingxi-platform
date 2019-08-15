@@ -6,6 +6,7 @@ import SimpleHeader from './Components/SimpleHeader/index'
 import WorkbenchPage from './Components/WorkbenchPage'
 import Home from './Components/Home'
 import { isColor } from '@/utils/util'
+import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -79,7 +80,7 @@ class SimpleMode extends Component {
       userInfo = {},
     } = this.props;
 
-    const { wallpaper = '' } = userInfo;
+    const { wallpaper = defaultWallpaperSrc } = userInfo;
     const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
     let bgStyle = {}
     if (isColor(wallpaperContent)) {
