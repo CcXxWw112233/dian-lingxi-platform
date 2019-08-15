@@ -34,7 +34,7 @@ class MyWorkbenchBoxs extends Component {
       
       if (selectBoard && selectBoard.length >0) {
        //设置当前选中的项目
-       setBoardIdStorage();
+       setBoardIdStorage(user_set.current_board);
        dispatch({
          type: 'simplemode/updateDatas',
          payload: {
