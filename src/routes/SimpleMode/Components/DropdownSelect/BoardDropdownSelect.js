@@ -31,6 +31,12 @@ class BoardDropdownSelect extends Component {
             simplemodeCurrentProject: {}
           }
         });
+        dispatch({
+          type: 'accountSet/updateUserSet',
+          payload: {
+            current_board: {}
+          }
+        });
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
         if (!selectBoard && selectBoard.length == 0) {
@@ -43,6 +49,13 @@ class BoardDropdownSelect extends Component {
           type: 'simplemode/updateDatas',
           payload: {
             simplemodeCurrentProject: { ...selectBoard[0] }
+          }
+        });
+
+        dispatch({
+          type: 'accountSet/updateUserSet',
+          payload: {
+            current_board: data.key
           }
         });
 
