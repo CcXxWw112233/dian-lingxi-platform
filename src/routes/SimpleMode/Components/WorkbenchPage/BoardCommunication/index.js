@@ -252,18 +252,13 @@ class BoardCommunication extends Component {
     }
 
     onBeforeUpload = (file, fileList) => {
-        this.setState(state => ({
-            awaitUploadFile: file,
-            selectBoardFileModalVisible: true,
-            is_selectFolder: true,
-            dragEnterCaptureFlag: false,
-            currentfile: {}
-        }));
         if (fileList.length > 1) {
-            message.warn("项目交流一次只能上传一个文件");
+            message.error("项目交流一次只能上传一个文件");
             //console.log(fileList);
-            
+            return false;
+
         }
+       
         const { dispatch, currentBoardDetail = {} } = this.props;
         if (file.size == 0) {
             message.error(`不能上传空文件`)
@@ -278,7 +273,13 @@ class BoardCommunication extends Component {
             message.error('暂不支持该文件格式上传')
             return false
         }
-
+        this.setState(state => ({
+            awaitUploadFile: file,
+            selectBoardFileModalVisible: true,
+            is_selectFolder: true,
+            dragEnterCaptureFlag: false,
+            currentfile: {}
+        }));
 
         if (currentBoardDetail.board_id) {
             dispatch({
@@ -409,7 +410,6 @@ class BoardCommunication extends Component {
         });
     }
 
-
     getBoardTreeData = (allOrgBoardTreeList) => {
         let list = []
         allOrgBoardTreeList.map((org, orgKey) => {
@@ -444,13 +444,26 @@ class BoardCommunication extends Component {
 
     selectBoardFile = (e) => {
         e.stopPropagation();
-        const { dispatch, currentBoardDetail = {} } = this.props;
+        const { dispatch, simplemodeCurrentProject = {} } = this.props;
+        let currentBoardDetail = {}
+        if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+            currentBoardDetail = { ...simplemodeCurrentProject };
+            dispatch({
+                type: 'simpleWorkbenchbox/updateDatas',
+                payload: {
+                    currentBoardDetail: currentBoardDetail
+                }
+            });
+        }
+
         dispatch({
             type: 'simpleBoardCommunication/updateDatas',
             payload: {
                 is_file_tree_loading: true
             }
         });
+
+
         if (currentBoardDetail.board_id) {
             dispatch({
                 type: 'simpleWorkbenchbox/getFileList',
@@ -502,9 +515,9 @@ class BoardCommunication extends Component {
                     type: 'simpleWorkbenchbox/getFolderList',
                     payload: {
                         board_id: boardId,
-                        calback: ()=>{
+                        calback: () => {
                             dispatch({
-                                type: 'simpleBoardCommunication/updateDatas' 
+                                type: 'simpleBoardCommunication/updateDatas'
                             });
                         }
                     }
@@ -669,10 +682,10 @@ class BoardCommunication extends Component {
     }
 
     renderSelectBoardFileTreeList = () => {
-        const { boardFileTreeData = [], boardFolderTreeData = [], is_file_tree_loading} = this.props.simpleBoardCommunication;
+        const { boardFileTreeData = [], boardFolderTreeData = [], is_file_tree_loading } = this.props.simpleBoardCommunication;
         const { is_selectFolder } = this.state;
         console.log('is_selectFolder', { boardFolderTreeData, boardFileTreeData });
-        if(is_file_tree_loading){
+        if (is_file_tree_loading) {
             return (
                 <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
                     数据加载中
@@ -874,7 +887,8 @@ function mapStateToProps({
         boardFileListData
     },
     simplemode: {
-        allOrgBoardTreeList
+        allOrgBoardTreeList,
+        simplemodeCurrentProject
     },
     simpleBoardCommunication,
     workbench: {
@@ -892,7 +906,8 @@ function mapStateToProps({
         boardListData,
         currentBoardDetail,
         boardFileListData,
-        simpleBoardCommunication
+        simpleBoardCommunication,
+        simplemodeCurrentProject
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

@@ -24,7 +24,7 @@ class BoardFiles extends Component {
   state = {
     boardSelectVisible: true,
     boardFileContentVisible: false,
-    currentBoardId:0
+    currentBoardId: 0
   };
 
   constructor(props) {
@@ -33,7 +33,20 @@ class BoardFiles extends Component {
 
 
   componentDidMount() {
-    console.log('sssss', 112)
+    const { dispatch, simplemodeCurrentProject = {} } = this.props;
+    let currentBoardDetail = {}
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+      currentBoardDetail = { ...simplemodeCurrentProject }
+      dispatch({
+        type: 'simpleWorkbenchbox/updateDatas',
+        payload: {
+          currentBoardDetail: currentBoardDetail
+        }
+      });
+      this.openBoardFiles(currentBoardDetail);
+
+    }
+
   }
 
 
@@ -46,7 +59,7 @@ class BoardFiles extends Component {
     this.setState({
       boardSelectVisible: false,
       boardFileContentVisible: true,
-      currentBoardId:board.board_id
+      currentBoardId: board.board_id
     });
     this.initialget(board.board_id);
   }
@@ -233,7 +246,7 @@ class BoardFiles extends Component {
         payload
       })
     }
-    const { boardSelectVisible, boardFileContentVisible, currentBoardId} = this.state;
+    const { boardSelectVisible, boardFileContentVisible, currentBoardId } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
 
     const { allOrgBoardTreeList = [] } = this.props;
@@ -275,10 +288,10 @@ class BoardFiles extends Component {
         {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
-              <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <BoarderfilesHeader board_id={currentBoardId} updateDatasFile={updateDatasFile} {...this.getFileModuleProps()} selectedRowKeys={selectedRowKeys} />
               </div>
-              
+
               <FileModule
                 {...this.getFileModuleProps()}
                 marginTop={'0px'}
@@ -306,7 +319,8 @@ function mapStateToProps({
     boardFileListData
   },
   simplemode: {
-    allOrgBoardTreeList
+    allOrgBoardTreeList,
+    simplemodeCurrentProject
   }
 }) {
 
@@ -319,7 +333,8 @@ function mapStateToProps({
     boardListData,
     currentBoardDetail,
     boardFileListData,
-    allOrgBoardTreeList
+    allOrgBoardTreeList,
+    simplemodeCurrentProject
   }
 }
 export default connect(mapStateToProps)(BoardFiles)

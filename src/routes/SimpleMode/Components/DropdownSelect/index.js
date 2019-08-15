@@ -71,11 +71,14 @@ class DropdownSelect extends Component {
     }
 
     renderContent() {
-        const { fuctionMenuItemList = [], menuItemClick = () => { } } = this.state;
-        const { itemList =[]} = this.props;
+        const { fuctionMenuItemList = [], menuItemClick = () => { }} = this.state;
+        const { itemList = [],selectedKeys = []} = this.props;
+        console.log("selectedKeys",selectedKeys);
+        
         return (
-            <Menu className
-                onClick={menuItemClick}>
+            <Menu className={styles.dropdownMenu}
+                onClick={menuItemClick}
+                selectedKeys={selectedKeys}>
                 {this.renderFunctionMenuItem(fuctionMenuItemList)}
                 {this.renderMenuItem(itemList)}
 
@@ -83,7 +86,7 @@ class DropdownSelect extends Component {
         );
     }
     render() {
-
+        const { simplemodeCurrentProject, iconVisible = true, dropdownStyle = {} } = this.props;
         return (
             <div className={styles.wrapper}>
 
@@ -97,13 +100,26 @@ class DropdownSelect extends Component {
                         style={{
                             display: 'inline-block',
                             maxWidth: '248px',
-                            width: '248px',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
+                            whiteSpace: 'nowrap',
                         }}>
-
-                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '20px' }}>&#xe67d;</i> <span style={{ fontWeight: '500', fontSize: '16px' }}>我参与得项目 <Icon type="down" style={{ fontSize: '12px' }} /></span>
+                        {
+                            iconVisible &&
+                            <span>
+                                <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '20px' }}>&#xe67d;</i>
+                                &nbsp;
+                                &nbsp;
+                            </span>
+                        }
+                        <span style={{ fontWeight: '500', fontSize: '16px' }}>
+                            {(simplemodeCurrentProject && simplemodeCurrentProject.board_id) ?
+                                simplemodeCurrentProject.board_name
+                                :
+                                '我参与的项目'
+                            }
+                            <Icon type="down" style={{ fontSize: '12px' }} />
+                        </span>
 
                     </div>
                 </Dropdown>

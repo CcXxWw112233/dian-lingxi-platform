@@ -1,14 +1,11 @@
 import React, { Component } from "react";
 import dva, { connect } from "dva/index"
-import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
-import DropdownSelect from '../../Components/DropdownSelect/index'
+import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
-import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter,setBoardIdStorage} from "@/utils/businessFunction"
-
-class MyWorkbenchBoxs extends Component {
+import { getOrgNameWithOrgIdFilter ,setBoardIdStorage} from "@/utils/businessFunction"
+class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +23,7 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
-    console.log(data, 'bbbbb');
+    console.log(data,'bbbbb');
     if (data.key === 'add') {
       //console.log("onSelectBoard");
       this.setState({
@@ -34,7 +31,7 @@ class MyWorkbenchBoxs extends Component {
       });
       return this.handleCreateProject();
     } else {
-      const { dispatch, projectList } = this.props;
+      const { dispatch, projectList} = this.props;
       if (data.key === 0) {
         dispatch({
           type: 'simplemode/updateDatas',
@@ -48,14 +45,15 @@ class MyWorkbenchBoxs extends Component {
           message.error('数据异常，请刷新后重试');
           return;
         }
+        setBoardIdStorage(data.key)
         //设置当前选中的项目
-        setBoardIdStorage(data.key);
         dispatch({
           type: 'simplemode/updateDatas',
           payload: {
             simplemodeCurrentProject: { ...selectBoard[0] }
           }
         });
+
       }
 
 
@@ -155,12 +153,10 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject={} } = this.props;
-    const { datas = {} } = project;
-    const { appsList = [] } = datas;
-
+    const {projectList,simplemodeCurrentProject,iconVisible=true } = this.props;
+ 
     const { addProjectModalVisible = false } = this.state;
-    console.log(projectList, "ppppppp");
+    console.log(iconVisible, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
@@ -168,40 +164,18 @@ class MyWorkbenchBoxs extends Component {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
     return (
-      <div className={indexStyles.mainContentWapper}>
-
-        <div className={indexStyles.projectSelector}>
-          <DropdownSelect selectedKeys={selectedKeys} iconVisible={true} simplemodeCurrentProject={simplemodeCurrentProject} itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.onSelectBoard}></DropdownSelect>
-        </div>
-
-        <div className={indexStyles.myWorkbenchBoxWapper}>
-          {
-            myWorkbenchBoxList.map((item, key) => {
-              return (
-                item.status == 0 ? (
-                  <Tooltip title="功能开发中，请耐心等待">
-                    {this.renderBoxItem(item)}
-                  </Tooltip>
-                ) :
-                  this.renderBoxItem(item)
-              )
-            })
-          }
-          <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
+          <div>
+             <DropdownSelect selectedKeys={selectedKeys} iconVisible={iconVisible} simplemodeCurrentProject={simplemodeCurrentProject} itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.onSelectBoard}></DropdownSelect>
+              {addProjectModalVisible && (
+                <CreateProject
+                  setAddProjectModalVisible={this.setAddProjectModalVisible}
+                  addProjectModalVisible={addProjectModalVisible}
+                  appsList={appsList}
+                  addNewProject={this.handleSubmitNewProject}
+                />
+              )}
           </div>
-        </div>
-
-        {addProjectModalVisible && (
-          <CreateProject
-            setAddProjectModalVisible={this.setAddProjectModalVisible}
-            addProjectModalVisible={addProjectModalVisible}
-            appsList={appsList}
-            addNewProject={this.handleSubmitNewProject}
-          />
-        )}
-      </div>
-
+         
     );
   }
 }
@@ -227,4 +201,4 @@ export default connect(
       workbenchBoxList,
       currentUserOrganizes,
       simplemodeCurrentProject
-    }))(MyWorkbenchBoxs)
+    }))(BoardDropdownSelect)

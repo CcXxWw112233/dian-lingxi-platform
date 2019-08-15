@@ -29,19 +29,22 @@ const SimpleHeader = (props) => {
         //         leftMainNavVisible: !leftMainNavVisible
         //     }
         // });
-        
-        window.open("/#/technological/workbench");
+
+        window.open('/#/technological/workbench', '_blank');
     }
 
-    const { chatImVisiable = false, leftMainNavVisible = false } = props;
+    const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible } = props;
     return (
         <div className={indexStyles.headerWapper}>
-            <Tooltip placement="bottom" title={'进入高效模式|管理后台'}>
-            <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
-                <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe7f4;</i>
-            </div>
-            </Tooltip>
-          
+            {
+                leftMainNavIconVisible && <Tooltip placement="bottom" title={'进入高效模式|管理后台'}>
+                    <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
+                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe7f4;</i>
+                    </div>
+                </Tooltip>
+            }
+
+
             <div className={indexStyles.miniImMessage} onClick={openOrCloseImChatModal}>
                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>
             </div>
@@ -70,7 +73,7 @@ const SimpleHeader = (props) => {
     );
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ simplemode: { chatImVisiable, leftMainNavVisible }, modal, technological, loading }) {
-    return { chatImVisiable, leftMainNavVisible, modal, model: technological, loading }
+function mapStateToProps({ simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, technological, loading }) {
+    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading }
 }
 export default connect(mapStateToProps)(SimpleHeader)
