@@ -30,16 +30,26 @@ const SimpleHeader = (props) => {
         //     }
         // });
 
-        window.open('/#/technological/workbench', '_blank');
+        //window.open('/#/technological/workbench', '_blank');
+        // console.log(checked, 'sssss')
+        const { dispatch } = props
+        dispatch({
+            type: 'technological/getSetShowSimple',
+            payload: {
+                is_simple_model: 0,
+                checked: false
+            }
+        })
+
     }
 
     const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible } = props;
     return (
         <div className={indexStyles.headerWapper}>
             {
-                leftMainNavIconVisible && <Tooltip placement="bottom" title={'进入高效模式|管理后台'}>
+                leftMainNavIconVisible && <Tooltip placement="bottom" title={'退出极简模式'}>
                     <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
-                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe7f4;</i>
+                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69d;</i>
                     </div>
                 </Tooltip>
             }
