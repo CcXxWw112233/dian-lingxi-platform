@@ -112,20 +112,14 @@ class MyWorkbenchBoxs extends Component {
   };
 
 
-  setAddProjectModalVisible = () => {
+  setAddProjectModalVisible = (data) => {
+    if(data) {
+      return
+    }
     const { dispatch } = this.props
     const { addProjectModalVisible } = this.state
     this.setState({
       addProjectModalVisible: !addProjectModalVisible
-    }, () => {
-      if (!addProjectModalVisible) {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
     })
   }
 
@@ -199,9 +193,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
-    const { datas = {} } = project;
-    const { appsList = [] } = datas;
+    const {projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
 
     const { addProjectModalVisible = false } = this.state;
     console.log(projectList, "ppppppp");
@@ -236,14 +228,11 @@ class MyWorkbenchBoxs extends Component {
           </div>
         </div>
 
-        {addProjectModalVisible && (
-          <CreateProject
+        <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addProjectModalVisible}
-            appsList={appsList}
             addNewProject={this.handleSubmitNewProject}
           />
-        )}
       </div>
 
     );
