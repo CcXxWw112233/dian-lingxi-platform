@@ -49,14 +49,8 @@ export default {
     effects: {
         * initSimplemodeCommData({ payload }, { call, put, select }) {
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
+
             if (initFlag) {
-                yield put({
-                    type: 'updateDatas',
-                    payload: {
-                        initFlag: false
-                    }
-                })
-               
                 yield put({
                     type: 'getProjectList',
                     payload: {}
@@ -70,7 +64,8 @@ export default {
                 yield put({
                     type: 'getWallpaperList'
                 });  
-              
+                console.log('fffffff');
+                
             }
 
         },
@@ -173,7 +168,8 @@ export default {
                 yield put({
                     type: 'updateDatas',
                     payload: {
-                        allWallpaperList: res.data
+                        allWallpaperList: res.data,
+                        initFlag: false
                     }
                 });
             } else {
