@@ -4,7 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
-import { getOrgNameWithOrgIdFilter ,setBoardIdStorage} from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -13,8 +13,9 @@ class BoardDropdownSelect extends Component {
     };
   }
 
+
   onSelectBoard = (data) => {
-    console.log(data,'bbbbb');
+    console.log(data, 'bbbbb');
     if (data.key === 'add') {
       //console.log("onSelectBoard");
       this.setState({
@@ -22,7 +23,7 @@ class BoardDropdownSelect extends Component {
       });
       return this.handleCreateProject();
     } else {
-      const { dispatch, projectList} = this.props;
+      const { dispatch, projectList } = this.props;
       if (data.key === 0) {
         dispatch({
           type: 'simplemode/updateDatas',
@@ -114,30 +115,33 @@ class BoardDropdownSelect extends Component {
 
 
 
+
+
   render() {
-    const {projectList,simplemodeCurrentProject,iconVisible=true } = this.props;
- 
+    const { project, projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
+    const { datas = {} } = project;
+    const { appsList = [] } = datas;
     const { addProjectModalVisible = false } = this.state;
     console.log(iconVisible, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
-    if(simplemodeCurrentProject && simplemodeCurrentProject.board_id){
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
     return (
-          <div>
-             <DropdownSelect selectedKeys={selectedKeys} iconVisible={iconVisible} simplemodeCurrentProject={simplemodeCurrentProject} itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.onSelectBoard}></DropdownSelect>
-              {addProjectModalVisible && (
-                <CreateProject
-                  setAddProjectModalVisible={this.setAddProjectModalVisible}
-                  addProjectModalVisible={addProjectModalVisible}
-                  appsList={appsList}
-                  addNewProject={this.handleSubmitNewProject}
-                />
-              )}
-          </div>
-         
+      <div>
+        <DropdownSelect selectedKeys={selectedKeys} iconVisible={iconVisible} simplemodeCurrentProject={simplemodeCurrentProject} itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.onSelectBoard}></DropdownSelect>
+        {addProjectModalVisible && (
+          <CreateProject
+            setAddProjectModalVisible={this.setAddProjectModalVisible}
+            addProjectModalVisible={addProjectModalVisible}
+            appsList={appsList}
+            addNewProject={this.handleSubmitNewProject}
+          />
+        )}
+      </div>
+
     );
   }
 }
