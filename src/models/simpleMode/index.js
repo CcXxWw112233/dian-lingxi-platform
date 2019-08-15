@@ -30,22 +30,6 @@ export default {
         setup({ dispatch, history }) {
             history.listen(async (location) => {
                 if (location.pathname.indexOf('/technological/simplemode') !== -1) {
-                    localStorage.setItem('currentSelectOrganize', JSON.stringify({}));
-                    dispatch({
-                        type: 'technological/changeCurrentOrg',
-                        payload: {
-                            org_id: '0',
-                            operateType:'other'
-                        }
-                    })
-                    dispatch({
-                        type: 'technological/updateDatas',
-                        payload: {
-                            currentSelectOrganize: {},
-                            is_all_org: true,
-                            is_show_org_name: true,
-                        }
-                    })
                     const initData = async () => {
                         await Promise.all([
                             await dispatch({
@@ -66,10 +50,27 @@ export default {
         * initSimplemodeCommData({ payload }, { call, put, select }) {
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
             if (initFlag) {
+                localStorage.setItem('currentSelectOrganize', JSON.stringify({}));
+
                 yield put({
                     type: 'updateDatas',
                     payload: {
                         initFlag: false
+                    }
+                })
+                yield({
+                    type: 'technological/changeCurrentOrg',
+                    payload: {
+                        org_id: '0',
+                        operateType:'other'
+                    }
+                })
+                yield({
+                    type: 'technological/updateDatas',
+                    payload: {
+                        currentSelectOrganize: {},
+                        is_all_org: true,
+                        is_show_org_name: true,
                     }
                 })
                 yield put({
@@ -85,6 +86,7 @@ export default {
                 yield put({
                     type: 'getWallpaperList'
                 });  
+              
             }
 
         },
