@@ -17,6 +17,8 @@ import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
 import { connect, } from 'dva';
 import hobbyImg from '@/assets/sider_left/smile.png'
+import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
+import {isApiResponseOk} from "@/utils/handleResponseData";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -46,6 +48,19 @@ export default class SiderLeft extends React.Component {
       payload: {
         is_all_org: localStorage.getItem('OrganizationId') == '0',
       }
+    })
+    this.getInitList()
+  }
+
+   // 获取通知设置的列表
+   getInitList = () => {
+    getUsersNoticeSettingList().then((res) => {
+        if (isApiResponseOk(res)) {
+            // console.log(res, 'sssss')
+            // console.log(res, 'ssss')
+        } else {
+            message.error(res.message)
+        }
     })
   }
 
@@ -544,7 +559,7 @@ export default class SiderLeft extends React.Component {
                   <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
                 </div>
             </Menu.Item>
-            {currentUserOrganizes.map((value, key) => {
+            {is_simple_model == '0' && currentUserOrganizes.map((value, key) => {
                 const { name, id, identity_type, logo } = value
                 return (
                   <Menu.Item key={id} className={indexStyles.org_name} >

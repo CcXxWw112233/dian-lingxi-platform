@@ -744,7 +744,7 @@ const Workbench = (props) => {
       < PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>
-      <div className={indexStyles.projectListBar}><ProjectListBar /></div>
+      <div className={indexStyles.projectListBar} style={{marginRight: 20}} ><ProjectListBar /></div>
       <div className={indexStyles.toggleView} >
         <ChangeCardView />
       </div>
