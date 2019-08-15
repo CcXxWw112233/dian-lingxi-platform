@@ -288,7 +288,7 @@ class BoardFiles extends Component {
         {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end',paddingRight:'16px' }}>
                 <BoarderfilesHeader board_id={currentBoardId} updateDatasFile={updateDatasFile} {...this.getFileModuleProps()} selectedRowKeys={selectedRowKeys} />
               </div>
 
