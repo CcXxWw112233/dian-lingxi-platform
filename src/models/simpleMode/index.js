@@ -50,9 +50,6 @@ export default {
         * initSimplemodeCommData({ payload }, { call, put, select }) {
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
             if (initFlag) {
-                localStorage.setItem('OrganizationId',0)
-                localStorage.setItem('currentSelectOrganize','{}');
-        
                 yield put({
                     type: 'updateDatas',
                     payload: {
