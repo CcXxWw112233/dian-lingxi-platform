@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter,setBoardIdStorage} from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -14,6 +14,37 @@ class MyWorkbenchBoxs extends Component {
     this.state = {
       addProjectModalVisible: false
     };
+  }
+
+  componentWillMount() {
+
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectList: old_projectList } = this.props;
+    const { dispatch, projectList } = nextProps;
+    if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
+      const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+      const { user_set = {} } = userInfo
+      console.log(user_set);
+      console.log(projectList);
+      const selectBoard = projectList.filter(item => item.board_id === user_set.current_board);
+      console.log("selectBoard",selectBoard);
+      
+      if (selectBoard && selectBoard.length >0) {
+       //设置当前选中的项目
+       setBoardIdStorage();
+       dispatch({
+         type: 'simplemode/updateDatas',
+         payload: {
+           simplemodeCurrentProject: { ...selectBoard[0] }
+         }
+       });
+      }
+    }
+
+
   }
 
   addMyWorkBoxs = () => {
@@ -42,6 +73,12 @@ class MyWorkbenchBoxs extends Component {
             simplemodeCurrentProject: {}
           }
         });
+        dispatch({
+          type: 'accountSet/updateUserSet',
+          payload: {
+            current_board: {}
+          }
+        });
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
         if (!selectBoard && selectBoard.length == 0) {
@@ -54,6 +91,13 @@ class MyWorkbenchBoxs extends Component {
           type: 'simplemode/updateDatas',
           payload: {
             simplemodeCurrentProject: { ...selectBoard[0] }
+          }
+        });
+
+        dispatch({
+          type: 'accountSet/updateUserSet',
+          payload: {
+            current_board: data.key
           }
         });
       }
@@ -155,7 +199,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject={} } = this.props;
+    const { project, projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
     const { datas = {} } = project;
     const { appsList = [] } = datas;
 
@@ -164,7 +208,7 @@ class MyWorkbenchBoxs extends Component {
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
-    if(simplemodeCurrentProject && simplemodeCurrentProject.board_id){
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
     return (

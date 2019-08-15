@@ -50,29 +50,15 @@ export default {
         * initSimplemodeCommData({ payload }, { call, put, select }) {
             const initFlag = yield select(getModelSelectState("simplemode", "initFlag")) || [];
             if (initFlag) {
-                localStorage.setItem('currentSelectOrganize', JSON.stringify({}));
-
+                //localStorage.setItem('currentSelectOrganize', JSON.stringify({}));
+                //console.log(111);
                 yield put({
                     type: 'updateDatas',
                     payload: {
                         initFlag: false
                     }
                 })
-                yield({
-                    type: 'technological/changeCurrentOrg',
-                    payload: {
-                        org_id: '0',
-                        operateType:'other'
-                    }
-                })
-                yield({
-                    type: 'technological/updateDatas',
-                    payload: {
-                        currentSelectOrganize: {},
-                        is_all_org: true,
-                        is_show_org_name: true,
-                    }
-                })
+               
                 yield put({
                     type: 'getProjectList',
                     payload: {}
