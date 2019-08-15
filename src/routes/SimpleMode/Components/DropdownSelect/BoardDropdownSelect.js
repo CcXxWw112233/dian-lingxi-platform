@@ -13,15 +13,6 @@ class BoardDropdownSelect extends Component {
     };
   }
 
-  addMyWorkBoxs = () => {
-    this.props.setHomeVisible({
-      simpleHeaderVisiable: false,
-      myWorkbenchBoxsVisiable: false,
-      wallpaperSelectVisiable: false,
-      workbenchBoxSelectVisiable: true,
-      createProjectVisiable: false,
-    });
-  }
   onSelectBoard = (data) => {
     console.log(data,'bbbbb');
     if (data.key === 'add') {
@@ -121,36 +112,7 @@ class BoardDropdownSelect extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = ({ id, code, status }) => {
-    if (status == 0) {
-      message.warn("功能开发中，请耐心等待");
-      return;
-    }
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
-        currentSelectedWorkbenchBox: { id, code }
-      }
-    });
-    dispatch({
-      type: 'simplemode/routingJump',
-      payload: {
-        route: '/technological/simplemode/workbench'
-      }
-    });
 
-
-  }
-
-  renderBoxItem = (item) => {
-    return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
-        <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
-        <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
-      </div>
-    );
-  }
 
   render() {
     const {projectList,simplemodeCurrentProject,iconVisible=true } = this.props;
