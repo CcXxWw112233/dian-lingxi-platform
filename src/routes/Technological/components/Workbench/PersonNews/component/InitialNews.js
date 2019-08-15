@@ -288,7 +288,7 @@ export default class InitialNews extends React.Component {
             </div>
           )
           break
-        case 'board.flow.cc.notice':
+        case 'board.flow.cc.notice': // 流程抄送通知
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{<span style={{ color: '#1890FF', cursor: 'pointer' }}
@@ -361,7 +361,7 @@ export default class InitialNews extends React.Component {
         case 'board.content.link.add': // 关联内容的添加
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 新增了关联内容「{messageValue.content.link_name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 新增了关联内容「{messageValue.content.linked_name}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -856,7 +856,7 @@ export default class InitialNews extends React.Component {
         case 'createWrokflowTpl':
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
-        case 'board.flow.instance.initiate':
+        case 'board.flow.instance.initiate': // 启动流程
           contain = `启动${currentNounPlanFilterName(FLOWS)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -1048,7 +1048,7 @@ export default class InitialNews extends React.Component {
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'board.flow.instance.discontinue':
+        case 'board.flow.instance.discontinue': // 中止流程
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div>
@@ -1070,7 +1070,33 @@ export default class InitialNews extends React.Component {
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'waitingWorkflowTaskNotice':
+        case 'board.flow.instance.delete': // 删除流程
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在「{jumpToBoard}」中 删除了流程「{jumpToProcess}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+              </div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `完成${currentNounPlanFilterName(FLOWS)}任务`     
+          break
+        case 'board.flow.instance.deadline.set': // 设置流程实例的截止时间
+          break
+        case 'board.flow.node.deadline.set': // 设置流程截止时间
+          break
+        case 'board.flow.task.assignee.notice':
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>您有一个{currentNounPlanFilterName(FLOWS)}任务待处理</div>
@@ -1555,6 +1581,9 @@ export default class InitialNews extends React.Component {
           break
         case '15':
           containner = (commentNews(value, parentKey, childrenKey))
+          break
+        case '21':
+          containner = (taskNews(value))
           break
         case '22':
           containner = (commentNews(value, parentKey, childrenKey))

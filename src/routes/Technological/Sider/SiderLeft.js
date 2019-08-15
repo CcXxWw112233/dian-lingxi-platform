@@ -57,7 +57,7 @@ export default class SiderLeft extends React.Component {
     getUsersNoticeSettingList().then((res) => {
         if (isApiResponseOk(res)) {
             // console.log(res, 'sssss')
-            console.log(res, 'ssss')
+            // console.log(res, 'ssss')
         } else {
             message.error(res.message)
         }
@@ -559,7 +559,7 @@ export default class SiderLeft extends React.Component {
                   <span style={{maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>全部组织</span>
                 </div>
             </Menu.Item>
-            {currentUserOrganizes.map((value, key) => {
+            {is_simple_model == '0' && currentUserOrganizes.map((value, key) => {
                 const { name, id, identity_type, logo } = value
                 return (
                   <Menu.Item key={id} className={indexStyles.org_name} >
