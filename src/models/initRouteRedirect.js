@@ -12,7 +12,7 @@ export default {
         message.destroy()
         if (location.pathname === '/') {
           const { user_set: { is_simple_model } } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-          if (is_simple_model == '1') {
+          if (is_simple_model && is_simple_model == '1') {
             dispatch({
               type: 'routingJump',
               payload: {

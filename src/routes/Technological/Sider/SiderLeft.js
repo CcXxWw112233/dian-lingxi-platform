@@ -17,6 +17,8 @@ import {color_4} from "../../../globalset/js/styles";
 import {message} from "antd/lib/index";
 import { connect, } from 'dva';
 import hobbyImg from '@/assets/sider_left/smile.png'
+import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
+import {isApiResponseOk} from "@/utils/handleResponseData";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -46,6 +48,19 @@ export default class SiderLeft extends React.Component {
       payload: {
         is_all_org: localStorage.getItem('OrganizationId') == '0',
       }
+    })
+    this.getInitList()
+  }
+
+   // 获取通知设置的列表
+   getInitList = () => {
+    getUsersNoticeSettingList().then((res) => {
+        if (isApiResponseOk(res)) {
+            // console.log(res, 'sssss')
+            console.log(res, 'ssss')
+        } else {
+            message.error(res.message)
+        }
     })
   }
 
