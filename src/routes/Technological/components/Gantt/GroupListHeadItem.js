@@ -156,7 +156,7 @@ export default class GroupListHeadItem extends Component {
   }
   render() {
 
-    const { currentUserOrganizes = [], group_rows = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
+    const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { list_name, org_id, list_no_time_data = [], list_id, lane_icon } = itemValue
     const { isShowBottDetail } = this.state
@@ -174,7 +174,7 @@ export default class GroupListHeadItem extends Component {
           <span className={indexStyles.list_name} onClick={this.listNameClick}>{list_name}</span>
           <span className={indexStyles.org_name}>
             {
-              is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && (
+              is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
                 <span className={indexStyles.org_name}>
                   #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
                 </span>

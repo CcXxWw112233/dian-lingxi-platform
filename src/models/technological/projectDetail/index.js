@@ -1,6 +1,6 @@
 import { getProjectRoles, setMemberRoleInProject, projectDetailInfo, updateProject, removeMenbers, createMilestone, getMilestoneList } from '../../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import { getUrlQueryString } from '../../../utils/util'
@@ -241,7 +241,16 @@ export default {
         // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
       }else{
         //权限缓存空数组
-        message.warn(result.message, MESSAGE_DURATION_TIME)
+        const openNotification = () => {
+          notification.warning({
+            message: '提示',
+            description: result.message,
+            onClick: () => {
+              // console.log('Notification Clicked!');
+            },
+          });
+        };
+        openNotification()
         const delay = (ms) => new Promise((resolve => {
           setTimeout(resolve, ms)
         }))
