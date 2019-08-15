@@ -18,14 +18,15 @@ export default class DateList extends Component {
     this.state = {
       add_lcb_modal_visible: false,
       create_lcb_time: '',
-      miletone_detail_modal_visible: false
+      miletone_detail_modal_visible: false,
+      currentSelectedProjectMembersList: [],
     }
   }
-
 
   componentDidMount() {
     this.getGttMilestoneList()
   }
+
   set_miletone_detail_modal_visible = () => {
     const { miletone_detail_modal_visible } = this.state
     this.setState({
@@ -54,6 +55,7 @@ export default class DateList extends Component {
   }
   // 选择里程碑
   selectLCB = (e, timestamp) => {
+    this.setCurrentSelectedProjectMembersList()
     const id = e.key
     if (id == '0') {
       this.setAddLCBModalVisibile()
@@ -71,7 +73,6 @@ export default class DateList extends Component {
       }
     })
   }
-
 
   //获取和日期对应上的里程碑列表
   getGttMilestoneList = () => {
@@ -111,8 +112,8 @@ export default class DateList extends Component {
   }
 
   getBoardName = (boardId) => {
-    const { projectList = [] } = this.props
-    const board_name = (projectList.find(item => item.board_id == boardId) || {}).board_name
+    const { about_user_boards = [] } = this.props
+    const board_name = (about_user_boards.find(item => item.board_id == boardId) || {}).board_name
     return board_name || '项目名称'
   }
 
@@ -158,16 +159,25 @@ export default class DateList extends Component {
     }
   }
 
+  // 过滤项目成员
+  setCurrentSelectedProjectMembersList = () => {
+    const { gantt_board_id, about_user_boards = [] } = this.props
+    const users = (about_user_boards.find(item => item.board_id = gantt_board_id) || {}).users
+    console.log('sssssssss', {users})
+    this.setState({
+      currentSelectedProjectMembersList: users
+    })
+  }
+
   render() {
     const {
       gold_date_arr = [],
-      gantt_board_id = [],
+      gantt_board_id,
       target_scrollTop,
-      projectList,
-      currentSelectedProjectMembersList = [],
       group_view_type
     } = this.props
-    const { add_lcb_modal_visible, create_lcb_time } = this.state
+
+    const { add_lcb_modal_visible, create_lcb_time, currentSelectedProjectMembersList = [] } = this.state
 
     return (
       <div>
@@ -185,7 +195,7 @@ export default class DateList extends Component {
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
                     return (
                       gantt_board_id == '0' || group_view_type != '1' ? (
-                        <Tooltip key={`${month}/${date_no}` } title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
+                        <Tooltip key={`${month}/${date_no}`} title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                           <div key={`${month}/${date_no}`}>
                             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                               <div className={`${indexStyles.dateDetailItem_date_no} 
@@ -223,7 +233,6 @@ export default class DateList extends Component {
         {gantt_board_id != '0' && (
           <AddLCBModal
             userList={currentSelectedProjectMembersList}
-            projectList={projectList}
             boardName={this.getBoardName(gantt_board_id)}
             create_lcb_time={create_lcb_time}
             boardId={gantt_board_id}
@@ -245,10 +254,9 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
-    workbench: { datas: { projectList = [], currentSelectedProjectMembersList = [] } }
+    gantt: { datas: { gold_date_arr = [], about_user_boards = [],list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
   }) {
-  return { gold_date_arr, list_group, target_scrollTop, projectList, currentSelectedProjectMembersList, milestoneMap, holiday_list, gantt_board_id, group_view_type }
+  return { gold_date_arr, list_group, target_scrollTop, milestoneMap, holiday_list, gantt_board_id, group_view_type, about_user_boards }
 }
 
 //  {/* {projectTabCurrentSelectedProject != '0' ? (

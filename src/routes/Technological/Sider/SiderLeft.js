@@ -310,7 +310,7 @@ export default class SiderLeft extends React.Component {
   // 是否显示极简模式
   handleMode(checked) {
     // console.log(checked, 'sssss')
-    const { user_set } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
+    const { user_set = {} } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { is_simple_model } = user_set
     const { dispatch } = this.props
     dispatch({
