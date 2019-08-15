@@ -799,7 +799,7 @@ export default class NewsListNewDatas extends React.Component {
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.news_4_bottom}>
-                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} valueItem={value[0]} card_id={card_id} />
+                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} valueItem={value[0]} board_id={board_id} card_id={card_id} />
               </div>
             </div>
           </div>
