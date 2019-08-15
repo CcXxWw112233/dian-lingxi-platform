@@ -113,7 +113,7 @@ export default class FolderItem extends Component {
                 {
                     type == '1' && (
                         <Menu.Item key={1} style={{ width: 248 }}>
-                            <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}><i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe666;</i> 重命名</span>
+                            <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}><i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe86d;</i> 重命名</span>
                         </Menu.Item>
                     )
                 }
