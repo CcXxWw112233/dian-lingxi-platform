@@ -28,6 +28,13 @@ class WorkbenchPage extends Component {
                 }
             });
         }
+
+        dispatch({
+            type:'simplemode/updateDatas',
+            payload:{
+                leftMainNavIconVisible:false
+            }
+        });
     }
 
     componentDidMount() {
@@ -157,7 +164,8 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible
     }
 }) {
 
@@ -165,7 +173,8 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

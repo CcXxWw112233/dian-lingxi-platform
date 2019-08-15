@@ -256,7 +256,7 @@ export default {
       }
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
-      const { org_id } = payload
+      const { org_id, operateType } = payload
       // const org_id = '0'
       let res = yield call(changeCurrentOrg, { org_id })
       if(isApiResponseOk(res)) {
@@ -264,7 +264,7 @@ export default {
         yield put({
           type: 'getUSerInfo',
           payload: {
-            operateType: 'changeOrg',
+            operateType: operateType ? operateType: 'changeOrg',
           }
         })
         yield put({ //重新获取名词方案

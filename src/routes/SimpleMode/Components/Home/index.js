@@ -36,7 +36,8 @@ class Home extends Component {
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
-        chatImVisiable: false
+        chatImVisiable: false,
+        leftMainNavIconVisible:true
       }
     });
 
@@ -68,6 +69,8 @@ class Home extends Component {
   }
 };
 
-export default connect(({ }) => ({
-
+export default connect(({ simplemode:{
+  leftMainNavIconVisible
+}}) => ({
+  leftMainNavIconVisible
 }))(Home)

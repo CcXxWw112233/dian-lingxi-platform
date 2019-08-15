@@ -12,6 +12,7 @@ export default {
         simpleHeaderVisiable: true, //显示隐藏用
         setWapperCenter: false, //显示隐藏用
         wallpaperSelectModalVisiable: false, //显示隐藏用
+        leftMainNavIconVisible: true,
         leftMainNavVisible: false,
         chatImVisiable: false, //显示隐藏用
 
@@ -22,18 +23,37 @@ export default {
         init: true,
         allOrgBoardTreeList: [],
         allWallpaperList: [], //可选的壁纸列表
-        currentUserWallpaperContent: null
+        currentUserWallpaperContent: null,
+        simplemodeCurrentProject: {},
     },
     subscriptions: {
         setup({ dispatch, history }) {
             history.listen(async (location) => {
                 if (location.pathname.indexOf('/technological/simplemode') !== -1) {
+                    localStorage.setItem('currentSelectOrganize', JSON.stringify({}));
+                    dispatch({
+                        type: 'technological/changeCurrentOrg',
+                        payload: {
+                            org_id: '0',
+                            operateType:'other'
+                        }
+                    })
+                    dispatch({
+                        type: 'technological/updateDatas',
+                        payload: {
+                            currentSelectOrganize: {},
+                            is_all_org: true,
+                            is_show_org_name: true,
+                        }
+                    })
                     const initData = async () => {
                         await Promise.all([
                             await dispatch({
                                 type: 'initSimplemodeCommData',
                                 payload: {}
                             }),
+
+
                         ])
                     }
                     initData()
@@ -64,7 +84,7 @@ export default {
                 });
                 yield put({
                     type: 'getWallpaperList'
-                });
+                });  
             }
 
         },
