@@ -19,7 +19,7 @@ import { selectFilePreviewCommitPointNumber, selectProjectDetailInfoData, select
 import Cookies from "js-cookie";
 import { fillFormComplete, getProessDynamics, getProcessTemplateList, saveProcessTemplate, getTemplateInfo, getProcessList, createProcess, completeProcessTask, getProcessInfo, rebackProcessTask, resetAsignees, rejectProcessTask } from '../../../services/technological/process'
 import { processEditDatasConstant, processEditDatasRecordsConstant } from '../../../routes/Technological/components/ProjectDetail/Process/constant'
-import {currentNounPlanFilterName, setBoardIdStorage} from "../../../utils/businessFunction";
+import {currentNounPlanFilterName, setBoardIdStorage, getGlobalData} from "../../../utils/businessFunction";
 import {postCommentToDynamics} from "../../../services/technological/library";
 import QueryString from 'querystring'
 
@@ -369,7 +369,7 @@ export default {
     },
 
     * getProjectRoles({ payload }, { select, call, put }) {
-      const res = yield call(getProjectRoles, payload)
+      const res = yield call(getProjectRoles, {...payload, _organization_id: getGlobalData('aboutBoardOrganizationId')})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
