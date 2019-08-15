@@ -11,8 +11,8 @@ export default class Header extends React.Component {
   }
 
   render() {
-   const { milestone_detail = {} } = this.props
-    const { board_name } = milestone_detail
+   const { milestone_detail = {}, users = [] } = this.props
+    const { board_name, id } = milestone_detail
     return (
       <div className={headerStyles.header_out}>
         <div className={headerStyles.header_out_left}>
@@ -28,6 +28,7 @@ export default class Header extends React.Component {
           </div>
         </div>
         <div className={headerStyles.header_out_right}>
+          <InformRemind rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>
     )
