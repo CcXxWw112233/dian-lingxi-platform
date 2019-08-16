@@ -74,25 +74,18 @@ const WorkbenchBoxSelect = (props) => {
           {
             workbenchBoxList.map((boxItem, key) => {
               let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
-              return boxItem.status == 1 ? (
-                <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
-                  <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />
-                  <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
-                  {isSelected && (
-<span>
-                      <div className={indexStyles.workbenchBoxSelected}><Icon type="check-circle" theme="filled" style={{ fontSize: '24px' }} /></div>
-                      <div className={indexStyles.workbenchBoxSelectedBg}></div>
-                    </span>
-)}
-
-                  {!isSelected &&
-                    <div className={indexStyles.workbenchBoxSelectHover}></div>
-                  }
-
-                </div>
-) : '';
+              //console.log("8888", isSelected);
+              return (
+                boxItem.status == 0 ? (
+                    <Tooltip title="功能开发中，请耐心等待">
+                      {renderBoxItem(boxItem, isSelected)}
+                    </Tooltip>
+                  ):
+                  renderBoxItem(boxItem, isSelected)
+              )
             })
           }
+
         </div>
 
       </div>
