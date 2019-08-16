@@ -336,15 +336,21 @@ export default {
     },
 
     * getFileType({payload}, {select, call, put}) {
-      let { file_id } = payload
+      let { file_id, calback } = payload
       let res = yield call(fileInfoByUrl, {id: file_id})
       // debugger
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          fileType: getSubfixName(res.data.base_info.file_name)
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            fileType: getSubfixName(res.data.base_info.file_name)
+          }
+        })
+        if(calback && typeof calback == 'function') {
+          calback(res.data)
         }
-      })
+      }
+     
       // let  res = fileList.reduce((r, c) => {
       //     return [
       //       ...r,

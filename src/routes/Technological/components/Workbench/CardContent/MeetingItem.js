@@ -25,7 +25,8 @@ export default class MeetingItem extends React.Component {
 
   itemClick(e) {
     const { itemValue = {} } = this.props
-    const { id, board_id } = itemValue
+    const { id, board_id, org_id } = itemValue
+    const { dispatch} = this.props
 
     setBoardIdStorage(board_id)
 
@@ -33,6 +34,12 @@ export default class MeetingItem extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    dispatch({
+      type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      payload: {
+        _organization_id: org_id
+      }
+    })
     this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
     this.props.setTaskDetailModalVisibile()
