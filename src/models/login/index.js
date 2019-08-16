@@ -52,10 +52,17 @@ export default {
     * loginRouteJump ({ payload }, {select, call, put}) {
       const res = yield call(getUSerInfo, payload)
       const { has_org } = res.data
+      const { is_simple_model } = res.data.user_set
       //如果存在组织， 否则跳到指引页面
       if(isApiResponseOk(res)) {
         if(has_org == '1'){
-          yield put(routerRedux.push(redirectLocation))
+          if (is_simple_model == '1' && !redirectLocation) {
+            yield put(routerRedux.push('/technological/simplemode/home'))
+          } else {  
+            yield put(routerRedux.push(redirectLocation))
+          }
+          // yield put(routerRedux.push(redirectLocation))
+          
         } else {
           yield put(routerRedux.push('/noviceGuide'))
         }
@@ -98,10 +105,11 @@ export default {
         // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         // Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
         // Cookies.set('is401', false, {expires: 30, path: ''})
+        const { token } = payload
         yield put({
           type: 'setTokenBeforeLogin',
           payload: {
-            data: payload
+            data: token
           }
         })
         //做登录成功重定向

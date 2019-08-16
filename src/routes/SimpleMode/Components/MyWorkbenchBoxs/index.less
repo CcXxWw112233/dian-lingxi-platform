@@ -47,7 +47,7 @@
 
         .myWorkbenchBox_title {
             font-size  : 16px;
-            font-weight: 500;
+            font-weight: 100;
             color      : rgba(255, 255, 255, 1);
             line-height: 24px;
             margin     : 0px !important;
@@ -67,5 +67,9 @@
 
     .myWorkbenchBox:nth-child(4n) {
         margin-right: 0
+    }
+    .myWorkbenchBox[disabled]{
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 }

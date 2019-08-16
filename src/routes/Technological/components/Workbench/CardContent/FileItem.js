@@ -69,10 +69,10 @@ class FileItem extends React.Component {
     stopPropagation(e);
     setBoardIdStorage(board_id)
 
-    if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-      return false;
-    }
+    // if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+    //   return false;
+    // }
     this.props.routingJump(
       `/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}`
     );

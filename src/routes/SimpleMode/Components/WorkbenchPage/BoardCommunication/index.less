@@ -101,6 +101,9 @@
         color        : rgba(0, 0, 0, 0.65);
         border-radius: 4px;
     }
+    .dropdownSelect[disabled]{
+        cursor: not-allowed!important;
+    }
 }
 
 .dropdownClass {
@@ -113,6 +116,7 @@
 
 .directoryTreeWapper {
     max-height   : 500px;
+    min-width    : 248px;
     max-width    : 680px;
     overflow     : scroll;
     border-radius: 4px;
@@ -140,10 +144,19 @@
 .dropdownLinkWapper {
     padding        : 0px 12px;
     display        : flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
+    overflow: hidden;
 
     .dropdownLink {
+        height: 52px;
         display: inline-block;
         flex   : 1;
+        word-break: break-all;
+        background-color: white;
+        padding-left: 20px;
+        text-overflow:ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 }

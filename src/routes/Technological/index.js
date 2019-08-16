@@ -17,21 +17,13 @@ const { Header, Sider, Content } = Layout;
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
 
-  // componentDidMount() {
-  //   //console.log('sssss_22', window.location)
-  //   const hash = window.location.hash
-  //   let page_load_type = '0'
-  //   if(hash.indexOf('/technological/simplemode') != -1) {
-  //     page_load_type = '1'
-  //   } else {
-  //     page_load_type = '2'
-  //   }
-  //   this.setState({
-  //     page_load_type
-  //   })
-  // }
+  componentWillReceiveProps(nextProps) {
+    
+  }
 
   render() {
+
+    
 
     const { page_load_type } = this.props;
     const app = dva();

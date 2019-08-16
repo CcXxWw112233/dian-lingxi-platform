@@ -4,7 +4,7 @@ import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
-import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple'
+import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
 
@@ -239,9 +239,10 @@ export default class RenderAdd extends Component {
       return (
           <div className={infoRemindStyle.slip}
           >
-            <div className={infoRemindStyle.select}>
+            <div className={`${infoRemindStyle.select}`}>
               {/* 显示某种事件类型的列表--选择框 */}
               <Select
+                  className={`${infoRemindStyle.trigger_select}`}
                   defaultValue={remind_trigger}
                   style={{ width: 122, height: 32, marginRight: 16 }}>
                   {

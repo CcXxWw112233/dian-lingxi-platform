@@ -29,8 +29,9 @@ export default class Comment extends React.Component {
   }
 
   submitComment() {
-    const { card_id, parentKey, childrenKey } = this.props
+    const { card_id, parentKey, childrenKey, board_id } = this.props
     this.props.addCardNewComment({
+      board_id,
       card_id,
       comment: toString(this.state.editText),
       parentKey,

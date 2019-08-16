@@ -36,9 +36,11 @@ class Home extends Component {
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
-          chatImVisiable: false
+        chatImVisiable: false,
+        leftMainNavIconVisible:true
       }
-  });
+    });
+
   }
 
   setHomeVisible = (data) => {
@@ -58,15 +60,17 @@ class Home extends Component {
       <div>
         {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />}
 
-        {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible}/>}
+        {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
-        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible}/>}
+        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
       </div>
     )
   }
 };
 
-export default connect(({ }) => ({
-
+export default connect(({ simplemode:{
+  leftMainNavIconVisible
+}}) => ({
+  leftMainNavIconVisible
 }))(Home)

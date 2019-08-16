@@ -8,6 +8,7 @@ import { validateTel, validateEmail, validatePassword } from '../../utils/verify
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import sha256 from 'js-sha256'
 
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
@@ -65,6 +66,7 @@ class FormList extends React.Component {
     });
   }
 
+ 
   //验证账户,失去焦点
   verifyByBlur = (name) => {
     this.props.form.validateFieldsAndScroll((err, values) => {

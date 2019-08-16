@@ -9,6 +9,58 @@ import infoRemindStyle from './index.less'
   }))
 class DrawerInformContent extends Component {
 
+    state = {
+        new_user_info_list: [], // 获取用户列表
+    }
+
+    // componentWillReceiveProps(nextProps) {
+    //     let type = nextProps.rela_type
+    //     let temp_info_list = []
+    //     let new_info_list = [...nextProps.user_remind_info]
+    //     let all_member = {
+    //         avatar: "",
+    //         id: "0",
+    //         user_id: '0',
+    //         name: "项目全体成员",
+    //     }
+    //     switch (type) {
+    //         case '1': // 任务
+    //             var obj = {
+    //                 avatar: "",
+    //                 id: "1",
+    //                 user_id: '1',
+    //                 name: "执行人",
+    //             }
+    //             temp_info_list.unshift(obj, ...new_info_list)
+    //             break;
+    //         case '2': // 流程
+    //             var obj = {
+    //                 avatar: "",
+    //                 id: "1",
+    //                 user_id: '1',
+    //                 name: "动作推进人",
+    //             }
+    //             temp_info_list.unshift(obj, ...new_info_list)
+    //             break;
+    //         case '5': // 里程碑
+    //             var obj = {
+    //                 avatar: "",
+    //                 id: "1",
+    //                 user_id: '1',
+    //                 name: "负责人",
+    //             }
+    //             temp_info_list.unshift(obj, ...new_info_list)
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //     temp_info_list.unshift(all_member)
+    //     // console.log(temp_info_list, 'sssss')
+    //     this.setState({
+    //         new_user_info_list: temp_info_list
+    //     })
+    // }
+
     /**
      * 添加提醒的方法
      * 需要把关联的id以及type类型传入
@@ -39,6 +91,7 @@ class DrawerInformContent extends Component {
 
     render() {
         const { rela_id, user_remind_info } = this.props;
+        const { new_user_info_list = [] } = this.state
         return (
             <>
                 <div className={infoRemindStyle.add_header}

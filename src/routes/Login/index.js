@@ -12,7 +12,7 @@ import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import indexStyles from './index.less'
 import sha256 from 'js-sha256'
-import { func } from 'prop-types';
+
 
 const juge = localStorage.getItem('bindType')?localStorage.getItem('bindType'): ''
 const getEffectOrReducerByName = name => `login/${name}`
@@ -54,7 +54,10 @@ class Login extends React.Component {
       }
 
     }
+    
   }
+
+  
   setLoginType() {
     const { loginType } = this.state
     this.setState({

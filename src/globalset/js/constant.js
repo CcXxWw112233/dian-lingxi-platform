@@ -137,3 +137,5 @@ export const CONTENT_DATA_TYPE_CARD = 'card'
 export const CONTENT_DATA_TYPE_FILE = 'file'
 export const CONTENT_DATA_TYPE_FOLDER = 'folder'
 export const CONTENT_DATA_TYPE_FLOW = 'flow'
+
+export const FILE_TYPE_UPLOAD_WHITELISTED= '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'
