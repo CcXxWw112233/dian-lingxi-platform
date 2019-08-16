@@ -222,10 +222,10 @@ export default class Header extends React.Component {
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { org_id } = projectDetailInfoData
     const { dispatch } = this.props
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     e.stopPropagation();
     this.setState({
       isInitEntry: false,

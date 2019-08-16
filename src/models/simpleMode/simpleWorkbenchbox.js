@@ -40,7 +40,7 @@ export default {
 
         },
         * getFileList({ payload }, { call, put }) {
-            const { folder_id, board_id } = payload;
+            const { folder_id, board_id, calback} = payload;
             const res = yield call(getBoardFileList, { folder_id, board_id: board_id });
             //console.log("res", res);
             if (isApiResponseOk(res)) {
@@ -48,19 +48,22 @@ export default {
                 let list = []
                 let { folder_data = [], file_data = [] } = res.data;
                 folder_data.map((folder, key) => {
-                    list.push({ key: folder.folder_id, title: folder.folder_name, type: 1 });
+                    list.push({ key: folder.folder_id, title: folder.folder_name, type: 1, selectable: false });
                 });
                 file_data.map((file, key) => {
-                    console.log(file);
-                    list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true });
+                    list.push({ key: file.file_id, title: file.file_name, type: 2, version_id: file.version_id, file_resource_id: file.file_resource_id, folder_id: file.belong_folder_id, isLeaf: true, selectable: true });
                 });
 
                 yield put({
                     type: 'simpleBoardCommunication/updateDatas',
                     payload: {
-                        boardFileTreeData: list
+                        boardFileTreeData: list,
+                        is_file_tree_loading: false
                     }
                 });
+                if (typeof calback === 'function') {
+                    calback()
+                }
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
@@ -72,7 +75,8 @@ export default {
                 yield put({
                     type: 'simpleBoardCommunication/updateDatas',
                     payload: {
-                        boardFolderTreeData: res.data
+                        boardFolderTreeData: res.data,
+                        is_file_tree_loading: false
                     }
                 })
                 if (typeof calback === 'function') {

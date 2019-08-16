@@ -99,7 +99,7 @@ export default class GanttDetail extends React.Component {
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} />}
-          headerContent={<HeaderContent />}
+          headerContent={<HeaderContent users={users}/>}
         />
       </div>
     )

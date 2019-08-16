@@ -122,10 +122,10 @@ export default class ElseProject extends React.Component{
   handleMenuClick( {board_id, org_id}, e ) {
     e.domEvent.stopPropagation();
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     this.setState({
       ellipsisShow: false,
       dropdownVisibleChangeValue: false
@@ -146,7 +146,7 @@ export default class ElseProject extends React.Component{
         this.confirm(board_id )
         break
       case 'remove':
-        this.handleToggleRemoveProjectModalVisible(true)
+        this.handleToggleRemoveProjectModalVisible(true, {org_id})
         break
       default:
         return
@@ -175,6 +175,10 @@ export default class ElseProject extends React.Component{
   }
   starClick({org_id, board_id }, e) {
     e.stopPropagation();
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     setBoardIdStorage(board_id)
     const { itemDetailInfo = {}, dispatch} = this.props
     const { is_star } = itemDetailInfo
@@ -232,10 +236,10 @@ export default class ElseProject extends React.Component{
   }
   projectListItemClick({route, board_id, org_id}) {
     //暂时去掉访客限制
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     // Cookies.set('board_id', board_id, {expires: 30, path: ''})
     this.props.routingJump(`${route}?board_id=${board_id}`)
   }
@@ -269,10 +273,13 @@ export default class ElseProject extends React.Component{
       this.shutRemoveProjectToGroupModal()
     })
   }
-  handleOpenRemoveProjectModal = () => {
+  handleOpenRemoveProjectModal = ({org_id}) => {
     const {dispatch} = this.props
     Promise.resolve(dispatch({
-      type: 'project/fetchProjectGroupSearchTree'
+      type: 'project/fetchProjectGroupSearchTree',
+      payload: {
+        _organization_id: org_id
+      }
     })).then(res => {
       if(res === 'error') {
         message.error('获取项目分组信息失败')
@@ -283,11 +290,11 @@ export default class ElseProject extends React.Component{
       })
     })
   }
-  handleToggleRemoveProjectModalVisible = (flag) => {
+  handleToggleRemoveProjectModalVisible = (flag, {org_id}) => {
 
     //如果是打开移动项目 modal
     if(flag) {
-      return this.handleOpenRemoveProjectModal()
+      return this.handleOpenRemoveProjectModal({org_id})
     }
     this.setState({
       removePojectToGroupModalVisible: flag,

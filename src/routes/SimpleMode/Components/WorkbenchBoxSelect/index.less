@@ -4,7 +4,10 @@
     position        : absolute;
     top             : 0px;
     left            : 0px;
-    background-image: url('https://dian-public.oss-cn-beijing.aliyuncs.com/lingxi/backgroup-default.jpg');
+    background-position: 50%;
+    background-size    : cover;
+    overflow           : hidden;
+    background-color: #788186;
     -webkit-filter  : blur(10px);
     -moz-filter     : blur(10px);
     -ms-filter      : blur(10px);
@@ -102,6 +105,10 @@
                 color      : rgba(255, 255, 255, 1);
                 line-height: 96px !important;
             }
+        }
+        .workbenchBox[disabled]{
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .workbenchBox:hover {

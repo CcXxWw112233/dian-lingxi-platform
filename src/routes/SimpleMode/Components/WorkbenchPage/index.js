@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
-
+import BoardPlan from './BoardPlan/index'
 
 
 
@@ -13,6 +13,7 @@ class WorkbenchPage extends Component {
         console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
+            BoardPlanVisible: false,
             BoardCommunicationVisible: false,
             BoardFilesVisible: false
         }
@@ -27,6 +28,13 @@ class WorkbenchPage extends Component {
                 }
             });
         }
+
+        dispatch({
+            type:'simplemode/updateDatas',
+            payload:{
+                leftMainNavIconVisible:false
+            }
+        });
     }
 
     componentDidMount() {
@@ -51,7 +59,7 @@ class WorkbenchPage extends Component {
     setWorkbenchVisible(currentSelectedWorkbenchBox) {
         const { dispatch, chatImVisiable } = this.props;
         if (currentSelectedWorkbenchBox.id && currentSelectedWorkbenchBox.code) {
-            if(currentSelectedWorkbenchBox.code != 'board:chat'){
+            if (currentSelectedWorkbenchBox.code != 'board:chat') {
                 const width = document.body.scrollWidth;
                 let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
                 dispatch({
@@ -66,21 +74,24 @@ class WorkbenchPage extends Component {
                 case 'board:archives': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
                     });
                 }
                     break;
                 case 'board:plans': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: true,
                     });
                 }
                     break;
                 case 'board:chat': {
                     this.setState({
                         BoardCommunicationVisible: true,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
                     });
                     const width = document.body.scrollWidth;
                     let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
@@ -96,14 +107,16 @@ class WorkbenchPage extends Component {
                 case 'board:files': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: true
+                        BoardFilesVisible: true,
+                        BoardPlanVisible: false,
                     });
                 }
                     break;
                 default: {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
                     });
                 }
 
@@ -123,13 +136,19 @@ class WorkbenchPage extends Component {
                     <div className={indexStyles.workbenchBoxContentWapper}>
 
                         {
+                            this.state.BoardPlanVisible &&
+                            <BoardPlan/>
+                        }
+
+
+                        {
                             this.state.BoardCommunicationVisible &&
-                            <BoardCommunication/>
+                            <BoardCommunication />
                         }
 
                         {
                             this.state.BoardFilesVisible &&
-                            <BoardFiles/>
+                            <BoardFiles />
                         }
 
                     </div>
@@ -145,7 +164,8 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible
     }
 }) {
 
@@ -153,7 +173,8 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

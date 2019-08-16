@@ -37,8 +37,8 @@ export async function getProjectRoles(params) {
     url: `${REQUEST_DOMAIN}/role/query`,
     method: 'GET',
     params: {
-      ...params,
       _organization_id: localStorage.getItem('OrganizationId'),
+      ...params,
     }      
   });
 }

@@ -75,8 +75,9 @@ export default class index extends Component {
     }
 
     render() {
-        const { visible, title, } =this.state;
+        const { visible, title} =this.state;
         const { rela_type, rela_id, user_remind_info } = this.props
+        // console.log(new_user_info_list, 'sssss')
         return (
             <>
                 {/* 通知提醒的小图标 */}

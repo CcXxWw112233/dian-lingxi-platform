@@ -10,13 +10,13 @@ class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)
     const currentUser = this.getCurrentUserFromLocalStorage('userInfo')
-    const { list, handleSelectedItemChange } = props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember } = props;
     const findUserInList = list.find(item => item.id === currentUser.id)
     if(findUserInList) {
       handleSelectedItemChange([findUserInList])
     }
     this.state = {
-      selectedList: findUserInList ? [findUserInList] : [],
+      selectedList: currentSelectedProjectMember? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
      dropdownOptionVisible: false
     }
@@ -140,7 +140,7 @@ class DropdownMultipleSelectWithSearch extends Component {
         filteredList:
           list && list.length
             ? list.filter(item =>
-                item.full_name.toLowerCase().includes(searchValue.toLowerCase())
+                item.name.toLowerCase().includes(searchValue.toLowerCase())
               )
             : [],
         isSelectedAll:
@@ -159,7 +159,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     const { filteredList } = this.handleList();
     return filteredList.map(item => {
       const isSelectCurrItem = selectedList.find(
-        selected => selected.full_name === item.full_name
+        selected => selected.name === item.name
       );
       return (
         <Menu.Item key={item.id}>
@@ -179,7 +179,7 @@ class DropdownMultipleSelectWithSearch extends Component {
               />
             )}
             <span style={{ marginLeft: "5px", userSelect: "none" }}>
-              {item.full_name}
+              {item.name}
             </span>
             <span style={{ position: "absolute", width: "20px", right: "0" }}>
               {isSelectCurrItem && <img src={chackImg} alt="" width="16" />}
@@ -253,7 +253,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
     return selectedItem.map(item => (
       <div className={styles.contentListItemWrapper} key={item.id}>
-        <span className={styles.contentListItemContent} title={item.full_name}>
+        <span className={styles.contentListItemContent} title={item.name}>
           {item.avatar ? (
             <img
               className={styles.contentListItemImg}
@@ -295,7 +295,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     return true;
   };
   componentWillReceiveProps(nextProps) {
-    const { list, handleSelectedItemChange } = this.props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
     const isReceiveSameListFromProps = this.comparePropsList(
       nextProps.list,
       list
@@ -306,13 +306,15 @@ class DropdownMultipleSelectWithSearch extends Component {
         const currentUserId = currentUserFromCookie.id;
           const currentUserInList = nextProps.list.find(
             item => item.id === currentUserId
-          );
+          );    
+          let new_new_selectedList =  currentUserInList ? [currentUserInList] : []
+          let new_selectedList = currentSelectedProjectMember.length? currentSelectedProjectMember : new_new_selectedList
           this.setState({
-            selectedList: currentUserInList ? [currentUserInList] : [],
+            selectedList: new_selectedList,//currentUserInList ? [currentUserInList] : [],
             searchValue: ""
           }, () => {
             if(currentUserInList) {
-              handleSelectedItemChange([currentUserInList])
+              handleSelectedItemChange(new_selectedList)
             }
           });
       } else {
