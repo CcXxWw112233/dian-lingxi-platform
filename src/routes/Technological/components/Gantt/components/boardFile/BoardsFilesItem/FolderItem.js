@@ -164,7 +164,15 @@ export default class FolderItem extends Component {
         dispatch({
             type: 'workbenchFileDetail/getFileType',
             payload: {
-                file_id: id
+                file_id: id,
+                calback: function(data) {
+                    dispatch({
+                        type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                        payload: {
+                          _organization_id: data.base_info.org_id
+                        }
+                    })
+                }
             }
         });
         this.props.setPreviewFileModalVisibile();
@@ -181,12 +189,6 @@ export default class FolderItem extends Component {
             }
         })
 
-        dispatch({
-            type: 'workbenchFileDetail/',
-            payload: {
-
-            }
-        })
 
         if (getSubfixName(file_name) == '.pdf') {
             this.props.dispatch({

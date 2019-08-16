@@ -54,11 +54,18 @@ export default class ProcessItem extends React.Component {
   async click(obj) {
     //用于缓存做权限调用
     setBoardIdStorage(this.state.value.board_id)
+    const { dispatch} = this.props
 
     if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    dispatch({
+      type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      payload: {
+        _organization_id: obj.org_id
+      }
+    })
     this.props.updatePublicDatas({ board_id: this.state.value.board_id })
     if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)

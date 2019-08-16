@@ -325,7 +325,15 @@ export default class GetRowGantt extends Component {
         type: 'workbenchTaskDetail/getCardDetail',
         payload: {
           id,
-          board_id
+          board_id,
+          calback: function(data) {
+            dispatch({
+              type: 'workbenchPublicDatas/getRelationsSelectionPre',
+              payload: {
+                _organization_id: data.org_id
+              }
+            })
+          }
         }
       })
       dispatch({
