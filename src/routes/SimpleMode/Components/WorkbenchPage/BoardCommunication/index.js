@@ -258,7 +258,7 @@ class BoardCommunication extends Component {
             return false;
 
         }
-       
+
         const { dispatch, currentBoardDetail = {} } = this.props;
         if (file.size == 0) {
             message.error(`不能上传空文件`)
@@ -481,10 +481,6 @@ class BoardCommunication extends Component {
         });
 
     }
-
-
-
-
 
     onChange = value => {
         console.log(value);
@@ -750,7 +746,15 @@ class BoardCommunication extends Component {
 
     handleCancel = e => {
         console.log(e);
+        const { dispatch } = this.props
+        dispatch({
+            type: 'simpleWorkbenchbox/updateDatas',
+            payload: {
+                currentBoardDetail: undefined
+            }
+        });
         this.setState({
+            selectBoardFileCompleteDisabled: true,
             selectBoardFileModalVisible: false,
         });
     };
@@ -828,46 +832,50 @@ class BoardCommunication extends Component {
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                 >
-                    <div>
-                        <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
-                            <Dropdown
-                                overlay={this.renderSelectBoardTreeList()}
-                                trigger={['click']}
-                                className={`${indexStyles.dropdownSelect}`}
-                                onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
-                                visible={this.state.selectBoardDropdownVisible}>
-                                <div className={indexStyles.dropdownLinkWapper}>
-                                    <span style={{ display: 'block', width: '28px' }}>项目</span>
-                                    <span className={indexStyles.dropdownLink}>
-                                        {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
-                                    </span>
+                    {
+                        this.state.selectBoardFileModalVisible && (
+                            <div>
+                                <div className={`${indexStyles.selectWapper} ${indexStyles.borderBottom}`}>
+                                    <Dropdown
+                                        overlay={this.renderSelectBoardTreeList()}
+                                        trigger={['click']}
+                                        className={`${indexStyles.dropdownSelect}`}
+                                        onVisibleChange={this.handleSelectBoardDropdownVisibleChange}
+                                        visible={this.state.selectBoardDropdownVisible}>
+                                        <div className={indexStyles.dropdownLinkWapper}>
+                                            <span style={{ display: 'block', width: '28px' }}>项目</span>
+                                            <span className={indexStyles.dropdownLink}>
+                                                {currentBoardDetail.board_id ? currentBoardDetail.board_name : '请选择'} <Icon type="down" />
+                                            </span>
+                                        </div>
+                                    </Dropdown>
                                 </div>
-                            </Dropdown>
-                        </div>
 
-                        <div className={indexStyles.selectWapper}>
-                            <Dropdown
-                                disabled={!currentBoardDetail || !currentBoardDetail.board_id}
-                                overlay={this.renderSelectBoardFileTreeList()}
-                                trigger={['click']}
-                                className={`${indexStyles.dropdownSelect}`}
-                                onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
-                                visible={this.state.selectBoardFileDropdownVisible}>
-                                <div className={indexStyles.dropdownLinkWapper}>
-                                    {is_selectFolder ?
-                                        <span style={{ display: 'block', width: '44px' }}>文件夹</span>
-                                        :
-                                        <span style={{ display: 'block', width: '28px' }}>文件</span>
-                                    }
+                                <div className={indexStyles.selectWapper}>
+                                    <Dropdown
+                                        disabled={!currentBoardDetail || !currentBoardDetail.board_id}
+                                        overlay={this.renderSelectBoardFileTreeList()}
+                                        trigger={['click']}
+                                        className={`${indexStyles.dropdownSelect}`}
+                                        onVisibleChange={this.handleSelectBoardFileDropdownVisibleChange}
+                                        visible={this.state.selectBoardFileDropdownVisible}>
+                                        <div className={indexStyles.dropdownLinkWapper}>
+                                            {is_selectFolder ?
+                                                <span style={{ display: 'block', width: '44px' }}>文件夹</span>
+                                                :
+                                                <span style={{ display: 'block', width: '28px' }}>文件</span>
+                                            }
 
-                                    <span className={indexStyles.dropdownLink}>
-                                        {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
-                                    </span>
+                                            <span className={indexStyles.dropdownLink}>
+                                                {currentfile.fileId ? currentfile.fileName : '请选择'} <Icon type="down" />
+                                            </span>
+                                        </div>
+                                    </Dropdown>
                                 </div>
-                            </Dropdown>
-                        </div>
-                    </div>
+                            </div>
 
+                        )
+                    }
 
                 </Modal>
 

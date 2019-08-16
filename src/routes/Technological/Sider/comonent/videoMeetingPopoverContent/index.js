@@ -46,6 +46,7 @@ class VideoMeetingPopoverContent extends React.Component {
         videoMeetingPopoverVisible: false,
         currentSelectedProjectMembersList: [], //当前选择项目的项目成员
         currentOrgAllMembers: [], //当前组织的成员
+        org_id: '0'
     }
 
     // 获取项目用户
@@ -83,9 +84,13 @@ class VideoMeetingPopoverContent extends React.Component {
     }
 
     handleVideoMeetingSaveSelectChange = value => {
+        const { projectList = [] } = this.props
+        // console.log('ssssssss__',{ value,  projectList})
+
         this.getProjectUsers({projectId: value})
         this.setState({
-            saveToProject: value
+            saveToProject: value,
+            org_id: projectList.find(item => item.board_id == value).org_id || '0'
         });
     };
 
@@ -185,7 +190,7 @@ class VideoMeetingPopoverContent extends React.Component {
     };
     handleVideoMeetingSubmit = () => {
         const { dispatch } = this.props;
-        const { meetingTitle, saveToProject } = this.state;
+        const { meetingTitle, saveToProject, org_id } = this.state;
         const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
         const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
         if (mentionSelectedOtherMembersMobileString === "error") {
@@ -204,6 +209,7 @@ class VideoMeetingPopoverContent extends React.Component {
         }
 
         const data = {
+            _organization_id: org_id,
             board_id: saveToProject,
             flag: 2,
             rela_id: saveToProject,
