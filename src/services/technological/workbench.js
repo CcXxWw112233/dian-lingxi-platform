@@ -115,11 +115,12 @@ export async function modifOrStopShareLink(payload = {}) {
 }
 
 export async function createMeeting(payload) {
-  const {board_id, flag, topic, user_for = null, user_ids = null } = payload
+  const {board_id, flag, topic, user_for = null, user_ids = null, _organization_id } = payload
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
     data: {
+      _organization_id,
       board_id,
       flag,
       topic,
