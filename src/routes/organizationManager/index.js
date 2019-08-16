@@ -18,7 +18,7 @@ const TabPane = Tabs.TabPane
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
 const Organization = (options) => {
-  const { dispatch, model = {}, technological = {} } = options
+  const { dispatch, model = {}, } = options
   const { datas: { tabSelectKey } } = model
   const updateDatas = (payload) => {
     dispatch({
@@ -136,20 +136,10 @@ const Organization = (options) => {
     },
   }
 
-  const updateOtherDatas = () => {
-    // console.log(technological, 'technological')
-    if(Object.keys(technological).length === 0){
-      message.info('当前数据异常, 请返回首页后再进来!');
-    }
-  }
-
   const onTabClick = (key) => {
     updateDatas({
       tabSelectKey: key
     })
-    if (key === '5') {
-      updateOtherDatas()
-    }
   }
 
 
@@ -191,7 +181,7 @@ const Organization = (options) => {
   )
 };
 
-function mapStateToProps({ modal, organizationManager, loading, technological }) {
-  return { modal, model: organizationManager, loading, technological }
+function mapStateToProps({ modal, organizationManager, loading }) {
+  return { modal, model: organizationManager, loading }
 }
 export default connect(mapStateToProps)(Organization)

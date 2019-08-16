@@ -11,8 +11,8 @@ import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAd
 import iconSrc from '@/assets/organizationManager/crown/crown@2x.png'
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
-@connect(({ MapManage = {}, organizationManager: { datas: { management_Array = [] } } }) => ({
-  MapManage, management_Array
+@connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } } }) => ({
+  MapManage, management_Array, technological
 }))
 export default class MapManage extends React.Component {
   state = {
@@ -71,6 +71,11 @@ export default class MapManage extends React.Component {
 
   //点击添加成员操作
   setShowAddMenberModalVisibile() {
+    const { technological } = this.props
+    if(!technological){
+      message.info('当前数据异常, 请先回到首页!');
+      return
+    }
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
