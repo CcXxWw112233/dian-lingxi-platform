@@ -50,12 +50,19 @@ export default class TaskItem extends React.Component {
     );
   }
   itemClick(data, e) {
-    const { id, board_id } = data;
+    const { dispatch} = this.props
+    const { id, board_id, org_id } = data;
     setBoardIdStorage(board_id)
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    dispatch({
+      type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      payload: {
+        _organization_id: org_id
+      }
+    })
     this.props.updatePublicDatas({ board_id });
     this.props.getCardDetail({ id, board_id });
     this.props.setTaskDetailModalVisibile();
@@ -125,7 +132,7 @@ export default class TaskItem extends React.Component {
               maxWidth: 100,
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
-            onClick={this.itemClick.bind(this, { id, board_id })}
+            onClick={this.itemClick.bind(this, { id, board_id, org_id })}
           >
             {name}
           </div>
@@ -137,7 +144,7 @@ export default class TaskItem extends React.Component {
                 <span
                   style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
                   key={key}
-                  onClick={this.itemClick.bind(this, { id, board_id })}
+                  onClick={this.itemClick.bind(this, { id, board_id, org_id })}
                 >{`< ${name}`}</span>
               );
             })}
@@ -207,7 +214,7 @@ export default class TaskItem extends React.Component {
             style={{
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
-            onClick={this.itemClick.bind(this, { id, board_id })}
+            onClick={this.itemClick.bind(this, { id, board_id, org_id })}
           >
             {name}
           </span>
@@ -217,7 +224,7 @@ export default class TaskItem extends React.Component {
               <span
                 style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
                 key={key}
-                onClick={this.itemClick.bind(this, { id, board_id })}
+                onClick={this.itemClick.bind(this, { id, board_id, org_id })}
               >{`< ${name}`}</span>
             );
           })}

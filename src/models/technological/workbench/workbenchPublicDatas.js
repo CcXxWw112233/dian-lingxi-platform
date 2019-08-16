@@ -25,12 +25,15 @@ export default modelExtend(technological, {
               milestoneList: [], //里程碑列表
             }
           })
-          dispatch({
-            type: 'getRelationsSelectionPre',
-            payload: {
-
-            }
-          })
+          if(localStorage.getItem('OrganizationId') && localStorage.getItem('OrganizationId') != '0') {
+            dispatch({
+              type: 'getRelationsSelectionPre',
+              payload: {
+  
+              }
+            })
+          }
+         
         }
       })
     },

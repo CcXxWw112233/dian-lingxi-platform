@@ -10,6 +10,7 @@ import {
 } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { func } from "prop-types";
+import { getGlobalData } from "../../utils/businessFunction";
 
 const createHeaderContentData = (contentType, contentId) => {
   if (contentType && contentId) {
@@ -394,7 +395,10 @@ export async function getRelationsSelectionPre(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link/prefix`,
     method: 'GET',
-    params
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId') == '0'? getGlobalData('aboutBoardOrganizationId'): localStorage.getItem('OrganizationId'),
+      ...params,
+    }
   }, { isNotLoading: true });
 }
 //加载关联内容（后）
