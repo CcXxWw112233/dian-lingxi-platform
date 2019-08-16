@@ -137,8 +137,8 @@ const Organization = (options) => {
   }
 
   const updateOtherDatas = () => {
-
-    if (technological.length === '0') {
+    // console.log(technological, 'technological')
+    if(Object.keys(technological).length === 0){
       message.info('当前数据异常, 请返回首页后再进来!');
     }
   }
