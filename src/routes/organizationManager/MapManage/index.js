@@ -128,9 +128,9 @@ export default class MapManage extends React.Component {
     const managementArr = this.props.management_Array
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
-      if(!isHasOrgMemberQueryPermission()) {
-        return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
-      }
+      // if(!isHasOrgMemberQueryPermission()) {
+      //   return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
+      // }
       return (
         <div className={indexStyles.manImageDropdown}>
           <div className={indexStyles.manImageDropdown_top}>
