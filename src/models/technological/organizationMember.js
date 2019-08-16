@@ -84,7 +84,7 @@ export default modelExtend(technological, {
     },
 
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'),...payload,})
+      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'), ...payload, })
       if(isApiResponseOk(res)) {
         const groupList = res.data.data
         //将角色信息数据包裹

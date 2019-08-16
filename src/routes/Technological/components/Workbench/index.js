@@ -11,6 +11,7 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
+
 import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
 import ChangeCardView from './ChangeCardView'

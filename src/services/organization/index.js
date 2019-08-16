@@ -172,3 +172,34 @@ export async function setFnManagementStatus(data) {
     data
   })
 }
+
+//投资地图权限功能-新增管理员
+export async function investmentMapAddAdministrators(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'POST',
+    data: {
+      ...data,
+    }
+  });
+}
+
+//投资地图权限功能-删除管理员
+export async function investmentMapDeleteAdministrators(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'DELETE',
+    data
+  });
+}
+
+//投资地图权限功能-查看管理员列表
+export async function investmentMapQueryAdministrators(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'GET',
+    params: {
+      ...params,
+    }   
+  });
+}

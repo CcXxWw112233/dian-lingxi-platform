@@ -1,6 +1,6 @@
 import React from 'react';
-import {connect} from "dva/index";
-import { Icon, Tabs } from 'antd'
+import { connect } from "dva/index";
+import { Icon, Tabs, message } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
 import ProjectRole from './ProjectRole'
@@ -8,17 +8,18 @@ import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
 import { getUrlQueryString } from '../../utils/util'
 import NounDefinition from "./NounDefinition";
-import {ORGANIZATION, PROJECTS} from "../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../utils/businessFunction";
+import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
+import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
+
 
 const TabPane = Tabs.TabPane
 
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
 const Organization = (options) => {
-  const { dispatch, model = {} } = options
-  const { datas: { tabSelectKey }} = model
+  const { dispatch, model = {}, technological = {} } = options
+  const { datas: { tabSelectKey } } = model
   const updateDatas = (payload) => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -132,39 +133,52 @@ const Organization = (options) => {
         type: getEffectOrReducerByName('saveNounList'),
         payload: data
       })
+    },
+  }
+
+  const updateOtherDatas = () => {
+
+    if (technological.length === '0') {
+      message.info('当前数据异常, 请返回首页后再进来!');
     }
   }
-  const onTabClick = (key)=>{
+
+  const onTabClick = (key) => {
     updateDatas({
       tabSelectKey: key
     })
+    if (key === '5') {
+      updateOtherDatas()
+    }
   }
 
-  return(
+
+
+  return (
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
         <div className={indexStyles.back} onClick={historyGoBack}>
           <Icon type="left" theme="outlined" />返回
         </div>
         <div className={indexStyles.topTitle}>
-          <Icon type="home" theme="outlined" style={{color: color_4, fontSize: 32}} />
+          <Icon type="home" theme="outlined" style={{ color: color_4, fontSize: 32 }} />
           <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
             <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} activeKey={tabSelectKey} onTabClick={onTabClick}>
               <TabPane tab="基本信息" key="1">
-                 <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
+                <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
               <TabPane tab={`${currentNounPlanFilterName(ORGANIZATION)}角色`} key="2">
                 <OrgnizationRole {...asyncProprs} updateDatas={updateDatas} />
                 {/*<RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
               <TabPane tab={`${currentNounPlanFilterName(PROJECTS)}角色`} key="3">
-                <ProjectRole {...asyncProprs} updateDatas={updateDatas}/>
+                <ProjectRole {...asyncProprs} updateDatas={updateDatas} />
                 {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
               <TabPane tab="名词定义" key="4">
-                <NounDefinition {...asyncProprs} updateDatas={updateDatas}/>
+                <NounDefinition {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
               <TabPane tab="功能管理" key="5">
                 <FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement>
@@ -177,7 +191,7 @@ const Organization = (options) => {
   )
 };
 
-function mapStateToProps({ modal, organizationManager, loading }) {
-  return { modal, model: organizationManager, loading }
+function mapStateToProps({ modal, organizationManager, loading, technological }) {
+  return { modal, model: organizationManager, loading, technological }
 }
 export default connect(mapStateToProps)(Organization)

@@ -283,15 +283,15 @@ class BoardCommunication extends Component {
             <>
                 <div style={{ backgroundColor: '#FFFFFF' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
                     {
-                        is_selectFolder ?
-                            <DirectoryTree onSelect={this.onSelectFolder}>
+                        is_selectFolder ? (
+<DirectoryTree onSelect={this.onSelectFolder}>
                                 {this.renderFolderTreeNodes([boardFolderTreeData])}
                             </DirectoryTree>
-                            :
-                            <DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
+): (
+<DirectoryTree loadData={this.onLoadFileTreeData.bind(this)} onSelect={this.onSelectFile} >
                                 {this.renderTreeNodes(boardFileTreeData)}
                             </DirectoryTree>
-                    }
+)}
 
                 </div>
             </>
@@ -686,12 +686,12 @@ class BoardCommunication extends Component {
                             <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
                             {
-                                dragEnterCaptureFlag ?
-                                <div className={indexStyles.iconDescription}>
+                                dragEnterCaptureFlag ? (
+<div className={indexStyles.iconDescription}>
                                     <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
                                     <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
                                 </div>
-                                :
+):
                                 <>
                                 <div className={indexStyles.icon}>
                                     <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
@@ -709,19 +709,19 @@ class BoardCommunication extends Component {
 
 
                 {
-                    false &&
-                    <div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+                    false && (
+<div className={`${indexStyles.dragOverBgWapper}  ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
                         <div className={indexStyles.dragOverArea} style={{ height: container_workbenchBoxContent.offsetHeight + 'px' }}>
                             {
-                                dragEnterCaptureFlag &&
-                                <div className={indexStyles.iconDescription}>
+                                dragEnterCaptureFlag && (
+<div className={indexStyles.iconDescription}>
                                     <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
                                     <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
                                 </div>
-                            }
+)}
                         </div>
                     </div>
-                }
+)}
 
 
                 <Modal
@@ -806,7 +806,7 @@ function mapStateToProps({
     workbenchPublicDatas
 }) {
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'],...workbenchPublicDatas['datas'] }
+        datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'] }
     }
     return {
         model: modelObj,

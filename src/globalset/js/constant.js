@@ -42,12 +42,16 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
 // export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if(NODE_ENV == 'development') {
-    return 'ws://test.lingxi.new-di.com/websocket' //'ws://prerelease.lingxi.new-di.com/websocket'  'ws://192.168.1.68:9326'
+    return 'ws://test.lingxi.new-di.com/websocket' 
+    //'ws://prerelease.lingxi.new-di.com/websocket'  
+    // return 'ws://192.168.1.39/websocket'
   } else {
     const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
   }
 })(NODE_ENV, window.location)
+
+export const MAP_URL = 'http://map.di-an.com:8888/' //投资地图
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'

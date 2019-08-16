@@ -41,7 +41,6 @@ const WorkbenchBoxSelect = (props) => {
           {
             workbenchBoxList.map((boxItem, key) => {
               let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
-              //console.log("8888", isSelected);
               return boxItem.status == 1 ? (
                 <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected }) }} >
                   <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br />

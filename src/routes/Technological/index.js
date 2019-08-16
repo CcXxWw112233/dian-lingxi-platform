@@ -34,9 +34,7 @@ export default class Technological extends React.Component {
   render() {
 
     const { page_load_type } = this.props;
-
     const app = dva();
-
     const routes = [
       {
         path: '/technological/accoutSet',
@@ -68,7 +66,11 @@ export default class Technological extends React.Component {
       }, {
         path: '/technological/simplemode',
         component: () => import('../SimpleMode/index'),
+      }, {
+        path: '/technological/investmentMap',
+        component: () => import('./components/InvestmentMap'),
       },
+    
     ]
 
     const defaultLayout = (

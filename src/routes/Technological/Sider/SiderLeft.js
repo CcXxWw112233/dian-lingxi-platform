@@ -71,6 +71,10 @@ export default class SiderLeft extends React.Component {
     })
   }
   menuClick({ key, code }) {
+
+    console.log(key, 'key')
+    console.log(code, 'code')
+
     const { dispatch } = this.props
     dispatch({
       type: 'technological/updateDatas',
@@ -97,7 +101,7 @@ export default class SiderLeft extends React.Component {
         route = 'xczNews'
         break
       case 'InvestmentMaps':
-        return
+        route = 'InvestmentMap'
         break
       default:
         break
@@ -307,7 +311,7 @@ export default class SiderLeft extends React.Component {
 
   render() {
     const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    console.log(is_all_org, 'sssss')
+    // console.log(is_all_org, 'sssss')
     let temp = []
     menuList.forEach((item) => {
       if(item.status === '1') {
@@ -544,9 +548,7 @@ export default class SiderLeft extends React.Component {
     // const isHasMemberView = () => {
     //   return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     // }
-
     return (
-      
       <Sider
         trigger={null}
         collapsible

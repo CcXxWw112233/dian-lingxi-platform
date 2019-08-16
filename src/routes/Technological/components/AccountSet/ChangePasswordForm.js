@@ -5,7 +5,9 @@ import moment from 'moment';
 import indexStyle from './index.less'
 import {validateEmail, validatePassword, validateTel} from '../../../../utils/verify'
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
-import sha256 from 'js-sha256'
+import sha256 from 'js-sha256';
+import { connect } from 'dva';
+import {routerRedux} from 'dva/router';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -13,6 +15,11 @@ const AutoCompleteOption = AutoComplete.Option;
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const RangePicker = DatePicker.RangePicker
+const fontSizeNumber = 16
+
+@connect(({ChangePasswordForm = {}}) => ({
+  ChangePasswordForm
+}))
 
 class ChangePasswordForm extends React.Component {
   state = {
@@ -22,6 +29,7 @@ class ChangePasswordForm extends React.Component {
 
   // 提交表单
   handleSubmit = (e) => {
+    
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -51,6 +59,13 @@ class ChangePasswordForm extends React.Component {
     });
   }
 
+  forgetThePassword(path) {
+    const { dispatch } = this.props;
+    dispatch(
+      routerRedux.push(path)
+      );
+  }
+
   currentPasswordBlur(e) {
 
   }
@@ -77,30 +92,42 @@ class ChangePasswordForm extends React.Component {
     };
     return (
       <Form onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600}}>
-        {/* 当前密码 */}
+        <div>
+          {/* 当前密码 */}
+          <FormItem
+            {...formItemLayout}
+            label={(
+              <span style={{fontSize: fontSizeNumber}}>
+                当前密码
+              </span>
+            )}
+          >
+            {getFieldDecorator('old_password', {
+              rules: [{ required: false, message: '请输入当前密码', whitespace: true }],
+            })(
+              <Input placeholder="请输入当前密码"
+                    className={indexStyle.personInfoInput}
+                    type={'password'}
+                    onBlur={this.currentPasswordBlur.bind(this)}
+              />
+            )}
+            {/* 忘记密码 */}
+            <div style={{marginLeft: 20, 
+                              width: 90, 
+                              height: 40, 
+                              fontSize: fontSizeNumber, 
+                              color: '#0090FA',
+                              textAlign: "center",
+                            }} 
+                onClick={this.forgetThePassword.bind(this, '/retrievePassword')}>忘记密码?
+            </div>
+          </FormItem>
+        </div>
+        {/* 新密码 */}  
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
-              当前密码
-            </span>
-          )}
-        >
-          {getFieldDecorator('old_password', {
-            rules: [{ required: false, message: '请输入当前密码', whitespace: true }],
-          })(
-            <Input placeholder="请输入当前密码"
-                   className={indexStyle.personInfoInput}
-                   type={'password'}
-                   onBlur={this.currentPasswordBlur.bind(this)}
-            />
-          )}
-        </FormItem>
-        {/* 新密码 */}
-        <FormItem
-          {...formItemLayout}
-          label={(
-            <span style={{fontSize: 16}}>
+            <span style={{fontSize: fontSizeNumber}}>
               新密码
             </span>
           )}
@@ -117,7 +144,7 @@ class ChangePasswordForm extends React.Component {
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{fontSize: fontSizeNumber}}>
               再次输入
             </span>
           )}
@@ -134,7 +161,7 @@ class ChangePasswordForm extends React.Component {
         <FormItem
           {...formItemLayout}
         >
-          <Button type="primary" htmlType="submit" style={{marginLeft: 112, width: 80, height: 40, fontSize: 16}}>确认</Button>
+          <Button type="primary" htmlType="submit" style={{marginLeft: 112, width: 80, height: 40, fontSize: fontSizeNumber}}>确认</Button>
         </FormItem>
       </Form>
     );

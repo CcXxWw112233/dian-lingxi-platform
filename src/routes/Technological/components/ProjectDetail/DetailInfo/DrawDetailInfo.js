@@ -119,7 +119,6 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   render() {
-
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } } = this.props.model
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
