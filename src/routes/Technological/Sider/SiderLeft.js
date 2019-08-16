@@ -344,12 +344,7 @@ export default class SiderLeft extends React.Component {
 
 
   render() {
-<<<<<<< HEAD
-    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org} = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
-    // console.log(is_all_org, 'sssss')
-=======
     const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
->>>>>>> develop
     let temp = []
     menuList.forEach((item) => {
       if (item.status === '1') {
