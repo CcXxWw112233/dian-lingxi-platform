@@ -512,9 +512,9 @@ export default class FileList extends React.Component {
           {type !== '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
           <Menu.Item key="2">下载</Menu.Item>
             ):('')}
-           {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
+           {/* {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
           <Menu.Item key="99"><span>访问控制&nbsp;&nbsp;<span className={globalStyles.authTheme}>&#xe7eb;</span></span></Menu.Item>
-            ):('')}
+            ):('')} */}
           {type !== '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)? (
             <Menu.Item key="3">移动</Menu.Item>
           ):('')}
