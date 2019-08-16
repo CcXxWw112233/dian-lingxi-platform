@@ -470,6 +470,7 @@ export default {
             _organization_id: payload._organization_id
           }
         })
+        message.info('移除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn('移除失败', MESSAGE_DURATION_TIME)
       }

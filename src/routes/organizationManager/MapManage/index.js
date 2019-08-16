@@ -52,21 +52,8 @@ export default class MapManage extends React.Component {
 
   confirm(data) {
     const that = this
-    Modal.confirm({
-      title: '确认将他移出项目吗？',
-      zIndex: 2000,
-      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
-        <span >退出后将无法获取该项目的相关动态</span>
-        {/*<div style={{marginTop:20,}}>*/}
-        {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
-        {/*</div>*/}
-      </div>,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        that.investmentMapDeleteAdministrators(data.user_id)
-      }
-    });
+    that.investmentMapDeleteAdministrators(data.user_id)
+    message.info("移除成功", MESSAGE_DURATION_TIME)
   }
 
   //点击添加成员操作
