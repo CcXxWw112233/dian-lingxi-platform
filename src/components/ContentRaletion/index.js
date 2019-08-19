@@ -15,10 +15,24 @@ export default class ContentRaletion extends React.Component {
     isInEditContentRelation: false,
     isInChoose: false,
     isInSearCh: false,
-    relations: []
+    relations: [],
+    local_link_id: ''
   }
   componentDidMount() {
-    this.getRelations()
+    const { link_id } = this.props
+    if(link_id) {
+      this.getRelations()
+      this.setState({
+        local_link_id: link_id
+      })
+    } 
+  }
+  componentWillReceiveProps(nextProps) {
+    const { link_id } = nextProps
+    const { local_link_id } = this.state
+    if(link_id && local_link_id != link_id) {
+      this.getRelations()
+    }
   }
   async getRelations(data) {
     const { board_id, link_id, link_local } = this.props
