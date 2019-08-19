@@ -307,7 +307,7 @@ export default {
         }
       }
 
-      // console.log('sssssss_list_group', list_group)
+      console.log('sssssss_list_group', list_group)
 
       yield put({
         type: 'updateDatas',
@@ -338,7 +338,7 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
       if(gantt_board_id == '0') { //只有在确认项目对应的一个组织id,才能够进行操作
-        return
+        // return
       }
 
       const start_date = yield select(workbench_start_date)
@@ -351,6 +351,7 @@ export default {
 
       const res = yield call(getGttMilestoneList, params)
       // debugger
+      console.log('sssssss', { milestoneMap: res.data })
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

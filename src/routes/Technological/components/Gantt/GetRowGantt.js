@@ -152,6 +152,9 @@ export default class GetRowGantt extends Component {
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+      this.setState({
+        dasheRectShow: false
+      })
       return false
     }
     const { datas: { ceiHeight, ceilWidth } } = this.props.model
@@ -449,9 +452,10 @@ export default class GetRowGantt extends Component {
 
 
         {list_group.map((value, key) => {
-          const { list_name, list_id, list_data = [] } = value
+          const { lane_data, list_id, list_data = [] } = value
+          const { milestones = { } } = lane_data
           return (
-            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} />
+            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones}/>
           )
         })}
         <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
