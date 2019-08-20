@@ -72,7 +72,7 @@ export default {
   effects: {
 
     //获取当前点击任务的项目详细信息
-    * getCardDetail({ payload,  }, { select, call, put }) { //查看项目详情信息
+    * getCardDetail({ payload, }, { select, call, put }) { //查看项目详情信息
       const { id, board_id, calback } = payload
       yield put({
         type: 'updateDatas',

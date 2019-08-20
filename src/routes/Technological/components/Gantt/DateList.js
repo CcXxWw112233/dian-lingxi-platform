@@ -258,7 +258,7 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], about_user_boards = [],list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
+    gantt: { datas: { gold_date_arr = [], about_user_boards = [], list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
   }) {
   return { gold_date_arr, list_group, target_scrollTop, milestoneMap, holiday_list, gantt_board_id, group_view_type, about_user_boards }
 }

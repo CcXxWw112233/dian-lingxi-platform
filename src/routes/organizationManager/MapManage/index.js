@@ -10,8 +10,6 @@ import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../.
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 import iconSrc from '@/assets/organizationManager/crown/crown@2x.png'
 const getEffectOrReducerByName = name => `organizationManager/${name}`
-import {currentNounPlanFilterName, getGlobalData} from "@/utils/businessFunction";
-import { MAP_ADMIN } from '../../../globalset/js/constant';
 
 
 @connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } } }) => ({

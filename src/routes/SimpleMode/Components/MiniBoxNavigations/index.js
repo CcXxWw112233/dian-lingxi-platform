@@ -44,7 +44,7 @@ const MiniBoxNavigations = (props) => {
                     <Tooltip placement="bottom" title='首页' className={`${indexStyles.nav} ${indexStyles.home}`} onClick={goHome}>
                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }} >&#xe66e;</i>
                     </Tooltip>
-                    <div style={{color:'#fff'}}>
+                    <div style={{color: '#fff'}}>
                         <BoardDropdownSelect iconVisible={false} />
                     </div>
                     <Divider className={indexStyles.divider} type="vertical" />

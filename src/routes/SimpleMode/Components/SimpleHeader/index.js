@@ -47,11 +47,13 @@ const SimpleHeader = (props) => {
     return (
         <div className={indexStyles.headerWapper}>
             {
-                leftMainNavIconVisible && <Tooltip placement="bottom" title={'退出极简模式'}>
+                leftMainNavIconVisible && (
+<Tooltip placement="bottom" title={'退出极简模式'}>
                     <div className={indexStyles.miniNavigation} onClick={openOrCloseMainNav}>
                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69d;</i>
                     </div>
                 </Tooltip>
+)
             }
 
 

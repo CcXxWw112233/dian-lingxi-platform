@@ -1251,7 +1251,7 @@ class DrawContent extends React.Component {
               {this.props.needDelete && (
                 <Dropdown overlay={topRightMenu}>
                 <span style={{position: 'absolute', right: 80, top: -2}} >
-                  <Icon type="ellipsis" style={{fontSize: 20,marginTop:2}} />
+                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2}} />
                 </span>
               </Dropdown>
               )}
