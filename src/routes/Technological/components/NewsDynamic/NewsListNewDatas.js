@@ -87,11 +87,10 @@ export default class NewsListNewDatas extends React.Component {
       let contain = ''
       let messageContain = (<div></div>)
       let jumpToBoard = (
-        // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}`)}>{messageValue.content.board.name}</span>
         <span
           style={{ color: '#1890FF', cursor: 'pointer' }}
           onClick={() => { this.goToBoard({ org_id: messageValue.org_id, content: messageValue.content }) }}
-        >{messageValue.content.board.name}</span>
+        >{messageValue.content.board && messageValue.content.board.name}</span>
       )
       let jumpToTask = (
         // <span style={{color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top'}} onClick={this.routingJump.bind(this, `/technological/projectDetail?board_id=${messageValue.content && messageValue.content.board && messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content && messageValue.content.card && messageValue.content.card.id}`)}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
@@ -460,7 +459,7 @@ export default class NewsListNewDatas extends React.Component {
           contain = `关联${currentNounPlanFilterName(TASKS)}到里程碑`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{cursor:'pointer', color: '#1890FF'}}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{ cursor: 'pointer', color: '#1890FF' }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -469,7 +468,7 @@ export default class NewsListNewDatas extends React.Component {
           contain = `将关联${currentNounPlanFilterName(TASKS)}移除到里程碑`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{cursor:'pointer', color: '#1890FF'}}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{ cursor: 'pointer', color: '#1890FF' }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -593,9 +592,6 @@ export default class NewsListNewDatas extends React.Component {
           )
           contain = `创建文件夹`
           break
-        case 'updFolder':
-          contain = `更新文件夹`
-          break
         case 'board.file.upload':
           contain = `上传${currentNounPlanFilterName(FILES)}`
           messageContain = (
@@ -650,7 +646,7 @@ export default class NewsListNewDatas extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}
-              「{<span className={styles.fileName} style={{cursor:'pointer', color: '#1890FF'}} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>}」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                「{<span className={styles.fileName} style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>}」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -672,11 +668,13 @@ export default class NewsListNewDatas extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{
-                <span className={styles.fileName} style={{cursor:'pointer', color: '#1890FF'}} onClick={ () => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) } }>{showCopyList}</span>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                <span className={styles.fileName} style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showCopyList}</span>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
+        case 'board.file.comment.add': // 添加一条文件评论动态
+          contain = `发表了一条${currentNounPlanFilterName(FILES)}评论`
         default:
           break
       }
@@ -772,9 +770,11 @@ export default class NewsListNewDatas extends React.Component {
       )
     }
     //评论动态
-    const commentNews = (value, parentKey, childrenKey) => {
-      const { content = {}, org_id } = value[0]
-      const { board = {}, card = {}, lists = {} } = content
+    const commentNews = (value, parentKey, childrenKey, type) => {
+      const { content = {}, org_id, creator, created } = value[0]
+      const { board = {}, card = {}, lists = {}, file_comment = {}, } = content
+      const { text, id } = file_comment
+      const { avatar } = creator
       const card_name = card['name']
       const card_id = card['id']
       const list_name = lists['name']
@@ -783,74 +783,112 @@ export default class NewsListNewDatas extends React.Component {
 
       return (
         <div className={NewsListStyle.containr}>
-          <div className={NewsListStyle.top}>
-            <div className={NewsListStyle.left}>
-              <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
-                {/*<img src="" />*/}
-              </div>
-              <div className={NewsListStyle.l_r}>
-                <div>{card_name}</div>
-                <div>
-                  {
-                    is_show_org_name && (
-                      <div className={NewsListStyle.news_orgName}>
-                        {/* <span>组织:</span> */}
-                        <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
-                        <Icon type="caret-right" style={{ fontSize: 8 }} />
-                      </div>
-                    )
-                  }
-                  {/* {currentNounPlanFilterName(PROJECTS)}：{board_name} <Icon type="caret-right" style={{fontSize: 8}}/>  {list_name} */}
-                  {board_name} <Icon type="caret-right" style={{ fontSize: 8 }} />  {list_name || '分组'}
-                </div>
-              </div>
-            </div>
-            <div className={NewsListStyle.right}>
-              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
-            </div>
-          </div>
-          <div className={NewsListStyle.bott}>
-            {/*{news_4}*/}
-            <div className={NewsListStyle.news_4}>
-              {value.map((val, key) => {
-                const { creator, created, content = {} } = val
-                const { card_comment = {} } = content
-                const { text } = card_comment
-                const { avatar } = creator
-                return (
-                  <div className={NewsListStyle.news_4_top} key={key}>
-                    <div className={NewsListStyle.news_4_left}>
-                      {/*<img src="" />*/}
-                      {avatar ? (
-                        <img src={avatar} />
-                      ) : (
-                          <div style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
-                            <Icon type={'user'} style={{ fontSize: 18, marginTop: 12, color: '#8c8c8c' }} />
+          {
+            value.map((val, key) => {
+              const { action } = val
+              let messageContain
+              switch (action) {
+                case 'board.file.comment.add':
+                  messageContain = (
+                    <>
+                      <div className={NewsListStyle.top}>
+                        <div className={NewsListStyle.left}>
+                          <div className={NewsListStyle.l_l}>
+                            <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
+                            {/*<img src="" />*/}
                           </div>
-                        )}
-                    </div>
-                    <div className={NewsListStyle.news_4_right}>
-                      <div className={NewsListStyle.r_t}>
-                        <div className={NewsListStyle.r_t_l}>{creator.name}</div>
-                        <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
+                          <div className={NewsListStyle.l_r}>
+                            <div>{filterTitleContain(action, value[0]).contain}</div>
+                            <div>
+                              {
+                                is_show_org_name && (
+                                  <div className={NewsListStyle.news_orgName}>
+                                    {/* <span>组织:</span> */}
+                                    <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
+                                    <Icon type="caret-right" style={{ fontSize: 8 }} />
+                                  </div>
+                                )
+                              }
+                              {/* {currentNounPlanFilterName(PROJECTS)}：{board_name} <Icon type="caret-right" style={{fontSize: 8}}/>  {list_name} */}
+                              {board_name} <Icon type="caret-right" style={{ fontSize: 8 }} />  {list_name || '分组'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={NewsListStyle.right}>
+                          {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
+                        </div>
                       </div>
-                      <div className={NewsListStyle.r_b}>
-                        {text}
+                      <div className={NewsListStyle.bott}>
+                        {/*{news_4}*/}
+                        <div className={NewsListStyle.news_4}>
+                          <div className={NewsListStyle.news_4_top} key={key}>
+                            <div className={NewsListStyle.news_4_left}>
+                              {/*<img src="" />*/}
+                              {avatar ? (
+                                <img src={avatar} />
+                              ) : (
+                                  <div style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
+                                    <Icon type={'user'} style={{ fontSize: 18, marginTop: 12, color: '#8c8c8c' }} />
+                                  </div>
+                                )}
+                            </div>
+                            <div className={NewsListStyle.news_4_right}>
+                              <div className={NewsListStyle.r_t}>
+                                <div className={NewsListStyle.r_t_l}>{creator.name}</div>
+                                <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
+                              </div>
+                              <div className={NewsListStyle.r_b}>
+                                {text}
+                              </div>
+                            </div>
+                          </div>
+                          {/* {value.map((val, key) => {
+                            const { creator, created, content = {} } = val
+                            const { file_comment = {} } = content
+                            const { text, id } = file_comment
+                            const { avatar } = creator
+                            return (
+                              <div className={NewsListStyle.news_4_top} key={key}>
+                                <div className={NewsListStyle.news_4_left}>
+                                  {avatar ? (
+                                    <img src={avatar} />
+                                  ) : (
+                                      <div style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
+                                        <Icon type={'user'} style={{ fontSize: 18, marginTop: 12, color: '#8c8c8c' }} />
+                                      </div>
+                                    )}
+                                </div>
+                                <div className={NewsListStyle.news_4_right}>
+                                  <div className={NewsListStyle.r_t}>
+                                    <div className={NewsListStyle.r_t_l}>{creator.name}</div>
+                                    <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
+                                  </div>
+                                  <div className={NewsListStyle.r_b}>
+                                    {text}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })} */}
+                          <div className={NewsListStyle.news_4_middle}>
+                            {/*<img src="" />*/}
+                            {/*<img src="" />*/}
+                          </div>
+                          <div className={NewsListStyle.news_4_bottom}>
+                            <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} valueItem={value[0]} board_id={board_id} file_id={id} comment_type={type} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )
-              })}
-              <div className={NewsListStyle.news_4_middle}>
-                {/*<img src="" />*/}
-                {/*<img src="" />*/}
-              </div>
-              <div className={NewsListStyle.news_4_bottom}>
-                <Comment {...this.props} parentKey={parentKey} childrenKey={childrenKey} valueItem={value[0]} board_id={board_id} card_id={card_id} />
-              </div>
-            </div>
-          </div>
+                    </>
+                  )
+                  break
+                default:
+                  messageContain = (<div></div>)
+                  break
+              }
+              return messageContain
+            })
+          }
         </div>
       )
     }
@@ -939,7 +977,6 @@ export default class NewsListNewDatas extends React.Component {
 
     //具体详细信息
     const filterNewsType = (type, value, parentKey, childrenKey) => {
-      // console.log(value, 'ssssss_11111111111111')
       let containner = (<div></div>)
       switch (type) {
         case '10':  // 项目动态
@@ -955,22 +992,22 @@ export default class NewsListNewDatas extends React.Component {
           containner = (value.map((val, key) => (<div key={key}>{fileNews(val)}</div>)))
           break
         case '14': // 卡片的评论动态
-          containner = (commentNews(value, parentKey, childrenKey))
+          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
           break
         case '15': // 文件的评论动态
-          containner = (commentNews(value, parentKey, childrenKey))
+          containner = (commentNews(value, parentKey, childrenKey, type))
           break
         case '21': // 任务的关联内容
           containner = (value.map((val, key) => (<div key={key}>{taskNews(val)}</div>)))
           break
         case '22': // 流程的评论动态
-          containner = (commentNews(value, parentKey, childrenKey))
+          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
           break
         case '16': // 任务评论 @ 通知
-          containner = (commentNews(value, parentKey, childrenKey))
+          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
           break
         case '17': // 文件评论 @ 通知
-          containner = (commentNews(value, parentKey, childrenKey))
+          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
           break
         default:
           break
@@ -979,8 +1016,8 @@ export default class NewsListNewDatas extends React.Component {
     }
     return (
       <div style={{ paddingBottom: 100, transform: 'none', display: 'inline' }} >
-        {newsDynamicList.map((value, parentkey)=> {
-          const { date, dataList = [], newDataList = []} = value
+        {newsDynamicList.map((value, parentkey) => {
+          const { date, dataList = [], newDataList = [] } = value
           return (
             <div className={NewsListStyle.itemOut} key={parentkey}>
               <div className={NewsListStyle.head}>
@@ -996,12 +1033,12 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           )
         })}
-        <div style={{marginBottom: 20}}>
-          {isHasMore?(
-            <div onClick={this.getNewsDynamicListNext.bind(this, next_id)} style={{height: 30, maxWidth: 770, minWidth: 600, margin: '0 auto', lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5', borderRadius: 4, marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
-          ):(
-            <div style={{height: 30, maxWidth: 770, minWidth: 600, margin: '0 auto', lineHeight: '30px', textAlign: 'center', marginTop: 20, color: '#8c8c8c'}}>没有更多了...</div>
-          )}
+        <div style={{ marginBottom: 20 }}>
+          {isHasMore ? (
+            <div onClick={this.getNewsDynamicListNext.bind(this, next_id)} style={{ height: 30, maxWidth: 770, minWidth: 600, margin: '0 auto', lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5', borderRadius: 4, marginTop: 20, cursor: 'pointer' }}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>
+          ) : (
+              <div style={{ height: 30, maxWidth: 770, minWidth: 600, margin: '0 auto', lineHeight: '30px', textAlign: 'center', marginTop: 20, color: '#8c8c8c' }}>没有更多了...</div>
+            )}
         </div>
         {/* <div style={{ margin: 'auto', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, textAlign: 'center' }}>
           <div style={{ fontSize: 48, color: 'rgba(0,0,0,0.15)' }} className={`${globalStyles.authTheme}`}>&#xe683;</div>
