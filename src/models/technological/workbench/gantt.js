@@ -418,7 +418,7 @@ export default {
 
       const res = yield call(getGttMilestoneList, params)
       // debugger
-      // console.log('sssssss', { milestoneMap: res.data })
+      console.log('sssssss', { milestoneMap: res.data })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

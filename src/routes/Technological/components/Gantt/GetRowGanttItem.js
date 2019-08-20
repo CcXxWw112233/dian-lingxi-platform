@@ -52,6 +52,7 @@ export default class GetRowGanttItem extends Component {
     let flag = false
     let current_date_miletones = [] //当前日期的所有里程碑列表
     let current_date_board_miletones = [] //当前日期对应的项目的所有里程碑列表
+    let is_over_duetime = false
     if (!timestamp || group_view_type != '1' || gantt_board_id != '0') { //只有在全部项目下的项目视图才可以看
       return {
         flag,
@@ -68,6 +69,9 @@ export default class GetRowGanttItem extends Component {
     }
 
     for(let val of current_date_miletones) {
+      if(Number(val.deadline) * 1000 < new Date().getTime()) { //小于今天算逾期
+        is_over_duetime = true
+      }
       if(val['board_id'] == list_id) {
         flag = true
         current_date_board_miletones.push(val)
@@ -75,6 +79,7 @@ export default class GetRowGanttItem extends Component {
     }
 
     return {
+      is_over_duetime,
       flag,
       current_date_board_miletones,
     }
@@ -149,6 +154,7 @@ export default class GetRowGanttItem extends Component {
                     const { week_day, timestamp, } = value2
                     const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
                     const current_date_board_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_board_miletones
+                    const is_over_duetime = this.isHasMiletoneList(Number(timestamp)).is_over_duetime
                     return (
                       <div className={`${indexStyles.ganttDetailItem}`}
                         key={key2}
@@ -162,6 +168,7 @@ export default class GetRowGanttItem extends Component {
                                 data-targetclassname="specific_example"
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
+                                style={{color: is_over_duetime?'#FF7875': '#FAAD14'}}
                               >&#xe6a0;</div>
                             </Dropdown>
                           )
@@ -171,7 +178,8 @@ export default class GetRowGanttItem extends Component {
                             <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                               <div
                                 data-targetclassname="specific_example"
-                                className={`${indexStyles.board_miletiones_flagpole}`} style={{ height: item_height - 12 }}
+                                className={`${indexStyles.board_miletiones_flagpole}`}
+                                style={{ height: item_height - 12, backgroundColor: is_over_duetime?'#FF7875': '#FAAD14' }}
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
                                 onMouseOver={e => e.stopPropagation()}
