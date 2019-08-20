@@ -427,7 +427,7 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToTask}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -471,7 +471,7 @@ export default class InitialNews extends React.Component {
         case 'board.card.create.child': // 创建子卡片
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在卡片{messageValue.content.rela_card && messageValue.content.rela_card.name} 中 创建了子{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」 中 创建了子{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>「{jumpToTask}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
@@ -723,6 +723,29 @@ export default class InitialNews extends React.Component {
             </div>
           )
           contain = `添加${currentNounPlanFilterName(TASKS)}执行人`
+          break
+        case 'board.card.update.executor.add.child': // 添加子卡片的执行人
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「</div>
+              <div className={NewsListStyle.news_3_card} >{jumpToTask}</div>」
+              <div className={NewsListStyle.news_3_text}>指派了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」</div>
+              <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+              {
+                is_show_org_name && (
+                  <div className={NewsListStyle.news_3_orgName}>
+                    {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                    <img src={double_right} alt="" />
+                  </div>
+                )
+              }
+              {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
+              <div className={NewsListStyle.news_3_project}>「{jumpToBoard}」 </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `添加子${currentNounPlanFilterName(TASKS)}执行人`
           break
         case 'board.card.update.label.add': // 添加标签
           if (messageValue.content.rela_data !== undefined) {
