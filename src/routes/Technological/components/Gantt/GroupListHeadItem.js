@@ -149,12 +149,12 @@ export default class GroupListHeadItem extends Component {
         gantt_board_id: list_id
       }
     })
-    dispatch({
-      type: 'gantt/getGttMilestoneList',
-      payload: {
+    // dispatch({
+    //   type: 'gantt/getGttMilestoneList',
+    //   payload: {
 
-      }
-    })
+    //   }
+    // })
     dispatch({
       type: 'gantt/getGanttData',
       payload: {

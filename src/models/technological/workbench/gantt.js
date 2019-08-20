@@ -232,6 +232,12 @@ export default {
           board_id: gantt_board_id == '0' ? '' : gantt_board_id
         }
       })
+      yield put({
+        type: 'getGttMilestoneList',
+        payload: {
+          query_board_ids: setContentFilterParams().query_board_ids,
+        }
+      })
 
       const res = yield call(getGanttData, params)
       yield put({
@@ -396,6 +402,7 @@ export default {
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 
+      const { query_board_ids=[] } = payload
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
       const start_date = yield select(workbench_start_date)
@@ -404,7 +411,7 @@ export default {
         start_time: Number(start_date['timestamp']) / 1000,
         end_time: Number(end_date['timestamp']) / 1000,
         _organization_id: localStorage.getItem('OrganizationId'),
-        query_board_ids: [],
+        query_board_ids,
       }
       if (gantt_board_id != '0') { //只有在确认项目对应的一个组织id,才能够进行操作
         params.board_id = gantt_board_id

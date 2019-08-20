@@ -82,13 +82,13 @@ export default class GetRowGanttItem extends Component {
     return (
       <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
         {current_date_miletones.map((value, key) => {
-          const { id, name } = value
+          const { id, name, board_id } = value
           return (
             <MenuItem
               data-targetclassname="specific_example"
               className={globalStyles.global_ellipsis}
               style={{ width: 216 }}
-              key={id}>
+              key={`${board_id}__${id}`}>
               {name}
             </MenuItem>
           )
@@ -97,17 +97,20 @@ export default class GetRowGanttItem extends Component {
     )
   }
   // 过滤项目成员
-  setCurrentSelectedProjectMembersList = () => {
-    const { gantt_board_id, about_user_boards = [] } = this.props
-    const users = (about_user_boards.find(item => item.board_id = gantt_board_id) || {}).users
+  setCurrentSelectedProjectMembersList = ({ board_id }) => {
+    const { about_user_boards = [] } = this.props
+    const users = (about_user_boards.find(item => item.board_id == board_id) || {}).users
+    // console.log('ssssssss', { users, board_id})
     this.setState({
       currentSelectedProjectMembersList: users
     })
   }
   // 选择里程碑
   selectLCB = (e, timestamp) => {
-    this.setCurrentSelectedProjectMembersList()
-    const id = e.key
+    const idarr = e.key.split('__')
+    const id = idarr[1]
+    const board_id = idarr[0]
+    this.setCurrentSelectedProjectMembersList({board_id})
     this.set_miletone_detail_modal_visible()
     // this.getMilestoneDetail(id)
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
@@ -188,6 +191,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id } } }) {
-  return { gold_date_arr, ceiHeight, gantt_board_id }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, about_user_boards } } }) {
+  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards }
 }
