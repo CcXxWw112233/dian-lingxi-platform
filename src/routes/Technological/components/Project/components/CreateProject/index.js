@@ -36,6 +36,26 @@ class CreateProject extends React.Component {
     _organization_id: this.props._organization_id ||'', //选择的组织id
     appsList: [], //app列表
   }
+  initData = () => {
+    this.setState({
+      step: 1,
+      step_2_type: 'normal', // normal / copy step = 2 时 默认类型/复制
+      appsArray: [],
+      stepOneContinueDisabled: true,
+      stepTwoContinueDisabled: true,
+      stepThreeContinueDisabled: true,
+      completeValidation: false, //完成滑块验证
+      addProjectModalVisibleLocal: false,
+      users: [], //被邀请人
+      projects: [], //带有app列表的项目列表//
+      select_project_id: undefined, //
+      project_apps: [], //选择board后的app列表
+      copy_value: {}, //复制的值
+      OrganizationId: localStorage.getItem('OrganizationId'),
+      _organization_id: this.props._organization_id ||'', //选择的组织id
+      appsList: [], //app列表
+    })
+  }
   componentWillReceiveProps(nextProps) {
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
@@ -129,6 +149,7 @@ class CreateProject extends React.Component {
       step: 1
     })
     this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible()
+    this.initData()
   }
 
   //step 2 表单单项button点击
@@ -203,6 +224,7 @@ class CreateProject extends React.Component {
         values['_organization_id'] = _organization_id || OrganizationId
         this.props.addNewProject ? this.props.addNewProject(values) : false
         this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({visible: false})
+        this.initData()
       }
     });
   }

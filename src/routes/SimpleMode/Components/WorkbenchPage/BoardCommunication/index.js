@@ -47,6 +47,20 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
     }
 
+    initModalSelect = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'simpleWorkbenchbox/updateDatas',
+            payload: {
+                currentBoardDetail: undefined
+            }
+        });
+        this.setState({
+            selectBoardFileCompleteDisabled: true,
+            selectBoardFileModalVisible: false,
+        });
+    }
+
     openFileModal = () => {
         const { dispatch } = this.props;
         const { currentBoardDetail = {} } = this.props;
@@ -99,7 +113,7 @@ class BoardCommunication extends Component {
         this.updatePublicDatas({ board_id })
         this.getFileModuleProps().getBoardMembers({ id: board_id })
 
-
+        this.initModalSelect()
     }
     setPreviewFileModalVisibile() {
         this.setState({
@@ -402,9 +416,11 @@ class BoardCommunication extends Component {
 
             }
 
+            this.initModalSelect()
         }).catch((error, e) => {
             console.log(error);
             message.destroy()
+            this.initModalSelect()
 
             message.error('上传失败');
         });
@@ -746,17 +762,7 @@ class BoardCommunication extends Component {
 
     handleCancel = e => {
         console.log(e);
-        const { dispatch } = this.props
-        dispatch({
-            type: 'simpleWorkbenchbox/updateDatas',
-            payload: {
-                currentBoardDetail: undefined
-            }
-        });
-        this.setState({
-            selectBoardFileCompleteDisabled: true,
-            selectBoardFileModalVisible: false,
-        });
+        this.initModalSelect()
     };
 
     render() {

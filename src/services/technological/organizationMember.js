@@ -258,7 +258,10 @@ export async function getMembersInOneGroup(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group/members`,
     method: 'GET',
-    params
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...params
+    }
   }, {isNotLoading: true});
 }
 //获取某个分组的成员 => 用于设置分组负责人
