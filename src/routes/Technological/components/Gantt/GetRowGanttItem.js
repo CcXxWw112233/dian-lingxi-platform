@@ -3,7 +3,10 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { isToday } from './getDate'
 import globalStyles from '@/globalset/css/globalClassName.less'
-
+import MilestoneDetail from './components/milestoneDetail'
+import { isSamDay } from './getDate'
+import { Dropdown, Menu } from 'antd'
+const MenuItem = Menu.Item
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGanttItem extends Component {
@@ -11,6 +14,7 @@ export default class GetRowGanttItem extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      miletone_detail_modal_visible: false, //里程碑详情是否点开
       needs_task_arr: [], //实现以起始时间相同的为同一分组
     }
   }
@@ -44,7 +48,7 @@ export default class GetRowGanttItem extends Component {
   }
 
   isHasMiletoneList = (timestamp) => {
-    const { milestoneMap = [] } = this.props
+    const { milestones = [] } = this.props
     let flag = false
     let current_date_miletones = []
     if (!timestamp) {
@@ -53,10 +57,10 @@ export default class GetRowGanttItem extends Component {
         current_date_miletones
       }
     }
-    for (let key in milestoneMap) {
+    for (let key in milestones) {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
         flag = true
-        current_date_miletones = milestoneMap[key]
+        current_date_miletones = milestones[key]
         break
       }
     }
@@ -66,11 +70,60 @@ export default class GetRowGanttItem extends Component {
       current_date_miletones,
     }
   }
+  set_miletone_detail_modal_visible = () => {
+    const { miletone_detail_modal_visible } = this.state
+    this.setState({
+      miletone_detail_modal_visible: !miletone_detail_modal_visible
+    })
+  }
 
+  // 里程碑详情和列表
+  renderLCBList = (current_date_miletones, timestamp) => {
+    return (
+      <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
+        {current_date_miletones.map((value, key) => {
+          const { id, name } = value
+          return (
+            <MenuItem
+              data-targetclassname="specific_example"
+              className={globalStyles.global_ellipsis}
+              style={{ width: 216 }}
+              key={id}>
+              {name}
+            </MenuItem>
+          )
+        })}
+      </Menu>
+    )
+  }
+  // 过滤项目成员
+  setCurrentSelectedProjectMembersList = () => {
+    const { gantt_board_id, about_user_boards = [] } = this.props
+    const users = (about_user_boards.find(item => item.board_id = gantt_board_id) || {}).users
+    this.setState({
+      currentSelectedProjectMembersList: users
+    })
+  }
+  // 选择里程碑
+  selectLCB = (e, timestamp) => {
+    this.setCurrentSelectedProjectMembersList()
+    const id = e.key
+    this.set_miletone_detail_modal_visible()
+    // this.getMilestoneDetail(id)
+    //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
+    const { dispatch } = this.props
+    dispatch({
+      type: 'milestoneDetail/updateDatas',
+      payload: {
+        milestone_id: id
+      }
+    })
+  }
   render() {
     const { rows = 7 } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id } = this.props
     const { milestones = {} } = this.props
+    const { currentSelectedProjectMembersList } = this.state
     const item_height = rows * ceiHeight
     return (
       <div className={indexStyles.ganttAreaOut}>
@@ -93,22 +146,27 @@ export default class GetRowGanttItem extends Component {
                         {/* 12为上下margin的总和 */}
                         {
                           gantt_board_id == '0' && has_lcb && (
-                            <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                              data-targetclassname="specific_example"
-                              onClick={this.seeMiletones}
-                              onMouseDown={e => e.stopPropagation()}
-                            >&#xe6a0;</div>
+                            <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}>
+                              <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                                data-targetclassname="specific_example"
+                                onClick={this.seeMiletones}
+                                onMouseDown={e => e.stopPropagation()}
+                              >&#xe6a0;</div>
+                            </Dropdown>
                           )
                         }
                         {
-                          gantt_board_id == '0' && has_lcb &&(
-                            <div
-                              data-targetclassname="specific_example"
-                              className={`${indexStyles.board_miletiones_flagpole}`} style={{ height: item_height - 12 }}
-                              onClick={this.seeMiletones}
-                              onMouseDown={e => e.stopPropagation()}
-                              onMouseOver={e => e.stopPropagation()}
-                            />
+                          gantt_board_id == '0' && has_lcb && (
+                            <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_miletones, timestamp)}>
+                              <div
+                                data-targetclassname="specific_example"
+                                className={`${indexStyles.board_miletiones_flagpole}`} style={{ height: item_height - 12 }}
+                                onClick={this.seeMiletones}
+                                onMouseDown={e => e.stopPropagation()}
+                                onMouseOver={e => e.stopPropagation()}
+                                // onMouseMove
+                              />
+                            </Dropdown>
                           )
                         }
                       </div>
@@ -119,7 +177,11 @@ export default class GetRowGanttItem extends Component {
             )
           })}
         </div>
-
+        <MilestoneDetail
+          users={currentSelectedProjectMembersList}
+          miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
+          set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
+        />
       </div>
     )
   }

@@ -25,12 +25,12 @@ export async function getHoliday(params) {
 }
 
 //获取甘特图里程碑列表
-export async function getGttMilestoneList(params) {
+export async function getGttMilestoneList(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/milestone`,
-    method: 'GET',
-    params: {
-      ...params,
+    method: 'POST',
+    data: {
+      ...data,
       // _organization_id: getGlobalData('aboutBoardOrganizationId')
     }
   }, { isNotLoading: true});
