@@ -457,7 +457,7 @@ export default {
           }
         })
       } else {
-        message.warn('添加失败', MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 

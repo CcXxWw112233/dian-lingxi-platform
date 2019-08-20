@@ -10,6 +10,9 @@ import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../.
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 import iconSrc from '@/assets/organizationManager/crown/crown@2x.png'
 const getEffectOrReducerByName = name => `organizationManager/${name}`
+import {currentNounPlanFilterName, getGlobalData} from "@/utils/businessFunction";
+import { MAP_ADMIN } from '../../../globalset/js/constant';
+
 
 @connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } } }) => ({
   MapManage, management_Array, technological
@@ -180,7 +183,7 @@ export default class MapManage extends React.Component {
       return(
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
           {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
-            <Menu.SubMenu title="设置角色" key={'setRole'}>
+            <Menu.SubMenu key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
                   <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
@@ -203,6 +206,8 @@ export default class MapManage extends React.Component {
         </Menu>
       )
     }
+    // const titleText = currentNounPlanFilterName(MAP_ADMIN)
+    const titleText = '地图管理'
     return (
       <div>
         <div className={indexStyles.tips_Style}>
@@ -234,6 +239,7 @@ export default class MapManage extends React.Component {
           </div>
         </div>
           <ShowAddMenberModal 
+          title = {titleText}
           addMenbersInProject={this.addMenbersInProject}
           {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
