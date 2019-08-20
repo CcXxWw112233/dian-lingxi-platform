@@ -29,12 +29,24 @@ export default class Comment extends React.Component {
   }
 
   submitComment(comment_type) {
-    console.log(this.props, 'sssss')
     const { card_id, parentKey, childrenKey, board_id, file_id } = this.props
-    if (comment_type == '15') { // 表示文件评论
+    // if (comment_type == '15') { // 表示文件评论
+    //   this.props.addFileCommit({
+    //     board_id,
+    //     file_id,
+    //     comment: toString(this.state.editText),
+    //     parentKey,
+    //     childrenKey,
+    //   })
+    //   this.setState({
+    //     editText: toContentState('')
+    //   })
+    // }
+
+    if (comment_type == '14') { // 发表卡片评论
       this.props.addCardNewComment({
         board_id,
-        file_id,
+        card_id,
         comment: toString(this.state.editText),
         parentKey,
         childrenKey,

@@ -786,7 +786,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}</div>
-              <div className={NewsListStyle.news_3_card}>「<span style={{cursor:'pointer', color: '#1890FF'}} onClick={() => { this.goToTask({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
+              <div className={NewsListStyle.news_3_card}>「<span style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToTask({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -809,7 +809,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}</div>
-              <div className={NewsListStyle.news_3_card}>「<span style={{cursor:'pointer', color: '#1890FF'}} onClick={() => { this.goToTask({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
+              <div className={NewsListStyle.news_3_card}>「<span style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToTask({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -1114,8 +1114,48 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(FLOWS)}任务`
           break
         case 'board.flow.instance.deadline.set': // 设置流程实例的截止时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了流程「{jumpToProcess}」的截止时间</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+            </div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}截止时间`
           break
-        case 'board.flow.node.deadline.set': // 设置流程截止时间
+        case 'board.flow.node.deadline.set': // 流程节点的截止时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中模板「{messageValue.content.flow_node_instance && messageValue.content.flow_node_instance.name}」的截止时间</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+            </div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}截止时间`
           break
         case 'board.flow.task.assignee.notice':
           messageContain = (
