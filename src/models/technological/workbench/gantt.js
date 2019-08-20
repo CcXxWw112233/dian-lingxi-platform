@@ -374,7 +374,7 @@ export default {
         }
       }
 
-      console.log('sssssss_list_group', list_group)
+      // console.log('sssssss_list_group', list_group)
 
       yield put({
         type: 'updateDatas',
@@ -419,7 +419,7 @@ export default {
 
       const res = yield call(getGttMilestoneList, params)
       // debugger
-      console.log('sssssss', { milestoneMap: res.data })
+      // console.log('sssssss', { milestoneMap: res.data })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

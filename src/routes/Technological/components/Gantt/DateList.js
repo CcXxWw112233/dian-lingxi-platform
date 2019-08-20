@@ -119,12 +119,6 @@ export default class DateList extends Component {
     })
   }
 
-  getBoardName = (boardId) => {
-    const { about_user_boards = [] } = this.props
-    const board_name = (about_user_boards.find(item => item.board_id == boardId) || {}).board_name
-    return board_name || '项目名称'
-  }
-
   isHasMiletoneList = (timestamp) => {
     const { milestoneMap = [] } = this.props
     let flag = false
@@ -181,7 +175,8 @@ export default class DateList extends Component {
       gold_date_arr = [],
       gantt_board_id,
       target_scrollTop,
-      group_view_type
+      group_view_type,
+      about_user_boards
     } = this.props
 
     const { add_lcb_modal_visible, create_lcb_time, currentSelectedProjectMembersList = [] } = this.state
@@ -240,10 +235,10 @@ export default class DateList extends Component {
         </div>
         {/* {gantt_board_id != '0' && ( */}
         <AddLCBModal
-          userList={currentSelectedProjectMembersList}
-          boardName={this.getBoardName(gantt_board_id)}
+          about_user_boards={about_user_boards}
+          user_list={gantt_board_id == '0'?[] : currentSelectedProjectMembersList} //如果是全部项目，则传空数组，特定项目下传特定的userList
           create_lcb_time={create_lcb_time}
-          boardId={gantt_board_id}
+          board_id={gantt_board_id}
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
           submitCreatMilestone={this.submitCreatMilestone}
