@@ -257,7 +257,7 @@ export default {
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
       const { org_id, operateType } = payload
-      console.log("sssss",org_id)
+      console.log("sssss", org_id)
       let res = yield call(changeCurrentOrg, { org_id })
       if (isApiResponseOk(res)) {
         setOrganizationIdStorage(org_id)

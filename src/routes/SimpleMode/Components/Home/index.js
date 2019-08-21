@@ -37,7 +37,7 @@ class Home extends Component {
       type: 'simplemode/updateDatas',
       payload: {
         chatImVisiable: false,
-        leftMainNavIconVisible:true
+        leftMainNavIconVisible: true
       }
     });
 
@@ -69,7 +69,7 @@ class Home extends Component {
   }
 };
 
-export default connect(({ simplemode:{
+export default connect(({ simplemode: {
   leftMainNavIconVisible
 }}) => ({
   leftMainNavIconVisible

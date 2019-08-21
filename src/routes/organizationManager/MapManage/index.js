@@ -11,6 +11,7 @@ import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAd
 import iconSrc from '@/assets/organizationManager/crown/crown@2x.png'
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
+
 @connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } } }) => ({
   MapManage, management_Array, technological
 }))
@@ -52,21 +53,8 @@ export default class MapManage extends React.Component {
 
   confirm(data) {
     const that = this
-    Modal.confirm({
-      title: '确认将他移出项目吗？',
-      zIndex: 2000,
-      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
-        <span >退出后将无法获取该项目的相关动态</span>
-        {/*<div style={{marginTop:20,}}>*/}
-        {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
-        {/*</div>*/}
-      </div>,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        that.investmentMapDeleteAdministrators(data.user_id)
-      }
-    });
+    that.investmentMapDeleteAdministrators(data.user_id)
+    message.info("移除成功", MESSAGE_DURATION_TIME)
   }
 
   //点击添加成员操作
@@ -193,7 +181,7 @@ export default class MapManage extends React.Component {
       return(
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
           {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
-            <Menu.SubMenu title="设置角色" key={'setRole'}>
+            <Menu.SubMenu key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
                   <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 0}}>
@@ -216,6 +204,8 @@ export default class MapManage extends React.Component {
         </Menu>
       )
     }
+    // const titleText = currentNounPlanFilterName(MAP_ADMIN)
+    const titleText = '地图管理'
     return (
       <div>
         <div className={indexStyles.tips_Style}>
@@ -247,6 +237,7 @@ export default class MapManage extends React.Component {
           </div>
         </div>
           <ShowAddMenberModal 
+          title = {titleText}
           addMenbersInProject={this.addMenbersInProject}
           {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>

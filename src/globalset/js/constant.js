@@ -118,7 +118,7 @@ export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //�
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
 
 //名词定义
-export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态"}
+export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
@@ -127,6 +127,7 @@ export const PROJECTS = 'Projects'
 export const FILES = 'Files'
 export const MEMBERS = 'Members'
 export const CATCH_UP = 'Catch_Up'
+export const MAP_ADMIN = 'Map_Admin'
 
 
 //内容类型 board , list, card, file, folder,flow

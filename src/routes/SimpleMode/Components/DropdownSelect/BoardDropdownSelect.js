@@ -71,20 +71,13 @@ class BoardDropdownSelect extends Component {
   };
 
 
-  setAddProjectModalVisible = () => {
-    const { dispatch } = this.props
+  setAddProjectModalVisible = (data) => {
+    if(data) {
+      return
+    }
     const { addProjectModalVisible } = this.state
     this.setState({
       addProjectModalVisible: !addProjectModalVisible
-    }, () => {
-      if (!addProjectModalVisible) {
-        dispatch({
-          type: 'project/getAppsList',
-          payload: {
-            type: '2'
-          }
-        });
-      }
     })
   }
 
@@ -131,9 +124,7 @@ class BoardDropdownSelect extends Component {
 
 
   render() {
-    const { project, projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
-    const { datas = {} } = project;
-    const { appsList = [] } = datas;
+    const {projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     console.log(iconVisible, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
@@ -149,7 +140,6 @@ class BoardDropdownSelect extends Component {
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addProjectModalVisible}
-            appsList={appsList}
             addNewProject={this.handleSubmitNewProject}
           />
         )}

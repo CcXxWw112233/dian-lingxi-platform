@@ -30,7 +30,7 @@ class MyWorkbenchBoxs extends Component {
       console.log(user_set);
       console.log(projectList);
       const selectBoard = projectList.filter(item => item.board_id === user_set.current_board);
-      console.log("selectBoard",selectBoard);
+      console.log("selectBoard", selectBoard);
       
       if (selectBoard && selectBoard.length >0) {
        //设置当前选中的项目
