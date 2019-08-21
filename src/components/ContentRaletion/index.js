@@ -32,6 +32,9 @@ export default class ContentRaletion extends React.Component {
     const { local_link_id } = this.state
     if(link_id && local_link_id != link_id) {
       this.getRelations()
+      this.setState({
+        local_link_id: link_id
+      })
     }
   }
   async getRelations(data) {

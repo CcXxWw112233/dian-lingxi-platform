@@ -120,6 +120,18 @@ export default class NewsListNewDatas extends React.Component {
       //   <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content.card.id}`}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       // )
       switch (activity_type) {
+        // 组织
+        case 'organization.member.apply': // 申请加入组织
+          contain = `申请加入${currentNounPlanFilterName(ORGANIZATION)}`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>
+                {messageValue.creator && messageValue.creator.name} 申请加入{currentNounPlanFilterName(ORGANIZATION)}「{messageValue.content && messageValue.content.org && messageValue.content.org.name}」
+              </div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
         //项目 ----------------------------------------
         case 'board.create': // 项目创建
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
@@ -170,8 +182,8 @@ export default class NewsListNewDatas extends React.Component {
           contain = `移除了${currentNounPlanFilterName(PROJECTS)}功能`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移除了「{jumpToBoard}」的功能</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 移除了「{messageValue.content.rela_data && messageValue.content.rela_data}」的功能</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
           break
@@ -179,24 +191,40 @@ export default class NewsListNewDatas extends React.Component {
           contain = `添加${currentNounPlanFilterName(PROJECTS)}功能`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了「{jumpToBoard}」的功能</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 添加了「{messageValue.content.rela_data && messageValue.content.rela_data}」的功能</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
+          break
+        case 'board.flow.node.deadline.set': // 设置流程节点时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中模板「{messageValue.content.flow_node_instance && messageValue.content.flow_node_instance.name}」的截止时间</div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}节点截止时间`
+          break
+        case 'board.flow.instance.deadline.set': // 设置流程实例的截止时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了流程「{jumpToProcess}」的截止时间</div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}截止时间`
           break
         case 'board.flow.task.attach.upload': // 在流程中上传文件
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{jumpToProcess}」上传了文件「{<span style={{ color: '#1890FF', cursor: 'pointer' }}
-                onClick={() => this.props.dispatch({
-                  type: 'newsDynamic/routingJump',
-                  payload: {
-                    route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data && messageValue.content.rela_data.id}`
-                  }
-                })}>{messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」#{jumpToBoard} #{jumpToProcess} #{messageValue.content.flow_node_instance.name}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在流程「{jumpToProcess}」上传了文件
+              「{<span>{messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
+          contain = `上传${currentNounPlanFilterName(FLOWS)}文件附件`
           break
         case 'board.flow.cc.notice': // 在流程中抄送
           messageContain = (
@@ -207,10 +235,11 @@ export default class NewsListNewDatas extends React.Component {
                   payload: {
                     route: `/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flow_instance && messageValue.content.flow_instance.id}`
                   }
-                })}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>}」中 {messageValue.title}</div>
+                })}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>}」中 给您抄送了{currentNounPlanFilterName(F)}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
+          contain = `在${currentNounPlanFilterName(FLOWS)}中抄送`
           break
         case 'board.delete': // 项目的删除
           contain = `删除${currentNounPlanFilterName(PROJECTS)}`
@@ -265,14 +294,14 @@ export default class NewsListNewDatas extends React.Component {
         case 'board.card.create':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了{messageValue.content.card_type && messageValue.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}「{jumpToTask}」 </div>
               {/* <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
              <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
              <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name?messageValue.list_name:'无'}</div> */}
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
-          contain = `创建${currentNounPlanFilterName(TASKS)}`
+          contain = `创建${messageValue.content.card_type && messageValue.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}`
           break
         case 'board.card.create.child': // 创建子卡片
           messageContain = (
@@ -286,7 +315,17 @@ export default class NewsListNewDatas extends React.Component {
           )
           contain = `创建子${currentNounPlanFilterName(TASKS)}`
           break
-        case 'board.card.update.finish.child': // 子卡片的完成
+        case 'board.card.update.finish.child': // 子卡片的完成\
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」 中完成了子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」 </div>
+              {/* <div className={NewsListStyle.news_3_card}>{jumpToTask}</div>
+            <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：# {jumpToBoard}</div>
+            <div className={NewsListStyle.news_3_group}>分组：{messageValue.list_name}</div> */}
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `完成子${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.archived': // 归档卡片
           messageContain = (
@@ -395,13 +434,22 @@ export default class NewsListNewDatas extends React.Component {
           contain = `添加${currentNounPlanFilterName(TASKS)}执行人`
           break
         case 'board.card.update.executor.add.child': // 添加子任务执行人
-            messageContain = (
-              <div className={NewsListStyle.news_3}>
-                <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」指派了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 </div>
-                <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
-              </div>
-            )
-            contain = `添加子${currentNounPlanFilterName(TASKS)}执行人`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」指派了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 </div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `添加子${currentNounPlanFilterName(TASKS)}执行人`
+          break
+        case 'board.card.update.executor.remove.child': // 移除子执行人
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「{jumpToTask}」移除了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 </div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `移除子${currentNounPlanFilterName(TASKS)}执行人`
           break
         case 'board.card.update.executor.remove':
           // console.log({messageValue})
@@ -468,7 +516,7 @@ export default class NewsListNewDatas extends React.Component {
           contain = `关联${currentNounPlanFilterName(TASKS)}到里程碑`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{ cursor: 'pointer', color: '#1890FF' }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -477,7 +525,7 @@ export default class NewsListNewDatas extends React.Component {
           contain = `将关联${currentNounPlanFilterName(TASKS)}移除到里程碑`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「<span style={{ cursor: 'pointer', color: '#1890FF' }}>{messageValue.content.rela_content && messageValue.content.rela_content.name}</span>」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -536,7 +584,7 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           )
           break
-        case 'board.flow.task.recall':
+        case 'board.flow.task.recall': // 流程撤回
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 撤回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
@@ -545,14 +593,14 @@ export default class NewsListNewDatas extends React.Component {
           )
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'board.flow.task.reject':
+        case 'board.flow.task.reject': // 驳回流程
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 驳回{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」节点「{messageValue.content.flow_node_instance.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
-          contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
+          contain = `驳回${currentNounPlanFilterName(FLOWS)}任务`
           break
         case 'board.flow.task.reassign':
           contain = '重新指派审批人'
@@ -563,19 +611,19 @@ export default class NewsListNewDatas extends React.Component {
             </div>
           )
           break
-        case 'uploadWorkflowFile':
-          contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
+        // case 'board.flow.task.attach.upload': // 流程附件上传
+        //   contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
+        //   messageContain = (
+        //     <div className={NewsListStyle.news_3}>
+        //       <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 上传了文件「{jumpToFile}」</div>
+        //       <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+        //     </div>
+        //   )
+        //   break
+        case 'board.flow.task.pass': // 流程通过
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 上传了文件「{jumpToFile}」</div>
-              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
-            </div>
-          )
-          break
-        case 'board.flow.task.pass':
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」 中完成了任务「{messageValue.content.flow_node_instance.name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」 中完成了任务「{messageValue.content.flow_node_instance && messageValue.content.flow_node_instance.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -584,14 +632,24 @@ export default class NewsListNewDatas extends React.Component {
         case 'board.flow.instance.discontinue':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中 中止了流程</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 终止了{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」</div>
               {/* 「{messageValue.content.flow_node_instance.name}」 */}
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
-          contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
+          contain = `终止${currentNounPlanFilterName(FLOWS)}任务`
           break
-        case 'waitingWorkflowTaskNotice':
+        case 'board.flow.instance.delete': // 删除流程
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 删除了{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」</div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          contain = `删除${currentNounPlanFilterName(FLOWS)}任务`
+          break
+        case 'board.flow.task.assignee.notice':
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>您有一个{currentNounPlanFilterName(FLOWS)}任务待处理</div>
@@ -693,11 +751,59 @@ export default class NewsListNewDatas extends React.Component {
           break
         // 评论 ----------------------------------------
         case 'board.file.comment.add': // 添加一条文件评论动态
-          contain = `在${currentNounPlanFilterName(FILES)}中发表评论`
+          contain = `添加${currentNounPlanFilterName(FILES)}评论`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}> {messageValue.creator && messageValue.creator.name}在{currentNounPlanFilterName(FILES)}「{jumpToFile}」中发表了一条评论</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
-        case 'board.card.update.comment.add':
-          contain = `在${currentNounPlanFilterName(TASKS)}中发表评论`
+        case 'board.file.comment.remove': // 移除文件评论
+          contain = `移除${currentNounPlanFilterName(FILES)}评论`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}> {messageValue.creator && messageValue.creator.name}在{currentNounPlanFilterName(FILES)}「{jumpToFile}」中删除了一条评论</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
           break
+        case 'board.card.update.comment.add': // 添加任务评论
+          contain = `${currentNounPlanFilterName(TASKS)}评论`
+          break
+        case 'board.card.update.comment.remove': // 移除任务评论
+          contain = `${currentNounPlanFilterName(TASKS)}评论`
+          break
+        case 'board.flow.comment.add': // 添加流程评论
+          contain = `添加${currentNounPlanFilterName(FLOWS)}评论`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}> {messageValue.creator && messageValue.creator.name}在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中发表了一条评论</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.flow.comment.remove': // 移除流程评论
+          contain = `移除${currentNounPlanFilterName(FLOWS)}评论`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}> {messageValue.creator && messageValue.creator.name}在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中删除了一条评论</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
+        case 'board.card.comment.at.notice': // 任务评论@通知
+          contain = `在${currentNounPlanFilterName(TASKS)}中@了您`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}> {messageValue.creator && messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」的评论中@了您</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
+            </div>
+          )
+          break
+        // case 'board.file.comment.at.notice': // 文件评论@通知
+        //   contain = `在${currentNounPlanFilterName(FILES)}中@了您`
+        //   break
         default:
           break
       }
@@ -715,8 +821,9 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.top}>
             <div className={NewsListStyle.left}>
               <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
-                {/*<img src="" />*/}
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe61a;</div></span>
+                </div>
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain} </div>
@@ -762,8 +869,9 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.top}>
             <div className={NewsListStyle.left}>
               <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
-                {/*<img src="" />*/}
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe61c;</div></span>
+                </div>
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain}</div>
@@ -792,7 +900,7 @@ export default class NewsListNewDatas extends React.Component {
         </div>
       )
     }
- 
+
     /**
      * 公共评论的数据结构
      * @param {String} action 动作的类型匹配
@@ -800,14 +908,15 @@ export default class NewsListNewDatas extends React.Component {
      * @param {String} text 文本内容
      * @param {String} common_id 就是需要传入的是什么id, 任务、文件、流程等
      */
-    const CommonCommentNews = (action,common_data = {}, common_id, text) => {
+    const CommonCommentNews = (action, common_data = {}, common_id, comment_id) => {
       return (
         <>
           <div className={NewsListStyle.top}>
             <div className={NewsListStyle.left}>
               <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
-                {/*<img src="" />*/}
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe6a1;</div></span>
+                </div>
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, common_data.value[0]).contain}</div>
@@ -834,9 +943,25 @@ export default class NewsListNewDatas extends React.Component {
             {/*{news_4}*/}
             <div className={NewsListStyle.news_4}>
               {common_data.value.map((val, key) => {
-                const { creator, created, content = {} } = val
+                const { creator, created, content = {}, action } = val
                 const { card_comment = {} } = content
                 const { avatar } = creator
+                const common_text = '「该评论已被删除」'
+                // let del_arr = [] // 定义一个删除的数组
+                // let new_del = []
+                // switch (action) {
+                //   case 'board.card.update.comment.remove': // 卡片删除评论
+                //     if (content.card_comment && content.card_comment.id) {
+                //       del_arr.push(content.card_comment.id)
+                //     }
+                //     new_del = [...del_arr]
+                //     new_del = new_del.concat(...new_del)
+                //     console.log(new_del && new_del.indexOf(comment_id) != -1, 'ssss')
+                //     break;
+
+                //   default:
+                //     break;
+                // }
                 return (
                   <div className={NewsListStyle.news_4_top} key={key}>
                     <div className={NewsListStyle.news_4_left}>
@@ -855,7 +980,8 @@ export default class NewsListNewDatas extends React.Component {
                         <div className={NewsListStyle.r_t_r}>{timestampToHM(created)}</div>
                       </div>
                       <div className={NewsListStyle.r_b}>
-                        {common_data.type == '14' && card_comment['text']}
+                        {common_data.type == '14' && (card_comment['text'] != '' ? card_comment['text'] : common_text)}
+                        {/* { common_data.type == '22' && (flow_content['name'] != '' ? flow_content['name'] : common_text) } */}
                       </div>
                     </div>
                   </div>
@@ -878,8 +1004,9 @@ export default class NewsListNewDatas extends React.Component {
     //评论动态
     const commentNews = (value, parentKey, childrenKey, type) => {
       const { content = {}, org_id, creator, created } = value[0]
-      const { board = {}, card = {}, lists = {}, card_comment = {} } = content
+      const { board = {}, card = {}, lists = {}, card_comment = {}, flow_instance = {} } = content
       const card_id = card['id']
+      const flow_id = flow_instance['id']
       let list_name = lists['name']
       let board_name = board['name']
       let board_id = board['id']
@@ -901,11 +1028,26 @@ export default class NewsListNewDatas extends React.Component {
               const { action } = val
               let messageContain
               switch (action) {
-                case 'board.card.update.comment.add':
+                case 'board.card.update.comment.add': // 卡片添加评论
                   messageContain = (
-                    <div>{CommonCommentNews(action, params, card_id ,card_comment['text'])}</div>
+                    <div>{CommonCommentNews(action, params, card_id, card_comment['id'])}</div>
                   )
                   break
+                // case 'board.card.update.comment.remove': // 卡片删除评论
+                //   messageContain = (
+                //     <div>{CommonCommentNews(action, params, card_id, card_comment['text'])}</div>
+                //   )
+                //   break
+                // case 'board.file.comment.add': // 添加文件评论
+                //   messageContain = (
+                //     <div>{CommonCommentNews(action, params, card_id, card_comment['text'])}</div>
+                //   )
+                //   break
+                // case 'board.flow.comment.add': // 添加流程评论
+                //   messageContain = (
+                //     <div>{CommonCommentNews(action, params, flow_id, flow_content['name'])}</div>
+                //   )
+                //   break
                 default:
                   messageContain = (<div></div>)
                   break
@@ -927,7 +1069,9 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.top}>
             <div className={NewsListStyle.left}>
               <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe61e;</div></span>
+                </div>
                 {/*<img src="" />*/}
               </div>
               <div className={NewsListStyle.l_r}>
@@ -968,8 +1112,9 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.top}>
             <div className={NewsListStyle.left}>
               <div className={NewsListStyle.l_l}>
-                <div style={{ background: '#E6F7FF', width: 40, height: 40, borderRadius: 40 }}></div>
-                {/*<img src="" />*/}
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe619;</div></span>
+                </div>
               </div>
               <div className={NewsListStyle.l_r}>
                 <div>{filterTitleContain(action, value).contain} </div>
@@ -986,6 +1131,34 @@ export default class NewsListNewDatas extends React.Component {
                   {/* {currentNounPlanFilterName(PROJECTS)}： {board_name} */}
                   {board_name}
                 </div>
+              </div>
+            </div>
+            <div className={NewsListStyle.right}>
+              {/*<Icon type="pushpin-o" className={NewsListStyle.timer}/><Icon type="check" className={NewsListStyle.check} />*/}
+            </div>
+          </div>
+          <div className={NewsListStyle.bott}>
+            <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain} </div>
+          </div>
+        </div>
+      )
+    }
+
+    // 申请加入组织
+    const applyOrg = (value, key) => {
+      // console.log(value, 'sssss')
+      const { action } = value
+      return (
+        <div className={NewsListStyle.containr}>
+          <div className={NewsListStyle.top}>
+            <div className={NewsListStyle.left}>
+              <div className={NewsListStyle.l_l}>
+                <div style={{ width: 40, height: 40, borderRadius: 40, position: 'relative' }}>
+                  <span className={`${NewsListStyle.common_icon}`}><div className={`${globalStyles.authTheme}`}>&#xe6a4;</div></span>
+                </div>
+              </div>
+              <div className={NewsListStyle.l_r} >
+                <div style={{lineHeight: '36px'}}>{filterTitleContain(action, value).contain} </div>
               </div>
             </div>
             <div className={NewsListStyle.right}>
@@ -1025,13 +1198,16 @@ export default class NewsListNewDatas extends React.Component {
           containner = (value.map((val, key) => (<div key={key}>{taskNews(val)}</div>)))
           break
         case '22': // 流程的评论动态
-          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
+          containner = (value.map((val, key) => (<div key={key}>{processNews(val)}</div>)))
           break
         case '16': // 任务评论 @ 通知
-          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
+          containner = (value.map((val, key) => (<div key={key}>{taskNews(val)}</div>)))
           break
         case '17': // 文件评论 @ 通知
-          // containner = (value.map((val, key) => (<div key={key}>{commentNews(val, parentKey, childrenKey)}</div>)))
+          // containner = (value.map((val, key) => (<div key={key}>{fileNews(val)}</div>)))
+          break
+        case '30': // 申请加入组织
+          containner = (value.map((val, key) => (<div key={key}>{applyOrg(val)}</div>)))
           break
         default:
           break
