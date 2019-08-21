@@ -684,12 +684,17 @@ export default modelExtend(projectDetail, {
     * workflowDelete({payload}, {select, call, put}) {
       let res = yield call(workflowDelete, payload)
       // console.log('this is workflowDelete:', res)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          isProcessEnd: ''
-        }
-      })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            isProcessEnd: ''
+          }
+        })
+      } else {
+        message.warning(res.message)
+      }
+      
     },
 
     * workflowEnd({payload}, {select, call, put}) {
