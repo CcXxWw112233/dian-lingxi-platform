@@ -160,8 +160,8 @@ export default {
 
       const res = yield call(getUSerInfo)
       if (isApiResponseOk(res)) {
-        const current_org = res.data.current_org || {}//当前选中的组织
-        const current_org_id = current_org.id
+        const user_set = res.data.user_set || {}//当前选中的组织
+        const current_org_id = user_set.current_org
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
         if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
           yield put({
