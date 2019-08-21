@@ -68,10 +68,11 @@ export default class GetRowGanttItem extends Component {
       }
     }
 
+    if(Number(timestamp) < new Date().getTime()) { //小于今天算逾期
+      is_over_duetime = true
+    }
+
     for(let val of current_date_miletones) {
-      if(Number(val.deadline) * 1000 < new Date().getTime()) { //小于今天算逾期
-        is_over_duetime = true
-      }
       if(val['board_id'] == list_id) {
         flag = true
         current_date_board_miletones.push(val)
@@ -136,6 +137,18 @@ export default class GetRowGanttItem extends Component {
       }
     })
   }
+
+  // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
+  handleMiletonsChangeMountInGantt = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+
+      }
+    })
+  }
+
   render() {
     const { rows = 7 } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type } = this.props
@@ -197,6 +210,7 @@ export default class GetRowGanttItem extends Component {
           })}
         </div>
         <MilestoneDetail
+          handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}

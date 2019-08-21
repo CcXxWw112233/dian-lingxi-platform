@@ -40,6 +40,12 @@ export default class MainContent extends React.Component {
     })
   }
 
+  // 父组件相对对应该里程碑变化的操作
+  handleMiletonesChange = () => {
+    const { handleMiletonesChange } = this.props
+    if(typeof handleMiletonesChange == 'function') handleMiletonesChange()
+  }
+
   //更新详情
   updateMilestone = (params) => {
     const { dispatch, milestone_detail = {} } = this.props
@@ -104,6 +110,8 @@ export default class MainContent extends React.Component {
   endDatePickerChange(e, timeString) {
     const due_timeStamp = timeToTimestamp(timeString)
     this.updateMilestone({ deadline: due_timeStamp })
+    // 父组件的操作
+    this.handleMiletonesChange()
   }
   disabledDueTime = (deadline) => {
     const now_time = new Date().getTime()
