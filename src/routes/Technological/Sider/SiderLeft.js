@@ -86,10 +86,8 @@ export default class SiderLeft extends React.Component {
     })
   }
   menuClick({ key, code }) {
-
-    console.log(key, 'key')
-    console.log(code, 'code')
-
+    // console.log(key, 'key')
+    // console.log(code, 'code')
     const { dispatch } = this.props
     dispatch({
       type: 'technological/updateDatas',
@@ -240,6 +238,13 @@ export default class SiderLeft extends React.Component {
             is_show_org_name: is_show_org_name ? true : false,
           }
         })
+
+        //选择全组织, 默认回到工作台
+        let data = {
+          key: key,
+          code: 'Workbench'
+        }
+        this.menuClick(data)
 
         break
       default: // 其他组织的切换
