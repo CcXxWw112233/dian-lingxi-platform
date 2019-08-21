@@ -299,3 +299,13 @@ export function isColor(color) {
   var re3 = /^rgba\(([0-9]|[0-9][0-9]|25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9])\,([0-9]|[0-9][0-9]|25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9])\,([0-9]|[0-9][0-9]|25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9])\,(1|1.0|0.[0-9])\)$/i
   return re2.test(color) || re1.test(color) || re3.test(color);
 }
+
+// 比较两个时间戳的大小, (10位和13位)
+export const compareTwoTimestamp = (timeStampA, timestampB) => {
+  if(!timeStampA || !timestampB) {
+    return true
+  }
+  const new_time_a = timeStampA.toString().length < 13? Number(timeStampA) * 1000: Number(timeStampA)
+  const new_time_b = timestampB.toString().length < 13? Number(timestampB) * 1000: Number(timestampB)
+  return new_time_a > new_time_b
+}
