@@ -402,16 +402,16 @@ export default {
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 
-      // const Aa = yield put({
-      //   type: 'returnContentFilterFinalParams',
-      // })
-      // const promise = new Promise(resolve =>{
-      //    resolve(Aa.then())
-      // })
-      // const content_filter_params = yield call(promise)
+      const Aa = yield put({
+        type: 'returnContentFilterFinalParams',
+      })
+      const get_content_filter_params = () => new Promise(resolve =>{
+         resolve(Aa.then())
+      })
+      const content_filter_params = yield call(get_content_filter_params) || {}
       // console.log('ssssssssss', { content_filter_params })
 
-      const { query_board_ids=[] } = payload
+      const { query_board_ids=[] } = content_filter_params
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
       const start_date = yield select(workbench_start_date)
