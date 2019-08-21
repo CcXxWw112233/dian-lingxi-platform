@@ -17,6 +17,10 @@ import { isApiResponseOk } from "@/utils/handleResponseData";
 import CreateOrganizationModal from '@/routes/Technological/components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '@/routes/Technological/components/OrganizationMember/ShowAddMenberModal'
 import NotificationSettingsModal from '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
+import AccountSet from '@/routes/Technological/components/AccountSet'
+import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
+import Organization from '@/routes/organizationManager'
+import queryString from 'query-string';
 const { SubMenu } = Menu;
 let timer;
 @connect(mapStateToProps)
@@ -185,16 +189,130 @@ export default class SimpleNavigation extends Component {
 
         switch (key) {
             case '24': // 匹配团队成员
-                isHasMemberView() && this.routingJump('/technological/organizationMember')
+                //isHasMemberView() && this.routingJump('/technological/organizationMember')
+                dispatch({
+                    type: 'organizationMember/updateDatas',
+                    payload: {
+                        groupList: [], //全部分组
+                        TreeGroupModalVisiblie: false, //树状分组是否可见
+                        groupTreeList: [], //树状分组数据
+                        currentBeOperateMemberId: '', //当前被操作的成员id
+                        roleList: [], //当前组织角色列表
+                        menuSearchSingleSpinning: false, //获取分组负责人转转转
+                    }
+                })
+                if (checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && localStorage.getItem('OrganizationId') != '0') {
+                    //获取分组列表
+                    dispatch({
+                        type: 'organizationMember/getGroupList',
+                        payload: {
+                        }
+                    })
+                    // 获取分组树状列表
+                    dispatch({
+                        type: 'organizationMember/getGroupTreeList',
+                        payload: {}
+                    })
+                    //查询当前角色
+                    dispatch({
+                        type: 'organizationMember/getCurrentOrgRole',
+                        payload: {
+                            type: '1'
+                        }
+                    })
+                } else {
+                    dispatch({
+                        type: 'noLookPermissionsHandle',
+                    })
+                }
+                this.props.updateStates({
+                    simpleDrawerVisible: true,
+                    simpleDrawerContent: <OrganizationMember />,
+                    simpleDrawerTitle: '团队成员'
+
+                });
+                break
                 break
             case '23': // 匹配成员管理后台
-                isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+                //isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+                const currentSelectOrganize = localStorage.getItem('currentSelectOrganize') ? JSON.parse(localStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(localStorage.getItem('currentSelectOrganize'))
+                const { name, member_join_model, member_join_content, logo, logo_id, id } = currentSelectOrganize
+                dispatch({
+                    type: 'organizationManager/updateDatas',
+                    payload: {
+                        currentOrganizationInfo: { //组织信息
+                            name,
+                            member_join_model,
+                            member_join_content,
+                            logo,
+                            logo_id,
+                            id,
+                            management_Array: [], //地图管理人员数组
+                        },
+                        content_tree_data: [], //可访问内容
+                        function_tree_data: [],
+                        orgnization_role_data: [], //组织角色数据
+                        project_role_data: [], //项目角色数据
+                        tabSelectKey: '1',
+                        // permission_data: [], //权限数据
+                        //名词定义
+                        current_scheme_local: '', //已选方案名称
+                        current_scheme: '', //当前方案名称
+                        current_scheme_id: '',
+                        scheme_data: [],
+                        field_data: [],
+                        editable: '0', //当前是否在自定义编辑状态 1是 0 否
+
+                    }      
+                })
+
+                dispatch({
+                    type: 'organizationManager/getRolePermissions',
+                    payload: {
+                        type: '1',
+                    }
+                })
+                dispatch({
+                    type: 'organizationManager/getRolePermissions',
+                    payload: {
+                        type: '2',
+                    }
+                })
+                dispatch({
+                    type: 'organizationManager/getNounList',
+                    payload: {}
+                })
+
+                this.props.updateStates({
+                    simpleDrawerVisible: true,
+                    simpleDrawerContent: <Organization/>,
+                    simpleDrawerTitle: '后台管理'
+
+                });
+
                 break
             case '22': // 匹配邀请成员加入弹框显示
                 checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
                 break
             case '20': // 匹配用户设置
-                this.routingJump('/technological/accoutSet')
+                //this.routingJump('/technological/accoutSet')
+                dispatch({
+                    type: 'accountSet/getUserInfo',
+                    payload: {}
+                })
+                const SelectedKeys = queryString.parse(location.search).selectedKeys
+                dispatch({
+                    type: 'accountSet/updateDatas',
+                    payload: {
+                        SelectedKeys: SelectedKeys || '1', //正常默认进来menu选项‘1’,通过外部邮件进来其他
+                    }
+                })
+                this.props.updateStates({
+                    simpleDrawerVisible: true,
+                    simpleDrawerContent: <AccountSet />,
+                    simpleDrawerTitle: '账号设置'
+
+                });
                 break
             case 'subShowOrgName':
                 // console.log('sss', 2222)

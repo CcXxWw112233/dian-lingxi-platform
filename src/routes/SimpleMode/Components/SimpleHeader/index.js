@@ -4,16 +4,19 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SiderLeft from '@/routes/Technological/Sider/SiderLeft'
 import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Tooltip, Dropdown } from 'antd';
-import SimpleNavigation from "./Components/SimpleNavigation";
-
+import { Tooltip, Dropdown } from 'antd'
+import SimpleNavigation from "./Components/SimpleNavigation/index"
+import SimpleDrawer from './Components/SimpleDrawer/index'
 class SimpleHeader extends Component {
     state = {
-        visible: false
+        leftNavigationVisible: false,
+        simpleDrawerVisible: false,
+        simpleDrawerContent: null,
+        simpleDrawerTitle:''
     }
 
     openOrCloseImChatModal = () => {
-        const { dispatch } = this.props;
+        const { dispatch, chatImVisiable } = this.props;
         const width = document.body.scrollWidth;
         let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
         dispatch({
@@ -27,7 +30,7 @@ class SimpleHeader extends Component {
     }
 
     handleVisibleChange = flag => {
-        this.setState({ visible: flag });
+        this.setState({ leftNavigationVisible: flag });
     };
 
     openOrCloseMainNav = (e) => {
@@ -51,9 +54,22 @@ class SimpleHeader extends Component {
         })
 
     }
+    updateStates = (data) => {
+        this.setState({
+            ...data
+        });
+    }
+
+    closeDrawer = () => {
+        this.setState({
+            simpleDrawerVisible: false,
+            simpleDrawerTitle:''
+        });
+    }
 
     render() {
         const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible } = this.props;
+        const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
                 {
@@ -67,11 +83,11 @@ class SimpleHeader extends Component {
                     leftMainNavIconVisible &&
                     <Dropdown
                         placement="bottomLeft"
-                        overlay={<SimpleNavigation />}
+                        overlay={<SimpleNavigation updateStates={this.updateStates} />}
                         onVisibleChange={this.handleVisibleChange}
-                        visible={true}
+                        visible={leftNavigationVisible}
                     >
-                        <div className={indexStyles.miniNavigation} onClick={this.openOrCloseMainNav}>
+                        <div className={indexStyles.miniNavigation}>
                             <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
                         </div>
                     </Dropdown>
@@ -101,6 +117,9 @@ class SimpleHeader extends Component {
                     </div>
                 </div>
 
+                {simpleDrawerVisible &&
+                    <SimpleDrawer updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
+                }
 
             </div>
         );

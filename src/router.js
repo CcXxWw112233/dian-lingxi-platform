@@ -166,6 +166,7 @@ const Routers = function ({ history, app }) {
       import('./models/simpleMode'),
       import('./models/simpleMode/simpleWorkbenchbox'),
       import('./models/simpleMode/simpleBoardCommunication'),
+      import('./models/organizationManager'),
       
       import('./models/technological/informRemind'),
 
