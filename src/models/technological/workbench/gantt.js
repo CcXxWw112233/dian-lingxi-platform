@@ -402,6 +402,15 @@ export default {
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 
+      // const Aa = yield put({
+      //   type: 'returnContentFilterFinalParams',
+      // })
+      // const promise = new Promise(resolve =>{
+      //    resolve(Aa.then())
+      // })
+      // const content_filter_params = yield call(promise)
+      // console.log('ssssssssss', { content_filter_params })
+
       const { query_board_ids=[] } = payload
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
