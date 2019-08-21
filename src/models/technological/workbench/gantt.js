@@ -139,6 +139,7 @@ export default {
       }
     },
     * getGanttData({ payload }, { select, call, put }) {
+      const { not_set_loading } = payload //not_set_loading是否需要设置loading状态
       // 参数处理
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
@@ -219,7 +220,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          get_gantt_data_loading: true,
+          get_gantt_data_loading: not_set_loading? false: true,
         }
       })
 
