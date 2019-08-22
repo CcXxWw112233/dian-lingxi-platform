@@ -273,7 +273,7 @@ class BoardCommunication extends Component {
 
         }
 
-        const { dispatch, currentBoardDetail = {} } = this.props;
+        const { dispatch, simplemodeCurrentProject = {} } = this.props;
         if (file.size == 0) {
             message.error(`不能上传空文件`)
             return false
@@ -294,6 +294,25 @@ class BoardCommunication extends Component {
             dragEnterCaptureFlag: false,
             currentfile: {}
         }));
+
+        let currentBoardDetail = {}
+        if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+            currentBoardDetail = { ...simplemodeCurrentProject };
+            dispatch({
+                type: 'simpleWorkbenchbox/updateDatas',
+                payload: {
+                    currentBoardDetail: currentBoardDetail
+                }
+            });
+        }
+
+        dispatch({
+            type: 'simpleBoardCommunication/updateDatas',
+            payload: {
+                is_file_tree_loading: true
+            }
+        });
+
 
         if (currentBoardDetail.board_id) {
             dispatch({
