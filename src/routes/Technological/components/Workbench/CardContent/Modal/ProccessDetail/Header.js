@@ -171,7 +171,7 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-    const { processDoingList, processStopedList, processComepletedList, projectDetailInfoData = {}, } = this.props.model.datas
+    const { processDoingList = [], processStopedList=[], processComepletedList = [], projectDetailInfoData = {}, } = this.props.model.datas
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick = {() => {console.log(2)}} style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
     const processDelete = async () => {

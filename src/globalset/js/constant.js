@@ -44,7 +44,7 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if(NODE_ENV == 'development') {
     return 'ws://test.lingxi.new-di.com/websocket' 
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    // return 'ws://192.168.1.39/websocket'
+    // return 'ws://192.168.1.17/websocket'
   } else {
     const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`

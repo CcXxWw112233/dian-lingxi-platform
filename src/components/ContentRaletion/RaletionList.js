@@ -153,7 +153,7 @@ export default class RaletionList extends React.Component {
             )
           } else {
             if (key < 2) {
-              console.log(linked_sign);
+              // console.log(linked_sign);
 
               return (
                 <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>

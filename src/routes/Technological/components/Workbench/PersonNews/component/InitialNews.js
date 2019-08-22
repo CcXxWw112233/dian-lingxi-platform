@@ -106,7 +106,7 @@ export default class InitialNews extends React.Component {
         <span
           style={{ color: '#1890FF', cursor: 'pointer', maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'inline-block', verticalAlign: 'top' }}
           onClick={() => { this.goToBoard({ org_id: messageValue.org_id, content: messageValue.content }) }}
-        >{messageValue.content.board.name}</span>
+        >{messageValue.content.board && messageValue.content.board.name}</span>
       )
       let jumpToTask = (
         <span
@@ -133,6 +133,18 @@ export default class InitialNews extends React.Component {
       //   <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content.card.id}`}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       // )
       switch (activity_type) {
+        // 组织
+        case 'organization.member.apply': // 申请加入组织
+          contain = `申请加入${currentNounPlanFilterName(ORGANIZATION)}`
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>
+                {messageValue.creator && messageValue.creator.name} 申请加入{currentNounPlanFilterName(ORGANIZATION)}「{messageValue.content && messageValue.content.org && messageValue.content.org.name}」
+              </div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          break
         //项目
         case 'board.create':
           contain = `创建${currentNounPlanFilterName(PROJECTS)}`
@@ -219,27 +231,27 @@ export default class InitialNews extends React.Component {
             </div>
           )
           break
-        case 'board.update.archived':
-          contain = `${currentNounPlanFilterName(PROJECTS)}归档`
-          messageContain = (
-            <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了「{jumpToBoard}」</div>
-              <div className={NewsListStyle.news_3_project}>
-                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
-                {
-                  is_show_org_name && (
-                    <div className={NewsListStyle.news_3_orgName}>
-                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
-                      <img src={double_right} alt="" />
-                    </div>
-                  )
-                }
-                {jumpToBoard}&nbsp;
-                </div>
-              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
-            </div>
-          )
-          break
+        // case 'board.update.archived':
+        //   contain = `${currentNounPlanFilterName(PROJECTS)}归档`
+        //   messageContain = (
+        //     <div className={NewsListStyle.news_3}>
+        //       <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 归档了「{jumpToBoard}」</div>
+        //       <div className={NewsListStyle.news_3_project}>
+        //         <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+        //         {
+        //           is_show_org_name && (
+        //             <div className={NewsListStyle.news_3_orgName}>
+        //               {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+        //               <img src={double_right} alt="" />
+        //             </div>
+        //           )
+        //         }
+        //         {jumpToBoard}&nbsp;
+        //         </div>
+        //       <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+        //     </div>
+        //   )
+        //   break
         case 'board.update.user.quit': // 用户退出项目
           contain = `退出${currentNounPlanFilterName(PROJECTS)}`
           messageContain = (
@@ -265,14 +277,8 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>
-                {messageValue.creator.name} 在流程「{jumpToProcess}」上传了文件「{<span style={{ color: '#1890FF', cursor: 'pointer' }}
-                  onClick={() => this.props.dispatch({
-                    type: 'newsDynamic/routingJump',
-                    payload: {
-                      route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=4&file_id=${messageValue.content.rela_data && messageValue.content.rela_data.id}`
-                    }
-                  })}>
-                  {messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」{jumpToBoard} {jumpToProcess} {messageValue.content.flow_instance && messageValue.content.flow_instance.name}</div>
+                {messageValue.creator.name} 在流程「{jumpToProcess}」上传了{currentNounPlanFilterName(FILES)}
+                「{<span>{messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.name}</span>}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -288,6 +294,7 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
+          contain = `上传${currentNounPlanFilterName(FLOWS)}文件附件`
           break
         case 'board.flow.cc.notice': // 流程抄送通知
           messageContain = (
@@ -298,7 +305,7 @@ export default class InitialNews extends React.Component {
                   payload: {
                     route: `/technological/projectDetail?board_id=${messageValue.content.board && messageValue.content.board.id}&appsSelectKey=2&flow_id=${messageValue.content.flow_instance && messageValue.content.flow_instance.id}`
                   }
-                })}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>}」中 {messageValue.title}</div>
+                })}>{messageValue.content && messageValue.content.flow_instance && messageValue.content.flow_instance.name}</span>}」中 {messageValue.title && messageValue.title}</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -338,7 +345,7 @@ export default class InitialNews extends React.Component {
             </div>
           )
           break
-        case 'board.update.user.add':
+        case 'board.update.user.add': // 项目中添加成员
           contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -360,6 +367,7 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.content.link.add': // 关联内容的添加
+          contain = `新增关联内容`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 新增了关联内容「{messageValue.content && messageValue.content.linked_name}」</div>
@@ -380,6 +388,7 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.content.link.remove': // 关联内容的移除
+          contain = `关联内容的移除`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移除了关联内容「{messageValue.content && messageValue.content.linked_name}」</div>
@@ -400,6 +409,7 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.content.link.update': // 关联内容的名称的修改
+          contain = `关联内容名称的修改`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了关联内容「{messageValue.content && messageValue.content.linked_name}」</div>
@@ -424,7 +434,7 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToTask}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -445,7 +455,7 @@ export default class InitialNews extends React.Component {
         case 'board.card.create': // 创建任务
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 创建了{messageValue.content.card_type && messageValue.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</div>
               <div className={NewsListStyle.news_3_card}>「{jumpToTask}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
@@ -463,12 +473,12 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-          contain = `创建${currentNounPlanFilterName(TASKS)}`
+          contain = `创建${messageValue.content.card_type && messageValue.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}`
           break
         case 'board.card.create.child': // 创建子卡片
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在卡片{messageValue.content.rela_card && messageValue.content.rela_card.name} 中 创建了子{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」 中 创建了子{currentNounPlanFilterName(TASKS)}</div>
               <div className={NewsListStyle.news_3_card}>「{jumpToTask}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
@@ -491,8 +501,8 @@ export default class InitialNews extends React.Component {
         case 'board.card.update.name':
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 更新了{currentNounPlanFilterName(TASKS)}信息为</div>
-              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了原{currentNounPlanFilterName(TASKS)}名「{messageValue.content.rela_data && messageValue.content.rela_data.name}」为</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」名称</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -630,7 +640,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(TASKS)}</div>
-              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」修改了开始时间</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」中修改了开始时间</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -647,13 +657,13 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-          contain = `删除${currentNounPlanFilterName(TASKS)}`
+          contain = `修改${currentNounPlanFilterName(TASKS)}的开始时间`
           break
         case 'board.card.update.dutTime': // 修改结束时间
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)} </div>
-              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」修改了结束时间</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」中修改了结束时间</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -670,7 +680,7 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-          contain = `删除${currentNounPlanFilterName(TASKS)}`
+          contain = `修改${currentNounPlanFilterName(TASKS)}的结束时间`
           break
         case 'board.card.update.description': // 修改卡片的描述
           messageContain = (
@@ -695,6 +705,27 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.card.update.finish.child': // 标记子任务的完成
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中 完成了子{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+            </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `完成子${currentNounPlanFilterName(TASKS)}`
           break
         case 'board.card.update.cancel.finish.child': // 取消子任务的完成
           break
@@ -714,12 +745,58 @@ export default class InitialNews extends React.Component {
                 )
               }
               {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
+              <div className={NewsListStyle.news_3_project}>{jumpToBoard} </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `添加${currentNounPlanFilterName(TASKS)}执行人`
+          break
+        case 'board.card.update.executor.add.child': // 添加子卡片的执行人
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「</div>
+              <div className={NewsListStyle.news_3_card} >{jumpToTask}</div>」
+              <div className={NewsListStyle.news_3_text}>指派了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」</div>
+              <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+              {
+                is_show_org_name && (
+                  <div className={NewsListStyle.news_3_orgName}>
+                    {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                    <img src={double_right} alt="" />
+                  </div>
+                )
+              }
+              {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
               <div className={NewsListStyle.news_3_project}>「{jumpToBoard}」 </div>
               <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-          contain = `添加任${currentNounPlanFilterName(TASKS)}执行人`
+          contain = `添加子${currentNounPlanFilterName(TASKS)}执行人`
+          break
+        case 'board.card.update.executor.remove.child': // 移除子卡片执行人
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在归属于{currentNounPlanFilterName(TASKS)}「{messageValue.content.rela_card && messageValue.content.rela_card.name}」中的子{currentNounPlanFilterName(TASKS)}「</div>
+              <div className={NewsListStyle.news_3_card} >{jumpToTask}</div>」
+            <div className={NewsListStyle.news_3_text}>移除了负责人为 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」</div>
+              <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+              {
+                is_show_org_name && (
+                  <div className={NewsListStyle.news_3_orgName}>
+                    {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                    <img src={double_right} alt="" />
+                  </div>
+                )
+              }
+              {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
+              <div className={NewsListStyle.news_3_project}>「{jumpToBoard}」 </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `移除子${currentNounPlanFilterName(TASKS)}执行人`
           break
         case 'board.card.update.label.add': // 添加标签
           if (messageValue.content.rela_data !== undefined) {
@@ -775,15 +852,54 @@ export default class InitialNews extends React.Component {
           }
           contain = `移除${currentNounPlanFilterName(TASKS)}标签`
           break
-        case 'board.card.update.contentprivilege':
-          contain = '设置任务内容特权'
-          break
+        // case 'board.card.update.contentprivilege':
+        //   contain = '设置任务内容特权'
+        //   break
         case 'board.card.add.to.milestone':
           contain = '把任务添加到里程碑'
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」中添加了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」内容</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
           break
-        //评论
         case 'board.card.remove.to.milestone':
           contain = '把任务从里程碑中删除'
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(TASKS)}</div>
+              <div className={NewsListStyle.news_3_card}>「{jumpToTask}」中移除了关联里程碑「{messageValue.content.milestone && messageValue.content.milestone.name}」的内容</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;>
+              </div>
+              <div className={NewsListStyle.news_3_group}>{messageValue.lists ? messageValue.lists.name : '无'}</div>
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
           break
         case 'board.card.list.group.add': // 更新分组
           messageContain = (
@@ -813,7 +929,7 @@ export default class InitialNews extends React.Component {
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={NewsListStyle.news_3_card}>「{jumpToBoard}」中</div>
-              <div className={NewsListStyle.news_3_text}>移除了分组{messageValue.content.lists && messageValue.content.lists.name}</div>
+              <div className={NewsListStyle.news_3_text}>移除了分组「{messageValue.content.lists && messageValue.content.lists.name}」</div>
               <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
               {
                 is_show_org_name && (
@@ -880,7 +996,7 @@ export default class InitialNews extends React.Component {
           contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users && messageValue.content.rela_users}」移出了「{jumpToBoard}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users && messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -901,7 +1017,7 @@ export default class InitialNews extends React.Component {
           contain = `添加${currentNounPlanFilterName(PROJECTS)}功能`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 添加了「{jumpToBoard}」的功能</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中添加了「{messageValue.content.rela_data && messageValue.content.rela_data}」的功能</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -922,7 +1038,7 @@ export default class InitialNews extends React.Component {
           contain = `移除了${currentNounPlanFilterName(PROJECTS)}功能`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 移除了「{jumpToBoard}」的功能</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}  在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中移除了「{messageValue.content.rela_data && messageValue.content.rela_data}」的功能</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -938,10 +1054,11 @@ export default class InitialNews extends React.Component {
               <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
             </div>
           )
-        case 'board.update.user.role': // 设置用户在项目中的角色
           break
-        case 'board.update.contentprivilege': // 设置项目的内容特权
-          break
+        // case 'board.update.user.role': // 设置用户在项目中的角色
+        //   break
+        // case 'board.update.contentprivilege': // 设置项目的内容特权
+        //   break
         case 'board.flow.task.recall':
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -1071,8 +1188,48 @@ export default class InitialNews extends React.Component {
           contain = `删除${currentNounPlanFilterName(FLOWS)}任务`
           break
         case 'board.flow.instance.deadline.set': // 设置流程实例的截止时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了流程「{jumpToProcess}」的截止时间</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+            </div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}截止时间`
           break
-        case 'board.flow.node.deadline.set': // 设置流程截止时间
+        case 'board.flow.node.deadline.set': // 流程节点的截止时间
+          messageContain = (
+            <div className={NewsListStyle.news_3}>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 设置了{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中模板「{messageValue.content.flow_node_instance && messageValue.content.flow_node_instance.name}」的截止时间</div>
+              <div className={NewsListStyle.news_3_project}>
+                <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                {
+                  is_show_org_name && (
+                    <div className={NewsListStyle.news_3_orgName}>
+                      {getOrgNameWithOrgIdFilter(messageValue.org_id, currentUserOrganizes)}
+                      <img src={double_right} alt="" />
+                    </div>
+                  )
+                }
+                {jumpToBoard}&nbsp;
+            </div>
+              {/* 「{messageValue.content.flow_node_instance.name}」 */}
+              <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(messageValue.created)}</div>
+            </div>
+          )
+          contain = `设置${currentNounPlanFilterName(FLOWS)}截止时间`
           break
         case 'board.flow.task.assignee.notice':
           messageContain = (
@@ -1121,7 +1278,7 @@ export default class InitialNews extends React.Component {
           contain = `上传${currentNounPlanFilterName(FILES)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在 「{jumpToBoard}」中 上传了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 在 {currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中 上传了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -1142,7 +1299,7 @@ export default class InitialNews extends React.Component {
           contain = `${currentNounPlanFilterName(FILES)}版本更新`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在「{jumpToBoard}」中更新了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中更新了{currentNounPlanFilterName(FILES)}「{jumpToFile}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -1277,6 +1434,7 @@ export default class InitialNews extends React.Component {
     }
     //项目动态
     const projectNews = (value) => {
+      // console.log(value, 'ssss')
       const { action } = value
       return (
         <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain}</div>
@@ -1481,10 +1639,42 @@ export default class InitialNews extends React.Component {
                   </div>
                 )
                 break
-              case 'board.card.comment.at.notice': // 任务评论 @ 我的
+              case 'board.card.comment.at.notice': // 任务评论 at 我的
+                messageContain = (
+                  <div className={NewsListStyle.news_3} key={key}>
+                    <div className={NewsListStyle.news_3_text}> {val.creator.name}在{currentNounPlanFilterName(TASKS)}「</div>
+                    <div className={NewsListStyle.news_3_card}>{<span style={{ color: '#1890FF', cursor: 'pointer' }}
+                      onClick={() => this.props.dispatch({
+                        type: 'newsDynamic/routingJump',
+                        payload: {
+                          route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3&card_id=${val.content.card && val.content.card.id}`
+                        }
+                      })}>{val.content && val.content.card && val.content.card.name}</span>}」的评论中@了您</div>
+                    <div className={NewsListStyle.news_3_project}>
+                      <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
+                      {
+                        is_show_org_name && (
+                          <div className={NewsListStyle.news_3_orgName}>
+                            {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                            <img src={double_right} alt="" />
+                          </div>
+                        )
+                      }
+                      {<span style={{ color: '#1890FF', cursor: 'pointer' }}
+                        onClick={() => this.props.dispatch({
+                          type: 'newsDynamic/routingJump',
+                          payload: {
+                            route: `/technological/projectDetail?board_id=${val.content.board && val.content.board.id}&appsSelectKey=3`
+                          }
+                        })}>{val.content && val.content.board && val.content.board.name}</span>} >
+                  </div>
+                    <div className={NewsListStyle.news_3_group}>{val.content.lists ? val.content.lists.name : '无'}</div>
+                    <div className={NewsListStyle.news_3_time}>{timestampToTimeNormal2(val.created)}</div>
+                  </div>
+                )
                 break
-              case 'board.file.comment.at.notice': // 文件评论 @ 我的
-                break
+              // case 'board.file.comment.at.notice': // 文件评论 @ 我的
+              //   break
               default:
                 messageContain = (<div></div>)
                 break
@@ -1529,45 +1719,51 @@ export default class InitialNews extends React.Component {
       )
     }
 
+    // 申请加入组织
+    const applyOrg = (value, key) => {
+      // console.log(value, 'sssss')
+      const { action } = value
+      return (
+        <div className={NewsListStyle.news_1}>{filterTitleContain(action, value).messageContain}</div>
+      )
+    }
+
     //具体详细信息
     const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
       switch (type) {
-        case '10':
+        case '10':  // 项目动态
           containner = (value.map((val, key) => (<div key={key}>{projectNews(val)}</div>)))
           break
-        case '11':
+        case '11': // 任务动态
           containner = (taskNews(value))
           break
-        case '12':
+        case '12': // 流程动态
           containner = (value.map((val, key) => (<div key={key}>{processNews(val)}</div>)))
           break
-        case '13':
+        case '13': // 文件动态
           containner = (value.map((val, key) => (<div key={key}>{fileNews(val)}</div>)))
           break
-        case '14':
+        case '14': // 卡片的评论动态
           containner = (commentNews(value, parentKey, childrenKey))
           break
-        case '15':
+        case '15': // 文件的评论动态
           containner = (commentNews(value, parentKey, childrenKey))
           break
-        case '21':
+        case '21': // 任务的关联内容
           containner = (taskNews(value))
           break
-        case '22':
+        case '22': // 流程的评论动态
           containner = (commentNews(value, parentKey, childrenKey))
           break
-        case '16':
+        case '16': // 任务评论 @ 通知
           containner = (commentNews(value, parentKey, childrenKey))
           break
-        case '17':
-          containner = (commentNews(value, parentKey, childrenKey))
-          break
-        case '6':
-          containner = (value.map((val, key) => (<div key={key}>{processNews(val)}</div>)))
-          break
-        case '8':
-          containner = (commentNews_2(value, parentKey, childrenKey))
+        // case '17': // 文件评论 @ 通知
+        //   containner = (commentNews(value, parentKey, childrenKey))
+        //   break
+        case '30': // 申请加入组织
+          containner = (value.map((val, key) => (<div key={key}>{applyOrg(val)}</div>)))
           break
         default:
           break
@@ -1581,7 +1777,7 @@ export default class InitialNews extends React.Component {
         {/*<div className={NewsListStyle.newsConfirm} onClick={this.updateNewsDynamic.bind(this)}>您有新消息，点击更新查看</div>*/}
         {/*): ('')}*/}
 
-        {/* {newsDynamicList && newsDynamicList.length ? newsDynamicList.map((value, parentkey) => {
+        {newsDynamicList && newsDynamicList.length ? newsDynamicList.map((value, parentkey) => {
           const { date, dataList = [], newDataList = [] } = value
           return (
             <div className={NewsListStyle.itemOut} key={parentkey}>
@@ -1598,11 +1794,11 @@ export default class InitialNews extends React.Component {
               <div style={{ fontSize: 48, color: 'rgba(0,0,0,0.15)' }} className={`${globalStyles.authTheme}`}>&#xe683;</div>
               <span style={{ color: 'rgba(217,217,217,1)' }}>暂无动态</span>
             </div>
-          )} */}
-        <div style={{ margin: 'auto', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, textAlign: 'center' }}>
+          )}
+        {/* <div style={{ margin: 'auto', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, textAlign: 'center' }}>
           <div style={{ fontSize: 48, color: 'rgba(0,0,0,0.15)' }} className={`${globalStyles.authTheme}`}>&#xe683;</div>
           <span style={{ color: 'rgba(217,217,217,1)' }}>动态模块维护中...</span>
-        </div>
+        </div> */}
         {/*<div style={{marginBottom: 20,maxWidth: 770, minWidth: 600}}>*/}
         {/*{isHasMore?(*/}
         {/*<div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30,maxWidth: 770, minWidth: 600, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>*/}
