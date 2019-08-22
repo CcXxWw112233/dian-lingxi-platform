@@ -1915,7 +1915,7 @@ export default class InitialNews extends React.Component {
     const filterNewsType = (type, value, parentKey, childrenKey) => {
       let containner = (<div></div>)
       switch (type) {
-        case '10':  // 项目动态
+        case '10': // 项目动态
           containner = (value.map((val, key) => (<div key={key}>{projectNews(val)}</div>)))
           break
         case '11': // 任务动态

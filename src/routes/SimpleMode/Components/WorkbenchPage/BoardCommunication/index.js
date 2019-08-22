@@ -427,18 +427,23 @@ class BoardCommunication extends Component {
     }
 
     getBoardTreeData = (allOrgBoardTreeList) => {
+        const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let list = []
         allOrgBoardTreeList.map((org, orgKey) => {
-            //children
-            //isLeaf: true
-            let children = []
-            if (org.board_list && org.board_list.length > 0) {
-                org.board_list.map((board, boardKey) => {
-                    children.push({ key: board.board_id, title: board.board_name, isLeaf: true, selectable: true });
-                });
-                list.push({ key: org.org_id, title: org.org_name, children, selectable: false });
+            //全组织或者当前组织
+            if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
+                //children
+                //isLeaf: true
+                let children = []
+                if (org.board_list && org.board_list.length > 0) {
+                    org.board_list.map((board, boardKey) => {
+                        children.push({ key: board.board_id, title: board.board_name, isLeaf: true, selectable: true });
+                    });
+                    list.push({ key: org.org_id, title: org.org_name, children, selectable: false });
 
+                }
             }
+
 
         });
         return list;

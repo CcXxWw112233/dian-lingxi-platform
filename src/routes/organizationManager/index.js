@@ -18,7 +18,7 @@ const TabPane = Tabs.TabPane
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
 const Organization = (options) => {
-  const { dispatch, model = {}, } = options
+  const { dispatch, model = {}, showBackBtn = true } = options
   const { datas: { tabSelectKey } } = model
   const updateDatas = (payload) => {
     dispatch({
@@ -147,9 +147,13 @@ const Organization = (options) => {
   return (
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
-        <div className={indexStyles.back} onClick={historyGoBack}>
-          <Icon type="left" theme="outlined" />返回
-        </div>
+        {
+          showBackBtn && (
+<div className={indexStyles.back} onClick={historyGoBack}>
+            <Icon type="left" theme="outlined" />返回
+          </div>
+)}
+
         <div className={indexStyles.topTitle}>
           <Icon type="home" theme="outlined" style={{ color: color_4, fontSize: 32 }} />
           <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>

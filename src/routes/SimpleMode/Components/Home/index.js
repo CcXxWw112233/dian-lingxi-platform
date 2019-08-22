@@ -47,9 +47,19 @@ class Home extends Component {
     this.setState(data)
   }
 
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
 
   render() {
-
     const {
       myWorkbenchBoxsVisiable,
       wallpaperSelectVisiable,
@@ -63,7 +73,6 @@ class Home extends Component {
         {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
         {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
-
       </div>
     )
   }
@@ -71,6 +80,6 @@ class Home extends Component {
 
 export default connect(({ simplemode: {
   leftMainNavIconVisible
-}}) => ({
+} }) => ({
   leftMainNavIconVisible
 }))(Home)
