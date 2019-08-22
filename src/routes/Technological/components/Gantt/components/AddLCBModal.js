@@ -94,13 +94,17 @@ class AddTaskModal extends Component {
   };
 
   isShouldNotDisableSubmitBtn = () => {
+    const { current_selected_board = {}} = this.state
+    const { board_id } = current_selected_board
+    // console.log('sssssssssss', {current_selected_board})
     const {
       add_name,
       due_time,
     } = this.state;
+    const isHasChooseBoard = () => !!!board_id
     const isHasTaskTitle = () => !!!add_name
     const isHasDueTime = () => !!!due_time
-    return isHasTaskTitle() || isHasDueTime()
+    return isHasTaskTitle() || isHasDueTime() || isHasChooseBoard()
   }
 
   handleAddTaskModalTaskTitleChange = e => {

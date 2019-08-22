@@ -144,64 +144,17 @@ export default {
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-      const group_view_filter_boards = yield select(getModelSelectDatasState('gantt', 'group_view_filter_boards'))
-      const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
-      const group_view_boards_tree = yield select(getModelSelectDatasState('gantt', 'group_view_boards_tree'))
-      const group_view_users_tree = yield select(getModelSelectDatasState('gantt', 'group_view_users_tree'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
       //内容过滤处理
-      const setContentFilterParams = () => {
-        let query_board_ids = []
-        let query_user_ids = []
-
-        //  项目id处理
-        for (let val of group_view_filter_boards) {
-          if (val.indexOf('board_org_') != -1) { //项目组织id
-            const org_board_list = group_view_boards_tree.find(item => item.value == val).children
-            const org_board_id_list = org_board_list.map(item => item.value.replace('board_', ''))
-            query_board_ids = [].concat(query_board_ids, org_board_id_list)
-          } else { //项目id
-            const board_id = val.replace('board_', '')
-            query_board_ids.push(board_id)
-          }
-        }
-
-        // 用户id处理
-        for (let val of group_view_filter_users) {
-          if (val.indexOf('user_org_') != -1) { //用户组织id
-            // 遍历得到了分组
-            const org_groups = group_view_users_tree.find(item => item.value == val).children //得到组织的用户分组
-            const org_groups_users = org_groups.map(item => item.children) //得到一个二维数组，组为一维，用户列表为二维
-            const org_users = org_groups_users.reduce(function (a, b) { return a.concat(b) }); //该组织下所有分组用户铺开一维数组
-            const org_user_ids = org_users.map(item => item.value.replace('user_', '').split('_')[2])
-            query_user_ids = [].concat(query_user_ids, org_user_ids)
-
-          } else if (val.indexOf('user_group_') != -1) { //分组id
-            const org_groupr_id_arr = val.replace('user_group_', '').split('_')
-            const group_org_id = org_groupr_id_arr[0]
-            const group_id = org_groupr_id_arr[1]
-
-            const org_groups = group_view_users_tree.find(item => item.value == `user_org_${group_org_id}`).children //得到组织对应分组列表
-            const org_users = org_groups.find(item => item.value == `user_group_${group_org_id}_${group_id}`).children //得到对应分组
-            const org_user_ids = org_users.map(item => item.value.replace('user_', '').split('_')[2])
-            query_user_ids = [].concat(query_user_ids, org_user_ids)
-
-          } else {//用户id
-            // const user_id = val.replace('user_','')
-            const user_id = val.replace('user_', '').split('_')[2]
-            query_user_ids.push(user_id)
-          }
-        }
-        // 去重
-        query_board_ids = Array.from(new Set(query_board_ids))
-        query_user_ids = Array.from(new Set(query_user_ids))
-        return {
-          query_board_ids,
-          query_user_ids,
-        }
-      }
-
+      const Aa = yield put({
+        type: 'returnContentFilterFinalParams',
+      })
+      const get_content_filter_params = () => new Promise(resolve =>{
+         resolve(Aa.then())
+      })
+      // 内容过滤处理end
+      const content_filter_params = yield call(get_content_filter_params) || {}
       // console.log('ssssssssss', {
       //   group_view_filter_boards,
       //   group_view_filter_users,
@@ -212,7 +165,7 @@ export default {
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
         chart_type: group_view_type,
-        ...setContentFilterParams(),
+        ...content_filter_params,
       }
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
@@ -228,14 +181,13 @@ export default {
       yield put({
         type: 'getGanttBoardsFiles',
         payload: {
-          query_board_ids: setContentFilterParams().query_board_ids,
+          query_board_ids: content_filter_params.query_board_ids,
           board_id: gantt_board_id == '0' ? '' : gantt_board_id
         }
       })
       yield put({
         type: 'getGttMilestoneList',
         payload: {
-          query_board_ids: setContentFilterParams().query_board_ids,
         }
       })
 
