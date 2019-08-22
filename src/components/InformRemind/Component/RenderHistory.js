@@ -253,6 +253,7 @@ export default class RenderHistory extends Component {
           <div className={infoRemindStyle.select}>
             {/* 显示某种事件类型的列表--选择框 */}
             <Select
+              className={`${infoRemindStyle.trigger_select}`}
               disabled={status == 2 ? true : false}
               defaultValue={remind_trigger}
               style={{ width: 122, height: 32, marginRight: 16 }}>
