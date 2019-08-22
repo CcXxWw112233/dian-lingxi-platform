@@ -51,7 +51,7 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   }
 })(NODE_ENV, window.location)
 
-export const MAP_URL = 'http://map.di-an.com:8888/' //投资地图
+export const MAP_URL = 'https://map.di-an.com' //投资地图
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
