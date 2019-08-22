@@ -29,7 +29,7 @@ class MyWorkbenchBoxs extends Component {
       const { user_set = {} } = userInfo
       console.log(user_set);
       console.log(projectList);
-      const selectBoard = projectList.filter(item => item.board_id === user_set.current_board);
+      const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
       console.log("selectBoard",selectBoard);
       
       if (selectBoard && selectBoard.length >0) {
@@ -41,6 +41,13 @@ class MyWorkbenchBoxs extends Component {
            simplemodeCurrentProject: { ...selectBoard[0] }
          }
        });
+      }else{
+        dispatch({
+          type: 'simplemode/updateDatas',
+          payload: {
+            simplemodeCurrentProject: {}
+          }
+        });
       }
     }
 

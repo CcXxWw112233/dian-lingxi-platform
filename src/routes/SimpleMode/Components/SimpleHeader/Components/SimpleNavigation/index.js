@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
 import { Tooltip, Modal, Menu, Switch, Icon } from 'antd';
-
+import linxiLogo from '@/assets/library/lingxi_logo.png'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva';
 import { checkIsHasPermission, currentNounPlanFilterName } from "@/utils/businessFunction";
@@ -263,7 +263,7 @@ export default class SimpleNavigation extends Component {
                         field_data: [],
                         editable: '0', //当前是否在自定义编辑状态 1是 0 否
 
-                    }      
+                    }
                 })
 
                 dispatch({
@@ -285,7 +285,7 @@ export default class SimpleNavigation extends Component {
 
                 this.props.updateStates({
                     simpleDrawerVisible: true,
-                    simpleDrawerContent: <Organization/>,
+                    simpleDrawerContent: <Organization showBackBtn={false} />,
                     simpleDrawerTitle: '后台管理'
 
                 });
@@ -341,7 +341,9 @@ export default class SimpleNavigation extends Component {
                 dispatch({
                     type: 'technological/changeCurrentOrg',
                     payload: {
-                        org_id: '0'
+                        org_id: '0',
+                        routingJumpPath: '/technological/simplemode/home',
+                        isNeedRedirectHash: false
                     }
                 })
                 dispatch({
@@ -352,6 +354,13 @@ export default class SimpleNavigation extends Component {
                         is_show_org_name: is_show_org_name ? true : false,
                     }
                 })
+
+                dispatch({
+                    type: 'simplemode/updateDatas',
+                    payload:{
+                        simplemodeCurrentProject:{}
+                    }
+                });
                 break
             case '-1': //退出
                 this.logout(e)
@@ -374,9 +383,17 @@ export default class SimpleNavigation extends Component {
                         dispatch({
                             type: 'technological/changeCurrentOrg',
                             payload: {
-                                org_id: val.id
+                                org_id: val.id,
+                                routingJumpPath: '/technological/simplemode/home',
+                                isNeedRedirectHash: false
                             }
                         })
+                        dispatch({
+                            type: 'simplemode/updateDatas',
+                            payload:{
+                                simplemodeCurrentProject:{}
+                            }
+                        });
                         break
                     }
                 }
@@ -611,6 +628,31 @@ export default class SimpleNavigation extends Component {
                         </div> */}
                     </Menu.Item>
                     <Menu.Divider />
+                </Menu>
+
+                <Menu
+                    className={`${globalStyles.global_vertical_scrollbar}`}
+                    style={{ maxHeight: 200, overflowY: 'auto' }}
+                    selectedKeys={id ? [id] : ['0']}
+                    onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} mode="vertical" >
+                    <Menu.Item key="0" className={indexStyles.org_name}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <img src={linxiLogo} className={indexStyles.org_img} />
+                            <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
+                        </div>
+                    </Menu.Item>
+                    {currentUserOrganizes.map((value, key) => {
+                        const { name, id, identity_type, logo } = value
+                        return (
+                            <Menu.Item key={id} className={indexStyles.org_name} >
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <img src={logo || linxiLogo} className={indexStyles.org_img} />
+                                    <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
+                                </div>
+                                {identity_type == '0' ? (<span className={indexStyles.middle_bott} style={{ display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6, position: 'absolute', right: 34, top: 12 }}>访客</span>) : ('')}
+                            </Menu.Item>
+                        )
+                    })}
                 </Menu>
 
                 {/** 功能组件引入 */}

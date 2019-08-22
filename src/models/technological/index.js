@@ -194,7 +194,7 @@ export default {
         localStorage.setItem('userInfo', JSON.stringify(res.data))
 
         //组织切换重新加载
-        const { operateType } = payload
+        const { operateType,routingJumpPath='/technological?redirectHash',isNeedRedirectHash=true } = payload
         if (operateType === 'changeOrg') {
           let redirectHash = locallocation.pathname
           if (locallocation.pathname === '/technological/projectDetail') {
@@ -203,7 +203,12 @@ export default {
           if (document.getElementById('iframImCircle')) {
             document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
           }
-          yield put(routerRedux.push(`/technological?redirectHash=${redirectHash}`));
+          if(isNeedRedirectHash){
+            yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          }else{
+            yield put(routerRedux.push(routingJumpPath));
+          }
+         
         }
         //存储
       } else {
@@ -256,7 +261,7 @@ export default {
       }
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
-      const { org_id, operateType } = payload
+      const { org_id, operateType,routingJumpPath,isNeedRedirectHash } = payload
       console.log("sssss",org_id)
       let res = yield call(changeCurrentOrg, { org_id })
       if (isApiResponseOk(res)) {
@@ -265,6 +270,9 @@ export default {
           type: 'getUSerInfo',
           payload: {
             operateType: operateType ? operateType : 'changeOrg',
+            routingJumpPath: routingJumpPath,
+            isNeedRedirectHash: isNeedRedirectHash
+
           }
         })
         yield put({ //重新获取名词方案

@@ -248,7 +248,7 @@ class BoardFiles extends Component {
     }
     const { boardSelectVisible, boardFileContentVisible, currentBoardId } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
-
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
@@ -260,24 +260,28 @@ class BoardFiles extends Component {
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {
-
-                    return org.board_list && org.board_list.length > 0 && (
-                      <div key={org.org_id}>
-                        <div className={indexStyles.groupName}>{org.org_name}</div>
-                        <div className={indexStyles.boardItemWapper}>
-                          {
-                            org.board_list.map((board, key) => {
-                              return (
-                                <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
-                                  <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                  <span className={indexStyles.boardName}>{board.board_name}</span>
-                                </div>
-                              );
-                            })
-                          }
+                    //全组织或者当前组织
+                    if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
+                      return org.board_list && org.board_list.length > 0 && (
+                        <div key={org.org_id}>
+                          <div className={indexStyles.groupName}>{org.org_name}</div>
+                          <div className={indexStyles.boardItemWapper}>
+                            {
+                              org.board_list.map((board, key) => {
+                                return (
+                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
+                                    <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
+                                    <span className={indexStyles.boardName}>{board.board_name}</span>
+                                  </div>
+                                );
+                              })
+                            }
+                          </div>
                         </div>
-                      </div>
-                    )
+                      )
+
+                    }
+
                   })
                 }
 
@@ -288,7 +292,7 @@ class BoardFiles extends Component {
         {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end',paddingRight:'16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '16px' }}>
                 <BoarderfilesHeader board_id={currentBoardId} updateDatasFile={updateDatasFile} {...this.getFileModuleProps()} selectedRowKeys={selectedRowKeys} />
               </div>
 
