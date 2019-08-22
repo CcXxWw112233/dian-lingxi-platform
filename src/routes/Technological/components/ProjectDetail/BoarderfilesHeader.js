@@ -25,8 +25,8 @@ export default class BoarderfilesHeader extends Component {
 
 
     getUploadProps = () => {
-        console.log(this.props, "hhhhhh");
-        console.log(this.props.model, "hhhhhh");
+        //console.log(this.props, "hhhhhh");
+        //console.log(this.props.model, "hhhhhh");
         const that = this;
         const currentParrentDirectoryId = this.props.model.datas.currentParrentDirectoryId; 
         return {
