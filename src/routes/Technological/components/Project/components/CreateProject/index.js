@@ -53,7 +53,7 @@ class CreateProject extends React.Component {
       copy_value: {}, //复制的值
       OrganizationId: localStorage.getItem('OrganizationId'),
       _organization_id: this.props._organization_id ||'', //选择的组织id
-      appsList: [], //app列表
+      // appsList: [], //app列表
     })
   }
   componentWillReceiveProps(nextProps) {

@@ -287,7 +287,7 @@ export default {
       let res = yield call(quitProject, payload)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getProjectList',
+          type: 'fetchCurrentProjectGroupProjectList',
           payload: {
             calback: function () {
               message.success('已退出项目', MESSAGE_DURATION_TIME)
