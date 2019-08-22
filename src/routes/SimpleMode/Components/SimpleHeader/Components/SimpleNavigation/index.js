@@ -300,7 +300,7 @@ export default class SimpleNavigation extends Component {
                     type: 'accountSet/getUserInfo',
                     payload: {}
                 })
-                const SelectedKeys = queryString.parse(location.search).selectedKeys
+                const SelectedKeys = queryString.parse(window.location.search).selectedKeys
                 dispatch({
                     type: 'accountSet/updateDatas',
                     payload: {
