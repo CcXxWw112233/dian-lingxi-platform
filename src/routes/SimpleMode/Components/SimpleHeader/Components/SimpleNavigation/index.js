@@ -357,8 +357,8 @@ export default class SimpleNavigation extends Component {
 
                 dispatch({
                     type: 'simplemode/updateDatas',
-                    payload:{
-                        simplemodeCurrentProject:{}
+                    payload: {
+                        simplemodeCurrentProject: {}
                     }
                 });
                 break
@@ -390,8 +390,8 @@ export default class SimpleNavigation extends Component {
                         })
                         dispatch({
                             type: 'simplemode/updateDatas',
-                            payload:{
-                                simplemodeCurrentProject:{}
+                            payload: {
+                                simplemodeCurrentProject: {}
                             }
                         });
                         break

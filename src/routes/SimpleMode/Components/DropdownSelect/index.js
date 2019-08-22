@@ -72,8 +72,8 @@ class DropdownSelect extends Component {
 
     renderContent() {
         const { fuctionMenuItemList = [], menuItemClick = () => { }} = this.state;
-        const { itemList = [],selectedKeys = []} = this.props;
-        console.log("selectedKeys",selectedKeys);
+        const { itemList = [], selectedKeys = []} = this.props;
+        console.log("selectedKeys", selectedKeys);
         
         return (
             <Menu className={styles.dropdownMenu}
@@ -105,13 +105,13 @@ class DropdownSelect extends Component {
                             whiteSpace: 'nowrap',
                         }}>
                         {
-                            iconVisible &&
-                            <span>
+                            iconVisible && (
+<span>
                                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '20px' }}>&#xe67d;</i>
                                 &nbsp;
                                 &nbsp;
                             </span>
-                        }
+)}
                         <span style={{ fontWeight: '500', fontSize: '16px' }}>
                             {(simplemodeCurrentProject && simplemodeCurrentProject.board_id) ?
                                 simplemodeCurrentProject.board_name

@@ -30,9 +30,9 @@ class WorkbenchPage extends Component {
         }
 
         dispatch({
-            type:'simplemode/updateDatas',
-            payload:{
-                leftMainNavIconVisible:false
+            type: 'simplemode/updateDatas',
+            payload: {
+                leftMainNavIconVisible: false
             }
         });
     }

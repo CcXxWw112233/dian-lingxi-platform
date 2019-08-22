@@ -457,7 +457,7 @@ export default {
           }
         })
       } else {
-        message.warn('添加失败', MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -470,6 +470,7 @@ export default {
             _organization_id: payload._organization_id
           }
         })
+        message.info('移除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn('移除失败', MESSAGE_DURATION_TIME)
       }

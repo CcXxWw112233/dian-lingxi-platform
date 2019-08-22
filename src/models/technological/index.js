@@ -160,8 +160,9 @@ export default {
 
       const res = yield call(getUSerInfo)
       if (isApiResponseOk(res)) {
-        const current_org = res.data.current_org || {}//当前选中的组织
-        const current_org_id = current_org.id
+        const current_org = res.data.current_org || {}
+        const user_set = res.data.user_set || {}//当前选中的组织
+        const current_org_id = user_set.current_org
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
         if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
           yield put({
@@ -194,7 +195,7 @@ export default {
         localStorage.setItem('userInfo', JSON.stringify(res.data))
 
         //组织切换重新加载
-        const { operateType,routingJumpPath='/technological?redirectHash',isNeedRedirectHash=true } = payload
+        const { operateType, routingJumpPath='/technological?redirectHash', isNeedRedirectHash=true } = payload
         if (operateType === 'changeOrg') {
           let redirectHash = locallocation.pathname
           if (locallocation.pathname === '/technological/projectDetail') {
@@ -208,7 +209,7 @@ export default {
           }else{
             yield put(routerRedux.push(routingJumpPath));
           }
-         
+
         }
         //存储
       } else {
@@ -261,8 +262,8 @@ export default {
       }
     },
     * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
-      const { org_id, operateType,routingJumpPath,isNeedRedirectHash } = payload
-      console.log("sssss",org_id)
+      const { org_id, operateType, routingJumpPath, isNeedRedirectHash } = payload
+      console.log("sssss", org_id)
       let res = yield call(changeCurrentOrg, { org_id })
       if (isApiResponseOk(res)) {
         setOrganizationIdStorage(org_id)

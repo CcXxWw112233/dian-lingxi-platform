@@ -12,7 +12,7 @@ class SimpleHeader extends Component {
         leftNavigationVisible: false,
         simpleDrawerVisible: false,
         simpleDrawerContent: null,
-        simpleDrawerTitle:''
+        simpleDrawerTitle: ''
     }
 
     openOrCloseImChatModal = () => {
@@ -63,7 +63,7 @@ class SimpleHeader extends Component {
     closeDrawer = () => {
         this.setState({
             simpleDrawerVisible: false,
-            simpleDrawerTitle:''
+            simpleDrawerTitle: ''
         });
     }
 
@@ -73,15 +73,17 @@ class SimpleHeader extends Component {
         return (
             <div className={indexStyles.headerWapper}>
                 {
-                    false && <Tooltip placement="bottom" title={'退出极简模式'}>
+                    false && (
+<Tooltip placement="bottom" title={'退出极简模式'}>
                         <div className={indexStyles.miniNavigation} onClick={this.openOrCloseMainNav}>
                             <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69d;</i>
                         </div>
                     </Tooltip>
+)
                 }
                 {
-                    leftMainNavIconVisible &&
-                    <Dropdown
+                    leftMainNavIconVisible && (
+<Dropdown
                         placement="bottomLeft"
                         overlay={<SimpleNavigation updateStates={this.updateStates} />}
                         onVisibleChange={this.handleVisibleChange}
@@ -91,8 +93,7 @@ class SimpleHeader extends Component {
                             <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
                         </div>
                     </Dropdown>
-
-                }
+)}
 
                 <div className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>

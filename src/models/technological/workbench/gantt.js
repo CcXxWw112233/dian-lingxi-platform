@@ -222,7 +222,7 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
-            let time_span =  (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+            let time_span = (!due_time ||!start_time)?1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
             if(due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
               time_span = (Math.floor(( end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
             } else if(start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间

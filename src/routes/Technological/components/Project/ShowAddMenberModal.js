@@ -83,14 +83,14 @@ class ShowAddMenberModal extends React.Component {
   }
 
   render() {
-    const { modalVisible } = this.props;
+    const { modalVisible, title } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { stepThreeContinueDisabled } = this.state
-
+    const titleText = !title ? currentNounPlanFilterName(PROJECTS) : title
     const step_3 = (
       // <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
       <Form style={{margin: '0 auto', width: 336}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>邀请他人一起加入{titleText}</div>
 
         {/* 他人信息 */}
         {/* <FormItem style={{width: 336}}>
