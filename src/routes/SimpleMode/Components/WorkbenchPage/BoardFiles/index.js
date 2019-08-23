@@ -249,6 +249,8 @@ class BoardFiles extends Component {
     const { boardSelectVisible, boardFileContentVisible, currentBoardId } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    console.log('user_set', user_set);
+    
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
@@ -271,7 +273,7 @@ class BoardFiles extends Component {
                                 return (
                                   <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
                                     <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                    <span className={indexStyles.boardName}>{board.board_name}</span>
+                                    {/* <span className={indexStyles.boardName}>{board.board_name}</span> */}
                                   </div>
                                 );
                               })
