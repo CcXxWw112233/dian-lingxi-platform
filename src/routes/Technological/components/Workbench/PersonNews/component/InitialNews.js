@@ -527,9 +527,36 @@ export default class InitialNews extends React.Component {
           break
         case 'board.content.link.update': // 关联内容的名称的修改
           contain = `关联内容名称的修改`
+          if (messageValue.content && messageValue.content.rela_data && messageValue.content.rela_data.type) {
+            if (messageValue.content.rela_data.type == '3') { // 表示任务
+              link_message = (
+                <span>
+                  在{currentNounPlanFilterName(TASKS)}「{jumpToTask}」中修改了关联内容「{messageValue.content.rela_data && messageValue.content.rela_data.name}」
+              </span>
+              )
+            } else if (messageValue.content.rela_data.type == '2') { // 表示流程
+              link_message = (
+                <span>
+                  在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」中修改了关联内容「{messageValue.content.rela_data && messageValue.content.rela_data.name}」
+              </span>
+              )
+            } else if (messageValue.content.rela_data.type == '21') { // 表示流程节点
+              link_message = (
+                <span>
+                  在{currentNounPlanFilterName(FLOWS)}「{jumpToProcess}」的节点「{messageValue.content.flow_node && messageValue.content.flow_node.name}」中修改了关联内容「{messageValue.content.rela_data && messageValue.content.rela_data.name}」
+              </span>
+              )
+            } else if (messageValue.content.rela_data.type == '4') { // 表示文件
+              link_message = (
+                <span>
+                  在{currentNounPlanFilterName(FILES)}「{jumpToFile}」中修改了关联内容「{messageValue.content.rela_data && messageValue.content.rela_data.name}」
+              </span>
+              )
+            }
+          }
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 修改了关联内容「{messageValue.content && messageValue.content.linked_name}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} {link_message}</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
