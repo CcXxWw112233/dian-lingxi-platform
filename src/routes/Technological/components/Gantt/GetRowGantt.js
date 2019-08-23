@@ -9,6 +9,7 @@ import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
+import QueueAnim from 'rc-queue-anim'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -51,7 +52,7 @@ export default class GetRowGantt extends Component {
   // 设置甘特图卡片距离页面文档左边距
   setGanttCardOutOffsetLeft = () => {
     const { is_need_calculate_left_dx } = this.props
-    if(!is_need_calculate_left_dx) { //如果不需要计算做边距，从引用甘特图组件的地方设置
+    if (!is_need_calculate_left_dx) { //如果不需要计算做边距，从引用甘特图组件的地方设置
       this.setState({
         coperatedX: 0
       })
@@ -329,7 +330,7 @@ export default class GetRowGantt extends Component {
         payload: {
           id,
           board_id,
-          calback: function(data) {
+          calback: function (data) {
             dispatch({
               type: 'workbenchPublicDatas/getRelationsSelectionPre',
               payload: {
@@ -413,38 +414,41 @@ export default class GetRowGantt extends Component {
               const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
 
               return (
-                <Dropdown  placement="bottomRight" overlay={<CardDropDetail {...value2} />}>
-                  <div
-                    className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                    data-targetclassname="specific_example"
-                    // onDrag={this.onCardItemDrag}
-                    style={{
-                      left: left, top: top,
-                      width: (width || 6) - 6, height: (height || task_item_height),
-                      marginTop: task_item_margin_top,
-                      background: this.setLableColor(label_data),// 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                    }}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onMouseMove={(e) => e.stopPropagation()}
-                    onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
-                  >
+                <QueueAnim type="right" key={id} duration={200}>
+                  <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
                     <div
+                      className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"
-                      className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                      onMouseDown={(e) => e.stopPropagation()} >
-                      <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                        <CheckItem is_realize={is_realize} />
-                      </div>
-                      <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
-                      <div data-targetclassname="specific_example"
-                        onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                        <AvatarList users={executors} size={'small'} />
+                      // onDrag={this.onCardItemDrag}
+                      style={{
+                        left: left, top: top,
+                        width: (width || 6) - 6, height: (height || task_item_height),
+                        marginTop: task_item_margin_top,
+                        background: this.setLableColor(label_data),// 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onMouseMove={(e) => e.stopPropagation()}
+                      onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                    >
+                      <div
+                        data-targetclassname="specific_example"
+                        className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                        onMouseDown={(e) => e.stopPropagation()} >
+                        <div data-targetclassname="specific_example"
+                          className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                          <CheckItem is_realize={is_realize} />
+                        </div>
+                        <div data-targetclassname="specific_example"
+                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
+                        <div data-targetclassname="specific_example"
+                          onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                          <AvatarList users={executors} size={'small'} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Dropdown>
+                  </Dropdown>
+                </QueueAnim>
+
               )
             })
           )
@@ -453,9 +457,9 @@ export default class GetRowGantt extends Component {
 
         {list_group.map((value, key) => {
           const { lane_data, list_id, list_data = [] } = value
-          const { milestones = { } } = lane_data
+          const { milestones = {} } = lane_data
           return (
-            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones}/>
+            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
           )
         })}
         <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
