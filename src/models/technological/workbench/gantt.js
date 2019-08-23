@@ -150,8 +150,8 @@ export default {
       const Aa = yield put({
         type: 'returnContentFilterFinalParams',
       })
-      const get_content_filter_params = () => new Promise(resolve =>{
-         resolve(Aa.then())
+      const get_content_filter_params = () => new Promise(resolve => {
+        resolve(Aa.then())
       })
       // 内容过滤处理end
       const content_filter_params = yield call(get_content_filter_params) || {}
@@ -173,7 +173,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          get_gantt_data_loading: not_set_loading? false: true,
+          get_gantt_data_loading: not_set_loading ? false : true,
         }
       })
 
@@ -289,15 +289,12 @@ export default {
 
       const group_list_area = [] //分组高度区域
 
-      console.log('sssssssss_before', { list_group })
-
       //设置分组区域高度, 并为每一个任务新增一条
       for (let i = 0; i < list_group.length; i++) {
         let list_data = list_group[i]['list_data']
         list_data = list_data.sort((a, b) => {
           return a.start_time - b.start_time
         })
-        console.log('ssssssssss', { list_data })
         // const length = (list_data.length || 1) + 1
         const length = list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
@@ -328,18 +325,49 @@ export default {
           }
 
           item.top = after_group_height + j * ceiHeight
-
-          // for (let k = 0; k < j; k++) {
-          //   if(item.start_time > list_data[k].end_time) {
-          //     item.top = after_group_height + k * ceiHeight
-          //     break
-          //   } 
-          // }
-
+          for (let k = 0; k < j; k++) {
+            if (item.start_time > list_data[k].end_time) {
+              item.top = after_group_height + k * ceiHeight
+              break
+            }
+          }
           list_group[i]['list_data'][j] = item
         }
       }
 
+      // for (let i = 0; i < list_group.length; i++) {
+      //   let list_data = list_group[i]['list_data']
+      //   let after_group_height = 0
+      //   for (let k = 0; k < i; k++) {
+      //     after_group_height += group_list_area[k]
+      //   }
+
+      //   for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置}
+      //     let item = list_data[j]
+      //     // item.top = after_group_height + j * ceiHeight
+
+      //     for (let k = 0; k < j; k++) { 
+      //       if(item.top == list_data[k].top && item.start_time < list_data[k].end_time) {
+      //         item.top = after_group_height + k * ceiHeight
+      //         let flag = false
+      //         let flag_index = 0
+      //         for(let z = 0; z < k; z++) {
+      //           if(item.start_time > list_data[z].start_time && item.top == list_data[z].top) {
+      //             flag_index = z
+      //             flag = true
+      //           }
+      //         }
+      //         if(flag) {
+      //           item.top = after_group_height + flag_index * ceiHeight
+      //         }
+      //         break
+      //       }
+      //     }
+      //     list_group[i]['list_data'][j] = item
+
+      //   }
+
+      // }
       // console.log('sssssss_list_group', list_group)
 
       yield put({
@@ -431,13 +459,13 @@ export default {
       const Aa = yield put({
         type: 'returnContentFilterFinalParams',
       })
-      const get_content_filter_params = () => new Promise(resolve =>{
-         resolve(Aa.then())
+      const get_content_filter_params = () => new Promise(resolve => {
+        resolve(Aa.then())
       })
       const content_filter_params = yield call(get_content_filter_params) || {}
       // console.log('ssssssssss', { content_filter_params })
 
-      const { query_board_ids=[] } = content_filter_params
+      const { query_board_ids = [] } = content_filter_params
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
 
       const start_date = yield select(workbench_start_date)
