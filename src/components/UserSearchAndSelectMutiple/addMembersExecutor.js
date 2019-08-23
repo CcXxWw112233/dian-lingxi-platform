@@ -13,17 +13,17 @@ import indexStyles from './menuseachNultiple.less'
 //  multipleSelectUserChange={() => this.multipleUserSelectUserChange()} //选择了某一项
 // />
 
-export default class UserSearchAndSelectMutiple extends React.Component{
-   state = {
-     resultArr: [],
-     keyWord: '',
-     selectedKeys: []
-   }
+export default class AddMembersExecutor extends React.Component {
+  state = {
+    resultArr: [],
+    keyWord: '',
+    selectedKeys: []
+  }
   componentWillMount() {
     const { keyWord } = this.state
     let selectedKeys = []
-    const { listData=[], searchName, currentSelect = [] } = this.props
-    for(let val of currentSelect) {
+    const { listData = [], searchName, currentSelect = [] } = this.props
+    for (let val of currentSelect) {
       selectedKeys.push(val['user_id'])
     }
     this.setState({
@@ -34,8 +34,7 @@ export default class UserSearchAndSelectMutiple extends React.Component{
       })
     })
   }
-  componentWillReceiveProps (nextProps) {
-
+  componentWillReceiveProps(nextProps) {
   }
   //选择
   handleMenuReallySelect = (e) => {
@@ -47,24 +46,25 @@ export default class UserSearchAndSelectMutiple extends React.Component{
   }
   setSelectKey(e, type) { //type add/remove
     const { key, selectedKeys } = e
-    if(!key) {
+    // console.log(key, selectedKeys, 'ssssss')
+    if (!key) {
       return false
     }
     this.setState({
       selectedKeys
     }, () => {
-      const { listData=[], searchName } = this.props
+      const { listData = [], searchName } = this.props
       const { keyWord } = this.state
       this.setState({
         resultArr: this.fuzzyQuery(listData, searchName, keyWord),
       })
     })
-    this.props.multipleSelectUserChange && this.props.multipleSelectUserChange({selectedKeys, key, type})
+    this.props.multipleSelectUserChange && this.props.multipleSelectUserChange({ selectedKeys, key, type })
   }
   onCheck() {
-     if(this.props.onCheck && typeof this.props.onCheck === 'function' ) {
-       this.props.onCheck(this.state.selectedKeys)
-     }
+    if (this.props.onCheck && typeof this.props.onCheck === 'function') {
+      this.props.onCheck(this.state.selectedKeys)
+    }
   }
   //模糊查询
   fuzzyQuery = (list, searchName, keyWord) => {
@@ -77,19 +77,48 @@ export default class UserSearchAndSelectMutiple extends React.Component{
 
     //添加任务执行人后往前插入
     const { selectedKeys } = this.state
-    for(let i = 0; i < arr.length; i++) {
-      if(selectedKeys.indexOf(arr[i]['user_id']) != -1 ){
-        if(i>0 && selectedKeys.indexOf(arr[i-1]['user_id']) == -1){
-          const deItem = arr.splice(i, 1)
-          arr.unshift(...deItem)
+    for (let i = 0; i < arr.length; i++) {
+      // 添加的思路
+      // console.log(arr[i]['user_id'], 'ssssss')
+      // if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+      //   if (arr[i - 1]['user_id'] == '0') { // 表示前面是全部成员, 没有执行人
+      //     const deItem = arr.splice(i, 1)
+      //     arr.splice(1, 0, ...deItem)
+      //   } else if (arr[i - 1]['user_id'] == '1') { // 表示前面是执行人
+      //     const deItem = arr.splice(i, 1)
+      //     arr.splice(2, 0, ...deItem)
+      //   } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1 && arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') == -1) { // 表示只有全体成员
+      //     const deItem = arr.splice(i, 1)
+      //     arr.splice(1, 0, ...deItem)
+      //   } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1 && arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') != -1) { // 表示全体成员和推进人都存在
+      //     const deItem = arr.splice(i, 1)
+      //     arr.splice(2, 0, ...deItem)
+      //   }
+      // }
+      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+        if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
+          if (arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') == -1) { // 表示只存在项目全体成员
+            const deItem = arr.splice(i, 1)
+            arr.splice(1, 0, ...deItem)
+          } else if (arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') != -1) { // 表示存在项目全体成员以及推进人
+            const deItem = arr.splice(i, 1)
+            arr.splice(2, 0, ...deItem)
+          }
         }
-
       }
+
+      // 原来的
+      // if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+      //   if(i>0 && selectedKeys.indexOf(arr[i-1]['user_id']) == -1){
+      //     const deItem = arr.splice(i, 1)
+      //     arr.unshift(...deItem)
+      //   }
+      // }
     }
     return arr;
   }
   onChange = (e) => {
-    const { listData=[], searchName } = this.props
+    const { listData = [], searchName } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
     this.setState({
@@ -97,46 +126,53 @@ export default class UserSearchAndSelectMutiple extends React.Component{
       resultArr
     })
   }
-  render(){
-    const { keyWord, resultArr, selectedKeys=[] } = this.state
-    const { Inputlaceholder='搜索', keyCode } = this.props
-
+  render() {
+    const { keyWord, resultArr, selectedKeys = [] } = this.state
+    const { Inputlaceholder = '搜索', keyCode } = this.props
+    // console.log(this.props, 'sssss') // currentSelect listData
     return (
-        <Menu style={{padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
-              selectedKeys={selectedKeys}
-              onDeselect={this.handleMenuReallyDeselect.bind(this)}
-              onSelect={this.handleMenuReallySelect.bind(this)} multiple >
-        <div style={{margin: '0 10px 10px 10px'}}>
-          <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)}/>
+      <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
+        selectedKeys={selectedKeys}
+        onDeselect={this.handleMenuReallyDeselect.bind(this)}
+        onSelect={this.handleMenuReallySelect.bind(this)} multiple >
+        <div style={{ margin: '0 10px 10px 10px' }}>
+          <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
         </div>
 
         {
           resultArr.map((value, key) => {
             const { avatar, name, user_name, user_id } = value
             return (
-              <Menu.Item className={indexStyles.menuItem} style={{height: 32, lineHeight: '32px', margin: 0, padding: '0 10px', }} key={value[keyCode]} >
+              <Menu.Item className={indexStyles.menuItem} style={{ height: 32, lineHeight: '32px', margin: 0, padding: '0 10px', }} key={value[keyCode]} >
 
-               <div className={indexStyles.menuItemDiv}>
-                <div style={{display: 'flex', alignItems: 'center'}} key={user_id}>
-                  {avatar? (
-                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4}} src={avatar} />
-                  ) : (
-                    <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                      <Icon type={'user'} style={{fontSize: 12, marginLeft: 10, color: '#8c8c8c'}}/>
-                    </div>
-                  )}
-                  <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8}}>{name || user_name || '佚名'}</div>
+                <div className={indexStyles.menuItemDiv}>
+                  <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
+                    {avatar ? (
+                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
+                    ) : (
+                        <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                          {
+                            user_id == '0' ? (
+                              // <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
+                              <Icon type="usergroup-delete" style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
+                            ) : (
+                              <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
+                            )
+                          }
+                        </div>
+                      )}
+                    <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                  </div>
+                  <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
+                    <Icon type="check" />
+                  </div>
                 </div>
-                 <div style={{display: selectedKeys.indexOf(user_id) != -1? 'block':'none'}}>
-                   <Icon type="check" />
-                 </div>
-              </div>
               </Menu.Item>
             )
           })
         }
       </Menu>
-  )
+    )
   }
 
 }

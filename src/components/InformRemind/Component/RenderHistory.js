@@ -4,7 +4,7 @@ import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
-import UserSearchAndSelectMutiple from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
+import AddMembersExecutor from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
 
@@ -320,7 +320,7 @@ export default class RenderHistory extends Component {
             {/* 显示用户信息头像 */}
             <div className={infoRemindStyle.user_info}>
               <Dropdown disabled={status == 2 ? true : false} overlay={
-                <UserSearchAndSelectMutiple
+                <AddMembersExecutor
                   listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                   keyCode={'user_id'} //值关键字
                   searchName={'name'} //搜索关键字
