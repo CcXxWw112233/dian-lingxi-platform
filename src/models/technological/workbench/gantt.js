@@ -21,6 +21,7 @@ import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
+import { max } from 'moment';
 
 export default {
   namespace: 'gantt',
@@ -295,7 +296,7 @@ export default {
         list_data = list_data.sort((a, b) => {
           return a.start_time - b.start_time
         })
-        // const length = (list_data.length || 1) + 1
+       
         const length = list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
@@ -324,52 +325,63 @@ export default {
             after_group_height += group_list_area[k]
           }
 
+          console.log('ssssssssss', {
+            i,
+            after_group_height
+          })
+
           item.top = after_group_height + j * ceiHeight
+        
+          let before_start_time_arr = []
+          let top_arr = []
+          let all_top = []
           for (let k = 0; k < j; k++) {
+            all_top.push(list_data[k].top)
             if (item.start_time > list_data[k].end_time) {
-              item.top = after_group_height + k * ceiHeight
-              break
+              before_start_time_arr.push(list_data[k])
+            }
+            if(item.start_time <= list_data[k].end_time) {
+              top_arr.push(list_data[k])
+            }
+          }
+      
+          before_start_time_arr = before_start_time_arr.filter(item => {
+            let flag = true
+            for(let val of top_arr) {
+              if(item.top == val.top) {
+                flag = false
+                break
+              }
+            }
+            return flag && item
+          })
+
+          all_top = Array.from(new Set(all_top)).sort((a, b ) => a - b)
+          const all_top_max = Math.max.apply(null, all_top) == -Infinity? 0:  Math.max.apply(null, all_top)
+         
+          if(before_start_time_arr[0]) {
+            item.top = before_start_time_arr[0].top
+          }else {
+            if(item.top > all_top_max) {
+              item.top = all_top_max + ceiHeight
             }
           }
           list_group[i]['list_data'][j] = item
+         
         }
       }
 
-      // for (let i = 0; i < list_group.length; i++) {
-      //   let list_data = list_group[i]['list_data']
-      //   let after_group_height = 0
-      //   for (let k = 0; k < i; k++) {
-      //     after_group_height += group_list_area[k]
-      //   }
-
-      //   for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置}
-      //     let item = list_data[j]
-      //     // item.top = after_group_height + j * ceiHeight
-
-      //     for (let k = 0; k < j; k++) { 
-      //       if(item.top == list_data[k].top && item.start_time < list_data[k].end_time) {
-      //         item.top = after_group_height + k * ceiHeight
-      //         let flag = false
-      //         let flag_index = 0
-      //         for(let z = 0; z < k; z++) {
-      //           if(item.start_time > list_data[z].start_time && item.top == list_data[z].top) {
-      //             flag_index = z
-      //             flag = true
-      //           }
-      //         }
-      //         if(flag) {
-      //           item.top = after_group_height + flag_index * ceiHeight
-      //         }
-      //         break
-      //       }
-      //     }
-      //     list_group[i]['list_data'][j] = item
-
-      //   }
-
-      // }
-      // console.log('sssssss_list_group', list_group)
-
+      for(let i = 0; i < list_group.length; i++) {
+        const list_height_arr = list_group[i]['list_data'].map(item => item.top)
+        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight
+        group_rows[i] = (list_group_item_height / ceiHeight) < 5? 5: list_group_item_height / ceiHeight
+        group_list_area[i] = group_rows[i] * ceiHeight
+        
+      }
+      console.log('ssss', {
+        group_rows,
+        group_list_area
+      })
       yield put({
         type: 'updateDatas',
         payload: {
