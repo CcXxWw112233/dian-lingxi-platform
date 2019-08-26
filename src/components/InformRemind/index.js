@@ -76,8 +76,7 @@ export default class index extends Component {
 
     render() {
         const { visible, title} =this.state;
-        const { rela_type, rela_id, user_remind_info } = this.props
-        // console.log(new_user_info_list, 'sssss')
+        const { rela_type, rela_id, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
         return (
             <>
                 {/* 通知提醒的小图标 */}
@@ -101,7 +100,7 @@ export default class index extends Component {
                         mask={true}
                         footer={null}
                         onCancel={this.onCancel.bind(this)}
-                        overInner={<DrawerInformContent rela_type={rela_type} rela_id={rela_id} user_remind_info={user_remind_info} />}
+                        overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} projectExecutors={projectExecutors} workbenchExecutors={workbenchExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={user_remind_info} />}
                     />
                 </div>
             </>

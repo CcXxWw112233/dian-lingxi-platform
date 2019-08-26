@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
-import AvatarList from '@/components/avatarList'
+import ExecutorAvatarList from '@/components/avatarList/executorAvatarList.js'
 import AddMembersExecutor from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
@@ -330,7 +330,7 @@ export default class RenderHistory extends Component {
                 {
                   message_consumers && message_consumers.length > 0 ? (
                     <div style={{ maxWidth: 60, width: 'auto' }}>
-                      <AvatarList
+                      <ExecutorAvatarList
                         size={'small'}
                         users={message_consumers} />
                     </div>

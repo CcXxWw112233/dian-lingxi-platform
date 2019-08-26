@@ -3,19 +3,121 @@ import { connect } from 'dva'
 import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
-import AvatarList from '@/components/avatarList'
+import ExecutorAvatarList from '@/components/avatarList/executorAvatarList.js'
 import AddMembersExecutor from '@/components/UserSearchAndSelectMutiple/addMembersExecutor.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { Option } = Select;
 
-@connect(({ informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [], historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers } }) => ({
-  triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers
+@connect(({
+  informRemind: { triggerList = [], diff_text_term = [], diff_remind_time = [], historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers },
+}) => ({
+  triggerList, diff_text_term, diff_remind_time, historyList, remind_trigger, remind_time_type, remind_edit_type, remind_time_value, setInfoRemindList, message_consumers,
+  // projectExecutors, projectType,
 }))
 export default class RenderAdd extends Component {
 
   state = {
     is_show_other_select: true, // 是否显示其他的选项框 true 显示
     is_show_date_picker: false, // 是否显示日历日期 默认为 false
+  }
+
+  componentDidMount() {
+    const { dispatch, rela_type, user_remind_info = [], workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+    if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中的任务或者日程弹窗中--才会进来
+      if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) { // 存在执行人
+        let new_userRemindInfo = [...user_remind_info]
+        new_userRemindInfo = new_userRemindInfo.filter(item => {
+          let new_item = item
+          if (new_item['user_id'] == '1') { // 表示找到了执行人
+            return new_item
+          }
+        })
+        dispatch({
+          type: 'informRemind/updateDatas',
+          payload: {
+            message_consumers: new_userRemindInfo
+          }
+        })
+      }
+    } else if (rela_type == '3') { // 表示在流程中才会进来
+      const { assignees } = processEditDatas && processEditDatas.length && processEditDatas[0]
+      if (assignees && assignees.length) { // 存在推进人
+        let new_userRemindInfo = [...user_remind_info]
+        new_userRemindInfo = new_userRemindInfo.filter(item => {
+          let new_item = item
+          if (new_item['user_id'] == '2') { // 表示找到了推进人
+            return new_item
+          }
+        })
+        dispatch({
+          type: 'informRemind/updateDatas',
+          payload: {
+            message_consumers: new_userRemindInfo
+          }
+        })
+      }
+    } else if (rela_type == '5') { // 表示在里程碑中触发
+      if (milestonePrincipals && milestonePrincipals.length) {
+        let new_userRemindInfo = [...user_remind_info]
+        new_userRemindInfo = new_userRemindInfo.filter(item => {
+          let new_item = item
+          if (new_item['user_id'] == '3') { // 表示找到了负责人
+            return new_item
+          }
+        })
+        dispatch({
+          type: 'informRemind/updateDatas',
+          payload: {
+            message_consumers: new_userRemindInfo
+          }
+        })
+      }
+    }
+
+    // const { dispatch, rela_type, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+    // if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中=中的任务或者日程弹窗的执行人
+    //   if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) {
+    //     let new_workbenchExecutors = [...workbenchExecutors]
+    //     let new_projectExecutors = [...projectExecutors]
+    //     dispatch({
+    //       type: 'informRemind/updateDatas',
+    //       payload: {
+    //         message_consumers: (new_workbenchExecutors.length && new_workbenchExecutors) || (new_projectExecutors.length && new_projectExecutors)
+    //       }
+    //     })
+    //   }
+    // } else if (rela_type == '3') { // 表示实在流程中才会触发
+    //   if (processEditDatas && processEditDatas.length) {
+    //     const { assignees } = processEditDatas[0]
+    //     let new_assignees = [...assignees]
+    //     new_assignees = new_assignees.map(item => {
+    //       let new_item = item
+    //       new_item = {...item, avatar: ''}
+    //       return new_item
+    //     })
+    //     dispatch({
+    //       type: 'informRemind/updateDatas',
+    //       payload: {
+    //         message_consumers: new_assignees
+    //       }
+    //     })
+    //   }
+    // } else if (rela_type == '5') { // 表示是在里程碑的弹窗中
+    //   if (milestonePrincipals && milestonePrincipals.length) {
+    //       let new_milestonePrincipals = [...milestonePrincipals]
+    //       new_milestonePrincipals = new_milestonePrincipals.map(item => {
+    //       let new_item = item
+    //       new_item = {...item, avatar: ''}
+    //       return new_item
+    //     })
+    //     dispatch({
+    //       type: 'informRemind/updateDatas',
+    //       payload: {
+    //         message_consumers: new_milestonePrincipals
+    //       }
+    //     })
+    //   }
+    // }
   }
 
   /**
@@ -203,7 +305,7 @@ export default class RenderAdd extends Component {
     const { selectedKeys = [] } = e
     // console.log(selectedKeys, 'sssss')
     new_message = selectedKeys.map(item => {
-      console.log(item, 'sssss')
+      // console.log(item, 'sssss')
       for (let val of new_user_remind_info) {
         if (item == val['user_id']) {
           return val
@@ -319,7 +421,7 @@ export default class RenderAdd extends Component {
               {
                 message_consumers && message_consumers.length > 0 ? (
                   <div style={{ maxWidth: 60, width: 'auto' }}>
-                    <AvatarList
+                    <ExecutorAvatarList
                       size={'small'}
                       users={message_consumers} />
                   </div>

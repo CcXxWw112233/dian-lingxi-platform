@@ -1234,7 +1234,7 @@ class DrawContent extends React.Component {
                 {/*</div>*/}
               {/*</Dropdown>*/}
             {/* </div> */}
-            <span style={{marginTop: '-2px', marginRight: '5px'}}><InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
+            <span style={{marginTop: '-2px', marginRight: '5px'}}><InformRemind workbenchExecutors={executors} rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
 
             <span style={{marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px'}}>
               {drawContent.card_id && (
