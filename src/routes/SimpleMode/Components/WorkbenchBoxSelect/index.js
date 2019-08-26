@@ -2,7 +2,7 @@ import React from "react";
 import dva, { connect } from "dva/index"
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Icon, message, Tooltip } from 'antd';
+import { Icon, message, Tooltip, Button } from 'antd';
 import { isColor } from '@/utils/util'
 
 const WorkbenchBoxSelect = (props) => {
@@ -70,6 +70,9 @@ const WorkbenchBoxSelect = (props) => {
     <div onClick={(e) => { closeBoxManage(e) }}>
       <div className={indexStyles.selectWorkbenchBoxWapperModalBg} style={bgStyle}></div>
       <div className={indexStyles.selectWorkbenchBoxWapperModal}>
+        <div style={{ paddingLeft: '96px', paddingTop: '44px' }}>
+          <div className={indexStyles.backBtn}><Icon type="left" />返回</div>
+        </div>
         <div className={indexStyles.workbenchBoxWapper}>
           {
             workbenchBoxList.map((boxItem, key) => {
@@ -77,17 +80,19 @@ const WorkbenchBoxSelect = (props) => {
               //console.log("8888", isSelected);
               return (
                 boxItem.status == 0 ? (
-                    <Tooltip title="功能开发中，请耐心等待">
-                      {renderBoxItem(boxItem, isSelected)}
-                    </Tooltip>
-                  ):
+                  <Tooltip title="功能开发中，请耐心等待">
+                    {renderBoxItem(boxItem, isSelected)}
+                  </Tooltip>
+                ) :
                   renderBoxItem(boxItem, isSelected)
               )
             })
           }
 
         </div>
-
+        <div className={indexStyles.footer}>
+          <div className={indexStyles.operationTip}>点击空白处或按“ESC“键返回</div>
+        </div>
       </div>
     </div>
   );
