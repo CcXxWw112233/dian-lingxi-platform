@@ -296,11 +296,22 @@ export default {
         list_data = list_data.sort((a, b) => {
           return a.start_time - b.start_time
         })
-       
-        const length = list_data.length < 5 ? 5 : (list_data.length + 1)
+
+        const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
         group_rows[i] = length
+
+        //设置纵坐标
+        //根据历史分组统计纵坐标累加
+        let after_group_height = 0
+        for (let k = 0; k < i; k++) {
+          after_group_height += group_list_area[k]
+        }
+        // console.log('ssssssssss', {
+        //   i,
+        //   after_group_height
+        // })
         for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
           const item = list_data[j]
           item.width = item.time_span * ceilWidth
@@ -318,20 +329,11 @@ export default {
             }
           }
 
-          //设置纵坐标
-          //根据历史分组统计纵坐标累加
-          let after_group_height = 0
-          for (let k = 0; k < i; k++) {
-            after_group_height += group_list_area[k]
-          }
-
-          console.log('ssssssssss', {
-            i,
-            after_group_height
-          })
-
           item.top = after_group_height + j * ceiHeight
-        
+
+          // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
+          // 该比较项和之前项存在交集，将交集项存入top_arr
+          // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
           let before_start_time_arr = []
           let top_arr = []
           let all_top = []
@@ -340,15 +342,15 @@ export default {
             if (item.start_time > list_data[k].end_time) {
               before_start_time_arr.push(list_data[k])
             }
-            if(item.start_time <= list_data[k].end_time) {
+            if (item.start_time <= list_data[k].end_time) {
               top_arr.push(list_data[k])
             }
           }
-      
+
           before_start_time_arr = before_start_time_arr.filter(item => {
             let flag = true
-            for(let val of top_arr) {
-              if(item.top == val.top) {
+            for (let val of top_arr) {
+              if (item.top == val.top) {
                 flag = false
                 break
               }
@@ -356,32 +358,25 @@ export default {
             return flag && item
           })
 
-          all_top = Array.from(new Set(all_top)).sort((a, b ) => a - b)
-          const all_top_max = Math.max.apply(null, all_top) == -Infinity? 0:  Math.max.apply(null, all_top)
-         
-          if(before_start_time_arr[0]) {
+          all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
+          const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
+
+          if (before_start_time_arr[0]) {
             item.top = before_start_time_arr[0].top
-          }else {
-            if(item.top > all_top_max) {
+          } else {
+            if (item.top > all_top_max) {
               item.top = all_top_max + ceiHeight
             }
           }
           list_group[i]['list_data'][j] = item
-         
         }
+        const list_height_arr = list_group[i]['list_data'].map(item => item.top)
+        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
+        group_rows[i] = (list_group_item_height / ceiHeight) < 5 ? 5 : list_group_item_height / ceiHeight
+        group_list_area[i] = group_rows[i] * ceiHeight
+       
       }
 
-      for(let i = 0; i < list_group.length; i++) {
-        const list_height_arr = list_group[i]['list_data'].map(item => item.top)
-        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight
-        group_rows[i] = (list_group_item_height / ceiHeight) < 5? 5: list_group_item_height / ceiHeight
-        group_list_area[i] = group_rows[i] * ceiHeight
-        
-      }
-      console.log('ssss', {
-        group_rows,
-        group_list_area
-      })
       yield put({
         type: 'updateDatas',
         payload: {
