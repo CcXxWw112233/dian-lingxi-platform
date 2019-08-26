@@ -21,6 +21,7 @@ export default class RenderAdd extends Component {
     is_show_date_picker: false, // 是否显示日历日期 默认为 false
   }
 
+  // 更新执行人还有创建人的操作
   componentDidMount() {
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { dispatch, rela_type, user_remind_info = [], workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
@@ -308,14 +309,21 @@ export default class RenderAdd extends Component {
     // console.log('sss', e)
     const { selectedKeys = [] } = e
     // console.log(selectedKeys, 'sssss')
-    new_message = selectedKeys.map(item => {
-      // console.log(item, 'sssss')
-      for (let val of new_user_remind_info) {
-        if (item == val['user_id']) {
-          return val
+    if (selectedKeys.indexOf('0') != -1) { // 表示存在全体成员
+      new_message.push(...new_user_remind_info)
+    } else if (selectedKeys.indexOf('0') == -1) {
+      new_message = []
+    } else {
+      new_message = selectedKeys.map(item => {
+        // console.log(item, 'sssss')
+        for (let val of new_user_remind_info) {
+          if (item == val['user_id']) {
+            return val
+          }
         }
-      }
-    })
+      })
+    }
+  //  console.log(new_message, 'sssss')
     // 将全局的用户信息做修改
     dispatch({
       type: 'informRemind/updateDatas',

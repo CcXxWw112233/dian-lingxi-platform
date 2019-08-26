@@ -34,7 +34,33 @@ export default class AddMembersExecutor extends React.Component {
       })
     })
   }
+
+  // // 比较两个数组user_id
+  // comparePropsList = (nextList, currList) => {
+  //   if (nextList.length !== currList.length) {
+  //     return false;
+  //   }
+  //   const isFindAllNextListInCurrList = () =>
+  //     nextList.every(item => currList.find(i => i.user_id === item.user_id));
+  //   if (!isFindAllNextListInCurrList()) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
+
   componentWillReceiveProps(nextProps) {
+    const { currentSelect = [] } = nextProps
+    console.log(this.props, 'sssss')
+    let temp_id = []
+    let new_currentSelect = [...currentSelect]
+    new_currentSelect.map(item => {
+      temp_id.push(item.user_id)
+      return temp_id
+    })
+    // console.log(temp_id, 'sssss')
+    this.setState({
+      selectedKeys: temp_id
+    })
   }
   //选择
   handleMenuReallySelect = (e) => {
