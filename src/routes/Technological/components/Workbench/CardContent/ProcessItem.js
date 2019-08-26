@@ -131,7 +131,7 @@ export default class ProcessItem extends React.Component {
           }>
             <span
                 style={{ display: 'inline-block', color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+                onClick={this.gotoBoardDetail.bind(this, obj)}
               >
                 {
                   is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
