@@ -488,7 +488,6 @@ export default class SimpleNavigation extends Component {
         const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
         const { logo, id } = currentSelectOrganize
 
-
         //是否拥有查看成员入口
         const isHasMemberView = () => {
             return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
