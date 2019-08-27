@@ -243,7 +243,6 @@ export default class SiderLeft extends React.Component {
 
         break
       default: // 其他组织的切换
-        // console.log('sss', 11111)
         this.setState({
           is_disabled: true
         })
@@ -278,7 +277,6 @@ export default class SiderLeft extends React.Component {
         break
     }
   }
-
     //选择全组织, 默认回到工作台
     nextMenuClick(key) {
       let data = {
@@ -287,7 +285,7 @@ export default class SiderLeft extends React.Component {
       }
       this.menuClick(data)
     }
-  
+
   //设置全局搜索
   setGlobalSearchModalVisible() {
     const { dispatch } = this.props

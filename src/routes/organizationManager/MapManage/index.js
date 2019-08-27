@@ -12,7 +12,7 @@ import iconSrc from '@/assets/organizationManager/crown/crown@2x.png'
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
 
-@connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } } }) => ({
+@connect(({ MapManage = {}, technological, organizationManager: { datas: { management_Array = [] } }, }) => ({
   MapManage, management_Array, technological
 }))
 export default class MapManage extends React.Component {
