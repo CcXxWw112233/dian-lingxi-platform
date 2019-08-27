@@ -351,7 +351,7 @@ export default class RenderAdd extends Component {
   render() {
     const {
       triggerList = [], diff_text_term = [], diff_remind_time = [], remind_trigger, remind_time_type, remind_time_value,
-      user_remind_info = [], message_consumers, rela_id, remind_edit_type
+      user_remind_info = [], message_consumers, rela_id, remind_edit_type, rela_type,
     } = this.props;
     const { is_show_date_picker, is_show_other_select } = this.state;
 
@@ -438,6 +438,7 @@ export default class RenderAdd extends Component {
             <Dropdown overlay={
               <AddMembersExecutor
                 // {...this.props}
+                rela_type={rela_type}
                 listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                 keyCode={'user_id'} //值关键字
                 searchName={'name'} //搜索关键字

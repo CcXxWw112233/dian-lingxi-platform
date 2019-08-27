@@ -91,6 +91,8 @@ export default class AddMembersExecutor extends React.Component {
       this.props.onCheck(this.state.selectedKeys)
     }
   }
+
+
   //模糊查询
   fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
@@ -102,33 +104,51 @@ export default class AddMembersExecutor extends React.Component {
 
     //添加任务执行人后往前插入
     const { selectedKeys } = this.state
+    const { rela_type } = this.props
     for (let i = 0; i < arr.length; i++) {
       // 添加的思路
-      // console.log(arr[i]['user_id'], 'ssssss')
-      // if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
-      //   if (arr[i - 1]['user_id'] == '0') { // 表示前面是全部成员, 没有执行人
+      // if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说user_id存在
+      //   if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部成员, 没有执行人
+      //     // 就将它从第一个后面插入
+      //     console.log('进来了', 'ssss_第一个if')
       //     const deItem = arr.splice(i, 1)
       //     arr.splice(1, 0, ...deItem)
-      //   } else if (arr[i - 1]['user_id'] == '1') { // 表示前面是执行人
+      //   } else if (i > 0 && (arr[i - 1]['user_id'] == '1' || arr[i - 1]['user_id'] == '2' || arr[i - 1]['user_id'] == '3')) { // 表示前面是执行人,推进人,负责人
+      //     // 如果说点击的的时候,前面是执行人或者推进人或者是负责人, 那么将它从第二个插入
+      //     console.log('进来了', 'ssss_第二个if')
       //     const deItem = arr.splice(i, 1)
       //     arr.splice(2, 0, ...deItem)
-      //   } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1 && arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') == -1) { // 表示只有全体成员
-      //     const deItem = arr.splice(i, 1)
-      //     arr.splice(1, 0, ...deItem)
-      //   } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1 && arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') != -1) { // 表示全体成员和推进人都存在
-      //     const deItem = arr.splice(i, 1)
-      //     arr.splice(2, 0, ...deItem)
+      //   } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 表示的是其他选项
+      //     // 如果说点击的是其他的时候，需要判断是否有推进人,执行人,负责人
+
       //   }
       // }
-      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
-        if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
-          if (arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') == -1) { // 表示只存在项目全体成员
+      // 不存在执行人,推送人以及负责人的情况下
+      if (rela_type != '1' && rela_type != '2' && rela_type != '3' && rela_type != '5') {
+        // console.log(selectedKeys, 'ssssss')
+        if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
+          if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 如果说点击的前一个元素不存在
             const deItem = arr.splice(i, 1)
             arr.splice(1, 0, ...deItem)
-          } else if (arr[i]['user_id'].indexOf('0') != -1 && arr[i]['user_id'].indexOf('1') != -1) { // 表示存在项目全体成员以及推进人
-            const deItem = arr.splice(i, 1)
-            arr.splice(2, 0, ...deItem)
           }
+        }
+      }
+
+      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
+        if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部成员, 没有执行人
+          // 就将它从第一个后面插入
+          // console.log('进来了', 'ssss_第一个if')
+          const deItem = arr.splice(i, 1)
+          arr.splice(1, 0, ...deItem)
+        } else if (i > 0 && (arr[i - 1]['user_id'] == '1' || arr[i - 1]['user_id'] == '2' || arr[i - 1]['user_id'] == '3')) { // 表示前面是执行人,推进人,负责人
+          // 如果说点击的的时候,前面是执行人或者推进人或者是负责人, 那么将它从第二个插入
+          // console.log('进来了', 'ssss_第二个if')
+          const deItem = arr.splice(i, 1)
+          arr.splice(2, 0, ...deItem)
+        } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 表示的是其他选项
+          // 如果说点击的是其他的时候，需要判断是否有推进人,执行人,负责人
+          const deItem = arr.splice(i, 1)
+          arr.splice(2, 0, ...deItem)
         }
       }
 
@@ -181,8 +201,8 @@ export default class AddMembersExecutor extends React.Component {
                               // <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
                               <Icon type="usergroup-delete" style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
                             ) : (
-                              <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                            )
+                                <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
+                              )
                           }
                         </div>
                       )}

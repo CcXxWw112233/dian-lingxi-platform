@@ -19,7 +19,7 @@ export default class RenderContent extends Component {
           <div className={infoRemindStyle.content}>
               { historyList.map((value, index) => {
                 const { id } = value
-                return <RenderHistory is_add_remind={is_add_remind} user_remind_info={user_remind_info} rela_id={rela_id} itemValue={value} key={id} />
+                return <RenderHistory is_add_remind={is_add_remind} rela_type={rela_type} user_remind_info={user_remind_info} rela_id={rela_id} itemValue={value} key={id} />
                 }) 
               }
               {

@@ -212,20 +212,40 @@ export default class RenderHistory extends Component {
     let new_user_remind_info = [...user_remind_info] // 用户列表的信息
     let new_message = [] // 传递过来的用户信息
     // console.log('sss', e)
-    const { selectedKeys = [] } = e
-    new_message = selectedKeys.map(item => {
-      for (let val of new_user_remind_info) {
-        if (item == val['user_id']) {
-          return val
+    const { selectedKeys = [], key, type } = e
+    // 去除空数组
+    const removeEmptyArrayEle = (arr) => {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == undefined) {
+          arr.splice(i, 1);
+          i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
         }
       }
-    })
+      return arr;
+    };
+
+    if (key == '0' && type == 'add') {  // 如果是全体成员并且是添加的操作
+      new_message = new_user_remind_info.filter(item => {
+        if (item['user_id'] == '0') {
+          return item
+        }
+      })
+    } else {
+      new_message = selectedKeys.map(item => {
+        for (let val of new_user_remind_info) {
+          if (item == val['user_id'] && item != '0') {
+            return val
+          }
+        }
+      })
+    }
     // 更新成员的信息
     let new_history_list = [...historyList]
     new_history_list = new_history_list.map(item => {
       let new_item = item
       if (id == new_item.id) {
-        new_item = { ...new_item, is_edit_status: true, message_consumers: new_message }
+        new_item = { ...new_item, is_edit_status: true, message_consumers: removeEmptyArrayEle(new_message) }
       }
       return new_item
     })
@@ -241,7 +261,7 @@ export default class RenderHistory extends Component {
 
   render() {
     const {
-      triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],
+      triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],rela_type,
     } = this.props;
     const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status, message_consumers } = itemValue
     // console.log(remind_trigger, 'sss')
@@ -321,6 +341,7 @@ export default class RenderHistory extends Component {
             <div className={infoRemindStyle.user_info}>
               <Dropdown disabled={status == 2 ? true : false} overlay={
                 <AddMembersExecutor
+                  rela_type={rela_type}
                   listData={user_remind_info} //users为全部用户列表[{user_id: '', name: '',...}, ]
                   keyCode={'user_id'} //值关键字
                   searchName={'name'} //搜索关键字
