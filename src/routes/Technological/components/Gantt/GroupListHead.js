@@ -29,9 +29,7 @@ export default class GroupListHead extends Component {
   }
 
   render() {
-    const { offsetTop, offsetLeft } = this.state
     const { datas: { list_group = [], group_rows = [], ceiHeight, target_scrollLeft } } = this.props.model
-    const { gantt_card_height } = this.props
     return (
       <div className={indexStyles.listHead} style={{ left: target_scrollLeft, }}>
         {list_group.map((value, key) => {
@@ -46,7 +44,7 @@ export default class GroupListHead extends Component {
             </div>
           )
         })}
-        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />   
       </div>
     )
   }

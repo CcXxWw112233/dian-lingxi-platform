@@ -7,8 +7,9 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
 import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technological/task';
-import { updateProject } from '../../../../services/technological/project';
+import { updateProject, addMenbersInProject } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
+import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -19,6 +20,7 @@ export default class GroupListHeadItem extends Component {
       show_edit_input: false,
       edit_input_value: '',
       local_list_name: '',
+      show_add_menber_visible: false,
     }
   }
   noTimeAreaScroll(e) {
@@ -173,11 +175,38 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
+  //添加项目组成员操作
+  setShowAddMenberModalVisibile = () => {
+    this.setState({
+      show_add_menber_visible: !this.state.show_add_menber_visible
+    })
+  }
+
+  addMenbersInProject = (values) => {
+    const { dispatch } = this.props
+    addMenbersInProject({ ...values }).then(res => {
+      if (isApiResponseOk(res)) {
+        message.success('已成功添加项目成员')
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/getAboutUsersBoards',
+            payload: {
+
+            }
+          })
+        }, 1000)
+
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
 
   // 操作项点击
   handleMenuSelect = ({ key }) => {
     switch (key) {
       case 'invitation':
+        this.setShowAddMenberModalVisibile()
         break
       case 'rename':
         this.setState({
@@ -217,7 +246,7 @@ export default class GroupListHeadItem extends Component {
     this.setShowEditInput(false)
     const { gantt_board_id, list_id } = this.props
     const { edit_input_value, local_list_name } = this.state
-    if(local_list_name == edit_input_value || !!!edit_input_value) { //检测到输入变化
+    if (local_list_name == edit_input_value || !!!edit_input_value) { //检测到输入变化
       return
     }
     if (gantt_board_id == '0') {
@@ -260,7 +289,7 @@ export default class GroupListHeadItem extends Component {
   requestDeleteGroup = () => {
     const { gantt_board_id, list_id, list_group = [], dispatch } = this.props
 
-    deleteTaskGroup({board_id: gantt_board_id, id: list_id }).then(res => {
+    deleteTaskGroup({ board_id: gantt_board_id, id: list_id }).then(res => {
       if (isApiResponseOk(res)) {
         // 过滤掉该项
         let new_list_group = list_group.filter(item => item.list_id != list_id)
@@ -298,59 +327,71 @@ export default class GroupListHeadItem extends Component {
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { list_name, org_id, list_no_time_data = [], list_id, lane_icon } = itemValue
-    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value } = this.state
+    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
 
     // console.log('sssss',{itemKey, group_rows, row: group_rows[itemKey], list_id })
 
     return (
-      <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight }}>
-        <div className={`${indexStyles.list_head_top}`}>
-          {
-            group_view_type == '2' && !get_gantt_data_loading && (
-              <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
-            )
-          }
-          {
-            show_edit_input ? (
-              <Input
-                style={{ marginBottom: 6 }}
-                autoFocus
-                value={edit_input_value}
-                onChange={this.inputOnchange}
-                onPressEnter={this.inputOnPressEnter}
-                onBlur={this.inputOnBlur}
-              />
-            ) : (
-                <span className={indexStyles.list_name} onClick={this.listNameClick}>{local_list_name}</span>
-              )
-          }
-          <span className={indexStyles.org_name}>
+      <div>
+        <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight }}>
+          <div className={`${indexStyles.list_head_top}`}>
             {
-              is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
-                <span className={indexStyles.org_name}>
-                  #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                </span>
+              group_view_type == '2' && !get_gantt_data_loading && (
+                <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
               )
             }
-          </span>
-          {
-            group_view_type == '1' && (
-              <Dropdown overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
-                <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
-              </Dropdown>
-            )
-          }
-        </div>
-        {/* {this.renderNoTimeCard()} */}
-        <div className={`${indexStyles.list_head_body}`}>
-          <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
-            {this.renderTaskItem()}
+            {
+              show_edit_input ? (
+                <Input
+                  style={{ marginBottom: 6 }}
+                  autoFocus
+                  value={edit_input_value}
+                  onChange={this.inputOnchange}
+                  onPressEnter={this.inputOnPressEnter}
+                  onBlur={this.inputOnBlur}
+                />
+              ) : (
+                  <span className={indexStyles.list_name} onClick={this.listNameClick}>{local_list_name}</span>
+                )
+            }
+            <span className={indexStyles.org_name}>
+              {
+                is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
+                  <span className={indexStyles.org_name}>
+                    #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </span>
+                )
+              }
+            </span>
+            {
+              group_view_type == '1' && (
+                <Dropdown overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
+                  <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
+                </Dropdown>
+              )
+            }
+          </div>
+          {/* {this.renderNoTimeCard()} */}
+          <div className={`${indexStyles.list_head_body}`}>
+            <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
+              {this.renderTaskItem()}
+            </div>
+          </div>
+          <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
+            <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
+            <div>{list_no_time_data.length}个未排期事项</div>
           </div>
         </div>
-        <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
-          <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-          <div>{list_no_time_data.length}个未排期事项</div>
-        </div>
+        {
+          show_add_menber_visible &&
+          <ShowAddMenberModal
+            _organization_id={org_id}
+            board_id={list_id}
+            addMenbersInProject={this.addMenbersInProject}
+            modalVisible={show_add_menber_visible}
+            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+          />
+        }
       </div>
     )
   }

@@ -83,7 +83,7 @@ class ShowAddMenberModal extends React.Component {
   }
 
   render() {
-    const { modalVisible } = this.props;
+    const { modalVisible, _organization_id } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { stepThreeContinueDisabled } = this.state
 
@@ -111,7 +111,7 @@ class ShowAddMenberModal extends React.Component {
           <Button type="primary" disabled={stepThreeContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>发送邀请</Button>
         </FormItem> */}
         <div>
-        <InviteOthers isShowTitle={false} _organization_id={getGlobalData('aboutBoardOrganizationId')} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
+        <InviteOthers isShowTitle={false} _organization_id={_organization_id || getGlobalData('aboutBoardOrganizationId')} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
       </Form>
     )
@@ -136,3 +136,7 @@ class ShowAddMenberModal extends React.Component {
   }
 }
 export default Form.create()(ShowAddMenberModal)
+
+ShowAddMenberModal.defaultProps = {
+  _organization_id: undefined, //传递进来的组织id
+} 
