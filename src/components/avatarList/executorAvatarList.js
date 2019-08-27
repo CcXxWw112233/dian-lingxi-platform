@@ -39,8 +39,10 @@ const executorAvatarList = (props) => {
       {
         users.map((value, key) => {
           const { avatar, name, id, user_id } = value
-          return key < 3 &&(
+          return key < 3 && user_id != '0' ?(
             <Avatar key={id || user_id} size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }}>{name}</Avatar>
+          ) : (
+            <Avatar key={id || user_id} size={size} icon={"user"} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }} />
           )
         })
       }

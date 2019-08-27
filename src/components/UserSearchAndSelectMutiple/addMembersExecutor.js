@@ -49,15 +49,13 @@ export default class AddMembersExecutor extends React.Component {
   // };
 
   componentWillReceiveProps(nextProps) {
-    const { currentSelect = [] } = nextProps
-    console.log(this.props, 'sssss')
-    let temp_id = []
+    // console.log(nextProps, 'ssssss')
+    const { currentSelect } = nextProps
     let new_currentSelect = [...currentSelect]
+    let temp_id = []
     new_currentSelect.map(item => {
-      temp_id.push(item.user_id)
-      return temp_id
+      temp_id.push(item['user_id'])
     })
-    // console.log(temp_id, 'sssss')
     this.setState({
       selectedKeys: temp_id
     })
@@ -85,6 +83,7 @@ export default class AddMembersExecutor extends React.Component {
         resultArr: this.fuzzyQuery(listData, searchName, keyWord),
       })
     })
+    // debugger
     this.props.multipleSelectUserChange && this.props.multipleSelectUserChange({ selectedKeys, key, type })
   }
   onCheck() {
@@ -155,7 +154,7 @@ export default class AddMembersExecutor extends React.Component {
   render() {
     const { keyWord, resultArr, selectedKeys = [] } = this.state
     const { Inputlaceholder = '搜索', keyCode } = this.props
-    // console.log(this.props, 'sssss') // currentSelect listData
+    // console.log({selectedKeys}, 'sssss') // currentSelect listData
     return (
       <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
         selectedKeys={selectedKeys}

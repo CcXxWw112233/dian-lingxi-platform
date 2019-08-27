@@ -301,34 +301,48 @@ export default class RenderAdd extends Component {
     })
   }
 
+
   // 用户信息的方法
   multipleUserSelectUserChange(e, message_consumers) {
     const { dispatch, user_remind_info = [] } = this.props;
     let new_user_remind_info = [...user_remind_info] // 通知提醒的用户列表的信息
     let new_message = [] // 传递过来的用户信息
     // console.log('sss', e)
-    const { selectedKeys = [] } = e
-    // console.log(selectedKeys, 'sssss')
-    if (selectedKeys.indexOf('0') != -1) { // 表示存在全体成员
-      new_message.push(...new_user_remind_info)
-    } else if (selectedKeys.indexOf('0') == -1) {
-      new_message = []
+    // 去除空数组
+    const removeEmptyArrayEle = (arr) => {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == undefined) {
+          arr.splice(i, 1);
+          i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+        }
+      }
+      return arr;
+    };
+
+    const { selectedKeys = [], key, type } = e
+    if (key == '0' && type == 'add') {  // 如果是全体成员并且是添加的操作
+      new_message = new_user_remind_info.filter(item => {
+        if (item['user_id'] == '0') {
+          return item
+        }
+      })
     } else {
       new_message = selectedKeys.map(item => {
-        // console.log(item, 'sssss')
         for (let val of new_user_remind_info) {
-          if (item == val['user_id']) {
+          if (item == val['user_id'] && item != '0') {
             return val
           }
         }
       })
     }
-  //  console.log(new_message, 'sssss')
+
+    // console.log(new_message, 'sssss')
     // 将全局的用户信息做修改
     dispatch({
       type: 'informRemind/updateDatas',
       payload: {
-        message_consumers: new_message
+        message_consumers: removeEmptyArrayEle(new_message)
       }
     })
   }
