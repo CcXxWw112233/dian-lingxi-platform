@@ -336,20 +336,19 @@ export default class GroupListHeadItem extends Component {
     return (
       <Menu onClick={this.handleMenuSelect}>
         {
-          gantt_board_id == '0' &&
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
-          // && 
-          <Menu.Item key={'invitation'}>
-            邀请成员加入
+          gantt_board_id == '0' && (
+            <Menu.Item key={'invitation'}>
+               邀请成员加入
             </Menu.Item>
-        }
+        )}
         {
           // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
         {
+          // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) &&
           gantt_board_id != '0' &&
-          // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) && 
           <Menu.Item key={'delete_group'}>删除分组</Menu.Item>
         }
       </Menu>
@@ -417,8 +416,8 @@ export default class GroupListHeadItem extends Component {
           </div>
         </div>
         {
-          show_add_menber_visible &&
-          <ShowAddMenberModal
+          show_add_menber_visible && (
+<ShowAddMenberModal
             show_wechat_invite={true}
             _organization_id={org_id}
             board_id={list_id}
@@ -426,7 +425,7 @@ export default class GroupListHeadItem extends Component {
             modalVisible={show_add_menber_visible}
             setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
           />
-        }
+)}
       </div>
     )
   }
