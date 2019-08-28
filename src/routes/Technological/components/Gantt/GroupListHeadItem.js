@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { Avatar, Dropdown, Menu, Input, message } from 'antd'
-import { getOrgNameWithOrgIdFilter } from '../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
@@ -10,6 +10,7 @@ import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technolo
 import { updateProject, addMenbersInProject } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -204,16 +205,32 @@ export default class GroupListHeadItem extends Component {
 
   // 操作项点击
   handleMenuSelect = ({ key }) => {
+    const { itemValue = {}, gantt_board_id } = this.props
+    const { list_id } = itemValue
+    const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
     switch (key) {
       case 'invitation':
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setShowAddMenberModalVisibile()
         break
       case 'rename':
+        const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP
+        if (!checkIsHasPermissionInBoard(rename_permission_code, params_board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setState({
           show_edit_input: true
         })
         break
       case 'delete_group':
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.requestDeleteGroup()
         break
       default:
@@ -312,12 +329,29 @@ export default class GroupListHeadItem extends Component {
 
   // 操作项
   renderMenuOperateListName = () => {
-    const { gantt_board_id } = this.props
+    const { itemValue = {}, gantt_board_id } = this.props
+    const { list_id } = itemValue
+    const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
+    const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP
     return (
       <Menu onClick={this.handleMenuSelect}>
-        {gantt_board_id == '0' && <Menu.Item key={'invitation'}>邀请成员加入</Menu.Item>}
-        <Menu.Item key={'rename'}>重命名</Menu.Item>
-        {gantt_board_id != '0' && <Menu.Item key={'delete_group'}>删除分组</Menu.Item>}
+        {
+          gantt_board_id == '0' &&
+          // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
+          // && 
+          <Menu.Item key={'invitation'}>
+            邀请成员加入
+            </Menu.Item>
+        }
+        {
+          // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
+          <Menu.Item key={'rename'}>重命名</Menu.Item>
+        }
+        {
+          gantt_board_id != '0' &&
+          // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) && 
+          <Menu.Item key={'delete_group'}>删除分组</Menu.Item>
+        }
       </Menu>
     )
   }
