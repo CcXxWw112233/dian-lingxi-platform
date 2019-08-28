@@ -84,10 +84,6 @@ export default class SimpleNavigation extends Component {
         })
     }
     menuClick({ key, code }) {
-
-        console.log(key, 'key')
-        console.log(code, 'code')
-
         const { dispatch } = this.props
         dispatch({
             type: 'technological/updateDatas',
@@ -160,9 +156,20 @@ export default class SimpleNavigation extends Component {
         })
     }
 
+    seeMapAuthority(params) {
+
+        const { dispatch } = this.props
+        dispatch({
+            type: 'organizationManager/getFnManagementList',
+            payload: {
+                organization_id: params.key,
+            }
+        })
+    }
+
     // 切换组织的点击事件
     handleOrgListMenuClick = (e) => {
-        // console.log(e, 'ssss')
+
         const { key } = e
         const { is_disabled } = this.state
         const { currentUserOrganizes = [] } = this.props
@@ -334,6 +341,9 @@ export default class SimpleNavigation extends Component {
                 this.setCreateOrgnizationOModalVisable()
                 break
             case '0': // 匹配全部组织
+
+                this.seeMapAuthority(e)
+
                 this.setState({
                     is_disabled: false
                 })
@@ -361,13 +371,20 @@ export default class SimpleNavigation extends Component {
                         simplemodeCurrentProject: {}
                     }
                 });
+
+                dispatch({
+                    type: 'investmentMap/getMapsQueryUser',
+                    payload: { }
+                })
                 break
             case '-1': //退出
                 this.logout(e)
                 break
 
             default: // 其他组织的切换
-                // console.log('sss', 11111)
+
+                this.seeMapAuthority(e)
+
                 this.setState({
                     is_disabled: true
                 })

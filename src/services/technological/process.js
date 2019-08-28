@@ -4,7 +4,7 @@ import request from "../../utils/requestAxios";
 import { func } from "prop-types";
 
 const createHeaderContentData = (contentType, contentId) => {
-  debugger
+  
   if (contentType && contentId) {
     return {
       BaseInfo: {

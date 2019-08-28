@@ -8,6 +8,7 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 
+let isDisabled
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -16,10 +17,7 @@ class MyWorkbenchBoxs extends Component {
     };
   }
 
-  componentWillMount() {
-
-
-  }
+  componentWillMount() { }
 
   componentWillReceiveProps(nextProps) {
     const { projectList: old_projectList } = this.props;
@@ -32,16 +30,16 @@ class MyWorkbenchBoxs extends Component {
       const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
       console.log("selectBoard", selectBoard);
 
-      if (selectBoard && selectBoard.length >0) {
-       //设置当前选中的项目
-       setBoardIdStorage(user_set.current_board);
-       dispatch({
-         type: 'simplemode/updateDatas',
-         payload: {
-           simplemodeCurrentProject: { ...selectBoard[0] }
-         }
-       });
-      }else{
+      if (selectBoard && selectBoard.length > 0) {
+        //设置当前选中的项目
+        setBoardIdStorage(user_set.current_board);
+        dispatch({
+          type: 'simplemode/updateDatas',
+          payload: {
+            simplemodeCurrentProject: { ...selectBoard[0] }
+          }
+        });
+      } else {
         dispatch({
           type: 'simplemode/updateDatas',
           payload: {
@@ -64,7 +62,7 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
-    console.log(data, 'bbbbb');
+    // console.log(data, 'bbbbb');
     if (data.key === 'add') {
       //console.log("onSelectBoard");
       this.setState({
@@ -120,7 +118,7 @@ class MyWorkbenchBoxs extends Component {
 
 
   setAddProjectModalVisible = (data) => {
-    if(data) {
+    if (data) {
       return
     }
     const { dispatch } = this.props
@@ -155,6 +153,20 @@ class MyWorkbenchBoxs extends Component {
       type: 'workbench/getProjectList',
       payload: {}
     })
+
+    dispatch({
+      type: 'investmentMap/getMapsQueryUser',
+      payload: {}
+    })
+
+    dispatch({
+      type: 'organizationManager/getFnManagementList',
+      payload: {
+        // organization_id: params.key,
+      }
+    })
+
+
   }
 
   getMenuItemList(projectList) {
@@ -169,7 +181,8 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = ({ id, code, status }) => {
-    if (status == 0) {
+    // if (status == 0) {
+    if (status == 0 || isDisabled == true) {
       message.warn("功能开发中，请耐心等待");
       return;
     }
@@ -186,13 +199,29 @@ class MyWorkbenchBoxs extends Component {
         route: '/technological/simplemode/workbench'
       }
     });
-
-
   }
 
   renderBoxItem = (item) => {
+    /**
+      * 投资地图是否禁用
+      * 1.单组织没权限 - 投资地图灰掉
+      * 2.单组织没开启地图 - 投资地图不展示|灰掉
+      * 3.单组织有权限 - 投资地图可显示
+      * 4.全组织都没开启 - 投资地图不展示
+      * 5.全组织一个开启 - 进入展示组织-项目列表
+      * 综上所述：
+      * 1.地图图标的显示与否取决于用户是否自行将该功能添加到极简桌面上，只要用户所选的组织中含有可用的地图功能于访问权限，用户便可*以将地图的功能图标添加到桌面上。
+      * 2.用户当下所选的组织不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
+      * （所有功能图标都如此）
+     */
+    const { InvestmentMapsSelectOrganizationVisible } = this.props
+    const { mapOrganizationList = [] } = this.props
+    const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : InvestmentMapsSelectOrganizationVisible
+    const unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
+    isDisabled = item.name === '投资地图' ? unclickable : (item.status === 0 ? true : false)
     return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
+      // <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
+      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisabled}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
         <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
       </div>
@@ -200,7 +229,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const {projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
+    const { projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
 
     const { addProjectModalVisible = false } = this.state;
     console.log(projectList, "ppppppp");
@@ -220,6 +249,7 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
+
               return (
                 item.status == 0 ? (
                   <Tooltip title="功能开发中，请耐心等待">
@@ -236,10 +266,10 @@ class MyWorkbenchBoxs extends Component {
         </div>
 
         <CreateProject
-            setAddProjectModalVisible={this.setAddProjectModalVisible}
-            addProjectModalVisible={addProjectModalVisible}
-            addNewProject={this.handleSubmitNewProject}
-          />
+          setAddProjectModalVisible={this.setAddProjectModalVisible}
+          addProjectModalVisible={addProjectModalVisible}
+          addNewProject={this.handleSubmitNewProject}
+        />
       </div>
 
     );
@@ -258,13 +288,23 @@ export default connect(
     },
     technological: {
       datas: { currentUserOrganizes }
-    }
-    , project }) => ({
+    },
+    organizationManager: {
+      datas: {
+        InvestmentMapsSelectOrganizationVisible }
+    },
+    investmentMap: {
+      datas: {
+        mapOrganizationList
+      } },
+    project }) => ({
       project,
       projectList,
       projectTabCurrentSelectedProject,
       myWorkbenchBoxList,
       workbenchBoxList,
       currentUserOrganizes,
-      simplemodeCurrentProject
+      simplemodeCurrentProject,
+      InvestmentMapsSelectOrganizationVisible,
+      mapOrganizationList,
     }))(MyWorkbenchBoxs)

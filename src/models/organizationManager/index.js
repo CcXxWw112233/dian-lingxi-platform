@@ -434,16 +434,17 @@ export default {
           fnmanagement_list: res.data
         }
       })
-
+      
       let fnmanagement_list = res.data
       var userArr = new Array(); 
       userArr = fnmanagement_list.experiment_function_list
       const status = userArr[3].status //投资地图的状态
+
       if (status === '0') {
         yield put({
           type: 'updateDatas',
           payload: {
-            InvestmentMapsSelectOrganizationVisible: false
+            InvestmentMapsSelectOrganizationVisible: true
           }
         })
         message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
@@ -452,14 +453,14 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            InvestmentMapsSelectOrganizationVisible: true
+            InvestmentMapsSelectOrganizationVisible: false
           }
         })
       }
     },
 
     * setFnManagement({ payload }, { call, put }) {
-      let re = yield call(setFnManagementStatus, payload)
+      let res = yield call(setFnManagementStatus, payload)
     },
 
     * investmentMapQueryAdministrators({ payload }, { call, put }) {
