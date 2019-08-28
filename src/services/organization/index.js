@@ -154,8 +154,9 @@ export async function getCurrentNounPlan(params) {
 
 //获取功能管理列表
 export async function getFnManagementList(params) {
-  const organization_id = params.organization_id
-  const _organization_id = localStorage.getItem('OrganizationId') === "0" ?  organization_id : localStorage.getItem('OrganizationId')
+  
+  const _organization_id = localStorage.getItem('OrganizationId') === "0"  ?  (localStorage.getItem('OrganizationId')) : (!params ? params.organization_id : localStorage.getItem('OrganizationId') ) 
+
   return request({
     url: `${REQUEST_DOMAIN}/organization_app`,
     method: 'GET',
