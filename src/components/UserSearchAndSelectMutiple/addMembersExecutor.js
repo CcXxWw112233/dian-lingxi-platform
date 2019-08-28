@@ -124,7 +124,7 @@ export default class AddMembersExecutor extends React.Component {
       //   }
       // }
       // 不存在执行人,推送人以及负责人的情况下
-      if (rela_type != '1' && rela_type != '2' && rela_type != '3' && rela_type != '5') {
+      if (rela_type != '1' && rela_type != '2' && rela_type != '5') {
         // console.log(selectedKeys, 'ssssss')
         if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
           if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 如果说点击的前一个元素不存在
