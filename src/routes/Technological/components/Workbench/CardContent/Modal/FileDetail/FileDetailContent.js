@@ -797,35 +797,42 @@ class FileDetailContent extends React.Component {
     const getVersionItemMenu = (list) => {
       return (
         // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <Menu selectable={true} style={{ width: 400 }}>
-          {list.map((value, key) => {
-            const { file_name, creator, create_time, file_size, file_id } = value
-            return (
-              <Menu.Item key={file_id} >
-                <div className={indexStyles.versionItemMenu}>
-                  <div style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
-                  <div>上传于</div>
-                  <div>{create_time}</div>
-                  {filePreviewCurrentFileId == file_id && (
-                    <div className={`${indexStyles.status}`}>当前</div>)}
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                    <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}>
-                      <span>&#xe7fd;</span>
-                    </Dropdown>
+        <Menu selectable={true} style={{ width: 400, maxHeight: '314px' }}>
+          <div key="versionTitle" style={{borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px'}}>
+            <div className={indexStyles.title_wrapper} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+              <span className={indexStyles.version_title}>版本信息</span>
+              <span className={indexStyles.version_close}>x</span>
+            </div>
+          </div>
+          <Menu className={`${globalStyles.global_vertical_scrollbar}`} style={{maxHeight: '200px', overflowY:'auto'}}>
+            {list.map((value, key) => {
+              const { file_name, creator, create_time, file_size, file_id } = value
+              return (
+                <Menu.Item className={indexStyles.version_menuItem} key={file_id} >
+                  <div className={indexStyles.versionItemMenu}>
+                    <div style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
+                    <div>上传于</div>
+                    <div>{create_time}</div>
+                    {filePreviewCurrentFileId == file_id && (
+                      <div className={`${indexStyles.status}`}>主版本</div>)}
+                    <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
+                    <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
+                      <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}>
+                        <span>&#xe7fd;</span>
+                      </Dropdown>
+                    </div>
                   </div>
-
-                </div>
-              </Menu.Item>
-            )
-          })}
-          <Menu.Item key="updateVersion" >
-            <Upload {...uploadProps} showUploadList={false}>
-              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
-                <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 更新版本
-              </div>
+                </Menu.Item>
+              )
+            })}
+          </Menu>
+          <div key="updateVersion" style={{height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)'}} >
+            <Upload className={indexStyles.upload_file} {...uploadProps} showUploadList={false}>
+              <Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
+                <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
+              </Button>
             </Upload>
-          </Menu.Item>
+          </div>
         </Menu>
       )
     }
@@ -841,7 +848,7 @@ class FileDetailContent extends React.Component {
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className={indexStyles.fileIcon}>
               <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
               文件
@@ -856,14 +863,14 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
-                <Button style={{ height: 24, marginLeft: 14 }}>
-                  <Icon type="upload" />版本信息
+              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)} trigger={['click']}>
+                <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
+                  <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息
                 </Button>
               </Dropdown>
             )}
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-              <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, pdfDownLoadSrc })}>
+              <Button className={indexStyles.download} style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
               </Button>
             )}

@@ -40,6 +40,29 @@
   }
 }
 
+.title_wrapper {
+  .version_title {
+    flex: 1;
+    text-align: center;
+    font-size:16px;
+    font-family:PingFangSC;
+    font-weight:500;
+    color:rgba(0,0,0,0.85);
+    line-height:24px;
+  }
+  .version_close {
+    font-size: 20px;
+    cursor: pointer;
+  }
+}
+.upload_file {
+  display: block;
+  height:34px;
+  margin: 8px 12px 0 12px;
+  cursor: pointer;
+}
+
+
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -184,11 +207,12 @@
 }
 
 .versionItemMenu{
-  height:22px;
+  height:40px;
   font-size:12px;
   color: #8c8c8c;
-  line-height:22px;
+  line-height:40px;
   display: flex;
+  align-items: center;
   div{
     margin-right: 12px;
   }
@@ -201,7 +225,7 @@
     max-width: 110px;
   }
   .status{
-    width:34px;
+    width:36px;
     height:20px;
     line-height: 20px;
     background:rgba(0,0,0,0.04);
@@ -219,6 +243,14 @@
   }
   .operate:hover{
     color: @color-link-hover;
+  }
+}
+.version_menuItem {
+  &:hover {
+    background: rgba(0,0,0,0.04);
+  }
+  &:focus {
+    background-color: transparent;
   }
 }
 .versionItemMenu:hover {
