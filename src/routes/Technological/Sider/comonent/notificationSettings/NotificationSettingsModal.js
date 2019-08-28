@@ -130,7 +130,7 @@ export default class NotificationSettingsModal extends Component {
     hideOkModal = () => {
         // console.log('进来了' , 'ssss')
 				const { is_way_status, radio_checked_val, default_detail_options, default_simple_options, user_detail_setting_options, user_simple_setting_options, notice_model, notice_daily } = this.state
-				console.log(notice_daily, 'sssss')
+				// console.log(notice_daily, 'sssss')
 				let new_notice_list_ids;
 				if (notice_model == '1' && radio_checked_val != '2') {
 					new_notice_list_ids = [...user_detail_setting_options]
