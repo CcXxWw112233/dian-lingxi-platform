@@ -101,6 +101,10 @@ export default class GroupListHeadElse extends Component {
           type: 'gantt/getGanttData',
           payload: {}
         })
+        dispatch({
+          type: 'gantt/getAboutGroupBoards',
+          payload: {}
+        })
       }, 1000)
     }
   }

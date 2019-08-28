@@ -171,7 +171,7 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, } = this.props.model.datas
+    const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
@@ -298,7 +298,7 @@ export default class Header extends React.Component {
             />
           </span>
           <span style={{ marginTop: '-5px', float: 'right', marginLeft: '18px' }}>
-            <InformRemind rela_id={id} rela_type={'3'} user_remind_info={data} />
+            <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
           <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
         </div>

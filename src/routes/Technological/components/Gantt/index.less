@@ -22,6 +22,17 @@
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
   border-top: 2px solid rgba(217, 217, 217, 1);
   display: flex;
+  .cardDetailMask {
+    width: 100%;
+    z-index: 8;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, .5)
+  }
   .cardDetail_left, .cardDetail_right{
     height: 100%;
     width: 20px;
@@ -206,6 +217,27 @@
         border-right: 1px solid rgba(0, 0, 0, .1);
         border-top: 1px solid #E8E8E8;
         box-sizing: border-box;
+        // display: flex;
+        .board_miletiones_flag {
+          color: #FAAD14;
+          font-size: 14px;
+          width:18px;
+          height: 18px;
+          position: relative;
+          z-index: 0;
+          top: 0px;
+          left: 24px;
+        }
+        .board_miletiones_flagpole {
+          box-sizing: border-box;
+          width: 2px;
+          background-color: #FAAD14;
+          position: relative;
+          z-index: 0;
+          top: -12px;
+          left: 21px;;
+         
+        }
         .ganttDetailItem_item{
           border-radius: 2px;
           box-sizing: border-box;
@@ -255,10 +287,32 @@
         .org_name {
           color: rgba(0, 0, 0, .45);
           font-size: 12px;
+          margin-left: 4px;
+        }
+        .operator {
+          font-size: 14px;
           margin-left: 6px;
+          width:20px;
+          height:20px;
+          line-height: 20px;
+          text-align: center;
+          border-radius:4px;
+          display: none;
         }
       }
-    
+     
+      .list_head_top:hover{
+        *{
+          color: #40A9FF;
+        }
+        .operator {
+          display: inline-block;
+        }
+        .operator:hover {
+          background:rgba(230,247,255,1);
+        }
+      }
+
       .list_head_body {
         flex: 1;
         display: flex;

@@ -12,7 +12,7 @@ import DCMenuItemOne from './DCMenuItemOne'
 import {Modal} from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
-import { timestampToTimeNormal, timeToTimestamp } from '../../../../../../../utils/util'
+import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../../../../../../../utils/util'
 import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
@@ -338,12 +338,17 @@ class DrawContent extends React.Component {
   }
     //截止时间
   endDatePickerChange(e, timeString) {
-    const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, start_time} = drawContent
+    const { datas: { drawContent = {}, milestoneList = [] } } = this.props.model
+    const { card_id, start_time, milestone_data = {} } = drawContent
+    const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     if(!this.compareStartDueTime(start_time, due_timeStamp)) {
       message.warn('开始时间不能大于结束时间')
       return false
+    }
+    if(!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+      return
     }
     drawContent['due_time'] = due_timeStamp
     const updateObj ={
@@ -936,9 +941,9 @@ class DrawContent extends React.Component {
       <Menu onClick={this.setRelaMiletones}>
         {
           milestoneList.map(value => {
-            const { id, name } = value
+            const { id, name, deadline } = value
             return (
-              <Menu.Item key={id}>{name}</Menu.Item>
+              <Menu.Item key={`${id}__${deadline}`}>{name}</Menu.Item>
             )
           })
         }
@@ -946,9 +951,15 @@ class DrawContent extends React.Component {
     )
   }
   setRelaMiletones = (e) => {
-    const id = e.key
+    const id_time_arr = e.key.split('__')
+    const id = id_time_arr[0]
+    const deadline = id_time_arr[1]
     const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, type } = drawContent
+    const { card_id, type,  due_time} = drawContent
+    if(!compareTwoTimestamp(deadline, due_time)) {
+      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+      return
+    }
     const params = {
       rela_id: card_id,
       id,
@@ -1234,7 +1245,7 @@ class DrawContent extends React.Component {
                 {/*</div>*/}
               {/*</Dropdown>*/}
             {/* </div> */}
-            <span style={{marginTop: '-2px', marginRight: '5px'}}><InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
+            <span style={{marginTop: '-2px', marginRight: '5px'}}><InformRemind workbenchExecutors={executors} rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
 
             <span style={{marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px'}}>
               {drawContent.card_id && (

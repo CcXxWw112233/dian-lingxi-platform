@@ -218,10 +218,17 @@ export default class GanttFace extends Component {
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height }}>
-        {/* <Spin spinning={get_gantt_data_loading} tip={'数据正在加载中...'}>
-          <div style={{height: gantt_card_height, width: '1000px', zIndex: 6, position: 'absolute'}}></div>
-        </Spin> */}
+      <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
+        {
+          get_gantt_data_loading && (
+            <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
+              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} zIndex={8} >
+              </Spin>
+            </div>
+          )
+        }
+
+
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           id={'gantt_card_out_middle'}

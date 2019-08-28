@@ -11,8 +11,9 @@ export default class Header extends React.Component {
   }
 
   render() {
+    // console.log(this.props, 'sssss_milestone')
    const { milestone_detail = {}, users = [] } = this.props
-    const { board_name, id } = milestone_detail
+    const { board_name, id, principals = [] } = milestone_detail
     return (
       <div className={headerStyles.header_out}>
         <div className={headerStyles.header_out_left}>
@@ -28,7 +29,7 @@ export default class Header extends React.Component {
           </div>
         </div>
         <div className={headerStyles.header_out_right}>
-          <InformRemind rela_id={id} rela_type='5' user_remind_info={users} />
+          <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>
     )

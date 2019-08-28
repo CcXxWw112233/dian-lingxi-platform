@@ -6,9 +6,13 @@ import HeaderContent from './HeaderContent'
 @connect(mapStateToProps)
 export default class GanttDetail extends React.Component {
 
-  state = {
-    milestone_id_local: ''
+  constructor(props) {
+    super(props)
+    this.state = {
+      milestone_id_local: ''
+    }
   }
+
   componentDidMount() {
     this.getMilestoneDetail(this.props)
   }
@@ -83,7 +87,7 @@ export default class GanttDetail extends React.Component {
     })
   }
   render() {
-    const { miletone_detail_modal_visible, milestone_id } = this.props
+    const { miletone_detail_modal_visible, milestone_id, handleMiletonesChange } = this.props
     const { users } = this.props
     const commentUseParams = { //公共评论模块所需要的参数
       commentSubmitPost: this.commentSubmitPost,
@@ -98,12 +102,19 @@ export default class GanttDetail extends React.Component {
           modalVisible={miletone_detail_modal_visible}
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
-          mainContent={<MainContent users={users} />}
+          mainContent={<MainContent users={users} handleMiletonesChange={handleMiletonesChange} />}
           headerContent={<HeaderContent users={users}/>}
         />
       </div>
     )
   }
+}
+GanttDetail.defaultProps = {
+  set_miletone_detail_modal_visible: false, // 里程碑详情是否显示
+  set_miletone_detail_modal_visible: function() { }, //设置里程碑详情弹窗是否显示
+  milestone_id: '', //里程碑id
+  users: [], //用户列表
+  handleMiletonesChange: function() {},
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ milestoneDetail: { milestone_id } }) {

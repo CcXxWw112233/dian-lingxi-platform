@@ -12,18 +12,18 @@ import RenderAdd from './RenderAdd';
 export default class RenderContent extends Component {
 
     render() {
-      const { historyList = [], rela_id, is_add_remind, user_remind_info } = this.props;
+      const { historyList = [], rela_type, rela_id, is_add_remind, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props;
     
       {
         return (
           <div className={infoRemindStyle.content}>
               { historyList.map((value, index) => {
                 const { id } = value
-                return <RenderHistory is_add_remind={is_add_remind} user_remind_info={user_remind_info} rela_id={rela_id} itemValue={value} key={id} />
+                return <RenderHistory is_add_remind={is_add_remind} rela_type={rela_type} user_remind_info={user_remind_info} rela_id={rela_id} itemValue={value} key={id} />
                 }) 
               }
               {
-                is_add_remind && <RenderAdd rela_id={rela_id} user_remind_info={user_remind_info} />
+                is_add_remind && <RenderAdd rela_type={rela_type} workbenchExecutors={workbenchExecutors} projectExecutors={projectExecutors} processEditDatas={processEditDatas} milestonePrincipals={milestonePrincipals} rela_id={rela_id} user_remind_info={user_remind_info} />
               }
           </div>
         ) 

@@ -20,6 +20,17 @@
   border-top: 2px solid #d9d9d9;
   display: flex;
 }
+.cardDetail .cardDetailMask {
+  width: 100%;
+  z-index: 8;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+}
 .cardDetail .cardDetail_left,
 .cardDetail .cardDetail_right {
   height: 100%;
@@ -202,6 +213,25 @@
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   border-top: 1px solid #E8E8E8;
   box-sizing: border-box;
+}
+.ganttArea .ganttAreaItem .ganttDetail .ganttDetailItem .board_miletiones_flag {
+  color: #FAAD14;
+  font-size: 14px;
+  width: 18px;
+  height: 18px;
+  position: relative;
+  z-index: 0;
+  top: 0px;
+  left: 24px;
+}
+.ganttArea .ganttAreaItem .ganttDetail .ganttDetailItem .board_miletiones_flagpole {
+  box-sizing: border-box;
+  width: 2px;
+  background-color: #FAAD14;
+  position: relative;
+  z-index: 0;
+  top: -12px;
+  left: 21px;
 }
 .ganttArea .ganttAreaItem .ganttDetail .ganttDetailItem .ganttDetailItem_item {
   border-radius: 2px;
