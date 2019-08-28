@@ -434,7 +434,7 @@ export default class NotificationSettingsModal extends Component {
 														{
 															notice_way_data && notice_way_data.map(item => {
 																return (
-																	<Col span={8}>
+																	<Col span={8} style={{marginBottom: '8px'}}>
 																		<Checkbox disabled={item.disabled} onChange={this.chgMovemenet} value={item.key}>
 																			{item.name}
 																		</Checkbox>
