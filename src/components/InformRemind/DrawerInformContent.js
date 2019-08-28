@@ -42,15 +42,15 @@ class DrawerInformContent extends Component {
                 }
                 temp_info_list.unshift(obj, ...new_info_list)
                 break
-            case '3': // 流程
-                var obj = {
-                    avatar: "",
-                    id: "1",
-                    user_id: '2',
-                    name: "动作推进人",
-                }
-                temp_info_list.unshift(obj, ...new_info_list)
-                break;
+            // case '3': // 流程
+            //     var obj = {
+            //         avatar: "",
+            //         id: "1",
+            //         user_id: '2',
+            //         name: "动作推进人",
+            //     }
+            //     temp_info_list.unshift(obj, ...new_info_list)
+            //     break;
             case '5': // 里程碑
                 var obj = {
                     avatar: "",
