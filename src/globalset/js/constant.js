@@ -44,14 +44,14 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if(NODE_ENV == 'development') {
     return 'ws://test.lingxi.new-di.com/websocket' 
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    // return 'ws://192.168.1.39/websocket'
+    // return 'ws://192.168.1.17/websocket'
   } else {
     const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
   }
 })(NODE_ENV, window.location)
 
-export const MAP_URL = 'http://map.di-an.com:8888/' //投资地图
+export const MAP_URL = 'https://map.di-an.com' //投资地图
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT= '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
@@ -118,7 +118,7 @@ export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //�
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
 
 //名词定义
-export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态"}
+export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
@@ -127,6 +127,7 @@ export const PROJECTS = 'Projects'
 export const FILES = 'Files'
 export const MEMBERS = 'Members'
 export const CATCH_UP = 'Catch_Up'
+export const MAP_ADMIN = 'Map_Admin'
 
 
 //内容类型 board , list, card, file, folder,flow

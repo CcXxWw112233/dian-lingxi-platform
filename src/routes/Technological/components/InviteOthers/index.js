@@ -121,6 +121,7 @@ class InviteOthers extends Component {
         //发起请求
         associateUser(user)
           .then(res => {
+            console.log('res = 发起', res)
             if (res.code && res.code === '0') {
               //如果查到了用户
               if (res.data && res.data.length) {

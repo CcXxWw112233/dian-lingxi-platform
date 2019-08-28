@@ -37,19 +37,53 @@ class Home extends Component {
       type: 'simplemode/updateDatas',
       payload: {
         chatImVisiable: false,
-        leftMainNavIconVisible:true
+        leftMainNavIconVisible: true
       }
     });
+    window.addEventListener('keydown', this.handleEscKeypress.bind(this))
 
   }
+
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleEscKeypress.bind(this))
+  }
+
+  handleEscKeypress = (e) => {
+    // console.log('esc',e.which);
+    
+    if (e.which == 27) {
+      const { workbenchBoxSelectVisiable } = this.state;
+      if (workbenchBoxSelectVisiable) {
+        this.setHomeVisible({
+          simpleHeaderVisiable: true,
+          myWorkbenchBoxsVisiable: true,
+          wallpaperSelectVisiable: true,
+          workbenchBoxSelectVisiable: false,
+          createProjectVisiable: false,
+        });
+      }
+    }
+  }
+
 
   setHomeVisible = (data) => {
     this.setState(data)
   }
 
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
 
   render() {
-
     const {
       myWorkbenchBoxsVisiable,
       wallpaperSelectVisiable,
@@ -63,14 +97,13 @@ class Home extends Component {
         {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
         {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
-
       </div>
     )
   }
 };
 
-export default connect(({ simplemode:{
+export default connect(({ simplemode: {
   leftMainNavIconVisible
-}}) => ({
+} }) => ({
   leftMainNavIconVisible
 }))(Home)

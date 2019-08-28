@@ -20,7 +20,7 @@ export default class Header extends React.Component {
     controller: 0
   }
   componentDidMount() {
-    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
       return false
     }
     this.setState({
@@ -43,10 +43,10 @@ export default class Header extends React.Component {
             name: user.full_name
               ? user.full_name
               : user.name
-              ? user.name
-              : user.user_id
-              ? user.user_id
-              : ''
+                ? user.name
+                : user.user_id
+                  ? user.user_id
+                  : ''
           }));
         };
         const newPersonList = genNewPersonList(curr.assignees);
@@ -62,14 +62,14 @@ export default class Header extends React.Component {
     return is_privilege === '1' ? true : false;
   };
   handleClickedOtherPersonListOperatorItem = (id, type) => {
-    if(type === 'remove') {
+    if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(id)
     } else {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
   }
   handleVisitControlChangeContentPrivilege = (id, type) => {
-    const { id: content_id, privileges} = this.getVisitControlDataFromPropsModelDatasProcessInfo()
+    const { id: content_id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
     const obj = {
       content_id: content_id,
       content_type: 'flow',
@@ -78,46 +78,46 @@ export default class Header extends React.Component {
     }
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
+      if (isResOk(res)) {
         let changedPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
+        for (let item in privileges) {
+          if (item !== id) {
             changedPrivileges[item] = privileges[item]
           } else {
             changedPrivileges[item] = type
           }
         }
-        this.visitControlUpdateCurrentModalData({privileges: changedPrivileges})
-      }else{
+        this.visitControlUpdateCurrentModalData({ privileges: changedPrivileges })
+      } else {
         message.error('更新用户控制类型失败')
       }
     })
   }
   handleVisitControlRemoveContentPrivilege = id => {
-    const { id: content_id, privileges} = this.getVisitControlDataFromPropsModelDatasProcessInfo()
-    removeContentPrivilege({content_id: content_id, content_type: 'flow', user_id: id}).then(res => {
+    const { id: content_id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
+    removeContentPrivilege({ content_id: content_id, content_type: 'flow', user_id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
+      if (isResOk(res)) {
         let remainPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
+        for (let item in privileges) {
+          if (item !== id) {
             remainPrivileges[item] = privileges[item]
           }
         }
-        this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
-      }else{
+        this.visitControlUpdateCurrentModalData({ privileges: remainPrivileges })
+      } else {
         message.error('移除用户内容控制权限失败')
       }
     })
   }
   handleVisitControlAddNewMember = (ids = []) => {
-    if(!ids.length) return
+    if (!ids.length) return
     const user_ids = ids.reduce((acc, curr) => {
-      if(!acc) return curr
+      if (!acc) return curr
       return `${acc},${curr}`
     }, '')
 
-    const {id, privileges} = this.getVisitControlDataFromPropsModelDatasProcessInfo()
+    const { id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
     const content_id = id
     const content_type = 'flow'
     setContentPrivilege({
@@ -126,11 +126,11 @@ export default class Header extends React.Component {
       privilege_code: 'read',
       user_ids,
     }).then(res => {
-      if(res && res.code === '0') {
+      if (res && res.code === '0') {
         const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
+          return Object.assign({}, acc, { [curr]: 'read' })
         }, {})
-        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
+        this.visitControlUpdateCurrentModalData({ privileges: Object.assign({}, newMemberPrivilegesObj, privileges) })
       }
     })
   }
@@ -171,9 +171,9 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-    const { processDoingList, processStopedList, processComepletedList, projectDetailInfoData = {}, } = this.props.model.datas
+    const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const ellipsis = <Icon type="ellipsis" onClick = {() => {console.log(2)}} style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
+    const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
         type: 'workbenchDetailProcess/workflowDelete',
@@ -184,23 +184,23 @@ export default class Header extends React.Component {
 
       // 删除
       let processStopedLists = []
-      processStopedList.length>0?processStopedList.forEach((item) => {
-        if(item.id === id) {
+      processStopedList.length > 0 ? processStopedList.forEach((item) => {
+        if (item.id === id) {
 
         } else {
           processStopedLists.push(item)
         }
-      }):null
+      }) : null
 
       let processComepletedLists = []
 
-      processComepletedList.length > 0?processComepletedList.forEach((item) => {
-        if(item.id === id) {
+      processComepletedList.length > 0 ? processComepletedList.forEach((item) => {
+        if (item.id === id) {
 
         } else {
           processComepletedLists.push(item)
         }
-      }):null
+      }) : null
       await this.props.updateDatasProcess({
         processStopedList: processStopedLists,
         processComepletedList: processComepletedLists
@@ -210,7 +210,7 @@ export default class Header extends React.Component {
 
     const processEnd = async () => {
       let processStopedLists = [],
-      processDoingLists = []
+        processDoingLists = []
       await this.props.dispatch({
         type: 'workbenchDetailProcess/workflowEnd',
         payload: {
@@ -222,29 +222,29 @@ export default class Header extends React.Component {
         payload: {}
       })
       // processStopedList
-      processDoingList?processDoingList.forEach((item) => {
-        if(item.id === id) {
+      processDoingList ? processDoingList.forEach((item) => {
+        if (item.id === id) {
           processStopedLists.push(item)
         } else {
           processDoingLists.push(item)
         }
-      }):null
+      }) : null
       await this.props.updateDatasProcess({
-        processStopedList: processStopedList?processStopedList.concat(processStopedLists):null,
-        processDoingList: processDoingLists?processDoingLists:null
+        processStopedList: processStopedList ? processStopedList.concat(processStopedLists) : null,
+        processDoingList: processDoingLists ? processDoingLists : null
       })
 
       await this.props.close()
     }
 
     const dataSource = [
-      this.state.controller === 1? {content: '终止流程', click: showConfirm.bind(this, processEnd.bind(this))}:undefined,
-      {content: '移入回收站', click: this.state.controller === 1?showDeleteConfirm.bind(this, processDelete.bind(this)):console.log('没权限')}
+      this.state.controller === 1 ? { content: '终止流程', click: showConfirm.bind(this, processEnd.bind(this)) } : undefined,
+      { content: '移入回收站', click: this.state.controller === 1 ? showDeleteConfirm.bind(this, processDelete.bind(this)) : console.log('没权限') }
     ]
     let r = dataSource.reduce((r, c) => {
       return [
         ...r,
-        ...(c === undefined?[]:[c])
+        ...(c === undefined ? [] : [c])
       ]
     }, [])
     const {
@@ -254,11 +254,12 @@ export default class Header extends React.Component {
     } = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     const principalList = this.genPrincipalListFromAssignees(nodes);
     return (
-      <div style = {{
+      <div style={{
         height: '52px',
         background: 'rgba(255,255,255,1)',
         // borderBottom: '1px solid #E8E8E8',
-        borderRadius: '4px 4px 0px 0px'}}>
+        borderRadius: '4px 4px 0px 0px'
+      }}>
         <div style={{
           width: '237px',
           height: '24px',
@@ -268,14 +269,14 @@ export default class Header extends React.Component {
           lineHeight: '24px',
           float: 'left'
         }}>
-          <span style={{cursor: 'pointer', color: '##8C8C8C', fontSize: '14px'}}>示例项目</span>
-          <span style={{color: '##8C8C8C', fontSize: '14px'}}> > </span>
-          <span style={{cursor: 'pointer', color: '##8C8C8C', fontSize: '14px'}}>任务看板分组名称</span>
+          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>示例项目</span>
+          <span style={{ color: '##8C8C8C', fontSize: '14px' }}> > </span>
+          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{}}>
-          <Icon type="close" onClick = {this.close.bind(this)} style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}} />
-          <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '')?false:true} disabledDel={(disabled === undefined || disabled === '')?true:false}/>
+        <div style={{ float: 'right' }}>
+          <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
+          <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span
             style={{
               float: 'right',
@@ -286,9 +287,6 @@ export default class Header extends React.Component {
               cursor: 'pointer'
             }}
           >
-            <span style={{position: 'absolute', right: 132, top: 18}}>
-              <InformRemind rela_id={id} rela_type={'3'} user_remind_info={data} />
-            </span>
             <VisitControl
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
@@ -298,8 +296,11 @@ export default class Header extends React.Component {
               handleAddNewMember={this.handleVisitControlAddNewMember}
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
             />
-            </span>
-          <Icon type="download" onClick = {() => {console.log(1)}} style={{float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer'}}/>
+          </span>
+          <span style={{ marginTop: '-5px', float: 'right', marginLeft: '18px' }}>
+            <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
+          </span>
+          <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
         </div>
       </div>
     )

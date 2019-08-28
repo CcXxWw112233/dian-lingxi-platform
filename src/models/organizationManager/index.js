@@ -21,7 +21,9 @@ import { getUSerInfo } from "../../services/technological";
 export default {
   namespace: 'organizationManager',
   state: {
-
+    datas:{
+      
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -55,7 +57,8 @@ export default {
               scheme_data: [],
               field_data: [],
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
-
+              fnmanagement_list: [], //功能管理状态
+              InvestmentMapsSelectOrganizationVisible: false,
             }
           })
 
@@ -431,6 +434,28 @@ export default {
           fnmanagement_list: res.data
         }
       })
+
+      let fnmanagement_list = res.data
+      var userArr = new Array(); 
+      userArr = fnmanagement_list.experiment_function_list
+      const status = userArr[3].status //投资地图的状态
+      if (status === '0') {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            InvestmentMapsSelectOrganizationVisible: false
+          }
+        })
+        message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
+      }
+      else {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            InvestmentMapsSelectOrganizationVisible: true
+          }
+        })
+      }
     },
 
     * setFnManagement({ payload }, { call, put }) {
@@ -457,7 +482,7 @@ export default {
           }
         })
       } else {
-        message.warn('添加失败', MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -470,6 +495,7 @@ export default {
             _organization_id: payload._organization_id
           }
         })
+        message.info('移除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn('移除失败', MESSAGE_DURATION_TIME)
       }

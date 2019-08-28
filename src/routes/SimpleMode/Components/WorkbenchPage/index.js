@@ -5,8 +5,7 @@ import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
 import BoardPlan from './BoardPlan/index'
-
-
+import InvestmentMaps from './InvestmentMaps/index'
 
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -15,7 +14,8 @@ class WorkbenchPage extends Component {
         this.state = {
             BoardPlanVisible: false,
             BoardCommunicationVisible: false,
-            BoardFilesVisible: false
+            BoardFilesVisible: false,
+            InvestmentMapsVisible: false,
         }
     }
     componentWillMount() {
@@ -30,9 +30,9 @@ class WorkbenchPage extends Component {
         }
 
         dispatch({
-            type:'simplemode/updateDatas',
-            payload:{
-                leftMainNavIconVisible:false
+            type: 'simplemode/updateDatas',
+            payload: {
+                leftMainNavIconVisible: false
             }
         });
     }
@@ -76,6 +76,7 @@ class WorkbenchPage extends Component {
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
                     });
                 }
                     break;
@@ -84,6 +85,7 @@ class WorkbenchPage extends Component {
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: false,
                         BoardPlanVisible: true,
+                        InvestmentMapsVisible: false,
                     });
                 }
                     break;
@@ -92,6 +94,7 @@ class WorkbenchPage extends Component {
                         BoardCommunicationVisible: true,
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
                     });
                     const width = document.body.scrollWidth;
                     let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
@@ -109,14 +112,25 @@ class WorkbenchPage extends Component {
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: true,
                         BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
                     });
                 }
+                    break;
+                    case 'maps': {
+                      this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: true,
+                      })
+                    }
                     break;
                 default: {
                     this.setState({
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
                     });
                 }
 
@@ -149,6 +163,11 @@ class WorkbenchPage extends Component {
                         {
                             this.state.BoardFilesVisible &&
                             <BoardFiles />
+                        }
+
+                        {
+                            this.state.InvestmentMapsVisible && 
+                            <InvestmentMaps />
                         }
 
                     </div>

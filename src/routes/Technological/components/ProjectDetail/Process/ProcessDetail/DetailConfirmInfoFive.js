@@ -243,7 +243,7 @@ export default class DetailConfirmInfoFive extends React.Component {
                               placeholder={'选择截止时间'}
                               showTime
                               format="YYYY-MM-DD HH:mm"
-                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '108px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '88px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
                 )
               }
             </div>

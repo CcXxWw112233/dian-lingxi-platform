@@ -86,10 +86,8 @@ export default class SiderLeft extends React.Component {
     })
   }
   menuClick({ key, code }) {
-
-    console.log(key, 'key')
-    console.log(code, 'code')
-
+    // console.log(key, 'key')
+    // console.log(code, 'code')
     const { dispatch } = this.props
     dispatch({
       type: 'technological/updateDatas',
@@ -241,9 +239,10 @@ export default class SiderLeft extends React.Component {
           }
         })
 
+        this.nextMenuClick(key)
+
         break
       default: // 其他组织的切换
-        // console.log('sss', 11111)
         this.setState({
           is_disabled: true
         })
@@ -272,9 +271,20 @@ export default class SiderLeft extends React.Component {
             is_show_org_name: is_show_org_name ? true : false
           }
         })
+
+        this.nextMenuClick(0)
+
         break
     }
   }
+    //选择全组织, 默认回到工作台
+    nextMenuClick(key) {
+      let data = {
+        key: key,
+        code: 'Workbench'
+      }
+      this.menuClick(data)
+    }
 
   //设置全局搜索
   setGlobalSearchModalVisible() {

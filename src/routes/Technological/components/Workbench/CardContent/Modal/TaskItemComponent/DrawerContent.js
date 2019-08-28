@@ -1230,7 +1230,7 @@ class DrawContent extends React.Component {
             <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20}} onClick={this.alarmNoEditPermission.bind(this)}></div>
           )}
           {/*项目挪动*/}
-          <div style={{display: 'flex', justifyContent: 'space-between', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>
+          <div style={{display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px'}}>
           <span></span>
           {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
             {/*<div className={DrawerContentStyles.contain_1}>*/}
@@ -1245,7 +1245,7 @@ class DrawContent extends React.Component {
                 {/*</div>*/}
               {/*</Dropdown>*/}
             {/* </div> */}
-            <span style={{position: 'absolute', right: 45, top: -2}}><InformRemind rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
+            <span style={{marginTop: '-2px', marginRight: '5px'}}><InformRemind workbenchExecutors={executors} rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} /></span>
 
             <span style={{marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px'}}>
               {drawContent.card_id && (
@@ -1262,7 +1262,7 @@ class DrawContent extends React.Component {
               {this.props.needDelete && (
                 <Dropdown overlay={topRightMenu}>
                 <span style={{position: 'absolute', right: 80, top: -2}} >
-                  <Icon type="ellipsis" style={{fontSize: 20,marginTop:2}} />
+                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2}} />
                 </span>
               </Dropdown>
               )}

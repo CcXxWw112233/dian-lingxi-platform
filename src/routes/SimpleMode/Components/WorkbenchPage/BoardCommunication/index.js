@@ -273,7 +273,7 @@ class BoardCommunication extends Component {
 
         }
 
-        const { dispatch, currentBoardDetail = {} } = this.props;
+        const { dispatch, simplemodeCurrentProject = {} } = this.props;
         if (file.size == 0) {
             message.error(`不能上传空文件`)
             return false
@@ -294,6 +294,25 @@ class BoardCommunication extends Component {
             dragEnterCaptureFlag: false,
             currentfile: {}
         }));
+
+        let currentBoardDetail = {}
+        if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+            currentBoardDetail = { ...simplemodeCurrentProject };
+            dispatch({
+                type: 'simpleWorkbenchbox/updateDatas',
+                payload: {
+                    currentBoardDetail: currentBoardDetail
+                }
+            });
+        }
+
+        dispatch({
+            type: 'simpleBoardCommunication/updateDatas',
+            payload: {
+                is_file_tree_loading: true
+            }
+        });
+
 
         if (currentBoardDetail.board_id) {
             dispatch({
@@ -427,18 +446,23 @@ class BoardCommunication extends Component {
     }
 
     getBoardTreeData = (allOrgBoardTreeList) => {
+        const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let list = []
         allOrgBoardTreeList.map((org, orgKey) => {
-            //children
-            //isLeaf: true
-            let children = []
-            if (org.board_list && org.board_list.length > 0) {
-                org.board_list.map((board, boardKey) => {
-                    children.push({ key: board.board_id, title: board.board_name, isLeaf: true, selectable: true });
-                });
-                list.push({ key: org.org_id, title: org.org_name, children, selectable: false });
+            //全组织或者当前组织
+            if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
+                //children
+                //isLeaf: true
+                let children = []
+                if (org.board_list && org.board_list.length > 0) {
+                    org.board_list.map((board, boardKey) => {
+                        children.push({ key: board.board_id, title: board.board_name, isLeaf: true, selectable: true });
+                    });
+                    list.push({ key: org.org_id, title: org.org_name, children, selectable: false });
 
+                }
             }
+
 
         });
         return list;

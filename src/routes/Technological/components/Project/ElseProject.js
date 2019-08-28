@@ -99,12 +99,13 @@ export default class ElseProject extends React.Component{
             })
           })
         }else if(type === '0') {
-          Promise.resolve(that.props.deleteProject(board_id)).then(() => {
-            dispatch({
-              type: 'project/fetchProjectListAndUpdateProjectGroupTree',
-              payload: {}
-            })
-          })
+          that.props.deleteProject(board_id)
+          // Promise.resolve(that.props.deleteProject(board_id)).then(() => {
+          //   dispatch({
+          //     type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+          //     payload: {}
+          //   })
+          // })
         }
       }
     });
