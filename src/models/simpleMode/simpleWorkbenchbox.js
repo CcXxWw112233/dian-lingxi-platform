@@ -186,18 +186,6 @@ export default {
                 // localStorage.setItem('currentBoardPermission', JSON.stringify(result.data.permissions || []))
             }
         },
-
-        * organizationMap({ payload }, { call, put }) {
-            const res = yield call(organizationMap, id);
-
-            // const { id } = payload;
-            // yield put({
-            //     type: 'projectDetailFile/initialget',
-            //     payload: {
-            //         id: id
-            //     }
-            // })
-        },
     },
     reducers: {
         updateDatas(state, action) {
