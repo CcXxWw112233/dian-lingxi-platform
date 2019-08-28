@@ -342,8 +342,6 @@ export default class SimpleNavigation extends Component {
                 break
             case '0': // 匹配全部组织
 
-                this.seeMapAuthority(e)
-
                 this.setState({
                     is_disabled: false
                 })
