@@ -456,7 +456,7 @@ export default class ElseProject extends React.Component{
             </div>
           </div>
         </Card>
-        {ShowAddMenberModalVisibile && <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>}
+        {ShowAddMenberModalVisibile && <ShowAddMenberModal {...this.props} show_wechat_invite={true} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>}
         {removePojectToGroupModalVisible && (
           <SearchTreeModal
             visible={removePojectToGroupModalVisible}

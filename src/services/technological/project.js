@@ -271,3 +271,12 @@ export async function editProjectApp(data) {
     data
   });
 }
+
+// 项目详情中生成扫码加入项目小程序二维码
+export async function joinBoardQRCode(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/mini/QRCode/join/board/${params.id}`,
+    method: 'GET',
+    params
+  }, { isNotLoading: true });
+}

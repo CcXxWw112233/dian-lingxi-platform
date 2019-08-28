@@ -385,6 +385,7 @@ export default class GroupListHeadItem extends Component {
         {
           show_add_menber_visible &&
           <ShowAddMenberModal
+            show_wechat_invite={true}
             _organization_id={org_id}
             board_id={list_id}
             addMenbersInProject={this.addMenbersInProject}
