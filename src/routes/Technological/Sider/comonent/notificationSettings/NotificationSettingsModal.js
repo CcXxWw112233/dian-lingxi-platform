@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Radio, Checkbox, Row, Col, message } from 'antd'
+import { Radio, Checkbox, Row, Col, message, Switch } from 'antd'
 import CustormModal from '@/components/CustormModal'
 import styles from './NotificationSettingsModal.less'
 import glabalStyles from '@/globalset/css/globalClassName.less'
@@ -31,6 +31,9 @@ export default class NotificationSettingsModal extends Component {
 						default_copy_options: [], // 用来做比较的列表
 						default_detail_options: [], // 默认详细列表的选项
 						default_simple_options: [], // 默认简要列表的选项
+
+						// 用户的每日代办推送
+						is_daily_agent: true,
            
         }
     }
@@ -411,7 +414,7 @@ export default class NotificationSettingsModal extends Component {
 
     render() {
         const { notificationSettingsModalVisible } = this.props
-				const { notice_way_data, is_way_status, radio_checked_val, is_detail_none, is_simple_none} = this.state
+				const { notice_way_data, is_way_status, radio_checked_val, is_detail_none, is_simple_none, is_daily_agent} = this.state
 				let status_val = []
 				for(let val in is_way_status) {
 					if (is_way_status[val] == '1') {
@@ -457,9 +460,18 @@ export default class NotificationSettingsModal extends Component {
                             </Radio>
                         </Radio.Group>
                     </div>
-                    <div className={styles.set_options}>
+                    <div className={` ${glabalStyles.global_vertical_scrollbar} ${styles.set_options}`}>
                         { this.renderSetOptions() }
                     </div>
+										<div className={styles.daily_agent}>
+											<span>每日工作提醒</span>
+											<div>
+												每天推送一则包含当日工作内容的通知&nbsp;&nbsp;
+												<Switch 
+													checked={is_daily_agent}
+													onChange={ (checked) => { this.handelDailyAgent(checked) } } />
+											</div>
+										</div>
                 </div>
             </div>
         )
