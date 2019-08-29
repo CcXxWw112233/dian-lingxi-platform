@@ -48,13 +48,13 @@ class AddTaskModal extends Component {
     super(props);
     this.state = {
       add_name: '',
-      current_selected_board: {},
+      current_selected_board: this.props.current_selected_board || {},
       current_selected_users: [],
       due_time: '',
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { create_lcb_time, board_id, about_user_boards = [] } = nextProps
+    const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
     const { due_time } = this.state
     if (due_time != create_lcb_time) {
       this.setState({
@@ -64,7 +64,7 @@ class AddTaskModal extends Component {
     // 初始化设置已选项目
     const init_selected_board = about_user_boards.find(item => item.board_id == board_id) || {}
     this.setState({
-      current_selected_board: init_selected_board
+      current_selected_board: current_selected_board || init_selected_board
     })
   }
   handleSelectedItemChange = list => {
@@ -155,7 +155,6 @@ class AddTaskModal extends Component {
       board_id,
       about_user_boards
     } = this.props;
-
 
     return (
       <Modal

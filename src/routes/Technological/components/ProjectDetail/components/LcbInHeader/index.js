@@ -86,7 +86,7 @@ export default class LcbInHeader extends Component {
   }
 
   render() {
-    const { data, board_id, board_name, milestoneList } = this.props
+    const { data, board_id, board_name, milestoneList, org_id } = this.props
     const { add_lcb_modal_visible, miletone_detail_modal_visible } = this.state
     const userList = data.map(item => {
       const value = item
@@ -117,9 +117,8 @@ export default class LcbInHeader extends Component {
              onClick={this.setAddLCBModalVisibile.bind(this)}>＋ 项目里程碑</div>
         </div>
         <AddLCBModal
-          userList={userList}
-          boardName={board_name}
-          boardId={board_id}
+          current_selected_board={{board_id, board_name, users: userList, org_id}}
+          board_id={board_id}
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
           submitCreatMilestone={this.submitCreatMilestone}
@@ -140,6 +139,6 @@ function mapStateToProps(
   {
     projectDetail: { datas: { projectDetailInfoData = { }, milestoneList = [] }},
   }){
-  const { data = [], board_id, board_name } = projectDetailInfoData
-  return { data, board_id, board_name, milestoneList }
+  const { data = [], board_id, board_name, org_id } = projectDetailInfoData
+  return { data, board_id, board_name, milestoneList, org_id }
 }
