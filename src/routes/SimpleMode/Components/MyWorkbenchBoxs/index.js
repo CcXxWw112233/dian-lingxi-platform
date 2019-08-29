@@ -181,10 +181,12 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = ({ id, code, status }) => {
-    
-    if (isDisabled == true) {
-      message.warn("暂无可查看的数据");
-      return
+
+    if (code === 'maps') {
+      if (isDisabled == true) {
+        message.warn("暂无可查看的数据");
+        return
+      }
     }
 
     if (status == 0) {
