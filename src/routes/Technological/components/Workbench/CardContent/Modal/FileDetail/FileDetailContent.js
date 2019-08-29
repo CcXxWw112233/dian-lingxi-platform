@@ -63,6 +63,12 @@ class FileDetailContent extends React.Component {
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
     isZoomPictureFullScreenMode: false, //图评全屏模式
+
+    // 是否关闭
+    is_close: null,
+
+    // 是否显示点击时候的样式颜色
+    is_show_active_color: true,
   }
   constructor() {
     super();
@@ -423,6 +429,7 @@ class FileDetailContent extends React.Component {
     const key = e.key
     switch (key) {
       case '1':
+        const { dispatch } = this.props
         let file_resource_id = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
@@ -430,6 +437,7 @@ class FileDetailContent extends React.Component {
             break
           }
         }
+        // console.log({file_resource_id, file_id}, 'sssss')
         this.setState({
           imgLoaded: false
         })
@@ -437,6 +445,13 @@ class FileDetailContent extends React.Component {
         //版本改变预览
         // this.props.filePreview({id: file_resource_id, file_id})
         this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+        dispatch({
+          type: "workbenchFileDetail/setCurrentVersionFile",
+          payload: {
+            id: file_id,
+            set_major_version:'1'
+          }
+        })
 
         this.setState({
           imgLoaded: false,
@@ -448,6 +463,10 @@ class FileDetailContent extends React.Component {
         })
         break
       case '2':
+        break
+      // 编辑版本信息
+      case '3':
+
         break
       default:
         break
@@ -518,14 +537,54 @@ class FileDetailContent extends React.Component {
 
   // 点击不同文件版本的切换
   handleVersionItem(e) {
-    // console.log(e, 'ssss')
+    const { key } = e
+    const { dispatch } = this.props
+    const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.filter(item => {
+      if (item.file_id == key) {
+        this.setState({
+          is_show_active_color: true
+        })
+        return item
+      } else {
+        this.setState({
+          is_show_active_color: false
+        })
+      }
+    })
+    // console.log(new_filePreviewCurrentVersionList, 'sssss')
+    const { file_id } = new_filePreviewCurrentVersionList[0]
+    dispatch({
+      type: 'workbenchFileDetail/filePreview',
+      payload: {
+        file_id
+      }
+    })
   }
+
+  // Dropdown显示隐藏的回调
+  handleVisibleChg(visible) {
+    // console.log(e,'ssssss')
+    this.setState({
+      is_close: visible
+    })
+  }
+
+  // 是否关闭
+  handleCloseChg() {
+    // console.log('进来了', 'sssss')
+    const { is_close } = this.state
+    // console.log(is_close, 'ssssss')
+    this.handleVisibleChg(!is_close)
+  }
+
 
   render() {
 
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_close, is_show_active_color } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -805,23 +864,28 @@ class FileDetailContent extends React.Component {
       return (
         // onClick={this.getVersionItemMenuClick.bind(this, list)}
         <Menu selectable={true} style={{ width: 400, maxHeight: '314px' }}>
-          <div key="versionTitle" style={{borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px'}}>
-            <div className={indexStyles.title_wrapper} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
+            <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span className={indexStyles.version_title}>版本信息</span>
-              <span className={indexStyles.version_close}>x</span>
+              <span onClick={ () => { this.handleCloseChg() } } className={indexStyles.version_close}>x</span>
             </div>
           </div>
-          <Menu onClick={ (e) => { this.handleVersionItem(e) } } className={`${globalStyles.global_vertical_scrollbar}`} style={{maxHeight: '200px', overflowY:'auto'}}>
+          <Menu onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
               const { file_name, creator, create_time, file_size, file_id } = value
               return (
-                <Menu.Item className={indexStyles.version_menuItem} key={file_id}>
-                  <div className={indexStyles.versionItemMenu}>
-                    <div style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
-                    <div>上传于</div>
-                    <div>{create_time}</div>
-                    {filePreviewCurrentFileId == file_id && (
-                      <div className={`${indexStyles.status}`}>主版本</div>)}
+                <Menu.Item style={{height: 'auto'}} className={indexStyles.version_menuItem} key={file_id}>
+                  <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
+                    <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{fontSize: '14px'}}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
+                    <div 
+                    style={{lineHeight: '30px'}}
+                    >
+                      <span style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.hover_color}`}>{creator}&nbsp;&nbsp;</span>
+                      <span className={indexStyles.hover_color}>上传于&nbsp;&nbsp;</span>
+                      <span className={indexStyles.hover_color}>{create_time}&nbsp;&nbsp;</span>
+                      {filePreviewCurrentFileId == file_id && (
+                        <div className={`${indexStyles.status}`}>主版本</div>)}
+                    </div>
                     <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
                     <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
                       <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}>
@@ -833,7 +897,7 @@ class FileDetailContent extends React.Component {
               )
             })}
           </Menu>
-          <div key="updateVersion" style={{height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)'}} >
+          <div key="updateVersion" style={{ height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)' }} >
             <Upload className={indexStyles.upload_file} {...uploadProps} showUploadList={false}>
               <Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
                 <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
@@ -846,7 +910,8 @@ class FileDetailContent extends React.Component {
     const versionItemMenu = ({ list, file_id, file_name }) => {
       return (
         <Menu onClick={this.getVersionItemMenuClick.bind(this, { list, file_id, file_name })}>
-          <Menu.Item key="1">设为当前</Menu.Item>
+          <Menu.Item key="1">设为主版本</Menu.Item>
+          <Menu.Item key="3">编辑版本信息</Menu.Item>
           <Menu.Item key="2" disabled>移到回收站</Menu.Item>
         </Menu>
       )
@@ -870,7 +935,7 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)} trigger={['click']}>
+              <Dropdown visible={is_close} onVisibleChange={ (visible) => { this.handleVisibleChg(visible) } } overlay={getVersionItemMenu(filePreviewCurrentVersionList)} trigger={['click']}>
                 <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
                   <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息
                 </Button>

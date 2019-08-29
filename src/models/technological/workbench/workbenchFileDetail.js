@@ -6,7 +6,7 @@ import { routerRedux } from "dva/router";
 import {
   getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy,
   fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
-  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo
+  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber } from './selects'
@@ -314,7 +314,16 @@ export default {
 
       }
     },
-
+    // 设为当前版本
+    * setCurrentVersionFile({ payload }, { select, call, put }) {
+      // console.log(payload, 'ssssss')
+      let res = yield call(setCurrentVersionFile, payload)
+      if (isApiResponseOk(res)) {
+        console.log(res, 'ssssss')
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
