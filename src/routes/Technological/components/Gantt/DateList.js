@@ -136,8 +136,7 @@ export default class DateList extends Component {
     for (let key in milestoneMap) {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
         flag = true
-        current_date_miletones = milestoneMap[key]
-        break
+        current_date_miletones = current_date_miletones.concat(milestoneMap[key])
       }
     }
 

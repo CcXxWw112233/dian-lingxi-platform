@@ -63,8 +63,7 @@ export default class GetRowGanttItem extends Component {
     for (let key in milestoneMap) {
       // 是同一天，并且在全部项目下里程碑所属的board_id和对应的分组id相等
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
-        current_date_miletones = milestoneMap[key]
-        break
+        current_date_miletones = current_date_miletones.concat(milestoneMap[key])
       }
     }
 
