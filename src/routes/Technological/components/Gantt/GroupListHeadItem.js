@@ -339,9 +339,9 @@ export default class GroupListHeadItem extends Component {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
           gantt_board_id == '0' && (
             <Menu.Item key={'invitation'}>
-               邀请成员加入
+              邀请成员加入
             </Menu.Item>
-        )}
+          )}
         {
           // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
@@ -397,7 +397,8 @@ export default class GroupListHeadItem extends Component {
               }
             </span>
             {
-              group_view_type == '1' && (
+              // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
+              group_view_type == '1' && list_id != '0' && (
                 <Dropdown overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
                   <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
                 </Dropdown>
@@ -417,15 +418,15 @@ export default class GroupListHeadItem extends Component {
         </div>
         {
           show_add_menber_visible && (
-<ShowAddMenberModal
-            show_wechat_invite={true}
-            _organization_id={org_id}
-            board_id={list_id}
-            addMenbersInProject={this.addMenbersInProject}
-            modalVisible={show_add_menber_visible}
-            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
-          />
-)}
+            <ShowAddMenberModal
+              show_wechat_invite={true}
+              _organization_id={org_id}
+              board_id={list_id}
+              addMenbersInProject={this.addMenbersInProject}
+              modalVisible={show_add_menber_visible}
+              setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+            />
+          )}
       </div>
     )
   }

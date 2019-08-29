@@ -24,4 +24,16 @@ export const beforeCreateBoardUpdateGantt = (dispatch) => {
 
         }
     })
+    dispatch({
+        type: 'gantt/getContentFiterBoardTree',
+        payload: {
+
+        }
+    })
+    dispatch({
+        type: 'gantt/getContentFiterUserTree',
+        payload: {
+            
+        }
+    })
 }
