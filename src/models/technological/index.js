@@ -522,7 +522,7 @@ export default {
     },
     * fetchCurrentOrgAllMembers({ payload }, {call, put}) {
       let res = yield call(getCurrentOrgAllMembers, {...payload})
-      // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')
+      console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

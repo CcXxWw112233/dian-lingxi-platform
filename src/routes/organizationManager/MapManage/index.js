@@ -238,6 +238,7 @@ export default class MapManage extends React.Component {
         </div>
           <ShowAddMenberModal 
           title = {titleText}
+          _organization_id={localStorage.getItem('OrganizationId')}
           addMenbersInProject={this.addMenbersInProject}
           {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
