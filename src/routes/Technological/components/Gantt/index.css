@@ -276,7 +276,26 @@
 .panel .listHead .listHeadItem .list_head_top .org_name {
   color: rgba(0, 0, 0, 0.45);
   font-size: 12px;
+  margin-left: 4px;
+}
+.panel .listHead .listHeadItem .list_head_top .operator {
+  font-size: 14px;
   margin-left: 6px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 4px;
+  display: none;
+}
+.panel .listHead .listHeadItem .list_head_top:hover * {
+  color: #40A9FF;
+}
+.panel .listHead .listHeadItem .list_head_top:hover .operator {
+  display: inline-block;
+}
+.panel .listHead .listHeadItem .list_head_top:hover .operator:hover {
+  background: #e6f7ff;
 }
 .panel .listHead .listHeadItem .list_head_body {
   flex: 1;
@@ -487,7 +506,7 @@
 }
 .content_filter_out {
   width: 248px;
-  height: autol;
+  height: auto;
   box-sizing: border-box;
   background-color: #ffffff;
   cursor: pointer;
@@ -518,6 +537,7 @@
 }
 .content_filter_out .content_filter_bott {
   padding: 0 12px;
+  height: auto;
 }
 .content_filter_out .content_filter_bott .filter_item {
   margin-top: 12px;
