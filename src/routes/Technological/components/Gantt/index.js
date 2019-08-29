@@ -132,7 +132,7 @@ class Gantt extends Component {
         param.list_id = data['list_id']
       } else {
         param.board_id = gantt_board_id
-        param.list_id = current_list_group_id
+        param.list_id = current_list_group_id == '0'? '': current_list_group_id
       }
     }
 

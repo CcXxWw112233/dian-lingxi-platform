@@ -281,7 +281,7 @@ export default class DrawDetailInfo extends React.Component {
             </div>
           ) : ( EditArea)}
         </div>
-        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} show_wechat_invite={true} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
   }
