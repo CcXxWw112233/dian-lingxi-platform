@@ -436,10 +436,14 @@ export default {
         }
       })
       
+      
       let fnmanagement_list = res.data
       var userArr = new Array(); 
-      userArr = fnmanagement_list.experiment_function_list
-      const status = userArr[3].status //投资地图的状态
+      // userArr = fnmanagement_list.experiment_function_list
+      // const status = userArr[3].status //投资地图的状态
+
+      userArr = fnmanagement_list.experiment_function_list || []
+      const status = userArr[3] ? userArr[3].status : '' //投资地图的状态
 
       if (status === '0') {
         yield put({
