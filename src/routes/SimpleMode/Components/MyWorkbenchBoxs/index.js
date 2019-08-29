@@ -159,14 +159,14 @@ class MyWorkbenchBoxs extends Component {
       payload: {}
     })
 
-    dispatch({
-      type: 'organizationManager/getFnManagementList',
-      payload: {
-        // organization_id: params.key,
-      }
-    })
-
-
+    if (localStorage.getItem('OrganizationId') !== "0") {
+      dispatch({
+        type: 'organizationManager/getFnManagementList',
+        payload: {
+          // organization_id: params.key,
+        }
+      })
+    }
   }
 
   getMenuItemList(projectList) {
@@ -219,6 +219,7 @@ class MyWorkbenchBoxs extends Component {
     const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : InvestmentMapsSelectOrganizationVisible
     const unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
     isDisabled = item.name === '投资地图' ? unclickable : (item.status === 0 ? true : false)
+  
     return (
       // <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
       <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisabled}>
