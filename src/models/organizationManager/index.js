@@ -428,6 +428,7 @@ export default {
 
     * getFnManagementList({ payload }, { call, put }) {
       const res = yield call(getFnManagementList, payload)
+
       yield put({
         type: 'updateDatas',
         payload: {
@@ -447,7 +448,7 @@ export default {
             InvestmentMapsSelectOrganizationVisible: true
           }
         })
-        message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
+        // message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
       }
       else {
         yield put({
@@ -460,7 +461,18 @@ export default {
     },
 
     * setFnManagement({ payload }, { call, put }) {
-      let res = yield call(setFnManagementStatus, payload)
+      const { id, status } = payload
+      let res = yield call(setFnManagementStatus, { id, status })
+      const { calback } = payload
+
+      if (isApiResponseOk(res)) {
+        if(typeof calback == 'function') {
+          calback()
+        }
+      }
+      else {
+
+      }
     },
 
     * investmentMapQueryAdministrators({ payload }, { call, put }) {

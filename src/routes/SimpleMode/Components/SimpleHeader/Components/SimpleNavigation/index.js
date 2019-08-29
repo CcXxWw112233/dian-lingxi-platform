@@ -158,13 +158,15 @@ export default class SimpleNavigation extends Component {
 
     seeMapAuthority(params) {
 
-        const { dispatch } = this.props
-        dispatch({
-            type: 'organizationManager/getFnManagementList',
-            payload: {
-                organization_id: params.key,
-            }
-        })
+        if (localStorage.getItem('OrganizationId') !== "0") {
+            const { dispatch } = this.props
+            dispatch({
+                type: 'organizationManager/getFnManagementList',
+                payload: {
+                    organization_id: params.key,
+                }
+            })
+        }
     }
 
     // 切换组织的点击事件
