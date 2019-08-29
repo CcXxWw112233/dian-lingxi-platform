@@ -83,6 +83,7 @@ export default function request(options = {}, elseSet = {}) {
                 });
               };
               openNotification()
+              resolve(data)
               break
           }
         } else {
