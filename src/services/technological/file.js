@@ -202,7 +202,7 @@ export async function deleteCommit(params) {
 //获取图评点的列表
 export async function getFileCommitPoints(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/comment/point/${params.id}`,
+    url: `${REQUEST_DOMAIN_FILE}/file/comment/point`,
     method: 'GET',
     params,
   });

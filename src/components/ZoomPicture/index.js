@@ -199,11 +199,7 @@ class ZoomPicture extends Component {
         const { handleFullScreen } = this.props;
         handleFullScreen(!isFullScreenMode);
       },
-      showAllCircleReview: () => { // 显示所有版本的圈评
-        this.setState({
-          isShowAllCircleReview: !isShowAllCircleReview,
-        })
-      },
+      showAllCircleReview: () => this.handleShowCircleReview(),
       rotate: () => this.handleImgRoate(),
     };
     cond[key]();
@@ -973,6 +969,22 @@ class ZoomPicture extends Component {
     })
     //let imgInfo = this.imgRef.current.getBoundingClientRect();
 
+  }
+
+  // 设置切换版本圈评
+  handleShowCircleReview = () => {
+    const { isShowAllCircleReview } = this.state
+    const { dispatch, filePreviewCurrentFileId } = this.props
+    this.setState({
+      isShowAllCircleReview: !isShowAllCircleReview
+    })
+    dispatch({
+      type: 'workbenchFileDetail/getFileCommitPoints',
+      payload: {
+        id: filePreviewCurrentFileId,
+        query_all: isShowAllCircleReview ? '' : '1'
+      }
+    })
   }
 
   genImgInitSize = (

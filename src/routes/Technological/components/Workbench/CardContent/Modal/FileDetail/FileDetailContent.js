@@ -516,6 +516,11 @@ class FileDetailContent extends React.Component {
     }
   }
 
+  // 点击不同文件版本的切换
+  handleVersionItem(e) {
+    // console.log(e, 'ssss')
+  }
+
   render() {
 
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
@@ -557,6 +562,7 @@ class FileDetailContent extends React.Component {
       <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center' }}>
         {filePreviewUrl && (
           <ZoomPicture
+            {...this.props}
             imgInfo={{ url: filePreviewUrl }}
             componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
             commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
@@ -566,6 +572,7 @@ class FileDetailContent extends React.Component {
             userId={this.getCurrentUserId()}
             handleGetNewComment={this.handleGetNewComment}
             handleFullScreen={this.handleZoomPictureFullScreen}
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
           />
         )}
       </div>
@@ -804,11 +811,11 @@ class FileDetailContent extends React.Component {
               <span className={indexStyles.version_close}>x</span>
             </div>
           </div>
-          <Menu className={`${globalStyles.global_vertical_scrollbar}`} style={{maxHeight: '200px', overflowY:'auto'}}>
+          <Menu onClick={ (e) => { this.handleVersionItem(e) } } className={`${globalStyles.global_vertical_scrollbar}`} style={{maxHeight: '200px', overflowY:'auto'}}>
             {list.map((value, key) => {
               const { file_name, creator, create_time, file_size, file_id } = value
               return (
-                <Menu.Item className={indexStyles.version_menuItem} key={file_id} >
+                <Menu.Item className={indexStyles.version_menuItem} key={file_id}>
                   <div className={indexStyles.versionItemMenu}>
                     <div style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
                     <div>上传于</div>
@@ -957,6 +964,7 @@ class FileDetailContent extends React.Component {
             <div>
               {filePreviewUrl && (
                 <ZoomPicture
+                  {...this.props}
                   imgInfo={{ url: filePreviewUrl }}
                   componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
                   commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
@@ -967,6 +975,7 @@ class FileDetailContent extends React.Component {
                   handleGetNewComment={this.handleGetNewComment}
                   isFullScreenMode={isZoomPictureFullScreenMode}
                   handleFullScreen={this.handleZoomPictureFullScreen}
+                  filePreviewCurrentFileId={filePreviewCurrentFileId}
                 />
               )}
             </div>
