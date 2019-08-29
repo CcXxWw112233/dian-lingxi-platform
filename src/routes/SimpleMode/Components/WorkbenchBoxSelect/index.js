@@ -76,6 +76,8 @@ const WorkbenchBoxSelect = (props) => {
         <div className={indexStyles.workbenchBoxWapper}>
           {
             workbenchBoxList.map((boxItem, key) => {
+              console.log(boxItem, 'boxItem');
+              
               let isSelected = myWorkbenchBoxList.filter(item => item.id == boxItem.id).length > 0 ? true : false;
               //console.log("8888", isSelected);
               return (
