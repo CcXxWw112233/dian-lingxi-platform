@@ -86,11 +86,10 @@ class VideoMeetingPopoverContent extends React.Component {
     handleVideoMeetingSaveSelectChange = value => {
         const { projectList = [] } = this.props
         // console.log('ssssssss__',{ value,  projectList})
-
         this.getProjectUsers({projectId: value})
         this.setState({
             saveToProject: value,
-            org_id: projectList.find(item => item.board_id == value).org_id || '0'
+            org_id: !value?'0': projectList.find(item => item.board_id == value).org_id || '0'
         });
     };
 
