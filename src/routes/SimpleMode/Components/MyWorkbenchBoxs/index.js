@@ -181,8 +181,13 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = ({ id, code, status }) => {
-    // if (status == 0) {
-    if (status == 0 || isDisabled == true) {
+    
+    if (isDisabled == true) {
+      message.warn("暂无可查看的数据");
+      return
+    }
+
+    if (status == 0) {
       message.warn("功能开发中，请耐心等待");
       return;
     }
