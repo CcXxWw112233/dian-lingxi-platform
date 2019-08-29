@@ -69,7 +69,7 @@ export default class FileDetailContent extends React.Component {
 
   componentDidMount() {
 
-    this.getRelations()
+    // this.getRelations()
   }
 
   //获取关联内容

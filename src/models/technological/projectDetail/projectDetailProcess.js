@@ -110,12 +110,12 @@ export default modelExtend(projectDetail, {
               type: '1'
             }
           })
-          dispatch({
-            type: 'getProcessInfoByUrl',
-            payload: {
-              currentProcessInstanceId: flow_id
-            }
-          })
+          // dispatch({
+          //   type: 'getProcessInfoByUrl',
+          //   payload: {
+          //     currentProcessInstanceId: flow_id
+          //   }
+          // })
           if(flow_id) {
             dispatch({
               type: 'getProcessInfoByUrl',
