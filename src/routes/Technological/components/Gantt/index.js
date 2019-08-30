@@ -100,7 +100,9 @@ class Gantt extends Component {
         if (res) {
           dispatch({
             type: 'gantt/getGanttData',
-            payload: {}
+            payload: {
+              not_set_loading: true
+            }
           })
         } else {
           message.warn('创建任务失败')
@@ -130,7 +132,7 @@ class Gantt extends Component {
         param.list_id = data['list_id']
       } else {
         param.board_id = gantt_board_id
-        param.list_id = current_list_group_id
+        param.list_id = current_list_group_id == '0'? '': current_list_group_id
       }
     }
 

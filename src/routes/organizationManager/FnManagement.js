@@ -1,13 +1,13 @@
 import React from 'react'
 import Card from '../../components/CardComps'
-import { message, Modal, Button} from 'antd'
+import { message, Modal, Button } from 'antd'
 import MapManage from './MapManage/index'
 import { connect } from 'dva';
 // import { Button } from 'antd/lib/radio';
-@connect(({ FnManagement = {}}) => ({
+@connect(({ FnManagement = {} }) => ({
   FnManagement,
 }))
-export default class FnManagement extends React.Component{
+export default class FnManagement extends React.Component {
   state = {
     basic_datas: [],
     experiment_datas: [],
@@ -37,11 +37,17 @@ export default class FnManagement extends React.Component{
 
   loadFunctionalManagementOfInvestmentMap = () => {
     this.showModal()
-    this.investmentMapQueryAdministrators ()
+    this.investmentMapQueryAdministrators()
   }
 
   componentDidMount() {
-    this.props.getFnManagementList()
+    // this.props.getFnManagementList()
+    const { dispatch } = this.props
+    dispatch({
+      type: 'organizationManager/getFnManagementList',
+      payload: {
+      }
+    })
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -50,14 +56,21 @@ export default class FnManagement extends React.Component{
     })
   }
   render() {
-    // console.log(this.props, 'ssssss')
     const { visible, basic_datas = [] } = this.state;
-    // const that = this
+    const { dispatch } = this.props
     const change = (id, bl) => {
-      bl===true?message.success('已开启流程功能'):message.warning('已关闭流程功能')
+      bl === true ? message.success('已开启流程功能') : message.warning('已关闭流程功能')
       this.props.setFnManagement({
         id: id,
-        status: bl?1:0
+        status: bl ? 1 : 0,
+        calback: function() {
+          dispatch({
+            type: 'organizationManager/getFnManagementList',
+            payload: {
+
+            }
+          })
+        }
       })
     }
     return (
@@ -68,21 +81,21 @@ export default class FnManagement extends React.Component{
           change={change}
         ></Card>
 
-        <Card 
-          loadFunctionalManagementOfInvestmentMap = {this.loadFunctionalManagementOfInvestmentMap}
-          title='实验室功能' 
+        <Card
+          loadFunctionalManagementOfInvestmentMap={this.loadFunctionalManagementOfInvestmentMap}
+          title='实验室功能'
           titleSub='实验室是尚不成熟的实验性功能的测试场所。这些功能有可能成为新的功能正式上线， 也随时可能会发生变化、无法正常运行或消失。'
           dataSource={this.state.experiment_datas}
-          change={change} 
+          change={change}
         ></Card>
 
-        <Modal 
-          visible={visible} 
-          title="投资地图权限功能" 
-          footer={null} 
+        <Modal
+          visible={visible}
+          title="投资地图权限功能"
+          footer={null}
           onCancel={this.handleCancel}>
 
-          <MapManage {...this.props}/>
+          <MapManage {...this.props} />
         </Modal>
       </div>
     )

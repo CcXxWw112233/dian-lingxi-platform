@@ -28,17 +28,17 @@ export default class ContentRaletion extends React.Component {
     } 
   }
   componentWillReceiveProps(nextProps) {
-    const { link_id } = nextProps
+    const { board_id, link_id, link_local } = nextProps
     const { local_link_id } = this.state
     if(link_id && local_link_id != link_id) {
-      this.getRelations()
+      this.getRelations({ board_id, link_id, link_local })
       this.setState({
         local_link_id: link_id
       })
     }
   }
   async getRelations(data) {
-    const { board_id, link_id, link_local } = this.props
+    const { board_id, link_id, link_local } = data || this.props
     const res = await getRelations({
       board_id,
       link_id,

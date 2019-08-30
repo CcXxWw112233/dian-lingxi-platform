@@ -32,6 +32,13 @@ export const reRefreshToken = (data) => {
   const is401 = Cookies.get('is401') === 'false' || !Cookies.get('is401')? false : true
   if(!is401) {
     Cookies.set('is401', true, {expires: 30, path: ''})
+    const { refreshToken } = data
+    if(!!!refreshToken) {
+      setTimeout(function () {
+        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
+      }, 500)
+      return
+    }
     setTimeout(function () {
       gotoRefresh(data)
     }, 500)

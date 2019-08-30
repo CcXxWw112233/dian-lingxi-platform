@@ -136,5 +136,10 @@ export const isToday = (timestamp) => {
 }
 
 export const isSamDay = (timestamp, timestamp2) => {
-  return new Date(timestamp).toDateString() === new Date(timestamp2).toDateString()
+  if(!!!timestamp || !!!timestamp2) {
+    return false
+  }
+  const new_time_a = timestamp.toString().length < 13? Number(timestamp) * 1000: Number(timestamp)
+  const new_time_b = timestamp2.toString().length < 13? Number(timestamp2) * 1000: Number(timestamp2)
+  return new Date(new_time_a).toDateString() == new Date(new_time_b).toDateString()
 }

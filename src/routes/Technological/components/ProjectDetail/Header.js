@@ -919,7 +919,7 @@ export default class Header extends React.Component {
         </div>
       </div>
         <DetailInfo {...this.props} modalVisible={projectInfoDisplay} />
-        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal show_wechat_invite={true} {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         <AddModalForm {...this.props} board_id = {board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)}/>
       </div>
   )

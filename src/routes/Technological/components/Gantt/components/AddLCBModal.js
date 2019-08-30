@@ -32,7 +32,7 @@ import {
   PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_TEAM_CARD_CREATE
 } from '../../../../../globalset/js/constant';
-import {timestampToTimeNormal, timeToTimestamp} from "../../../../../utils/util";
+import { timestampToTimeNormal, timeToTimestamp } from "../../../../../utils/util";
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 
 const taskTypeToName = {
@@ -48,32 +48,34 @@ class AddTaskModal extends Component {
     super(props);
     this.state = {
       add_name: '',
-      currentSelectedProject: '',
-      currentSelectedProjectMember: [],
+      current_selected_board: this.props.current_selected_board || {},
+      current_selected_users: [],
       due_time: '',
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { create_lcb_time, boardId } = nextProps
+    const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
     const { due_time } = this.state
-    if(due_time != create_lcb_time) {
+    if (due_time != create_lcb_time) {
       this.setState({
         due_time: create_lcb_time
       })
     }
+    // 初始化设置已选项目
+    const init_selected_board = about_user_boards.find(item => item.board_id == board_id) || {}
     this.setState({
-      currentSelectedProject: boardId
+      current_selected_board: current_selected_board || init_selected_board
     })
   }
   handleSelectedItemChange = list => {
     this.setState({
-      currentSelectedProjectMember: list
+      current_selected_users: list
     });
   };
 
   datePickerChange(date, dateString) {
     const newDateString = dateString.replace(/-/gim, '/')
-    if(!dateString) {
+    if (!dateString) {
       return false
     }
     this.setState({
@@ -83,7 +85,7 @@ class AddTaskModal extends Component {
 
   handleAddTaskModalCancel = () => {
     this.setState({
-      currentSelectedProject: {},
+      current_selected_board: {},
       due_time: '',
       add_name: ''
     });
@@ -92,13 +94,17 @@ class AddTaskModal extends Component {
   };
 
   isShouldNotDisableSubmitBtn = () => {
+    const { current_selected_board = {}} = this.state
+    const { board_id } = current_selected_board
+    // console.log('sssssssssss', {current_selected_board})
     const {
       add_name,
       due_time,
     } = this.state;
+    const isHasChooseBoard = () => !!!board_id
     const isHasTaskTitle = () => !!!add_name
     const isHasDueTime = () => !!!due_time
-    return isHasTaskTitle() || isHasDueTime()
+    return isHasTaskTitle() || isHasDueTime() || isHasChooseBoard()
   }
 
   handleAddTaskModalTaskTitleChange = e => {
@@ -108,32 +114,46 @@ class AddTaskModal extends Component {
   };
 
   handleClickedSubmitBtn = () => {
-    const { currentSelectedProject, add_name, due_time, currentSelectedProjectMember } = this.state
+    const { current_selected_board = {}, add_name, due_time, current_selected_users } = this.state
+    const { board_id } = current_selected_board
     let users = []
-    for(let val of currentSelectedProjectMember) {
+    for (let val of current_selected_users) {
       users.push(val['id'])
     }
     const param = {
-      currentSelectedProject, add_name, due_time,users
+      currentSelectedProject: board_id, add_name, due_time, users
     }
 
     this.props.submitCreatMilestone && this.props.submitCreatMilestone(param)
     this.handleAddTaskModalCancel()
   }
 
+  // -----------------
+  getBoardName = (board_id) => {
+    const { about_user_boards = [] } = this.props
+    const board_name = (about_user_boards.find(item => item.board_id == board_id) || {}).board_name
+    return board_name || '项目名称'
+  }
+  handleSelectedBoard = (item) => {
+    this.setCurrentSelectedBoard(item)
+  }
+  setCurrentSelectedBoard = (data) => {
+    this.setState({
+      current_selected_board: data
+    })
+  }
   render() {
     const {
       add_name,
-      currentSelectedProject,
-      currentSelectedProjectMember,
+      current_selected_board = {},
+      current_selected_users,
       due_time,
     } = this.state;
     const {
       add_lcb_modal_visible,
-      userList,
-      boardId,
-      boardName,
-      create_lcb_time
+      create_lcb_time,
+      board_id,
+      about_user_boards
     } = this.props;
 
     return (
@@ -150,21 +170,33 @@ class AddTaskModal extends Component {
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
               {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
-              <div>
-                <span className={globalStyles.authTheme} style={{marginRight: 4, fontSize: 16}}>&#xe60a;</span>{boardName}
-              </div>
+              {current_selected_board.board_id && board_id != '0' ? (
+                <div className={styles.groupList__wrapper} style={{ marginLeft: 0 }}>
+                  <span className={globalStyles.authTheme} style={{ marginRight: 2, fontSize: 18 }}>&#xe60a;</span>
+                  {current_selected_board.board_name}
+                </div>
+              ) : (
+                  <DropdownSelectWithSearch
+                    list={about_user_boards}
+                    _organization_id={current_selected_board.org_id}
+                    initSearchTitle="选择项目"
+                    selectedItem={current_selected_board}
+                    handleSelectedItem={this.handleSelectedBoard}
+                    isShouldDisableDropdown={false}
+                  />
+                )}
             </div>
 
             {/*时间选择*/}
             <div>
-              {create_lcb_time?timestampToTimeNormal(create_lcb_time, '/', true): (
-                <div style={{position: 'relative' }}>
+              {create_lcb_time ? timestampToTimeNormal(create_lcb_time, '/', true) : (
+                <div style={{ position: 'relative' }}>
                   {timestampToTimeNormal(due_time, '/', true) || '设置截止时间'}
                   <DatePicker onChange={this.datePickerChange.bind(this)}
-                              placeholder={'选择截止时间'}
-                              showTime
-                              format="YYYY-MM-DD HH:mm"
-                              style={{opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+                    placeholder={'选择截止时间'}
+                    showTime
+                    format="YYYY-MM-DD HH:mm"
+                    style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
                 </div>
               )}
             </div>
@@ -181,9 +213,9 @@ class AddTaskModal extends Component {
             <div className={styles.addTaskModalOperator}>
               <DropdownMultipleSelectWithSearch
                 itemTitle={'参与人'}
-                list={userList}
+                list={current_selected_board.users || []}
                 handleSelectedItemChange={this.handleSelectedItemChange}
-                currentSelectedProjectMember={currentSelectedProjectMember}
+                current_selected_users={current_selected_users}
               />
             </div>
             <div className={styles.confirmBtn}>

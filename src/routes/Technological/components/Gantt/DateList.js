@@ -24,7 +24,7 @@ export default class DateList extends Component {
   }
 
   componentDidMount() {
-    this.getGttMilestoneList()
+    // this.getGttMilestoneList()
   }
 
   set_miletone_detail_modal_visible = () => {
@@ -36,21 +36,23 @@ export default class DateList extends Component {
 
   // 里程碑详情和列表
   renderLCBList = (current_date_miletones, timestamp) => {
+    const { gantt_board_id } = this.props
     return (
       <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
-        <MenuItem key={'0'} style={{color: '#1890FF'}}>
+        <MenuItem key={`${0}__${0}`} style={{ color: '#1890FF' }}>
           <i className={globalStyles.authTheme}>&#xe8fe;</i>
           &nbsp;
            新建里程碑
           </MenuItem>
         {current_date_miletones.map((value, key) => {
-          const { id, name } = value
+          const { id, name, board_name, board_id } = value
           return (
             <MenuItem
               className={globalStyles.global_ellipsis}
               style={{ width: 216 }}
-              key={id}>
+              key={`${board_id}__${id}`}>
               {name}
+              {gantt_board_id == '0' && <span style={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.45)', marginLeft: 6 }}>#{board_name}</span>}
             </MenuItem>
           )
         })}
@@ -59,8 +61,10 @@ export default class DateList extends Component {
   }
   // 选择里程碑
   selectLCB = (e, timestamp) => {
-    this.setCurrentSelectedProjectMembersList()
-    const id = e.key
+    const idarr = e.key.split('__')
+    const id = idarr[1]
+    const board_id = idarr[0]
+    this.setCurrentSelectedProjectMembersList({ board_id })
     if (id == '0') {
       this.setAddLCBModalVisibile()
       this.setCreateLcbTime(timestamp)
@@ -115,31 +119,29 @@ export default class DateList extends Component {
     })
   }
 
-  getBoardName = (boardId) => {
-    const { about_user_boards = [] } = this.props
-    const board_name = (about_user_boards.find(item => item.board_id == boardId) || {}).board_name
-    return board_name || '项目名称'
-  }
-
   isHasMiletoneList = (timestamp) => {
     const { milestoneMap = [] } = this.props
     let flag = false
     let current_date_miletones = []
+    let is_over_duetime = false
     if (!timestamp) {
       return {
         flag,
         current_date_miletones
       }
     }
+    if (Number(timestamp) < new Date().getTime()) { //小于今天算逾期
+      is_over_duetime = true
+    }
     for (let key in milestoneMap) {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
         flag = true
-        current_date_miletones = milestoneMap[key]
-        break
+        current_date_miletones = current_date_miletones.concat(milestoneMap[key])
       }
     }
 
     return {
+      is_over_duetime,
       flag,
       current_date_miletones,
     }
@@ -164,21 +166,30 @@ export default class DateList extends Component {
   }
 
   // 过滤项目成员
-  setCurrentSelectedProjectMembersList = () => {
-    const { gantt_board_id, about_user_boards = [] } = this.props
-    const users = (about_user_boards.find(item => item.board_id = gantt_board_id) || {}).users
-    console.log('sssssssss', {users})
+  setCurrentSelectedProjectMembersList = ({ board_id }) => {
+    const { about_user_boards = [] } = this.props
+    const users = (about_user_boards.find(item => item.board_id == board_id) || {}).users
     this.setState({
       currentSelectedProjectMembersList: users
     })
   }
+  // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
+  handleMiletonsChangeMountInGantt = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
 
+      }
+    })
+  }
   render() {
     const {
       gold_date_arr = [],
       gantt_board_id,
       target_scrollTop,
-      group_view_type
+      group_view_type,
+      about_user_boards
     } = this.props
 
     const { add_lcb_modal_visible, create_lcb_time, currentSelectedProjectMembersList = [] } = this.state
@@ -197,8 +208,10 @@ export default class DateList extends Component {
                     const { month, date_no, week_day, timestamp } = value2
                     const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
                     const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
+                    const is_over_duetime = this.isHasMiletoneList(Number(timestamp)).is_over_duetime
+                    // /gantt_board_id == '0' ||
                     return (
-                      gantt_board_id == '0' || group_view_type != '1' ? (
+                      group_view_type != '1' ? (
                         <Tooltip key={`${month}/${date_no}`} title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                           <div key={`${month}/${date_no}`}>
                             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -219,7 +232,9 @@ export default class DateList extends Component {
                                     ${indexStyles.nomal_date_no}
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
                                     ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}
-                                    ${has_lcb && indexStyles.has_moletones_date_no}`}>
+                                    ${has_lcb && indexStyles.has_moletones_date_no}`}
+                                    style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
+                                  >
                                     {date_no}
                                   </div>
                                 </div>
@@ -234,18 +249,19 @@ export default class DateList extends Component {
             )
           })}
         </div>
-        {gantt_board_id != '0' && (
-          <AddLCBModal
-            userList={currentSelectedProjectMembersList}
-            boardName={this.getBoardName(gantt_board_id)}
-            create_lcb_time={create_lcb_time}
-            boardId={gantt_board_id}
-            add_lcb_modal_visible={add_lcb_modal_visible}
-            setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
-            submitCreatMilestone={this.submitCreatMilestone}
-          />
-        )}
+        {/* {gantt_board_id != '0' && ( */}
+        <AddLCBModal
+          about_user_boards={about_user_boards}
+          user_list={gantt_board_id == '0' ? [] : currentSelectedProjectMembersList} //如果是全部项目，则传空数组，特定项目下传特定的userList
+          create_lcb_time={create_lcb_time}
+          board_id={gantt_board_id}
+          add_lcb_modal_visible={add_lcb_modal_visible}
+          setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
+          submitCreatMilestone={this.submitCreatMilestone}
+        />
+        {/* )} */}
         <MilestoneDetail
+          handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
