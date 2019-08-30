@@ -95,6 +95,16 @@ export async function setCurrentVersionFile(data) {
   })
 }
 
+// 更新文件版本描述
+export async function updateVersionFileDescription(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file`,
+    method: 'PUT',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    data,
+  })
+}
+
 // 把文件文件夹 放入回收站
 export async function fileRemove(data) {
   return request({

@@ -19,7 +19,8 @@ import {
   getFileDetailIssue,
   updateFolder,
   getCardCommentListAll,
-  getFilePDFInfo
+  getFilePDFInfo,
+  updateVersionFileDescription,
 } from "../../../services/technological/file";
 import {
   selectAppsSelectKey,
@@ -297,6 +298,17 @@ export default modelExtend(projectDetail, {
         })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    // 文件版本更新描述
+    * updateVersionFileDescription({ payload }, { select, call, put }) {
+      // console.log(payload, 'sssss')
+      let res = yield call(updateVersionFileDescription, payload)
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
     },
 

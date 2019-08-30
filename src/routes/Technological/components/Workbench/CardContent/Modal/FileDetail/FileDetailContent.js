@@ -425,7 +425,7 @@ class FileDetailContent extends React.Component {
   }
 
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
-    // console.log(e, 'sssss_1111')
+    e && e.domEvent && e.domEvent.stopPropagation()
     const key = e.key
     switch (key) { 
       case '1': // 设置为主版本

@@ -319,7 +319,7 @@ export default {
       // console.log(payload, 'ssssss')
       let res = yield call(setCurrentVersionFile, payload)
       if (isApiResponseOk(res)) {
-        console.log(res, 'ssssss')
+        // console.log(res, 'ssssss')
       } else {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }

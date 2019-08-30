@@ -73,6 +73,10 @@ class FileDetailContent extends React.Component {
 
     // 是否显示编辑版本信息的描述
     is_edit_version_description: false,
+
+    // 定义一个数组来保存编辑状态的数组
+    editVersionFileList: [],
+    editValue: '', // 编辑时候的文本信息
   }
   constructor() {
     super();
@@ -424,6 +428,8 @@ class FileDetailContent extends React.Component {
     }
   }
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
+    e && e.domEvent && e.domEvent.stopPropagation()
+    // console.log(list, 'sssss')
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
@@ -454,13 +460,32 @@ class FileDetailContent extends React.Component {
       case '2': // 移动回收站
         break
       case '3': // 编辑版本信息
-        console.log('进来了', 'ssssss')
-
+        // console.log('进来了', 'ssssss')
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
         break
       default:
         break
     }
 
+  }
+
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(list, 'ssss')
+    let new_list = [...list]
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        new_item = { ...item, is_edit: true }
+      }
+      return new_item
+    })
+    this.setState({
+      editVersionFileList: new_list
+    })
   }
 
   handleChangeOnlyReadingShareModalVisible = () => {
@@ -706,7 +731,8 @@ class FileDetailContent extends React.Component {
         return item
       } else {
         this.setState({
-          is_show_active_color: false
+          is_show_active_color: false,
+          is_edit_version_description: false // 不相等的情况下置为false
         })
       }
     })
@@ -720,15 +746,58 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  // 改变编辑描述的value
+  handleFileVersionValue = (e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 每一个菜单点击的版本修改描述信息
+  handleFileVersionDecription = (list, e) => {
+    // let val = e.target.value
+    // console.log(val, 'ssss')
+    const { dispatch, } = this.props
+    const { editValue } = this.state
+    // console.log(editValue, 'sssss')
+    let new_list = [...list]
+    // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
+    new_list = new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false }
+        return new_item
+      }
+    })
+    const { file_id } = new_list[0]
+    this.setState({
+      is_edit_version_description: false
+    })
+    if (editValue != '') {
+      dispatch({
+        type: 'projectDetailFile/updateVersionFileDescription',
+        payload: {
+          id: file_id,
+          version_info: editValue
+        }
+      })
+      this.setState({
+        editValue: ''
+      })
+    }
+
+  }
+
   render() {
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
-    let {componentHeight, componentWidth } = this.props
-    if(!componentHeight && !componentWidth){
+    let { componentHeight, componentWidth } = this.props
+    if (!componentHeight && !componentWidth) {
       const container_fileDetailOut = document.getElementById('container_fileDetailOut');
       const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;
       componentWidth = fileDetailOutWidth - 419;
@@ -999,11 +1068,15 @@ class FileDetailContent extends React.Component {
       )
     }
 
+    // 定义一个版本列表的数据,而不用model中的数据
+    let new_filePreviewVersionList = editVersionFileList && editVersionFileList.length ? editVersionFileList : filePreviewCurrentVersionList
+
     const params = {
-      board_id, 
-      filePreviewCurrentFileId, 
-      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
-      filePreviewCurrentVersionList,
+      board_id,
+      filePreviewCurrentFileId,
+      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      new_filePreviewVersionList,
+      is_edit_version_description,
     }
 
     return (
@@ -1017,10 +1090,12 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <VersionSwitching {...params} 
-              handleVersionItem={ this.handleVersionItem } 
-              getVersionItemMenuClick={this.getVersionItemMenuClick}
-              uploadProps={uploadProps} />
+              <VersionSwitching {...params}
+                handleVersionItem={this.handleVersionItem}
+                getVersionItemMenuClick={this.getVersionItemMenuClick}
+                handleFileVersionDecription={this.handleFileVersionDecription}
+                handleFileVersionValue={this.handleFileVersionValue}
+                uploadProps={uploadProps} />
             )}
 
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
