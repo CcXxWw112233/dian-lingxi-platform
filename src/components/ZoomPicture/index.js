@@ -973,18 +973,33 @@ class ZoomPicture extends Component {
 
   // 设置切换版本圈评
   handleShowCircleReview = () => {
+    console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
-    const { dispatch, filePreviewCurrentFileId } = this.props
+    const { dispatch, filePreviewCurrentFileId, workbenchType, projectFileType } = this.props
+    console.log(this.props, 'ssssss')
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview
     })
-    dispatch({
-      type: 'workbenchFileDetail/getFileCommitPoints',
-      payload: {
-        id: filePreviewCurrentFileId,
-        query_all: isShowAllCircleReview ? '' : '1'
-      }
-    })
+    if (workbenchType) {
+      dispatch({
+        type: 'workbenchFileDetail/getFileCommitPoints',
+        payload: {
+          id: filePreviewCurrentFileId,
+          query_all: isShowAllCircleReview ? '' : '1'
+        }
+      })
+    }
+    if (projectFileType) {
+      console.log('进来了' ,'ssss')
+      dispatch({
+        type: 'projectDetailFile/getFileCommitPoints',
+        payload: {
+          id: filePreviewCurrentFileId,
+          query_all: isShowAllCircleReview ? '' : '1'
+        }
+      })
+    }
+
   }
 
   genImgInitSize = (
@@ -1516,10 +1531,10 @@ class ZoomPicture extends Component {
                   {/* {i.icon} */}
                   {
                     i && i.key && i.key == 'addCommit' ? (
-                      <span style={{display: 'flex'}}>{i.icon}&nbsp;&nbsp;<span style={{fontSize: '14px', width: '56px'}}>添加圈点</span></span>
+                      <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>添加圈点</span></span>
                     ) : (
-                      <span>{i.icon}</span>
-                    )
+                        <span>{i.icon}</span>
+                      )
                   }
                 </div>
               </div>
@@ -1537,7 +1552,7 @@ class ZoomPicture extends Component {
                 onClick={i.onClick}
                 className={styles.operatorBarCell}
               >
-                <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}><span style={{display: 'flex'}}>{i.icon}&nbsp;&nbsp;<span style={{fontSize: '14px'}}>退出圈点</span></span></div>
+                <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}><span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px' }}>退出圈点</span></span></div>
               </div>
             </Tooltip>
           ))}
