@@ -21,7 +21,7 @@ import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
-import { max } from 'moment';
+import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 export default {
   namespace: 'gantt',
@@ -42,6 +42,7 @@ export default {
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
+      target_scrollTop_board_storage: 0, //缓存查看项目视图下，滚动条的位置高度
       current_list_group_id: '0', //当前选中的分组id
       milestoneMap: [], //里程碑列表
 
@@ -385,6 +386,11 @@ export default {
           list_group
         }
       })
+      // 设置滚动条的高度位置
+      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+      const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
+      handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
     },
     * setListGroup_copy({ payload }, { select, call, put }) {
 

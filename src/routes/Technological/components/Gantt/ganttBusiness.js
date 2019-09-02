@@ -37,3 +37,15 @@ export const beforeCreateBoardUpdateGantt = (dispatch) => {
         }
     })
 }
+
+export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id, target_scrollTop_board_storage }) => {
+    const target = document.getElementById('gantt_card_out_middle')
+    if (!target) {
+        return
+    }
+    if(gantt_board_id == '0' && group_view_type == '1') { //在查看项目的情况下
+        target.scrollTop = target_scrollTop_board_storage
+    } else {
+        target.scrollTop = 0
+    }
+}
