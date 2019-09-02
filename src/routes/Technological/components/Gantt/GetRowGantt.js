@@ -91,7 +91,7 @@ export default class GetRowGantt extends Component {
     this.setIsDragging(false)
     this.isMouseDown = true
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
-    const target = this.refs.operateArea//event.target || event.srcElement;
+    const target = this.refs.gantt_operate_area_panel//event.target || event.srcElement;
     target.onmousemove = this.dashedDragMousemove.bind(this);
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
@@ -105,7 +105,7 @@ export default class GetRowGantt extends Component {
 
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
-    const target = this.refs.operateArea//event.target || event.srcElement;
+    const target = this.refs.gantt_operate_area_panel//event.target || event.srcElement;
     const { coperatedX } = this.state
     // 取得鼠标位置
     const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
@@ -137,7 +137,7 @@ export default class GetRowGantt extends Component {
     this.handleCreateTask({ start_end: '2', top: currentRect.y })
   }
   stopDragging() {
-    const target = this.refs.operateArea
+    const target = this.refs.gantt_operate_area_panel
     target.onmousemove = null;
     target.onmuseup = null;
     const that = this
@@ -394,7 +394,8 @@ export default class GetRowGantt extends Component {
         onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
         onMouseMove={this.dashedMouseMove.bind(this)}
         onMouseLeave={this.dashedMouseLeave.bind(this)}
-        ref={'operateArea'}>
+        id={'gantt_operate_area_panel'}
+        ref={'gantt_operate_area_panel'}>
         {dasheRectShow && (
           <div className={indexStyles.dasheRect} style={{
             left: currentRect.x + 1, top: currentRect.y,

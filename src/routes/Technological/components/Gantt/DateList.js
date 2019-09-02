@@ -183,7 +183,29 @@ export default class DateList extends Component {
       }
     })
   }
+
+  // 视图是否在可见区域
+  filterIsInViewArea = () => {
+    const target = document.getElementById('gantt_operate_area_panel')
+    if (!target) {
+      return
+    }
+    const { date_arr_one_level, ceilWidth = 44 } = this.props
+    const left = target.getBoundingClientRect().left
+    const width = target.clientWidth
+    const now = new Date().getTime()
+    const index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
+    const now_position = index * ceilWidth //当天所在位置position
+
+    let isInViewArea = false
+    if(width - left > now_position && width - left < 2 * now_position) { //在可视区域
+      isInViewArea = true
+    }
+    console.log('ssss', { left, width, now_position, isInViewArea })
+    return isInViewArea
+  }
   render() {
+    this.filterIsInViewArea()
     const {
       gold_date_arr = [],
       gantt_board_id,
@@ -274,20 +296,19 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], about_user_boards = [], list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
+    gantt: { datas: {
+      gold_date_arr = [], about_user_boards = [],
+      list_group = [], target_scrollTop = [],
+      milestoneMap = [], holiday_list = [],
+      gantt_board_id, group_view_type, ceilWidth,
+      target_scrollLeft, date_arr_one_level } },
   }) {
-  return { gold_date_arr, list_group, target_scrollTop, milestoneMap, holiday_list, gantt_board_id, group_view_type, about_user_boards }
+  return {
+    gold_date_arr, list_group,
+    target_scrollTop, milestoneMap,
+    holiday_list, gantt_board_id,
+    group_view_type, about_user_boards, ceilWidth,
+    target_scrollLeft, date_arr_one_level
+  }
 }
 
-//  {/* {projectTabCurrentSelectedProject != '0' ? (
-//                           <DateListLCBItem
-//                             has_lcb={has_lcb}
-//                             boardName={this.getBoardName(projectTabCurrentSelectedProject)}
-//                             current_date_miletones={current_date_miletones}
-//                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
-//                             setCreateLcbTime={this.setCreateLcbTime}
-//                             setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
-//                             set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
-//                         ):(
-//                           <div className={indexStyles.lcb_area}></div>
-//                         )} */}
