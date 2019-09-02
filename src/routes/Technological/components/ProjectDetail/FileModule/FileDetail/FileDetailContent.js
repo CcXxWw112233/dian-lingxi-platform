@@ -78,7 +78,7 @@ class FileDetailContent extends React.Component {
     is_edit_version_description: false,
 
     // 定义一个数组来保存编辑状态的数组
-    editVersionFileList: [],
+    // editVersionFileList: [],
     editValue: '', // 编辑时候的文本信息
   }
   constructor() {
@@ -447,10 +447,15 @@ class FileDetailContent extends React.Component {
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
+        const { dispatch } = this.props
+        const { datas: { breadcrumbList = [] } } = this.props.model
         let file_resource_id = ''
+        let file_version_id = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
+            // console.log('进来了', 'sssss')
             file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
             break
           }
         }
@@ -461,6 +466,15 @@ class FileDetailContent extends React.Component {
         //版本改变预览
         // this.props.filePreview({id: file_resource_id, file_id})
         this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+
+        dispatch({
+          type: "projectDetailFile/setCurrentVersionFile",
+          payload: {
+            id: file_id,
+            set_major_version: '1',
+            version_id: file_version_id
+          }
+        })
 
         this.setState({
           imgLoaded: false,
@@ -740,9 +754,10 @@ class FileDetailContent extends React.Component {
     // console.log(e, 'ssss_22222')
     const { key } = e
     const { dispatch } = this.props
-    const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
-    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.filter(item => {
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
       if (item.file_id == key) {
         return item
       }
@@ -758,8 +773,8 @@ class FileDetailContent extends React.Component {
       //   })
       // }
     })
-    // console.log(new_filePreviewCurrentVersionList, 'sssss')
-    const { file_id } = new_filePreviewCurrentVersionList[0]
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    const { file_id } = temp_filePreviewCurrentVersionList[0]
     dispatch({
       type: 'projectDetailFile/filePreview',
       payload: {
@@ -796,7 +811,7 @@ class FileDetailContent extends React.Component {
     new_list = new_list.map(item => {
       let new_item = item
       if (new_item.is_edit) {
-        new_item = {...item, is_edit: false, is_editValue: editValue}
+        new_item = { ...item, is_edit: false, remarks: editValue != '' ? editValue : item.remarks }
         return new_item
       } else {
         return new_item
@@ -821,6 +836,12 @@ class FileDetailContent extends React.Component {
         editValue: ''
       })
     }
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        filePreviewCurrentVersionList: new_list
+      }
+    })
   }
 
   render() {

@@ -20,6 +20,7 @@ import {
   updateFolder,
   getCardCommentListAll,
   getFilePDFInfo,
+  setCurrentVersionFile,
   updateVersionFileDescription,
 } from "../../../services/technological/file";
 import {
@@ -312,6 +313,25 @@ export default modelExtend(projectDetail, {
       }
     },
 
+     // 设为当前版本
+     * setCurrentVersionFile({ payload }, { select, call, put }) {
+      // console.log(payload, 'ssssss')
+      const { id, set_major_version, version_id } = payload
+      let res = yield call(setCurrentVersionFile, { id, set_major_version })
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+        yield put({
+          type: 'fileVersionist',
+          payload: {
+            version_id: version_id,
+            file_id: id
+          }
+        })
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+
     * getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
       let res = yield call(getFileList, {folder_id})
@@ -541,12 +561,22 @@ export default modelExtend(projectDetail, {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile, isPDF } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
       const breadcrumbList = yield select(selectBreadcrumbList)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-
+      // console.log(res, 'ssssss')
+      let temp_list = [...res.data && res.data]
+      // console.log(temp_list, 'sssss')
+      let temp_arr = []
+      for (let val of temp_list) {
+        if (val['file_id'] == file_id) {
+          // console.log(val, 'ssssss')
+          temp_arr.unshift(val)
+        }
+      }
+      // console.log(temp_arr, 'sssss')
       if(isApiResponseOk(res)) {
-        breadcrumbList[breadcrumbList.length - 1] = res.data[0]
+        breadcrumbList[breadcrumbList.length - 1] = temp_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {

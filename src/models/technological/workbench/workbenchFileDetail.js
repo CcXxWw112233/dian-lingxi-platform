@@ -6,7 +6,8 @@ import { routerRedux } from "dva/router";
 import {
   getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy,
   fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
-  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile
+  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile,
+  updateVersionFileDescription,
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber } from './selects'
@@ -318,6 +319,16 @@ export default {
     * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
       let res = yield call(setCurrentVersionFile, payload)
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+    // 文件版本更新描述
+    * updateVersionFileDescription({ payload }, { select, call, put }) {
+      // console.log(payload, 'sssss')
+      let res = yield call(updateVersionFileDescription, payload)
       if (isApiResponseOk(res)) {
         // console.log(res, 'ssssss')
       } else {

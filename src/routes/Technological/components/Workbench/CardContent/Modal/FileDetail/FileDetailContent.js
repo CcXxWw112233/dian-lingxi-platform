@@ -67,6 +67,16 @@ class FileDetailContent extends React.Component {
 
     // 是否显示点击时候的样式颜色
     is_show_active_color: true,
+
+    // 更新版本信息列表,将其保存一个状态
+    new_filePreviewCurrentVersionList: [],
+
+    // 是否显示编辑版本信息的描述
+    is_edit_version_description: false,
+
+    // 定义一个数组来保存编辑状态的数组
+    // editVersionFileList: [],
+    editValue: '', // 编辑时候的文本信息
   }
   constructor() {
     super();
@@ -84,8 +94,19 @@ class FileDetailContent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps, 'sssss')
     const rects = []
-    const { datas: { filePreviewCommitPoints = [] } } = nextProps.model
+    const { datas: { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } } = nextProps.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      new_item = { ...item, is_edit: false }
+      return new_item
+    })
+
+    this.setState({
+      new_filePreviewCurrentVersionList,
+    })
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -427,7 +448,7 @@ class FileDetailContent extends React.Component {
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
     e && e.domEvent && e.domEvent.stopPropagation()
     const key = e.key
-    switch (key) { 
+    switch (key) {
       case '1': // 设置为主版本
         const { dispatch } = this.props
         let file_resource_id = ''
@@ -449,7 +470,7 @@ class FileDetailContent extends React.Component {
           type: "workbenchFileDetail/setCurrentVersionFile",
           payload: {
             id: file_id,
-            set_major_version:'1'
+            set_major_version: '1'
           }
         })
 
@@ -466,7 +487,10 @@ class FileDetailContent extends React.Component {
         break
       // 编辑版本信息
       case '3':
-
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
         break
       default:
         break
@@ -535,27 +559,51 @@ class FileDetailContent extends React.Component {
     }
   }
 
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(file_id, 'ssssss')
+    // console.log(list, 'ssss')
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList
+    })
+  }
+
   // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
   handleVersionItem = (e) => {
     // console.log(e, 'ssss_22222')
     const { key } = e
     const { dispatch } = this.props
-    const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
-    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.filter(item => {
+    const { new_filePreviewCurrentVersionList } = this.state
+    // const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
       if (item.file_id == key) {
-        this.setState({
-          is_show_active_color: true
-        })
         return item
-      } else {
-        this.setState({
-          is_show_active_color: false
-        })
       }
+      // if (item.file_id == key) {
+      //   this.setState({
+      //     is_show_active_color: true
+      //   })
+      //   return item
+      // } else {
+      //   this.setState({
+      //     is_show_active_color: false
+      //   })
+      // }
     })
     // console.log(new_filePreviewCurrentVersionList, 'sssss')
-    const { file_id } = new_filePreviewCurrentVersionList[0]
+    const { file_id } = temp_filePreviewCurrentVersionList[0]
     dispatch({
       type: 'workbenchFileDetail/filePreview',
       payload: {
@@ -564,12 +612,67 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  // 改变编辑描述的value onChange事件
+  handleFileVersionValue = (e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
+    // let val = e.target.value
+    const { dispatch, } = this.props
+    const { editValue, is_edit_version_description } = this.state
+    // console.log(is_edit_version_description, 'ssssss')
+    // console.log(editValue, 'sssss')
+    let new_list = [...list]
+    // console.log(new_list, 'sssss')
+    // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        return new_item
+      }
+    })
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false, is_editValue: editValue }
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    // console.log(new_list, 'sssss')
+    const { file_id } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
+    if (editValue != '') {
+      dispatch({
+        type: 'workbenchFileDetail/updateVersionFileDescription',
+        payload: {
+          id: file_id,
+          version_info: editValue
+        }
+      })
+      this.setState({
+        editValue: ''
+      })
+    }
+  }
+
 
   render() {
 
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_close, is_show_active_color } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -847,10 +950,11 @@ class FileDetailContent extends React.Component {
     }
 
     const params = {
-      board_id, 
-      filePreviewCurrentFileId, 
-      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
-      filePreviewCurrentVersionList,
+      board_id,
+      filePreviewCurrentFileId,
+      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      new_filePreviewCurrentVersionList,
+      is_edit_version_description,
     }
 
     return (
@@ -871,10 +975,12 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <VersionSwitching {...params} 
-                handleVersionItem={ this.handleVersionItem } 
-                getVersionItemMenuClick={this.getVersionItemMenuClick}
-                uploadProps={uploadProps} />
+              <VersionSwitching {...params}
+              handleVersionItem={this.handleVersionItem}
+              getVersionItemMenuClick={this.getVersionItemMenuClick}
+              handleFileVersionDecription={this.handleFileVersionDecription}
+              handleFileVersionValue={this.handleFileVersionValue}
+              uploadProps={uploadProps} />
             )}
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
               <Button className={indexStyles.download} style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, pdfDownLoadSrc })}>
