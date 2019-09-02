@@ -162,7 +162,7 @@ export default class SiderLeft extends React.Component {
 
   // 切换组织的点击事件
   handleOrgListMenuClick = (e) => {
-    console.log(e, 'ssss')
+    // console.log(e, 'ssss')
     const { key } = e
     const { is_disabled } = this.state
     const { currentUserOrganizes = [] } = this.props

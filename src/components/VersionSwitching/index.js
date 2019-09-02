@@ -19,24 +19,24 @@ export default class index extends Component {
 
   state = {
     is_close: null, // 是否关闭状态, 默认为 null
-    new_filePreviewCurrentVersionList: [], // 定义一个空的数组
+    // new_filePreviewCurrentVersionList: [], // 定义一个空的数组
   }
 
-  componentWillReceiveProps(nextProps) {
-    // console.log(nextProps, 'sssss')
-    const { filePreviewCurrentVersionList = [] } = nextProps
-    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
-      let new_item = { ...item }
-      new_item = { ...item, is_edit: false }
-      return new_item
-    })
+  // componentWillReceiveProps(nextProps) {
+  //   // console.log(nextProps, 'sssss')
+  //   const { filePreviewCurrentVersionList = [] } = nextProps
+  //   let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+  //   new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+  //     let new_item = { ...item }
+  //     new_item = { ...item, is_edit: false }
+  //     return new_item
+  //   })
 
-    this.setState({
-      new_filePreviewCurrentVersionList,
-    })
-    // console.log(new_filePreviewCurrentVersionList, 'sssss')
-  }
+  //   this.setState({
+  //     new_filePreviewCurrentVersionList,
+  //   })
+  //   // console.log(new_filePreviewCurrentVersionList, 'sssss')
+  // }
 
   /**
    * Dropdown的点击显示隐藏的回调
@@ -60,7 +60,6 @@ export default class index extends Component {
    * @param {Object} e 对应点击的key的字段
    */
   handleVersionChg = ({ list, file_id, file_name }, e) => {
-    // console.log(e, 'sssss')
     this.props.getVersionItemMenuClick({ list, file_id, file_name }, e)
   }
 
@@ -73,8 +72,11 @@ export default class index extends Component {
     this.props.handleVersionItem(e)
   }
 
-  handleFileDecription = (list, e) => {
-    this.props.handleFileVersionDecription(list, e)
+  /**
+   * 编辑版本描述
+   */
+  handleFileDecription = (list, file_id) => {
+    this.props.handleFileVersionDecription(list, file_id)
   }
 
   // 修改文本框的value值
@@ -87,12 +89,19 @@ export default class index extends Component {
     e && e.stopPropagation()
   }
 
+  handleKeyDown(list, file_id,e) {
+    if (e.keyCode == '13') {
+      this.handleFileDecription(list, file_id)
+    }
+  }
 
   render() {
 
-    const { is_close, new_filePreviewCurrentVersionList = [] } = this.state
-    const { new_filePreviewVersionList = [], filePreviewCurrentFileId, uploadProps, is_edit_version_description } = this.props
-    let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
+    const { is_close } = this.state
+    const { new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, uploadProps, is_edit_version_description } = this.props
+    // console.log(is_edit_version_description, 'ssssss')
+    // console.log(new_filePreviewCurrentVersionList, 'ssss')
+    // let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
     // console.log(this.props, 'sssss')
     // 点击版本信息的显示列表
     const getVersionItemMenu = (list) => {
@@ -107,7 +116,7 @@ export default class index extends Component {
           </div>
           <Menu onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
-              const { file_name, creator, create_time, file_size, file_id, is_edit, remarks } = value
+              const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, is_editValue } = value
               return (
                 <Menu.Item style={{ height: 'auto' }} className={indexStyles.version_menuItem} key={file_id}>
                   {
@@ -118,18 +127,19 @@ export default class index extends Component {
                           autoFocus={true}
                           autosize={true}
                           onChange={(e) => { this.handleChgEditVal(e) }}
-                          onBlur={(e) => { this.handleFileDecription(list, e) }}
+                          onBlur={() => { this.handleFileDecription(list, file_id) }}
                           onClick={(e) => { this.handleStopPro(e) }}
+                          onKeyDown={(e) => { this.handleKeyDown(list, file_id,e) }}
                         />
                       </div>
                     ) : (
                         <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
                           <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
                           {
-                            remarks && remarks ? (
+                            (is_editValue && is_editValue) || (remarks && remarks) ? (
                               <div style={{ lineHeight: '30px'}}>
                               <span style={{fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
-                                {remarks}&nbsp;&nbsp;&nbsp;&nbsp;
+                                {is_editValue || remarks}&nbsp;&nbsp;&nbsp;&nbsp;
                               </span>
                               {filePreviewCurrentFileId == file_id && (
                                   <span className={`${indexStyles.status}`}>主版本</span>)}
@@ -148,7 +158,11 @@ export default class index extends Component {
                           }
                           <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
                           <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                            <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}>
+                            <Dropdown overlay={versionItemMenu({ list, file_id, file_name })} 
+                              // getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onClick={ (e) => { this.handleStopPro(e) } }
+                              trigger={['click']}
+                            >
                               <span>&#xe7fd;</span>
                             </Dropdown>.
                           </div>
@@ -182,7 +196,7 @@ export default class index extends Component {
 
     return (
       <div>
-        <Dropdown visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(temp_arr)} trigger={['click']}>
+        <Dropdown visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
           <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
             <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息
                 </Button>

@@ -71,6 +71,9 @@ class FileDetailContent extends React.Component {
     // 是否显示点击时候的样式颜色
     is_show_active_color: true,
 
+    // 更新版本信息列表,将其保存一个状态
+    new_filePreviewCurrentVersionList: [],
+
     // 是否显示编辑版本信息的描述
     is_edit_version_description: false,
 
@@ -94,8 +97,19 @@ class FileDetailContent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps, 'sssss')
     const rects = []
-    const { datas: { filePreviewCommitPoints = [] } } = nextProps.model
+    const { datas: { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } } = nextProps.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      new_item = { ...item, is_edit: false }
+      return new_item
+    })
+
+    this.setState({
+      new_filePreviewCurrentVersionList,
+    })
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -472,21 +486,6 @@ class FileDetailContent extends React.Component {
 
   }
 
-  // 修改编辑版本描述的方法
-  chgVersionFileEdit({ list, file_id, file_name }) {
-    // console.log(list, 'ssss')
-    let new_list = [...list]
-    new_list = new_list.map(item => {
-      let new_item = item
-      if (new_item.file_id == file_id) {
-        new_item = { ...item, is_edit: true }
-      }
-      return new_item
-    })
-    this.setState({
-      editVersionFileList: new_list
-    })
-  }
 
   handleChangeOnlyReadingShareModalVisible = () => {
     const { onlyReadingShareModalVisible } = this.state
@@ -636,7 +635,7 @@ class FileDetailContent extends React.Component {
         message.error('设置内容权限失败，请稍后再试')
       }
     })
-    console.log(flag, 'get visitcontrol change')
+    // console.log(flag, 'get visitcontrol change')
   }
   visitControlUpdateCurrentModalData = obj => {
     const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id } } } = this.props.model
@@ -716,6 +715,26 @@ class FileDetailContent extends React.Component {
     }
   }
 
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(file_id, 'ssssss')
+    // console.log(list, 'ssss')
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList
+    })
+  }
+
   // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
   handleVersionItem = (e) => {
     // console.log(e, 'ssss_22222')
@@ -725,16 +744,19 @@ class FileDetailContent extends React.Component {
     let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
     new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.filter(item => {
       if (item.file_id == key) {
-        this.setState({
-          is_show_active_color: true
-        })
         return item
-      } else {
-        this.setState({
-          is_show_active_color: false,
-          is_edit_version_description: false // 不相等的情况下置为false
-        })
       }
+      // if (item.file_id == key) {
+      //   this.setState({
+      //     is_show_active_color: true
+      //   })
+      //   return item
+      // } else {
+      //   this.setState({
+      //     is_show_active_color: false,
+      //     is_edit_version_description: false // 不相等的情况下置为false
+      //   })
+      // }
     })
     // console.log(new_filePreviewCurrentVersionList, 'sssss')
     const { file_id } = new_filePreviewCurrentVersionList[0]
@@ -746,7 +768,7 @@ class FileDetailContent extends React.Component {
     })
   }
 
-  // 改变编辑描述的value
+  // 改变编辑描述的value onChange事件
   handleFileVersionValue = (e) => {
     let val = e.target.value
     this.setState({
@@ -754,26 +776,39 @@ class FileDetailContent extends React.Component {
     })
   }
 
-  // 每一个菜单点击的版本修改描述信息
-  handleFileVersionDecription = (list, e) => {
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
     // let val = e.target.value
-    // console.log(val, 'ssss')
     const { dispatch, } = this.props
-    const { editValue } = this.state
+    const { editValue, is_edit_version_description } = this.state
+    // console.log(is_edit_version_description, 'ssssss')
     // console.log(editValue, 'sssss')
     let new_list = [...list]
+    // console.log(new_list, 'sssss')
     // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
-    new_list = new_list.filter(item => {
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
       let new_item = item
       if (new_item.is_edit) {
-        new_item = { ...item, is_edit: false }
         return new_item
       }
     })
-    const { file_id } = new_list[0]
-    this.setState({
-      is_edit_version_description: false
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = {...item, is_edit: false, is_editValue: editValue}
+        return new_item
+      } else {
+        return new_item
+      }
     })
+    // console.log(new_list, 'sssss')
+    const { file_id } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
     if (editValue != '') {
       dispatch({
         type: 'projectDetailFile/updateVersionFileDescription',
@@ -786,12 +821,11 @@ class FileDetailContent extends React.Component {
         editValue: ''
       })
     }
-
   }
 
   render() {
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -1069,13 +1103,13 @@ class FileDetailContent extends React.Component {
     }
 
     // 定义一个版本列表的数据,而不用model中的数据
-    let new_filePreviewVersionList = editVersionFileList && editVersionFileList.length ? editVersionFileList : filePreviewCurrentVersionList
+    // let new_filePreviewVersionList = editVersionFileList && editVersionFileList.length ? editVersionFileList : filePreviewCurrentVersionList
 
     const params = {
       board_id,
       filePreviewCurrentFileId,
       filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
-      new_filePreviewVersionList,
+      new_filePreviewCurrentVersionList,
       is_edit_version_description,
     }
 
