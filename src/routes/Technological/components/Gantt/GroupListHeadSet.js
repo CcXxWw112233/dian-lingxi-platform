@@ -68,10 +68,24 @@ export default class GroupListHeadSet extends Component {
 
     handleSubmitNewProject = data => {
         const { dispatch } = this.props;
+        const calback = (id) => {
+            if(!!!id) {
+                return
+            }
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    gantt_board_id: id,
+                }
+            })
+        }
         Promise.resolve(
             dispatch({
                 type: 'project/addNewProject',
-                payload: data
+                payload: {
+                    ...data,
+                    calback
+                }
             })
         )
             .then(() => {
