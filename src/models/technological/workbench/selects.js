@@ -23,6 +23,7 @@ export const workbench_selectFilePreviewPointNumCommits = state => state[(`workb
 export const workbench_selectFilePreviewCommitPoints = state => state[(`workbenchFileDetail`)].datas.filePreviewCommitPoints
 export const workbench_selectFilePreviewCurrentVersionList = state => state[(`workbenchFileDetail`)].datas.filePreviewCurrentVersionList
 
+
 //工作台任务
 export const workbench_selectDrawContent = state => state[(`workbenchTaskDetail`)].datas.drawContent
 export const workbench_selectCard_id = state => state[(`workbenchTaskDetail`)].datas.card_id

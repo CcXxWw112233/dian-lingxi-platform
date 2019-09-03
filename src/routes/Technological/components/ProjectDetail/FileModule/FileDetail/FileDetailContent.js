@@ -765,12 +765,13 @@ class FileDetailContent extends React.Component {
       }
     })
     // console.log(temp_filePreviewCurrentVersionList, 'sssss')
-    const { file_id, file_resource_id } = temp_filePreviewCurrentVersionList[0]
+    const { file_id, file_resource_id, version_id } = temp_filePreviewCurrentVersionList[0]
     dispatch({
       type: 'projectDetailFile/filePreview',
       payload: {
         file_id,
         file_resource_id,
+        version_id,
       }
     })
   }
@@ -1130,10 +1131,16 @@ class FileDetailContent extends React.Component {
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
-          <div className={indexStyles.fileDetailHeadLeft}>
-            {seeFileInput === 'fileModule' ? (
-              <FileDerailBreadCrumbFileNav {...this.props} />
-            ) : ('')}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={indexStyles.fileIcon}>
+              <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
+              文件
+            </div>
+            <div className={indexStyles.fileDetailHeadLeft}>
+              {seeFileInput === 'fileModule' ? (
+                <FileDerailBreadCrumbFileNav {...this.props} />
+              ) : ('')}
+            </div>
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>

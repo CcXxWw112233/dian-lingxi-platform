@@ -48,6 +48,7 @@ export default class index extends Component {
    * @param {Object} e 对应点击的key的字段
    */
   handleVersionChg = ({ list, file_id, file_name }, e) => {
+    // console.log(file_id, 'ssssss')
     this.props.getVersionItemMenuClick({ list, file_id, file_name }, e)
   }
 

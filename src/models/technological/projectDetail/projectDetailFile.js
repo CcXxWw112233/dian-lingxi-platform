@@ -222,22 +222,34 @@ export default modelExtend(projectDetail, {
           payload: {
             filePreviewCurrentVersionList: res.data.version_list,
             filePreviewCurrentVersionId: res.data.version_list.length?res.data.version_list[0]['version_id']: '',
-            filePreviewCurrentId: res.data.base_info.file_resource_id
+            // filePreviewCurrentId: res.data.base_info.file_resource_id
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList) || []
         let arr = []
         const target_path = res.data.target_path
-        //递归添加路径
+        // 递归添加路径
         const digui = (name, data) => {
-          if(data[name] && data['parent_id'] != '0') {
+          if(data[name]) {
             arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
             digui(name, data[name])
+          }else if(data['parent_id'] == '0'){
+            arr.push({file_name: '根目录', file_id: data.id, type: '1'})
           }
         }
         digui('parent_folder', target_path)
-        const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        const newbreadcrumbList = arr.reverse()
         newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2'})
+        //递归添加路径
+        // const digui = (name, data) => {
+        //   if(data[name] && data['parent_id'] != '0') {
+        //     arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+        //     digui(name, data[name])
+        //   }
+        // }
+        // digui('parent_folder', target_path)
+        // const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        // newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2'})
 
         yield put({
           type: 'updateDatas',
@@ -411,7 +423,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * filePreview({ payload }, { select, call, put }) {
-      const { file_id, file_resource_id } = payload
+      const { file_id, file_resource_id, version_id } = payload
       const res = yield call(filePreview, {id: file_id})
       if(isApiResponseOk(res)) {
         yield put({
@@ -434,6 +446,12 @@ export default modelExtend(projectDetail, {
           type: 'getFileCommitPoints',
           payload: {
             id: file_id
+          }
+        })
+        yield put({
+          type: 'fileInfoByUrl',
+          payload: {
+            file_id
           }
         })
 
@@ -592,12 +610,13 @@ export default modelExtend(projectDetail, {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
-      const breadcrumbList = yield select(selectBreadcrumbList)
+      const { isNeedPreviewFile, isPDF, file_id, version_id } = payload //是否需要重新读取文档
+      // console.log(payload, 'ssssss')
+      // console.log(version_id, 'ssssss')
+      const new_breadcrumbList = yield select(selectBreadcrumbList)
       const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-      // console.log(res, 'ssssss')
-      let temp_list = [...res.data && res.data]
+      let temp_list = [...res && res.data]
       // console.log(temp_list, 'sssss')
       let temp_arr = []
       let default_arr = []
@@ -610,15 +629,15 @@ export default modelExtend(projectDetail, {
           default_arr.push(val)
         }
       }
-      // console.log(temp_arr, 'sssss')
+      // console.log(temp_arr, default_arr, 'sssss')
       if(isApiResponseOk(res)) {
         // 修改弹窗中的文件路径
-        breadcrumbList[breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
-            breadcrumbList,
+            breadcrumbList: new_breadcrumbList
           }
         })
         if(isNeedPreviewFile) {

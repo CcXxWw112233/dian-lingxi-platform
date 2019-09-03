@@ -10,7 +10,7 @@ import {
   updateVersionFileDescription,
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList } from './selects'
+import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList } from './selects'
 import {selectBreadcrumbList} from "../select";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -45,6 +45,8 @@ export default {
                 filePreviewCommitPointNumber: '', //评论当前的点
                 filePreviewIsRealImage: true, //当前预览的图片是否真正图片,
                 pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
+
+                breadcrumbList: [],
 
               }
             })
@@ -178,12 +180,32 @@ export default {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile, isPDF } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
+      // console.log(payload, 'sss_worek')
+      const new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
+      const filePreviewCurrentFileId = yield select(workbench_selectFilePreviewCurrentFileId)
+      // console.log(res.data, 'ssssss')
+      let temp_list = [...res && res.data]
+      // console.log(temp_list, 'sssss')
+      let temp_arr = []
+      let default_arr = []
+      for (let val of temp_list) {
+        if (val['file_id'] == file_id) {
+          // console.log(val, 'ssssss')
+          temp_arr.unshift(val)
+        }
+        if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
+          default_arr.push(val)
+        }
+      }
+      // console.log(temp_arr, default_arr, 'sssss')
       if(isApiResponseOk(res)) {
+        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
+            breadcrumbList:new_breadcrumbList,
           }
         })
         if(isNeedPreviewFile) {
