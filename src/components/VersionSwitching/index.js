@@ -100,7 +100,7 @@ export default class index extends Component {
   render() {
 
     const { is_close } = this.state
-    const { new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, uploadProps, is_edit_version_description } = this.props
+    const { new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description } = this.props
     // console.log(is_edit_version_description, 'ssssss')
     // console.log(new_filePreviewCurrentVersionList, 'ssss')
     // let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
@@ -118,7 +118,7 @@ export default class index extends Component {
           </div>
           <Menu onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
-              const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, } = value
+              const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
               return (
                 <Menu.Item style={{ height: 'auto' }} className={indexStyles.version_menuItem} key={file_id}>
                   {
@@ -135,15 +135,15 @@ export default class index extends Component {
                         />
                       </div>
                     ) : (
-                        <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
-                          <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
+                        <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentId == file_resource_id && indexStyles.current_version_color}`}>
+                          <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentId == file_resource_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
                           {
                             remarks && remarks ? (
                               <div style={{ lineHeight: '30px' }}>
                                 <span style={{ fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
                                   {remarks}&nbsp;&nbsp;&nbsp;&nbsp;
                               </span>
-                                {filePreviewCurrentFileId == file_id && (
+                                {filePreviewCurrentId == file_resource_id && (
                                   <span className={`${indexStyles.status}`}>主版本</span>)}
                               </div>
                             ) : (
@@ -153,7 +153,7 @@ export default class index extends Component {
                                   <span style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.hover_color}`}>{creator}&nbsp;&nbsp;</span>
                                   <span className={indexStyles.hover_color}>上传于&nbsp;&nbsp;</span>
                                   <span className={indexStyles.hover_color}>{create_time}&nbsp;&nbsp;</span>
-                                  {filePreviewCurrentFileId == file_id && (
+                                  {filePreviewCurrentId == file_resource_id && (
                                     <span className={`${indexStyles.status}`}>主版本</span>)}
                                 </div>
                               )

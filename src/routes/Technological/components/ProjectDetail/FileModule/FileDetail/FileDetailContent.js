@@ -763,24 +763,14 @@ class FileDetailContent extends React.Component {
       if (item.file_id == key) {
         return item
       }
-      // if (item.file_id == key) {
-      //   this.setState({
-      //     is_show_active_color: true
-      //   })
-      //   return item
-      // } else {
-      //   this.setState({
-      //     is_show_active_color: false,
-      //     is_edit_version_description: false // 不相等的情况下置为false
-      //   })
-      // }
     })
     // console.log(temp_filePreviewCurrentVersionList, 'sssss')
-    const { file_id } = temp_filePreviewCurrentVersionList[0]
+    const { file_id, file_resource_id } = temp_filePreviewCurrentVersionList[0]
     dispatch({
       type: 'projectDetailFile/filePreview',
       payload: {
-        file_id
+        file_id,
+        file_resource_id,
       }
     })
   }
@@ -896,6 +886,7 @@ class FileDetailContent extends React.Component {
             handleGetNewComment={this.handleGetNewComment}
             handleFullScreen={this.handleZoomPictureFullScreen}
             filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
             projectFileType={"projectFileType"}
           />
         )}
@@ -1258,6 +1249,7 @@ class FileDetailContent extends React.Component {
                   isFullScreenMode={isZoomPictureFullScreenMode}
                   handleFullScreen={this.handleZoomPictureFullScreen}
                   filePreviewCurrentFileId={filePreviewCurrentFileId}
+                  filePreviewCurrentId={filePreviewCurrentId}
                   projectFileType={"projectFileType"}
                 />
               )}

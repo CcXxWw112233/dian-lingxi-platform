@@ -10,7 +10,7 @@ import {
   updateVersionFileDescription,
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import { workbench_selectFilePreviewCommitPointNumber } from './selects'
+import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList } from './selects'
 import {selectBreadcrumbList} from "../select";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -57,7 +57,7 @@ export default {
   },
   effects: {
     * filePreview({ payload }, { select, call, put }) {
-      const { file_id } = payload
+      const { file_id, file_resource_id } = payload
       const res = yield call(filePreview, {id: file_id})
       if(isApiResponseOk(res)) {
         yield put({
@@ -66,6 +66,8 @@ export default {
             filePreviewIsUsable: res.data.isUsable,
             filePreviewUrl: res.data.url,
             filePreviewIsRealImage: res.data.isRealImage,
+            // filePreviewCurrentId: file_resource_id
+            filePreviewCurrentFileId: file_id
           }
         })
         yield put({
@@ -318,9 +320,38 @@ export default {
     // 设为当前版本
     * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
-      let res = yield call(setCurrentVersionFile, payload)
+      const { id, set_major_version, version_id, file_name } = payload
+      let res = yield call(setCurrentVersionFile, { id, set_major_version })
+      const new_fileList = yield select(workbench_selectrUploadedFileList)
+      const new_filePreviewId= yield select(workbench_selectFilePreviewCurrentFileId)
+      const new_filePreviewCurrentVersionList = yield select(workbench_selectFilePreviewCurrentVersionList)
       if (isApiResponseOk(res)) {
         // console.log(res, 'ssssss')
+        yield put({
+          type: 'fileVersionist',
+          payload: {
+            version_id: version_id,
+            file_id: id
+          }
+        })
+       
+        let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
+        for(let val of new_filePreviewCurrentVersionList) {
+          if (val['file_id'] == new_filePreviewId) {
+            temp_arr.push(val)
+          }
+        }
+        let temp_obj = temp_arr[0] // 这个是用来保存得到当前的元素对象
+        // 需要做的操作是在 new_fileList 里面去查询到这条元素然后替换
+        // 需要根据工作台的条件来进行切换
+        
+        // yield put({
+        //   type: 'workbench/updateDatas',
+        //   payload: {
+        //     fileList: temp_list
+        //   }
+        // })
+       
       } else {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }

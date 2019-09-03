@@ -613,7 +613,7 @@ class ZoomPicture extends Component {
     // }
   };
   handleImgOnMouseDown = e => {
-    console.log('cccccc');
+    // console.log('cccccc');
 
     if (e) e.stopPropagation();
     this.isMouseUp = false;
@@ -975,7 +975,7 @@ class ZoomPicture extends Component {
   handleShowCircleReview = () => {
     // console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
-    const { dispatch, filePreviewCurrentFileId, workbenchType, projectFileType } = this.props
+    const { dispatch, filePreviewCurrentFileId, filePreviewCurrentId, workbenchType, projectFileType } = this.props
     // console.log(this.props, 'ssssss')
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview

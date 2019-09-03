@@ -452,9 +452,13 @@ class FileDetailContent extends React.Component {
       case '1': // 设置为主版本
         const { dispatch } = this.props
         let file_resource_id = ''
+        let file_version_id = ''
+        let file_name = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
             file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
+            file_name = val['file_name']
             break
           }
         }
@@ -470,7 +474,9 @@ class FileDetailContent extends React.Component {
           type: "workbenchFileDetail/setCurrentVersionFile",
           payload: {
             id: file_id,
-            set_major_version: '1'
+            set_major_version: '1',
+            version_id: file_version_id,
+            file_name: file_name,
           }
         })
 
@@ -591,23 +597,14 @@ class FileDetailContent extends React.Component {
       if (item.file_id == key) {
         return item
       }
-      // if (item.file_id == key) {
-      //   this.setState({
-      //     is_show_active_color: true
-      //   })
-      //   return item
-      // } else {
-      //   this.setState({
-      //     is_show_active_color: false
-      //   })
-      // }
     })
     // console.log(new_filePreviewCurrentVersionList, 'sssss')
-    const { file_id } = temp_filePreviewCurrentVersionList[0]
+    const { file_id, file_resource_id } = temp_filePreviewCurrentVersionList[0]
     dispatch({
       type: 'workbenchFileDetail/filePreview',
       payload: {
-        file_id
+        file_id,
+        file_resource_id
       }
     })
   }
@@ -640,7 +637,7 @@ class FileDetailContent extends React.Component {
     new_list = new_list.map(item => {
       let new_item = item
       if (new_item.is_edit) {
-        new_item = { ...item, is_edit: false, is_editValue: editValue }
+        new_item = { ...item, is_edit: false, remarks: editValue != '' ? editValue : item.remarks }
         return new_item
       } else {
         return new_item
@@ -720,6 +717,7 @@ class FileDetailContent extends React.Component {
             handleGetNewComment={this.handleGetNewComment}
             handleFullScreen={this.handleZoomPictureFullScreen}
             filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
             workbenchType={"workbenchType"}
           />
         )}
@@ -1082,6 +1080,7 @@ class FileDetailContent extends React.Component {
                   isFullScreenMode={isZoomPictureFullScreenMode}
                   handleFullScreen={this.handleZoomPictureFullScreen}
                   filePreviewCurrentFileId={filePreviewCurrentFileId}
+                  filePreviewCurrentId={filePreviewCurrentId}
                   workbenchType={"workbenchType"}
                 />
               )}
