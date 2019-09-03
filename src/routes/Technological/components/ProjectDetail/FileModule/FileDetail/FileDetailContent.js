@@ -448,14 +448,15 @@ class FileDetailContent extends React.Component {
     switch (key) {
       case '1': // 设置为主版本
         const { dispatch } = this.props
-        const { datas: { breadcrumbList = [] } } = this.props.model
         let file_resource_id = ''
         let file_version_id = ''
+        let file_name = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
             // console.log('进来了', 'sssss')
             file_resource_id = val['file_resource_id']
             file_version_id = val['version_id']
+            file_name = val['file_name']
             break
           }
         }
@@ -472,7 +473,8 @@ class FileDetailContent extends React.Component {
           payload: {
             id: file_id,
             set_major_version: '1',
-            version_id: file_version_id
+            version_id: file_version_id,
+            file_name: file_name
           }
         })
 

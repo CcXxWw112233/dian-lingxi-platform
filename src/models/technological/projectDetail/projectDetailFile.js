@@ -28,7 +28,9 @@ import {
   selectBreadcrumbList,
   selectCurrentParrentDirectoryId,
   selectFilePreviewCommitPointNumber,
-  selectFilePreviewCurrentFileId
+  selectFilePreviewCurrentFileId,
+  selectFileList,
+  selectFilePreviewCurrentVersionList,
 } from "../select";
 import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
 import {isApiResponseOk} from "../../../utils/handleResponseData";
@@ -316,8 +318,11 @@ export default modelExtend(projectDetail, {
      // 设为当前版本
      * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
-      const { id, set_major_version, version_id } = payload
+      const { id, set_major_version, version_id, file_name } = payload
       let res = yield call(setCurrentVersionFile, { id, set_major_version })
+      const new_fileList = yield select(selectFileList)
+      const new_filePreviewId= yield select(selectFilePreviewCurrentFileId)
+      const new_filePreviewCurrentVersionList = yield select(selectFilePreviewCurrentVersionList)
       if (isApiResponseOk(res)) {
         // console.log(res, 'ssssss')
         yield put({
@@ -327,6 +332,30 @@ export default modelExtend(projectDetail, {
             file_id: id
           }
         })
+        let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
+        for(let val of new_filePreviewCurrentVersionList) {
+          if (val['file_id'] == new_filePreviewId) {
+            temp_arr.push(val)
+          }
+        }
+        let temp_obj = temp_arr[0]
+        let temp_list = [...new_fileList]
+        temp_list = temp_list.map(item => {
+          let new_item = item
+          if (new_item.version_id == temp_obj.version_id) {
+            new_item = {...temp_obj}
+            return new_item
+          } else {
+            return new_item
+          }
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            fileList: temp_list
+          }
+        })
+        
       } else {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
@@ -563,20 +592,26 @@ export default modelExtend(projectDetail, {
       let res = yield call(fileVersionist, payload)
       const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
       const breadcrumbList = yield select(selectBreadcrumbList)
+      const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
       // console.log(res, 'ssssss')
       let temp_list = [...res.data && res.data]
       // console.log(temp_list, 'sssss')
       let temp_arr = []
+      let default_arr = []
       for (let val of temp_list) {
         if (val['file_id'] == file_id) {
           // console.log(val, 'ssssss')
           temp_arr.unshift(val)
         }
+        if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
+          default_arr.push(val)
+        }
       }
       // console.log(temp_arr, 'sssss')
       if(isApiResponseOk(res)) {
-        breadcrumbList[breadcrumbList.length - 1] = temp_arr[0]
+        // 修改弹窗中的文件路径
+        breadcrumbList[breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {

@@ -973,10 +973,10 @@ class ZoomPicture extends Component {
 
   // 设置切换版本圈评
   handleShowCircleReview = () => {
-    console.log('ssss_1111')
+    // console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
     const { dispatch, filePreviewCurrentFileId, workbenchType, projectFileType } = this.props
-    console.log(this.props, 'ssssss')
+    // console.log(this.props, 'ssssss')
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview
     })
@@ -990,7 +990,7 @@ class ZoomPicture extends Component {
       })
     }
     if (projectFileType) {
-      console.log('进来了' ,'ssss')
+      // console.log('进来了' ,'ssss')
       dispatch({
         type: 'projectDetailFile/getFileCommitPoints',
         payload: {
