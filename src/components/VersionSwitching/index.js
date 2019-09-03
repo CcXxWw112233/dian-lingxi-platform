@@ -133,6 +133,7 @@ export default class index extends Component {
                           onBlur={() => { this.handleFileDecription(list, file_id) }}
                           onClick={(e) => { this.handleStopPro(e) }}
                           onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
+                          maxLength={50}
                         />
                       </div>
                     ) : (

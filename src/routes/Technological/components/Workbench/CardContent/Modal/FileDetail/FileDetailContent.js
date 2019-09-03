@@ -661,6 +661,12 @@ class FileDetailContent extends React.Component {
       this.setState({
         editValue: ''
       })
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          filePreviewCurrentVersionList: new_list
+        }
+      })
     }
   }
 
