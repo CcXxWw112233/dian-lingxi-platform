@@ -64,9 +64,9 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewIsUsable: res.data.isUsable,
+            filePreviewIsUsable: res.data.is_usable,
             filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.isRealImage,
+            filePreviewIsRealImage: res.data.is_real_image,
             // filePreviewCurrentId: file_resource_id
             // filePreviewCurrentFileId: file_id
           }

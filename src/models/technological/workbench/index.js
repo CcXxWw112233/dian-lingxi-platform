@@ -59,7 +59,7 @@ export default modelExtend(technological, {
                   uploadedFileList: [],
                   backLogProcessList: [],
                   meetingLsit: [],
-                  uploadedFileNotificationIdList: [] //工作台新上传的文档的id的通知提醒
+                  uploadedFileNotificationIdList: [], //工作台新上传的文档的id的通知提醒
                 }
               }),
               // dispatch({
