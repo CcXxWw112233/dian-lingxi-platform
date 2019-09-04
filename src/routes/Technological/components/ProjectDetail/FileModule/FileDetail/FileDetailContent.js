@@ -1088,7 +1088,7 @@ class FileDetailContent extends React.Component {
           message.success(`上传成功。`);
           // console.log('file', file)
           if (file.response && file.response.code == '0') {
-            that.props.updateDatasFile({ filePreviewCurrentFileId: file.response.data.id })
+            that.props.updateDatasFile({ filePreviewCurrentFileId: file.response.data.id, filePreviewCurrentId: file.response.data.file_resource_id })
             that.props.fileVersionist({ version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf' })
           }
         } else if (file.status === 'error') {

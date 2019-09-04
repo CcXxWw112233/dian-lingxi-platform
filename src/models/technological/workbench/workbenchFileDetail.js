@@ -11,7 +11,6 @@ import {
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList } from './selects'
-import {selectBreadcrumbList} from "../select";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -69,7 +68,7 @@ export default {
             filePreviewUrl: res.data.url,
             filePreviewIsRealImage: res.data.isRealImage,
             // filePreviewCurrentId: file_resource_id
-            filePreviewCurrentFileId: file_id
+            // filePreviewCurrentFileId: file_id
           }
         })
         yield put({
@@ -185,7 +184,7 @@ export default {
       const new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
       const filePreviewCurrentFileId = yield select(workbench_selectFilePreviewCurrentFileId)
       // console.log(res.data, 'ssssss')
-      let temp_list = [...res && res.data]
+      let temp_list = [...res.data]
       // console.log(temp_list, 'sssss')
       let temp_arr = []
       let default_arr = []

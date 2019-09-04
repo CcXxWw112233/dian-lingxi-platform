@@ -137,15 +137,15 @@ export default class index extends Component {
                         />
                       </div>
                     ) : (
-                        <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentId == file_resource_id && indexStyles.current_version_color}`}>
-                          <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentId == file_resource_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
+                        <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
+                          <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
                           {
                             remarks && remarks ? (
                               <div style={{ lineHeight: '30px' }}>
                                 <span style={{ fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
                                   {remarks}&nbsp;&nbsp;&nbsp;&nbsp;
                               </span>
-                                {filePreviewCurrentId == file_resource_id && (
+                                {filePreviewCurrentFileId == file_id && (
                                   <span className={`${indexStyles.status}`}>主版本</span>)}
                               </div>
                             ) : (
@@ -155,12 +155,12 @@ export default class index extends Component {
                                   <span style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.hover_color}`}>{creator}&nbsp;&nbsp;</span>
                                   <span className={indexStyles.hover_color}>上传于&nbsp;&nbsp;</span>
                                   <span className={indexStyles.hover_color}>{create_time}&nbsp;&nbsp;</span>
-                                  {filePreviewCurrentId == file_resource_id && (
+                                  {filePreviewCurrentFileId == file_id && (
                                     <span className={`${indexStyles.status}`}>主版本</span>)}
                                 </div>
                               )
                           }
-                          <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
+                          <span className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</span>
                           <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
                             <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}
                               // getPopupContainer={triggerNode => triggerNode.parentNode}
