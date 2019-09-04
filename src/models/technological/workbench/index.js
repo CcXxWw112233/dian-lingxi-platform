@@ -9,7 +9,8 @@ import Cookies from "js-cookie";
 import {getAppsList} from "../../../services/technological/project";
 import modelExtend from 'dva-model-extend'
 import technological from '../index'
-import {workbench_selectKnowPolicyArticles, workbench_selectKnowCityArticles, workbench_selectBoxList, workbench_selectBoxUsableList} from "./selects";
+import {workbench_selectKnowPolicyArticles, workbench_selectKnowCityArticles, workbench_selectBoxList, workbench_selectBoxUsableList
+} from "./selects";
 import {filePreview, fileDownload} from "../../../services/technological/file";
 import { postCommentToDynamics } from "../../../services/technological/library";
 
