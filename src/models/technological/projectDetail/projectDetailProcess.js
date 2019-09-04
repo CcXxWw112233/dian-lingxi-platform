@@ -9,7 +9,6 @@ import {
   createProcess,
   fillFormComplete,
   getProcessInfo,
-  getProcessList,
   getProcessTemplateList,
   getProessDynamics,
   getTemplateInfo,
@@ -103,13 +102,7 @@ export default modelExtend(projectDetail, {
               id: board_id
             }
           })
-          dispatch({
-            type: 'getProcessList',
-            payload: {
-              board_id: board_id,
-              type: '1'
-            }
-          })
+        
           // dispatch({
           //   type: 'getProcessInfoByUrl',
           //   payload: {
@@ -241,29 +234,10 @@ export default modelExtend(projectDetail, {
 
       }
     },
-    * getProcessList({ payload }, { select, call, put }) {
-      let res = yield call(getProcessList, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            processList: res.data
-          }
-        })
-      }else{
-
-      }
-    },
+   
     * createProcess({ payload }, { select, call, put }) {
       const res = yield call(createProcess, payload)
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessList',
-          payload: {
-            board_id: board_id,
-            type: '1'
-          }
-        })
         yield put({
           type: 'getProcessInfo',
           payload: {

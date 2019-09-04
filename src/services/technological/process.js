@@ -63,7 +63,7 @@ export async function getTemplateInfo(id) {
   });
 }
 
-//获取流程列表
+//获取流程列表(废弃)
 export async function getProcessList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow`,
