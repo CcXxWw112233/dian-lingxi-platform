@@ -72,9 +72,7 @@ class DropdownSelect extends Component {
 
     renderContent() {
         const { fuctionMenuItemList = [], menuItemClick = () => { }} = this.state;
-        const { itemList = [], selectedKeys = []} = this.props;
-        console.log("selectedKeys", selectedKeys);
-        
+        const { itemList = [], selectedKeys = []} = this.props;        
         return (
             <Menu className={styles.dropdownMenu}
                 onClick={menuItemClick}

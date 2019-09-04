@@ -64,8 +64,6 @@ export default {
                 yield put({
                     type: 'getWallpaperList'
                 });  
-                console.log('fffffff');
-                
             }
 
         },

@@ -1,5 +1,5 @@
 import request from '@/utils/requestAxios'
-import { REQUEST_COMMON } from '@/globalset/js/constant'
+import { REQUEST_COMMON, REQUEST_DOMAIN } from '@/globalset/js/constant'
 
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {
@@ -101,3 +101,15 @@ export async function getCommonArticlesList(params) {
         params,
     })
 }
+
+//获取有权限查看的组织列表
+export async function getXczNewsQueryUser(params) {
+    return request({
+      url: `${REQUEST_DOMAIN}/organization/regulation`,
+      method: 'GET',
+      params: {
+        params,
+      }
+    })
+  }
+  

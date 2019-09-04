@@ -376,6 +376,11 @@ export default class SimpleNavigation extends Component {
                     type: 'investmentMap/getMapsQueryUser',
                     payload: { }
                 })
+
+                dispatch({
+                    type: 'xczNews/getXczNewsQueryUser',
+                    payload: { }
+                })
                 break
             case '-1': //退出
                 this.logout(e)
