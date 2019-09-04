@@ -91,31 +91,11 @@ class ProjectListBar extends Component {
       }
     );
   };
-  setAddProjectModalVisible = (data) => {
-    const { dispatch } = this.props
+  setAddProjectModalVisible = () => {
     const { addProjectModalVisible } = this.state
-    const { visible } = data || {}
-    if(data) {
-      // this.setState({
-      //   addProjectModalVisible: visible
-      // })
-    } else {
-      this.setState({
-        addProjectModalVisible: !addProjectModalVisible
-      })
-    }
-    // this.setState({
-    //   addProjectModalVisible: !addProjectModalVisible
-    // }, () => {
-    //   if(!addProjectModalVisible) {
-    //     dispatch({
-    //       type: 'project/getAppsList',
-    //       payload: {
-    //         type: '2'
-    //       }
-    //     });
-    //   }
-    // })
+    this.setState({
+      addProjectModalVisible: !addProjectModalVisible
+    })
   }
 
   handleSubmitNewProject = data => {
@@ -133,9 +113,9 @@ class ProjectListBar extends Component {
         });
       })
       .then(() => {
+        // this.setAddProjectModalVisible();
         const { workbench_show_gantt_card } = this.props
         workbench_show_gantt_card == '1' && beforeCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
-        this.setAddProjectModalVisible();
       });
   };
   isVisitor = param => {

@@ -60,17 +60,24 @@ class CreateProject extends React.Component {
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
     if(addProjectModalVisible && !addProjectModalVisibleLocal) {
-      this.getProjectList()
+      // this.getProjectList()
+      this.handleOrgSetInit()
     }
-    this.setState({
-      addProjectModalVisibleLocal: addProjectModalVisible
-    })
-    this.handleOrgSetInit()
+    this.setAddProjectModalVisibleLocal(nextProps)
   }
   componentDidMount() {
     // this.getProjectList(true)
     // this.getAppList(true)
     this.handleOrgSetInit()
+    this.setAddProjectModalVisibleLocal(this.props)
+  }
+
+  // 缓存是否可见在state
+  setAddProjectModalVisibleLocal = (props) => {
+    const { addProjectModalVisible } = this.props
+    this.setState({
+      addProjectModalVisibleLocal: addProjectModalVisible
+    })
   }
 
   // 全组织，在只有一个组织情况下，默认选中该组织.查询组织项目列表和app列表
