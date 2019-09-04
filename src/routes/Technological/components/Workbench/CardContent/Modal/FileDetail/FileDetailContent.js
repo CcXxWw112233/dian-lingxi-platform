@@ -3,42 +3,43 @@ import indexStyles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
-import {stopPropagation} from "../../../../../../../utils/util";
+import { stopPropagation } from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
-import {getRelations, JoinRelation} from "../../../../../../../services/technological/task";
-import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
+import { getRelations, JoinRelation } from "../../../../../../../services/technological/task";
+import { isApiResponseOk } from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
-import {checkIsHasPermissionInBoard, getSubfixName} from "../../../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, getSubfixName } from "../../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW, PROJECT_FILES_FILE_DELETE,
   PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE
 } from "../../../../../../../globalset/js/constant";
-import {message} from "antd/lib/index";
-import {color_4} from "../../../../../../../globalset/js/styles";
+import { message } from "antd/lib/index";
+import { color_4 } from "../../../../../../../globalset/js/styles";
 import Cookies from "js-cookie";
 
 import VisitControl from './../../../../VisitControl/index'
-import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../../../services/technological/project'
+import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../../../services/technological/project'
 
 import ZoomPicture from './../../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../../components/HOC/withBodyClientDimens'
 
 import InformRemind from '@/components/InformRemind'
+import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 class FileDetailContent extends React.Component {
 
-  versionItemClick({value, key}){
+  versionItemClick({ value, key }) {
     const { file_resource_id, file_id } = value
     this.setState({
       imgLoaded: false
     })
-    this.props.updateFileDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
-    this.props.filePreview({id: file_resource_id, file_id})
+    this.props.updateFileDatas({ filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id })
+    this.props.filePreview({ id: file_resource_id, file_id })
     this.setState({
       imgLoaded: false,
       editMode: true,
@@ -63,25 +64,49 @@ class FileDetailContent extends React.Component {
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
     isZoomPictureFullScreenMode: false, //图评全屏模式
+
+    // 是否显示点击时候的样式颜色
+    is_show_active_color: true,
+
+    // 更新版本信息列表,将其保存一个状态
+    new_filePreviewCurrentVersionList: [],
+
+    // 是否显示编辑版本信息的描述
+    is_edit_version_description: false,
+
+    // 定义一个数组来保存编辑状态的数组
+    // editVersionFileList: [],
+    editValue: '', // 编辑时候的文本信息
   }
   constructor() {
     super();
     this.x1 = 0
     this.y1 = 0
     this.isDragging = false
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
   }
 
   componentWillMount() {
-    const { datas: { filePreviewCommitPoints=[]} }= this.props.model
+    const { datas: { filePreviewCommitPoints = [] } } = this.props.model
     this.setState({
       rects: filePreviewCommitPoints
     })
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps, 'sssss')
     const rects = []
-    const { datas: { filePreviewCommitPoints=[]} }= nextProps.model
+    const { datas: { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } } = nextProps.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      new_item = { ...item, is_edit: false }
+      return new_item
+    })
+
+    this.setState({
+      new_filePreviewCurrentVersionList,
+    })
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -91,7 +116,7 @@ class FileDetailContent extends React.Component {
   previewImgLoad(e) {
     const { maxImageWidth } = this.state
     this.setState({
-      imgWidth: e.target.width >= maxImageWidth? maxImageWidth : e.target.width,
+      imgWidth: e.target.width >= maxImageWidth ? maxImageWidth : e.target.width,
       imgHeight: e.target.height,
       imgLoaded: true
     })
@@ -138,7 +163,7 @@ class FileDetailContent extends React.Component {
     })
   }
   isObj(obj) {
-    if(!obj || typeof obj !=='object') {
+    if (!obj || typeof obj !== 'object') {
       return false
     } else {
       return true
@@ -150,26 +175,26 @@ class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
-    if(!this.isDragging) {
+    this.SelectedRect = { x: 0, y: 0 }
+    if (!this.isDragging) {
       const { punctuateArea, imgHeight, imgWidth } = this.state
 
       let x = this.x1
       let y = this.y1
 
-      if(imgWidth - x < punctuateArea/2) { //右边界
+      if (imgWidth - x < punctuateArea / 2) { //右边界
         x = imgWidth - punctuateArea
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         x = 0
       } else {
-        x = x - punctuateArea/2
+        x = x - punctuateArea / 2
       }
-      if(imgHeight - y < punctuateArea/2) { //下边界
+      if (imgHeight - y < punctuateArea / 2) { //下边界
         y = imgHeight - punctuateArea
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         y = 0
       } else {
-        y = y - punctuateArea/2
+        y = y - punctuateArea / 2
       }
       const property = {
         x: x,
@@ -194,7 +219,7 @@ class FileDetailContent extends React.Component {
   operateAreaBlur(e) {
     const that = this
     setTimeout(function () {
-      if(that.state.mentionFocus) {
+      if (that.state.mentionFocus) {
         return false
       }
       that.setState({
@@ -237,7 +262,7 @@ class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
     this.isDragging = false
 
     /*定义鼠标移动事件*/
@@ -247,7 +272,7 @@ class FileDetailContent extends React.Component {
   }
   onmousemove(e) {
     //mousedown 后开始拖拽时添加
-    if(!this.isDragging) {
+    if (!this.isDragging) {
       const property = {
         x: this.x1,
         y: this.y1,
@@ -279,8 +304,8 @@ class FileDetailContent extends React.Component {
       const y = e.clientY - target.offsetTop - modalTop;
       //------------------------
       //设置高度
-      this.SelectedRect.x= x-this.x1;
-      this.SelectedRect.y= y-this.y1;
+      this.SelectedRect.x = x - this.x1;
+      this.SelectedRect.y = y - this.y1;
 
       const { imgWidth, imgHeight, punctuateArea } = this.state
 
@@ -290,21 +315,21 @@ class FileDetailContent extends React.Component {
       let width = Math.abs(this.SelectedRect.x)
       let height = Math.abs(this.SelectedRect.y)
 
-      if(imgWidth - px - width< 0) { //右边界
+      if (imgWidth - px - width < 0) { //右边界
         width = imgWidth - px
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         width = 0
       } else {
-        width = x - punctuateArea/2
+        width = x - punctuateArea / 2
       }
-      if(imgHeight - py - height < 0) { //下边界
+      if (imgHeight - py - height < 0) { //下边界
         height = imgHeight - py
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         height = 0
       } else {
-        height = y - punctuateArea/2
+        height = y - punctuateArea / 2
       }
-      const property ={
+      const property = {
         x: px,
         y: py,
         width: Math.abs(this.SelectedRect.x),
@@ -324,8 +349,8 @@ class FileDetailContent extends React.Component {
     this.stopDragging()
   }
 
-  setEditMode(){
-    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+  setEditMode() {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -337,52 +362,52 @@ class FileDetailContent extends React.Component {
 
   //header
   closeFile() {
-    const { datas: { breadcrumbList = [] } }= this.props.model
+    const { datas: { breadcrumbList = [] } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
     this.props.setPreviewFileModalVisibile()
-    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
+    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
   }
   zoomFrame() {
-    const { datas: { isExpandFrame = false } }= this.props.model
+    const { datas: { isExpandFrame = false } } = this.props.model
     this.props.updateDatasFile({
       isExpandFrame: !isExpandFrame,
     })
   }
-  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
-    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+  fileDownload({ filePreviewCurrentId, pdfDownLoadSrc }) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
     //如果时pdf
-    if(pdfDownLoadSrc) {
+    if (pdfDownLoadSrc) {
       window.open(pdfDownLoadSrc)
-    }else {
-      this.props.fileDownload({ids: filePreviewCurrentId})
+    } else {
+      this.props.fileDownload({ ids: filePreviewCurrentId })
     }
   }
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData= {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
+    const { datas: { projectDetailInfoData = {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
       case '1':
         break
       case '2':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         //如果时pdf
-        if(pdfDownLoadSrc) {
+        if (pdfDownLoadSrc) {
           window.open(pdfDownLoadSrc)
-        }else {
-          this.props.fileDownload({ids: file_resource_id})
+        } else {
+          this.props.fileDownload({ ids: file_resource_id })
         }
         break
       case '3':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -393,7 +418,7 @@ class FileDetailContent extends React.Component {
         })
         break
       case '4':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -404,39 +429,56 @@ class FileDetailContent extends React.Component {
         })
         break
       case '5':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         this.props.fileRemove({
           board_id,
-          arrays: JSON.stringify([{type, id: file_id}])
+          arrays: JSON.stringify([{ type, id: file_id }])
         })
         breadcrumbList.splice(breadcrumbList.length - 1, 1)
-        this.props.updateDatasFile({isInOpenFile: false})
+        this.props.updateDatasFile({ isInOpenFile: false })
         break
       default:
         break
     }
   }
-  getVersionItemMenuClick({list, file_id, file_name }, e) {
+
+  getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
+    e && e.domEvent && e.domEvent.stopPropagation()
     const key = e.key
     switch (key) {
-      case '1':
+      case '1': // 设置为主版本
+        const { dispatch } = this.props
         let file_resource_id = ''
-        for(let val of list) {
-          if(file_id == val['file_id']) {
+        let file_version_id = ''
+        let file_name = ''
+        for (let val of list) {
+          if (file_id == val['file_id']) {
             file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
+            file_name = val['file_name']
             break
           }
         }
+        // console.log({file_resource_id, file_id}, 'sssss')
         this.setState({
           imgLoaded: false
         })
-        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id })
         //版本改变预览
         // this.props.filePreview({id: file_resource_id, file_id})
-        this.handleUploadPDForElesFilePreview({file_name, id: file_id, file_resource_id})
+        this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+        dispatch({
+          type: "workbenchFileDetail/setCurrentVersionFile",
+          payload: {
+            id: file_id,
+            set_major_version: '1',
+            version_id: file_version_id,
+            file_name: file_name,
+          }
+        })
 
         this.setState({
           imgLoaded: false,
@@ -449,22 +491,29 @@ class FileDetailContent extends React.Component {
         break
       case '2':
         break
+      // 编辑版本信息
+      case '3':
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
+        break
       default:
         break
     }
   }
   handleDeleteCommentItem = obj => {
-    const {id} = obj
-    const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits }} = this.props.model
-    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
+    const { id } = obj
+    const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits } } = this.props.model
+    this.props.deleteCommit({ id, file_id: filePreviewCurrentFileId })
     this.props.updateDatasFile({
       filePreviewPointNumCommits: filePreviewPointNumCommits.filter(i => i.id !== id)
     })
   }
   async handleClickedCommentItem(flag) {
     const { datas: {
-                filePreviewCurrentFileId,
-              } }= this.props.model
+      filePreviewCurrentFileId,
+    } } = this.props.model
     await this.props.updateDatasFile({
       filePreviewCommitPointNumber: flag
     })
@@ -475,18 +524,18 @@ class FileDetailContent extends React.Component {
   }
   getCurrentUserId = () => {
     try {
-      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')): {}
+      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
       return id
     } catch (e) {
       return ''
     }
   }
   handleGetNewComment = obj => {
-    const {coordinates, comment, point_number} = obj
+    const { coordinates, comment, point_number } = obj
     const { datas: {
-                filePreviewCurrentFileId,
-                board_id }
-              } = this.props.model
+      filePreviewCurrentFileId,
+      board_id }
+    } = this.props.model
     this.props.addFileCommit({
       board_id,
       point_number,
@@ -504,7 +553,7 @@ class FileDetailContent extends React.Component {
 
   //pdf文件和普通文件区别时做不同地处理预览
   handleUploadPDForElesFilePreview = ({ file_name, id, file_resource_id }) => {
-    if(getSubfixName(file_name) == '.pdf') {
+    if (getSubfixName(file_name) == '.pdf') {
       this.props.dispatch({
         type: 'workbenchFileDetail/getFilePDFInfo',
         payload: {
@@ -512,40 +561,146 @@ class FileDetailContent extends React.Component {
         }
       })
     } else {
-      this.props.filePreview({id: file_resource_id, file_id: id})
+      this.props.filePreview({ id: file_resource_id, file_id: id })
     }
   }
 
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(file_id, 'ssssss')
+    // console.log(list, 'ssss')
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList
+    })
+  }
+
+  // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
+  handleVersionItem = (e) => {
+    // console.log(e, 'ssss_22222')
+    const { key } = e
+    const { dispatch } = this.props
+    const { new_filePreviewCurrentVersionList } = this.state
+    // const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
+      if (item.file_id == key) {
+        return item
+      }
+    })
+    // console.log(new_filePreviewCurrentVersionList, 'sssss')
+    const { file_id, file_resource_id } = temp_filePreviewCurrentVersionList[0]
+    dispatch({
+      type: 'workbenchFileDetail/filePreview',
+      payload: {
+        file_id,
+        file_resource_id
+      }
+    })
+  }
+
+  // 改变编辑描述的value onChange事件
+  handleFileVersionValue = (e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
+    // let val = e.target.value
+    const { dispatch, } = this.props
+    const { editValue, is_edit_version_description } = this.state
+    // console.log(is_edit_version_description, 'ssssss')
+    // console.log(editValue, 'sssss')
+    let new_list = [...list]
+    // console.log(new_list, 'sssss')
+    // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        return new_item
+      }
+    })
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false, remarks: editValue != '' ? editValue : item.remarks }
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    // console.log(new_list, 'sssss')
+    const { file_id } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
+    if (editValue != '') {
+      dispatch({
+        type: 'workbenchFileDetail/updateVersionFileDescription',
+        payload: {
+          id: file_id,
+          version_info: editValue
+        }
+      })
+      this.setState({
+        editValue: ''
+      })
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          filePreviewCurrentVersionList: new_list
+        }
+      })
+    }
+  }
+
+
   render() {
-     
+
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
-    const { clientHeight, offsetTopDeviation } =this.props
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList } = this.state
+    const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
-    let {componentHeight, componentWidth } = this.props
+    let { componentHeight, componentWidth } = this.props
 
-    if(!componentHeight && !componentWidth){
+    if (!componentHeight && !componentWidth) {
       const container_fileDetailOut = document.getElementById('container_fileDetailOut');
       const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;
       componentWidth = fileDetailOutWidth - 419;
       componentHeight = fileDetailContentOutHeight - 20;
     }
 
-    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="'+src+'"></iframe>'
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
     }
 
-    const getVersionItem = (value, key ) => {
+    const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
       return (
-        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, {value, key})}>
-          <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, { value, key })}>
+          <div className={filePreviewCurrentVersionKey === key ? indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{update_time}</div>
           <div className={indexStyles.size}>{file_size}</div>
@@ -554,47 +709,51 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{minWidth: componentWidth+'px', minHeight: componentHeight+'px', overflow: 'auto', textAlign: 'center'}}>
-      {filePreviewUrl && (
-            <ZoomPicture
-                imgInfo={{url: filePreviewUrl}}
-                componentInfo={{width: componentWidth+'px', height: componentHeight+'px'}}
-                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
-                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                handleDeleteCommentItem={this.handleDeleteCommentItem}
-                userId={this.getCurrentUserId()}
-                handleGetNewComment={this.handleGetNewComment}
-                handleFullScreen={this.handleZoomPictureFullScreen}
-              />
+      <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center' }}>
+        {filePreviewUrl && (
+          <ZoomPicture
+            {...this.props}
+            imgInfo={{ url: filePreviewUrl }}
+            componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
+            commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+            handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+            currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+            handleDeleteCommentItem={this.handleDeleteCommentItem}
+            userId={this.getCurrentUserId()}
+            handleGetNewComment={this.handleGetNewComment}
+            handleFullScreen={this.handleZoomPictureFullScreen}
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
+            workbenchType={"workbenchType"}
+          />
         )}
       </div>
-)
+    )
 
     const punctuateDom_old = (
-      <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-        <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
-          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
-          {imgLoaded && editMode? (
-            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+      <div style={{ height: '100%', width: '100%' }} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
+        <div style={{ margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth }} />
+          {imgLoaded && editMode ? (
+            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{ height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0 }}>
               {rects.map((value, key) => {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this, {currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this, { currentRect: JSON.parse(coordinates), point_number: flag })} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{ position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
                   </div>
                 )
               })}
-              {isInEdditOperate?(
+              {isInEdditOperate ? (
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}} />
-              ):('')}
+                  style={{ position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }} />
+              ) : ('')}
 
-              {isInAdding? (
-                <div style={{position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+              {isInAdding ? (
+                <div style={{ position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y + currentRect.height + 10 }}>
                   <Comment {...this.props} currentRect={currentRect} setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
                 </div>
               ) : ('')}
@@ -604,120 +763,120 @@ class FileDetailContent extends React.Component {
 
         </div>
         {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT) && (
-          <div className={indexStyles.pictureEditState} style={{left: (this.props.clientWidth - (isExpandFrame? 0:420)) / 2 }} onClick={this.setEditMode.bind(this)}>
-            {!editMode?('添加圈点评论'):('退出圈点模式')}
+          <div className={indexStyles.pictureEditState} style={{ left: (this.props.clientWidth - (isExpandFrame ? 0 : 420)) / 2 }} onClick={this.setEditMode.bind(this)}>
+            {!editMode ? ('添加圈点评论') : ('退出圈点模式')}
           </div>
         )}
       </div>
     )
     const iframeDom = (
       <div className={indexStyles.fileDetailContentLeft}
-      dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+        dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
     )
     const notSupport = (type) => {
       let content
       switch (type) {
         case '.obj':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62f;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62f;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.3dm':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe626;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe626;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.iges':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62b;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62b;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.ma':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe630;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe630;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.mb':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe628;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe628;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.skp':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.dwg':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62a;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62a;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.psd':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe627;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe627;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
@@ -743,14 +902,14 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -759,14 +918,14 @@ class FileDetailContent extends React.Component {
       onChange({ file, fileList, event }) {
         if (file.status === 'uploading') {
 
-        }else{
+        } else {
           message.destroy()
         }
         if (file.status === 'done') {
           message.success(`上传成功。`);
-          if(file.response && file.response.code == '0') {
-            that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
-            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf'})
+          if (file.response && file.response.code == '0') {
+            that.props.updateDatasFile({ filePreviewCurrentFileId: file.response.data.id })
+            that.props.fileVersionist({ version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf' })
           }
         } else if (file.status === 'error') {
           message.error(`上传失败。`);
@@ -785,85 +944,57 @@ class FileDetailContent extends React.Component {
           )}
           {/*<Menu.Item key="3">移动</Menu.Item>*/}
           {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (*/}
-            {/*<Menu.Item key="4">复制</Menu.Item>*/}
+          {/*<Menu.Item key="4">复制</Menu.Item>*/}
           {/*)}*/}
           {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (*/}
-            {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
+          {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
           {/*)}*/}
         </Menu>
       )
     }
-    //版本信息列表
-    const getVersionItemMenu = (list) => {
-      return (
-        // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <Menu selectable={true} style={{ width: 400}}>
-          {list.map((value, key) => {
-            const { file_name, creator, create_time, file_size, file_id } = value
-            return (
-              <Menu.Item key={file_id} >
-                <div className={indexStyles.versionItemMenu}>
-                  <div style={{fontWeight: 400, fontSize: 14}} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
-                  <div>上传于</div>
-                  <div>{create_time}</div>
-                  {filePreviewCurrentFileId == file_id && (
-                    <div className={`${indexStyles.status}`}>当前</div>)}
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                    <Dropdown overlay={versionItemMenu({list, file_id, file_name})}>
-                      <span>&#xe7fd;</span>
-                    </Dropdown>
-                  </div>
 
-                </div>
-              </Menu.Item>
-            )
-          })}
-          <Menu.Item key="updateVersion" >
-            <Upload {...uploadProps} showUploadList={false}>
-              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
-                <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
-              </div>
-            </Upload>
-          </Menu.Item>
-        </Menu>
-      )
-    }
-    const versionItemMenu = ({list, file_id, file_name}) => {
-      return (
-        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id, file_name})}>
-          <Menu.Item key="1">设为当前</Menu.Item>
-          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
-        </Menu>
-      )
+    const params = {
+      board_id,
+      filePreviewCurrentFileId,
+      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      new_filePreviewCurrentVersionList,
+      is_edit_version_description,
     }
 
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
-          <div className={indexStyles.fileDetailHeadLeft}>
-            {seeFileInput === 'fileModule'? (
-              <FileDerailBreadCrumbFileNav {...this.props}/>
-            ):('')}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={indexStyles.fileIcon}>
+              <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
+              文件
+            </div>
+            <div className={indexStyles.fileDetailHeadLeft}>
+              {seeFileInput === 'fileModule' ? (
+                <FileDerailBreadCrumbFileNav {...this.props} />
+              ) : ('')}
+            </div>
           </div>
+
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
-                <Button style={{height: 24, marginLeft: 14}}>
-                  <Icon type="upload" />版本信息
-                </Button>
-              </Dropdown>
+              <VersionSwitching {...params}
+              handleVersionItem={this.handleVersionItem}
+              getVersionItemMenuClick={this.getVersionItemMenuClick}
+              handleFileVersionDecription={this.handleFileVersionDecription}
+              handleFileVersionValue={this.handleFileVersionValue}
+              uploadProps={uploadProps} />
             )}
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
+              <Button className={indexStyles.download} style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
               </Button>
             )}
 
-            <span style={{marginLeft: '10px'}}></span>
+            <span style={{ marginLeft: '10px' }}></span>
             <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
-             {/* <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
+            {/* <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
             <VisitControl
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 handleVisitControlChange={this.handleVisitControlChange}
@@ -873,43 +1004,43 @@ class FileDetailContent extends React.Component {
                 handleAddNewMember={this.handleVisitControlAddNewMember}
                 />
             </span> */}
-            <div style={{cursor: 'pointer'}}>
-              {seeFileInput === 'fileModule'? (
-                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
-                  <Icon type="ellipsis" style={{fontSize: 20, marginLeft: 14}}/>
+            <div style={{ cursor: 'pointer' }}>
+              {seeFileInput === 'fileModule' ? (
+                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' })}>
+                  <Icon type="ellipsis" style={{ fontSize: 20, marginLeft: 14 }} />
                 </Dropdown>
-              ):('')}
-              <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+              ) : ('')}
+              <Icon type={!isExpandFrame ? 'fullscreen' : 'fullscreen-exit'} style={{ fontSize: 20, marginLeft: 14 }} theme="outlined" onClick={this.zoomFrame.bind(this)} />
               <Tooltip title={'关闭预览'} placement={'left'}>
-                <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
+                <Icon type="close" onClick={this.closeFile.bind(this)} style={{ fontSize: 20, marginLeft: 16 }} />
               </Tooltip>
             </div>
           </div>
         </div>
-        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-          {filePreviewIsUsable? (
-            filePreviewIsRealImage?(
+        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
+          {filePreviewIsUsable ? (
+            filePreviewIsRealImage ? (
               punctuateDom
             ) : (
-              iframeDom
-            )
-          ):(
-            <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
-              <div>
-                {notSupport(this.props.model.datas.fileType)}
+                iframeDom
+              )
+          ) : (
+              <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                <div>
+                  {notSupport(this.props.model.datas.fileType)}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
 
-          <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
+          <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}>
 
             {/*width: isExpandFrame?0:420*/}
             {/*从文件卡片查看的时候才有*/}
             <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               <ContentRaletion
                 {...this.props}
-                board_id ={board_id}
+                board_id={board_id}
                 link_id={filePreviewCurrentFileId}
                 link_local={'4'}
               />
@@ -925,8 +1056,8 @@ class FileDetailContent extends React.Component {
               {/*): ('')}*/}
             </div>
             {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
-              <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-                <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
+              <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
+                <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
               </div>
             )}
 
@@ -939,23 +1070,27 @@ class FileDetailContent extends React.Component {
 
         </div>
         {isZoomPictureFullScreenMode && (
-          <Modal zIndex={9999999999} style={{top: 0, left: 0, height: bodyClientHeight - 200 + 'px'}} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({isZoomPictureFullScreenMode: false})}>
-          <div>
-          {filePreviewUrl && (
-            <ZoomPicture
-                imgInfo={{url: filePreviewUrl}}
-                componentInfo={{width: bodyClientWidth - 100, height: bodyClientHeight - 60}}
-                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
-                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                handleDeleteCommentItem={this.handleDeleteCommentItem}
-                userId={this.getCurrentUserId()}
-                handleGetNewComment={this.handleGetNewComment}
-                isFullScreenMode={isZoomPictureFullScreenMode}
-                handleFullScreen={this.handleZoomPictureFullScreen}
-              />
-        )}
-        </div>
+          <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+            <div>
+              {filePreviewUrl && (
+                <ZoomPicture
+                  {...this.props}
+                  imgInfo={{ url: filePreviewUrl }}
+                  componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+                  commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+                  handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                  currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                  handleDeleteCommentItem={this.handleDeleteCommentItem}
+                  userId={this.getCurrentUserId()}
+                  handleGetNewComment={this.handleGetNewComment}
+                  isFullScreenMode={isZoomPictureFullScreenMode}
+                  handleFullScreen={this.handleZoomPictureFullScreen}
+                  filePreviewCurrentFileId={filePreviewCurrentFileId}
+                  filePreviewCurrentId={filePreviewCurrentId}
+                  workbenchType={"workbenchType"}
+                />
+              )}
+            </div>
           </Modal>
         )}
       </div>

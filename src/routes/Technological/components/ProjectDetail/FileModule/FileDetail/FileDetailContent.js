@@ -28,6 +28,7 @@ import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } f
 import ZoomPicture from './../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../components/HOC/withBodyClientDimens'
 import InformRemind from '@/components/InformRemind'
+import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 class FileDetailContent extends React.Component {
@@ -66,6 +67,19 @@ class FileDetailContent extends React.Component {
     onlyReadingShareModalVisible: false, //只读分享modal
     onlyReadingShareData: {},
     isZoomPictureFullScreenMode: false, //图评全屏模式
+
+    // 是否显示点击时候的样式颜色
+    is_show_active_color: true,
+
+    // 更新版本信息列表,将其保存一个状态
+    new_filePreviewCurrentVersionList: [],
+
+    // 是否显示编辑版本信息的描述
+    is_edit_version_description: false,
+
+    // 定义一个数组来保存编辑状态的数组
+    // editVersionFileList: [],
+    editValue: '', // 编辑时候的文本信息
   }
   constructor() {
     super();
@@ -83,8 +97,19 @@ class FileDetailContent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps, 'sssss')
     const rects = []
-    const { datas: { filePreviewCommitPoints = [] } } = nextProps.model
+    const { datas: { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } } = nextProps.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      new_item = { ...item, is_edit: false }
+      return new_item
+    })
+
+    this.setState({
+      new_filePreviewCurrentVersionList,
+    })
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -416,14 +441,22 @@ class FileDetailContent extends React.Component {
         break
     }
   }
-  getVersionItemMenuClick({ list, file_id, file_name }, e) {
+  getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
+    e && e.domEvent && e.domEvent.stopPropagation()
+    // console.log(list, 'sssss')
     const key = e.key
     switch (key) {
-      case '1':
+      case '1': // 设置为主版本
+        const { dispatch } = this.props
         let file_resource_id = ''
+        let file_version_id = ''
+        let file_name = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
+            // console.log('进来了', 'sssss')
             file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
+            file_name = val['file_name']
             break
           }
         }
@@ -435,6 +468,16 @@ class FileDetailContent extends React.Component {
         // this.props.filePreview({id: file_resource_id, file_id})
         this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
 
+        dispatch({
+          type: "projectDetailFile/setCurrentVersionFile",
+          payload: {
+            id: file_id,
+            set_major_version: '1',
+            version_id: file_version_id,
+            file_name: file_name
+          }
+        })
+
         this.setState({
           imgLoaded: false,
           editMode: true,
@@ -444,13 +487,21 @@ class FileDetailContent extends React.Component {
           mentionFocus: false,
         })
         break
-      case '2':
+      case '2': // 移动回收站
+        break
+      case '3': // 编辑版本信息
+        // console.log('进来了', 'ssssss')
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
         break
       default:
         break
     }
 
   }
+
 
   handleChangeOnlyReadingShareModalVisible = () => {
     const { onlyReadingShareModalVisible } = this.state
@@ -600,7 +651,7 @@ class FileDetailContent extends React.Component {
         message.error('设置内容权限失败，请稍后再试')
       }
     })
-    console.log(flag, 'get visitcontrol change')
+    // console.log(flag, 'get visitcontrol change')
   }
   visitControlUpdateCurrentModalData = obj => {
     const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id } } } = this.props.model
@@ -679,15 +730,122 @@ class FileDetailContent extends React.Component {
       this.props.filePreview({ id: file_resource_id, file_id: id })
     }
   }
+
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(file_id, 'ssssss')
+    // console.log(list, 'ssss')
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList
+    })
+  }
+
+  // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
+  handleVersionItem = (e) => {
+    // console.log(e, 'ssss_22222')
+    const { key } = e
+    const { dispatch } = this.props
+    const { new_filePreviewCurrentVersionList } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssss')
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
+      if (item.file_id == key) {
+        return item
+      }
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    const { file_id, file_resource_id, version_id } = temp_filePreviewCurrentVersionList[0]
+    dispatch({
+      type: 'projectDetailFile/filePreview',
+      payload: {
+        file_id,
+        file_resource_id,
+        version_id,
+      }
+    })
+  }
+
+  // 改变编辑描述的value onChange事件
+  handleFileVersionValue = (e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
+    // let val = e.target.value
+    const { dispatch, } = this.props
+    const { editValue, is_edit_version_description } = this.state
+    // console.log(is_edit_version_description, 'ssssss')
+    // console.log(editValue, 'sssss')
+    let new_list = [...list]
+    // console.log(new_list, 'sssss')
+    // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        return new_item
+      }
+    })
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false, remarks: editValue != '' ? editValue : item.remarks }
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    // console.log(new_list, 'sssss')
+    const { file_id } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
+    if (editValue != '') {
+      dispatch({
+        type: 'projectDetailFile/updateVersionFileDescription',
+        payload: {
+          id: file_id,
+          version_info: editValue
+        }
+      })
+      this.setState({
+        editValue: ''
+      })
+    }
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        filePreviewCurrentVersionList: new_list
+      }
+    })
+  }
+
   render() {
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
-    let {componentHeight, componentWidth } = this.props
-    if(!componentHeight && !componentWidth){
+    let { componentHeight, componentWidth } = this.props
+    if (!componentHeight && !componentWidth) {
       const container_fileDetailOut = document.getElementById('container_fileDetailOut');
       const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;
       componentWidth = fileDetailOutWidth - 419;
@@ -718,6 +876,7 @@ class FileDetailContent extends React.Component {
       <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', paddingTop: '10px' }}>
         {filePreviewUrl && (
           <ZoomPicture
+            {...this.props}
             imgInfo={{ url: filePreviewUrl }}
             componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
             commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
@@ -727,6 +886,9 @@ class FileDetailContent extends React.Component {
             userId={this.getCurrentUserId()}
             handleGetNewComment={this.handleGetNewComment}
             handleFullScreen={this.handleZoomPictureFullScreen}
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
+            projectFileType={"projectFileType"}
           />
         )}
       </div>
@@ -954,68 +1116,41 @@ class FileDetailContent extends React.Component {
         </Menu>
       )
     }
-    //版本信息列表
-    const getVersionItemMenu = (list) => {
-      return (
-        // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <Menu selectable={true} style={{ width: 400 }}>
-          {list.map((value, key) => {
-            const { file_name, creator, create_time, file_size, file_id } = value
-            return (
-              <Menu.Item key={file_id} >
-                <div className={indexStyles.versionItemMenu}>
-                  <div style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
-                  <div>上传于</div>
-                  <div>{create_time}</div>
-                  {filePreviewCurrentFileId == file_id && (
-                    <div className={`${indexStyles.status}`}>当前</div>)}
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                    <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}>
-                      <span>&#xe7fd;</span>
-                    </Dropdown>
-                  </div>
 
-                </div>
-              </Menu.Item>
-            )
-          })}
-          <Menu.Item key="updateVersion" >
-            <Upload {...uploadProps} showUploadList={false}>
-              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
-                <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 更新版本
-              </div>
-            </Upload>
-          </Menu.Item>
-        </Menu>
-      )
-    }
+    // 定义一个版本列表的数据,而不用model中的数据
+    // let new_filePreviewVersionList = editVersionFileList && editVersionFileList.length ? editVersionFileList : filePreviewCurrentVersionList
 
-    const versionItemMenu = ({ list, file_id, file_name }) => {
-      return (
-        <Menu onClick={this.getVersionItemMenuClick.bind(this, { list, file_id, file_name })}>
-          <Menu.Item key="1">设为当前</Menu.Item>
-          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
-        </Menu>
-      )
+    const params = {
+      board_id,
+      filePreviewCurrentFileId,
+      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      new_filePreviewCurrentVersionList,
+      is_edit_version_description,
     }
 
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
-          <div className={indexStyles.fileDetailHeadLeft}>
-            {seeFileInput === 'fileModule' ? (
-              <FileDerailBreadCrumbFileNav {...this.props} />
-            ) : ('')}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={indexStyles.fileIcon}>
+              <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
+              文件
+            </div>
+            <div className={indexStyles.fileDetailHeadLeft}>
+              {seeFileInput === 'fileModule' ? (
+                <FileDerailBreadCrumbFileNav {...this.props} />
+              ) : ('')}
+            </div>
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>
             {seeFileInput === 'fileModule' && (
-              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
-                <Button style={{ height: 24, marginLeft: 14 }}>
-                  <Icon type="upload" />版本信息
-                </Button>
-              </Dropdown>
+              <VersionSwitching {...params}
+                handleVersionItem={this.handleVersionItem}
+                getVersionItemMenuClick={this.getVersionItemMenuClick}
+                handleFileVersionDecription={this.handleFileVersionDecription}
+                handleFileVersionValue={this.handleFileVersionValue}
+                uploadProps={uploadProps} />
             )}
 
             {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
@@ -1109,6 +1244,7 @@ class FileDetailContent extends React.Component {
             <div>
               {filePreviewUrl && (
                 <ZoomPicture
+                  {...this.props}
                   imgInfo={{ url: filePreviewUrl }}
                   componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
                   commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
@@ -1119,6 +1255,9 @@ class FileDetailContent extends React.Component {
                   handleGetNewComment={this.handleGetNewComment}
                   isFullScreenMode={isZoomPictureFullScreenMode}
                   handleFullScreen={this.handleZoomPictureFullScreen}
+                  filePreviewCurrentFileId={filePreviewCurrentFileId}
+                  filePreviewCurrentId={filePreviewCurrentId}
+                  projectFileType={"projectFileType"}
                 />
               )}
             </div>

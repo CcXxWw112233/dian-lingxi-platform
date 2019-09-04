@@ -38,6 +38,7 @@ export const selectFilePreviewCurrentFileId= state => state[(`projectDetailFile`
 export const selectFilePreviewCommits= state => state[(`projectDetailFile`)].datas.filePreviewCommits
 export const selectFilePreviewPointNumCommits = state => state[(`projectDetailFile`)].datas.filePreviewPointNumCommits
 export const selectFilePreviewCommitPoints = state => state[(`projectDetailFile`)].datas.filePreviewCommitPoints
+export const selectFilePreviewCurrentVersionList = state => state[(`projectDetailFile`)].datas.filePreviewCurrentVersionList
 //新消息
 export const selectNewMessageItem= state => state[(`technological`)].datas.newMessageItem //
 

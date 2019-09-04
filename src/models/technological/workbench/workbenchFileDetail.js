@@ -6,10 +6,11 @@ import { routerRedux } from "dva/router";
 import {
   getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy,
   fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
-  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo
+  getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile,
+  updateVersionFileDescription,
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import { workbench_selectFilePreviewCommitPointNumber } from './selects'
+import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList } from './selects'
 import {selectBreadcrumbList} from "../select";
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -45,6 +46,8 @@ export default {
                 filePreviewIsRealImage: true, //当前预览的图片是否真正图片,
                 pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
 
+                breadcrumbList: [],
+
               }
             })
           }
@@ -56,7 +59,7 @@ export default {
   },
   effects: {
     * filePreview({ payload }, { select, call, put }) {
-      const { file_id } = payload
+      const { file_id, file_resource_id } = payload
       const res = yield call(filePreview, {id: file_id})
       if(isApiResponseOk(res)) {
         yield put({
@@ -65,6 +68,8 @@ export default {
             filePreviewIsUsable: res.data.isUsable,
             filePreviewUrl: res.data.url,
             filePreviewIsRealImage: res.data.isRealImage,
+            // filePreviewCurrentId: file_resource_id
+            filePreviewCurrentFileId: file_id
           }
         })
         yield put({
@@ -175,12 +180,32 @@ export default {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile, isPDF } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
+      // console.log(payload, 'sss_worek')
+      const new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
+      const filePreviewCurrentFileId = yield select(workbench_selectFilePreviewCurrentFileId)
+      // console.log(res.data, 'ssssss')
+      let temp_list = [...res && res.data]
+      // console.log(temp_list, 'sssss')
+      let temp_arr = []
+      let default_arr = []
+      for (let val of temp_list) {
+        if (val['file_id'] == file_id) {
+          // console.log(val, 'ssssss')
+          temp_arr.unshift(val)
+        }
+        if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
+          default_arr.push(val)
+        }
+      }
+      // console.log(temp_arr, default_arr, 'sssss')
       if(isApiResponseOk(res)) {
+        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
+            breadcrumbList:new_breadcrumbList,
           }
         })
         if(isNeedPreviewFile) {
@@ -314,7 +339,55 @@ export default {
 
       }
     },
-
+    // 设为当前版本
+    * setCurrentVersionFile({ payload }, { select, call, put }) {
+      // console.log(payload, 'ssssss')
+      const { id, set_major_version, version_id, file_name } = payload
+      let res = yield call(setCurrentVersionFile, { id, set_major_version })
+      const new_fileList = yield select(workbench_selectrUploadedFileList)
+      const new_filePreviewId= yield select(workbench_selectFilePreviewCurrentFileId)
+      const new_filePreviewCurrentVersionList = yield select(workbench_selectFilePreviewCurrentVersionList)
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+        yield put({
+          type: 'fileVersionist',
+          payload: {
+            version_id: version_id,
+            file_id: id
+          }
+        })
+       
+        let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
+        for(let val of new_filePreviewCurrentVersionList) {
+          if (val['file_id'] == new_filePreviewId) {
+            temp_arr.push(val)
+          }
+        }
+        let temp_obj = temp_arr[0] // 这个是用来保存得到当前的元素对象
+        // 需要做的操作是在 new_fileList 里面去查询到这条元素然后替换
+        // 需要根据工作台的条件来进行切换
+        
+        // yield put({
+        //   type: 'workbench/updateDatas',
+        //   payload: {
+        //     fileList: temp_list
+        //   }
+        // })
+       
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
+    // 文件版本更新描述
+    * updateVersionFileDescription({ payload }, { select, call, put }) {
+      // console.log(payload, 'sssss')
+      let res = yield call(updateVersionFileDescription, payload)
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+      }
+    },
     * routingJump({ payload }, { call, put }) {
       const { route } = payload
       yield put(routerRedux.push(route));
