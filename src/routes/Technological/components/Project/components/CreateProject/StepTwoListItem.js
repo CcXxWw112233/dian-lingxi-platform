@@ -4,10 +4,34 @@ import {currentNounPlanFilterName} from "../../../../../../utils/businessFunctio
 import CopyCheck from './CopyCheck.js'
 
 export default class StepTwoListItem extends React.Component{
-  state = {
-    buttonState: false,
-    switchChecked: false,
+ 
+  constructor(props) {
+    super(props)
+    this.state= {
+      buttonState: false,
+      switchChecked: false,
+    }
   }
+
+  componentDidMount() {
+    this.initialOpen()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // this.initialOpen()
+  }
+
+  // 默认开启任务和流程
+  initialOpen = (props) => {
+    const { itemValue: { code, itemKey, id } } = this.props
+    if('Tasks' == code || 'Flows' == code) { //
+      this.setState({
+        switchChecked: true
+      })
+      this.props.stepTwoButtonClick({ itemKey, id , isAdd: true})
+    }
+  }
+
   buttonClick(data) {
     this.setState({
       buttonState: !this.state.buttonState
@@ -49,7 +73,6 @@ export default class StepTwoListItem extends React.Component{
     const { buttonState, switchChecked } = this.state
     const { step_2_type } = this.props
     const { id, name, description, status, itemKey, code } = this.props.itemValue
-
     return (
       <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 30}}>
         <div style={{textAlign: 'left', flex: 1}}>

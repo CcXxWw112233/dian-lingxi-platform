@@ -413,7 +413,7 @@ class CreateProject extends React.Component {
             <div style={{margin: '0 auto', width: 392}}>
               {appsList.map((value, key) => {
                 return (
-                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={value.id} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                 )
               })}
             </div>
@@ -452,7 +452,7 @@ class CreateProject extends React.Component {
               <div style={{margin: '0 auto', width: 392}}>
                 {project_apps.map((value, key) => {
                   return (
-                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={`${select_project_id}_${value.id}`} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                   )
                 })}
               </div>
