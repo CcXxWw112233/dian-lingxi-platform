@@ -20,7 +20,6 @@ class MyWorkbenchBoxs extends Component {
   componentWillMount() { }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps, 'sssss')
     const { projectList: old_projectList } = this.props;
     const { dispatch, projectList } = nextProps;
     if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {

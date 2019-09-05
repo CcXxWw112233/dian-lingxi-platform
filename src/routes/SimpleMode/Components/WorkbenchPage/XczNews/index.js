@@ -29,14 +29,13 @@ export default class index extends Component {
     }
     seeXczNews(params) {
         this.setState({
-            selectOrganizationVisible: true
+            selectOrganizationVisible: false
         })
     }
     render() {
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { XczNewsOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state
-
         const { location } = this.props;
         return (
             <div>

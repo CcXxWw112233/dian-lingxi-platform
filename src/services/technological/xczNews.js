@@ -107,9 +107,7 @@ export async function getXczNewsQueryUser(params) {
     return request({
       url: `${REQUEST_DOMAIN}/organization/regulation`,
       method: 'GET',
-      params: {
-        params,
-      }
+      params: { }
     })
   }
   
