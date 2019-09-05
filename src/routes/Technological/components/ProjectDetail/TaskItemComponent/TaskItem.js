@@ -406,7 +406,10 @@ export default class TaskItem extends React.Component {
           </Menu.Item>
           <Menu.Item key={'99'} style={{textAlign: 'center', padding: 0, margin: 0}}>
             {!shouldHideVisitControlPopover && (
-              <div style={{marginLeft: '-35px', minWidth: '130px'}}>
+              <div 
+                // style={{marginLeft: '-35px', minWidth: '130px'}}
+                style={{padding: '4px 10px'}}
+              >
             <VisitControl
               popoverPlacement={'rightTop'}
               isPropVisitControl={is_privilege === '0' ? false : true}

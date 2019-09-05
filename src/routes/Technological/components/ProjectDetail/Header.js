@@ -606,7 +606,9 @@ export default class Header extends React.Component {
           </Menu.Item>
         )}
         {<Menu.Item key={'99'} style={{textAlign: 'center', padding: 0, margin: 0}}>
-            <div className={indexStyle.elseProjectMemu} style={{marginLeft: '-35px'}}>
+            <div className={indexStyle.elseProjectMemu} 
+              // style={{marginLeft: '-35px'}}
+            >
             <VisitControl
               popoverPlacement={'leftTop'}
               isPropVisitControl={is_privilege === '0' ? false : true}
