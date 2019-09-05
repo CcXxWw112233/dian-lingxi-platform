@@ -1,3 +1,5 @@
+import { routerRedux } from "dva/router";
+
 import { 
   getHotTabs, 
   getHotArticles, 
@@ -83,7 +85,7 @@ export default {
             XczNewsOrganizationList: [], //有权限查看晓策志的组织
           }
         })
-        if (location.pathname.indexOf('/technological/xczNews') != -1) {
+        if (location.pathname.indexOf('/xczNews') != -1) {
           dispatch({
             type: "updateDatas",
             payload: {
@@ -93,7 +95,7 @@ export default {
           })
            
         }
-        if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
+        if (location.pathname.indexOf('/xczNews/hot') != -1) {
           dispatch({
             type: "getHotTabs",
             payload: {
@@ -120,7 +122,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/highRise') != -1) {
+        if (location.pathname.indexOf('/xczNews/highRise') != -1) {
           dispatch({
             type: "getHighRiseArticles",
             payload: {
@@ -141,7 +143,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/authority') != -1) {
+        if (location.pathname.indexOf('/xczNews/authority') != -1) {
           dispatch({
             type: "getAuthorityArticles",
             payload: {
@@ -162,7 +164,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/dataBase') != -1) {
+        if (location.pathname.indexOf('/xczNews/dataBase') != -1) {
           dispatch({
             type: "getDataBase",
             payload: {
@@ -195,7 +197,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/area') != -1) {
+        if (location.pathname.indexOf('/xczNews/area') != -1) {
           dispatch({
             type: "getAreas",
             payload: {
@@ -515,7 +517,6 @@ export default {
     // 获取有权限查看的组织列表
     * getXczNewsQueryUser({ payload = {} }, { select, call, put }) { 
       let res = yield call(getXczNewsQueryUser, payload)
-      console.log(res,'组织列表resresres');
       
       if(isApiResponseOk(res)) {
         yield put({
@@ -527,6 +528,11 @@ export default {
       }else {
 
       }
+    },
+
+    * routingJump({ payload }, { call, put }) {
+      const { route } = payload
+      yield put(routerRedux.push(route));
     },
 
   },

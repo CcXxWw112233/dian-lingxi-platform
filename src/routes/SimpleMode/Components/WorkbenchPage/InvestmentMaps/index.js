@@ -46,19 +46,12 @@ export default class index extends React.Component {
 
     render() {
         const accessToken = Cookies.get('Authorization')
-        // const src_url = `${MAP_URL}?token=${accessToken}`
-        const src_url = `${MAP_URL}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjgxNjg2MzUsInVzZXJJZCI6IjExNDQ4MzE2MTE1MzIwODcyOTYifQ.PVV9se68Ti9rLrsFc0X-K_QVMDuVqfhOEn-VZsZN1kM`
-
-        console.log(src_url, 'ssssssssssss');
-        
-
-        const { height } = this.state
+        const src_url = `${MAP_URL}?token=${accessToken}`
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { mapOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
-        console.log(contentHeight);
         return (
             <div className={indexStyles.mapsContainer} style={{height:contentHeight+'px'}}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false ? (
@@ -78,9 +71,7 @@ export default class index extends React.Component {
                         </div>
                     </div>
                 ) : (
-                       
-                            <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
-                        
+                    <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
                     )}
             </div>
         );
