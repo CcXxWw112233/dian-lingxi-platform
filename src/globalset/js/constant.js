@@ -26,7 +26,7 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
   if(NODE_ENV == 'development') {
-    api = 'http://192.168.1.39:8092'
+    // api = 'http://192.168.1.39:8092'
   } else {
     if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
       api = REQUEST_DOMAIN_ARTICLE
