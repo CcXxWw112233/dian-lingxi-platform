@@ -58,7 +58,7 @@ export default {
               field_data: [],
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
-              InvestmentMapsSelectOrganizationVisible: false,
+              SelectOrganizationVisible: false,
             }
           })
 
@@ -440,24 +440,28 @@ export default {
       let fnmanagement_list = res.data
       var userArr = new Array();
       userArr = fnmanagement_list.experiment_function_list || []
-      const status = userArr[3] ? userArr[3].status : '' //投资地图的状态
-
-      if (status === '0') {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            InvestmentMapsSelectOrganizationVisible: true
-          }
+      // const status = userArr[3] ? userArr[3].status : '' //投资地图的状态
+      if (userArr) {
+        let status
+        userArr.map((item) => {
+          status = item.status
         })
-        // message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
-      }
-      else {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            InvestmentMapsSelectOrganizationVisible: false
-          }
-        })
+        if (status === '0') {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              SelectOrganizationVisible: true
+            }
+          })
+        }
+        else {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              SelectOrganizationVisible: false
+            }
+          })
+        }
       }
     },
 

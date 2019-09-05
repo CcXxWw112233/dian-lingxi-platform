@@ -10,6 +10,7 @@ import {
   getAreasLocation,
   getHeaderSearch,
   getCommonArticlesList,
+  getXczNewsQueryUser,
 } from '@/services/technological/xczNews'
 
 import { getSelectState } from './select'
@@ -79,6 +80,7 @@ export default {
             area_ids: '', // 地区对应的id 
             defaultCityValue: 'cityTown',
             defaultProvinceValue: 'province', 
+            XczNewsOrganizationList: [], //有权限查看晓策志的组织
           }
         })
         if (location.pathname.indexOf('/technological/xczNews') != -1) {
@@ -143,7 +145,7 @@ export default {
           dispatch({
             type: "getAuthorityArticles",
             payload: {
-              
+               
             }
           }),
           dispatch({
@@ -491,7 +493,6 @@ export default {
           is_onscroll_do_paging: res.data.records.length < page_size ? false: true,
         }
       })
-
     },
 
     // 获取所有的文章列表
@@ -510,7 +511,23 @@ export default {
           searchList: res.data
         },
       })
-    }
+    },
+    // 获取有权限查看的组织列表
+    * getXczNewsQueryUser({ payload = {} }, { select, call, put }) { 
+      let res = yield call(getXczNewsQueryUser, payload)
+      console.log(res,'组织列表resresres');
+      
+      if(isApiResponseOk(res)) {
+        yield put({
+            type: 'updateDatas',
+            payload: {
+                XczNewsOrganizationList: res.data
+            }
+          })
+      }else {
+
+      }
+    },
 
   },
 

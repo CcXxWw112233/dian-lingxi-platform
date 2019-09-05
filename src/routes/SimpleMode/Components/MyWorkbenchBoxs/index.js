@@ -25,10 +25,7 @@ class MyWorkbenchBoxs extends Component {
     if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
       const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
       const { user_set = {} } = userInfo
-      console.log(user_set);
-      console.log(projectList);
       const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
-      console.log("selectBoard", selectBoard);
 
       if (selectBoard && selectBoard.length > 0) {
         //设置当前选中的项目
@@ -62,9 +59,7 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
-    // console.log(data, 'bbbbb');
     if (data.key === 'add') {
-      //console.log("onSelectBoard");
       this.setState({
         addProjectModalVisible: true
       });
@@ -159,6 +154,11 @@ class MyWorkbenchBoxs extends Component {
       payload: {}
     })
 
+    dispatch({
+      type: 'xczNews/getXczNewsQueryUser',
+      payload: {}
+    })
+
     if (localStorage.getItem('OrganizationId') !== "0") {
       dispatch({
         type: 'organizationManager/getFnManagementList',
@@ -181,8 +181,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = ({ id, code, status }) => {
-
-    if (code === 'maps') {
+    if (code === 'maps' || code === 'regulations') {
       if (isDisabled == true) {
         message.warn("暂无可查看的数据");
         return
@@ -208,8 +207,8 @@ class MyWorkbenchBoxs extends Component {
     });
   }
 
-  renderBoxItem = (item) => {
-    /**
+  getIsDisabled = (item) => {
+     /**
       * 投资地图是否禁用
       * 1.单组织没权限 - 投资地图灰掉
       * 2.单组织没开启地图 - 投资地图不展示|灰掉
@@ -221,14 +220,28 @@ class MyWorkbenchBoxs extends Component {
       * 2.用户当下所选的组织不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
       * （所有功能图标都如此）
      */
-    const { InvestmentMapsSelectOrganizationVisible } = this.props
+    const { SelectOrganizationVisible } = this.props
+    const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : SelectOrganizationVisible
     const { mapOrganizationList = [] } = this.props
-    const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : InvestmentMapsSelectOrganizationVisible
-    const unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
-    isDisabled = item.name === '投资地图' ? unclickable : (item.status === 0 ? true : false)
-  
+    const { XczNewsOrganizationList = [] } = this.props
+    let unclickable
+    if (item.code === 'maps') {
+      unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
+      isDisabled = item.name ? unclickable : (item.status === 0 ? true : false)
+
+    }else if (item.code === 'regulations') {
+      unclickable = XczNewsOrganizationList.length > 0 ? isAllOrg : true
+      isDisabled = item.name ? unclickable : (item.status === 0 ? true : false)
+    }
+    else {
+      isDisabled = false
+    }
+    return isDisabled
+  }
+
+  renderBoxItem = (item) => {
+    isDisabled = this.getIsDisabled(item)
     return (
-      // <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
       <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisabled}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
         <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
@@ -240,7 +253,6 @@ class MyWorkbenchBoxs extends Component {
     const { projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
 
     const { addProjectModalVisible = false } = this.state;
-    console.log(projectList, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
@@ -257,7 +269,6 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
-
               return (
                 item.status == 0 ? (
                   <Tooltip title="功能开发中，请耐心等待">
@@ -299,12 +310,15 @@ export default connect(
     },
     organizationManager: {
       datas: {
-        InvestmentMapsSelectOrganizationVisible }
+        SelectOrganizationVisible }
     },
     investmentMap: {
       datas: {
         mapOrganizationList
       } },
+    xczNews: {
+        XczNewsOrganizationList
+      },
     project }) => ({
       project,
       projectList,
@@ -313,6 +327,7 @@ export default connect(
       workbenchBoxList,
       currentUserOrganizes,
       simplemodeCurrentProject,
-      InvestmentMapsSelectOrganizationVisible,
+      SelectOrganizationVisible,
       mapOrganizationList,
+      XczNewsOrganizationList,
     }))(MyWorkbenchBoxs)

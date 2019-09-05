@@ -12,31 +12,31 @@ export default class Header extends Component {
             {
                 "flag": 1,
                 "name": "hot",
-                "path": "/technological/xczNews/hot",
+                "path": "/technological/simplemode/workbench/xczNews/hot",
                 "text": "热点"
             },
             {
                 "flag": 2,
                 "name": "highRise",
-                "path": "/technological/xczNews/highRise",
+                "path": "/technological/simplemode/workbench/xczNews/highRise",
                 "text": "高层"
             },
             {   
                 "flag": 3,
                 "name": "authority",
-                "path": "/technological/xczNews/authority",
+                "path": "/technological/simplemode/workbench/xczNews/authority",
                 "text": "权威"
             },
             {
                 "flag": 4,
                 "name": "area",
-                "path": "/technological/xczNews/area",
+                "path": "/technological/simplemode/workbench/xczNews/area",
                 "text": "地区"
             },
             {
                 "flag": 5,
                 "name": "dataBase",
-                "path": "/technological/xczNews/dataBase",
+                "path": "/technological/simplemode/workbench/xczNews/dataBase",
                 "text": "资料库"
             }
         ],
@@ -107,9 +107,7 @@ export default class Header extends Component {
     }
 
     render() {
-        const { xczNews, location } = this.props;
-        console.log('location = ', location);
-        
+        const { xczNews, location } = this.props;        
         const { tabs } = this.state;
         const { inputValue } = xczNews;
         return (
@@ -135,7 +133,7 @@ export default class Header extends Component {
                         </div>
                     </div>
                     {
-                        location.pathname !== '/technological/xczNews/area' && (
+                        location.pathname !== '/technological/simplemode/workbench/xczNews/area' && (
                             <div className={headerStyles.Search}>
                                 <Input.Search 
                                     type="text"
