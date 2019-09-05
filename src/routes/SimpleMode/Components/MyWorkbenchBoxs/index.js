@@ -181,10 +181,22 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = ({ id, code, status }) => {
+    const { dispatch } = this.props;
+
     if (code === 'maps' || code === 'regulations') {
       if (isDisabled == true) {
         message.warn("暂无可查看的数据");
         return
+      }else if (code === 'regulations') {
+        if (localStorage.getItem('OrganizationId') === "0") {
+          localStorage.setItem('isRegulations', 'yes');
+        }
+        dispatch({
+          type: 'xczNews/routingJump',
+          payload: {
+            route: '/technological/simplemode/workbench/xczNews/hot'
+          }
+        })
       }
     }
 
@@ -192,19 +204,21 @@ class MyWorkbenchBoxs extends Component {
       message.warn("功能开发中，请耐心等待");
       return;
     }
-    const { dispatch } = this.props;
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
         currentSelectedWorkbenchBox: { id, code }
       }
     });
-    dispatch({
-      type: 'simplemode/routingJump',
-      payload: {
-        route: '/technological/simplemode/workbench'
-      }
-    });
+
+    if (code !== 'regulations') {
+      dispatch({
+        type: 'simplemode/routingJump',
+        payload: {
+          route: '/technological/simplemode/workbench'
+        }
+      });
+    }
   }
 
   getIsDisabled = (item) => {
