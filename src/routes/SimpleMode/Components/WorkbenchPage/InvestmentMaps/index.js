@@ -46,12 +46,7 @@ export default class index extends React.Component {
 
     render() {
         const accessToken = Cookies.get('Authorization')
-        // const src_url = `${MAP_URL}?token=${accessToken}`
-        const src_url = `${MAP_URL}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjgxNjg2MzUsInVzZXJJZCI6IjExNDQ4MzE2MTE1MzIwODcyOTYifQ.PVV9se68Ti9rLrsFc0X-K_QVMDuVqfhOEn-VZsZN1kM`
-
-        console.log(src_url, 'ssssssssssss');
-        
-
+        const src_url = `${MAP_URL}?token=${accessToken}`
         const { height } = this.state
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { mapOrganizationList = [] } = this.props
@@ -78,9 +73,7 @@ export default class index extends React.Component {
                         </div>
                     </div>
                 ) : (
-                       
-                            <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
-                        
+                    <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
                     )}
             </div>
         );
