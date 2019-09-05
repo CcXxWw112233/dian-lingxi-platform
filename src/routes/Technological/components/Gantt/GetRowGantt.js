@@ -10,7 +10,7 @@ import { Tooltip, Dropdown } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
-
+import GetRowTaskItem from './GetRowTaskItem'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
@@ -317,7 +317,7 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample({ id, board_id, top }, e) {
+  setSpecilTaskExample = ({ id, board_id, top }, e) => {
     if (e) {
       e.stopPropagation()
     }
@@ -417,7 +417,11 @@ export default class GetRowGantt extends Component {
               return (
                 <QueueAnim type="right" key={id} duration={200}>
                   <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
-                    <div
+                    <div>
+                      <GetRowTaskItem itemValue={value2} setSpecilTaskExample={this.setSpecilTaskExample} />
+
+                    </div>
+                    {/* <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"
                       // onDrag={this.onCardItemDrag}
@@ -446,7 +450,7 @@ export default class GetRowGantt extends Component {
                           <AvatarList users={executors} size={'small'} />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </Dropdown>
                 </QueueAnim>
 
