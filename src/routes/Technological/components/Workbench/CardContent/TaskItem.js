@@ -2,7 +2,7 @@ import React from "react";
 import indexstyles from "../index.less";
 import { Icon, Tooltip} from "antd";
 import Cookies from "js-cookie";
-import { timestampToTimeNormal2 } from './../../../../../utils/util'
+import { timestampToTimeNormal2, timeColor } from './../../../../../utils/util'
 import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
 import {message} from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
@@ -83,7 +83,7 @@ export default class TaskItem extends React.Component {
 
   render() {
     const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org} = this.props;
-    const { org_id, is_realize, board_id, board_name, name, id } = itemValue;
+    const { org_id, is_realize, board_id, board_name, name, id, due_time } = itemValue;
 
     //父级任务
     let parentCards = [];
@@ -101,8 +101,8 @@ export default class TaskItem extends React.Component {
     };
     returnParentCard(itemValue);
 
-    const transItemValueTimestampToDate = timestampToTimeNormal2(itemValue.create_time)
-    const DateNoTimeStr = transItemValueTimestampToDate ? transItemValueTimestampToDate.split(' ')[0] : null
+    const transItemValueTimestampToDate = timestampToTimeNormal2(due_time)
+    // const DateNoTimeStr = transItemValueTimestampToDate ? transItemValueTimestampToDate.split(' ')[0] : null
 
     const renderInWorkbench = (
       <div className={indexstyles.taskItem__workbench_wrapper}>
@@ -185,8 +185,8 @@ export default class TaskItem extends React.Component {
               </div>
             </Tooltip>
           </div>
-        <span className={indexstyles.taskItem__workbench_time}>
-          {DateNoTimeStr}
+        <span className={indexstyles.taskItem__workbench_time} style={{color: timeColor(due_time)}}>
+          {transItemValueTimestampToDate}
         </span>
       </div>
     );

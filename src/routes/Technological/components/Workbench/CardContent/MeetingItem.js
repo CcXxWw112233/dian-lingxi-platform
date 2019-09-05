@@ -2,7 +2,7 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermission} from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
@@ -117,7 +117,7 @@ export default class MeetingItem extends React.Component {
               </div>
             </Tooltip>
         </div>
-        <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
+        <span style={{marginLeft: 6, color: timeColor(due_time), cursor: 'pointer', fontSize: 12, justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
       </div>
     )
   }
