@@ -322,7 +322,7 @@ class DrawContent extends React.Component {
     //截止时间
   endDatePickerChange(e, timeString) {
     const { datas: { drawContent = {}, milestoneList = [] } } = this.props.model
-    const { card_id, start_time,  milestone_data = {} } = drawContent
+    const { card_id, start_time, milestone_data = {} } = drawContent
     const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     if(!this.compareStartDueTime(start_time, due_timeStamp)) {
@@ -964,7 +964,7 @@ class DrawContent extends React.Component {
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
     const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, type,  due_time} = drawContent
+    const { card_id, type, due_time} = drawContent
     if(!compareTwoTimestamp(deadline, due_time)) {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return

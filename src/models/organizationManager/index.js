@@ -21,7 +21,7 @@ import { getUSerInfo } from "../../services/technological";
 export default {
   namespace: 'organizationManager',
   state: {
-    datas:{
+    datas: {
       
     }
   },

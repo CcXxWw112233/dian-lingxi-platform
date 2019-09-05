@@ -29,7 +29,7 @@ export default class index extends Component {
     }
     seeXczNews(params) {
         this.setState({
-            selectOrganizationVisible: false
+            selectOrganizationVisible: true
         })
     }
     render() {

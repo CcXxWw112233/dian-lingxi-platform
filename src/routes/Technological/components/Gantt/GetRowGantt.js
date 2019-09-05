@@ -425,7 +425,7 @@ export default class GetRowGantt extends Component {
                         left: left, top: top,
                         width: (width || 6) - 6, height: (height || task_item_height),
                         marginTop: task_item_margin_top,
-                        background: this.setLableColor(label_data),// 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                        background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
                       onMouseMove={(e) => e.stopPropagation()}

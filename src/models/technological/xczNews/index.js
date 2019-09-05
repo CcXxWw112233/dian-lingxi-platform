@@ -515,7 +515,7 @@ export default {
     // 获取有权限查看的组织列表
     * getXczNewsQueryUser({ payload = {} }, { select, call, put }) { 
       let res = yield call(getXczNewsQueryUser, payload)
-      console.log(res,'组织列表resresres');
+      console.log(res, '组织列表resresres');
       
       if(isApiResponseOk(res)) {
         yield put({

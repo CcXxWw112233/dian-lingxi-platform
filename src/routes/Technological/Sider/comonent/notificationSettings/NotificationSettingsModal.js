@@ -142,7 +142,7 @@ export default class NotificationSettingsModal extends Component {
 				} else if (radio_checked_val == '2') {
 					new_notice_list_ids = [...default_simple_options]
 				}
-        const data = { notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids, notice_daily:notice_daily}
+        const data = { notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids, notice_daily: notice_daily}
         // console.log(data, 'sssss')
         setNoticeSettingList(data).then((res) => {
             // console.log(res, 'ssss')

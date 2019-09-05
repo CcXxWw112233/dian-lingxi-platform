@@ -53,9 +53,8 @@ export default class index extends React.Component {
         const { selectOrganizationVisible } = this.state
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
-        console.log(contentHeight);
         return (
-            <div className={indexStyles.mapsContainer} style={{height:contentHeight+'px'}}>
+            <div className={indexStyles.mapsContainer} style={{height: contentHeight+'px'}}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false ? (
                     <div className={indexStyles.boardSelectWapper}>
                         <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>

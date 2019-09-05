@@ -204,7 +204,7 @@ export default {
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
-            breadcrumbList:new_breadcrumbList,
+            breadcrumbList: new_breadcrumbList,
           }
         })
         if(isNeedPreviewFile) {
@@ -374,7 +374,7 @@ export default {
         // })
        
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     // 文件版本更新描述
@@ -384,7 +384,7 @@ export default {
       if (isApiResponseOk(res)) {
         // console.log(res, 'ssssss')
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * routingJump({ payload }, { call, put }) {
