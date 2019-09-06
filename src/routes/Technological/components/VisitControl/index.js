@@ -27,9 +27,9 @@ class VisitControl extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addMemberModalVisible: false,
-      comfirmRemoveModalVisible: false,
-      visible: false,
+      addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
+      comfirmRemoveModalVisible: false, // 是否显示移除成员的弹窗, 默认为 false 不显示
+      visible: false, // ？？？
       selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
       othersPersonList: [], //外部邀请人员的list
       transPrincipalList: [] //外部已有权限人的list
@@ -45,9 +45,11 @@ class VisitControl extends Component {
     });
   };
 
+  // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
+  // 获取添加成员的回调
   handleGetAddNewMember = members => {
     const { handleAddNewMember } = this.props;
     const filterPlatformUsersId = users =>
@@ -79,10 +81,17 @@ class VisitControl extends Component {
       addMemberModalVisible: false
     });
   };
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} checked 是否开启访问控制的状态
+   */
   handleToggleVisitControl = checked => {
     const { handleVisitControlChange } = this.props;
     handleVisitControlChange(checked);
   };
+
+  // 我的理解是: 别的地方调用该popover的时候关闭或者打开的控制该状态的回调，
   onPopoverVisibleChange = visible => {
     const { handleVisitControlPopoverVisible } = this.props;
     const isClose = visible === false;
@@ -99,11 +108,20 @@ class VisitControl extends Component {
       );
     }
   };
+
+  /**
+   * 获取当前操作的对象的id
+   * @param {Object} item 当前操作的对象
+   */
   handleClickedOtherPersonListItem = item => {
     this.setState({
       selectedOtherPersonId: item
     });
   };
+
+  /**
+   * 点击选中邀请进来的外部人员的下拉菜单的回调
+   */
   handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
     const operatorType = key;
     const { handleClickedOtherPersonListOperatorItem } = this.props;
@@ -119,6 +137,11 @@ class VisitControl extends Component {
       operatorType
     );
   };
+
+  /**
+   * 点击移除成员弹窗的确定回调
+   * @param {Object} e 当前的事件对象
+   */
   handleComfirmRemoveModalOk = e => {
     if (e) e.stopPropagation();
     const { handleClickedOtherPersonListOperatorItem } = this.props;
@@ -135,24 +158,33 @@ class VisitControl extends Component {
       }
     );
   };
+
+  // 关闭移除成员的弹窗回调
   handleCloseComfirmRemoveModal = e => {
     if (e) e.stopPropagation();
     this.setState({
       comfirmRemoveModalVisible: false
     });
   };
+
+  // 关闭添加成员弹窗的回调
   handleCloseAddMemberModal = e => {
     if (e) e.stopPropagation();
     this.setState({
       addMemberModalVisible: false
     });
   };
+
+  // 点击添加成员的回调
   handleAddNewMember = () => {
     this.setState({
       addMemberModalVisible: true
     });
   };
+
+  // 获取负责人列表
   genPrincipalList = (principalList = []) => {
+    // ？？？ 我的理解是:检测数组中的每一个元素是否是String, 为什么要检测？
     const isStr = str => typeof str === 'string'
     const isArrEleAllStr = arr => arr.every(i => isStr(i))
     if(!isArrEleAllStr(principalList)) {
@@ -162,11 +194,13 @@ class VisitControl extends Component {
       return
     }
     const { currentOrgAllMembersList = []} = this.props;
+    // 是否在负责人列表中的成员能够在当前所有组织成员列表中找到？
     const isEachMemberInPrincipalListCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       principalList.every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
       );
     let allMember = [...currentOrgAllMembersList]
+    // 获取其他人列表？
     const getOthersPersonList = allMember =>
       principalList.reduce((acc, curr) => {
         const id = curr;
@@ -236,6 +270,8 @@ class VisitControl extends Component {
       }
 
   }
+
+  // 这是分析其他人的权限
   parseOtherPrivileges = otherPrivilege => {
     const { currentOrgAllMembersList = [] } = this.props;
     const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
@@ -307,6 +343,8 @@ class VisitControl extends Component {
       });
     }
   };
+
+  // 是否有必要更新比较其他人的权限在props中
   compareOtherPrivilegeInPropsAndUpdateIfNecessary = nextProps => {
     const { otherPrivilege: nextOtherPrivilege } = nextProps;
     const { otherPrivilege } = this.props;
@@ -332,20 +370,27 @@ class VisitControl extends Component {
       this.parseOtherPrivileges(nextOtherPrivilege);
     }
   };
+
+  // 开启访问控制权限回调
   handleClickedInVisitControl = e => {
     if (e) e.stopPropagation();
     const { handleVisitControlPopoverVisible } = this.props;
     handleVisitControlPopoverVisible(true);
   };
+
+  //组件挂载完成需要调用获取负责人列表以及分析其他人的权限
   componentDidMount() {
     //将[id]:privilageType 对象转化为数组
     const { otherPrivilege = [], principalList = [] } = this.props;
     this.parseOtherPrivileges(otherPrivilege);
     this.genPrincipalList(principalList)
   }
+
   componentWillReceiveProps(nextProps) {
     this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps);
   }
+
+  // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
     const { isPropVisitControl } = this.props;
     const unClockIcon = (
@@ -373,6 +418,8 @@ class VisitControl extends Component {
       </div>
     );
   };
+
+  // 渲染其他人操作下拉菜单的选项
   renderOtherPersonOperatorMenu = privilege => {
     const { otherPersonOperatorMenuItem } = this.props;
     const { Item } = Menu;
@@ -401,6 +448,8 @@ class VisitControl extends Component {
       </Menu>
     );
   };
+
+  // 渲染popover中的负责人列表组件
   renderPopoverContentPrincipalList() {
     const { principalInfo } = this.props;
     const {transPrincipalList} = this.state
@@ -430,6 +479,8 @@ class VisitControl extends Component {
       </div>
     );
   };
+
+  // 渲染popover中其他人的组件列表
   renderPopoverContentOthersPersonList = () => {
     const { otherPersonOperatorMenuItem } = this.props;
     const { othersPersonList } = this.state;
@@ -485,6 +536,8 @@ class VisitControl extends Component {
       </div>
     );
   };
+
+  // 渲染popover组件中的底部 添加成员按钮
   renderPopoverContentAddMemberBtn = () => {
     return (
       <div className={styles.content__addMemberBtn_wrapper}>
@@ -494,6 +547,8 @@ class VisitControl extends Component {
       </div>
     );
   };
+
+  // 渲染没有数据的时候
   renderPopoverContentNoContent = () => {
     return (
       <div className={styles.content__noConten_wrapper}>
@@ -502,11 +557,15 @@ class VisitControl extends Component {
       </div>
     );
   };
+
+  // 当前是否没有成员
   isCurrentHasNoMember = () => {
     const { principalList } = this.props;
     const { othersPersonList } = this.state;
     return principalList.length === 0 && othersPersonList.length === 0;
   };
+
+  // 渲染popover组件中的内容
   renderPopoverContent = () => {
     const {notShowPrincipal} = this.props
     return (
@@ -525,6 +584,7 @@ class VisitControl extends Component {
       </div>
     );
   };
+  
   render() {
     const {
       tooltipUnClockText,
@@ -564,6 +624,7 @@ class VisitControl extends Component {
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >
+        {/* 这里是小图标的形式点击进来的,然后显示访问控制中的内容, 但是这个children没有看懂 */}
         {!onlyShowPopoverContent && (
           <Popover
             placement={popoverPlacement}
@@ -591,6 +652,7 @@ class VisitControl extends Component {
             )}
           </Popover>
         )}
+        {/* 这里是直接显示访问控制中的内容 */}
         {onlyShowPopoverContent &&(
           <div style={{marginLeft: '-40%', textAlign: 'center'}}>
             <div style={{marginTop: '-24px'}}>{this.renderPopoverTitle()}</div>
@@ -628,7 +690,7 @@ class VisitControl extends Component {
 }
 
 VisitControl.defaultProps = {
-  onlyShowPopoverContent: false, //是否直接显示popover里的内容
+  onlyShowPopoverContent: false, //是否直接显示popover里的内容 ----这个是定义有些是在弹窗中的时候,那么就是小图标的形式
   popoverPlacement: 'bottomRight', //popoverplacement
   tooltipUnClockText: '访问控制', //默认的popover包裹元素的tooltip
   tooltipClockText: '关闭访问控制', //默认的popover包裹元素的tooltip
