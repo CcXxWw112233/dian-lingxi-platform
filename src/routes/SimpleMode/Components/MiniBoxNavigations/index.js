@@ -6,9 +6,43 @@ import { Icon, Divider, Tooltip, message } from 'antd';
 import { MESSAGE_DURATION_TIME } from "@/globalset/js/constant";
 import BoardDropdownSelect from '../../Components/DropdownSelect/BoardDropdownSelect'
 
-
 const MiniBoxNavigations = (props) => {
     const { dispatch, myWorkbenchBoxList = [], workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox = {} } = props;
+
+    const getIsDisabled = (item) => {
+        const { rela_app_id, code } = item
+        const { currentUserOrganizes = [] } = props
+        let isDisabled = true
+        if("regulations" == code || "maps" == code) {
+          if(localStorage.getItem('OrganizationId') == '0') {
+              let flag = false
+              for(let val of currentUserOrganizes) {
+                for(let val2 of val['enabled_app_list']) {
+                  if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+                    flag = true
+                    isDisabled = false
+                    break
+                  }
+                }
+                if(flag) {
+                  break
+                }
+              }
+          } else {
+            const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+            const enabled_app_list = org.enabled_app_list || []
+            for(let val2 of enabled_app_list) {
+              if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+                isDisabled = false
+                break
+              }
+            }
+          }
+        } else {
+          isDisabled = false
+        }
+        return isDisabled
+    }
 
     const goHome = () => {
         dispatch({
@@ -20,21 +54,20 @@ const MiniBoxNavigations = (props) => {
     };
 
     const setWorkbenchPage = (box) => {
+        const isDisableds = getIsDisabled(box)
+        if(isDisableds) {
+            message.warn('暂无可查看的数据')
+            return
+        }
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
                 currentSelectedWorkbenchBox: box
             }
         })
+
     }
 
-    // if (myWorkbenchBoxList.length == 0) { 
-    //     message.warn("没有获取到您所选的工作台功能模块", MESSAGE_DURATION_TIME)
-    //     setTimeout(() => {
-    //         goHome();
-    //     }, 2000);
-    //     return null;
-    // }
 
     return (
 
@@ -50,10 +83,14 @@ const MiniBoxNavigations = (props) => {
                     <Divider className={indexStyles.divider} type="vertical" />
                     {
                         myWorkbenchBoxList.map((item, key) => {
+                            const { rela_app_id, id, code } = item
+                            const isDisableds = getIsDisabled(item)
                             return (
-                                <Tooltip key={item.id} onClick={e => setWorkbenchPage({ id: item.id, code: item.code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`}>
+                                <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds}>
+                                  
                                     <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
                                     <div className={indexStyles.text}>{item.name}</div>
+
                                 </Tooltip>
                             )
                         })
@@ -67,7 +104,12 @@ const MiniBoxNavigations = (props) => {
 
 export default connect(({ simplemode: {
     myWorkbenchBoxList
-} }) => ({
-    myWorkbenchBoxList
+},
+technological: {
+    datas: { currentUserOrganizes }
+  },
+ }) => ({
+    myWorkbenchBoxList,
+    currentUserOrganizes
 }))(MiniBoxNavigations)
 
