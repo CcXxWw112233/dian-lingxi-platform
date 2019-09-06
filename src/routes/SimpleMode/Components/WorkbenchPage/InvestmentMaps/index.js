@@ -47,12 +47,13 @@ export default class index extends React.Component {
     render() {
         const accessToken = Cookies.get('Authorization')
         const src_url = `${MAP_URL}?token=${accessToken}`
-        const { height } = this.state
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { mapOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state
+        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
+        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
         return (
-            <div>
+            <div className={indexStyles.mapsContainer} style={{height: contentHeight+'px'}}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false ? (
                     <div className={indexStyles.boardSelectWapper}>
                         <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>
@@ -70,9 +71,7 @@ export default class index extends React.Component {
                         </div>
                     </div>
                 ) : (
-                        <div>
-                            <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={height}></iframe>
-                        </div>
+                    <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
                     )}
             </div>
         );

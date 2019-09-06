@@ -225,7 +225,7 @@ export default class RenderHistory extends Component {
       return arr;
     };
 
-    if (key == '0' && type == 'add') {  // 如果是全体成员并且是添加的操作
+    if (key == '0' && type == 'add') { // 如果是全体成员并且是添加的操作
       new_message = new_user_remind_info.filter(item => {
         if (item['user_id'] == '0') {
           return item
@@ -261,7 +261,7 @@ export default class RenderHistory extends Component {
 
   render() {
     const {
-      triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [],rela_type,
+      triggerList = [], diff_text_term = [], diff_remind_time = [], itemValue = {}, user_remind_info = [], rela_type,
     } = this.props;
     const { remind_trigger, id, remind_time_type, remind_time_value, remind_edit_type, status, is_edit_status, message_consumers } = itemValue
     // console.log(remind_trigger, 'sss')

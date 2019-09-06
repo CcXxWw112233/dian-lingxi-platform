@@ -795,7 +795,6 @@ class BoardCommunication extends Component {
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
-        console.log(showFileSelectDropdown, "sssss");
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}

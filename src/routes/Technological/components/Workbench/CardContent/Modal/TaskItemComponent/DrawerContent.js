@@ -955,7 +955,7 @@ class DrawContent extends React.Component {
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
     const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, type,  due_time} = drawContent
+    const { card_id, type, due_time} = drawContent
     if(!compareTwoTimestamp(deadline, due_time)) {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return

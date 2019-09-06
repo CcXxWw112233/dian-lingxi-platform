@@ -28,7 +28,7 @@ export default class StepTwoListItem extends React.Component{
       this.setState({
         switchChecked: true
       })
-      this.props.stepTwoButtonClick({ itemKey, id , isAdd: true})
+      this.props.stepTwoButtonClick({ itemKey, id, isAdd: true})
     }
   }
 

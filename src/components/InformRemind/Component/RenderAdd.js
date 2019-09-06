@@ -321,7 +321,7 @@ export default class RenderAdd extends Component {
     };
 
     const { selectedKeys = [], key, type } = e
-    if (key == '0' && type == 'add') {  // 如果是全体成员并且是添加的操作
+    if (key == '0' && type == 'add') { // 如果是全体成员并且是添加的操作
       new_message = new_user_remind_info.filter(item => {
         if (item['user_id'] == '0') {
           return item

@@ -32,7 +32,7 @@ export default class index extends Component {
    */
   handleVisibleChg(visible) {
     this.setState({
-      is_close: visible
+      is_close: visible,
     })
   }
 
@@ -74,8 +74,8 @@ export default class index extends Component {
    * 修改文本框的value值
    * @param {Object} e 当前操作的事件对象
    */
-  handleChgEditVal(e) {
-    this.props.handleFileVersionValue(e)
+  handleChgEditVal(list, e) {
+    this.props.handleFileVersionValue(list, e)
   }
 
   /**
@@ -101,7 +101,7 @@ export default class index extends Component {
   render() {
 
     const { is_close } = this.state
-    const { new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description } = this.props
+    const { editValue, new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description } = this.props
     // console.log(is_edit_version_description, 'ssssss')
     // console.log(new_filePreviewCurrentVersionList, 'ssss')
     // let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
@@ -120,27 +120,30 @@ export default class index extends Component {
           <Menu onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
               const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
+              // console.log(remarks, 'sssssss')
               return (
                 <Menu.Item style={{ height: 'auto' }} className={indexStyles.version_menuItem} key={file_id}>
                   {
                     is_edit_version_description && is_edit ? (
-                      <div style={{ marginBottom: '5px' }}>
+                      <div style={{ marginBottom: '5px' }} >
                         <Input.TextArea
+                          id="edit_description"
                           style={{ resize: 'none' }}
                           autoFocus={true}
                           autosize={true}
-                          onChange={(e) => { this.handleChgEditVal(e) }}
+                          onChange={(e) => { this.handleChgEditVal(list, e) }}
                           onBlur={() => { this.handleFileDecription(list, file_id) }}
                           onClick={(e) => { this.handleStopPro(e) }}
                           onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
                           maxLength={50}
+                          value={editValue}
                         />
                       </div>
                     ) : (
                         <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
                           <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
                           {
-                            remarks && remarks ? (
+                            remarks && remarks != '' ? (
                               <div style={{ lineHeight: '30px' }}>
                                 <span style={{ fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
                                   {remarks}&nbsp;&nbsp;&nbsp;&nbsp;

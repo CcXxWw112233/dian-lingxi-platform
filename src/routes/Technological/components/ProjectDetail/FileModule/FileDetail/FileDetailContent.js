@@ -737,17 +737,20 @@ class FileDetailContent extends React.Component {
     // console.log(list, 'ssss')
     const { new_filePreviewCurrentVersionList } = this.state
     // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_val
     let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
     temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
       let new_item = item
       if (new_item.file_id == file_id) {
+        temp_val= new_item.remarks
         new_item = { ...item, is_edit: !item.is_edit }
       }
       return new_item
     })
     // console.log(temp_filePreviewCurrentVersionList, 'sssss')
     this.setState({
-      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList,
+      editValue: temp_val
     })
   }
 
@@ -777,7 +780,7 @@ class FileDetailContent extends React.Component {
   }
 
   // 改变编辑描述的value onChange事件
-  handleFileVersionValue = (e) => {
+  handleFileVersionValue = (list ,e) => {
     let val = e.target.value
     this.setState({
       editValue: val
@@ -804,20 +807,20 @@ class FileDetailContent extends React.Component {
     new_list = new_list.map(item => {
       let new_item = item
       if (new_item.is_edit) {
-        new_item = { ...item, is_edit: false, remarks: editValue != '' ? editValue : item.remarks }
+        new_item = { ...item, is_edit: false, remarks: editValue }
         return new_item
       } else {
         return new_item
       }
     })
     // console.log(new_list, 'sssss')
-    const { file_id } = temp_list[0]
+    const { file_id, remarks } = temp_list[0]
     this.setState({
       is_edit_version_description: false,
       new_filePreviewCurrentVersionList: new_list
     })
 
-    if (editValue != '') {
+    if (editValue != remarks) {
       dispatch({
         type: 'projectDetailFile/updateVersionFileDescription',
         payload: {
@@ -839,7 +842,7 @@ class FileDetailContent extends React.Component {
 
   render() {
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -1126,6 +1129,7 @@ class FileDetailContent extends React.Component {
       filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
       new_filePreviewCurrentVersionList,
       is_edit_version_description,
+      editValue
     }
 
     return (
