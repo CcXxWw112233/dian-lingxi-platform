@@ -8,7 +8,7 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 
-let isDisabled
+let isDisableds
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -184,7 +184,7 @@ class MyWorkbenchBoxs extends Component {
     const { dispatch } = this.props;
 
     if (code === 'maps' || code === 'regulations') {
-      if (isDisabled == true) {
+      if (isDisableds == true) {
         message.warn("暂无可查看的数据");
         return
       }else if (code === 'regulations') {
@@ -221,8 +221,7 @@ class MyWorkbenchBoxs extends Component {
     }
   }
 
-  getIsDisabled = (item) => {
-     /**
+   /**
       * 投资地图是否禁用
       * 1.单组织没权限 - 投资地图灰掉
       * 2.单组织没开启地图 - 投资地图不展示|灰掉
@@ -234,29 +233,45 @@ class MyWorkbenchBoxs extends Component {
       * 2.用户当下所选的组织不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
       * （所有功能图标都如此）
      */
-    const { SelectOrganizationVisible } = this.props
-    const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : SelectOrganizationVisible
-    const { mapOrganizationList = [] } = this.props
-    const { XczNewsOrganizationList = [] } = this.props
-    let unclickable
-    if (item.code === 'maps') {
-      unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
-      isDisabled = item.name ? unclickable : (item.status === 0 ? true : false)
-
-    }else if (item.code === 'regulations') {
-      unclickable = XczNewsOrganizationList.length > 0 ? isAllOrg : true
-      isDisabled = item.name ? unclickable : (item.status === 0 ? true : false)
-    }
-    else {
+  getIsDisabled = (item) => {
+    const { rela_app_id, code } = item
+    const { currentUserOrganizes = [] } = this.props
+    let isDisabled = true
+    if("regulations" == code || "maps" == code) {
+      if(localStorage.getItem('OrganizationId') == '0') {
+          let flag = false
+          for(let val of currentUserOrganizes) {
+            for(let val2 of val['enabled_app_list']) {
+              if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+                flag = true
+                isDisabled = false
+                break
+              }
+            }
+            if(flag) {
+              break
+            }
+          }
+      } else {
+        const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+        const enabled_app_list = org.enabled_app_list || []
+        for(let val2 of enabled_app_list) {
+          if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+            isDisabled = false
+            break
+          }
+        }
+      }
+    } else {
       isDisabled = false
     }
     return isDisabled
   }
 
   renderBoxItem = (item) => {
-    isDisabled = this.getIsDisabled(item)
+    isDisableds = this.getIsDisabled(item)
     return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisabled}>
+      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisableds}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
         <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
       </div>
@@ -264,7 +279,8 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
+
+    const { projectList, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
 
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
@@ -273,7 +289,9 @@ class MyWorkbenchBoxs extends Component {
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
+
     return (
+
       <div className={indexStyles.mainContentWapper}>
 
         <div className={indexStyles.projectSelector}>
@@ -285,7 +303,7 @@ class MyWorkbenchBoxs extends Component {
             myWorkbenchBoxList.map((item, key) => {
               return (
                 item.status == 0 ? (
-                  <Tooltip title="功能开发中，请耐心等待">
+                  <Tooltip title="功能开发中，请耐心等待" key={key}>
                     {this.renderBoxItem(item)}
                   </Tooltip>
                 ) :
@@ -322,10 +340,6 @@ export default connect(
     technological: {
       datas: { currentUserOrganizes }
     },
-    organizationManager: {
-      datas: {
-        SelectOrganizationVisible }
-    },
     investmentMap: {
       datas: {
         mapOrganizationList
@@ -341,7 +355,6 @@ export default connect(
       workbenchBoxList,
       currentUserOrganizes,
       simplemodeCurrentProject,
-      SelectOrganizationVisible,
       mapOrganizationList,
       XczNewsOrganizationList,
     }))(MyWorkbenchBoxs)
