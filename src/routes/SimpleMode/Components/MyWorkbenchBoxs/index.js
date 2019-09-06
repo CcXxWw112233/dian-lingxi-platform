@@ -8,7 +8,6 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 
-let isDisableds
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -180,11 +179,21 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = ({ id, code, status }) => {
-    const { dispatch } = this.props;
+  goWorkbenchBox = (item) => {
 
-    if (code === 'maps' || code === 'regulations') {
-      if (isDisableds == true) {
+    const { id, code, status } = item
+    const { dispatch } = this.props;
+    const isDisableds = this.getIsDisabled(item)
+
+    if (code === 'maps') {
+      if ( isDisableds ) {
+        message.warn("暂无可查看的数据");
+        return
+      }
+    }
+
+    if (code === 'regulations') {
+      if ( isDisableds ) {
         message.warn("暂无可查看的数据");
         return
       }else if (code === 'regulations') {
@@ -269,7 +278,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   renderBoxItem = (item) => {
-    isDisableds = this.getIsDisabled(item)
+    const isDisableds = this.getIsDisabled(item)
     return (
       <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisableds}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
