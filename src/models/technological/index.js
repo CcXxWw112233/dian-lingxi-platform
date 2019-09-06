@@ -508,6 +508,7 @@ export default {
       return res
     },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+      
       let res = yield call(getProjectList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -522,7 +523,10 @@ export default {
     },
     * fetchCurrentOrgAllMembers({ payload }, {call, put}) {
       let res = yield call(getCurrentOrgAllMembers, {...payload})
+<<<<<<< HEAD
       // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')
+=======
+>>>>>>> simple_mode
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
