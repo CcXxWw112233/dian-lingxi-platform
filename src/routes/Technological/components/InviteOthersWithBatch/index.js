@@ -170,8 +170,8 @@ class InviteOtherWithBatch extends Component {
   handleInputSelected = value => {
     const { selectedMember } = this.state;
     const selectedUser = this.parseUserValueStr(value.key);
-    const isHasSameMemberInSelectedMember = () =>
-      selectedMember.find(item => item.user === selectedUser.user);
+    const isHasSameMemberInSelectedMember = () => selectedMember.find(item => item.id === selectedUser.id);
+    // console.log('ssss', {selectedMember, selectedUser })  
     //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
       message.destroy();

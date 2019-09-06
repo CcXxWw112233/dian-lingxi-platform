@@ -23,10 +23,15 @@ export default class FaceRightButton extends Component {
         const now = new Date().getTime()
         const date = new Date().getDate()
         const toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now))
+        const target = document.getElementById('gantt_card_out_middle')
 
-        if (toDayIndex != -1) { //如果今天在当前日期面板内 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+        if (toDayIndex != -1) { //如果今天在当前日期面板内 
+            const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
+            const position = max_position > nomal_position? nomal_position: max_position
+
             this.setScrollPosition({
-                position: toDayIndex * ceilWidth - 248 + 16
+                position
             })
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: now })
@@ -58,7 +63,7 @@ export default class FaceRightButton extends Component {
     }
     render() {
         return (
-            !this.filterIsInViewArea() ? (
+            !this.filterIsInViewArea()? (
                 <div className={styles.card_button} onClick={this.checkToday}>
                  今天
                 </div>

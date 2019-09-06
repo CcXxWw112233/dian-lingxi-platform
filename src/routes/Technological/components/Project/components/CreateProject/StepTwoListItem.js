@@ -24,7 +24,7 @@ export default class StepTwoListItem extends React.Component{
   // 默认开启任务和流程
   initialOpen = (props) => {
     const { itemValue: { code, itemKey, id } } = this.props
-    if('Tasks' == code || 'Flows' == code) { //
+    if('Tasks' == code || 'Files' == code) { //
       this.setState({
         switchChecked: true
       })
