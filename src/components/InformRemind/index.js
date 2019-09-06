@@ -12,7 +12,7 @@ import infoRemindStyle from './index.less'
 export default class index extends Component {
 
     state = {
-        visible: '',
+        visible: false,
         title: '通知提醒',
     }
 

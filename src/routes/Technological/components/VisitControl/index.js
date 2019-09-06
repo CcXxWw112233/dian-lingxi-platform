@@ -18,6 +18,12 @@ import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2
 import { inviteNewUserInProject } from './../../../../services/technological/index';
 import { fetchUsersByIds } from './../../../../services/organization/index';
 import classNames from 'classnames/bind';
+import ShowAddMenberModal from '../Project/ShowAddMenberModal'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
+} from "@/globalset/js/constant";
+import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "@/utils/businessFunction";
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
@@ -29,12 +35,15 @@ class VisitControl extends Component {
     this.state = {
       addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
       comfirmRemoveModalVisible: false, // 是否显示移除成员的弹窗, 默认为 false 不显示
-      visible: false, // ？？？
+      visible: false, // ？？？ 这是控制popover组件自身的显示状态
       selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
       othersPersonList: [], //外部邀请人员的list
-      transPrincipalList: [] //外部已有权限人的list
+      transPrincipalList: [], //外部已有权限人的list
+      ShowAddMenberModalVisibile: false,
     };
   }
+
+  // 小图标的点击事件或者说访问控制的点击事件
   togglePopoverVisible = e => {
     if (e) e.stopPropagation();
     this.setState(state => {
@@ -76,9 +85,11 @@ class VisitControl extends Component {
     return Promise.resolve(usersId);
   }
   handleInviteMemberReturnResult = members => {
+    debugger
     this.handleGetAddNewMember(members);
     this.setState({
-      addMemberModalVisible: false
+      addMemberModalVisible: false,
+      ShowAddMenberModalVisibile: false
     });
   };
 
@@ -95,9 +106,9 @@ class VisitControl extends Component {
   onPopoverVisibleChange = visible => {
     const { handleVisitControlPopoverVisible } = this.props;
     const isClose = visible === false;
-    const { addMemberModalVisible, comfirmRemoveModalVisible } = this.state;
+    const { addMemberModalVisible, comfirmRemoveModalVisible, ShowAddMenberModalVisibile } = this.state;
     //关闭页面中的其他 弹窗 会影响到 popover 的状态，这里以示区分。
-    if (isClose && !addMemberModalVisible && !comfirmRemoveModalVisible) {
+    if (isClose && !comfirmRemoveModalVisible && !ShowAddMenberModalVisibile) {
       this.setState(
         {
           visible: false
@@ -171,7 +182,8 @@ class VisitControl extends Component {
   handleCloseAddMemberModal = e => {
     if (e) e.stopPropagation();
     this.setState({
-      addMemberModalVisible: false
+      addMemberModalVisible: false,
+      ShowAddMenberModalVisibile:false
     });
   };
 
@@ -180,7 +192,19 @@ class VisitControl extends Component {
     this.setState({
       addMemberModalVisible: true
     });
+    this.togglePopoverVisible
   };
+
+  //点击添加成员操作
+  setShowAddMenberModalVisibile = () => {
+    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)){
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile,
+    })
+  }
 
   // 获取负责人列表
   genPrincipalList = (principalList = []) => {
@@ -541,7 +565,12 @@ class VisitControl extends Component {
   renderPopoverContentAddMemberBtn = () => {
     return (
       <div className={styles.content__addMemberBtn_wrapper}>
-        <Button type="primary" block onClick={this.handleAddNewMember}>
+        <Button 
+          type="primary" 
+          block 
+          // onClick={this.handleAddNewMember}
+          onClick={this.setShowAddMenberModalVisibile}
+        >
           添加成员
         </Button>
       </div>
@@ -593,6 +622,7 @@ class VisitControl extends Component {
       removeMemberPromptText,
       popoverPlacement,
       children,
+      board_id,
       onlyShowPopoverContent
     } = this.props;
     const {
@@ -659,7 +689,7 @@ class VisitControl extends Component {
             <div>{this.renderPopoverContent()}</div>
           </div>
         )}
-        <Modal
+        {/* <Modal
           visible={addMemberModalVisible}
           destroyOnClose={true}
           footer={null}
@@ -673,7 +703,17 @@ class VisitControl extends Component {
             handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
             isDisableSubmitWhenNoSelectItem={true}
           />
-        </Modal>
+        </Modal> */}
+        <ShowAddMenberModal 
+          {...this.props}
+          title="邀请他人一起参与"
+          submitText="确定" 
+          show_wechat_invite={true} 
+          board_id = {board_id}
+          new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} 
+          modalVisible={this.state.ShowAddMenberModalVisibile} 
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+        />
         <Modal
           visible={comfirmRemoveModalVisible}
           destroyOnClose={true}
