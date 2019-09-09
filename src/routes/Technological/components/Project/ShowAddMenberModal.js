@@ -50,10 +50,8 @@ class ShowAddMenberModal extends React.Component {
     }, '')
   }
   handleInviteMemberReturnResult = (selectedMember = []) => {
-    // console.log('进来了', 'sssssss')
-    debugger
+    this.props.new_handleInviteMemberReturnResult && this.props.new_handleInviteMemberReturnResult(selectedMember)
     this.handleSubmit(this.handleUsersToUsersStr(selectedMember))
-    this.props.new_handleInviteMemberReturnResult && this.props.new_handleInviteMemberReturnResult
   }
 
   setWechatInviteVisible = () => {
@@ -93,7 +91,7 @@ class ShowAddMenberModal extends React.Component {
         <CustormModal
           visible={modalVisible}
           width={472}
-          zIndex={1200}
+          zIndex={1100}
           maskClosable={false}
           footer={null}
           destroyOnClose

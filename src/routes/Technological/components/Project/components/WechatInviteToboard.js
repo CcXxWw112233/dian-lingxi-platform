@@ -62,7 +62,7 @@ export default class WechatInviteToboard extends Component {
                 <CustormModal
                     visible={modalVisible} //modalVisible
                     width={472}
-                    zIndex={1006}
+                    zIndex={1150}
                     maskClosable={false}
                     footer={null}
                     destroyOnClose

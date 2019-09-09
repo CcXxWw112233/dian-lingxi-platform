@@ -864,11 +864,12 @@ class DrawContent extends React.Component {
     this.props.updateDatasTask({drawContent, taskGroupList})
   }
   handleVisitControlAddNewMember = (ids = []) => {
+    // console.log(ids, 'sssssss')
     if(!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if(!acc) return curr
-      return `${acc},${curr}`
-    }, '')
+    // const user_ids = ids.reduce((acc, curr) => {
+    //   if(!acc) return curr
+    //   return `${acc},${curr}`
+    // }, '')
     const { datas: { drawContent = {}} } = this.props.model
     const {card_id, privileges} = drawContent
     const content_id = card_id
@@ -877,7 +878,7 @@ class DrawContent extends React.Component {
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids,
+      user_ids: ids,
     }).then(res => {
       if(res && res.code === '0') {
         const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
@@ -1256,6 +1257,7 @@ class DrawContent extends React.Component {
               {drawContent.is_privilege && (
                 <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>
               <VisitControl
+                board_id={board_id}
                 isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
                 handleVisitControlChange={this.handleVisitControlChange}
                 principalList={drawContent.executors}
