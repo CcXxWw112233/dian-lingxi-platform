@@ -126,7 +126,6 @@ class BoardDropdownSelect extends Component {
   render() {
     const {projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
-    console.log(iconVisible, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];

@@ -21,7 +21,7 @@ import { getUSerInfo } from "../../services/technological";
 export default {
   namespace: 'organizationManager',
   state: {
-    datas:{
+    datas: {
       
     }
   },
@@ -58,7 +58,7 @@ export default {
               field_data: [],
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
-              InvestmentMapsSelectOrganizationVisible: false,
+              myWorkbenchBoxList: [],
             }
           })
 
@@ -435,33 +435,11 @@ export default {
           fnmanagement_list: res.data
         }
       })
-      
-      
-      let fnmanagement_list = res.data
-      var userArr = new Array(); 
-      // userArr = fnmanagement_list.experiment_function_list
-      // const status = userArr[3].status //投资地图的状态
 
-      userArr = fnmanagement_list.experiment_function_list || []
-      const status = userArr[3] ? userArr[3].status : '' //投资地图的状态
-
-      if (status === '0') {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            InvestmentMapsSelectOrganizationVisible: true
-          }
-        })
-        // message.warn('当前组织没有开通投资地图功能', MESSAGE_DURATION_TIME)
-      }
-      else {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            InvestmentMapsSelectOrganizationVisible: false
-          }
-        })
-      }
+      yield put({
+        type: 'technological/getCurrentUserOrganizes',
+        payload: { }
+      })
     },
 
     * setFnManagement({ payload }, { call, put }) {

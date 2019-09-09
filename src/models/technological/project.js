@@ -206,21 +206,15 @@ export default {
       }
     },
     * addNewProject({ payload }, { select, call, put }) {
-      let res = yield call(addNewProject, payload)
+      const { calback } = payload
+      const params = {...payload}
+      delete params.calback
+      let res = yield call(addNewProject, params)
       if(isApiResponseOk(res)) {
-        // yield put({
-        //   type: 'getProjectList',
-        //   payload: {
-        //     type: '1',
-        //     calback: function () {
-        //       message.success('添加项目成功', MESSAGE_DURATION_TIME)
-        //     },
-        //   }
-        // })
         message.success('添加项目成功', MESSAGE_DURATION_TIME)
-        // yield put({ //获取全部组织的全部项目
-        //   type: 'technological/getUserAllOrgsAllBoards',
-        // })
+        if(typeof calback == 'function') {
+          calback(res.data.id)
+        }
         yield put({
           type: 'technological/getUserAllOrgsAllBoards',
           payload: {}

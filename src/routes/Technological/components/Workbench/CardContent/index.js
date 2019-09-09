@@ -481,6 +481,41 @@ class CardContent extends React.Component {
       </div>
     );
   }
+
+  // 修改任务或会议回调
+  handleChangeCard = ({drawContent, card_id}) => {
+    const {
+      workbench: {
+        datas: {
+          responsibleTaskList = [],
+          meetingLsit = []
+        }
+      },
+      dispatch
+    } = this.props;
+    const new_responsibleTaskList = responsibleTaskList.map(item => {
+      let new_item = {...item}
+      if(item.id == card_id) {
+        new_item = {...item, ...drawContent, name: drawContent.card_name}
+      }
+      return new_item
+    })
+    const new_meetingLsit = meetingLsit.map(item => {
+      let new_item = {...item}
+      if(item.id == card_id) {
+        new_item = {...item, ...drawContent, name: drawContent.card_name}
+      }
+      return new_item
+    })
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        responsibleTaskList: new_responsibleTaskList,
+        meetingLsit: new_meetingLsit
+      }
+    })
+  }
+
   render() {
 
     const { datas = {} } = this.props.model;
@@ -824,6 +859,8 @@ class CardContent extends React.Component {
         />
         <TaskDetailModal
           {...this.props}
+          //修改某一个任务
+          handleChangeCard={this.handleChangeCard} 
           modalVisible={this.state.TaskDetailModalVisibile}
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
             this

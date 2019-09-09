@@ -125,7 +125,7 @@ export default class GanttFace extends Component {
       }
     })
 
-    const { target_scrollTop } = this.props
+    const { target_scrollTop, gantt_board_id, group_view_type } = this.props
     if (target_scrollTop != scrollTop) {
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
@@ -133,6 +133,14 @@ export default class GanttFace extends Component {
           target_scrollTop: scrollTop
         }
       })
+      if(group_view_type == '1' && gantt_board_id == '0') {
+        dispatch({
+          type: getEffectOrReducerByName('updateDatas'),
+          payload: {
+            target_scrollTop_board_storage: scrollTop
+          }
+        })
+      }
     }
     // console.log('sssssss', scrollLeft)
   }
@@ -274,7 +282,9 @@ function mapStateToProps({ gantt: { datas: {
   list_group = [],
   group_rows = [],
   get_gantt_data_loading,
-  ceiHeight
+  ceiHeight,
+  group_view_type,
+  gantt_board_id
 } } }) {
   return {
     ceilWidth,
@@ -285,7 +295,9 @@ function mapStateToProps({ gantt: { datas: {
     list_group,
     group_rows,
     get_gantt_data_loading,
-    ceiHeight
+    ceiHeight,
+    group_view_type,
+    gantt_board_id
   }
 }
 GanttFace.defaultProps = {

@@ -6,6 +6,7 @@ import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
 import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
+import XczNews from './XczNews/index'
 
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class WorkbenchPage extends Component {
             BoardCommunicationVisible: false,
             BoardFilesVisible: false,
             InvestmentMapsVisible: false,
+            XczNewsVisible: false,
         }
     }
     componentWillMount() {
@@ -77,6 +79,7 @@ class WorkbenchPage extends Component {
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
                     });
                 }
                     break;
@@ -86,6 +89,7 @@ class WorkbenchPage extends Component {
                         BoardFilesVisible: false,
                         BoardPlanVisible: true,
                         InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
                     });
                 }
                     break;
@@ -95,6 +99,7 @@ class WorkbenchPage extends Component {
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
                     });
                     const width = document.body.scrollWidth;
                     let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
@@ -113,17 +118,29 @@ class WorkbenchPage extends Component {
                         BoardFilesVisible: true,
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
                     });
                 }
                     break;
-                    case 'maps': {
-                      this.setState({
+                case 'maps': {
+                    this.setState({
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: true,
-                      })
-                    }
+                        XczNewsVisible: false,
+                    })
+                }
+                    break;
+                case 'regulations': {
+                    this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: true,
+                    });
+                }
                     break;
                 default: {
                     this.setState({
@@ -131,6 +148,7 @@ class WorkbenchPage extends Component {
                         BoardFilesVisible: false,
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
                     });
                 }
 
@@ -151,7 +169,7 @@ class WorkbenchPage extends Component {
 
                         {
                             this.state.BoardPlanVisible &&
-                            <BoardPlan/>
+                            <BoardPlan />
                         }
 
 
@@ -166,8 +184,13 @@ class WorkbenchPage extends Component {
                         }
 
                         {
-                            this.state.InvestmentMapsVisible && 
+                            this.state.InvestmentMapsVisible &&
                             <InvestmentMaps />
+                        }
+
+                        {
+                            this.state.XczNewsVisible &&
+                            <XczNews {...this.props}/>
                         }
 
                     </div>

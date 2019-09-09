@@ -1,3 +1,5 @@
+import { routerRedux } from "dva/router";
+
 import { 
   getHotTabs, 
   getHotArticles, 
@@ -10,6 +12,7 @@ import {
   getAreasLocation,
   getHeaderSearch,
   getCommonArticlesList,
+  getXczNewsQueryUser,
 } from '@/services/technological/xczNews'
 
 import { getSelectState } from './select'
@@ -79,9 +82,10 @@ export default {
             area_ids: '', // 地区对应的id 
             defaultCityValue: 'cityTown',
             defaultProvinceValue: 'province', 
+            XczNewsOrganizationList: [], //有权限查看晓策志的组织
           }
         })
-        if (location.pathname.indexOf('/technological/xczNews') != -1) {
+        if (location.pathname.indexOf('/xczNews') != -1) {
           dispatch({
             type: "updateDatas",
             payload: {
@@ -91,7 +95,7 @@ export default {
           })
            
         }
-        if (location.pathname.indexOf('/technological/xczNews/hot') != -1) {
+        if (location.pathname.indexOf('/xczNews/hot') != -1) {
           dispatch({
             type: "getHotTabs",
             payload: {
@@ -118,7 +122,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/highRise') != -1) {
+        if (location.pathname.indexOf('/xczNews/highRise') != -1) {
           dispatch({
             type: "getHighRiseArticles",
             payload: {
@@ -139,11 +143,11 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/authority') != -1) {
+        if (location.pathname.indexOf('/xczNews/authority') != -1) {
           dispatch({
             type: "getAuthorityArticles",
             payload: {
-              
+               
             }
           }),
           dispatch({
@@ -160,7 +164,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/dataBase') != -1) {
+        if (location.pathname.indexOf('/xczNews/dataBase') != -1) {
           dispatch({
             type: "getDataBase",
             payload: {
@@ -193,7 +197,7 @@ export default {
             }
           })
         }
-        if (location.pathname.indexOf('/technological/xczNews/area') != -1) {
+        if (location.pathname.indexOf('/xczNews/area') != -1) {
           dispatch({
             type: "getAreas",
             payload: {
@@ -491,7 +495,6 @@ export default {
           is_onscroll_do_paging: res.data.records.length < page_size ? false: true,
         }
       })
-
     },
 
     // 获取所有的文章列表
@@ -510,7 +513,27 @@ export default {
           searchList: res.data
         },
       })
-    }
+    },
+    // 获取有权限查看的组织列表
+    * getXczNewsQueryUser({ payload = {} }, { select, call, put }) { 
+      let res = yield call(getXczNewsQueryUser, payload)
+      
+      if(isApiResponseOk(res)) {
+        yield put({
+            type: 'updateDatas',
+            payload: {
+                XczNewsOrganizationList: res.data
+            }
+          })
+      }else {
+
+      }
+    },
+
+    * routingJump({ payload }, { call, put }) {
+      const { route } = payload
+      yield put(routerRedux.push(route));
+    },
 
   },
 

@@ -183,6 +183,7 @@ export default class DateList extends Component {
       }
     })
   }
+
   render() {
     const {
       gold_date_arr = [],
@@ -274,20 +275,17 @@ export default class DateList extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    gantt: { datas: { gold_date_arr = [], about_user_boards = [], list_group = [], target_scrollTop = [], milestoneMap = [], holiday_list = [], gantt_board_id, group_view_type } },
+    gantt: { datas: {
+      gold_date_arr = [], about_user_boards = [],
+      list_group = [], target_scrollTop = [],
+      milestoneMap = [], holiday_list = [],
+      gantt_board_id, group_view_type } },
   }) {
-  return { gold_date_arr, list_group, target_scrollTop, milestoneMap, holiday_list, gantt_board_id, group_view_type, about_user_boards }
+  return {
+    gold_date_arr, list_group,
+    target_scrollTop, milestoneMap,
+    holiday_list, gantt_board_id,
+    group_view_type, about_user_boards
+  }
 }
 
-//  {/* {projectTabCurrentSelectedProject != '0' ? (
-//                           <DateListLCBItem
-//                             has_lcb={has_lcb}
-//                             boardName={this.getBoardName(projectTabCurrentSelectedProject)}
-//                             current_date_miletones={current_date_miletones}
-//                             timestamp={new Date(`${date_string} 23:59:59`).getTime()}
-//                             setCreateLcbTime={this.setCreateLcbTime}
-//                             setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
-//                             set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}/>
-//                         ):(
-//                           <div className={indexStyles.lcb_area}></div>
-//                         )} */}

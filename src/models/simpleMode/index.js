@@ -64,8 +64,6 @@ export default {
                 yield put({
                     type: 'getWallpaperList'
                 });  
-                console.log('fffffff');
-                
             }
 
         },
@@ -87,8 +85,6 @@ export default {
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
-
-
         },
         * getAllBoxs({ payload }, { call, put }) {
             let res = yield call(getAllBoxs, {});

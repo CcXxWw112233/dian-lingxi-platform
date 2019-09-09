@@ -8,7 +8,6 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 
-let isDisabled
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -25,10 +24,7 @@ class MyWorkbenchBoxs extends Component {
     if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
       const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
       const { user_set = {} } = userInfo
-      console.log(user_set);
-      console.log(projectList);
       const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
-      console.log("selectBoard", selectBoard);
 
       if (selectBoard && selectBoard.length > 0) {
         //设置当前选中的项目
@@ -62,9 +58,7 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
-    // console.log(data, 'bbbbb');
     if (data.key === 'add') {
-      //console.log("onSelectBoard");
       this.setState({
         addProjectModalVisible: true
       });
@@ -159,6 +153,11 @@ class MyWorkbenchBoxs extends Component {
       payload: {}
     })
 
+    dispatch({
+      type: 'xczNews/getXczNewsQueryUser',
+      payload: {}
+    })
+
     if (localStorage.getItem('OrganizationId') !== "0") {
       dispatch({
         type: 'organizationManager/getFnManagementList',
@@ -180,12 +179,33 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = ({ id, code, status }) => {
+  goWorkbenchBox = (item) => {
+
+    const { id, code, status } = item
+    const { dispatch } = this.props;
+    const isDisableds = this.getIsDisabled(item)
 
     if (code === 'maps') {
-      if (isDisabled == true) {
+      if ( isDisableds ) {
         message.warn("暂无可查看的数据");
         return
+      }
+    }
+
+    if (code === 'regulations') {
+      if ( isDisableds ) {
+        message.warn("暂无可查看的数据");
+        return
+      }else if (code === 'regulations') {
+        if (localStorage.getItem('OrganizationId') === "0") {
+          localStorage.setItem('isRegulations', 'yes');
+        }
+        dispatch({
+          type: 'xczNews/routingJump',
+          payload: {
+            route: '/technological/simplemode/workbench/xczNews/hot'
+          }
+        })
       }
     }
 
@@ -193,23 +213,24 @@ class MyWorkbenchBoxs extends Component {
       message.warn("功能开发中，请耐心等待");
       return;
     }
-    const { dispatch } = this.props;
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
         currentSelectedWorkbenchBox: { id, code }
       }
     });
-    dispatch({
-      type: 'simplemode/routingJump',
-      payload: {
-        route: '/technological/simplemode/workbench'
-      }
-    });
+
+    if (code !== 'regulations') {
+      dispatch({
+        type: 'simplemode/routingJump',
+        payload: {
+          route: '/technological/simplemode/workbench'
+        }
+      });
+    }
   }
 
-  renderBoxItem = (item) => {
-    /**
+   /**
       * 投资地图是否禁用
       * 1.单组织没权限 - 投资地图灰掉
       * 2.单组织没开启地图 - 投资地图不展示|灰掉
@@ -221,15 +242,45 @@ class MyWorkbenchBoxs extends Component {
       * 2.用户当下所选的组织不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
       * （所有功能图标都如此）
      */
-    const { InvestmentMapsSelectOrganizationVisible } = this.props
-    const { mapOrganizationList = [] } = this.props
-    const isAllOrg = localStorage.getItem('OrganizationId') === "0" ? false : InvestmentMapsSelectOrganizationVisible
-    const unclickable = mapOrganizationList.length > 0 ? isAllOrg : true
-    isDisabled = item.name === '投资地图' ? unclickable : (item.status === 0 ? true : false)
-  
+  getIsDisabled = (item) => {
+    const { rela_app_id, code } = item
+    const { currentUserOrganizes = [] } = this.props
+    let isDisabled = true
+    if("regulations" == code || "maps" == code) {
+      if(localStorage.getItem('OrganizationId') == '0') {
+          let flag = false
+          for(let val of currentUserOrganizes) {
+            for(let val2 of val['enabled_app_list']) {
+              if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+                flag = true
+                isDisabled = false
+                break
+              }
+            }
+            if(flag) {
+              break
+            }
+          }
+      } else {
+        const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+        const enabled_app_list = org.enabled_app_list || []
+        for(let val2 of enabled_app_list) {
+          if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+            isDisabled = false
+            break
+          }
+        }
+      }
+    } else {
+      isDisabled = false
+    }
+    return isDisabled
+  }
+
+  renderBoxItem = (item) => {
+    const isDisableds = this.getIsDisabled(item)
     return (
-      // <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0 ? true : false}>
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisabled}>
+      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisableds}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
         <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
       </div>
@@ -237,17 +288,19 @@ class MyWorkbenchBoxs extends Component {
   }
 
   render() {
-    const { projectList, projectTabCurrentSelectedProject, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
+
+    const { projectList, myWorkbenchBoxList = [], simplemodeCurrentProject = {} } = this.props;
 
     const { addProjectModalVisible = false } = this.state;
-    console.log(projectList, "ppppppp");
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
+
     return (
+
       <div className={indexStyles.mainContentWapper}>
 
         <div className={indexStyles.projectSelector}>
@@ -257,10 +310,9 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
-
               return (
                 item.status == 0 ? (
-                  <Tooltip title="功能开发中，请耐心等待">
+                  <Tooltip title="功能开发中，请耐心等待" key={key}>
                     {this.renderBoxItem(item)}
                   </Tooltip>
                 ) :
@@ -297,14 +349,13 @@ export default connect(
     technological: {
       datas: { currentUserOrganizes }
     },
-    organizationManager: {
-      datas: {
-        InvestmentMapsSelectOrganizationVisible }
-    },
     investmentMap: {
       datas: {
         mapOrganizationList
       } },
+    xczNews: {
+        XczNewsOrganizationList
+      },
     project }) => ({
       project,
       projectList,
@@ -313,6 +364,6 @@ export default connect(
       workbenchBoxList,
       currentUserOrganizes,
       simplemodeCurrentProject,
-      InvestmentMapsSelectOrganizationVisible,
       mapOrganizationList,
+      XczNewsOrganizationList,
     }))(MyWorkbenchBoxs)

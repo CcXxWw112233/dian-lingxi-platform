@@ -253,6 +253,7 @@ class BoardFiles extends Component {
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
+    
     return (
       <div className={indexStyles.boardFilesContainer}>
         {
@@ -263,6 +264,7 @@ class BoardFiles extends Component {
                   allOrgBoardTreeList.map((org, orgkey) => {
                     //全组织或者当前组织
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
+                      
                       return org.board_list && org.board_list.length > 0 && (
                         <div key={org.org_id}>
                           <div className={indexStyles.groupName}>{org.org_name}</div>

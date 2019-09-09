@@ -60,16 +60,43 @@ class CreateProject extends React.Component {
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
     if(addProjectModalVisible && !addProjectModalVisibleLocal) {
-      this.getProjectList()
+      // this.getProjectList()
+      this.handleOrgSetInit()
     }
+    this.setAddProjectModalVisibleLocal(nextProps)
+  }
+  componentDidMount() {
+    // this.getProjectList(true)
+    // this.getAppList(true)
+    this.handleOrgSetInit()
+    this.setAddProjectModalVisibleLocal(this.props)
+  }
+
+  // 缓存是否可见在state
+  setAddProjectModalVisibleLocal = (props) => {
+    const { addProjectModalVisible } = this.props
     this.setState({
       addProjectModalVisibleLocal: addProjectModalVisible
     })
   }
-  componentDidMount() {
-    this.getProjectList(true)
-    this.getAppList(true)
+
+  // 全组织，在只有一个组织情况下，默认选中该组织.查询组织项目列表和app列表
+  handleOrgSetInit = () => {
+    const { currentUserOrganizes = [], _organization_id } = this.props
+    if(currentUserOrganizes.length == 1 && !!!_organization_id) {
+      this.setState({
+        _organization_id: currentUserOrganizes[0].id
+      }, () => {
+        this.getProjectList(true)
+        this.getAppList(true)
+      })
+     
+    } else{
+      this.getProjectList(true)
+      this.getAppList(true)
+    }
   }
+
   getAppList = (init, payload = {}) => {
     const { dispatch } = this.props
     const { _organization_id, OrganizationId } = this.state
@@ -314,10 +341,7 @@ class CreateProject extends React.Component {
     const { addProjectModalVisible, currentUserOrganizes = [] } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    // console.log('sssssss', {
-    //   _organization_id: !_organization_id,
-    //   _organization_id_: this.props._organization_id
-    // })
+  
     //编辑第一步
     const step_1 = (
       <Form style={{margin: '0 auto', width: 336}}>
@@ -328,7 +352,7 @@ class CreateProject extends React.Component {
             {
               OrganizationId == '0' && (
                 // <FormItem style={{width: 336}}>
-                // {getFieldDecorator('_organization_id', {
+                // {getFieldDecorator('', {
                 // })(
                   <Select
                     size={'large'}
@@ -389,7 +413,7 @@ class CreateProject extends React.Component {
             <div style={{margin: '0 auto', width: 392}}>
               {appsList.map((value, key) => {
                 return (
-                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={value.id} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                 )
               })}
             </div>
@@ -428,7 +452,7 @@ class CreateProject extends React.Component {
               <div style={{margin: '0 auto', width: 392}}>
                 {project_apps.map((value, key) => {
                   return (
-                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={key} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={`${select_project_id}_${value.id}`} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
                   )
                 })}
               </div>

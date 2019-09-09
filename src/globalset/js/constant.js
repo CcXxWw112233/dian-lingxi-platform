@@ -26,13 +26,14 @@ export const WE_APP_ID = (appType) => { //返回小程序后台appid
 export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
   if(NODE_ENV == 'development') {
-
+    // api = 'http://192.168.1.39:8092'
   } else {
-    if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
-      api = REQUEST_DOMAIN_ARTICLE
-    }else {
-      api = 'http://47.93.4.48'
-    }
+    // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
+    //   api = REQUEST_DOMAIN_ARTICLE
+    // }else {
+    //   api = REQUEST_DOMAIN_ARTICLE
+    // }
+    api = REQUEST_DOMAIN_ARTICLE;
   }
   return `${api}/api`
 })(NODE_ENV, window.location)
@@ -43,8 +44,9 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if(NODE_ENV == 'development') {
     return 'ws://test.lingxi.new-di.com/websocket' 
+    // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    // return 'ws://192.168.1.17/websocket'
+    // return 'ws://192.168.1.39/websocket'
   } else {
     const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`

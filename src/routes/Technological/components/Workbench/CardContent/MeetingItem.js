@@ -2,7 +2,7 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermission} from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
@@ -69,7 +69,7 @@ export default class MeetingItem extends React.Component {
     const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
     const { id, board_id } = itemValue
 
-    const { name, start_time, due_time, org_id } = itemValue
+    const { name, start_time, due_time, org_id, board_name } = itemValue
     // console.log(itemValue, 'sss')
     return (
       <div className={indexstyles.meetingItem}>
@@ -88,8 +88,8 @@ export default class MeetingItem extends React.Component {
             )
           }
           <Tooltip placement="topLeft" title={
-           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {name}</span>)
-            : (<span>{name}</span>)
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
           }>
             <div
                 style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
@@ -111,13 +111,13 @@ export default class MeetingItem extends React.Component {
                 }
                 {
                   projectTabCurrentSelectedProject == '0' && (
-                    <span className={indexstyles.ellipsis}>{name}</span>
+                    <span className={indexstyles.ellipsis}>{board_name}</span>
                   )
                 }
               </div>
             </Tooltip>
         </div>
-        <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
+        <span style={{marginLeft: 6, color: timeColor(due_time), cursor: 'pointer', fontSize: 12, justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
       </div>
     )
   }

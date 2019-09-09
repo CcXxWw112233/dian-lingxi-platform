@@ -488,24 +488,30 @@
      display: flex;
      justify-content: space-between;
      align-items: center;
-     .group_back_to_board {
-      width:26px;
-      height:26px;
-      background:rgba(255,255,255,1);
-      box-shadow:0px 0px 1px 0px rgba(0,0,0,0.15);
-      border-radius:4px;
-      border:1px solid rgba(0,0,0,0.04);
-      text-align: center;
-      line-height: 26px;
-     }
+    
      .set_content_left {
        display: flex;
-       justify-content: space-between;
-       width:72px;
-       height:28px;
-       border-radius:4px;
-       border:1px solid rgba(247,247,247,1);
-       padding: 1px;
+       justify-content: space-between;  
+       .group_back_to_board {
+          width:26px;
+          height:26px;
+          background:rgba(255,255,255,1);
+          margin-right: 6px;
+          box-shadow:0px 0px 1px 0px rgba(0,0,0,0.15);
+          border-radius:4px;
+          border:1px solid rgba(0,0,0,0.04);
+          text-align: center;
+          line-height: 26px;
+       }
+       .set_content_view_type {
+          display: flex;
+          justify-content: space-between;
+          width:72px;
+          height:28px;
+          border-radius:4px;
+          border:1px solid rgba(247,247,247,1);
+          padding: 1px;
+       }
        .set_content_left_left, .set_content_left_right {
          line-height: 26px;
          width: 35px;
@@ -528,15 +534,22 @@
         align-items: center;
         color: rgba(0,0, 0, .45);
         .set_content_right_left, .set_content_right_right {
-          
+          font-size: 16px;
         }
-        .set_content_right_middle{
-          margin: 0 6px;
+        .set_content_right_right {
+          margin-left: 4px;
+          background-image:-webkit-linear-gradient(bottom,#18B2FF,#18CDFF); 
+          -webkit-background-clip: text; 
+          -webkit-text-fill-color:transparent; 
+        }
+        .has_filter_content {
+          color: #1890FF
+        }
+        .set_content_right_left:hover, .has_filter_content:hover{
+          color: #40A9FF;
         }
      }
-     .set_content_right:hover{
-       color: #595959;
-     }
+  
    }
 }
 
