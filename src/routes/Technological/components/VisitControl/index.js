@@ -76,7 +76,6 @@ class VisitControl extends Component {
         if (!acc) return curr.user;
         return `${acc},${curr.user}`;
       }, '');
-      console.log(users, 'sssssss')
     if (!users) return Promise.resolve([]);
     let res = await inviteNewUserInProject({ data: users });
     if (!res || res.code !== '0') {
@@ -464,7 +463,7 @@ class VisitControl extends Component {
       <div className={styles.title__wrapper}>
         <span className={styles.title__text_wrapper}>
           {isPropVisitControl ? clockIcon : unClockIcon}
-          <span className={styles.title__text_content}>访问控制</span>
+          <span className={styles.title__text_content}>访问权限</span>
         </span>
         {/* <span className={styles.title__operator}>
           <Switch
@@ -584,9 +583,9 @@ class VisitControl extends Component {
                   }
                 >
                   {
-                    otherPersonOperatorMenuItem.find(
+                    (otherPersonOperatorMenuItem.find(
                       item => item.value === privilege
-                    ).key
+                    ) || {}).key
                   }
                 </span>
                 <span

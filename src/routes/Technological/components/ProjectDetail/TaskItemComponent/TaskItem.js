@@ -303,11 +303,11 @@ export default class TaskItem extends React.Component {
   }
   handleVisitControlAddNewMember = (ids = []) => {
     if (!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if (!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    this.handleSetContentPrivilege(user_ids, 'read')
+    // const user_ids = ids.reduce((acc, curr) => {
+    //   if (!acc) return curr
+    //   return `${acc},${curr}`
+    // }, '')
+    this.handleSetContentPrivilege(ids, 'read')
   }
   handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
     const { taskItemValue = {} } = this.props
@@ -320,11 +320,15 @@ export default class TaskItem extends React.Component {
       content_id,
       content_type,
       privilege_code,
-      user_ids
+      user_ids: ids
     }).then(res => {
       if (res && res.code === '0') {
         const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: 'read' }), {}))
         this.visitControlUpdateCurrentProjectData({ privileges: obj })
+        // const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
+        //   return Object.assign({}, acc, {[curr]: 'read'})
+        // }, {})
+        // this.visitControlUpdateCurrentProjectData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
       } else {
         message.error(errorText)
       }
@@ -484,7 +488,7 @@ export default class TaskItem extends React.Component {
         <div className={CreateTaskStyle.cardListOut} style={{ maxHeight: cardListOut }}>
           {/*<QueueAnim  interval={20}>*/}
           {card_data.map((value, key) => {
-            const { card_id } = value
+            const { card_id, is_privilege } = value
             return (
               <ItemTwo itemValue={value} {...this.props}
                 taskGroupListIndex_index={key}
