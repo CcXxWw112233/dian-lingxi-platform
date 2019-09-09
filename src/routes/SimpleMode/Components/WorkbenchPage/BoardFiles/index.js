@@ -274,7 +274,7 @@ class BoardFiles extends Component {
                                 return (
                                   <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
                                     <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                    <span className={indexStyles.boardName}>{board.boardName}</span>
+                                    <span className={indexStyles.boardName}>{board.board_name}</span>
                                   </div>
                                 );
                               })

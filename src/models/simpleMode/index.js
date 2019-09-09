@@ -85,8 +85,6 @@ export default {
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
-
-
         },
         * getAllBoxs({ payload }, { call, put }) {
             let res = yield call(getAllBoxs, {});

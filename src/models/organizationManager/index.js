@@ -58,7 +58,7 @@ export default {
               field_data: [],
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
-              SelectOrganizationVisible: false,
+              myWorkbenchBoxList: [],
             }
           })
 
@@ -435,34 +435,11 @@ export default {
           fnmanagement_list: res.data
         }
       })
-      
-      
-      let fnmanagement_list = res.data
-      var userArr = new Array();
-      userArr = fnmanagement_list.experiment_function_list || []
-      // const status = userArr[3] ? userArr[3].status : '' //投资地图的状态
-      if (userArr) {
-        let status
-        userArr.map((item) => {
-          status = item.status
-        })
-        if (status === '0') {
-          yield put({
-            type: 'updateDatas',
-            payload: {
-              SelectOrganizationVisible: true
-            }
-          })
-        }
-        else {
-          yield put({
-            type: 'updateDatas',
-            payload: {
-              SelectOrganizationVisible: false
-            }
-          })
-        }
-      }
+
+      yield put({
+        type: 'technological/getCurrentUserOrganizes',
+        payload: { }
+      })
     },
 
     * setFnManagement({ payload }, { call, put }) {
