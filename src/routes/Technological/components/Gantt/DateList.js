@@ -225,9 +225,9 @@ export default class DateList extends Component {
                           </div>
                         </Tooltip>
                       ) : (
-                          <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}>
+                          <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}  key={`${month}/${date_no}`}>
                             <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
-                              <div key={`${month}/${date_no}`}>
+                              <div>
                                 <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                                   <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}

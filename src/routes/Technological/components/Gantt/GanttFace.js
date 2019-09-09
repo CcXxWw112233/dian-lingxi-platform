@@ -230,7 +230,7 @@ export default class GanttFace extends Component {
         {
           get_gantt_data_loading && (
             <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
-              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} zIndex={8} >
+              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} >
               </Spin>
             </div>
           )

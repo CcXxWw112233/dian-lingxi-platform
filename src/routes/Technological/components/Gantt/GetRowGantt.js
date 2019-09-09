@@ -101,7 +101,7 @@ export default class GetRowGantt extends Component {
     }
     this.setIsDragging(true)
 
-    const { datas: { ceiHeight, ceilWidth } } = this.props.model
+    const { ceiHeight, ceilWidth } = this.props
 
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
@@ -158,7 +158,7 @@ export default class GetRowGantt extends Component {
       })
       return false
     }
-    const { datas: { ceiHeight, ceilWidth } } = this.props.model
+    const { ceiHeight, ceilWidth } = this.props
     if (this.isMouseDown) { //按下的情况不处理
       return false
     }
@@ -210,7 +210,7 @@ export default class GetRowGantt extends Component {
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     const { dispatch } = this.props
-    const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] } } = this.props.model
+    const { gold_date_arr = [], ceilWidth, date_arr_one_level = [] } = this.props
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
     let counter = 0
@@ -245,7 +245,7 @@ export default class GetRowGantt extends Component {
       return total + num;
     }
     const { dispatch } = this.props
-    const { datas: { group_list_area = [], list_group = [] } } = this.props.model
+    const { group_list_area = [], list_group = [] } = this.props
     let conter_key = 0
     for (let i = 0; i < group_list_area.length; i++) {
       if (i == 0) {
@@ -276,7 +276,7 @@ export default class GetRowGantt extends Component {
     const { dispatch } = this.props
 
     //根据所获得的分组数据转换所需要的数据
-    const { datas: { list_group = [] } } = this.props.model
+    const { list_group = [] } = this.props
 
     const list_group_new = [...list_group]
 
@@ -387,7 +387,7 @@ export default class GetRowGantt extends Component {
 
   render() {
     const { currentRect = {}, dasheRectShow } = this.state
-    const { datas: { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } } = this.props.model
+    const { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } = this.props
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -412,8 +412,8 @@ export default class GetRowGantt extends Component {
           const { list_data = [] } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
-
+              // const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
+              const { id } = value2
               return (
                 <QueueAnim type="right" key={id} duration={200}>
                   <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
@@ -474,7 +474,25 @@ export default class GetRowGantt extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps({ gantt: {
+  datas: {
+    gold_date_arr = [],
+    list_group = [],
+    ceilWidth,
+    group_rows = [],
+    ceiHeight,
+    group_list_area = [],
+    date_arr_one_level = [],
+  }
+} }) {
+  return {
+    gold_date_arr,
+    list_group,
+    ceilWidth,
+    group_rows,
+    ceiHeight,
+    group_list_area,
+    date_arr_one_level,
+  }
 }
 
