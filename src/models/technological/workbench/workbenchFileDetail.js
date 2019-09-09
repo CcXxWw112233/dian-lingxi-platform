@@ -181,7 +181,8 @@ export default {
       let res = yield call(fileVersionist, payload)
       const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
       // console.log(payload, 'sss_worek')
-      const new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
+      let new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
+      new_breadcrumbList = new_breadcrumbList || []
       const filePreviewCurrentFileId = yield select(workbench_selectFilePreviewCurrentFileId)
       // console.log(res.data, 'ssssss')
       let temp_list = [...res.data]
@@ -199,7 +200,9 @@ export default {
       }
       // console.log(temp_arr, default_arr, 'sssss')
       if(isApiResponseOk(res)) {
-        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        if(new_breadcrumbList.length) {
+          new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        }
         yield put({
           type: 'updateDatas',
           payload: {

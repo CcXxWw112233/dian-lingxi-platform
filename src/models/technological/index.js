@@ -508,6 +508,7 @@ export default {
       return res
     },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+      
       let res = yield call(getProjectList, payload)
       if (isApiResponseOk(res)) {
         yield put({

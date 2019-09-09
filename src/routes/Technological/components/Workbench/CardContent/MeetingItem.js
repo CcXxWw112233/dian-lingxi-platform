@@ -69,7 +69,7 @@ export default class MeetingItem extends React.Component {
     const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
     const { id, board_id } = itemValue
 
-    const { name, start_time, due_time, org_id } = itemValue
+    const { name, start_time, due_time, org_id, board_name } = itemValue
     // console.log(itemValue, 'sss')
     return (
       <div className={indexstyles.meetingItem}>
@@ -88,8 +88,8 @@ export default class MeetingItem extends React.Component {
             )
           }
           <Tooltip placement="topLeft" title={
-           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {name}</span>)
-            : (<span>{name}</span>)
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
           }>
             <div
                 style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
@@ -111,7 +111,7 @@ export default class MeetingItem extends React.Component {
                 }
                 {
                   projectTabCurrentSelectedProject == '0' && (
-                    <span className={indexstyles.ellipsis}>{name}</span>
+                    <span className={indexstyles.ellipsis}>{board_name}</span>
                   )
                 }
               </div>

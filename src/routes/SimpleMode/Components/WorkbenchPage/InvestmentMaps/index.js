@@ -47,7 +47,6 @@ export default class index extends React.Component {
     render() {
         const accessToken = Cookies.get('Authorization')
         const src_url = `${MAP_URL}?token=${accessToken}`
-        const { height } = this.state
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { mapOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state

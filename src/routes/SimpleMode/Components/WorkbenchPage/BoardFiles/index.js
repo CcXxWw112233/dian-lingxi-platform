@@ -264,7 +264,6 @@ class BoardFiles extends Component {
                   allOrgBoardTreeList.map((org, orgkey) => {
                     //全组织或者当前组织
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
-                      console.log('org.board_list全组织或者当前组织', org.board_list);
                       
                       return org.board_list && org.board_list.length > 0 && (
                         <div key={org.org_id}>
@@ -275,7 +274,7 @@ class BoardFiles extends Component {
                                 return (
                                   <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
                                     <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                    <span className={indexStyles.boardName}>{board.boardName}</span>
+                                    <span className={indexStyles.boardName}>{board.board_name}</span>
                                   </div>
                                 );
                               })
