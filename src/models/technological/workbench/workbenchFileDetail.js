@@ -228,6 +228,12 @@ export default {
             })
           }
         }
+        yield put({
+          type: 'workbench/getUploadedFileList',
+          payload: {
+
+          }
+        })
       }else{
 
       }
