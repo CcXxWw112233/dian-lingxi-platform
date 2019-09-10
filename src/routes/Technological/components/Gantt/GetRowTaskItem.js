@@ -140,32 +140,27 @@ export default class GetRowTaskItem extends Component {
                     left: local_left, top: local_top,
                     width: (width || 6) - 6, height: (height || task_item_height),
                     marginTop: task_item_margin_top,
+                    opacity: 0.5,
                     background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
-                onMouseDown={(e) => this.onMouseDownOut(e)}
-            // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                // onMouseDown={(e) => this.onMouseDownOut(e)}
+                // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                onMouseDown={(e) => e.stopPropagation()}
+                onMouseMove={(e) => e.stopPropagation()}
+                onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
             >
                 <div
                     data-targetclassname="specific_example"
                     className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                // onMouseDown={(e) => e.stopPropagation()}
-                >
+                    onMouseDown={(e) => e.stopPropagation()} >
                     <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_status}`}
-                    // onMouseDown={(e) => e.stopPropagation()} 
-                    // onMouseMove={(e) => e.stopPropagation()}
-                    >
+                        className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                         <CheckItem is_realize={is_realize} />
                     </div>
                     <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
-                    // onMouseDown={(e) => e.stopPropagation()}
-                    // onMouseMove={(e) => e.stopPropagation()}
-                    >{name}</div>
+                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
                     <div data-targetclassname="specific_example"
-                    // onMouseDown={(e) => e.stopPropagation()}
-                    //  onMouseMove={(e) => e.stopPropagation()}
-                    >
+                        onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                         <AvatarList users={executors} size={'small'} />
                     </div>
                 </div>

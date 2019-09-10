@@ -417,10 +417,8 @@ export default class GetRowGantt extends Component {
               return (
                 <QueueAnim type="right" key={id} duration={200}>
                   <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
-                    <div>
-                      <GetRowTaskItem itemValue={value2} setSpecilTaskExample={this.setSpecilTaskExample} />
+                    <GetRowTaskItem itemValue={value2} setSpecilTaskExample={this.setSpecilTaskExample} />
 
-                    </div>
                     {/* <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"
