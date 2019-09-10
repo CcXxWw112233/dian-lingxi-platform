@@ -469,6 +469,12 @@ export default {
 
 
     * logout({ payload }, { select, call, put }) { //提交表单
+      if(!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
+        Cookies.remove('Authorization')
+        Cookies.remove('refreshToken')
+        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
+        return
+      }
       let res = yield call(logout, payload)
       if (isApiResponseOk(res)) {
         Cookies.remove('sdktoken')
