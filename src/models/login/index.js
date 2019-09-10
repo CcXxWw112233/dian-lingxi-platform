@@ -53,14 +53,38 @@ export default {
       const res = yield call(getUSerInfo, payload)
       const { has_org } = res.data
       const { is_simple_model } = res.data.user_set
+      // console.log(is_simple_model, 'sssssss')
       //如果存在组织， 否则跳到指引页面
       if(isApiResponseOk(res)) {
         if(has_org == '1'){
-          if (is_simple_model == '1' && !redirectLocation) {
-            yield put(routerRedux.push('/technological/simplemode/home'))
-          } else {  
+          if (is_simple_model == '0' && redirectLocation != '/technological/simplemode/home') { // 如果是高效模式,但重定向不为极简模式,那么就重定向到该去的地方
+            yield put({
+              type: 'technological/setShowSimpleModel',
+              payload: {
+                is_simple_model: '0'
+              }
+            })
             yield put(routerRedux.push(redirectLocation))
+            
+          } else if (is_simple_model == '0' && redirectLocation == '/technological/simplemode/home') { // 如果是高效模式, 但重定向为极简模式, 那么就以模式为主
+            yield put(routerRedux.push('/technological/workbench'))
+          } else if (is_simple_model == '1' && redirectLocation != '/technological/workbench') {
+            yield put({
+              type: 'technological/setShowSimpleModel',
+              payload: {
+                is_simple_model: '0'
+              }
+            })
+            yield put(routerRedux.push(redirectLocation))
+            
+          } else if (is_simple_model == '1' && redirectLocation == '/technological/workbench'){
+            yield put(routerRedux.push('/technological/simplemode/home'))
           }
+          // if (is_simple_model == '1' && !redirectLocation) {
+          //   yield put(routerRedux.push('/technological/simplemode/home'))
+          // } else {  
+          //   yield put(routerRedux.push(redirectLocation))
+          // }
           // yield put(routerRedux.push(redirectLocation))
           
         } else {
