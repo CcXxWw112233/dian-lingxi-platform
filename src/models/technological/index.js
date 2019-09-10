@@ -11,7 +11,7 @@ import {
   getUserOrgPermissions,
   getUserBoardPermissions,
   getSetShowOrgName,
-  getSetShowSimple,
+  setShowSimpleModel,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
 import { getProjectList, getCurrentOrgAllMembers, createMeeting } from './../../services/technological/workbench'
@@ -371,9 +371,9 @@ export default {
       }
     },
     // 获取显示是否是极简模式
-    * getSetShowSimple({ payload }, { select, call, put }) {
+    * setShowSimpleModel({ payload }, { select, call, put }) {
       const { checked, is_simple_model } = payload
-      let res = yield call(getSetShowSimple, is_simple_model)
+      let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
@@ -469,6 +469,12 @@ export default {
 
 
     * logout({ payload }, { select, call, put }) { //提交表单
+      if(!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
+        Cookies.remove('Authorization')
+        Cookies.remove('refreshToken')
+        window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
+        return
+      }
       let res = yield call(logout, payload)
       if (isApiResponseOk(res)) {
         Cookies.remove('sdktoken')

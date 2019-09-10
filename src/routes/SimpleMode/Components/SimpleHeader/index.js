@@ -46,7 +46,7 @@ class SimpleHeader extends Component {
         // console.log(checked, 'sssss')
         const { dispatch } = this.props
         dispatch({
-            type: 'technological/getSetShowSimple',
+            type: 'technological/setShowSimpleModel',
             payload: {
                 is_simple_model: 0,
                 checked: false

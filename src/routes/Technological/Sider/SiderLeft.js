@@ -343,7 +343,7 @@ export default class SiderLeft extends React.Component {
     const { is_simple_model } = user_set
     const { dispatch} = this.props
     dispatch({
-      type: 'technological/getSetShowSimple',
+      type: 'technological/setShowSimpleModel',
       payload: {
         is_simple_model: checked ? '1' : '0',
         checked
@@ -354,7 +354,7 @@ export default class SiderLeft extends React.Component {
 
 
   render() {
-    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
     menuList.forEach((item) => {
       if (item.status === '1') {
@@ -415,6 +415,7 @@ export default class SiderLeft extends React.Component {
 
     const { current_org = {}, name, avatar, user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { is_simple_model } = user_set
+    console.log(is_simple_model, 'sssssssss')
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo, id } = currentSelectOrganize
@@ -681,7 +682,7 @@ export default class SiderLeft extends React.Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: { datas: {
-  menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple
+  menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org
 } } }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple }
+  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org }
 }
