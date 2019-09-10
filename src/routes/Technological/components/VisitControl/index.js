@@ -322,17 +322,26 @@ class VisitControl extends Component {
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
     let allMember = [...currentOrgAllMembersList];
     const getOthersPersonList = allMember =>
+    // console.log(allMember, 'ssssss_allMember')
       Object.entries(otherPrivilege).reduce((acc, curr) => {
-        const [id, privilageType] = curr;
-        const currPerson = allMember.find(item => item.id === id);
+        // console.log({
+        //   acc, curr,
+        // }, 'ssssss_reduce')
+        // debugger
+        // const [id, privilageType] = curr;
+        const [id, user_id, content_privilege_code] = curr;
+        const currPerson = allMember.find(item => item.id === user_id);
+        // console.log(currPerson, 'sssssss_currPerson')
+        // debugger
         const obj = {
-          id: currPerson.id,
-          name: currPerson.full_name,
+          id: currPerson && currPerson.id,
+          name: currPerson && currPerson.full_name,
           avatar:
-            currPerson.avatar && this.isValidAvatar(currPerson.avatar)
-              ? currPerson.avatar
+            currPerson && currPerson.avatar && this.isValidAvatar(currPerson && currPerson.avatar)
+              ? currPerson && currPerson.avatar
               : defaultUserAvatar,
-          privilege: privilageType
+          // privilege: privilageType
+          privilege: content_privilege_code
         };
         return [...acc, obj];
       }, []);
@@ -448,6 +457,7 @@ class VisitControl extends Component {
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
     const { isPropVisitControl } = this.props;
+    // console.log(isPropVisitControl, 'sssssss')
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86b;
@@ -550,9 +560,10 @@ class VisitControl extends Component {
   renderPopoverContentOthersPersonList = () => {
     const { otherPersonOperatorMenuItem } = this.props;
     const { othersPersonList } = this.state;
+    // console.log(othersPersonList, 'ssssss_othersPersonList')
     return (
       <div className={styles.content__othersPersonList_wrapper}>
-        {othersPersonList.map(({ id, name, avatar, privilege }) => (
+        {othersPersonList && othersPersonList.map(({ id, name, avatar, privilege }) => (
           <div
             key={id}
             className={styles.content__othersPersonList_Item_wrapper}

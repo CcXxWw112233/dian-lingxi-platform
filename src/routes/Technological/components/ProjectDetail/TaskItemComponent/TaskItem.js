@@ -323,12 +323,12 @@ export default class TaskItem extends React.Component {
       user_ids: ids
     }).then(res => {
       if (res && res.code === '0') {
-        const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: 'read' }), {}))
-        this.visitControlUpdateCurrentProjectData({ privileges: obj })
-        // const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-        //   return Object.assign({}, acc, {[curr]: 'read'})
-        // }, {})
-        // this.visitControlUpdateCurrentProjectData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
+        // const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: 'read' }), {}))
+        // this.visitControlUpdateCurrentProjectData({ privileges: obj })
+        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
+          return Object.assign({}, acc, {[curr]: 'read'})
+        }, {})
+        this.visitControlUpdateCurrentProjectData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
       } else {
         message.error(errorText)
       }
@@ -375,8 +375,11 @@ export default class TaskItem extends React.Component {
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
     const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges } = taskItemValue
-
-    const projectParticipant = card_data.reduce((acc, curr) => [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], [])
+    // 这是将在card_data中的executors取出来,保存在一个数组中
+    const projectParticipant = card_data.reduce((acc, curr) => 
+      // console.log(acc, '------', curr, 'sssssss')
+      [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
+    )
     const visitControlOtherPersonOperatorMenuItem = [
       {
         key: '可访问',
@@ -466,11 +469,11 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div className={CreateTaskStyle.title_l}>
+            <div id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-                <Dropdown overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
+                <Dropdown getPopupContainer={() => document.getElementById("title_l")} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>

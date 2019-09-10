@@ -99,7 +99,7 @@ export default class ItemTwo extends React.Component {
           {
             isPropVisitControl && (
               <Tooltip title="已开启访问控制" placement="top">
-                <div style={{ color: 'rgba(0,0,0,0.50)' }}>
+                <div style={{ color: 'rgba(0,0,0,0.50)', lineHeight: '24px' }}>
                   <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
                 </div>
               </Tooltip>
