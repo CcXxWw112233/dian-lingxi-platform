@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import ContentFilter from './components/contentFilter'
-import { Dropdown, Tooltip } from 'antd'
+import { Dropdown, Tooltip, message } from 'antd'
 import indexStyles from './index.less'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { beforeCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
+import { checkIsHasPermission } from '../../../../utils/businessFunction'
+import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class GroupListHeadSet extends Component {
@@ -69,7 +71,7 @@ export default class GroupListHeadSet extends Component {
     handleSubmitNewProject = data => {
         const { dispatch } = this.props;
         const calback = (id) => {
-            if(!!!id) {
+            if (!!!id) {
                 return
             }
             dispatch({
@@ -98,6 +100,24 @@ export default class GroupListHeadSet extends Component {
                 beforeCreateBoardUpdateGantt(dispatch)
             });
     };
+
+    createBoard = () => {
+        if (!this.isHasCreatBoardPermission()) {
+            message.warn('您在该组织没有创建项目权限')
+            return false
+        }
+        this.setAddProjectModalVisible()
+    }
+    isHasCreatBoardPermission = () => {
+        const org_id = localStorage.getItem('OrganizationId')
+        let flag = true
+        if (org_id != '0') {
+            if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+                flag = false
+            }
+        }
+        return flag
+    }
     render() {
         const { dropdownVisible, addProjectModalVisible } = this.state
         const { target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
@@ -132,10 +152,10 @@ export default class GroupListHeadSet extends Component {
                         {/* 在项目视图，并且在查看全部项目下 */}
 
                         {
-                            group_view_type == '1' && gantt_board_id == '0' && (
+                            group_view_type == '1' && gantt_board_id == '0' && this.isHasCreatBoardPermission() && (
                                 <Tooltip title={'新建项目'}>
                                     <div className={`${indexStyles.set_content_right_right} ${globalStyles.authTheme}`}
-                                        onClick={this.setAddProjectModalVisible}>&#xe846;</div>
+                                        onClick={this.createBoard}>&#xe846;</div>
                                 </Tooltip>
                             )
                         }
