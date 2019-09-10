@@ -5,6 +5,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
+import { beforeChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +14,13 @@ class BoardDropdownSelect extends Component {
     };
   }
 
+  // 项目变化时，甘特图处理
+  handleBoardChangeMappingGantt = (board_id) => {
+    const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
+    if ('board:plans' == code) {
+      beforeChangeBoardUpdateGantt({ board_id, dispatch })
+    }
+  }
 
   onSelectBoard = (data) => {
     console.log(data, 'bbbbb');
@@ -58,10 +66,9 @@ class BoardDropdownSelect extends Component {
             current_board: data.key
           }
         });
-
+        
       }
-
-
+      this.handleBoardChangeMappingGantt(data.key)
     }
 
   }
@@ -72,7 +79,7 @@ class BoardDropdownSelect extends Component {
 
 
   setAddProjectModalVisible = (data) => {
-    if(data) {
+    if (data) {
       return
     }
     const { addProjectModalVisible } = this.state
@@ -124,7 +131,7 @@ class BoardDropdownSelect extends Component {
 
 
   render() {
-    const {projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
+    const { projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
@@ -156,7 +163,8 @@ export default connect(
     simplemode: {
       myWorkbenchBoxList,
       workbenchBoxList,
-      simplemodeCurrentProject
+      simplemodeCurrentProject,
+      currentSelectedWorkbenchBox
     },
     technological: {
       datas: { currentUserOrganizes }
@@ -168,5 +176,6 @@ export default connect(
       myWorkbenchBoxList,
       workbenchBoxList,
       currentUserOrganizes,
-      simplemodeCurrentProject
+      simplemodeCurrentProject,
+      currentSelectedWorkbenchBox
     }))(BoardDropdownSelect)

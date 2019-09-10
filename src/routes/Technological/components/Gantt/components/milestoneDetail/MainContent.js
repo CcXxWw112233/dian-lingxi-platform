@@ -41,9 +41,11 @@ export default class MainContent extends React.Component {
   }
 
   // 父组件相对对应该里程碑变化的操作
-  handleMiletonesChange = () => {
-    const { handleMiletonesChange } = this.props
-    if(typeof handleMiletonesChange == 'function') handleMiletonesChange()
+  handleMiletonesChange = (data = {}) => {
+    const { handleMiletonesChange, milestone_detail = { } } = this.props
+    const { id } = milestone_detail
+
+    if(typeof handleMiletonesChange == 'function') handleMiletonesChange(id, { ...data })
   }
 
   //更新详情
@@ -63,6 +65,7 @@ export default class MainContent extends React.Component {
   titleChangeBlur(e) {
     const value = e.target.value
     this.updateMilestone({name: value})
+    this.handleMiletonesChange({ name: value })
   }
   setTitleIsEdit = (titleIsEdit) => {
     this.setState({
@@ -128,7 +131,7 @@ export default class MainContent extends React.Component {
 
     this.updateMilestone({ deadline: due_timeStamp })
     // 父组件的操作
-    this.handleMiletonesChange()
+    this.handleMiletonesChange({ deadline: due_timeStamp })
   }
   disabledDueTime = (deadline) => {
     const now_time = new Date().getTime()

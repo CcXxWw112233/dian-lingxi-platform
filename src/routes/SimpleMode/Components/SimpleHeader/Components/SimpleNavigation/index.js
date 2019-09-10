@@ -486,7 +486,7 @@ export default class SimpleNavigation extends Component {
         const { is_simple_model } = user_set
         const { dispatch } = this.props
         dispatch({
-            type: 'technological/getSetShowSimple',
+            type: 'technological/setShowSimpleModel',
             payload: {
                 is_simple_model: checked ? '1' : '0',
                 checked
