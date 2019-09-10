@@ -415,7 +415,7 @@ export default class SiderLeft extends React.Component {
 
     const { current_org = {}, name, avatar, user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { is_simple_model } = user_set
-    console.log(is_simple_model, 'sssssssss')
+    // console.log(is_simple_model, 'sssssssss')
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo, id } = currentSelectOrganize
