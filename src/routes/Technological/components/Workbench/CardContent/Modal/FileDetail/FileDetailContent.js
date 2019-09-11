@@ -576,7 +576,7 @@ class FileDetailContent extends React.Component {
     temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
       let new_item = item
       if (new_item.file_id == file_id) {
-        temp_val= new_item.remarks
+        temp_val = new_item.remarks
         new_item = { ...item, is_edit: !item.is_edit }
       }
       return new_item
@@ -651,7 +651,7 @@ class FileDetailContent extends React.Component {
       new_filePreviewCurrentVersionList: new_list
     })
 
-    if ( editValue != remarks) {
+    if (editValue != remarks) {
       dispatch({
         type: 'workbenchFileDetail/updateVersionFileDescription',
         payload: {
@@ -668,7 +668,7 @@ class FileDetailContent extends React.Component {
       this.setState({
         editValue: ''
       })
-      
+
     }
   }
 
@@ -915,9 +915,13 @@ class FileDetailContent extends React.Component {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
+        console.log('sssss', 2222)
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+          return false
+        }
         if (file.status === 'uploading') {
 
         } else {
