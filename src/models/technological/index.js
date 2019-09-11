@@ -24,7 +24,6 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
-import { is } from '_immutable@3.8.2@immutable';
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
