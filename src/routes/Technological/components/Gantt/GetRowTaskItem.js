@@ -85,9 +85,9 @@ export default class GetRowTaskItem extends Component {
         this.t = target.offsetTop;
 
         target.style.cursor = 'move';
-        target.onmousemove = this.onMouseMoveOut.bind(this);
-        target.onmouseup = this.onMouseUpOut.bind(this);
-        target.onmouseleave = this.onMouseUpOut.bind(this);
+        window.onmousemove = this.onMouseMoveOut.bind(this);
+        window.onmouseup = this.onMouseUpOut.bind(this);
+        // target.onmouseleave = this.onMouseUpOut.bind(this);
     }
 
     onMouseMoveOut = (e) => {
@@ -109,7 +109,7 @@ export default class GetRowTaskItem extends Component {
         //计算移动后的左偏移量和顶部的偏移量
         const nl = nx - (this.x - this.l);
         const nt = ny - (this.y - this.t);
-        console.log('sssss', { l: this.l, t: this.t, x: this.x, y: this.y, nl, nt, })
+        // console.log('sssss', { l: this.l, t: this.t, x: this.x, y: this.y, nl, nt, })
         this.setState({
             local_top: nt,
             local_left: nl,
@@ -125,6 +125,9 @@ export default class GetRowTaskItem extends Component {
         this.t = 0
         this.is_down = false
         this.out_ref.current.style.cursor = 'pointer';
+
+        window.onmousemove = null;
+        window.onmuseup = null;        
     }
     render() {
         const { itemValue = {} } = this.props
@@ -145,7 +148,7 @@ export default class GetRowTaskItem extends Component {
                     background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
                 onMouseDown={(e) => this.onMouseDownOut(e)}
-                onMouseMove={(e) => this.onMouseMoveOut(e)}
+                // onMouseMove={(e) => this.onMouseMoveOut(e)}
                // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
             >
                 <div
@@ -156,18 +159,18 @@ export default class GetRowTaskItem extends Component {
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
                     //  onMouseDown={(e) => e.stopPropagation()} 
-                     onMouseMove={(e) => e.stopPropagation()}
+                     onMouseMove={(e) => e.preventDefault()}
                     >
                         <CheckItem is_realize={is_realize} />
                     </div>
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                     // onMouseDown={(e) => e.stopPropagation()}
-                    onMouseMove={(e) => e.stopPropagation()}
+                    onMouseMove={(e) => e.preventDefault()}
                     >{name}</div>
                     <div data-targetclassname="specific_example"
                     // onMouseDown={(e) => e.stopPropagation()} 
-                    onMouseMove={(e) => e.stopPropagation()}
+                    onMouseMove={(e) => e.preventDefault()}
                     >
                         <AvatarList users={executors} size={'small'} />
                     </div>
