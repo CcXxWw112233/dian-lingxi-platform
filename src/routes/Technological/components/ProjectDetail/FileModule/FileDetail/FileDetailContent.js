@@ -1087,15 +1087,15 @@ class FileDetailContent extends React.Component {
         } else {
           message.destroy()
         }
-        if (file.status === 'done') {
+        if (file.status === 'done' && file.response.code === '0') {
           message.success(`上传成功。`);
           // console.log('file', file)
           if (file.response && file.response.code == '0') {
             that.props.updateDatasFile({ filePreviewCurrentFileId: file.response.data.id, filePreviewCurrentId: file.response.data.file_resource_id })
             that.props.fileVersionist({ version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf' })
           }
-        } else if (file.status === 'error') {
-          message.error(`上传失败。`);
+        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
+          message.error(file.response && file.response.message || '上传失败');
           setTimeout(function () {
             message.destroy()
           }, 2000)

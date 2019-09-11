@@ -155,7 +155,7 @@ class InviteOtherWithBatch extends Component {
       state => {
         const { selectedMember } = state;
         return {
-          selectedMember: selectedMember.filter(i => i.user !== item.user)
+          selectedMember: selectedMember.filter(i => i.id !== item.id)
         };
       },
       () => {

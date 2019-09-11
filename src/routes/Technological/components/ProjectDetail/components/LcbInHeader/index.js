@@ -55,7 +55,7 @@ export default class LcbInHeader extends Component {
           return (
             <MenuItem
               className={globalStyles.global_ellipsis}
-              style={{width: 216}}
+              style={{ width: 216 }}
               key={id}>
               {name}
             </MenuItem>
@@ -85,6 +85,23 @@ export default class LcbInHeader extends Component {
     })
   }
 
+  handleMiletonesChange = (id, data = {}) => {
+    const { milestoneList = [], dispatch } = this.props
+    const new_milestoneList = milestoneList.map(item => {
+      let new_item = { ...item }
+      if (item.id == id) {
+        new_item = { ...item, ...data }
+      }
+      return new_item
+    })
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        milestoneList: new_milestoneList
+      }
+    })
+  }
+
   render() {
     const { data, board_id, board_name, milestoneList, org_id } = this.props
     const { add_lcb_modal_visible, miletone_detail_modal_visible } = this.state
@@ -94,7 +111,7 @@ export default class LcbInHeader extends Component {
       value['full_name'] = item['name']
       return value
     })
-    return(
+    return (
       <div>
         <div className={indexStyles.coperate_lcb_out}>
           {milestoneList.length > 0 && (
@@ -105,19 +122,19 @@ export default class LcbInHeader extends Component {
               <div className={`${indexStyles.coperate_lcb_out_item}`}>0/{milestoneList.length}</div>
               <div className={`${indexStyles.coperate_lcb_out_item} ${indexStyles.progress_area}`}>
                 <Progress percent={0}
-                          status="active"
-                          showInfo={false}
-                          strokeColor={'#FAAD14'}
+                  status="active"
+                  showInfo={false}
+                  strokeColor={'#FAAD14'}
                 />
               </div>
             </div>
           )}
 
           <div className={`${indexStyles.coperate_lcb_out_item} ${indexStyles.add_input}`}
-             onClick={this.setAddLCBModalVisibile.bind(this)}>＋ 项目里程碑</div>
+            onClick={this.setAddLCBModalVisibile.bind(this)}>＋ 项目里程碑</div>
         </div>
         <AddLCBModal
-          current_selected_board={{board_id, board_name, users: userList, org_id}}
+          current_selected_board={{ board_id, board_name, users: userList, org_id }}
           board_id={board_id}
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
@@ -126,7 +143,8 @@ export default class LcbInHeader extends Component {
         <MilestoneDetail
           users={data}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
-          set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
+          set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
+          handleMiletonesChange={this.handleMiletonesChange}
         />
       </div>
     )
@@ -137,8 +155,8 @@ export default class LcbInHeader extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
-    projectDetail: { datas: { projectDetailInfoData = { }, milestoneList = [] }},
-  }){
+    projectDetail: { datas: { projectDetailInfoData = {}, milestoneList = [] } },
+  }) {
   const { data = [], board_id, board_name, org_id } = projectDetailInfoData
   return { data, board_id, board_name, milestoneList, org_id }
 }
