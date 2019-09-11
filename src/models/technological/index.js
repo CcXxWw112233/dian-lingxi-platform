@@ -24,6 +24,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
+import { is } from '_immutable@3.8.2@immutable';
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
@@ -45,8 +46,6 @@ export default {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
-        // const { user_set } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-        // const { is_simple_model } = user_set
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
 
@@ -193,6 +192,14 @@ export default {
         //  payload: {}
         //  })
         localStorage.setItem('userInfo', JSON.stringify(res.data))
+        const is_simple_model = user_set.is_simple_model
+        if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
+          // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
+          yield put(routerRedux.push('/technological/workbench'));
+        } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
+          // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
+          yield put(routerRedux.push('/technological/simplemode/home'))
+        }
 
         //组织切换重新加载
         const { operateType, routingJumpPath='/technological?redirectHash', isNeedRedirectHash=true } = payload

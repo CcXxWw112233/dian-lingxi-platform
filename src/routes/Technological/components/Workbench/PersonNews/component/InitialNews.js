@@ -64,7 +64,9 @@ export default class InitialNews extends React.Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+    if (content && content.board && content.board.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+    }   
   }
 
   // 去任务详情
@@ -73,7 +75,10 @@ export default class InitialNews extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+    if (content && content.card && content.card.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+    }
+    
   }
 
   // 去文件详情
@@ -82,7 +87,10 @@ export default class InitialNews extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+    if (content && content.board_file && content.board_file.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+    }
+    
   }
 
   // 去流程详情
@@ -91,7 +99,10 @@ export default class InitialNews extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+    if (content && content.flow_instance && content.flow_instance.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+    }
+   
   }
 
   // 去到会议
