@@ -118,16 +118,19 @@ export default class GetRowTaskItem extends Component {
 
     onMouseUpOut = (e) => {
         e.stopPropagation()
-        console.log("sssssssss", 'upl')
+        // console.log("sssssssss", 'upl')
         this.x = 0
         this.y = 0
         this.l = 0
         this.t = 0
         this.is_down = false
-        this.out_ref.current.style.cursor = 'pointer';
+        const target = this.out_ref.current
+        if (target) {
+            target.style.cursor = 'pointer';
+        }
 
         window.onmousemove = null;
-        window.onmuseup = null;        
+        window.onmuseup = null;
     }
     render() {
         const { itemValue = {} } = this.props
@@ -140,7 +143,7 @@ export default class GetRowTaskItem extends Component {
                 // draggable
                 ref={this.out_ref}
                 style={{
-                    zIndex: this.is_down?1:0,
+                    zIndex: this.is_down ? 1 : 0,
                     left: local_left, top: local_top,
                     width: (width || 6) - 6, height: (height || task_item_height),
                     marginTop: task_item_margin_top,
@@ -148,29 +151,29 @@ export default class GetRowTaskItem extends Component {
                     background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
                 onMouseDown={(e) => this.onMouseDownOut(e)}
-                // onMouseMove={(e) => this.onMouseMoveOut(e)}
-               // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                onMouseMove={(e) => this.onMouseMoveOut(e)}
+            // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
             >
                 <div
                     data-targetclassname="specific_example"
                     className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                    // onMouseDown={(e) => e.stopPropagation()} 
-                    >
+                // onMouseDown={(e) => e.stopPropagation()} 
+                >
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
-                    //  onMouseDown={(e) => e.stopPropagation()} 
-                     onMouseMove={(e) => e.preventDefault()}
+                        //  onMouseDown={(e) => e.stopPropagation()} 
+                        onMouseMove={(e) => e.preventDefault()}
                     >
                         <CheckItem is_realize={is_realize} />
                     </div>
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
-                    // onMouseDown={(e) => e.stopPropagation()}
-                    onMouseMove={(e) => e.preventDefault()}
+                        // onMouseDown={(e) => e.stopPropagation()}
+                        onMouseMove={(e) => e.preventDefault()}
                     >{name}</div>
                     <div data-targetclassname="specific_example"
-                    // onMouseDown={(e) => e.stopPropagation()} 
-                    onMouseMove={(e) => e.preventDefault()}
+                        // onMouseDown={(e) => e.stopPropagation()} 
+                        onMouseMove={(e) => e.preventDefault()}
                     >
                         <AvatarList users={executors} size={'small'} />
                     </div>
