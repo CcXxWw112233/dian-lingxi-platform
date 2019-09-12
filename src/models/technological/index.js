@@ -378,7 +378,7 @@ export default {
     },
     // 获取显示是否是极简模式
     * setShowSimpleModel({ payload }, { select, call, put }) {
-      const { checked, is_simple_model } = payload
+      const { checked, is_simple_model, redirectLocation = '/technological/workbench' } = payload
       let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -416,7 +416,7 @@ export default {
         yield put({
           type: 'routingJump',
           payload: {
-            route: '/technological/workbench',
+            route: redirectLocation,
           }
         })
       }
