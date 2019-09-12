@@ -47,7 +47,9 @@ export default class NewsListNewDatas extends React.Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+    if (content && content.board && content.board.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}`)
+    } 
   }
 
   // 去任务详情
@@ -56,7 +58,9 @@ export default class NewsListNewDatas extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+    if (content && content.card && content.card.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=3&card_id=${content && content.card && content.card.id}`)
+    }
   }
 
   // 去文件详情
@@ -65,7 +69,9 @@ export default class NewsListNewDatas extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+    if (content && content.board_file && content.board_file.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=4&file_id=${content && content.board_file && content.board_file.id}`)
+    }
   }
 
   // 去流程详情
@@ -74,7 +80,9 @@ export default class NewsListNewDatas extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+    if (content && content.flow_instance && content.flow_instance.id) {
+      this.routingJump(`/technological/projectDetail?board_id=${content && content.board && content.board.id}&appsSelectKey=2&flow_id=${content && content.flow_instance && content.flow_instance.id}`)
+    }
   }
 
   // 去到会议
@@ -855,9 +863,9 @@ export default class NewsListNewDatas extends React.Component {
           let hideList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if (i >= 1) {
-              hideList.push([<span>{item.fileName}</span>, <br />])
+              hideList.push([<span>{item.name}</span>, <br />])
             } else {
-              showList.push(item.fileName)
+              showList.push(item.name)
             }
           })
           if (messageValue.content.board_file_list.length > 1) {
@@ -867,7 +875,7 @@ export default class NewsListNewDatas extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}
-                「{<span className={styles.fileName} style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>}」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                「{<span className={styles.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>}」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -878,9 +886,9 @@ export default class NewsListNewDatas extends React.Component {
           let hideCopyList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if (i >= 1) {
-              hideCopyList.push([<span>{item.fileName}</span>, <br />])
+              hideCopyList.push([<span>{item.name}</span>, <br />])
             } else {
-              showCopyList.push(item.fileName)
+              showCopyList.push(item.name)
             }
           })
           if (messageValue.content && messageValue.content.board_file_list.length > 1) {
@@ -889,7 +897,7 @@ export default class NewsListNewDatas extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}「{
-                <span className={styles.fileName} style={{ cursor: 'pointer', color: '#1890FF' }} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showCopyList}</span>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                <span className={styles.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showCopyList}</span>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )

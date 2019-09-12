@@ -45,8 +45,6 @@ export default {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
-        // const { user_set } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-        // const { is_simple_model } = user_set
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
 
@@ -193,6 +191,14 @@ export default {
         //  payload: {}
         //  })
         localStorage.setItem('userInfo', JSON.stringify(res.data))
+        const is_simple_model = user_set.is_simple_model
+        if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
+          // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
+          yield put(routerRedux.push('/technological/workbench'));
+        } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
+          // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
+          yield put(routerRedux.push('/technological/simplemode/home'))
+        }
 
         //组织切换重新加载
         const { operateType, routingJumpPath='/technological?redirectHash', isNeedRedirectHash=true } = payload
