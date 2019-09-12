@@ -157,7 +157,9 @@ export default class GetRowTaskItem extends Component {
                 <div
                     data-targetclassname="specific_example"
                     className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                // onMouseDown={(e) => e.stopPropagation()} 
+                    // onMouseDown={(e) => e.stopPropagation()} 
+                    onMouseMove={(e) => e.preventDefault()}
+
                 >
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
