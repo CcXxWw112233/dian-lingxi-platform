@@ -1605,9 +1605,9 @@ export default class InitialNews extends React.Component {
           let hideList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if (i >= 1) {
-              hideList.push([<span>{item.fileName}</span>, <br />])
+              hideList.push([<span>{item.name}</span>, <br />])
             } else {
-              showList.push(item.fileName)
+              showList.push(item.name)
             }
           })
           if (messageValue.content.board_file_list.length > 1) {
@@ -1617,7 +1617,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 移动{currentNounPlanFilterName(FILES)}
-                「<span className={NewsListStyle.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>}」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                「<span className={NewsListStyle.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showList}</span>」到文件夹「{messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -1640,9 +1640,9 @@ export default class InitialNews extends React.Component {
           let hideCopyList = []
           messageValue.content.board_file_list.forEach((item, i) => {
             if (i >= 1) {
-              hideCopyList.push([<span>{item.fileName}</span>, <br />])
+              hideCopyList.push([<span>{item.name}</span>, <br />])
             } else {
-              showCopyList.push(item.fileName)
+              showCopyList.push(item.name)
             }
           })
           if (messageValue.content && messageValue.content.board_file_list.length > 1) {
@@ -1651,7 +1651,7 @@ export default class InitialNews extends React.Component {
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator && messageValue.creator.name} 复制{currentNounPlanFilterName(FILES)}
-                「<span className={NewsListStyle.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showCopyList}</span>}」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
+                「<span className={NewsListStyle.fileName} onClick={() => { this.goToFile({ board_id: messageValue.content.board.id, content: messageValue.content }) }}>{showCopyList}</span>」到文件夹「{messageValue.content && messageValue.content.target_folder && messageValue.content.target_folder.name}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
