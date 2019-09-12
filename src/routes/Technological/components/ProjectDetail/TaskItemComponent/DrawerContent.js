@@ -825,6 +825,8 @@ class DrawContent extends React.Component {
       message.error('操作失败')
     })
   }
+
+  // 访问控制的切换
   handleVisitControlChange = (flag) => {
     const { datas: { drawContent = {}} } = this.props.model
     const {is_privilege = '0', card_id} = drawContent
@@ -849,23 +851,44 @@ class DrawContent extends React.Component {
 
     // console.log(flag, 'get visitcontrol change')
   }
-  visitControlUpdateCurrentModalData = (obj = {}) => {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
-    const {card_id} = drawContent
 
-    for (let item in obj) {
-      drawContent[item] = obj[item]
-      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][item] = obj[item]
+  // 数组去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
     }
-    const updateObj ={
-      card_id
-    }
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent, taskGroupList})
+    return temp_arr
   }
-  handleVisitControlAddNewMember = (ids = []) => {
+
+  // 访问控制的更新model中的数据
+  visitControlUpdateCurrentModalData = (obj = {}) => {
+    // console.log(obj, 'sssss_obj')
+    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    const {card_id, list_id, privileges = []} = drawContent
+    // console.log(card_id, 'sssssss')
+    // 这是更新弹窗中的priveleges
+    let new_privileges = []
+    for(let item in obj) {
+      if (item == 'privileges') {
+        obj[item].map(val => {
+          let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+          return new_privileges = [...temp_arr]
+        })
+      } 
+    }
+    let new_drawContent = {...drawContent, privileges: new_privileges}
+    this.props.updateDatasTask({drawContent: new_drawContent})
+  }
+
+  // 访问控制添加成员
+  handleVisitControlAddNewMember = (users_arr = []) => {
     // console.log(ids, 'sssssss')
-    if(!ids.length) return
+    if(!users_arr.length) return
     // const user_ids = ids.reduce((acc, curr) => {
     //   if(!acc) return curr
     //   return `${acc},${curr}`
@@ -874,69 +897,80 @@ class DrawContent extends React.Component {
     const {card_id, privileges} = drawContent
     const content_id = card_id
     const content_type = 'card'
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids: ids,
+      user_ids: temp_ids,
     }).then(res => {
       if(res && res.code === '0') {
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
-        }, {})
-        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
+        // console.log(res, 'ssssssss_res')
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentModalData({privileges: temp_arr})
       }
     })
     //设置特权，然后更新卡片详情
     // console.log(ids, 'idddddds')
   }
+
+  // 访问控制移除成员
   handleVisitControlRemoveContentPrivilege = id => {
     const { datas: { drawContent = {}} } = this.props.model
     const {card_id, privileges} = drawContent
-    removeContentPrivilege({content_id: card_id, content_type: 'card', user_id: id}).then(res => {
+    let temp_id = []
+    temp_id.push(id)
+    removeContentPrivilege({id: id}).then(res => {
       const isResOk = res => res && res.code === '0'
       if(isResOk(res)){
-        let remainPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            remainPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
+        // console.log(res, 'ssssss')
+        // this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
       }else{
         message.error('移除用户内容控制权限失败')
       }
     })
   }
+
+  // 访问控制设置更新成员
   handleVisitControlChangeContentPrivilege = (id, type) => {
     const { datas: { drawContent = {}} } = this.props.model
     const {card_id, privileges} = drawContent
+    let temp_id = []
+    temp_id.push(id)
     const obj = {
       content_id: card_id,
       content_type: 'card',
       privilege_code: type,
-      user_ids: id
+      user_ids: temp_id
     }
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
       if(isResOk(res)){
-        let changedPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            changedPrivileges[item] = privileges[item]
-          } else {
-            changedPrivileges[item] = type
-          }
-        }
+        // console.log(res, 'sssssss_res')
+        let new_user = res && res.data
+        // let changedPrivileges = {}
+        // for(let item in privileges) {
+        //   if(item !== id) {
+        //     changedPrivileges[item] = privileges[item]
+        //   } else {
+        //     changedPrivileges[item] = type
+        //   }
+        // }
         this.visitControlUpdateCurrentModalData({privileges: changedPrivileges})
       }else{
         message.error('更新用户控制类型失败')
       }
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+
+  // 其他成员的下拉回调
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if(type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }

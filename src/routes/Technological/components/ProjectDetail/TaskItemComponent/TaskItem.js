@@ -326,9 +326,9 @@ export default class TaskItem extends React.Component {
         // const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: 'read' }), {}))
         // this.visitControlUpdateCurrentProjectData({ privileges: obj })
         const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
+          return Object.assign({}, acc, { [curr]: 'read' })
         }, {})
-        this.visitControlUpdateCurrentProjectData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
+        this.visitControlUpdateCurrentProjectData({ privileges: Object.assign({}, newMemberPrivilegesObj, privileges) })
       } else {
         message.error(errorText)
       }
@@ -369,17 +369,35 @@ export default class TaskItem extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.hideTaskGroupOperatorDropdownMenuWhenScroll(nextProps)
   }
+
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['user_id'])
+      }
+    }
+    return temp_arr
+  }
+
   render() {
     const { isAddEdit, isInEditName, executor = {}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
     const { taskItemValue = {}, clientHeight } = this.props
     const { projectDetailInfoData = {} } = this.props.model.datas
     const { board_id, data = [], } = projectDetailInfoData
-    const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges } = taskItemValue
-    // 这是将在card_data中的executors取出来,保存在一个数组中
-    const projectParticipant = card_data.reduce((acc, curr) => 
+    const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges, privileges_extend = [] } = taskItemValue
+    // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
+    const projectParticipant = card_data.reduce((acc, curr) =>
       // console.log(acc, '------', curr, 'sssssss')
       [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
     )
+    // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
+    const extendParticipant = privileges_extend && privileges_extend.length && [...privileges_extend]
+    let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
+    let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
     const visitControlOtherPersonOperatorMenuItem = [
       {
         key: '可访问',
@@ -421,7 +439,7 @@ export default class TaskItem extends React.Component {
                   board_id={board_id}
                   popoverPlacement={'rightTop'}
                   isPropVisitControl={is_privilege === '0' ? false : true}
-                  principalList={projectParticipant}
+                  principalList={new_projectParticipant}
                   principalInfo='位任务列表负责人'
                   otherPrivilege={privileges}
                   otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}

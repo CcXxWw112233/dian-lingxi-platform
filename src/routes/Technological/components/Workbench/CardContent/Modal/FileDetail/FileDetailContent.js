@@ -1072,10 +1072,11 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
@@ -1083,7 +1084,7 @@ class FileDetailContent extends React.Component {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
-        console.log('sssss', 2222)
+        // console.log('sssss', 2222)
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
