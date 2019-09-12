@@ -406,6 +406,7 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
+            zIndex: this.isDragging ? 1 : 0
           }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
