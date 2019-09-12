@@ -7,6 +7,7 @@ import Cookies from 'js-cookie'
 import QueryString from 'querystring'
 import { getUSerInfo } from "../../services/technological";
 import { selectLoginCaptchaKey } from './selects'
+import { getModelIsImport } from '../utils';
 let redirectLocation
 export default {
   namespace: 'login',
@@ -86,20 +87,25 @@ export default {
           // }
 
           if (redirectLocation.indexOf('/technological/simplemode') == -1) {
-            yield put({
-              type: 'technological/setShowSimpleModel',
-              payload: {
-                is_simple_model: '0',
-                redirectLocation
-              }
-            })
+            const model_is_import = yield select(getModelIsImport('technological'))
+            if (model_is_import) { //在该模块注入之后才调用，否则就只是调用简单跳转
+              yield put({
+                type: 'technological/setShowSimpleModel',
+                payload: {
+                  is_simple_model: '0',
+                  redirectLocation
+                }
+              })
+            } else {
+              yield put(routerRedux.push('/technological/simplemode/home'))
+            }
           } else {
             if (is_simple_model == '0') {
               yield put(routerRedux.push('/technological/workbench'))
-            } else if(is_simple_model == '1') {
+            } else if (is_simple_model == '1') {
               yield put(routerRedux.push('/technological/simplemode/home'))
             } else {
-              
+
             }
           }
 

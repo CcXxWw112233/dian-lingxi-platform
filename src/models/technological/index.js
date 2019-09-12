@@ -31,6 +31,7 @@ let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
   state: {
+    model_is_import: true, //模块是否注入标志
     datas: {
       currentUserOrganizes: [], //用户组织列表
       is_show_org_name: true, // 是否显示组织名称
