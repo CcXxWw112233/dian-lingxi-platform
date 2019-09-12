@@ -142,6 +142,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   componentDidMount() {
+    
     const { dispatch } = this.props;
     dispatch({
       type: 'workbench/getProjectList',
