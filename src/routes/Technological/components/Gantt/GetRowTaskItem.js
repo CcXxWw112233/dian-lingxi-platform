@@ -91,6 +91,7 @@ export default class GetRowTaskItem extends Component {
     }
 
     onMouseMoveOut = (e) => {
+        console.log
         e.stopPropagation()
         if (this.is_down == false) {
             return;
