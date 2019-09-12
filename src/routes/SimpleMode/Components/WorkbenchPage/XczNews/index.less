@@ -1,7 +1,29 @@
 .xczNewContainer {
     position: relative;
-    width   : 100%;
+    // width   : 100%;
     padding : 8px 8px;
+    width     : 100%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width : 5px;
+        height: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius     : 5px;
+        -webkit-box-shadow: inset 0 0 5px rgba(191, 191, 191, 1);
+        box-shadow        : inset 0 0 5px rgba(191, 191, 191, 1);
+        background        : #737372;
+    }
+
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: 0;
+        box-shadow        : 0;
+        border-radius     : 0;
+        background        : #ffffff;
+    }
+
 
     .container {
         width : 1298px;

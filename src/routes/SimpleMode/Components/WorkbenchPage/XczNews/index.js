@@ -44,9 +44,9 @@ export default class index extends Component {
         let isRegulations = localStorage.getItem('isRegulations');
 
         return (
-            <div className={indexStyles.xczNewContainer} style={{height:contentHeight+'px'}}>
+            <div className={indexStyles.xczNewContainer} >
                 {user_set.current_org === '0' && selectOrganizationVisible === false && isRegulations === 'yes' ? (
-                    <div className={indexStyles.boardSelectWapper}>
+                    <div className={indexStyles.boardSelectWapper} style={{ height: contentHeight + 'px' }}>
                         <div className={indexStyles.groupName}>请选择一个组织进行查看政策法规</div>
                         <div className={indexStyles.boardItemWapper}>
                             {
@@ -62,7 +62,7 @@ export default class index extends Component {
                         </div>
                     </div>
                 ) : (
-                        <div>
+                        <div className={indexStyles.xczNewContainer} style={{ height: contentHeight + 'px' }}>
                             <Header location={location} />
                             <Switch>
                                 {/* <Route path="/technological/xczNews" exact component={ SearchArticlesList } /> */}
@@ -81,3 +81,4 @@ export default class index extends Component {
         )
     }
 }
+
