@@ -885,7 +885,6 @@ class DrawContent extends React.Component {
       })
       let new_drawContent = { ...drawContent, privileges: new_privileges }
       this.props.updateDatasTask({ drawContent: new_drawContent })
-      return
     }
     // console.log(card_id, 'sssssss')
     // 这是添加成员的操作
@@ -933,6 +932,12 @@ class DrawContent extends React.Component {
         type: '2',
         arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
         board_id: board_id
+      }
+    })
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
       }
     })
 

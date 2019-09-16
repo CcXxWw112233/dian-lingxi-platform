@@ -371,7 +371,7 @@ class VisitControl extends Component {
 
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
-    const { isPropVisitControl } = this.props;
+    const { isPropVisitControl, type } = this.props;
     // console.log(isPropVisitControl, 'sssssss')
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
@@ -386,24 +386,28 @@ class VisitControl extends Component {
 
     return (
       <div className={styles.title__wrapper}>
-        <span className={styles.title__text_wrapper}>
-          {isPropVisitControl ? clockIcon : unClockIcon}
-          <span className={styles.title__text_content}>访问权限</span>
-        </span>
-        {/* <span className={styles.title__operator}>
-          <Switch
-            checked={isPropVisitControl}
-            onChange={this.handleToggleVisitControl}
-          />
-        </span> */}
-        <div className={styles.title__operator} style={{ cursor: 'pointer' }}>
-          <Dropdown overlay={this.toggleVisitControl()} trigger={['click']}>
-            <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
-              <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
-              <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
+        {
+          type && type == 'board_list' ? (
+            <span className={styles.title__text_wrapper}>
+              <span className={styles.title__text_content}>访问权限</span>
             </span>
-          </Dropdown>
-        </div>
+          ) : (
+              <>
+                <span className={styles.title__text_wrapper}>
+                  {isPropVisitControl ? clockIcon : unClockIcon}
+                  <span className={styles.title__text_content}>访问权限</span>
+                </span>
+                <div className={styles.title__operator} style={{ cursor: 'pointer' }}>
+                  <Dropdown overlay={this.toggleVisitControl()} trigger={['click']}>
+                    <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
+                      <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
+                      <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
+                    </span>
+                  </Dropdown>
+                </div>
+              </>
+            )
+        }
 
       </div>
     );

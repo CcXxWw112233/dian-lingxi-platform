@@ -471,9 +471,11 @@ export default class Header extends React.Component {
   }
   //右方部分点击-----------------end
   getFieldFromProjectDetailInfoData = (...fields) => {
+    debugger
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     if (!fields.length) return {}
     return fields.reduce((acc, curr) => {
+      debugger
       let fieldObj = {}
       curr in projectDetailInfoData ? fieldObj[curr] = projectDetailInfoData[curr] : null
       return Object.assign({}, acc, fieldObj)
@@ -491,6 +493,7 @@ export default class Header extends React.Component {
   }
   handleVisitControlChange = flag => {
     const { is_privilege, board_id } = this.getFieldFromProjectDetailInfoData('is_privilege', 'board_id')
+    console.log(is_privilege, 'ssssss_1111')
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag === is_privilege_bool) {
@@ -513,9 +516,7 @@ export default class Header extends React.Component {
   handleVisitControlRemoveContentPrivilege = id => {
     const { board_id, board_id: content_id } = this.getFieldFromProjectDetailInfoData('board_id')
     removeContentPrivilege({
-      content_id,
-      content_type: 'board',
-      user_id: id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -529,24 +530,26 @@ export default class Header extends React.Component {
   handleVisitControlChangeContentPrivilege = (id, type) => {
     this.handleSetContentPrivilege(id, type)
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
-    console.log(id, type, 'handleClickedOtherPersonListOperatorItem')
   }
-  handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
     const { board_id, board_id: content_id } = this.getFieldFromProjectDetailInfoData('board_id')
     const content_type = 'board'
     const privilege_code = type
-    const user_ids = ids
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
         this.visitControlUpdateCurrentProjectData(board_id)
@@ -555,13 +558,13 @@ export default class Header extends React.Component {
       }
     })
   }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if (!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if (!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    this.handleSetContentPrivilege(user_ids, 'read')
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    // const user_ids = ids.reduce((acc, curr) => {
+    //   if (!acc) return curr
+    //   return `${acc},${curr}`
+    // }, '')
+    this.handleSetContentPrivilege(users_arr, 'read')
   }
   async visitControlUpdateCurrentProjectData(board_id) {
     await this.props.updateProject({
@@ -569,11 +572,38 @@ export default class Header extends React.Component {
     })
 
   }
+
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['user_id'])
+      }
+    }
+    return temp_arr
+  }
+
+
   render() {
     const that = this
     const { datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1' } } = this.props.model
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName } = this.state
-    const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges } = projectDetailInfoData
+    const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges, privileges_extend } = projectDetailInfoData
+    let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
+    const removeEmptyArrayEle = (arr) => {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == undefined) {
+          arr.splice(i, 1);
+          i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+        }
+      }
+      return arr;
+    };
+    let new_projectParticipant = this.arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
     const processName = processInfo.name
     is_starinit = is_star
 
@@ -612,9 +642,11 @@ export default class Header extends React.Component {
           // style={{marginLeft: '-35px'}}
           >
             <VisitControl
+              board_id={board_id}
+              type="board_list"
               popoverPlacement={'leftTop'}
-              isPropVisitControl={is_privilege === '0' ? false : true}
-              principalList={projectParticipant}
+              isPropVisitControl={is_privilege == '0' ? false : true}
+              principalList={new_projectParticipant}
               principalInfo='位项目参与人'
               otherPrivilege={privileges}
               otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
@@ -860,25 +892,18 @@ export default class Header extends React.Component {
             <div className={indexStyle.left_top} onMouseLeave={this.setEllipsisHide.bind(this)} onMouseOver={this.setEllipsisShow.bind(this)}>
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)} />
               {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
-              {
-                !is_privilege === '0' && (
-                  <Tooltip title="已开启访问控制" placement="top">
-                    <div style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '40px', marginRight: '5px', lineHeight: '30px' }}>
-                      <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
-                    </div>
-                  </Tooltip>
-                )
-              }
               {!isInEditBoardName ? (
-                <span className={`${indexStyle.projectName} ${!is_privilege === '0' && indexStyle.tempLeft}`} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+                <span className={`${indexStyle.projectName} ${!(is_privilege == '0') && indexStyle.tempLeft}`} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+
               ) : (
                   <Input value={localBoardName}
-                    className={`${indexStyle.projectName} ${!is_privilege === '0' && indexStyle.tempLeft}`}
+                    className={`${indexStyle.projectName} ${!(is_privilege == '0') && indexStyle.tempLeft}`}
                     autoFocus
                     onChange={this.localBoardNameChange.bind(this)}
                     onPressEnter={this.editBoardNameComplete.bind(this)}
                     onBlur={this.editBoardNameComplete.bind(this)} />
-                )}
+                )
+              }
               {isInitEntry ? (is_star === '1' ? (starProject) : (cancelStarProjet)) : (isCollection ? (starProject) : (cancelStarProjet))}
 
               {/*<Icon className={indexStyle.star}*/}
