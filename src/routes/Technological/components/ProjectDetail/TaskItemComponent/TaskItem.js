@@ -233,17 +233,52 @@ export default class TaskItem extends React.Component {
       this.checkAddNewTask()
     }
   }
-  visitControlUpdateCurrentProjectData = (obj) => {
-    const { taskItemValue = {}, itemKey } = this.props
+
+  // 这是设置访问控制之后需要更新的数据
+  visitControlUpdateCurrentProjectData = (obj = {}) => {
+    const { taskItemValue = {}, itemKey, dispatch, getTaskGroupListArrangeType, board_id } = this.props
     const { list_id, list_name } = taskItemValue
-    const data = Object.assign({}, { id: list_id, itemKey, name: list_name })
-    this.props.updateTaskGroup(data)
+    // 访问控制的切换
+    // if (obj && obj.type && obj.type == 'privilege') {
+    //   dispatch({
+    //     type: 'projectDetailTask/getTaskGroupList',
+    //     payload: {
+    //       type: '2',
+    //       arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+    //       board_id: board_id
+    //     }
+    //   })
+    // }
+
+    // // 访问控制添加成员
+    // if (obj && obj.type && obj.type == 'add') {
+    //   dispatch({
+    //     type: 'projectDetailTask/getTaskGroupList',
+    //     payload: {
+    //       type: '2',
+    //       arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+    //       board_id: board_id
+    //     }
+    //   })
+    // }
+    // const data = Object.assign({}, { id: list_id, itemKey, name: list_name })
+    // this.props.updateTaskGroup(data)
+    dispatch({
+      type: 'projectDetailTask/getTaskGroupList',
+      payload: {
+        type: '2',
+        arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+        board_id: board_id
+      }
+    })
     this.setState({
       isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
       taskGroupOperatorDropdownMenuVisible: false,
       shouldHideVisitControlPopover: true,
     })
   }
+
+  // 访问控制的开关切换
   handleVisitControlChange = flag => {
     const { taskItemValue = {}, itemKey } = this.props
     const { list_id, is_privilege } = taskItemValue
@@ -261,74 +296,75 @@ export default class TaskItem extends React.Component {
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
         //更新数据
-        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0' })
+        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege' })
       } else {
         message.error('设置任务列表内容权限失败，请稍后再试')
       }
     })
   }
+
+  // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
     const content_id = list_id
+    let temp_id = []
+    temp_id.push(id)
     removeContentPrivilege({
-      content_id,
-      content_type,
-      user_id: id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        const obj = {}
-        for (let item in privileges) {
-          if (id !== item) {
-            obj[item] = privileges[item]
-          }
-        }
-
-        this.visitControlUpdateCurrentProjectData({ privileges: obj })
+        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
       } else {
         message.error('移出用户失败')
       }
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+
+  // 下拉菜单的操作类型
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
     console.log(id, type, 'handleClickedOtherPersonListOperatorItem')
   }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if (!ids.length) return
-    // const user_ids = ids.reduce((acc, curr) => {
+
+  // 访问控制的添加成员
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    // const user_ids = users_arr.reduce((acc, curr) => {
     //   if (!acc) return curr
     //   return `${acc},${curr}`
     // }, '')
-    this.handleSetContentPrivilege(ids, 'read')
+    this.handleSetContentPrivilege(users_arr, 'read')
   }
-  handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+
+  // 访问控制添加成员
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
     const privilege_code = type
-    const user_ids = ids
     const content_id = list_id
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids: ids
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        // const obj = Object.assign({}, privileges, ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: 'read' }), {}))
-        // this.visitControlUpdateCurrentProjectData({ privileges: obj })
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, { [curr]: 'read' })
-        }, {})
-        this.visitControlUpdateCurrentProjectData({ privileges: Object.assign({}, newMemberPrivilegesObj, privileges) })
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
         message.error(errorText)
       }
@@ -395,7 +431,7 @@ export default class TaskItem extends React.Component {
       [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
     )
     // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
-    const extendParticipant = privileges_extend && privileges_extend.length && [...privileges_extend]
+    const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
     let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
     const visitControlOtherPersonOperatorMenuItem = [
@@ -479,7 +515,7 @@ export default class TaskItem extends React.Component {
         {!isInEditName ? (
           <div className={CreateTaskStyle.title}>
             {
-              !is_privilege === '0' && (
+              !(is_privilege == '0') && (
                 <Tooltip title="已开启访问控制" placement="top">
                   <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
                     <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
@@ -502,7 +538,16 @@ export default class TaskItem extends React.Component {
             </div>
           </div>
         ) : (
-            <div style={{ marginBottom: 16 }} >
+            <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center' }} >
+              {
+                !(is_privilege == '0') && (
+                  <Tooltip title="已开启访问控制" placement="top">
+                    <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
+                      <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
+                    </div>
+                  </Tooltip>
+                )
+              }
               <Input autoFocus defaultValue={list_name} placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)} />
             </div>
           )}

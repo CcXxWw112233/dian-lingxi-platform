@@ -170,7 +170,7 @@ class VisitControl extends Component {
     }
     handleClickedOtherPersonListOperatorItem(
       selectedOtherPersonId,
-      operatorType, 
+      operatorType,
       removerOtherPersonId
     );
   };
@@ -235,7 +235,7 @@ class VisitControl extends Component {
 
   // 获取负责人列表
   genPrincipalList = (principalList = []) => {
-    console.log(principalList, 'sssssss')
+    // console.log(principalList, 'sssssss')
     // ？？？ 我的理解是:检测数组中的每一个元素是否是String, 为什么要检测？
     // const isStr = str => typeof str === 'string'
     // const isArrEleAllStr = arr => arr.every(i => isStr(i))
@@ -260,7 +260,7 @@ class VisitControl extends Component {
         return currentOrgAllMembersList.find(each => each.id === item.user_info.id)
       });
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
-    
+
     // console.log('ssss_2', Object.entries(otherPrivilege))
     let allMember = [...currentOrgAllMembersList];
     // console.log(allMember, 'ssssss_allMember')
@@ -299,8 +299,8 @@ class VisitControl extends Component {
 
   // 是否有必要更新比较其他人的权限在props中
   compareOtherPrivilegeInPropsAndUpdateIfNecessary = nextProps => {
-    const { otherPrivilege: nextOtherPrivilege } = nextProps;
-    const { otherPrivilege } = this.props;
+    const { otherPrivilege: nextOtherPrivilege, principalList: nextPrincipalList } = nextProps;
+    const { otherPrivilege, principalList } = this.props;
     // 定义一个方法做比较
     const isTheSameOtherPrivilege = (otherPrivilege1, otherPrivilege2) => {
       // 将数组变成一个新的迭代器对象
@@ -323,9 +323,15 @@ class VisitControl extends Component {
       }
       return false;
     };
-    // 如果说两次的执行人列表不相同, 那么就分析执行人列表
+    // 如果说两次其他成员的列表不同, 那么就更新它
     if (!isTheSameOtherPrivilege(otherPrivilege, nextOtherPrivilege)) {
       this.parseOtherPrivileges(nextOtherPrivilege);
+    }
+    // 如果说两次的执行人列表不同, 那么就更新它
+    if (!isTheSameOtherPrivilege(principalList, nextPrincipalList)) {
+      this.setState({
+        transPrincipalList: nextPrincipalList
+      })
     }
   };
 
@@ -460,7 +466,12 @@ class VisitControl extends Component {
         {/* <span className={styles.content__principalList_info}>
           {`${transPrincipalList.length}${principalInfo}`}
         </span> */}
-        <span className={`${styles.content__principalList_info}`} style={{ color: 'rgba(0,0,0,0.25)' }}>默认可访问</span>
+        {
+          transPrincipalList && transPrincipalList.length != '0' && (
+            <span className={`${styles.content__principalList_info}`} style={{ color: 'rgba(0,0,0,0.25)' }}>默认可访问</span>
+          )
+        }
+
       </div>
     );
   };
@@ -469,7 +480,6 @@ class VisitControl extends Component {
   renderPopoverContentOthersPersonList = () => {
     const { otherPersonOperatorMenuItem } = this.props;
     const { othersPersonList } = this.state;
-    console.log(othersPersonList, 'ssssss_othersPersonList')
     return (
       <div className={styles.content__othersPersonList_wrapper}>
         {othersPersonList && othersPersonList.map(({ id, user_id, name, avatar, privilege }) => (
