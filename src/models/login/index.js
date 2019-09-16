@@ -5,8 +5,9 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from 'js-cookie'
 import QueryString from 'querystring'
-import {getUSerInfo} from "../../services/technological";
+import { getUSerInfo } from "../../services/technological";
 import { selectLoginCaptchaKey } from './selects'
+import { getModelIsImport } from '../utils';
 let redirectLocation
 export default {
   namespace: 'login',
@@ -22,7 +23,7 @@ export default {
       history.listen((location) => {
         message.destroy()
         if (location.pathname === '/login') {
-          Cookies.set('is401', false, {expires: 30, path: ''})
+          Cookies.set('is401', false, { expires: 30, path: '' })
           redirectLocation = location.search.replace('?redirect=', '')
           dispatch({
             type: 'updateDatas',
@@ -35,7 +36,7 @@ export default {
         } else {
           localStorage.removeItem('bindType')
         }
-        if(location.pathname.indexOf('/login') !== -1) {
+        if (location.pathname.indexOf('/login') !== -1) {
           dispatch({
             type: 'updateDatas',
             payload: {
@@ -49,44 +50,91 @@ export default {
   },
   effects: {
     // 登录成功重定向
-    * loginRouteJump ({ payload }, {select, call, put}) {
+    * loginRouteJump({ payload }, { select, call, put }) {
       const res = yield call(getUSerInfo, payload)
       const { has_org } = res.data
       const { is_simple_model } = res.data.user_set
       // console.log(is_simple_model, 'sssssss')
       //如果存在组织， 否则跳到指引页面
-      if(isApiResponseOk(res)) {
-        if(has_org == '1'){
-          if (is_simple_model == '0' && redirectLocation != '/technological/simplemode/home') { // 如果是高效模式,但重定向不为极简模式,那么就重定向到该去的地方
-            yield put({
-              type: 'technological/setShowSimpleModel',
-              payload: {
-                is_simple_model: '0'
-              }
-            })
-            yield put(routerRedux.push(redirectLocation))
-            
-          } else if (is_simple_model == '0' && redirectLocation == '/technological/simplemode/home') { // 如果是高效模式, 但重定向为极简模式, 那么就以模式为主
-            yield put(routerRedux.push('/technological/workbench'))
-          } else if (is_simple_model == '1' && redirectLocation != '/technological/workbench') {
-            yield put({
-              type: 'technological/setShowSimpleModel',
-              payload: {
-                is_simple_model: '0'
-              }
-            })
-            yield put(routerRedux.push(redirectLocation))
-            
-          } else if (is_simple_model == '1' && redirectLocation == '/technological/workbench'){
-            yield put(routerRedux.push('/technological/simplemode/home'))
-          }
-          // if (is_simple_model == '1' && !redirectLocation) {
-          //   yield put(routerRedux.push('/technological/simplemode/home'))
-          // } else {  
-          //   yield put(routerRedux.push(redirectLocation))
+      if (isApiResponseOk(res)) {
+        if (has_org == '1') {
+          // if (is_simple_model == '0') {
+          //   if (redirectLocation.indexOf('/technological/simplemode') == -1) {
+          //     yield put({
+          //       type: 'technological/setShowSimpleModel',
+          //       payload: {
+          //         is_simple_model: '0',
+          //         redirectLocation
+          //       }
+          //     })
+          //   } else {
+          //     yield put(routerRedux.push('/technological/workbench'))
+          //   }
+          // } else if (is_simple_model == '1') {
+          //   if (redirectLocation.indexOf('/technological/simplemode') == -1) {
+          //     yield put({
+          //       type: 'technological/setShowSimpleModel',
+          //       payload: {
+          //         is_simple_model: '0',
+          //         redirectLocation
+          //       }
+          //     })
+          //   } else {
+          //     yield put(routerRedux.push('/technological/simplemode/home'))
+          //   }
+          // } else {
+
           // }
-          // yield put(routerRedux.push(redirectLocation))
-          
+
+          if (redirectLocation.indexOf('/technological/simplemode') == -1) {
+            const model_is_import = yield select(getModelIsImport('technological'))
+            if (model_is_import) { //在该模块注入之后才调用，否则就只是调用简单跳转
+              yield put({
+                type: 'technological/setShowSimpleModel',
+                payload: {
+                  is_simple_model: '0',
+                  redirectLocation
+                }
+              })
+            } else {
+              yield put(routerRedux.push('/technological/simplemode/home'))
+            }
+          } else {
+            if (is_simple_model == '0') {
+              yield put(routerRedux.push('/technological/workbench'))
+            } else if (is_simple_model == '1') {
+              yield put(routerRedux.push('/technological/simplemode/home'))
+            } else {
+
+            }
+          }
+
+          // if (is_simple_model == '0' && redirectLocation.indexOf('/technological/simplemode') == -1) { // 如果是普通模式,但重定向不为极简模式,那么就重定向到该去的地方
+          //   yield put({
+          //     type: 'technological/setShowSimpleModel',
+          //     payload: {
+          //       is_simple_model: '0',
+          //       redirectLocation
+          //     }
+          //   })
+          //   // yield put(routerRedux.push(redirectLocation))
+
+          // } else if (is_simple_model == '0' && redirectLocation.indexOf('/technological/simplemode') != -1) { // 如果是高效模式, 但重定向为极简模式, 那么就以模式为主
+          //   yield put(routerRedux.push('/technological/workbench'))
+          // } else if (is_simple_model == '1' && redirectLocation.indexOf('/technological/workbench') == -1) {
+          //   yield put({
+          //     type: 'technological/setShowSimpleModel',
+          //     payload: {
+          //       is_simple_model: '0',
+          //       redirectLocation
+          //     }
+          //   })
+          //   // yield put(routerRedux.push(redirectLocation))
+
+          // } else if (is_simple_model == '1' && redirectLocation.indexOf('/technological/workbench') != -1) {
+          //   yield put(routerRedux.push('/technological/simplemode/home'))
+          // }
+
         } else {
           yield put(routerRedux.push('/noviceGuide'))
         }
@@ -95,16 +143,16 @@ export default {
       }
     },
     // 登录成功设置token
-    * setTokenBeforeLogin ({ payload }, {select, call, put}) {
+    * setTokenBeforeLogin({ payload }, { select, call, put }) {
       const { data } = payload
       const tokenArray = data.split('__')
-      Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
-      Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
-      Cookies.set('is401', false, {expires: 30, path: ''})
+      Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
+      Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
+      Cookies.set('is401', false, { expires: 30, path: '' })
     },
-    * wechatAccountBind({payload}, {select, call, put}) {
+    * wechatAccountBind({ payload }, { select, call, put }) {
       let res = yield call(wechatAccountBind, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         // const tokenArray = res.data.split('__')
         // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
         // Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
@@ -120,34 +168,34 @@ export default {
           type: 'loginRouteJump',
           payload: {}
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * wechatLogin({ payload }, { select, call, put }) { //微信扫码登陆
-        // const tokenArray = payload.token.split('__')
-        // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
-        // Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
-        // Cookies.set('is401', false, {expires: 30, path: ''})
-        const { token } = payload
-        yield put({
-          type: 'setTokenBeforeLogin',
-          payload: {
-            data: token
-          }
-        })
-        //做登录成功重定向
-        yield put({
-          type: 'loginRouteJump',
-          payload: {}
-        })
+      // const tokenArray = payload.token.split('__')
+      // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
+      // Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
+      // Cookies.set('is401', false, {expires: 30, path: ''})
+      const { token } = payload
+      yield put({
+        type: 'setTokenBeforeLogin',
+        payload: {
+          data: token
+        }
+      })
+      //做登录成功重定向
+      yield put({
+        type: 'loginRouteJump',
+        payload: {}
+      })
 
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       const captcha_key = yield select(selectLoginCaptchaKey)
-      let res = yield call(formSubmit, {...payload, captcha_key})
+      let res = yield call(formSubmit, { ...payload, captcha_key })
       const code = res.code
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'setTokenBeforeLogin',
           payload: {
@@ -159,8 +207,8 @@ export default {
           type: 'loginRouteJump',
           payload: {}
         })
-      }else{
-        if(code == '4005' || code == '4006' ) {
+      } else {
+        if (code == '4005' || code == '4006') {
           yield put({
             type: 'updateDatas',
             payload: {
@@ -169,7 +217,7 @@ export default {
               captcha_key: res.data && res.data.captcha_key
             }
           })
-        }else if(code == '4007') {
+        } else if (code == '4007') {
           yield put({
             type: 'updateDatas',
             payload: {
@@ -184,16 +232,16 @@ export default {
       const { data, calback } = payload
       let res = yield call(requestVerifyCode, data)
       calback && typeof calback === 'function' ? calback() : ''
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * changePicVerifySrc({ payload }, { select, call, put }) { //更新图片验证码
       const captcha_key = yield select(selectLoginCaptchaKey)
-      const res = yield call(changePicVerifySrc, {captcha_key})
-      if(isApiResponseOk(res)) {
+      const res = yield call(changePicVerifySrc, { captcha_key })
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
@@ -202,7 +250,7 @@ export default {
           }
         })
 
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -218,7 +266,7 @@ export default {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: {...state.datas, ...action.payload},
+        datas: { ...state.datas, ...action.payload },
       }
     }
   },

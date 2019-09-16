@@ -31,6 +31,7 @@ let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
   state: {
+    model_is_import: true, //模块是否注入标志
     datas: {
       currentUserOrganizes: [], //用户组织列表
       is_show_org_name: true, // 是否显示组织名称
@@ -378,7 +379,7 @@ export default {
     },
     // 获取显示是否是极简模式
     * setShowSimpleModel({ payload }, { select, call, put }) {
-      const { checked, is_simple_model } = payload
+      const { checked, is_simple_model, redirectLocation = '/technological/workbench' } = payload
       let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -416,7 +417,7 @@ export default {
         yield put({
           type: 'routingJump',
           payload: {
-            route: '/technological/workbench',
+            route: redirectLocation,
           }
         })
       }
