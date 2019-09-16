@@ -18,12 +18,18 @@ export default class GetRowTaskItem extends Component {
         this.state = {
             local_top: 0,
             local_left: 0,
+            drag_type: 'position', // position/left/right 拖动位置/延展左边/延展右边
         }
 
         this.x = 0
         this.y = 0
         this.l = 0
         this.t = 0
+        this.drag_type_map = {
+            position: 'pointer',
+            left: 'w-resize',
+            right: 'e-resize'
+        }
     }
 
     componentDidMount() {
@@ -77,14 +83,16 @@ export default class GetRowTaskItem extends Component {
         e.stopPropagation()
         const target = this.out_ref.current
         this.is_down = true;
-
+        const { drag_type } = this.state
+        if ('position' == drag_type) { //在中间
+            target.style.cursor = 'move';
+        }
         this.x = e.clientX;
         this.y = e.clientY
         //获取左部和顶部的偏移量
         this.l = target.offsetLeft;
         this.t = target.offsetTop;
 
-        target.style.cursor = 'move';
         window.onmousemove = this.onMouseMove.bind(this);
         window.onmouseup = this.onMouseUp.bind(this);
         // target.onmouseleave = this.onMouseUp.bind(this);
@@ -96,7 +104,28 @@ export default class GetRowTaskItem extends Component {
         if (this.is_down == false) {
             return;
         }
+        const { drag_type } = this.state
+        if ('position' == drag_type) {
+            this.changePosition(e)
+        } else if ('left' == drag_type) {
+            this.extentionLeft(e)
+        } else if ('right' == drag_type) {
+            this.extentionRight(e)
+        }
+    }
 
+    // 延展左边
+    extentionLeft = () => {
+
+    }
+
+    // 延展右边
+    extentionRight = () => {
+
+    }
+
+    // 整条拖动
+    changePosition = (e) => {
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
         const target = this.out_ref.current//event.target || event.srcElement;
@@ -117,11 +146,35 @@ export default class GetRowTaskItem extends Component {
     }
 
     // 针对于在某一条任务上滑动时，判别鼠标再不同位置的处理，(ui箭头, 事件处理等)
-    handleMouseMove = (e) => {
-        if (this.is_down) { //准备拖动时不再处理
+    handleMouseMove = (event) => {
+        const { ganttPanelDashedDrag } = this.props
+        if (this.is_down || ganttPanelDashedDrag) { //准备拖动时不再处理, 拖拽生成一条任务时也不再处理
             return
         }
-        this.displayCoord(e)
+        const { currentTarget, clientX, clientY } = event
+        const { clientWidth } = currentTarget
+        const oDiv = currentTarget
+        const target_1 = document.getElementById('gantt_card_out_middle')
+        const offsetLeft = this.getX(oDiv);
+        const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
+        if (rela_left <= 6) { //滑动到左边
+            this.setTargetDragTypeCursor('left')
+        } else if (clientWidth - rela_left <= 6) { //滑动到右边
+            this.setTargetDragTypeCursor('right')
+        } else { //中间
+            this.setTargetDragTypeCursor('position')
+        }
+    }
+    // 设置鼠标形状和拖拽类型
+    setTargetDragTypeCursor = (cursorTypeKey) => {
+        this.setState({
+            drag_type: cursorTypeKey
+        })
+        const cursorType = this.drag_type_map[cursorTypeKey]
+        const target = this.out_ref.current
+        if (target) {
+            target.style.cursor = cursorType;
+        }
     }
     getX = (obj) => {
         var parObj = obj;
@@ -140,16 +193,7 @@ export default class GetRowTaskItem extends Component {
         }
         return top;
     }
-    displayCoord = (event) => {
-        const oDiv = event.currentTarget
-        const target_1 = document.getElementById('gantt_card_out_middle')
 
-        const offsetTop = this.getY(oDiv);
-        const offsetLeft = this.getX(oDiv);
-        const left = event.clientX - offsetLeft - 2 +  target_1.scrollLeft
-        const top = event.clientY - offsetTop - 2 + target_1.scrollTop
-        console.log('sssss', { top, left})
-    }
     onMouseUp = (e) => {
         e.stopPropagation()
         // console.log("sssssssss", 'upl')
@@ -158,10 +202,7 @@ export default class GetRowTaskItem extends Component {
         this.l = 0
         this.t = 0
         this.is_down = false
-        const target = this.out_ref.current
-        if (target) {
-            target.style.cursor = 'pointer';
-        }
+        this.setTargetDragTypeCursor('pointer')
 
         window.onmousemove = null;
         window.onmuseup = null;
