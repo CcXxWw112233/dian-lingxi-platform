@@ -119,7 +119,6 @@ export default class Header extends Component {
                         <div className={headerStyles.tab}>
                             {
                                 tabs.map((item, index) => {
-                                    // console.log(item)
                                     if (item.path == location.pathname) {
                                         return (
                                             <Link id={item.flag} className={headerStyles.active} to={item.path}>{item.text}</Link>

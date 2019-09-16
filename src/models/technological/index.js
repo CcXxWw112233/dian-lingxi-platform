@@ -31,6 +31,7 @@ let locallocation //保存location在组织切换
 export default {
   namespace: 'technological',
   state: {
+    model_is_import: true, //模块是否注入标志
     datas: {
       currentUserOrganizes: [], //用户组织列表
       is_show_org_name: true, // 是否显示组织名称
@@ -45,8 +46,6 @@ export default {
       history.listen(async (location) => {
         message.destroy()
         //头部table key
-        // const { user_set } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-        // const { is_simple_model } = user_set
         locallocation = location
         if (location.pathname.indexOf('/technological') !== -1) {
 
@@ -193,6 +192,14 @@ export default {
         //  payload: {}
         //  })
         localStorage.setItem('userInfo', JSON.stringify(res.data))
+        const is_simple_model = user_set.is_simple_model
+        if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
+          // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
+          yield put(routerRedux.push('/technological/workbench'));
+        } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
+          // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
+          yield put(routerRedux.push('/technological/simplemode/home'))
+        }
 
         //组织切换重新加载
         const { operateType, routingJumpPath='/technological?redirectHash', isNeedRedirectHash=true } = payload
@@ -372,7 +379,7 @@ export default {
     },
     // 获取显示是否是极简模式
     * setShowSimpleModel({ payload }, { select, call, put }) {
-      const { checked, is_simple_model } = payload
+      const { checked, is_simple_model, redirectLocation = '/technological/workbench' } = payload
       let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -410,7 +417,7 @@ export default {
         yield put({
           type: 'routingJump',
           payload: {
-            route: '/technological/workbench',
+            route: redirectLocation,
           }
         })
       }

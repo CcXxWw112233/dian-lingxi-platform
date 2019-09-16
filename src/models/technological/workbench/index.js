@@ -394,7 +394,7 @@ export default modelExtend(technological, {
         }
       })
       if(!card_id) {
-        message('获取工作台日程列表失败')
+        // message('获取工作台日程列表失败')
         return
       }
       let res = yield call(getMeetingList_new, {id: card_id})
@@ -426,7 +426,7 @@ export default modelExtend(technological, {
         }
       })
       if(!card_id) {
-        message('获取工作台任务列表失败')
+        // message('获取工作台任务列表失败')
         return
       }
       let res = yield call(getTaskList_new, {id: card_id})
@@ -450,7 +450,7 @@ export default modelExtend(technological, {
         }
       })
       if(!card_id) {
-        message('获取工作台文件列表失败')
+        // message('获取工作台文件列表失败')
         return
       }
       let res = yield call(getFileList_new, {id: card_id})
@@ -474,7 +474,7 @@ export default modelExtend(technological, {
         }
       })
       if(!card_id) {
-        message('获取工作台流程列表失败')
+        // message('获取工作台流程列表失败')
         return
       }
       let res = yield call(getProcessList_new, {id: card_id})

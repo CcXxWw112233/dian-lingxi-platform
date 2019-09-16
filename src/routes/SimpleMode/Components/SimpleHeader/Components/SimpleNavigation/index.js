@@ -376,7 +376,7 @@ export default class SimpleNavigation extends Component {
                     type: 'investmentMap/getMapsQueryUser',
                     payload: { }
                 })
-
+                
                 dispatch({
                     type: 'xczNews/getXczNewsQueryUser',
                     payload: { }
