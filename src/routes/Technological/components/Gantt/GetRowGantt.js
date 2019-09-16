@@ -410,15 +410,20 @@ export default class GetRowGantt extends Component {
           }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
-          const { list_data = [] } = value
+          const { list_data = [], list_id } = value
           return (
             list_data.map((value2, key) => {
               // const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
-              const { id } = value2
+              const { id, left, width } = value2
               return (
-                <QueueAnim type="right" key={id} duration={200}>
+                <QueueAnim type="right" key={`${id}_${width}_${left}`} duration={200}>
                   <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
-                    <GetRowTaskItem itemValue={value2} setSpecilTaskExample={this.setSpecilTaskExample} ganttPanelDashedDrag={this.isDragging} />
+                    <GetRowTaskItem
+                      itemValue={value2}
+                      setSpecilTaskExample={this.setSpecilTaskExample}
+                      ganttPanelDashedDrag={this.isDragging}
+                      list_id={list_id}
+                    />
 
                     {/* <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}

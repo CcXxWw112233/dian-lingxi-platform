@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
+import { connect } from 'dva'
 import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
@@ -9,6 +10,7 @@ import { task_item_height, task_item_margin_top, date_area_height } from './cons
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
 const coperatedX = 0
+@connect(mapStateToProps)
 export default class GetRowTaskItem extends Component {
 
     constructor(props) {
@@ -103,7 +105,7 @@ export default class GetRowTaskItem extends Component {
 
     onMouseMove = (e) => {
         e.stopPropagation()
-        this.handleMouseMove(e)
+        this.handleMouseMove(e) //设置flag依赖
         if (this.is_down == false) {
             return;
         }
@@ -111,7 +113,7 @@ export default class GetRowTaskItem extends Component {
         if ('position' == drag_type) {
             this.changePosition(e)
         } else if ('left' == drag_type) {
-            this.extentionLeft(e)
+            // this.extentionLeft(e)
         } else if ('right' == drag_type) {
             this.extentionRight(e)
         }
@@ -123,12 +125,10 @@ export default class GetRowTaskItem extends Component {
         //计算移动后的左偏移量和顶部的偏移量
         const nl = nx - (this.x - this.l);
         const nw = this.x - nx //宽度
-        console.log(this.x, this.l, nl, nx)
         this.setState({
             local_left: nl,
-            local_width: nw < 40 ? 40 : nw
+            local_width: nw < 44 ? 44 : nw
         })
-        console.log('sssss', '向左延展')
     }
 
     // 延展右边
@@ -139,7 +139,7 @@ export default class GetRowTaskItem extends Component {
         //计算移动后的左偏移量和顶部的偏移量
         const nw = nx - this.x + local_width_flag //宽度
         this.setState({
-            local_width: nw,
+            local_width: nw < 44 ? 44 : nw
         })
     }
 
@@ -176,14 +176,17 @@ export default class GetRowTaskItem extends Component {
         const target_1 = document.getElementById('gantt_card_out_middle')
         const offsetLeft = this.getX(oDiv);
         const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
-        if (rela_left <= 6) { //滑动到左边
-            this.setTargetDragTypeCursor('left')
-        } else if (clientWidth - rela_left <= 6) { //滑动到右边
+        if (clientWidth - rela_left <= 6) { //滑动到右边
             this.setTargetDragTypeCursor('right')
-        } else { //中间
+        }
+        // else if (rela_left <= 6) { //滑动到左边
+        //     this.setTargetDragTypeCursor('left')
+        // }
+        else { //中间
             this.setTargetDragTypeCursor('position')
         }
     }
+
     // 设置鼠标形状和拖拽类型
     setTargetDragTypeCursor = (cursorTypeKey) => {
         this.setState({
@@ -220,6 +223,9 @@ export default class GetRowTaskItem extends Component {
         this.y = 0
         this.l = 0
         this.t = 0
+        if (this.is_down) {
+            this.overDragCompleteHandle()
+        }
         this.is_down = false
         this.setTargetDragTypeCursor('pointer')
         this.setState({
@@ -228,6 +234,35 @@ export default class GetRowTaskItem extends Component {
         window.onmousemove = null;
         window.onmuseup = null;
     }
+
+    // 拖拽完成后的事件处理
+    overDragCompleteHandle = () => {
+        const { itemValue: { id } } = this.props
+        const { local_left, local_width } = this.state
+        this.handleHasScheduleCard({
+            card_id: id,
+            updateData: {
+                width: local_width,
+                left: local_left
+            }
+        })
+    }
+    // 修改有排期的任务
+    handleHasScheduleCard = ({ card_id, updateData = {} }) => {
+        const { list_group = [], list_id, dispatch } = this.props
+        const list_group_new = [...list_group]
+        const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
+        const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+        list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...updateData }
+
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                list_group: list_group_new
+            }
+        })
+    }
+
     render() {
         const { itemValue = {} } = this.props
         const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = itemValue
@@ -278,5 +313,14 @@ export default class GetRowTaskItem extends Component {
                 </div>
             </div>
         )
+    }
+}
+function mapStateToProps({ gantt: {
+    datas: {
+        list_group = [],
+    }
+} }) {
+    return {
+        list_group,
     }
 }
