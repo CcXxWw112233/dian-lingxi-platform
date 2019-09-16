@@ -91,8 +91,8 @@ export default class GetRowTaskItem extends Component {
     }
 
     onMouseMove = (e) => {
-        console.log('ssss', e.target.offsetLeft)
         e.stopPropagation()
+        this.handleMouseMove(e)
         if (this.is_down == false) {
             return;
         }
@@ -116,6 +116,40 @@ export default class GetRowTaskItem extends Component {
         })
     }
 
+    // 针对于在某一条任务上滑动时，判别鼠标再不同位置的处理，(ui箭头, 事件处理等)
+    handleMouseMove = (e) => {
+        if (this.is_down) { //准备拖动时不再处理
+            return
+        }
+        this.displayCoord(e)
+    }
+    getX = (obj) => {
+        var parObj = obj;
+        var left = obj.offsetLeft;
+        while (parObj = parObj.offsetParent) {
+            left += parObj.offsetLeft;
+        }
+        return left;
+    }
+
+    getY = (obj) => {
+        var parObj = obj;
+        var top = obj.offsetTop;
+        while (parObj = parObj.offsetParent) {
+            top += parObj.offsetTop;
+        }
+        return top;
+    }
+    displayCoord = (event) => {
+        const oDiv = event.currentTarget
+        const target_1 = document.getElementById('gantt_card_out_middle')
+
+        const offsetTop = this.getY(oDiv);
+        const offsetLeft = this.getX(oDiv);
+        const left = event.clientX - offsetLeft - 2 +  target_1.scrollLeft
+        const top = event.clientY - offsetTop - 2 + target_1.scrollTop
+        console.log('sssss', { top, left})
+    }
     onMouseUp = (e) => {
         e.stopPropagation()
         // console.log("sssssssss", 'upl')
@@ -152,7 +186,7 @@ export default class GetRowTaskItem extends Component {
                 }}
                 onMouseDown={(e) => this.onMouseDown(e)}
                 onMouseMove={(e) => this.onMouseMove(e)}
-                // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+            // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
             >
                 <div
                     data-targetclassname="specific_example"
