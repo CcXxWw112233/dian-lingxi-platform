@@ -73,7 +73,7 @@ export default class GetRowTaskItem extends Component {
         setSpecilTaskExample(data)
     }
 
-    onMouseDownOut = (e) => {
+    onMouseDown = (e) => {
         e.stopPropagation()
         const target = this.out_ref.current
         this.is_down = true;
@@ -85,13 +85,13 @@ export default class GetRowTaskItem extends Component {
         this.t = target.offsetTop;
 
         target.style.cursor = 'move';
-        window.onmousemove = this.onMouseMoveOut.bind(this);
-        window.onmouseup = this.onMouseUpOut.bind(this);
-        // target.onmouseleave = this.onMouseUpOut.bind(this);
+        window.onmousemove = this.onMouseMove.bind(this);
+        window.onmouseup = this.onMouseUp.bind(this);
+        // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
-    onMouseMoveOut = (e) => {
-        console.log
+    onMouseMove = (e) => {
+        console.log('ssss', e.target.offsetLeft)
         e.stopPropagation()
         if (this.is_down == false) {
             return;
@@ -110,14 +110,13 @@ export default class GetRowTaskItem extends Component {
         //计算移动后的左偏移量和顶部的偏移量
         const nl = nx - (this.x - this.l);
         const nt = ny - (this.y - this.t);
-        // console.log('sssss', { l: this.l, t: this.t, x: this.x, y: this.y, nl, nt, })
         this.setState({
             local_top: nt,
             local_left: nl,
         })
     }
 
-    onMouseUpOut = (e) => {
+    onMouseUp = (e) => {
         e.stopPropagation()
         // console.log("sssssssss", 'upl')
         this.x = 0
@@ -151,9 +150,9 @@ export default class GetRowTaskItem extends Component {
                     opacity: 0.5,
                     background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
-                onMouseDown={(e) => this.onMouseDownOut(e)}
-                onMouseMove={(e) => this.onMouseMoveOut(e)}
-            // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                onMouseDown={(e) => this.onMouseDown(e)}
+                onMouseMove={(e) => this.onMouseMove(e)}
+                // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
             >
                 <div
                     data-targetclassname="specific_example"
