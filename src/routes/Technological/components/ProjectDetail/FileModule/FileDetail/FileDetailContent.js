@@ -518,6 +518,7 @@ class FileDetailContent extends React.Component {
       })
     }
   }
+
   getSearchFromLocation = location => {
     if (!location.search) {
       return {}
@@ -527,6 +528,7 @@ class FileDetailContent extends React.Component {
       return Object.assign({}, acc, { [key]: value })
     }, {})
   }
+
   createOnlyReadingShareLink = () => {
     const { location } = this.props
     //获取参数
@@ -550,6 +552,20 @@ class FileDetailContent extends React.Component {
       }
     })
   }
+
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
   handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
     const isStopShare = obj && obj['status'] && obj['status'] === '0'
     return modifOrStopShareLink(obj).then(res => {
@@ -572,65 +588,74 @@ class FileDetailContent extends React.Component {
       message.error('操作失败')
     })
   }
+
+  // 访问控制移除回调
   handleVisitControlRemoveContentPrivilege = id => {
 
     const { file_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
     removeContentPrivilege({
-      content_id: file_id,
-      content_type: 'file',
-      user_id: id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        const newPrivileges = {}
-        for (let item in privileges) {
-          if (item !== id) {
-            newPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({ privileges: newPrivileges })
+        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
         message.error('移出用户失败')
       }
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+
+  // 访问控制下拉菜单选项
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if (!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if (!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    this.handleSetContentPrivilege(user_ids, 'read')
+
+  // 访问控制添加成员回调
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    // const users_arr = ids.reduce((acc, curr) => {
+    //   if (!acc) return curr
+    //   return `${acc},${curr}`
+    // }, '')
+    this.handleSetContentPrivilege(users_arr, 'read')
   }
-  handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+
+  // 访问控制设置回调
+  handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
     //debugger
     const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'
     const privilege_code = type
-    const user_ids = ids
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
-        this.visitControlUpdateCurrentModalData({ privileges: Object.assign({}, privileges, addedPrivileges) })
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
       } else {
         message.error(errorText)
       }
     })
   }
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
   handleVisitControlChange = (flag) => {
     const { is_privilege = '0', file_id } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'file_id')
     const toBool = str => !!Number(str)
@@ -646,23 +671,78 @@ class FileDetailContent extends React.Component {
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
-        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0' }, flag)
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {
         message.error('设置内容权限失败，请稍后再试')
       }
     })
     // console.log(flag, 'get visitcontrol change')
   }
+
+  // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id } } } = this.props.model
-    const newCurrentPreviewFileData = Object.assign({}, currentPreviewFileData, obj)
-    this.props.updateDatasFile({
-      currentPreviewFileData: newCurrentPreviewFileData
-    })
-    this.props.getFileList({
-      folder_id: belong_folder_id
-    })
+    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges, is_privilege } } } = this.props.model
+
+    // 设置访问控制开关
+    if (obj && obj.type && obj.type == 'privilege') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      this.props.updateDatasFile({
+        currentPreviewFileData: newCurrentPreviewFileData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+    // 添加成员
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+      this.props.updateDatasFile({
+        currentPreviewFileData: newCurrentPreviewFileData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+    // 移除成员
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+      this.props.updateDatasFile({
+        currentPreviewFileData: newCurrentPreviewFileData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
   }
+
   getFieldFromPropsCurrentPreviewFileData = (...fields) => {
     const { datas: { currentPreviewFileData = {} } } = this.props.model
     return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileData[curr] }), {})
@@ -679,6 +759,7 @@ class FileDetailContent extends React.Component {
       type: 'point'
     })
   }
+
   handleDeleteCommentItem = obj => {
     const { id } = obj
     const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits } } = this.props.model
@@ -687,6 +768,7 @@ class FileDetailContent extends React.Component {
       filePreviewPointNumCommits: filePreviewPointNumCommits.filter(i => i.id !== id)
     })
   }
+
   getCurrentUserId = () => {
     try {
       const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
@@ -695,6 +777,7 @@ class FileDetailContent extends React.Component {
       return ''
     }
   }
+
   handleGetNewComment = obj => {
     const { coordinates, comment, point_number } = obj
     const { datas: {
@@ -710,6 +793,7 @@ class FileDetailContent extends React.Component {
       coordinates: JSON.stringify(coordinates),
     })
   }
+
   handleZoomPictureFullScreen = (flag) => {
     this.setState({
       isZoomPictureFullScreenMode: flag,
@@ -742,7 +826,7 @@ class FileDetailContent extends React.Component {
     temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
       let new_item = item
       if (new_item.file_id == file_id) {
-        temp_val= new_item.remarks
+        temp_val = new_item.remarks
         new_item = { ...item, is_edit: !item.is_edit }
       }
       return new_item
@@ -780,7 +864,7 @@ class FileDetailContent extends React.Component {
   }
 
   // 改变编辑描述的value onChange事件
-  handleFileVersionValue = (list ,e) => {
+  handleFileVersionValue = (list, e) => {
     let val = e.target.value
     this.setState({
       editValue: val
@@ -855,10 +939,18 @@ class FileDetailContent extends React.Component {
       componentHeight = fileDetailContentOutHeight - 20;
     }
 
-    const { datas: { projectDetailInfoData = {}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewIsRealImage = false } } = this.props.model
+    const { 
+      datas: { 
+        projectDetailInfoData = {}, currentParrentDirectoryId, filePreviewCurrentVersionId, pdfDownLoadSrc, filePreviewCurrentFileId, 
+        seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
+        filePreviewCurrentVersionList = [], filePreviewIsRealImage = false,
+        currentPreviewFileData = {} 
+      } 
+  
+    } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege, privileges } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    const { is_privilege, privileges } = currentPreviewFileData
 
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
@@ -1168,6 +1260,7 @@ class FileDetailContent extends React.Component {
             <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px', marginTop: '2px' }}>
               <VisitControl
+                board_id={board_id}
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 handleVisitControlChange={this.handleVisitControlChange}
                 otherPrivilege={privileges}

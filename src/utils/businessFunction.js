@@ -65,6 +65,13 @@ export const checkIsHasPermission = (code, param_org_id) => {
   return flag
 }
 
+// 即将更新一个关于访问控制的方法
+// export const ss = ({ code, privileges, permissionsValue }) => {
+//   const user_id = '',
+//   const permissions_type
+
+// }
+
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []

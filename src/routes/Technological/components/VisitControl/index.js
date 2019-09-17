@@ -22,7 +22,7 @@ import classNames from 'classnames/bind';
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
+  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
 import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
 
@@ -224,7 +224,7 @@ class VisitControl extends Component {
 
   //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -254,18 +254,25 @@ class VisitControl extends Component {
   // 这是分析检测其他人的权限
   parseOtherPrivileges = otherPrivilege => {
     const { currentOrgAllMembersList = [] } = this.props;
-    const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
-      otherPrivilege.every(item => {
+    const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList => {
+      if (!(otherPrivilege instanceof Array)) {
+        return
+      }
+      return otherPrivilege && otherPrivilege.every(item => {
         // console.log('sssss', item)
         return currentOrgAllMembersList.find(each => each.id === item.user_info.id)
       });
+    }
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
 
     // console.log('ssss_2', Object.entries(otherPrivilege))
     let allMember = [...currentOrgAllMembersList];
     // console.log(allMember, 'ssssss_allMember')
     const getOthersPersonList = (arr) => {
-      return otherPrivilege.reduce((acc, curr) => {
+      if (!(otherPrivilege instanceof Array)) {
+        return
+      }
+      return otherPrivilege && otherPrivilege.reduce((acc, curr) => {
         const { content_privilege_code, user_info = {}, id } = curr
         const { name, avatar } = user_info
         const obj = {
@@ -282,8 +289,14 @@ class VisitControl extends Component {
         return [...acc, obj];
       }, []);
     }
+    // this.setState({
+    //   othersPersonList: getOthersPersonList(allMember)
+    // });
     if (!isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList(currentOrgAllMembersList)) {
       // 过滤那些不在组织中的人
+      if (!(otherPrivilege instanceof Array)) {
+        return
+      }
       const notFoundInOrgAllMembersListMembers = otherPrivilege.filter(
         item => !currentOrgAllMembersList.find(each => each.id === item.user_info.id)
       );
@@ -567,7 +580,7 @@ class VisitControl extends Component {
   isCurrentHasNoMember = () => {
     const { principalList } = this.props;
     const { othersPersonList } = this.state;
-    return principalList.length === 0 && othersPersonList.length === 0;
+    return principalList && principalList.length == 0 && othersPersonList && othersPersonList.length == 0;
   };
 
   // 渲染popover组件中的内容

@@ -470,11 +470,9 @@ export default class Header extends React.Component {
   }
   //右方部分点击-----------------end
   getFieldFromProjectDetailInfoData = (...fields) => {
-    debugger
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     if (!fields.length) return {}
     return fields.reduce((acc, curr) => {
-      debugger
       let fieldObj = {}
       curr in projectDetailInfoData ? fieldObj[curr] = projectDetailInfoData[curr] : null
       return Object.assign({}, acc, fieldObj)
@@ -492,7 +490,6 @@ export default class Header extends React.Component {
   }
   handleVisitControlChange = flag => {
     const { is_privilege, board_id } = this.getFieldFromProjectDetailInfoData('is_privilege', 'board_id')
-    console.log(is_privilege, 'ssssss_1111')
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag === is_privilege_bool) {
