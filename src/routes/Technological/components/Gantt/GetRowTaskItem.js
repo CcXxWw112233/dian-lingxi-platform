@@ -5,6 +5,7 @@ import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height } from './constants'
+import { isSamDay } from './getDate'
 // 参考自http://www.jq22.com/webqd1348
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -237,7 +238,8 @@ export default class GetRowTaskItem extends Component {
 
     // 拖拽完成后的事件处理
     overDragCompleteHandle = () => {
-        const { itemValue: { id } } = this.props
+        const { itemValue: { id, end_time, start_time } } = this.props
+
         const { local_left, local_width, drag_type } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -248,11 +250,22 @@ export default class GetRowTaskItem extends Component {
             const end_time_timestamp = date.timestamp
             updateData.due_time = end_time_timestamp
             console.log('ssss', end_time_position, new Date(end_time_timestamp).toDateString())
+            if(isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
+                const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
+                const time_width = time_span_ * ceilWidth
+                this.setState({
+                    local_width:  time_width,
+                    local_width_flag:  time_width
+                })
+                console.log('ssss', time_span_, end_time, start_time)
+                return
+            }
+            this.handleHasScheduleCard({
+                card_id: id,
+                updateData
+            })
         }
-        this.handleHasScheduleCard({
-            card_id: id,
-            updateData
-        })
+      
     }
     // 修改有排期的任务
     handleHasScheduleCard = ({ card_id, updateData = {} }) => {
