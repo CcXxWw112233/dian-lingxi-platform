@@ -11,7 +11,7 @@ import {
 } from "../../../../../globalset/js/constant";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from "../../../../../utils/util";
-import { is } from '_immutable@3.8.2@immutable'
+
 
 const Panel = Collapse.Panel
 

@@ -24,7 +24,6 @@ import VisitControl from './../../components/VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../services/technological/project'
 import LcbInHeader from './components/LcbInHeader/index'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
-import { is } from '_immutable@3.8.2@immutable'
 import globalStyle from '@/globalset/css/globalClassName.less'
 
 let is_starinit = null
