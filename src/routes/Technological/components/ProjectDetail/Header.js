@@ -688,6 +688,16 @@ export default class Header extends React.Component {
     return temp_arr
   }
 
+  // 邀请人进项目
+  addMenbersInProject = (data) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/addMenbersInProject',
+      payload: {
+        ...data
+      }
+    })
+  }
 
   render() {
     const that = this
@@ -1064,7 +1074,7 @@ export default class Header extends React.Component {
           </div>
         </div>
         <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} />
-        <ShowAddMenberModal show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal  addMenbersInProject={this.addMenbersInProject}  show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
         <AddModalForm  board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
       </div>
     )

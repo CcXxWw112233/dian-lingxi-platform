@@ -141,6 +141,17 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
+
+  // 邀请人进项目
+  addMenbersInProject = (data) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/addMenbersInProject',
+      payload: {
+        ...data
+      }
+    })
+  }
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } = this.props
@@ -303,7 +314,7 @@ export default class DrawDetailInfo extends React.Component {
             </div>
           ) : (EditArea)}
         </div>
-        <ShowAddMenberModal show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal addMenbersInProject={this.addMenbersInProject} show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
       </div>
     )
   }
