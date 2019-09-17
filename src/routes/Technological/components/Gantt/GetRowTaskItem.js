@@ -8,7 +8,9 @@ import { task_item_height, task_item_margin_top, date_area_height } from './cons
 import { isSamDay } from './getDate'
 import { updateTask } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, Dropdown } from 'antd'
+import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
+
 // 参考自http://www.jq22.com/webqd1348
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -292,7 +294,7 @@ export default class GetRowTaskItem extends Component {
             })
     }
     overDragCompleteHandlePositon = () => {
-        
+
     }
     // 拖拽完成后的事件处理---end
 
@@ -317,50 +319,52 @@ export default class GetRowTaskItem extends Component {
         const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = itemValue
         const { local_left, local_top, local_width } = this.state
         return (
-            <div
-                className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                data-targetclassname="specific_example"
-                // draggable
-                ref={this.out_ref}
-                style={{
-                    zIndex: this.is_down ? 1 : 0,
-                    left: local_left, top: local_top,
-                    width: (local_width || 6) - 6, height: (height || task_item_height),
-                    marginTop: task_item_margin_top,
-                    opacity: 0.5,
-                    background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                }}
-                onMouseDown={(e) => this.onMouseDown(e)}
-                onMouseMove={(e) => this.onMouseMove(e)}
-            // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
-            >
+            <Dropdown placement="bottomRight" overlay={<CardDropDetail {...itemValue} />} key={id}>
                 <div
+                    className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
-                    className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                    // onMouseDown={(e) => e.stopPropagation()} 
-                    onMouseMove={(e) => e.preventDefault()}
-
+                    // draggable
+                    ref={this.out_ref}
+                    style={{
+                        zIndex: this.is_down ? 1 : 0,
+                        left: local_left, top: local_top,
+                        width: (local_width || 6) - 6, height: (height || task_item_height),
+                        marginTop: task_item_margin_top,
+                        opacity: 0.5,
+                        background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                    }}
+                    onMouseDown={(e) => this.onMouseDown(e)}
+                    onMouseMove={(e) => this.onMouseMove(e)}
+                // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
                 >
-                    <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_status}`}
-                        //  onMouseDown={(e) => e.stopPropagation()} 
-                        onMouseMove={(e) => e.preventDefault()}
-                    >
-                        <CheckItem is_realize={is_realize} />
-                    </div>
-                    <div data-targetclassname="specific_example"
-                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
-                        // onMouseDown={(e) => e.stopPropagation()}
-                        onMouseMove={(e) => e.preventDefault()}
-                    >{name}</div>
-                    <div data-targetclassname="specific_example"
+                    <div
+                        data-targetclassname="specific_example"
+                        className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                         // onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
+
                     >
-                        <AvatarList users={executors} size={'small'} />
+                        <div data-targetclassname="specific_example"
+                            className={`${indexStyles.card_item_status}`}
+                            //  onMouseDown={(e) => e.stopPropagation()} 
+                            onMouseMove={(e) => e.preventDefault()}
+                        >
+                            <CheckItem is_realize={is_realize} />
+                        </div>
+                        <div data-targetclassname="specific_example"
+                            className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
+                            // onMouseDown={(e) => e.stopPropagation()}
+                            onMouseMove={(e) => e.preventDefault()}
+                        >{name}</div>
+                        <div data-targetclassname="specific_example"
+                            // onMouseDown={(e) => e.stopPropagation()} 
+                            onMouseMove={(e) => e.preventDefault()}
+                        >
+                            <AvatarList users={executors} size={'small'} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Dropdown>
         )
     }
 }

@@ -413,11 +413,11 @@ export default class GetRowGantt extends Component {
           const { list_data = [], list_id } = value
           return (
             list_data.map((value2, key) => {
-              // const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
-              const { id, left, width, start_time, end_time } = value2
+              const { left, start_time, end_time, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
+              // const { id, left, width, start_time, end_time } = value2
               return (
                 <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
-                  <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
+                  {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
                     <GetRowTaskItem
                       key={`${id}_${start_time}_${end_time}`}
                       itemValue={value2}
@@ -425,8 +425,8 @@ export default class GetRowGantt extends Component {
                       ganttPanelDashedDrag={this.isDragging}
                       list_id={list_id}
                     />
-
-                    {/* <div
+                    {/* 
+                    <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"
                       // onDrag={this.onCardItemDrag}
@@ -456,7 +456,7 @@ export default class GetRowGantt extends Component {
                         </div>
                       </div>
                     </div> */}
-                  </Dropdown>
+                  {/* </Dropdown> */}
                 </QueueAnim>
 
               )
