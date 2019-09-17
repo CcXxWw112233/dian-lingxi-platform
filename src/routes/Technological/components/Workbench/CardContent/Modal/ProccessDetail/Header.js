@@ -297,7 +297,7 @@ export default class Header extends React.Component {
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
             />
           </span>
-          <span style={{ marginTop: '-5px', float: 'right', marginLeft: '18px' }}>
+          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px' }}>
             <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
           <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />

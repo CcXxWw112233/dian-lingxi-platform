@@ -9,7 +9,6 @@ import Area from './components/area/Area'
 import DataBase from './components/database/DataBase'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
-import { is } from 'immutable';
 
 @connect(({ xczNews: { XczNewsOrganizationList }, }) => ({
     XczNewsOrganizationList,

@@ -83,7 +83,7 @@ export default class DCAddChirdrenTask extends React.Component{
       taskGroupListIndex_index: this.props.model.datas.taskGroupListIndex_index,
       length: child_data.length,
     }
-    drawContent['child_data'].unshift(obj)
+    drawContent['child_data'] && drawContent['child_data'].unshift(obj)
     this.updateParentTaskList('child_data', drawContent['child_data'])
     this.props.addChirldTask(obj)
     this.setState({

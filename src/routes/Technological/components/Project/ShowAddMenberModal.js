@@ -50,6 +50,7 @@ class ShowAddMenberModal extends React.Component {
     }, '')
   }
   handleInviteMemberReturnResult = (selectedMember = []) => {
+    this.props.new_handleInviteMemberReturnResult && this.props.new_handleInviteMemberReturnResult(selectedMember)
     this.handleSubmit(this.handleUsersToUsersStr(selectedMember))
   }
 
@@ -61,12 +62,12 @@ class ShowAddMenberModal extends React.Component {
   }
 
   renderUsersList = () => {
-    const { _organization_id, show_wechat_invite } = this.props
+    const { _organization_id, show_wechat_invite, title, submitText } = this.props
     const container = (
       <Form style={{ margin: '0 auto', width: 336 }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div>
         <div>
-          <InviteOthers isShowTitle={false} _organization_id={_organization_id || getGlobalData('aboutBoardOrganizationId')} submitText='邀请加入' handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
+          <InviteOthers submitText={submitText ? submitText : '邀请加入'} isShowTitle={false} _organization_id={_organization_id || getGlobalData('aboutBoardOrganizationId')} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
         {
           show_wechat_invite && (
@@ -90,7 +91,7 @@ class ShowAddMenberModal extends React.Component {
         <CustormModal
           visible={modalVisible}
           width={472}
-          zIndex={1006}
+          zIndex={1100}
           maskClosable={false}
           footer={null}
           destroyOnClose

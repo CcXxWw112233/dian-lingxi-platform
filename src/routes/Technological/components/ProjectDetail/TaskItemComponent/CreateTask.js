@@ -239,7 +239,7 @@ export default class CreateTask extends React.Component {
   //右方抽屉弹窗---end
   render() {
     const { clientHeight=changeClientHeight(), isScrolling} = this.state
-    const { datas: { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1' } } = this.props.model
+    const { datas: { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType='1', board_id } } = this.props.model
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if(clientHeight < 900) {
       corretDegree = 44
@@ -267,6 +267,8 @@ export default class CreateTask extends React.Component {
                       itemKey={key}
                       taskGroupListIndex={key}
                       {...this.props}
+                      getTaskGroupListArrangeType={getTaskGroupListArrangeType}
+                      board_id={board_id}
                       setDrawerVisibleOpen={this.setDrawerVisibleOpen.bind(this)}
                     ></TaskItem>
                   </div>
