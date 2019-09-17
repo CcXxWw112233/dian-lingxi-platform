@@ -224,7 +224,7 @@ export default class GetRowTaskItem extends Component {
         this.l = 0
         this.t = 0
         if (this.is_down) {
-            this.overDragCompleteHandle()
+            this.overDragCompleteHandle() //松开拖拽完成，继续操作
         }
         this.is_down = false
         this.setTargetDragTypeCursor('pointer')
@@ -238,13 +238,20 @@ export default class GetRowTaskItem extends Component {
     // 拖拽完成后的事件处理
     overDragCompleteHandle = () => {
         const { itemValue: { id } } = this.props
-        const { local_left, local_width } = this.state
+        const { local_left, local_width, drag_type } = this.state
+        const { date_arr_one_level, ceilWidth } = this.props
+        const updateData = {}
+        if ('right' == drag_type) {
+            const end_time_position = local_left + local_width
+            const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
+            const date = date_arr_one_level[end_time_index]
+            const end_time_timestamp = date.timestamp
+            updateData.due_time = end_time_timestamp
+            console.log('ssss', end_time_position, new Date(end_time_timestamp).toDateString())
+        }
         this.handleHasScheduleCard({
             card_id: id,
-            updateData: {
-                width: local_width,
-                left: local_left
-            }
+            updateData
         })
     }
     // 修改有排期的任务
@@ -256,9 +263,9 @@ export default class GetRowTaskItem extends Component {
         list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...updateData }
 
         dispatch({
-            type: 'gantt/updateDatas',
+            type: 'gantt/handleListGroup',
             payload: {
-                list_group: list_group_new
+                data: list_group_new
             }
         })
     }
@@ -318,9 +325,13 @@ export default class GetRowTaskItem extends Component {
 function mapStateToProps({ gantt: {
     datas: {
         list_group = [],
+        date_arr_one_level = [],
+        ceilWidth
     }
 } }) {
     return {
         list_group,
+        date_arr_one_level,
+        ceilWidth
     }
 }

@@ -414,11 +414,12 @@ export default class GetRowGantt extends Component {
           return (
             list_data.map((value2, key) => {
               // const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
-              const { id, left, width } = value2
+              const { id, left, width, start_time, end_time } = value2
               return (
-                <QueueAnim type="right" key={`${id}_${width}_${left}`} duration={200}>
+                <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
                   <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
                     <GetRowTaskItem
+                      key={`${id}_${start_time}_${end_time}`}
                       itemValue={value2}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.isDragging}
