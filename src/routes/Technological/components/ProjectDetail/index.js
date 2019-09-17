@@ -73,7 +73,7 @@ const ProjectDetail = (props) => {
       <div className={indexStyles.headerMaskDown}></div>
       <Header />
       <div style={{ padding: '0 20px' }}>
-        {filterAppsModule(appsSelectKey)}
+        {/* {filterAppsModule(appsSelectKey)} */}
       </div>
     </div>
   )
