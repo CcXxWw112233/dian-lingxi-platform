@@ -6,6 +6,9 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height } from './constants'
 import { isSamDay } from './getDate'
+import { updateTask } from '../../../../services/technological/task'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { message } from 'antd'
 // 参考自http://www.jq22.com/webqd1348
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -52,8 +55,9 @@ export default class GetRowTaskItem extends Component {
         this.setState({
             local_top: top,
             local_left: left,
-            local_width: width,
-            local_width_flag: width
+            local_width: width, //实时变化
+            local_width_flag: width, //作为local_width实时变化在拖动松开后的标志宽度
+            local_width_origin: width, //记载原始宽度，不变，除非传递进来的改变
         })
 
     }
@@ -217,6 +221,7 @@ export default class GetRowTaskItem extends Component {
         return top;
     }
 
+    // 拖拽完成后松开鼠标
     onMouseUp = (e) => {
         e.stopPropagation()
         // console.log("sssssssss", 'upl')
@@ -236,37 +241,61 @@ export default class GetRowTaskItem extends Component {
         window.onmuseup = null;
     }
 
-    // 拖拽完成后的事件处理
+    // 拖拽完成后的事件处理---start
     overDragCompleteHandle = () => {
-        const { itemValue: { id, end_time, start_time } } = this.props
+        const { drag_type } = this.state
+        if ('right' == drag_type) {
+            this.overDragCompleteHandleRight()
+        } else if ('position' == drag_type) {
+            this.overDragComp
+        } else {
 
-        const { local_left, local_width, drag_type } = this.state
+        }
+
+
+    }
+    overDragCompleteHandleRight = () => { //右侧增减时间
+        const { itemValue: { id, end_time, start_time, board_id } } = this.props
+        const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
-        if ('right' == drag_type) {
-            const end_time_position = local_left + local_width
-            const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
-            const date = date_arr_one_level[end_time_index]
-            const end_time_timestamp = date.timestamp
-            updateData.due_time = end_time_timestamp
-            console.log('ssss', end_time_position, new Date(end_time_timestamp).toDateString())
-            if(isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
-                const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
-                const time_width = time_span_ * ceilWidth
-                this.setState({
-                    local_width:  time_width,
-                    local_width_flag:  time_width
-                })
-                console.log('ssss', time_span_, end_time, start_time)
-                return
-            }
-            this.handleHasScheduleCard({
-                card_id: id,
-                updateData
+        const end_time_position = local_left + local_width
+        const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
+        const date = date_arr_one_level[end_time_index]
+        const end_time_timestamp = date.timestamp
+        updateData.due_time = end_time_timestamp
+        if (isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
+            const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
+            const time_width = time_span_ * ceilWidth
+            this.setState({
+                local_width: time_width,
+                local_width_flag: time_width
             })
+            return
         }
-      
+        updateTask({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
+            .then(res => {
+                if (isApiResponseOk(res)) {
+                    this.handleHasScheduleCard({
+                        card_id: id,
+                        updateData
+                    })
+                } else {
+                    this.setState({
+                        local_width: local_width_origin,
+                        local_width_flag: local_width_origin
+                    })
+                    message.error(res.message)
+                }
+            }).catch(err => {
+                message.error('更新失败')
+            })
     }
+    overDragCompleteHandlePositon = () => {
+        
+    }
+    // 拖拽完成后的事件处理---end
+
     // 修改有排期的任务
     handleHasScheduleCard = ({ card_id, updateData = {} }) => {
         const { list_group = [], list_id, dispatch } = this.props
