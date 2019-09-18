@@ -120,11 +120,11 @@ export default class ProcessItem extends React.Component {
             #{this.state.value.board_name}
           </span> */}
           {
-            !(is_privilege == '0') && (
+            is_privilege && (
               <Tooltip title="已开启访问控制" placement="top">
-                <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px', cursor: 'pointer' }}>
+                <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px', cursor: 'pointer' }}>
                   <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
-                </div>
+                </span>
               </Tooltip>
             )
           }
