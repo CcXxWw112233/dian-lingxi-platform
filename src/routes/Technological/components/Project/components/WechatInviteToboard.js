@@ -17,14 +17,14 @@ export default class WechatInviteToboard extends Component {
     }
     componentWillReceiveProps(nextProps) {
         const { modalVisible } = nextProps
-        if(modalVisible) {
+        if (modalVisible) {
             this.getQRCode()
         }
     }
     getQRCode = () => {
         const { board_id } = this.props
         joinBoardQRCode({ board_id, id: board_id }).then(res => {
-            if(isApiResponseOk(res)) {
+            if (isApiResponseOk(res)) {
                 this.setState({
                     qr_code_src: res.message
                 })
@@ -38,10 +38,10 @@ export default class WechatInviteToboard extends Component {
         return (
             <div>
                 <div style={{ color: '#595959', fontSize: '20px', color: '#595959', fontWeight: 'bold' }}>
-                    微信连接邀请参与人
+                    微信扫码邀请参与人
                 </div>
                 <div style={{ margin: '0 auto', marginTop: 28, height: 196, width: 196, background: 'rgba(216,216,216,1)' }}>
-                    <img src={qr_code_src} style={{height: 196, width: 196, }} />
+                    <img src={qr_code_src} style={{ height: 196, width: 196, }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 14 }}>
                     <div style={{ width: 48, height: 1, background: 'rgba(0,0,0,0.09)' }}></div>

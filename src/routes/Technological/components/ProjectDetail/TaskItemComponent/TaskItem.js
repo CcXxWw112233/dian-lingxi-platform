@@ -271,7 +271,8 @@ export default class TaskItem extends React.Component {
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
         //更新数据
-        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege' })
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
         message.error('设置任务列表内容权限失败，请稍后再试')
       }
@@ -304,7 +305,7 @@ export default class TaskItem extends React.Component {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
-      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+      // this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
 
@@ -385,9 +386,9 @@ export default class TaskItem extends React.Component {
     let temp_arr = []
     let temp_id = []
     for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
         temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
+        temp_id.push(arr[i]['id'])
       }
     }
     return temp_arr

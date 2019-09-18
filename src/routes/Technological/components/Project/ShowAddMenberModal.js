@@ -73,7 +73,7 @@ class ShowAddMenberModal extends React.Component {
           show_wechat_invite && (
             <div style={{ marginTop: -18, marginBottom: 16, color: '#1890FF', cursor: 'pointer' }} onClick={this.setWechatInviteVisible}>
               <i className={globalStyles.authTheme} style={{ color: '#46A318', marginRight: 4 }}>&#xe634;</i>
-              通过微信连接邀请
+              微信扫码邀请参与人
             </div>
           )
         }
