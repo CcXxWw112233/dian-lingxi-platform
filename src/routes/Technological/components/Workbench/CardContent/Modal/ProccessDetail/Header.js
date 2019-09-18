@@ -179,7 +179,10 @@ export default class Header extends React.Component {
 
   visitControlUpdateCurrentModalData = obj => {
     const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const { privileges = [] } = originProcessInfo
+    const { privileges = [], status } = originProcessInfo
+    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { board_id } = projectDetailInfoData
+    const { dispatch } = this.props
 
     // 访问控制开关
     if (obj && obj.type &&  obj.type == 'privilege') {
@@ -196,6 +199,14 @@ export default class Header extends React.Component {
       this.props.updateDatasProcess({
         processInfo: newProcessInfo
       });
+      // 这是需要获取一下流程列表
+      dispatch({
+        type: 'projectDetailProcess/getProcessListByType',
+        payload: {
+          status: status,
+          board_id: board_id
+        }
+      })
     };
 
     // 访问控制添加
@@ -254,7 +265,7 @@ export default class Header extends React.Component {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
     const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
-    const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
@@ -370,6 +381,7 @@ export default class Header extends React.Component {
             }}
           >
             <VisitControl
+              board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
               principalList={principalList}

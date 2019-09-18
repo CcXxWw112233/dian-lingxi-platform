@@ -682,7 +682,8 @@ class FileDetailContent extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges, is_privilege } } } = this.props.model
+    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges, is_privilege }, board_id } } = this.props.model
+    const { dispatch } = this.props
 
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
@@ -700,7 +701,8 @@ class FileDetailContent extends React.Component {
         currentPreviewFileData: newCurrentPreviewFileData
       })
       this.props.getFileList({
-        folder_id: belong_folder_id
+        folder_id: belong_folder_id,
+        // board_id: board_id
       })
     }
 

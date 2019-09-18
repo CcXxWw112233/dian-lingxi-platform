@@ -241,7 +241,7 @@ export default class TaskItem extends React.Component {
     dispatch({
       type: 'projectDetailTask/getTaskGroupList',
       payload: {
-        type: '2',
+        // type: '2',
         arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
         board_id: board_id
       }
