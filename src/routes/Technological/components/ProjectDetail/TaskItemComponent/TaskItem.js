@@ -238,31 +238,6 @@ export default class TaskItem extends React.Component {
   visitControlUpdateCurrentProjectData = (obj = {}) => {
     const { taskItemValue = {}, itemKey, dispatch, getTaskGroupListArrangeType, board_id } = this.props
     const { list_id, list_name } = taskItemValue
-    // 访问控制的切换
-    // if (obj && obj.type && obj.type == 'privilege') {
-    //   dispatch({
-    //     type: 'projectDetailTask/getTaskGroupList',
-    //     payload: {
-    //       type: '2',
-    //       arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
-    //       board_id: board_id
-    //     }
-    //   })
-    // }
-
-    // // 访问控制添加成员
-    // if (obj && obj.type && obj.type == 'add') {
-    //   dispatch({
-    //     type: 'projectDetailTask/getTaskGroupList',
-    //     payload: {
-    //       type: '2',
-    //       arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
-    //       board_id: board_id
-    //     }
-    //   })
-    // }
-    // const data = Object.assign({}, { id: list_id, itemKey, name: list_name })
-    // this.props.updateTaskGroup(data)
     dispatch({
       type: 'projectDetailTask/getTaskGroupList',
       payload: {
@@ -331,7 +306,6 @@ export default class TaskItem extends React.Component {
     } else {
       this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
-    console.log(id, type, 'handleClickedOtherPersonListOperatorItem')
   }
 
   // 访问控制的添加成员

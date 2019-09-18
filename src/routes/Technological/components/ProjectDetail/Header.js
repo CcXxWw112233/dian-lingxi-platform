@@ -592,7 +592,6 @@ export default class Header extends React.Component {
   }
   handleVisitControlChange = flag => {
     const { is_privilege, board_id } = this.getFieldFromProjectDetailInfoData('is_privilege', 'board_id')
-    console.log(is_privilege, 'ssssss_1111')
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag === is_privilege_bool) {
