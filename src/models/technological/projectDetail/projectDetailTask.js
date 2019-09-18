@@ -377,11 +377,12 @@ export default modelExtend(projectDetail, {
         const taskGroupList = yield select(selectTaskGroupList)
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
         const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
-        taskGroupList[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
+        const new_arr_ = [...taskGroupList]
+        new_arr_[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
         yield put({
           type: 'updateDatas',
           payload: {
-            taskGroupList
+            taskGroupList: new_arr_
           }
         })
         message.success('删除成功', MESSAGE_DURATION_TIME)
@@ -424,13 +425,14 @@ export default modelExtend(projectDetail, {
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
         const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
         const drawContent = yield select(selectDrawContent)
+        const new_drawContent_ = {...drawContent}
         taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['child_data'].splice(chirldDataIndex, 1)
-        drawContent['child_data'].splice(chirldDataIndex, 1)
+        new_drawContent_['child_data'].splice(chirldDataIndex, 1)
         yield put({
           type: 'updateDatas',
           payload: {
             taskGroupList,
-            drawContent
+            drawContent: new_drawContent_
           }
         })
         message.success('删除成功', MESSAGE_DURATION_TIME)

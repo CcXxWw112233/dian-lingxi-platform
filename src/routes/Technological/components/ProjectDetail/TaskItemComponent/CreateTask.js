@@ -236,6 +236,7 @@ export default class CreateTask extends React.Component {
     // this.setState({
     //   drawerVisible: false,
     // })
+    const { dispatch } = this.props
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
@@ -246,7 +247,7 @@ export default class CreateTask extends React.Component {
   //右方抽屉弹窗---end
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
-    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id } = this.props
+    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch } = this.props
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if (clientHeight < 900) {
       corretDegree = 44
@@ -289,6 +290,7 @@ export default class CreateTask extends React.Component {
 
         {/*任务详细弹窗*/}
         <DrawContentModal
+          dispatch={dispatch}
           visible={drawerVisible}
           setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} />
       </div>
