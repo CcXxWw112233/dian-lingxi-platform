@@ -907,9 +907,9 @@ class DrawContent extends React.Component {
       new_privileges = new_privileges.map((item) => {
         let new_item = item
         if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
+          new_item = { ...item, content_privilege_code: obj.code }
         } else {
-          new_item = {...item}
+          new_item = { ...item }
         }
         return new_item
       })
@@ -1018,7 +1018,7 @@ class DrawContent extends React.Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         let temp_arr = []
-        temp_arr = res && res.data[0] 
+        temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.error('更新用户控制类型失败')

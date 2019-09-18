@@ -179,13 +179,14 @@ export default modelExtend(projectDetail, {
       let res = yield call(addTaskGroup, payload)
       const { length } = payload
       const taskGroupList = yield select(selectTaskGroupList)
+      const new_arr_ = [...taskGroupList]
       if(isApiResponseOk(res)) {
-        taskGroupList[length].list_id = res.data.id
-        taskGroupList[length].editable = res.data.editable || '1'
+        new_arr_[length].list_id = res.data.id
+        new_arr_[length].editable = res.data.editable || '1'
         yield put({
           type: 'updateDatas',
           payload: {
-            taskGroupList
+            taskGroupList: new_arr_
           }
         })
         message.success(`添加${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
@@ -206,12 +207,13 @@ export default modelExtend(projectDetail, {
       let res = yield call(deleteTaskGroup, payload)
       const { itemKey = 0 } = payload
       const taskGroupList = yield select(selectTaskGroupList)
+      const new_arr_ = [...taskGroupList]
       if(isApiResponseOk(res)) {
-        taskGroupList.splice(itemKey, 1)
+        new_arr_.splice(itemKey, 1)
         yield put({
           type: 'updateDatas',
           payload: {
-            taskGroupList
+            taskGroupList: new_arr_
           }
         })
         message.success(`删除${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
@@ -232,12 +234,13 @@ export default modelExtend(projectDetail, {
       let res = yield call(updateTaskGroup, payload)
       const { itemKey = 0, name } = payload
       const taskGroupList = yield select(selectTaskGroupList)
+      const new_arr_ = [...taskGroupList]
       if(isApiResponseOk(res)) {
-        taskGroupList[itemKey]['list_name'] = name
+        new_arr_[itemKey]['list_name'] = name
         yield put({
           type: 'updateDatas',
           payload: {
-            taskGroupList
+            taskGroupList: new_arr_
           }
         })
         message.success(`更新${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
