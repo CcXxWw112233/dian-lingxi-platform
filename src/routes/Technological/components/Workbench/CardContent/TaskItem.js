@@ -1,17 +1,18 @@
 import React from "react";
 import indexstyles from "../index.less";
-import { Icon, Tooltip} from "antd";
+import { Icon, Tooltip } from "antd";
 import Cookies from "js-cookie";
 import { timestampToTimeNormal2, timeColor } from './../../../../../utils/util'
 import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
-import {message} from "antd/lib/index";
+import { message } from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
-import {setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../../../utils/businessFunction";
+import { setBoardIdStorage, getOrgNameWithOrgIdFilter } from "../../../../../utils/businessFunction";
 import { connect } from 'dva'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 @connect((
-  { 
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }, 
+  {
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
     workbench: { datas: { projectTabCurrentSelectedProject } }
   },
 ) => ({
@@ -30,7 +31,7 @@ export default class TaskItem extends React.Component {
       is_realize: is_realize === "1" ? "0" : "1"
     };
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -50,10 +51,10 @@ export default class TaskItem extends React.Component {
     );
   }
   itemClick(data, e) {
-    const { dispatch} = this.props
+    const { dispatch } = this.props
     const { id, board_id, org_id } = data;
     setBoardIdStorage(board_id)
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -82,8 +83,8 @@ export default class TaskItem extends React.Component {
 
 
   render() {
-    const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org} = this.props;
-    const { org_id, is_realize, board_id, board_name, name, id, due_time } = itemValue;
+    const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
+    const { org_id, is_realize, board_id, board_name, name, id, due_time, is_privilege } = itemValue;
 
     //父级任务
     let parentCards = [];
@@ -111,8 +112,8 @@ export default class TaskItem extends React.Component {
             `
             ${indexstyles.taskItem__workbench_check}
             ${is_realize === "1"
-            ? indexstyles.nomalCheckBoxActive
-            : indexstyles.nomalCheckBox}
+              ? indexstyles.nomalCheckBoxActive
+              : indexstyles.nomalCheckBox}
             `
           }
           onClick={this.itemOneClick.bind(this)}
@@ -126,17 +127,27 @@ export default class TaskItem extends React.Component {
           className={indexstyles.taskItem__workbench_content}
         >
           <Tooltip title={name}>
-          <div
-            className={`${indexstyles.taskItem__workbench_content_title} ${indexstyles.ellipsis}`}
-            style={{
-              maxWidth: 100,
-              textDecoration: is_realize === "1" ? "line-through" : "none"
-            }}
-            onClick={this.itemClick.bind(this, { id, board_id, org_id })}
-          >
-            {name}
-          </div>
+            <div
+              className={`${indexstyles.taskItem__workbench_content_title} ${indexstyles.ellipsis}`}
+              style={{
+                maxWidth: 100,
+                textDecoration: is_realize === "1" ? "line-through" : "none"
+              }}
+              onClick={this.itemClick.bind(this, { id, board_id, org_id })}
+            >
+              {name}
+            </div>
           </Tooltip>
+          {/* 添加访问控制小锁 */}
+          {
+            !(is_privilege == '0') && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <div style={{ color: 'rgba(0,0,0,0.50)', cursor: 'pointer', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </div>
+              </Tooltip>
+            )
+          }
           <div className={indexstyles.taskItem__workbench_content_hier}>
             {parentCards.map((value, key) => {
               const { name, id, board_id } = value;
@@ -151,41 +162,41 @@ export default class TaskItem extends React.Component {
           </div>
           {
             projectTabCurrentSelectedProject == '0' && (
-              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+              <span style={{ marginLeft: 5, marginRight: 2, color: '#8C8C8C' }}>#</span>
             )
           }
           <Tooltip title={
-           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
-            : (<span>{board_name}</span>)
+            is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{ fontSize: 8, color: '#8C8C8C' }} /> {board_name}</span>)
+              : (<span>{board_name}</span>)
           }>
             <div
               className={indexstyles.taskItem__workbench_content_projectname}
-                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', textDecoration: is_realize === "1" ? "line-through" : "none" }}
-                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
-              >
-                {
-                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
-                    <span className={indexstyles.org_name}>
-                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                    </span>
-                  )
-                }
-                {
-                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
-                    <span>
-                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
-                    </span>
-                  )
-                }
-                {
-                  projectTabCurrentSelectedProject == '0' && (
-                    <span className={indexstyles.board_name}>{board_name}</span>
-                  )
-                }
-              </div>
-            </Tooltip>
-          </div>
-        <span className={indexstyles.taskItem__workbench_time} style={{color: timeColor(due_time)}}>
+              style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', textDecoration: is_realize === "1" ? "line-through" : "none" }}
+              onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+            >
+              {
+                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                  <span className={indexstyles.org_name}>
+                    {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </span>
+                )
+              }
+              {
+                is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                  <span>
+                    <Icon type="caret-right" style={{ fontSize: 8, color: '#8C8C8C' }} />
+                  </span>
+                )
+              }
+              {
+                projectTabCurrentSelectedProject == '0' && (
+                  <span className={indexstyles.board_name}>{board_name}</span>
+                )
+              }
+            </div>
+          </Tooltip>
+        </div>
+        <span className={indexstyles.taskItem__workbench_time} style={{ color: timeColor(due_time) }}>
           {transItemValueTimestampToDate}
         </span>
       </div>

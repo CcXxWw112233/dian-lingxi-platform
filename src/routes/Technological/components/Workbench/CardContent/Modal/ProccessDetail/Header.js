@@ -199,14 +199,19 @@ export default class Header extends React.Component {
       this.props.updateDatasProcess({
         processInfo: newProcessInfo
       });
-      // 这是需要获取一下流程列表
-      dispatch({
-        type: 'projectDetailProcess/getProcessListByType',
-        payload: {
-          status: status,
-          board_id: board_id
-        }
-      })
+      // 这是需要获取一下流程列表 区分工作台和项目列表
+      if (projectDetailInfoData && projectDetailInfoData.length) {
+        dispatch({
+          type: 'projectDetailProcess/getProcessListByType',
+          payload: {
+            status: status,
+            board_id: board_id
+          }
+        })
+      } else {
+
+      }
+      
     };
 
     // 访问控制添加

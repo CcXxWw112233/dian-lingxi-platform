@@ -65,12 +65,35 @@ export const checkIsHasPermission = (code, param_org_id) => {
   return flag
 }
 
-// 即将更新一个关于访问控制的方法
-// export const ss = ({ code, privileges, permissionsValue }) => {
-//   const user_id = '',
-//   const permissions_type
-
-// }
+/**
+ * 这是检测某个用户的访问控制权限
+ * 思路: 先在该用户所在的权限列表中查询找到对应的用户, 如果存在, 那么该用户的权限就是
+ * code 类型 { edit > comment > read > permissionsValue } 中的一种, 
+ * 如果不存在, 那么就去查看该用户在项目中对应的权限列表
+ * @param {String} code 对应用户的字段类型
+ * @param {Array} privileges 该用户所在的权限列表
+ * @param {Boolean} permissionsValue 所有用户在项目中的权限
+ */
+export const checkIsHasPermissionInVisitControl = (code, privileges, permissionsValue) => {
+  // 1. 从localstorage中获取当前操作的用户信息
+  // 2. 在privileges列表中查找该用户, 如果找到了, 根据返回的code类型来判断该用户的操作权限
+  // 3. 找不到, 那么就取permissionsValue中对应的权限
+  const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+  const { user_id } = user_set
+  let new_privileges = [...privileges]
+  let result = ''
+  // ???? 在乱写
+  new_privileges = new_privileges.map(item => {
+    let { id, content_privilege_code } = item.user_info
+    if (user_id == id) { // 说明在列表中存在该用户
+      result = code
+    } else {
+      result = permissionsValue
+    }
+    return result
+  })
+  return result
+}
 
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
