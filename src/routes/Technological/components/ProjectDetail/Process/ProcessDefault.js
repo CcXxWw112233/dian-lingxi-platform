@@ -3,6 +3,7 @@ import indexStyles from './index.less'
 import { Tabs } from 'antd'
 import PagingnationContent from './component/ProcessDefault/PagingnationContent'
 import TemplateContent from './component/ProcessDefault/TemplateContent'
+import { connect } from 'dva'
 const TabPane = Tabs.TabPane
 
 const changeClientHeight = () => {
@@ -10,6 +11,7 @@ const changeClientHeight = () => {
   return clientHeight
 }
 
+@connect(mapStateToProps)
 export default class ProcessDefault extends React.Component {
   state = {
     clientHeight: changeClientHeight()
@@ -32,17 +34,26 @@ export default class ProcessDefault extends React.Component {
   }
   handleMenuReallyClick = (e) => {
     const { key } = e
-    if(!key) {
+    if (!key) {
       return false
     }
-    const { datas: { processTemplateList = [] } } = this.props.model
-    const { template_name, template_id, template_no } = processTemplateList[Number(key)]
+    const { processTemplateList = [], dispatch } = this.props
+    const { template_id } = processTemplateList[Number(key)]
     //此处为启动流程界面查询逻辑(查询模板信息)
-    this.props.getTemplateInfo && this.props.getTemplateInfo(template_id)
+    dispatch({
+      dispatch: 'projectDetailProcess/getTemplateInfo',
+      payload: {
+        id: template_id
+      }
+    })
   }
   startEdit() {
-    this.props.updateDatasProcess({
-      processPageFlagStep: '2'
+    const { dispatch } = this.props
+    dispatch({
+      dispatch: 'projectDetailProcess/updateDatas',
+      payload: {
+        processPageFlagStep: '2'
+      }
     })
   }
 
@@ -52,13 +63,13 @@ export default class ProcessDefault extends React.Component {
 
   render() {
     const { clientHeight } = this.state
-    const { datas: { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props.model
+    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } = this.props
     const flowTabs = () => {
       return (
-        <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16}}>
-          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>进行中 </div>} key="1">{<PagingnationContent {...this.props} listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已终止 </div>} key="2">{<PagingnationContent {...this.props} listData={processStopedList} status={'2'} clientHeight={clientHeight}/>}</TabPane>
-          <TabPane tab={<div style={{padding: 0, fontSize: 16}}>已完成 </div>} key="3">{<PagingnationContent {...this.props} listData={processComepletedList} status={'3'} clientHeight={clientHeight}/>}</TabPane>
+        <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{ marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16 }}>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>进行中 </div>} key="1">{<PagingnationContent listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已终止 </div>} key="2">{<PagingnationContent listData={processStopedList} status={'2'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已完成 </div>} key="3">{<PagingnationContent listData={processComepletedList} status={'3'} clientHeight={clientHeight} />}</TabPane>
         </Tabs>
       )
     }
@@ -67,7 +78,7 @@ export default class ProcessDefault extends React.Component {
       <div className={indexStyles.processDefautOut}>
         <div className={indexStyles.processDefautOut_left}>
           <div className={indexStyles.title}>模板</div>
-          <TemplateContent {...this.props} clientHeight = {clientHeight}/>
+          <TemplateContent clientHeight={clientHeight} />
         </div>
         {/*右方流程*/}
         <div className={indexStyles.processDefautOut_right}>
@@ -77,11 +88,29 @@ export default class ProcessDefault extends React.Component {
     )
   }
 }
-const customPanelStyle = {
-  background: '#f5f5f5',
-  borderRadius: 4,
-  fontSize: 16,
-  border: 0,
-  marginLeft: 10,
-  overflow: 'hidden',
-};
+
+function mapStateToProps({
+  projectDetailProcess: {
+    datas: {
+      processTemplateList = [],
+      processDoingList = [],
+      processStopedList = [],
+      processComepletedList = [],
+      processPageFlagStep
+    }
+  },
+  projectDetailProcess: {
+    datas: {
+      board_id
+    }
+  }
+}) {
+  return {
+    processPageFlagStep,
+    processTemplateList,
+    processDoingList,
+    processStopedList,
+    processComepletedList,
+    board_id
+  }
+}
