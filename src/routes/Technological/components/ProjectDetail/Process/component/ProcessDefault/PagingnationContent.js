@@ -57,8 +57,8 @@ export default class PagingnationContent extends React.Component {
     const { page_number, page_size, } = this.state
     const { listData = [], status, } = this.props
     const obj = {
-      page_number,
-      page_size,
+      // page_number,
+      // page_size,
       status,
       board_id
     }
@@ -206,7 +206,7 @@ export default class PagingnationContent extends React.Component {
             </div>
           </div>
         ): ('')}
-        <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div>
+        {/* <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div> */}
         <ProccessDetailModal
           {...this.props}
           status = {this.props.status}

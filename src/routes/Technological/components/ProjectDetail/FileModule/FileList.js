@@ -312,11 +312,12 @@ export default class FileList extends React.Component {
     // this.props.openFileInUrl({file_id})
   }
 
-  // 点击访问控制的回调
-  async handleShowVisitControlModal(data) {
-    await this.initVisitControlModalData(data) // 初始化数据
-    await this.toggleVisitControlModal(true) // 初始化弹窗变量
-  }
+  // // 点击访问控制的回调
+  // async handleShowVisitControlModal(data) {
+  //   console.log(data, 'sssssss')
+  //   await this.initVisitControlModalData(data) // 初始化数据
+  //   await this.toggleVisitControlModal(true) // 初始化弹窗变量
+  // }
 
   // 点击弹窗ok的回调
   handleVisitControlModalOk = () => {
@@ -412,19 +413,20 @@ export default class FileList extends React.Component {
   }
 
   /**
-   * 切换点点点的回调
+   * 点击点点点的回调
    * @param {Boolean} visible 显示隐藏
    */
-  toggleDropdownVisible = (visible) => {
+  toggleDropdownVisible = (visible, data) => {
     const { isShouldBeFileGroupOperatorDropdownMenuVisible } = this.state
     if (isShouldBeFileGroupOperatorDropdownMenuVisible) return
-    if (visible === true) {
+    if (visible == true) {
       this.setState({
-        shouldHideVisitControlPopover: false,
+        shouldHideVisitControlPopover: false, // 不让他隐藏
       })
+      this.initVisitControlModalData(data)
     }
     this.setState({
-      fileGroupOperatorDropdownMenuVisible: visible
+      fileGroupOperatorDropdownMenuVisible: visible // 让文件的dropdown跟随点击的状态变化
     })
   }
 
@@ -432,7 +434,7 @@ export default class FileList extends React.Component {
   handleVisitControlPopoverVisible = (flag) => {
     if (!flag) {
       this.setState({
-        fileGroupOperatorDropdownMenuVisible: false
+        fileGroupOperatorDropdownMenuVisible: false // 如果flag为false, 则相当于点击了两次,则要控制隐藏
       })
     }
     this.setState({
@@ -478,6 +480,19 @@ export default class FileList extends React.Component {
     return false
   }
 
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
   /**
    * 访问控制移除成员
    * @param {String} id 移除成员对应的id
@@ -486,23 +501,44 @@ export default class FileList extends React.Component {
     const content_id = this.getVisitControlModalDataId()
     const content_type = this.getVisitControlModalDataType()
     removeContentPrivilege({
-      content_id,
-      content_type,
-      user_id: id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code == '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        const { visitControlModalData: { privileges } } = this.state
-        const newPrivileges = {}
-        for (let item in privileges) {
-          if (item != id) {
-            newPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentProjectData({ privileges: newPrivileges })
+        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
       } else {
         message.error('移出用户失败')
+      }
+    })
+  }
+
+  /**
+  * 访问控制设置更新成员
+  * @param {String} id 设置成员对应的id
+  * @param {String} type 设置成员对应的字段
+  */
+  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
+    const { visitControlModalData: { folder_id, version_id, privileges } } = this.state
+    const dataType = this.getVisitControlModalDataType()
+    const content_id = dataType == 'file' ? version_id : folder_id
+    const content_type = dataType == 'file' ? 'file' : 'folder'
+    const privilege_code = type
+    let temp_id = []
+    temp_id.push(id)
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_id
+    }).then(res => {
+      if (res && res.code == '0') {
+        let temp_arr = []
+        temp_arr = res && res.data[0]
+        // const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
+        this.visitControlUpdateCurrentProjectData({ temp_arr: temp_arr, type: 'change', code: type })
+      } else {
+        message.error(errorText)
       }
     })
   }
@@ -517,7 +553,7 @@ export default class FileList extends React.Component {
     if (type == 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
-      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+      this.handleVisitControlChangeContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
 
@@ -525,18 +561,18 @@ export default class FileList extends React.Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (user_ids = []) => {
-    if (!user_ids.length) return
-    // const user_ids = ids.reduce((acc, curr) => {
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    // const users_arr = ids.reduce((acc, curr) => {
     //   if (!acc) return curr
     //   return `${acc},${curr}`
     // }, '')
-    this.handleSetContentPrivilege(user_ids, 'read')
+    this.handleSetContentPrivilege(users_arr, 'read')
   }
 
   // 访问控制设置成员
-  handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
-    //debugger
+  handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
+
     const { visitControlModalData: { folder_id, version_id, privileges } } = this.state
     const dataType = this.getVisitControlModalDataType()
     const content_id = dataType == 'file' ? version_id : folder_id
@@ -597,13 +633,87 @@ export default class FileList extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentProjectData = obj => {
-    const { visitControlModalData, visitControlModalData: { belong_folder_id } } = this.state
-    this.setState({
-      visitControlModalData: Object.assign({}, visitControlModalData, obj)
-    })
-    this.props.getFileList({
-      folder_id: belong_folder_id
-    })
+    const { visitControlModalData, visitControlModalData: { belong_folder_id, privileges } } = this.state
+    // 访问控制开关切换
+    if (obj && obj.type && obj.type == 'privilege') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let new_visitControlModalData = { ...visitControlModalData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      this.setState({
+        visitControlModalData: new_visitControlModalData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+    // 访问控制添加
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      this.setState({
+        visitControlModalData: new_visitControlModalData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+    // 访问控制移除
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      this.setState({
+        visitControlModalData: new_visitControlModalData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+    // 访问控制设置
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = { ...item, content_privilege_code: obj.code }
+        } else {
+          new_item = { ...item }
+        }
+        return new_item
+      })
+      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      this.setState({
+        visitControlModalData: new_visitControlModalData
+      })
+      this.props.getFileList({
+        folder_id: belong_folder_id
+      })
+    }
+
+
   }
 
   render() {
@@ -612,7 +722,7 @@ export default class FileList extends React.Component {
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, shouldHideVisitControlPopover } = this.state;
     // 文件列表的点点点选项
     const operationMenu = (data) => {
-      const { type } = data
+      const { type, is_privilege } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
@@ -620,19 +730,19 @@ export default class FileList extends React.Component {
           {type != '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
             <Menu.Item key="2">下载</Menu.Item>
           ) : ('')}
-          {/* {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
+          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
             <Menu.Item key="99">
               {!shouldHideVisitControlPopover && (
                 <div
-                  // style={{marginLeft: '-35px', minWidth: '130px'}}
+                // style={{marginLeft: '-35px', minWidth: '130px'}}
                 >
                   <VisitControl
                     board_id={board_id}
                     popoverPlacement={'rightTop'}
-                    isPropVisitControl={is_privilege === '0' ? false : true}
+                    isPropVisitControl={is_privilege == '0' ? false : true}
                     // principalList={new_projectParticipant}
                     principalInfo='位任务列表负责人'
-                    // notShowPrincipal={this.getVisitControlModalDataType() == 'file' ? true : false}
+                    notShowPrincipal={true}
                     otherPrivilege={privileges}
                     otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
                     removeMemberPromptText='移出后用户将不能访问此任务列表'
@@ -647,7 +757,7 @@ export default class FileList extends React.Component {
               )}
             </Menu.Item>
           ) : ('')
-          } */}
+          }
           {
             type != '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER) ? (
               <Menu.Item key="3">移动</Menu.Item>
@@ -750,7 +860,7 @@ export default class FileList extends React.Component {
           if (!isInAdd) {
             return (
               <div style={{ cursor: 'pointer' }}>
-                <Dropdown overlay={operationMenu(data)} trigger={['click']} onVisibleChange={this.toggleDropdownVisible} >
+                <Dropdown overlay={operationMenu(data)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
                   <Icon type="ellipsis" theme="outlined" style={{ fontSize: 22, color: '#000000' }}
                   // onClick={this.toggleDropdownVisible} 
                   />

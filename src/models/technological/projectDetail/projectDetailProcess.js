@@ -579,10 +579,8 @@ export default modelExtend(projectDetail, {
     },
     //获取流程列表，类型进行中 已终止 已完成
     * getProcessListByType({ payload }, { select, call, put }) {
-      const { status = '1' } = payload
-      const res = yield call(getProcessListByType, payload)
-
-
+      const { status = '1', board_id } = payload
+      const res = yield call(getProcessListByType, { status, board_id })
       let listName
       let selectList = []
       switch (status ) {
@@ -607,7 +605,8 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            [listName]: [].concat(selectList, res.data),
+            // [listName]: [].concat(selectList, res.data),
+            [listName]: res.data
           }
         })
       }else{

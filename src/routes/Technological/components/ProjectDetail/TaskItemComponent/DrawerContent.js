@@ -1448,240 +1448,242 @@ class DrawContent extends React.Component {
 
     return (
       //
-      <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
-        <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
-          {/*没有编辑项目时才有*/}
-          {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
-            <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
-          )}
-          {/*项目挪动*/}
-          <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
+      <div style={{position: 'relative'}}>
+        {/* <div className={globalStyle.drawContent_mask}></div> */}
+        <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
+          <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
+            {/*没有编辑项目时才有*/}
             {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
-              <div style={{ height: '100%', width: '70%', position: 'absolute', zIndex: '3' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
             )}
-            <div className={DrawerContentStyles.contain_1}>
-              <Dropdown overlay={projectGroupMenu}>
-                <div className={DrawerContentStyles.left}>
-                  <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
-                </div>
-              </Dropdown>
-              <div className={DrawerContentStyles.right}>
-                {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
-                <span style={{ marginRight: '10px' }}>
-                  {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
-                </span>
-                <InformRemind projectExecutors={drawContent.executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
-                {/* <Dropdown overlay={topRightMenu}> */}
-                {drawContent.is_privilege && (
-                  <span style={{ marginRight: drawContent.is_privilege === '1' ? '46px' : '20px' }}>
-                    <VisitControl
-                      board_id={board_id}
-                      isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
-                      handleVisitControlChange={this.handleVisitControlChange}
-                      principalList={drawContent.executors}
-                      otherPrivilege={drawContent.privileges}
-                      handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                      id={drawContent.card_id}
-                      handleAddNewMember={this.handleVisitControlAddNewMember}
-                    />
-                  </span>
-                )}
-                {/* </Dropdown> */}
-                <Dropdown overlay={topRightMenu}>
-                  <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2, cursor: 'pointer' }} />
-                  {/*</Dropdown>*/}
+            {/*项目挪动*/}
+            <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
+              {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
+                <div style={{ height: '100%', width: '70%', position: 'absolute', zIndex: '3' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+              )}
+              <div className={DrawerContentStyles.contain_1}>
+                <Dropdown overlay={projectGroupMenu}>
+                  <div className={DrawerContentStyles.left}>
+                    <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
+                  </div>
                 </Dropdown>
+                <div className={DrawerContentStyles.right}>
+                  {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
+                  <span style={{ marginRight: '10px' }}>
+                    {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
+                  </span>
+                  <InformRemind projectExecutors={drawContent.executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
+                  {/* <Dropdown overlay={topRightMenu}> */}
+                  {drawContent.is_privilege && (
+                    <span style={{ marginRight: drawContent.is_privilege === '1' ? '46px' : '20px' }}>
+                      <VisitControl
+                        board_id={board_id}
+                        isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
+                        handleVisitControlChange={this.handleVisitControlChange}
+                        principalList={drawContent.executors}
+                        otherPrivilege={drawContent.privileges}
+                        handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                        id={drawContent.card_id}
+                        handleAddNewMember={this.handleVisitControlAddNewMember}
+                      />
+                    </span>
+                  )}
+                  {/* </Dropdown> */}
+                  <Dropdown overlay={topRightMenu}>
+                    <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2, cursor: 'pointer' }} />
+                    {/*</Dropdown>*/}
+                  </Dropdown>
+                </div>
               </div>
             </div>
-          </div>
 
 
-          {/*标题*/}
-          <div className={DrawerContentStyles.divContent_2}>
-            <div className={DrawerContentStyles.contain_2}>
-              {type === '0' ? (
-                <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive : DrawerContentStyles.nomalCheckBox} style={{ width: 24, height: 24 }}>
-                  <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
-                </div>
-              ) : (
-                  <div style={{ width: 24, height: 24, color: '#595959' }}>
-                    <i className={globalStyle.authTheme} >&#xe709;</i>
-                  </div>
-                )}
-
-              {/*<TextArea defaultValue={card_name}*/}
-              {/*autosize*/}
-              {/*onBlur={this.titleTextAreaChangeBlur.bind(this)}*/}
-              {/*onClick={this.setTitleIsEdit.bind(this, true)}*/}
-              {/*autoFocus={true}*/}
-              {/*maxLength={100}*/}
-              {/*style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}*/}
-              {/*/>*/}
-              {!titleIsEdit ? (
-                <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
-              ) : (
-                  <NameChangeInput
-                    autosize
-                    onBlur={this.titleTextAreaChangeBlur.bind(this)}
-                    onClick={this.setTitleIsEdit.bind(this, true)}
-                    setIsEdit={this.setTitleIsEdit.bind(this, true)}
-                    autoFocus={true}
-                    goldName={card_name}
-                    maxLength={100}
-                    nodeName={'textarea'}
-                    style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px' }}
-                  />
-                )}
-            </div>
-          </div>
-          {/*<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>*/}
-          {/*任务负责人*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_3}>
-              <div>
-                {!executors.length ? (
-                  <div>
-                    <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
-                      <span>指派负责人</span>
-                    </Dropdown>
+            {/*标题*/}
+            <div className={DrawerContentStyles.divContent_2}>
+              <div className={DrawerContentStyles.contain_2}>
+                {type === '0' ? (
+                  <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive : DrawerContentStyles.nomalCheckBox} style={{ width: 24, height: 24 }}>
+                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
                   </div>
                 ) : (
-                    <div className={DrawerContentStyles.excutorsOut}>
-                      <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
-                        <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
-                          {executors.map((value, key) => {
-                            const { avatar, name, user_name, user_id } = value
-                            return (
-                              <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                                {avatar ? (
-                                  <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
-                                ) : (
-                                    <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                                      <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                    </div>
-                                  )}
-                                <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8 }}>{name || user_name || '佚名'}</div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </Dropdown>
-
-                      <Dropdown overlay={<ExcutorList listData={executors} />}>
-                        <div className={DrawerContentStyles.excutorsOut_right} style={{ backgroundColor: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? '#f5f5f5' : '' }}>
-                          <Icon type="ellipsis" style={{ marginTop: 2, display: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? 'block' : 'none' }} />
-                        </div>
-                      </Dropdown>
+                    <div style={{ width: 24, height: 24, color: '#595959' }}>
+                      <i className={globalStyle.authTheme} >&#xe709;</i>
                     </div>
                   )}
-              </div>
-            </div>
-          </div>
 
-          {/*第三行设置*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_3}>
-              {/*负责人*/}
-              <div style={{ display: 'none' }}>
-                {!executor.user_id ? (
-                  <div>
-                    <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
-                      <span>指派负责人</span>
-                    </Dropdown>
-                  </div>
+                {/*<TextArea defaultValue={card_name}*/}
+                {/*autosize*/}
+                {/*onBlur={this.titleTextAreaChangeBlur.bind(this)}*/}
+                {/*onClick={this.setTitleIsEdit.bind(this, true)}*/}
+                {/*autoFocus={true}*/}
+                {/*maxLength={100}*/}
+                {/*style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}*/}
+                {/*/>*/}
+                {!titleIsEdit ? (
+                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
                 ) : (
-                    <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {executor.avatar ? (
-                          <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
-                        ) : (
-                            <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
-                              <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                            </div>
-                          )}
-                        <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80 }}>{executor.user_name || '佚名'}</div>
-                      </div>
-                    </Dropdown>
+                    <NameChangeInput
+                      autosize
+                      onBlur={this.titleTextAreaChangeBlur.bind(this)}
+                      onClick={this.setTitleIsEdit.bind(this, true)}
+                      setIsEdit={this.setTitleIsEdit.bind(this, true)}
+                      autoFocus={true}
+                      goldName={card_name}
+                      maxLength={100}
+                      nodeName={'textarea'}
+                      style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px' }}
+                    />
                   )}
               </div>
-              {/*时间*/}
-              <div style={{ display: 'none' }}>
-                <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            </div>
+            {/*<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>*/}
+            {/*任务负责人*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_3}>
+                <div>
+                  {!executors.length ? (
+                    <div>
+                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
+                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <span>指派负责人</span>
+                      </Dropdown>
+                    </div>
+                  ) : (
+                      <div className={DrawerContentStyles.excutorsOut}>
+                        <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                          <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
+                            {executors.map((value, key) => {
+                              const { avatar, name, user_name, user_id } = value
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
+                                  {avatar ? (
+                                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
+                                  ) : (
+                                      <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                      </div>
+                                    )}
+                                  <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </Dropdown>
+
+                        <Dropdown overlay={<ExcutorList listData={executors} />}>
+                          <div className={DrawerContentStyles.excutorsOut_right} style={{ backgroundColor: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? '#f5f5f5' : '' }}>
+                            <Icon type="ellipsis" style={{ marginTop: 2, display: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? 'block' : 'none' }} />
+                          </div>
+                        </Dropdown>
+                      </div>
+                    )}
+                </div>
               </div>
-              <div>
-                {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)}
-                <span style={{ position: 'relative', cursor: 'pointer' }}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始'}
-                  <DatePicker
-                    disabledDate={this.disabledStartTime.bind(this)}
-                    onChange={this.startDatePickerChange.bind(this)}
-                    placeholder={'开始时间'}
-                    format="YYYY/MM/DD HH:mm"
-                    showTime={{ format: 'HH:mm' }}
-                    style={{ opacity: 0, width: !start_time ? 16 : 100, height: 20, background: '#000000', cursor: 'pointer', position: 'absolute', right: !start_time ? 8 : 0, zIndex: 1 }} />
-                </span>
-                &nbsp;
-                {start_time && due_time ? (<span style={{ color: '#bfbfbf' }}>-</span>) : (<span style={{ color: '#bfbfbf' }}>或</span>)}
-                &nbsp;
-                <span style={{ position: 'relative' }}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                  <DatePicker
-                    disabledDate={this.disabledDueTime.bind(this)}
-                    placeholder={'截止时间'}
-                    format="YYYY/MM/DD HH:mm"
-                    showTime={{ format: 'HH:mm' }}
-                    onChange={this.endDatePickerChange.bind(this)}
-                    style={{ opacity: 0, width: !due_time ? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1 }} />
-                </span>
-              </div>
-              {type === '0' ? ('') : (
-                <div >
+            </div>
+
+            {/*第三行设置*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_3}>
+                {/*负责人*/}
+                <div style={{ display: 'none' }}>
+                  {!executor.user_id ? (
+                    <div>
+                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
+                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <span>指派负责人</span>
+                      </Dropdown>
+                    </div>
+                  ) : (
+                      <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          {executor.avatar ? (
+                            <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
+                          ) : (
+                              <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
+                                <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                              </div>
+                            )}
+                          <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80 }}>{executor.user_name || '佚名'}</div>
+                        </div>
+                      </Dropdown>
+                    )}
+                </div>
+                {/*时间*/}
+                <div style={{ display: 'none' }}>
                   <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                 </div>
-              )}
-              {type === '0' ? ('') : (
                 <div>
-                  {/* <Dropdown overlay={meetingMenu}> */}
-                  <span onClick={(e) => this.handleCreateVideoMeeting(card_name, card_id, executors, e)}>发起远程会议</span>
-                  {/* </Dropdown> */}
+                  {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)}
+                  <span style={{ position: 'relative', cursor: 'pointer' }}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始'}
+                    <DatePicker
+                      disabledDate={this.disabledStartTime.bind(this)}
+                      onChange={this.startDatePickerChange.bind(this)}
+                      placeholder={'开始时间'}
+                      format="YYYY/MM/DD HH:mm"
+                      showTime={{ format: 'HH:mm' }}
+                      style={{ opacity: 0, width: !start_time ? 16 : 100, height: 20, background: '#000000', cursor: 'pointer', position: 'absolute', right: !start_time ? 8 : 0, zIndex: 1 }} />
+                  </span>
+                  &nbsp;
+                {start_time && due_time ? (<span style={{ color: '#bfbfbf' }}>-</span>) : (<span style={{ color: '#bfbfbf' }}>或</span>)}
+                  &nbsp;
+                <span style={{ position: 'relative' }}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                    <DatePicker
+                      disabledDate={this.disabledDueTime.bind(this)}
+                      placeholder={'截止时间'}
+                      format="YYYY/MM/DD HH:mm"
+                      showTime={{ format: 'HH:mm' }}
+                      onChange={this.endDatePickerChange.bind(this)}
+                      style={{ opacity: 0, width: !due_time ? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1 }} />
+                  </span>
+                </div>
+                {type === '0' ? ('') : (
+                  <div >
+                    <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                  </div>
+                )}
+                {type === '0' ? ('') : (
+                  <div>
+                    {/* <Dropdown overlay={meetingMenu}> */}
+                    <span onClick={(e) => this.handleCreateVideoMeeting(card_name, card_id, executors, e)}>发起远程会议</span>
+                    {/* </Dropdown> */}
+                  </div>
+                )}
+                <div style={{ display: 'none' }}>
+                  {!isSetedAlarm ? (
+                    <Dropdown overlay={alarmMenu}>
+                      <span>设置提醒</span>
+                    </Dropdown>
+                  ) : (
+                      <Dropdown overlay={alarmMenu}>
+                        <span>{alarmTime}</span>
+                      </Dropdown>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            {/*富文本*/}
+            {!isInEdit ? (
+              <div className={DrawerContentStyles.divContent_1} >
+                <div style={{ marginTop: 20 }}>
+                  <Button size={'small'} style={{ fontSize: 12 }} onClick={this.goEdit.bind(this)}>编辑描述</Button>
+                </div>
+                {/*onClick={this.goEdit.bind(this)}*/}
+                <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
+                  <div style={{ cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: typeof description === 'object' ? description.toHTML() : description }}></div>
+                </div>
+              </div>
+            ) : (
+                <div>
+                  <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
+                    <BraftEditor {...editorProps} style={{ fontSize: 12 }} />
+                  </div>
+                  <div style={{ marginTop: 20, textAlign: 'right' }}>
+                    <Button size={'small'} style={{ fontSize: 12, marginRight: 16 }} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
+                    <Button size={'small'} style={{ fontSize: 12 }} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
+                  </div>
                 </div>
               )}
-              <div style={{ display: 'none' }}>
-                {!isSetedAlarm ? (
-                  <Dropdown overlay={alarmMenu}>
-                    <span>设置提醒</span>
-                  </Dropdown>
-                ) : (
-                    <Dropdown overlay={alarmMenu}>
-                      <span>{alarmTime}</span>
-                    </Dropdown>
-                  )}
-              </div>
-            </div>
-          </div>
-
-          {/*富文本*/}
-          {!isInEdit ? (
-            <div className={DrawerContentStyles.divContent_1} >
-              <div style={{ marginTop: 20 }}>
-                <Button size={'small'} style={{ fontSize: 12 }} onClick={this.goEdit.bind(this)}>编辑描述</Button>
-              </div>
-              {/*onClick={this.goEdit.bind(this)}*/}
-              <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
-                <div style={{ cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: typeof description === 'object' ? description.toHTML() : description }}></div>
-              </div>
-            </div>
-          ) : (
-              <div>
-                <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
-                  <BraftEditor {...editorProps} style={{ fontSize: 12 }} />
-                </div>
-                <div style={{ marginTop: 20, textAlign: 'right' }}>
-                  <Button size={'small'} style={{ fontSize: 12, marginRight: 16 }} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
-                  <Button size={'small'} style={{ fontSize: 12 }} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
-                </div>
-              </div>
-            )}
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
@@ -1691,60 +1693,60 @@ class DrawContent extends React.Component {
               link_id={card_id}
               link_local={'3'}
 
-            />
-          </div>
-
-          {/*添加里程碑*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.miletones}>
-              {
-                milestone_data['id'] ? (
-                  <div className={DrawerContentStyles.miletones_item}>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_logo}`}>&#xe633;</div>
-                    <div className={`${globalStyle.global_ellipsis} ${DrawerContentStyles.miletones_item_name}`}>{milestone_data['name']}</div>
-                    <Popconfirm title={'取消关联里程碑'} onConfirm={() => this.cancelRelaMiletone({ card_id, id: milestone_data['id'] })}>
-                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_delete}`}>&#xe70f;</div>
-                    </Popconfirm>
-                  </div>
-                ) : (
-                    <Dropdown overlay={this.renderMiletonesMenu()}>
-                      <div className={DrawerContentStyles.miletones_item_add} style={{ marginTop: 8, width: 100 }}>
-                        <Icon type="plus" style={{ marginRight: 4 }} />里程碑
-                    </div>
-                    </Dropdown>
-                  )
-              }
-
+              />
             </div>
-          </div>
 
-          {/*标签*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_5}>
-              {label_data.map((value, key) => {
-                let flag = false //如果项目列表
-                for (let i = 0; i < boardTagList.length; i++) {
-                  if (value['label_id'] == boardTagList[i]['id']) {
-                    flag = true
-                    break;
-                  }
+            {/*添加里程碑*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.miletones}>
+                {
+                  milestone_data['id'] ? (
+                    <div className={DrawerContentStyles.miletones_item}>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_logo}`}>&#xe633;</div>
+                      <div className={`${globalStyle.global_ellipsis} ${DrawerContentStyles.miletones_item_name}`}>{milestone_data['name']}</div>
+                      <Popconfirm title={'取消关联里程碑'} onConfirm={() => this.cancelRelaMiletone({ card_id, id: milestone_data['id'] })}>
+                        <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_delete}`}>&#xe70f;</div>
+                      </Popconfirm>
+                    </div>
+                  ) : (
+                      <Dropdown overlay={this.renderMiletonesMenu()}>
+                        <div className={DrawerContentStyles.miletones_item_add} style={{ marginTop: 8, width: 100 }}>
+                          <Icon type="plus" style={{ marginRight: 4 }} />里程碑
+                    </div>
+                      </Dropdown>
+                    )
                 }
-                const { label_color = '90,90,90' } = value
-                return (
-                  flag && (
-                    <Tag closable
-                      visible={true}
-                      style={{ marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}
-                      onClose={this.tagClose.bind(this, { label_id: value.label_id, label_name: value.label_name, key })}
-                      key={key} >{value.label_name}</Tag>
-                  )
-                )
-              })}
 
-              <div>
-                {!isInAddTag ? (
-                  <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
-                    <Icon type="plus" style={{ marginRight: 4 }} />标签
+              </div>
+            </div>
+
+            {/*标签*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_5}>
+                {label_data.map((value, key) => {
+                  let flag = false //如果项目列表
+                  for (let i = 0; i < boardTagList.length; i++) {
+                    if (value['label_id'] == boardTagList[i]['id']) {
+                      flag = true
+                      break;
+                    }
+                  }
+                  const { label_color = '90,90,90' } = value
+                  return (
+                    flag && (
+                      <Tag closable
+                        visible={true}
+                        style={{ marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}
+                        onClose={this.tagClose.bind(this, { label_id: value.label_id, label_name: value.label_name, key })}
+                        key={key} >{value.label_name}</Tag>
+                    )
+                  )
+                })}
+
+                <div>
+                  {!isInAddTag ? (
+                    <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
+                      <Icon type="plus" style={{ marginRight: 4 }} />标签
                   </div>
                 ) : (
                     <Dropdown visible={this.state.tagDropdownVisible}
@@ -1762,50 +1764,56 @@ class DrawContent extends React.Component {
                   )}
               </div>
 
+              </div>
             </div>
-          </div>
-          {child_data.length ? (
-            <div className={DrawerContentStyles.divContent_1}>
-              <div className={DrawerContentStyles.spaceLine}></div>
-            </div>
-          ) : ('')}
+            {child_data.length ? (
+              <div className={DrawerContentStyles.divContent_1}>
+                <div className={DrawerContentStyles.spaceLine}></div>
+              </div>
+            ) : ('')}
 
 
           {/*添加子任务*/}
           <DCAddChirdrenTask />
 
-          {/*上传任务附件*/}
-          <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
-            <Upload {...uploadProps}>
-              <Button size={'small'} style={{ fontSize: 12, marginTop: 16, }} >
-                <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
+            {/*上传任务附件*/}
+            <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
+              <Upload {...uploadProps}>
+                <Button size={'small'} style={{ fontSize: 12, marginTop: 16, }} >
+                  <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
               </Button>
-            </Upload>
-            <div className={DrawerContentStyles.attach_file_list}>
-              {attachment_fileList.map((value, key) => {
-                const { name, lastModified, create_time, file_id, uid } = value
-                const now_time = new Date().getTime()
-                return (
-                  <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
-                    <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
-                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id })}>&#xe7f1;</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id })}>&#xe70f;</div>
-                  </div>
-                )
-              })}
+              </Upload>
+              <div className={DrawerContentStyles.attach_file_list}>
+                {attachment_fileList.map((value, key) => {
+                  const { name, lastModified, create_time, file_id, uid } = value
+                  const now_time = new Date().getTime()
+                  return (
+                    <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
+                      <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
+                      <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id })}>&#xe7f1;</div>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id })}>&#xe70f;</div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
 
           {/*查看任务附件*/}
           <PreviewFileModal modalVisible={isInOpenFile} />
           {/*查看*/}
           <PreviewFileModalRichText isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.spaceLine} ></div>
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.spaceLine} ></div>
+            </div>
           </div>
+          {/*评论*/}
+          <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
+            <Comment {...this.props} leftSpaceDivWH={26}></Comment>
+          </div>
+          <div style={{ height: 100 }}></div>
         </div>
         {/*评论*/}
         <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>

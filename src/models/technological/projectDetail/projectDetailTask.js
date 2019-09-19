@@ -259,7 +259,7 @@ export default modelExtend(projectDetail, {
 
     * getTaskGroupList({ payload }, { select, call, put }) { //
       const { type, board_id, arrange_type, calback, operateType } = payload
-      let res = yield call(getTaskGroupList, {type, arrange_type, board_id})
+      let res = yield call(getTaskGroupList, {arrange_type, board_id})
       if (typeof calback === 'function') {
         calback()
       }
