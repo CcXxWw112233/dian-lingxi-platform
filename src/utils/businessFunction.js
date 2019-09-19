@@ -95,11 +95,27 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, permissions
     return flag = permissionsValue
   }
   let new_privileges = [...privileges]
-  new_privileges = new_privileges.map(item => {
+
+  // 这是需要从privileges列表中找到当前操作的用户
+  let currentUserArr = []
+  new_privileges.find(item => {
     if (!(item && item.user_info)) return false
     let { id } = item && item.user_info
     if (!id) return false
+    if (user_id == id) {
+      currentUserArr.push(item)
+      return currentUserArr
+    }
+  })
+
+  // 这是需要用当前用户去遍历, 只能有一个, 并且只要一种结果, 进入一个条件之后不会进入其他条件
+  currentUserArr = currentUserArr.map(item => {
+    if (!(item && item.user_info)) return false
+    let { id } = item && item.user_info
+    let temp_user = []
+    if (!id) return false
     if (user_id == id) { // 判断改成员能不能在自己的权限列表中查询到
+      temp_user.push(item)
       if (item.content_privilege_code == code) { // 如果说该成员的权限状态与code匹配, 返回true, 表示有权利
         flag = true
       } else { // 返回false,表示没有权利

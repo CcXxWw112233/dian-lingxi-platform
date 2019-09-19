@@ -5,8 +5,8 @@ import {
   showConfirm,
   showDeleteConfirm
 } from '../../../../../../../components/headerOperateModal'
-import { PROJECT_FLOWS_FLOW_ABORT } from '../../../../../../../globalset/js/constant'
-import { checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction'
+import { PROJECT_FLOWS_FLOW_ABORT, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '../../../../../../../utils/businessFunction'
 import VisitControl from './../../../../VisitControl/index';
 import {
   toggleContentPrivilege,
@@ -14,6 +14,7 @@ import {
   removeContentPrivilege
 } from './../../../../../../../services/technological/project';
 import InformRemind from '@/components/InformRemind'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 export default class Header extends React.Component {
   state = {
@@ -42,6 +43,11 @@ export default class Header extends React.Component {
     }
     return temp_arr
   }
+
+  // 访问控制蒙层的点击回调
+ alarmNoEditPermission = () => {
+  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+ }
 
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
     const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
@@ -108,9 +114,6 @@ export default class Header extends React.Component {
   }
 
   handleVisitControlRemoveContentPrivilege = id => {
-    const { id: content_id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
-    let temp_id = []
-    temp_id.push(id)
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -177,6 +180,51 @@ export default class Header extends React.Component {
     });
   };
 
+  /**
+   * 这是一个公用的用来区分更新的是工作台流程列表还是项目详情中的流程列表
+   * @param {Array} newProcessInfo 这是需要更新流程的数据
+   * @param {String} type 这是规定只有时切换访问控制状态的时候才需要调用两个列表
+   */
+  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
+    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
+    const { status } = originProcessInfo
+    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { board_id } = projectDetailInfoData
+    const { dispatch } = this.props
+    if (projectDetailInfoData && projectDetailInfoData.length) {
+      if (type) {
+        dispatch({
+          type: 'projectDetailProcess/getProcessListByType',
+          payload: {
+            status: status,
+            board_id: board_id
+          }
+        })
+      }
+      dispatch({
+        type: 'projectDetailProcess/updateDatas',
+        payload: {
+          processInfo: newProcessInfo
+        }
+      })
+    } else {
+      if (type) {
+        dispatch({
+          type: 'workbench/getBackLogProcessList',
+          payload: {
+  
+          }
+        })
+      }
+      dispatch({
+        type: 'workbenchDetailProcess/updateDatas',
+        payload: {
+          processInfo: newProcessInfo
+        }
+      })
+    }
+  }
+
   visitControlUpdateCurrentModalData = obj => {
     const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     const { privileges = [], status } = originProcessInfo
@@ -196,21 +244,11 @@ export default class Header extends React.Component {
         }
       }
       let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
-      this.props.updateDatasProcess({
-        processInfo: newProcessInfo
-      });
+      // this.props.updateDatasProcess({
+      //   processInfo: newProcessInfo
+      // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
-      if (projectDetailInfoData && projectDetailInfoData.length) {
-        dispatch({
-          type: 'projectDetailProcess/getProcessListByType',
-          payload: {
-            status: status,
-            board_id: board_id
-          }
-        })
-      } else {
-
-      }
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
       
     };
 
@@ -226,9 +264,7 @@ export default class Header extends React.Component {
         }
       }
       let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
-      this.props.updateDatasProcess({
-        processInfo: newProcessInfo
-      });
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
     // 访问控制移除
@@ -240,9 +276,7 @@ export default class Header extends React.Component {
         }
       })
       let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
-      this.props.updateDatasProcess({
-        processInfo: newProcessInfo
-      });
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
     // 这是更新type类型
@@ -259,9 +293,7 @@ export default class Header extends React.Component {
         return new_item
       })
       let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
-      this.props.updateDatasProcess({
-        processInfo: newProcessInfo
-      });
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
   }
@@ -372,7 +404,12 @@ export default class Header extends React.Component {
           <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{ float: 'right' }}>
+        <div style={{ float: 'right', position: 'relative' }}>
+          {
+            checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} style={{right: '40px'}} className={globalStyles.drawContent_mask}></div>
+            )
+          }
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
           <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span

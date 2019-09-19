@@ -5,7 +5,7 @@ import Header from './Header'
 import ProccessDetailContent from "./ProccessDetailContent";
 
 const bodyHeight = document.querySelector('body').clientHeight
-export default class FileDetail extends React.Component {
+export default class ProccessDetail extends React.Component {
   state = {
     clientHeight: document.documentElement.clientHeight,
     clientWidth: document.documentElement.clientWidth,
