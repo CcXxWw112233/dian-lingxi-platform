@@ -51,7 +51,7 @@ export default class TemplateContent extends React.Component {
     }
     const { dispatch } = this.props
     dispatch({
-      dispatch: 'projectDetailProcess/updateDatas',
+      type: 'projectDetailProcess/updateDatas',
       payload: {
         processInfo: {},
         processPageFlagStep: '2',
