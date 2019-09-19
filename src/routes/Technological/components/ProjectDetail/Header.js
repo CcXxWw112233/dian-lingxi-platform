@@ -400,6 +400,9 @@ export default class Header extends React.Component {
     if (isInAddDirectory) { //正在创建的过程中不能添加多个
       return false
     }
+    const new_fileList_ = [...fileList]
+    const new_filedata_1_ = [...filedata_1]
+
     const obj = {
       file_id: '',
       file_name: '',
@@ -409,13 +412,15 @@ export default class Header extends React.Component {
       type: '1',
       isInAdd: true
     }
-    fileList.unshift(obj)
-    filedata_1.unshift(obj)
+    new_fileList_.unshift(obj)
+    new_filedata_1_.unshift(obj)
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        fileList, filedata_1, isInAddDirectory: true
+        fileList: new_fileList_,
+         filedata_1: new_filedata_1_, 
+         isInAddDirectory: true
       }
     })
   }

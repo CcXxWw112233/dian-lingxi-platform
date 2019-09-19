@@ -1,22 +1,24 @@
 
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, message, Modal, Tooltip } from 'antd';
+import { Table, Menu, Dropdown, Icon, message, Modal, Tooltip } from 'antd';
 import CreatDirector from './CreatDirector'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
-  PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FOLDER
+  PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FOLDER
 } from "../../../../../globalset/js/constant";
 import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
-import { ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP } from "../../../../../globalset/js/constant";
-import { currentNounPlanFilterName, openPDF, getSubfixName } from "../../../../../utils/businessFunction";
+import { FILES } from "../../../../../globalset/js/constant";
+import { currentNounPlanFilterName, getSubfixName } from "../../../../../utils/businessFunction";
 
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
+import { connect } from 'dva';
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
+@connect(mapStateToProps)
 export default class FileList extends React.Component {
   state = {
     //排序，tru为升序，false为降序
@@ -42,7 +44,7 @@ export default class FileList extends React.Component {
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
@@ -159,8 +161,7 @@ export default class FileList extends React.Component {
   }
 
   listSort(key) {
-    const { datas = {} } = this.props.model
-    const { fileList, filedata_1, filedata_2, selectedRowKeys } = datas
+    const { filedata_1, filedata_2 } = this.props
     switch (key) {
       case '1':
         this.setState({
@@ -238,8 +239,7 @@ export default class FileList extends React.Component {
 
   //文件夹或文件点击
   open(data, type) {
-    const { datas = {} } = this.props.model
-    const { breadcrumbList = [], currentParrentDirectoryId } = datas
+    const { breadcrumbList = [], currentParrentDirectoryId } = this.props
     const { belong_folder_id, file_id } = data
     if (belong_folder_id === currentParrentDirectoryId) {
       breadcrumbList.push(data)
@@ -267,22 +267,24 @@ export default class FileList extends React.Component {
     // }
     this.open(data, '2')
 
+    const { fileList = [], dispatch } = this.props
+
     this.props.dispatch({
       type: 'projectDetailFile/getCardCommentListAll',
       payload: {
         id: file_id
       }
     })
-    this.props.dispatch({
+    dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
         filePreviewCurrentFileId: file_id
       }
     })
-    this.props.dispatch({
+    dispatch({
       type: 'projectDetailFile/getFileType',
       payload: {
-        fileList: this.props.model.datas.fileList,
+        fileList,
         file_id
       }
     })
@@ -717,8 +719,7 @@ export default class FileList extends React.Component {
   }
 
   render() {
-    const { datas = {} } = this.props.model
-    const { selectedRowKeys, fileList = [], board_id } = datas
+    const { selectedRowKeys, fileList = [], board_id } = this.props
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, shouldHideVisitControlPopover } = this.state;
     // 文件列表的点点点选项
     const operationMenu = (data) => {
@@ -924,5 +925,34 @@ export default class FileList extends React.Component {
         </Modal> */}
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailFile: {
+    datas: {
+      filedata_1,
+      filedata_2,
+      selectedRowKeys,
+      fileList = [],
+      breadcrumbList = [],
+      currentParrentDirectoryId
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+      board_id
+    }
+  }
+}) {
+  return {
+    filedata_1,
+    filedata_2,
+    projectDetailInfoData,
+    selectedRowKeys,
+    fileList,
+    board_id,
+    breadcrumbList,
+    currentParrentDirectoryId
   }
 }
