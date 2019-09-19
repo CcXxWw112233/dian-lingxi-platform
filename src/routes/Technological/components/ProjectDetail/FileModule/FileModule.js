@@ -11,7 +11,7 @@ import { connect } from 'dva';
 @connect(mapStateToProps)
 export default class FileIndex extends React.Component {
   render() {
-    const { isInOpenFile } = this.props
+    const { isInOpenFile, dispatch } = this.props
     const { marginTop = '20px' } = this.props;
     return (
       <div>
@@ -21,7 +21,7 @@ export default class FileIndex extends React.Component {
           <FileList />
           <MoveToDirectory />
         </div>
-        <FileDetailModal visible={isInOpenFile} />
+        <FileDetailModal visible={isInOpenFile} dispatch={dispatch}/>
       </div>
     )
   }

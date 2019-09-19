@@ -868,7 +868,7 @@ export default class FileList extends React.Component {
           const { type, file_name, isInAdd, is_privilege } = data
           if (isInAdd) {
             return (
-              <CreatDirector {...this.props} />
+              <CreatDirector />
             )
           } else {
             return (type === '1' ?
