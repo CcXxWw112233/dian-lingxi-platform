@@ -87,6 +87,7 @@ export default class ProcessItem extends React.Component {
   render() {
     const { itemValue = {}, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
     const { flow_node_name, flow_template_name, name, board_name, board_id, status = '1', flow_instance_id, org_id, id, is_privilege } = itemValue
+    // console.log(is_privilege, 'sssssss')
     // const { flow_node_name, name, board_name, board_id, status='1', flow_instance_id } = itemValue //status 1running 2stop 3 complete
     // console.log('hhhaha', this.props.itemValue)
     const obj = {
@@ -120,7 +121,7 @@ export default class ProcessItem extends React.Component {
             #{this.state.value.board_name}
           </span> */}
           {
-            is_privilege && (
+            is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px', cursor: 'pointer' }}>
                   <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>

@@ -296,11 +296,13 @@ export default modelExtend(projectDetail, {
         let taskGroupListIndex = 0
         let taskGroupListIndex_index = 0
         for(let i = 0; i < res.data.length; i ++) {
-          for(let j = 0; j < res.data[i]['card_data'].length; j ++) {
-            if (card_id === res.data[i]['card_data'][j]['card_id']) {
-              taskGroupListIndex = i
-              taskGroupListIndex_index = j
-              break
+          if (res.data[i]['card_data']) {
+            for(let j = 0; j < res.data[i]['card_data'].length; j ++) {
+              if (card_id === res.data[i]['card_data'][j]['card_id']) {
+                taskGroupListIndex = i
+                taskGroupListIndex_index = j
+                break
+              }
             }
           }
         }
