@@ -37,14 +37,20 @@ export default class FileList extends React.Component {
   }
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys) => {
-    this.props.updateDatasFile({ selectedRowKeys });
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRowKeys
+      }
+    })
     // console.log(selectedRowKeys)
   }
 
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { projectDetailInfoData = {} } = this.props
+    const { projectDetailInfoData = {}, dispatch } = this.props
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
@@ -55,18 +61,28 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileDownload({ ids: file_resource_id, fileIds: file_id })
+        dispatch({
+          type: 'projectDetailFile/fileDownload',
+          payload: {
+            ids: file_resource_id,
+            fileIds: file_id
+          }
+        })
         break
       case '3': // 移动
         if (!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatasFile({
-          copyOrMove: '0',
-          openMoveDirectoryType: '2',
-          moveToDirectoryVisiblie: true,
-          currentFileListMenuOperatorId: file_id
+
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            copyOrMove: '0',
+            openMoveDirectoryType: '2',
+            moveToDirectoryVisiblie: true,
+            currentFileListMenuOperatorId: file_id
+          }
         })
         break
       case '4': // 复制
@@ -74,11 +90,15 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.updateDatasFile({
-          copyOrMove: '1',
-          openMoveDirectoryType: '2',
-          moveToDirectoryVisiblie: true,
-          currentFileListMenuOperatorId: file_id
+
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            copyOrMove: '1',
+            openMoveDirectoryType: '2',
+            moveToDirectoryVisiblie: true,
+            currentFileListMenuOperatorId: file_id
+          }
         })
         break
       case '5': // 移动到回收站
@@ -86,9 +106,13 @@ export default class FileList extends React.Component {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        this.props.fileRemove({
-          board_id,
-          arrays: JSON.stringify([{ type, id: file_id }])
+
+        dispatch({
+          type: 'projectDetailFile/fileRemove',
+          payload: {
+            board_id,
+            arrays: JSON.stringify([{ type, id: file_id }])
+          }
         })
         break
       case '99': // 访问控制
@@ -116,8 +140,12 @@ export default class FileList extends React.Component {
         return b[key].localeCompare(a[key]);
       }
     });
-    this.props.updateDatasFile({
-      fileList: [...filedata_1, ...filedata_2]
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        fileList: [...filedata_1, ...filedata_2]
+      }
     })
   }
 
@@ -155,8 +183,13 @@ export default class FileList extends React.Component {
         return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
       }
     });
-    this.props.updateDatasFile({
-      fileList: [...filedata_1, ...filedata_2]
+
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        fileList: [...filedata_1, ...filedata_2]
+      }
     })
   }
 
@@ -188,8 +221,13 @@ export default class FileList extends React.Component {
         break
     }
     //排序的时候清空掉所选项
-    this.props.updateDatasFile({ selectedRowKeys: [] })
-
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRowKeys: []
+      }
+    })
   }
 
   //文件名类型
@@ -241,21 +279,35 @@ export default class FileList extends React.Component {
   open(data, type) {
     const { breadcrumbList = [], currentParrentDirectoryId } = this.props
     const { belong_folder_id, file_id } = data
+    const new_breadcrumbList = [...breadcrumbList]
     if (belong_folder_id === currentParrentDirectoryId) {
-      breadcrumbList.push(data)
+      new_breadcrumbList.push(data)
     } else {
-      breadcrumbList[breadcrumbList.length - 1] = data
+      new_breadcrumbList[new_breadcrumbList.length - 1] = data
     }
     //顺便将isInAddDirectory设置为不在添加文件夹状态
-    this.props.updateDatasFile({ breadcrumbList, currentParrentDirectoryId: type === '1' ? file_id : currentParrentDirectoryId, isInAddDirectory: false })
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        breadcrumbList: new_breadcrumbList,
+        currentParrentDirectoryId: type === '1' ? file_id : currentParrentDirectoryId,
+        isInAddDirectory: false
+      }
+    })
   }
 
   openDirectory(data) {
     this.open(data, '1')
     //接下来做文件夹请求的操作带id
     const { file_id } = data
-    this.props.getFileList({
-      folder_id: file_id
+
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/getFileList',
+      payload: {
+        folder_id: file_id
+      }
     })
   }
 
@@ -269,7 +321,7 @@ export default class FileList extends React.Component {
 
     const { fileList = [], dispatch } = this.props
 
-    this.props.dispatch({
+    dispatch({
       type: 'projectDetailFile/getCardCommentListAll',
       payload: {
         id: file_id
@@ -289,27 +341,39 @@ export default class FileList extends React.Component {
       }
     })
     //接下来打开文件
-    this.props.updateDatasFile({
-      isInOpenFile: true,
-      seeFileInput: 'fileModule',
-      currentPreviewFileData: data,
-      filePreviewCurrentFileId: file_id,
-      filePreviewCurrentId: file_resource_id,
-      filePreviewCurrentVersionId: version_id,
-      pdfDownLoadSrc: '',
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isInOpenFile: true,
+        seeFileInput: 'fileModule',
+        currentPreviewFileData: data,
+        filePreviewCurrentFileId: file_id,
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentVersionId: version_id,
+        pdfDownLoadSrc: '',
+      }
     })
     if (getSubfixName(file_name) == '.pdf') {
-      this.props.dispatch({
+      dispatch({
         type: 'projectDetailFile/getFilePDFInfo',
         payload: {
           id: file_id
         }
       })
     } else {
-      this.props.filePreview({ id: file_resource_id, file_id })
+      dispatch({
+        type: 'projectDetailFile/filePreview',
+        payload: {
+          id: file_resource_id, file_id
+        }
+      })
     }
-    this.props.fileVersionist({ version_id: version_id })
-
+    dispatch({
+      type: 'projectDetailFile/fileVersionist',
+      payload: {
+        version_id
+      }
+    })
     //通过url
     // this.props.openFileInUrl({file_id})
   }
@@ -636,6 +700,8 @@ export default class FileList extends React.Component {
   // 访问控制更新数据
   visitControlUpdateCurrentProjectData = obj => {
     const { visitControlModalData, visitControlModalData: { belong_folder_id, privileges } } = this.state
+    const { dispatch } = this.props
+
     // 访问控制开关切换
     if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = []
@@ -651,8 +717,11 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      this.props.getFileList({
-        folder_id: belong_folder_id
+      dispatch({
+        type: 'projectDetailFile/getFileList',
+        payload: {
+          folder_id: belong_folder_id
+        }
       })
     }
 
@@ -671,8 +740,12 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      this.props.getFileList({
-        folder_id: belong_folder_id
+   
+      dispatch({
+        type: 'projectDetailFile/getFileList',
+        payload: {
+          folder_id: belong_folder_id
+        }
       })
     }
 
@@ -688,8 +761,12 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      this.props.getFileList({
-        folder_id: belong_folder_id
+    
+      dispatch({
+        type: 'projectDetailFile/getFileList',
+        payload: {
+          folder_id: belong_folder_id
+        }
       })
     }
 
@@ -710,8 +787,12 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      this.props.getFileList({
-        folder_id: belong_folder_id
+      
+      dispatch({
+        type: 'projectDetailFile/getFileList',
+        payload: {
+          folder_id: belong_folder_id
+        }
       })
     }
 

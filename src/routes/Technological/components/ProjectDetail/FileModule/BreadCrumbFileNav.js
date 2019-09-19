@@ -9,13 +9,14 @@ export default class BreadCrumbFileNav extends React.Component {
   fileNavClick(data) {
     const { value: { file_id, file_name }, key } = data
     const { breadcrumbList = [] } = this.props
-    breadcrumbList.splice(key + 1, breadcrumbList.length - key - 1) //删除当前点击后面的元素下标
+    const new_breadcrumbList = [...breadcrumbList]
+    new_breadcrumbList.splice(key + 1, breadcrumbList.length - key - 1) //删除当前点击后面的元素下标
 
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        breadcrumbList,
+        breadcrumbList: new_breadcrumbList,
         currentParrentDirectoryId: file_id,
         isInAddDirectory: false
       }
