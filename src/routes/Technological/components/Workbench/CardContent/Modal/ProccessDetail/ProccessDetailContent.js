@@ -1,6 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, message } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import {stopPropagation} from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
@@ -10,8 +11,8 @@ import {getRelations, JoinRelation} from "../../../../../../../services/technolo
 import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import { timestampToHM, judgeTimeDiffer, judgeTimeDiffer_ten } from '../../../../../../../utils/util'
-import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from '../../../../../../../utils/businessFunction'
-import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT} from '../../../../../../../globalset/js/constant'
+import {checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl, checkIsHasPermission} from '../../../../../../../utils/businessFunction'
+import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS} from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
 
 export default class FileDetailContent extends React.Component {
@@ -71,6 +72,11 @@ export default class FileDetailContent extends React.Component {
 
     // this.getRelations()
   }
+
+  // 访问控制蒙层的点击回调
+ alarmNoEditPermission = () => {
+  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+ }
 
   //获取关联内容
   async getRelations(data) {
@@ -374,11 +380,11 @@ export default class FileDetailContent extends React.Component {
   render() {
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
     const { clientHeight, offsetTopDeviation } =this.props
-
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
     const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, 
       filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
-      filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+      filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false, processInfo = {} } }= this.props.model
+    const { privileges = [] } = processInfo
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="'+src+'"></iframe>'
       return iframe
@@ -565,7 +571,13 @@ export default class FileDetailContent extends React.Component {
 
           {/*width: isExpandFrame?0:420*/}
           {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+          {/* 这里将会有一个蒙层 */}
+            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{position: 'relative'}}>
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              }
               <ContentRaletion
                 {...this.props}
                 board_id ={board_id}
@@ -598,7 +610,9 @@ export default class FileDetailContent extends React.Component {
             </div>
             <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
           </div>
-          {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT) && (
+          {/* 这里将会有一个蒙层 */}
+          {/* 这里是如果是评论,可以显示以及是可编辑状态 */}
+          {(checkIsHasPermissionInVisitControl('comment', privileges, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id))) && (
             <div className={indexStyles.fileDetailContentRight_bott}>
               <Comment2 {...this.props} ></Comment2>
             </div>

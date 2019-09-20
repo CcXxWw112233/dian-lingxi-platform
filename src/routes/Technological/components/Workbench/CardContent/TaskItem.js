@@ -3,7 +3,7 @@ import indexstyles from "../index.less";
 import { Icon, Tooltip } from "antd";
 import Cookies from "js-cookie";
 import { timestampToTimeNormal2, timeColor } from './../../../../../utils/util'
-import { checkIsHasPermissionInBoard, checkIsHasPermission } from './../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, checkIsHasPermission, checkIsHasPermissionInVisitControl } from './../../../../../utils/businessFunction'
 import { message } from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
 import { setBoardIdStorage, getOrgNameWithOrgIdFilter } from "../../../../../utils/businessFunction";
@@ -25,13 +25,14 @@ export default class TaskItem extends React.Component {
       datas: { responsibleTaskList = [] }
     } = this.props.model;
     const { itemValue = {}, itemKey } = this.props;
-    const { is_realize, board_id, board_name, name, id } = itemValue;
+    const { is_realize, board_id, board_name, name, id, privileges = [] } = itemValue;
     const obj = {
       card_id: id,
       is_realize: is_realize === "1" ? "0" : "1"
     };
     setBoardIdStorage(board_id)
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
+    // 这里是控制完成卡片的权限, 所以传入code为edit
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -54,10 +55,11 @@ export default class TaskItem extends React.Component {
     const { dispatch } = this.props
     const { id, board_id, org_id } = data;
     setBoardIdStorage(board_id)
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // 这里查看卡片弹窗不需要权限控制,是因为,既然都能看见这条任务,就说明你已经在访问控制的权限列表中了,因为不在的话, 不会返回该任务
+    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {

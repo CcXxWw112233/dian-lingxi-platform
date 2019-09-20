@@ -70,9 +70,15 @@ export const checkIsHasPermission = (code, param_org_id) => {
  * 思路: 先在该用户所在的权限列表中查询找到对应的用户, 如果存在, 那么该用户的权限就是
  * code 类型 { edit > comment > read > permissionsValue } 中的一种, 
  * 如果不存在, 那么就去查看该用户在项目中对应的权限列表
+ * 
+ * 想要达到的效果是,在哪里调用就返回对应的true/false
+ * 比如想判断它是否是编辑, 那么传入对应的code,
+ * 
+ * 缺点: 就是限制了code类型, 而且必须要在你知道的情况下
  * @param {String} code 对应用户的字段类型
  * @param {Array} privileges 该用户所在的权限列表
  * @param {Boolean} permissionsValue 所有用户在项目中的权限
+ * @return {Boolean} 该方法返回一个布尔类型的值, 为true 表示可以行使该权限
  */
 export const checkIsHasPermissionInVisitControl = (code, privileges, permissionsValue) => {
   // 1. 从localstorage中获取当前操作的用户信息
@@ -80,19 +86,47 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, permissions
   // 3. 找不到, 那么就取permissionsValue中对应的权限
   const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
   const { user_id } = user_set
+  let flag
+  if (!Array.isArray(privileges)) { // 纯属为了高端, 没啥用
+    return false
+  }
+  // 这里是判断如果是自己直接创建某条任务情况,不在权限列表中
+  if (!(privileges && privileges.length)) {
+    return flag = permissionsValue
+  }
   let new_privileges = [...privileges]
-  let result = ''
-  // ???? 在乱写
-  new_privileges = new_privileges.map(item => {
-    let { id, content_privilege_code } = item.user_info
-    if (user_id == id) { // 说明在列表中存在该用户
-      result = code
-    } else {
-      result = permissionsValue
+
+  // 这是需要从privileges列表中找到当前操作的用户
+  let currentUserArr = []
+  new_privileges.find(item => {
+    if (!(item && item.user_info)) return false
+    let { id } = item && item.user_info
+    if (!id) return false
+    if (user_id == id) {
+      currentUserArr.push(item)
+      return currentUserArr
     }
-    return result
   })
-  return result
+
+  // 这是需要用当前用户去遍历, 只能有一个, 并且只要一种结果, 进入一个条件之后不会进入其他条件
+  currentUserArr = currentUserArr.map(item => {
+    if (!(item && item.user_info)) return false
+    let { id } = item && item.user_info
+    let temp_user = []
+    if (!id) return false
+    if (user_id == id) { // 判断改成员能不能在自己的权限列表中查询到
+      temp_user.push(item)
+      if (item.content_privilege_code == code) { // 如果说该成员的权限状态与code匹配, 返回true, 表示有权利
+        flag = true
+      } else { // 返回false,表示没有权利
+        flag = false
+      }
+    } else { // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
+      flag = permissionsValue // 返回对应项目权限列表中的状态
+    }
+    return flag
+  })
+  return flag
 }
 
 //在当前项目中检查是否有权限操作
