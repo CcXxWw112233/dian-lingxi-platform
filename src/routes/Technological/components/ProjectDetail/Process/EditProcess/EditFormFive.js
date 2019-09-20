@@ -1,13 +1,13 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Tooltip } from 'antd';
+import { Input, Mention, InputNumber, Radio, Checkbox, Tooltip } from 'antd';
 import indexStyles from './index.less'
 import MentionAssignees from './MentionAssignees'
 import { validatePositiveInt } from '../../../../../../utils/verify'
 import { connect } from 'dva'
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
-const { toString, toContentState } = Mention;
+const { toString } = Mention;
 
 @connect(mapStateToProps)
 export default class EditFormFive extends React.Component {

@@ -1,12 +1,12 @@
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
-import { Form, Input, Mention, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Menu, Dropdown } from 'antd';
+import { Input, Mention, Radio, Icon, Checkbox, Menu, Dropdown } from 'antd';
 import indexStyles from './index.less'
 import { validatePositiveInt } from '../../../../../../utils/verify'
 
 const TextArea = Input.TextArea
 const RadioGroup = Radio.Group
-const { toString, toContentState } = Mention;
+const { toString } = Mention;
 import EditFormThree_One from './EditFormThree_One'
 import EditFormThree_Two from './EditFormThree_Two'
 import EditFormThree_Three from './EditFormThree_Three'
@@ -24,7 +24,7 @@ export default class EditFormThree extends React.Component {
 
     const new_processEditDatas = [...processEditDatas]
     const new_processEditDatasRecords_ = [...processEditDatasRecords]
-    
+
     //更新processEditDatasRecords操作解构赋值避免操作污染
     const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     let newAlltypedata = [...alltypedata]
@@ -36,7 +36,7 @@ export default class EditFormThree extends React.Component {
         newAlltypedata[i] = obj
       }
     }
-   
+
     new_processEditDatas[processCurrentEditStep][key] = value
     new_processEditDatasRecords_[processCurrentEditStep] = {
       node_type: '3',

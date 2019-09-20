@@ -99,7 +99,7 @@ export default class EditProcess extends React.Component {
   }
 
   currentEditStepClick(data) {
-    const { processEditDatas = [], } = this.props
+    const { processEditDatas = [], dispatch} = this.props
     const { value, key } = data
     const { node_type } = value
 
@@ -166,7 +166,7 @@ export default class EditProcess extends React.Component {
       return false
     }
     const { board_id } = projectDetailInfoData
-   
+
     dispatch({
       type: 'projectDetailProcess/directStartSaveTemplate',
       payload: {
@@ -231,27 +231,27 @@ export default class EditProcess extends React.Component {
       switch (node_type) {
         case '1':
           containner = (
-            <EditFormOne {...this.props} />
+            <EditFormOne />
           )
           break
         case '2':
           containner = (
-            <EditFormTwo {...this.props} />
+            <EditFormTwo />
           )
           break
         case '3':
           containner = (
-            <EditFormThree {...this.props} />
+            <EditFormThree />
           )
           break
         case '4':
           containner = (
-            <EditFormFour{...this.props} />
+            <EditFormFour />
           )
           break
         case '5':
           containner = (
-            <EditFormFive {...this.props} />
+            <EditFormFive />
           )
           break
         default:
@@ -304,7 +304,7 @@ export default class EditProcess extends React.Component {
           <Button style={{ marginTop: 14 }} onClick={this.directStart.bind(this)}>直接启动</Button>
           <Button style={{ marginTop: 14, color: 'red' }} onClick={this.quitEdit.bind(this)}>退出编辑</Button>
         </div>
-        <SaveTemplate requestFilterProcessEditDatas={this.requestFilterProcessEditDatas.bind(this)} {...this.props} setSaveTemplateModalVisible={this.setSaveTemplateModalVisible.bind(this)} saveTemplateModalVisible={this.state.saveTemplateModalVisible} />
+        <SaveTemplate requestFilterProcessEditDatas={this.requestFilterProcessEditDatas.bind(this)} setSaveTemplateModalVisible={this.setSaveTemplateModalVisible.bind(this)} saveTemplateModalVisible={this.state.saveTemplateModalVisible} />
 
       </div>
     )

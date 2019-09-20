@@ -65,7 +65,7 @@ export default class TemplateContent extends React.Component {
   }
 
   render() {
-    const { processTemplateList = [] } = this.props
+    const { processTemplateList = [], dispatch } = this.props
     const { clientHeight } = this.props
     const maxContentHeight = clientHeight - 108 - 160
     return (
@@ -74,7 +74,7 @@ export default class TemplateContent extends React.Component {
           {processTemplateList.map((value, key) => {
             const { id } = value
             return (
-              <TemplateItem  key={id} itemValue={value} />
+              <TemplateItem key={id} itemValue={value} dispatch={dispatch} />
             )
           })}
         </div>

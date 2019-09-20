@@ -41,7 +41,7 @@ export default class ProcessDefault extends React.Component {
     const { template_id } = processTemplateList[Number(key)]
     //此处为启动流程界面查询逻辑(查询模板信息)
     dispatch({
-      dispatch: 'projectDetailProcess/getTemplateInfo',
+      type: 'projectDetailProcess/getTemplateInfo',
       payload: {
         id: template_id
       }
@@ -50,7 +50,7 @@ export default class ProcessDefault extends React.Component {
   startEdit() {
     const { dispatch } = this.props
     dispatch({
-      dispatch: 'projectDetailProcess/updateDatas',
+      type: 'projectDetailProcess/updateDatas',
       payload: {
         processPageFlagStep: '2'
       }

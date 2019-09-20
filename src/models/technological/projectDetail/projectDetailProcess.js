@@ -213,14 +213,17 @@ export default modelExtend(projectDetail, {
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getTemplateInfo',
-          payload: res.data.flow_template_id
+          payload: {
+            id: res.data.flow_template_id
+          }
         })
       } else {
 
       }
     },
     * getTemplateInfo({ payload }, { select, call, put }) {
-      let res = yield call(getTemplateInfo, payload)
+      const { id } = payload
+      let res = yield call(getTemplateInfo, id)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
