@@ -19,7 +19,7 @@ export default class TemplateContent extends React.Component {
   templateStartClick({ id }) {
     const { dispatch } = this.props
     dispatch({
-      dispatch: 'projectDetailProcess/getTemplateInfo',
+      type: 'projectDetailProcess/getTemplateInfo',
       payload: {
         id
       }
@@ -34,7 +34,7 @@ export default class TemplateContent extends React.Component {
       cancelText: '取消',
       onOk() {
         dispatch({
-          dispatch: 'projectDetailProcess/deleteProcessTemplate',
+          type: 'projectDetailProcess/deleteProcessTemplate',
           payload: {
             id
           }

@@ -12,9 +12,9 @@ import {
 import { Collapse } from 'antd';
 import { getProcessListByType } from "../../../../../../../services/technological/process";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
-import ProccessDetailModal from '../../../../Workbench/CardContent/Modal/ProccessDetailModal'
 import FlowsInstanceItem from './FlowsInstanceItem'
 import { connect } from 'dva';
+import ProcessDetailModalContainer from './ProcessDetailModalContainer'
 const Panel = Collapse.Panel;
 
 @connect(mapStateToProps)
@@ -109,7 +109,7 @@ export default class PagingnationContent extends React.Component {
     })
     const { dispatch } = this.props
     dispatch({
-      dispatch: 'projectDetailProcess/updateDatas',
+      type: 'projectDetailProcess/updateDatas',
       payload: {
         processDetailModalVisible: false
       }
@@ -123,7 +123,7 @@ export default class PagingnationContent extends React.Component {
     }
     const { dispatch } = this.props
     await dispatch({
-      dispatch: 'projectDetailProcess/getWorkFlowComment',
+      type: 'projectDetailProcess/getWorkFlowComment',
       payload: {
         flow_instance_id: obj.flow
       }
@@ -135,14 +135,14 @@ export default class PagingnationContent extends React.Component {
       }
     })
     await dispatch({
-      dispatch: 'projectDetailProcess/getWorkFlowComment',
+      type: 'projectDetailProcess/getWorkFlowComment',
       payload: {
         flow_instance_id: obj.flow
       }
     })
 
     dispatch({
-      dispatch: 'projectDetailProcess/updateDatas',
+      type: 'projectDetailProcess/updateDatas',
       payload: {
         currentProcessInstanceId: obj.flow,
         totalId: obj
@@ -160,6 +160,8 @@ export default class PagingnationContent extends React.Component {
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
   }
+
+
   render() {
     const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch } = this.props
     const { clientHeight, listData = [], status } = this.props
@@ -210,7 +212,7 @@ export default class PagingnationContent extends React.Component {
           </div>
         ) : ('')}
         {/* <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div> */}
-        <ProccessDetailModal
+        <ProcessDetailModalContainer
           status={status}
           getProcessListByType={this.getProcessListByType.bind(this)}
           close={this.close.bind(this)}
@@ -242,7 +244,8 @@ function mapStateToProps({
     datas: {
       board_id
     }
-  }
+  },
+
 }) {
   return {
     processDetailModalVisible,

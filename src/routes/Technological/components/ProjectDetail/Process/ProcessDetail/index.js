@@ -8,14 +8,14 @@ import DetailConfirmInfoFour from './DetailConfirmInfoFour'
 import DetailConfirmInfoFive from './DetailConfirmInfoFive'
 
 import sssimg from '../../../../../../assets/yay.jpg'
-import {timestampToHM} from "../../../../../../utils/util";
-import {currentNounPlanFilterName} from "../../../../../../utils/businessFunction";
-import {FLOWS} from "../../../../../../globalset/js/constant";
+import { timestampToHM } from "../../../../../../utils/util";
+import { currentNounPlanFilterName } from "../../../../../../utils/businessFunction";
+import { FLOWS } from "../../../../../../globalset/js/constant";
 
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProcessDetail extends React.Component {
   state = {
-     isShowAll: false, //是否查看全部
+    isShowAll: false, //是否查看全部
   }
   constructor(props) {
     super(props)
@@ -35,7 +35,7 @@ export default class ProcessDetail extends React.Component {
   }
 
   initCanvas() {
-    const { datas: { processInfo = {}, processEditDatas=[] }} = this.props.model
+    const { datas: { processInfo = {}, processEditDatas = [] } } = this.props.model
     const { curr_node_sort } = processInfo
     const defaultProps = {
       canvaswidth: 210, // 画布宽度
@@ -68,15 +68,15 @@ export default class ProcessDetail extends React.Component {
       circle.save()
       circle.lineWidth = lineWidth;
       let color = 'rgba(83,196,26,1)'
-      if( Number(curr_node_sort) === Number(processEditDatas[i].sort)){
+      if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
         color = 'rgba(24,144,255,1)'
-      }else if(Number(processEditDatas[i].sort) < Number(curr_node_sort)){
+      } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
         color = 'rgba(83,196,26,1)'
-      }else if(Number(processEditDatas[i].sort) > Number(curr_node_sort)){
+      } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
         color = '#f2f2f2'
       }
       circle.strokeStyle = color; //curr_node_sort
-      circle.arc(x0, y0, r, 0.6* Math.PI + i*1.83/length* Math.PI, 0.6* Math.PI + i*1.83/length* Math.PI + 1.83/length* Math.PI - 0.03*Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
+      circle.arc(x0, y0, r, 0.6 * Math.PI + i * 1.83 / length * Math.PI, 0.6 * Math.PI + i * 1.83 / length * Math.PI + 1.83 / length * Math.PI - 0.03 * Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
       circle.stroke();//对当前路径进行描边
       circle.restore()
       circle.closePath()
@@ -85,7 +85,7 @@ export default class ProcessDetail extends React.Component {
 
   render() {
     const { isShowAll } = this.state
-    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
+    const { datas: { processInfo = {}, processEditDatas = [], processDynamics = [] } } = this.props.model
     const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
     // console.log('processDynamics', processDynamics)
     // const
@@ -101,7 +101,7 @@ export default class ProcessDetail extends React.Component {
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
           break
         case 'board.flow.instance.initiate':
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
@@ -113,7 +113,7 @@ export default class ProcessDetail extends React.Component {
           break
         case 'board.flow.task.reject':
           contain = `拒绝${currentNounPlanFilterName(FLOWS)}任务`
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
@@ -125,7 +125,7 @@ export default class ProcessDetail extends React.Component {
           break
         case 'board.flow.task.recall':
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
@@ -137,7 +137,7 @@ export default class ProcessDetail extends React.Component {
           break
         case 'board.flow.task.reassign':
           contain = '重新指派审批人'
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
@@ -149,7 +149,7 @@ export default class ProcessDetail extends React.Component {
           break
         case 'board.flow.instance.discontinue':
           contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
                 <div className={indexStyles.newsItem_left_l}></div>
@@ -160,12 +160,12 @@ export default class ProcessDetail extends React.Component {
           )
           break
         case 'board.flow.task.pass':
-          messageContain=(
+          messageContain = (
             <div className={indexStyles.newsItem}>
               <div className={indexStyles.newsItem_left}>
-                  <div className={indexStyles.newsItem_left_l}></div>
-                  <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
-                </div>
+                <div className={indexStyles.newsItem_left_l}></div>
+                <div className={indexStyles.newsItem_left_r}>{messageValue.creator.name} 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
+              </div>
               <div className={indexStyles.newsItem_right}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -216,63 +216,63 @@ export default class ProcessDetail extends React.Component {
     }
 
     return (
-      <div className={indexStyles.processDetailOut_out} style={{minHeight: bodyHeight}}>
+      <div className={indexStyles.processDetailOut_out} style={{ minHeight: bodyHeight }}>
         <div className={indexStyles.processDetailOut}>
-        <div className={indexStyles.topTitle}>
-          <div className={indexStyles.topTitle_left}>
-            <div></div>
-            <div>{name}</div>
-          </div>
-        </div>
-          {/*参与人*/}
-          <div>
-        </div>
-          {/*描述*/}
-        <div className={indexStyles.description} dangerouslySetInnerHTML = {{ __html: description }}></div>
-
-        <div className={indexStyles.bottContainer}>
-          <div className={indexStyles.bottContainer_left}>
-            <div className={indexStyles.circle} style={{position: 'relative'}}>
-              <div style={{ width: 210, height: 210}}>
-                <canvas id="time_graph_canvas" width={210} height={210}></canvas>
-              </div>
-              <img id="node_img" src={sssimg} style={{position: 'absolute', width: 20, height: 20, bottom: 0, left: 95}}/>
+          <div className={indexStyles.topTitle}>
+            <div className={indexStyles.topTitle_left}>
+              <div></div>
+              <div>{name}</div>
             </div>
           </div>
-          <div className={indexStyles.bottContainer_right} >
-            <div className={indexStyles.news}>
-              <div className={indexStyles.newsTitle}>最新动态</div>
-              <div className={indexStyles.newsList} >
-                {processDynamics.map((value, key) => {
-                  return(
-                    <div key={key} value={value}>
-                      {filterTitleContain(value)}
+          {/*参与人*/}
+          <div>
+          </div>
+          {/*描述*/}
+          <div className={indexStyles.description} dangerouslySetInnerHTML={{ __html: description }}></div>
+
+          <div className={indexStyles.bottContainer}>
+            <div className={indexStyles.bottContainer_left}>
+              <div className={indexStyles.circle} style={{ position: 'relative' }}>
+                <div style={{ width: 210, height: 210 }}>
+                  <canvas id="time_graph_canvas" width={210} height={210}></canvas>
+                </div>
+                <img id="node_img" src={sssimg} style={{ position: 'absolute', width: 20, height: 20, bottom: 0, left: 95 }} />
+              </div>
+            </div>
+            <div className={indexStyles.bottContainer_right} >
+              <div className={indexStyles.news}>
+                <div className={indexStyles.newsTitle}>最新动态</div>
+                <div className={indexStyles.newsList} >
+                  {processDynamics.map((value, key) => {
+                    return (
+                      <div key={key} value={value}>
+                        {filterTitleContain(value)}
+                      </div>
+                    )
+                  })}
+                  <div className={indexStyles.seeAllList}>
+                    <div></div>
+                    {/* <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div> */}
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+              <div className={indexStyles.processPoint}>
+                <div className={indexStyles.processPointTitle}>
+                  步骤详情
+              </div>
+                {processEditDatas.map((value, key) => {
+                  return (
+                    <div className={indexStyles.processPointItem} key={key}>
+                      {filterForm(value, key)}
                     </div>
                   )
                 })}
-                <div className={indexStyles.seeAllList}>
-                  <div></div>
-                  {/* <div onClick={this.setIsShowAll.bind(this)}>{!isShowAll? '查看全部': '收起部分'}</div> */}
-                  <div></div>
-                </div>
               </div>
-            </div>
-            <div className={indexStyles.processPoint}>
-              <div className={indexStyles.processPointTitle}>
-                 步骤详情
-              </div>
-              {processEditDatas.map((value, key) => {
-                return (
-                  <div className={indexStyles.processPointItem} key={key}>
-                    {filterForm(value, key)}
-                  </div>
-                )
-              })}
             </div>
           </div>
-        </div>
 
-      </div>
+        </div>
 
       </div>
     )
