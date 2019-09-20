@@ -32,7 +32,7 @@ class InviteOthers extends Component {
       local_organization_id: this.props._organization_id, //传递进来的orgid
       inputValue: [],
       inputRet: [],
-      fetching: false,
+      fetching: false, // 是否在搜索查询
       selectedMember: [], //已经选择的成员或平台外人员
       membersListToSelect: Array.isArray(currentOrgAllMembersList)
         ? currentOrgAllMembersList
@@ -44,17 +44,23 @@ class InviteOthers extends Component {
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
   }
+
+  // 验证手机号或者是邮箱
   isValidMobileOrValidEmail = user => {
     return validateEmail(user) || validateTel(user)
   }
+
+  // 输入框失去焦点的事件
   handleInputBlur = () => {
     this.setState({
       inputValue: [],
       inputRet: [],
     })
   }
+
+  // 是否正在搜索
   handleSearchUser = user => {
-    console.log('search....................')
+    // console.log('search....................')
     this.setState(
       {
         inputValue: [],
@@ -69,6 +75,8 @@ class InviteOthers extends Component {
       }
     )
   }
+
+  // ???? 没懂
   genSplitSymbol = () => '$%$'
   genUserValueStr = (icon, name, user, isFromPlatForm, id) => {
     const splitSymbol = this.genSplitSymbol()
@@ -76,6 +84,8 @@ class InviteOthers extends Component {
       id ? `${splitSymbol}${id}` : ''
     }`
   }
+
+  // 给一个成员默认的结构
   genUserToDefinedMember = user => {
     if (!user || !(user.id || user.user_id)) return
     const {
@@ -97,6 +107,8 @@ class InviteOthers extends Component {
       )
     )
   }
+
+  // 分析用户
   parseUserValueStr = userValueStr => {
     if (!userValueStr) return
     const [icon, name, user, isFromPlatForm, id] = userValueStr.split(
@@ -110,6 +122,8 @@ class InviteOthers extends Component {
       id: id ? id : ''
     }
   }
+
+  // 进行搜索, 发送请求
   fetchUsers = user => {
     if (!user) return
     this.setState(
@@ -121,7 +135,7 @@ class InviteOthers extends Component {
         //发起请求
         associateUser(user)
           .then(res => {
-            console.log('res = 发起', res)
+            // console.log('res = 发起', res)
             if (res.code && res.code === '0') {
               //如果查到了用户
               if (res.data && res.data.length) {
@@ -199,6 +213,8 @@ class InviteOthers extends Component {
       }
     )
   }
+
+  // 搜索框的chg事件
   handleInputSelected = value => {
     const { selectedMember } = this.state
     const selectedUser = this.parseUserValueStr(value.key)
@@ -224,12 +240,16 @@ class InviteOthers extends Component {
       this.handleReturnResultWhenNotShowSubmitBtn()
     })
   }
+
+  // 当没有提交的时候返回的结果
   handleReturnResultWhenNotShowSubmitBtn = () => {
     const {handleInviteMemberReturnResult, isShowSubmitBtn} = this.props
       if(isShowSubmitBtn) return
       const {selectedMember} = this.state
       handleInviteMemberReturnResult(selectedMember)
   }
+
+  // 取消选中时的回调
   handleInputDeselected = value => {
     const selectedUser = this.parseUserValueStr(value.key)
     const { selectedMember } = this.state
@@ -249,6 +269,8 @@ class InviteOthers extends Component {
     //   fetching: false
     // })
   }
+
+  // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
     //默认
@@ -270,6 +292,8 @@ class InviteOthers extends Component {
       </p>
     )
   }
+
+  // 删除选中的用户的回调
   delFromSelectedMember = item => {
     this.setState(state => {
       const { selectedMember } = state
@@ -280,6 +304,8 @@ class InviteOthers extends Component {
       this.handleReturnResultWhenNotShowSubmitBtn()
     })
   }
+
+  // 添加用户的回调
   addMemberToSelectedMember = item => {
     const { selectedMember } = this.state
     const isMemberHasInSelectedMember = () =>
@@ -292,10 +318,14 @@ class InviteOthers extends Component {
       this.handleReturnResultWhenNotShowSubmitBtn()
     })
   }
+
+  // 点击头像上的小x将用户移除列表的事件
   handleClickedResultListIcon = (item, e) => {
     if (e) e.stopPropagation()
     this.delFromSelectedMember(item)
   }
+
+  // ？？？？
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation()
     const { selectedMember } = this.state
@@ -309,9 +339,13 @@ class InviteOthers extends Component {
     }
     return this.addMemberToSelectedMember(member)
   }
+
+  // 是否是有效的头像
   isAvatarValid = avatar => {
     return avatar && typeof avatar === 'string' && avatar.startsWith('http')
   }
+
+  // 这是验证每一个用户的什么？？？？ 难道是 名称？？？？？？？
   checkMemberInSelectedMember = item => {
     const { selectedMember } = this.state
     const mobileOrEmail = item.mobile ? item.mobile : item.email
@@ -319,6 +353,8 @@ class InviteOthers extends Component {
       each => each.type === 'platform' && each.user === mobileOrEmail
     )
   }
+
+  // 这是对用户列表进行排序, 为什么要排序？？？
   sortMemberListByCapital = (arr = []) => {
     if (!arr.length) return []
     return arr.sort((a, b) => {
@@ -339,12 +375,16 @@ class InviteOthers extends Component {
       return aNameCapital.localeCompare(bNameCapital)
     })
   }
+
+  // 获取分组, 分组的点击事件
   handleClickedInviteFromGroup = () => {
     this.setState({
       isInSelectedList: true,
       step: 'group-list'
     })
   }
+
+  // 从项目中邀请, 首先获取项目列表
   handleClickedInviteFromProject = () => {
     const { dispatch } = this.props
     const initProjectList = () => {
@@ -363,6 +403,7 @@ class InviteOthers extends Component {
         }))
       })
     }
+    // 获取项目列表 ？？
     const fetchProjectList = async () => {
       await dispatch({
         type: 'workbench/getProjectUserList',
@@ -372,6 +413,8 @@ class InviteOthers extends Component {
     }
     fetchProjectList()
   }
+
+  // 从项目列表中邀请
   handleClickedInviteFromProjectList = (id, e) => {
     if (e) e.stopPropagation()
     const getProjectMembers = () => {
@@ -386,6 +429,8 @@ class InviteOthers extends Component {
     }
     this.setPageStep(false, `project-${id}`, getProjectMembers())
   }
+
+  // 设置步骤
   setPageStep = (isInSelectedList, step, membersListToSelect = []) => {
     this.setState({
       isInSelectedList,
@@ -393,6 +438,8 @@ class InviteOthers extends Component {
       membersListToSelect
     })
   }
+
+  // 从分组列表中邀请
   handleClickedInviteFromGroupList = (id, e) => {
     if (e) e.stopPropagation()
     const getGroupMembers = () => {
@@ -408,6 +455,8 @@ class InviteOthers extends Component {
     )
     this.setPageStep(false, `group-${id}`, nameToFullname)
   }
+
+  // 点击返回的操作
   handleBack = () => {
     const { currentOrgAllMembersList, groupList } = this.props
     const { step } = this.state
@@ -458,12 +507,16 @@ class InviteOthers extends Component {
     const callback = conditionMap.get(step)
     if (callback) callback()
   }
+
+  // 是否全选
   isSelectedAll = () => {
     const { membersListToSelect } = this.state
     return membersListToSelect.every(item =>
       this.checkMemberInSelectedMember(item)
     )
   }
+
+  // 全选的切换事件
   handleToggleSelectCurrentListAll = () => {
     const { membersListToSelect, selectedMember } = this.state
     //如果是全选状态，那么就全不选, 否则就全选
@@ -491,6 +544,8 @@ class InviteOthers extends Component {
       })
     }
   }
+
+  // 获取分组列表
   getGroupList = (payload = {}) => {
     const { dispatch } = this.props
     const { _organization_id } = payload
@@ -510,15 +565,21 @@ class InviteOthers extends Component {
       }
     })
   }
+
+  // 验证是否是有效的图片
   isValidImgSrc = (srcStr = '') => {
     const srcRegExp = /^http[s]?:.+\.(png|jpg|jpeg|gif)$/
     return srcRegExp.test(srcStr)
   }
+
+  // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
     handleInviteMemberReturnResult(selectedMember)
   }
+
+
   componentDidMount() {
     const { _organization_id, shouldNotGetGroupInDidMount } = this.props
     if(!shouldNotGetGroupInDidMount) {
@@ -527,6 +588,8 @@ class InviteOthers extends Component {
       })
     }
   }
+
+
   componentWillReceiveProps(nextProps) {
     const { _organization_id, currentOrgAllMembersList } = nextProps
     const { local_organization_id } = this.state
@@ -540,9 +603,13 @@ class InviteOthers extends Component {
       membersListToSelect: currentOrgAllMembersList
     })
   }
+
+  // 渲染没有数据的时候
   renderWhenNoData = () => {
     return null
   }
+
+  // 渲染列表的结构
   renderSelectList = () => {
     const { step, projectList, isInSelectedList } = this.state
     const { groupList } = this.props
@@ -570,6 +637,8 @@ class InviteOthers extends Component {
         </div>
       </>
     )
+
+    // 选择的是分组
     const selectGroupList = () => (
       <>
         {groupList.map((item, index) => (
@@ -586,6 +655,8 @@ class InviteOthers extends Component {
         ))}
       </>
     )
+
+    // 选择的是项目
     const selectProjectList = () => (
       <>
         {projectList.map(item => (
@@ -604,15 +675,19 @@ class InviteOthers extends Component {
         ))}
       </>
     )
+
+    // 定义一个条件来区分现在选择的是哪一个步骤
     const condition = {
       home: selectHome,
       'group-list': selectGroupList,
       'project-list': selectProjectList
     }
+
     let selectListWrapper = cx({
       invite__select_list_wrapper: true,
       invite__select_list_wrapper_with_out_border_bottom: isInSelectedList
     })
+    
     const mapCallback = condition[step]
     const wrapper = (
       <div className={selectListWrapper}>

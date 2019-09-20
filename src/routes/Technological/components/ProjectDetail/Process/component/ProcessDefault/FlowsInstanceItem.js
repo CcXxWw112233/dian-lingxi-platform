@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {DatePicker } from 'antd'
+import {DatePicker, Tooltip } from 'antd'
 import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../../utils/util";
 import indexStyles from '../../index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
@@ -127,7 +127,7 @@ export default class FlowsInstanceItem extends Component {
 
     const { due_time } = this.state
     const { itemValue = {}, status } = this.props
-    const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num, deadline } = itemValue
+    const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num, deadline, is_privilege } = itemValue
 
     return (
       <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, { flow: id, board: board_id})}>
@@ -135,6 +135,15 @@ export default class FlowsInstanceItem extends Component {
         <div className={indexStyles.panelHead_m}>
           <div className={indexStyles.panelHead_m_l}>{name}{this.filterProgress.bind(this, { status, completed_node_num, total_node_num })}</div>
           <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
+          {
+            !(is_privilege == '0') && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </div>
+              </Tooltip>
+            )
+          }
         </div>
         <div className={indexStyles.panelHead_r} onClick={this.stopPropagation}>
           {timestampToTimeNormal(due_time, '/', true) || (

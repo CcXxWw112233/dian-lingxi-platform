@@ -1,7 +1,6 @@
 //文件列表包括文件夹
-import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
-import { func } from "prop-types";
 
 const createHeaderContentData = (contentType, contentId) => {
   
@@ -174,11 +173,12 @@ export async function deleteProcessFile(data) {
 //获取流程列表 进行中 已终止 已完成
 export async function getProcessListByType(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow/list`,
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/list`,
     method: 'GET',
     params,
   }, {isNotLoading: true});
 }
+
 //工作台 流程modal 评论提交
 export async function addWorkFlowComment(data) {
   return request({

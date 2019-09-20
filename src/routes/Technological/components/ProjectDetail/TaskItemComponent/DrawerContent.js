@@ -1,6 +1,6 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Checkbox, message, Modal, Popconfirm } from 'antd'
+import { Icon, Tag, Input, Dropdown, Menu, DatePicker, message, Modal, Popconfirm } from 'antd'
 import BraftEditor from 'braft-editor'
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
@@ -15,35 +15,32 @@ import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../
 import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
-  PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
-  PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, PROJECTS, CONTENT_DATA_TYPE_CARD
+  PROJECT_TEAM_CARD_COMPLETE, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_BOARD, TASKS, CONTENT_DATA_TYPE_CARD
 } from "../../../../../globalset/js/constant";
 import {
-  checkIsHasPermissionInBoard, checkIsHasPermission,
-  currentNounPlanFilterName, openPDF, getSubfixName
+  checkIsHasPermissionInBoard,
+  currentNounPlanFilterName, getSubfixName
 } from "../../../../../utils/businessFunction";
 import { deleteTaskFile } from '../../../../../services/technological/task'
-import { filePreview } from '../../../../../services/technological/file'
-import {getProcessList} from "../../../../../services/technological/process";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
 import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
 import ContentRaletion from '../../../../../components/ContentRaletion'
-import {createMeeting, createShareLink, modifOrStopShareLink} from './../../../../../services/technological/workbench'
+import { createMeeting, createShareLink, modifOrStopShareLink } from './../../../../../services/technological/workbench'
 import ShareAndInvite from './../../ShareAndInvite/index'
 import VisitControl from './../../VisitControl/index'
 import InformRemind from '@/components/InformRemind'
-import {setContentPrivilege, toggleContentPrivilege, removeContentPrivilege} from './../../../../../services/technological/project'
-import {withRouter} from 'react-router-dom'
+import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
+import { withRouter } from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { connect } from 'dva'
 
-const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 let that
+@connect(mapStateToProps)
 class DrawContent extends React.Component {
   state = {
     title: '',
@@ -64,14 +61,14 @@ class DrawContent extends React.Component {
   }
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas: { drawContent = {}} } = this.props.model
+    const { drawContent = {} } = this.props
     let { description, attachment_data = [] } = drawContent
     this.setState({
       brafitEditHtml: description
     })
   }
   componentWillReceiveProps(nextProps) {
-    const { datas: { drawContent = {}} } = nextProps.model
+    const { drawContent = {} } = nextProps
     let { description } = drawContent
     this.setState({
       brafitEditHtml: description
@@ -79,19 +76,19 @@ class DrawContent extends React.Component {
     this.initSetAttachmentFileList(nextProps)
   }
   initSetAttachmentFileList(props) {
-    const { datas: { drawContent = {}} } = props.model
+    const { drawContent = {} } = props
     let { attachment_data = [] } = drawContent
     const attachment_fileList_local = this.state.attachment_fileList || []
-    if(attachment_data.length == attachment_fileList_local.length) {
+    if (attachment_data.length == attachment_fileList_local.length) {
       return
     }
 
     let attachment_fileList = []
-    for(let i = 0; i < attachment_data.length; i++) {
-      if(attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
+    for (let i = 0; i < attachment_data.length; i++) {
+      if (attachment_data[i].status !== 'uploading') { //加此判断是 由于在上传的过程中退出详情抽屉，导致数据异常
         attachment_fileList.push(attachment_data[i])
         // attachment_fileList[i]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
-        attachment_fileList[attachment_fileList.length-1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data? attachment_data[i].response.data.attachment_id:'')
+        attachment_fileList[attachment_fileList.length - 1]['uid'] = attachment_data[i].id || (attachment_data[i].response && attachment_data[i].response.data ? attachment_data[i].response.data.attachment_id : '')
       }
     }
     this.setState({
@@ -105,7 +102,7 @@ class DrawContent extends React.Component {
     const parentKey = Number(pathArr[1])
     const childKey = Number(pathArr[0])
 
-    const { datas: { drawContent = {}, projectDetailInfoData = {}, projectGoupList = [] } } = this.props.model
+    const { drawContent = {}, projectGoupList = [] } = this.props
     const { card_id } = drawContent
     const list_id = projectGoupList[parentKey].list_data[childKey].list_id
     const board_id = projectGoupList[parentKey].board_id
@@ -118,22 +115,31 @@ class DrawContent extends React.Component {
       taskGroupListIndex: childKey,
       taskGroupListIndex_index: 0
     }
-    this.props.changeTaskType({requestObj, indexObj})
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/changeTaskType',
+      payload: {
+        requestObj, indexObj
+      }
+    })
   }
-  topRightMenuClick({key}) {
-    const { datas: { drawContent = {} } } = this.props.model
+  topRightMenuClick({ key }) {
+    const { drawContent = {}, dispatch } = this.props
     const { card_id } = drawContent
-    if(key === '1') {
-      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
+    if (key === '1') {
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
-      this.props.archivedTask({
-        card_id,
-        is_archived: '1'
+      dispatch({
+        type: 'projectDetailTask/archivedTask',
+        payload: {
+          card_id,
+          is_archived: '1'
+        }
       })
-    }else if(key === '2') {
-      if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)){
+    } else if (key === '2') {
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -142,6 +148,8 @@ class DrawContent extends React.Component {
   }
   confirm(card_id) {
     const that = this
+    const { dispatch } = that.props
+
     Modal.confirm({
       title: `确认删除该${currentNounPlanFilterName(TASKS)}吗？`,
       okText: '确认',
@@ -149,7 +157,12 @@ class DrawContent extends React.Component {
       zIndex: 2000,
       onOk() {
         that.props.setDrawerVisibleClose()
-        that.props.deleteTask(card_id)
+        dispatch({
+          type: 'projectDetailTask/deleteTask',
+          payload: {
+            id: card_id,
+          }
+        })
       }
     });
   }
@@ -157,33 +170,51 @@ class DrawContent extends React.Component {
 
   //更新父级任务列表的当前任务
   updateParentTaskList(name, value) {
-    const { datas: { taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    const { taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [] } = this.props
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
-    this.props.updateDatasTask({ taskGroupList})
+
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList
+      }
+    })
   }
   //标题-------start
   setIsCheck() {
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)){
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
+    const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [] } = this.props
     const { is_realize = '0', card_id } = drawContent
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
     }
-    this.props.completeTask(obj)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/completeTask',
+      payload: {
+        ...obj
+      }
+    })
     drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatasTask({drawContent, taskGroupList})
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent, taskGroupList
+      }
+    })
   }
   titleTextAreaChangeBlur(e) {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
-    const { card_id, description, due_time, start_time } = drawContent
+    const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [], dispatch } = this.props
+    const { card_id } = drawContent
     drawContent['card_name'] = e.target.value
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['card_name'] = e.target.value
-    const updateObj ={
+    const updateObj = {
       card_id,
       name: e.target.value,
       card_name: e.target.value,
@@ -192,8 +223,19 @@ class DrawContent extends React.Component {
       titleIsEdit: false
     })
     // const newDrawContent = {...drawContent,card_name: e.target.value,}
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent, taskGroupList})
+
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent, taskGroupList
+      }
+    })
   }
   setTitleIsEdit(titleIsEdit, e) {
     e.stopPropagation();
@@ -204,34 +246,31 @@ class DrawContent extends React.Component {
   //标题-------end
 
   //第二行状态栏编辑------------------start
-    //设置任务负责人组件---------------start
+  //设置任务负责人组件---------------start
   setList(id) {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {}, dispatch } = this.props
     const { board_id } = projectDetailInfoData
-    this.props.removeProjectMenbers({board_id, user_id: id})
+
+    dispatch({
+      type: 'projectDetailTask/removeProjectMenbers',
+      payload: {
+        board_id, user_id: id
+      }
+    })
   }
   chirldrenTaskChargeChange(data) {
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
-    const { card_id, executors=[] } = drawContent
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
+    const { card_id } = drawContent
     //单个任务执行人
     const { user_id, full_name, avatar } = data
-    // executors[0] = {
-    //   user_id,
-    //   user_name: full_name,
-    //   avatar: avatar
-    // }
-    // this.props.addTaskExecutor({
-    //   card_id,
-    //   users: user_id
-    // })
 
-   //  多个任务执行人
+    //  多个任务执行人
     const excutorData = projectDetailInfoData['data'] //所有的人
     let newExecutors = []
     const { selectedKeys = [] } = data
-    for(let i = 0; i < selectedKeys.length; i++) {
-      for(let j = 0; j < excutorData.length; j++) {
-        if(selectedKeys[i] === excutorData[j]['user_id']) {
+    for (let i = 0; i < selectedKeys.length; i++) {
+      for (let j = 0; j < excutorData.length; j++) {
+        if (selectedKeys[i] === excutorData[j]['user_id']) {
           newExecutors.push(excutorData[j])
         }
       }
@@ -241,22 +280,25 @@ class DrawContent extends React.Component {
     //用于判判断任务执行人菜单是否显示
     const that = this
     setTimeout(function () {
-      const { excutorsOut_left = {}} = that.refs
+      const { excutorsOut_left = {} } = that.refs
       const excutorsOut_left_width = excutorsOut_left.clientWidth
       that.setState({
         excutorsOut_left_width
       })
     }, 300)
 
-    this.props.addTaskExecutor({
-      card_id,
-      users: selectedKeys.join(',')
+    dispatch({
+      type: 'projectDetailTask/addTaskExecutor',
+      payload: {
+        card_id,
+        users: selectedKeys.join(',')
+      }
     })
 
   }
   setChargeManIsSelf() {
-    const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, executors=[] } = drawContent
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, executors = [] } = drawContent
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const { id, full_name, fullName, email, mobile, avatar } = userInfo
     executors[0] = {
@@ -266,14 +308,17 @@ class DrawContent extends React.Component {
     }
     this.updateParentTaskList('executors', executors)
 
-    this.props.addTaskExecutor({
-      card_id,
-      users: id
+    dispatch({
+      type: 'projectDetailTask/addTaskExecutor',
+      payload: {
+        card_id,
+        users: id
+      }
     })
   }
-    //设置任务负责人组件---------------end
-    //设置提醒
-  alarmMenuClick({key}) {
+  //设置任务负责人组件---------------end
+  //设置提醒
+  alarmMenuClick({ key }) {
     let alarmTime
     switch (key) {
       case '1':
@@ -302,58 +347,80 @@ class DrawContent extends React.Component {
       alarmTime
     })
   }
-    //开始时间
+  //开始时间
   startDatePickerChange(e, timeString) {
-    const { datas: { drawContent = {} } } = this.props.model
+    const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
-    if(!this.compareStartDueTime(start_timeStamp, due_time)) {
+    if (!this.compareStartDueTime(start_timeStamp, due_time)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
     drawContent['start_time'] = start_timeStamp
-    const updateObj ={
+    const updateObj = {
       card_id,
       start_time: start_timeStamp,
     }
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent})
+
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
   }
-    //截止时间
+  //截止时间
   endDatePickerChange(e, timeString) {
-    const { datas: { drawContent = {}, milestoneList = [] } } = this.props.model
+    const { drawContent = {}, milestoneList = [], dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
     const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
-    if(!this.compareStartDueTime(start_time, due_timeStamp)) {
+    if (!this.compareStartDueTime(start_time, due_timeStamp)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if(!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
       return
     }
     drawContent['due_time'] = due_timeStamp
-    const updateObj ={
+    const updateObj = {
       card_id,
       due_time: due_timeStamp,
     }
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent})
+
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
   }
   compareStartDueTime = (start_time, due_time) => {
-    if(!start_time || !due_time) {
+    if (!start_time || !due_time) {
       return true
     }
     const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
     const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
-    if(newStartTime >= newDueTime) {
+    if (newStartTime >= newDueTime) {
       return false
     }
     return true
   }
   disabledDueTime = (due_time) => {
-    const { datas: { drawContent = {} } } = this.props.model
+    const { drawContent = {} } = this.props
     const { start_time } = drawContent
     if (!start_time || !due_time) {
       return false;
@@ -362,7 +429,7 @@ class DrawContent extends React.Component {
     return Number(due_time.valueOf()) / 1000 < newStartTime;
   }
   disabledStartTime = (start_time) => {
-    const { datas: { drawContent = {} } } = this.props.model
+    const { drawContent = {} } = this.props
     const { due_time } = drawContent
     if (!start_time || !due_time) {
       return false;
@@ -387,7 +454,7 @@ class DrawContent extends React.Component {
   }
   quitBrafitEdit(e) {
     e.stopPropagation();
-    const { datas: { drawContent = {}} } = this.props.model
+    const { drawContent = {} } = this.props
     let { description } = drawContent
     this.setState({
       isInEdit: false,
@@ -397,50 +464,43 @@ class DrawContent extends React.Component {
   }
   saveBrafitEdit(e) {
     e.stopPropagation();
-    const { datas: { drawContent = {} } } = this.props.model
-    let { card_id} = drawContent
+    const { drawContent = {}, dispatch } = this.props
+    let { card_id } = drawContent
     let { brafitEditHtml } = this.state
-    if(typeof brafitEditHtml === 'object') {
+    if (typeof brafitEditHtml === 'object') {
       brafitEditHtml = brafitEditHtml.toHTML()
     }
     this.setState({
       isInEdit: false,
     })
-    const updateObj ={
+    const updateObj = {
       card_id,
       description: brafitEditHtml,
     }
-    this.props.updateTask({updateObj})
+
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
   }
   drawerContentOutClick(e) {
-    // if(this.state.isInEdit){
-    //   const { datas:{ drawContent = {} } } = this.props.model
-    //   let { card_id, description,} = drawContent
-    //   if(typeof description === 'object') {
-    //     description = description.toHTML()
-    //   }
-    //   const updateObj ={
-    //     card_id,
-    //     description,
-    //   }
-    //   this.props.updateTask({updateObj})
-    // }
     this.setState({
-      // isInEdit: false,
       titleIsEdit: false,
     })
   }
   isJSON = (str) => {
     if (typeof str === 'string') {
       try {
-        var obj=JSON.parse(str);
-        if(str.indexOf('{')>-1){
+        var obj = JSON.parse(str);
+        if (str.indexOf('{') > -1) {
           return true;
-        }else{
+        } else {
           return false;
         }
 
-      } catch(e) {
+      } catch (e) {
         return false;
       }
     }
@@ -454,8 +514,8 @@ class DrawContent extends React.Component {
     const successFn = (response) => {
       // 假设服务端直接返回文件上传后的地址
       // 上传成功后调用param.success并传入上传后的文件地址
-      if(xhr.status === 200 && this.isJSON(xhr.responseText)) {
-        if(JSON.parse(xhr.responseText).code === '0') {
+      if (xhr.status === 200 && this.isJSON(xhr.responseText)) {
+        if (JSON.parse(xhr.responseText).code === '0') {
           param.success({
             url: JSON.parse(xhr.responseText).data ? JSON.parse(xhr.responseText).data.url : '',
             meta: {
@@ -468,10 +528,10 @@ class DrawContent extends React.Component {
               // poster: 'http://xxx/xx.png', // 指定视频播放器的封面
             }
           })
-        }else {
+        } else {
           errorFn()
         }
-      }else {
+      } else {
         errorFn()
       }
 
@@ -501,14 +561,14 @@ class DrawContent extends React.Component {
     xhr.send(fd)
   }
   descriptionHTML(e) {
-    if(e.target.nodeName.toUpperCase() === 'IMG') {
+    if (e.target.nodeName.toUpperCase() === 'IMG') {
       const src = e.target.getAttribute('src')
       this.setState({
         previewFileType: 'img',
         previewFileSrc: src
       })
       this.setPreviewFileModalVisibile()
-    }else if(e.target.nodeName.toUpperCase() === 'VIDEO') {
+    } else if (e.target.nodeName.toUpperCase() === 'VIDEO') {
       const src = e.target.getAttribute('src')
       // console.log(src)
       this.setState({
@@ -528,21 +588,31 @@ class DrawContent extends React.Component {
   //标签-------------start
   randomColorArray() {
     const colorArr = ['magenta', 'red', 'volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple']
-    const n = Math.floor(Math.random() * colorArr.length + 1)-1;
+    const n = Math.floor(Math.random() * colorArr.length + 1) - 1;
     return colorArr[n]
   }
-  tagClose({ label_id, label_name, key}) {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[]} } = this.props.model
+  tagClose({ label_id, label_name, key }) {
+    const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [], dispatch } = this.props
     const { card_id } = drawContent
     // drawContent['label_data'].splice(key, 1)
-    const keyCode = label_id? 'label_id':'label_name'
-    this.props.removeTaskTag({
-      card_id,
-      [keyCode]: label_id || label_name,
-    })
+    const keyCode = label_id ? 'label_id' : 'label_name'
+  
     drawContent['label_data'].splice(key, 1)
     taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
-    this.props.updateDatasTask({taskGroupList, drawContent})
+
+    dispatch({
+      type: 'projectDetailTask/removeTaskTag',
+      payload: {
+        card_id,
+        [keyCode]: label_id || label_name,
+      }
+    })
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList, drawContent
+      }
+    })
   }
   addTag() {
     this.setState({
@@ -562,19 +632,23 @@ class DrawContent extends React.Component {
       tagDropdownVisible: false,
       tagInputValue: ''
     })
-    if(! e.target.value) {
+    if (!e.target.value) {
       return false
     }
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
-    label_data.push({label_name: e.target.value})
-    this.props.addTaskTag({
-      card_id,
-      board_id,
-      name: e.target.value,
-      label_name: e.target.value,
-      length: label_data.length
+    label_data.push({ label_name: e.target.value })
+    
+    dispatch({
+      type: 'projectDetailTask/addTaskTag',
+      payload: {
+        card_id,
+        board_id,
+        name: e.target.value,
+        label_name: e.target.value,
+        length: label_data.length
+      }
     })
     this.updateParentTaskList('label_data', label_data)
 
@@ -585,18 +659,22 @@ class DrawContent extends React.Component {
       tagDropdownVisible: false,
       tagInputValue: ''
     })
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
     const { name, color } = data
-    label_data.push({label_name: name, label_color: color})
-    this.props.addTaskTag({
-      card_id,
-      board_id,
-      name: name,
-      color,
-      label_name: name,
-      length: label_data.length
+    label_data.push({ label_name: name, label_color: color })
+    
+    dispatch({
+      type: 'projectDetailTask/addTaskTag',
+      payload: {
+        card_id,
+        board_id,
+        name: name,
+        color,
+        label_name: name,
+        length: label_data.length
+      }
     })
     this.updateParentTaskList('label_data', label_data)
 
@@ -621,38 +699,54 @@ class DrawContent extends React.Component {
     const file_name = data.name
     const file_resource_id = data.file_resource_id || data.response.data.file_resource_id
     const file_id = data.file_id || data.response.data.file_id
-    this.props.updateDatasFile({
-      seeFileInput: 'taskModule',
-      isInOpenFile: true,
-      filePreviewCurrentId: file_resource_id,
-      filePreviewCurrentFileId: file_id,
-      pdfDownLoadSrc: '',
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        seeFileInput: 'taskModule',
+        isInOpenFile: true,
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentFileId: file_id,
+        pdfDownLoadSrc: '',
+      }
     })
 
-    if(getSubfixName(file_name) == '.pdf') {
-      this.props.dispatch({
+    if (getSubfixName(file_name) == '.pdf') {
+      dispatch({
         type: 'projectDetailFile/getFilePDFInfo',
         payload: {
           id: file_id
         }
       })
     } else {
-      this.props.filePreview({id: file_resource_id, file_id})
+      dispatch({
+        type: 'projectDetailFile/filePreview',
+        payload: {
+          id: file_id
+        }
+      })
     }
   }
-  attachmentItemOpera({type, data = {}, card_id}, e) {
+  attachmentItemOpera({ type, data = {}, card_id }, e) {
     e.stopPropagation()
     //debugger
+    const { dispatch } = this.props
     const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
     const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
-    if(!attachment_id){
+    if (!attachment_id) {
       message.warn('上传中，请稍后...')
       return
     }
-    if(type == 'remove') {
-      this.deleteAttachmentFile({attachment_id, card_id})
-    }else if(type == 'download') {
-      this.props.fileDownload({ids: file_resource_id, card_id})
+    if (type == 'remove') {
+      this.deleteAttachmentFile({ attachment_id, card_id })
+    } else if (type == 'download') {
+      dispatch({
+        type: 'projectDetailFile/fileDownload',
+        payload: {
+          ids: file_resource_id, 
+          card_id
+        }
+      })
     }
   }
   deleteAttachmentFile(data) {
@@ -660,12 +754,12 @@ class DrawContent extends React.Component {
     const that = this
     const { attachment_fileList } = this.state
     const atta_arr = [...attachment_fileList]
-    const { datas: { drawContent = {} }} = this.props.model
+    const { drawContent = {}, dispatch } = this.props
 
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
       zIndex: 1007,
-      content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
         <span >删除后不可恢复</span>
       </div>,
       okText: '确认',
@@ -673,12 +767,12 @@ class DrawContent extends React.Component {
       onOk() {
         return new Promise((resolve, reject) => {
           deleteTaskFile(data).then((value) => {
-       
-            if(value.code !=='0') {
+
+            if (value.code !== '0') {
               message.warn('删除失败，请重新删除。1')
               resolve()
-            }else {
-              for(let i = 0; i < atta_arr.length; i++) {
+            } else {
+              for (let i = 0; i < atta_arr.length; i++) {
                 if (attachment_id == atta_arr[i]['id'] || (atta_arr[i].response && atta_arr[i].response.data && atta_arr[i].response.data.attachment_id == attachment_id)) {
                   atta_arr.splice(i, 1)
                 }
@@ -686,9 +780,9 @@ class DrawContent extends React.Component {
               that.setState({
                 attachment_fileList: atta_arr
               })
-              const drawContentNew = {...drawContent}
+              const drawContentNew = { ...drawContent }
               drawContentNew['attachment_data'] = atta_arr
-              that.props.dispatch({
+              dispatch({
                 type: 'projectDetailTask/updateDatas',
                 payload: {
                   drawContent: drawContentNew
@@ -711,9 +805,9 @@ class DrawContent extends React.Component {
     const { key } = e
     if (key == '1') {
       window.open('https://zoom.us/start/webmeeting')
-    } else if(key == '2') {
+    } else if (key == '2') {
       window.open('https://zoom.us/start/videomeeting')
-    } else if(key == '3') {
+    } else if (key == '3') {
       window.open('https://zoom.us/start/sharemeeting')
     }
   }
@@ -734,13 +828,13 @@ class DrawContent extends React.Component {
     aTag.parentNode.removeChild(aTag)
   }
   handleCreateVideoMeeting = (title, id, users = [], e) => {
-    if(e) e.stopPropagation()
+    if (e) e.stopPropagation()
     const body = {
       flag: '1',
       board_id: id,
       topic: title,
       user_ids: users.reduce((acc, curr) => {
-        if(!curr || !curr.user_id) return acc
+        if (!curr || !curr.user_id) return acc
         return acc ? acc + ',' + curr.user_id : curr.user_id
       }, '')
     }
@@ -757,9 +851,9 @@ class DrawContent extends React.Component {
     })
   }
   handleChangeOnlyReadingShareModalVisible = () => {
-    const {onlyReadingShareModalVisible} = this.state
+    const { onlyReadingShareModalVisible } = this.state
     //打开之前确保获取到数据
-    if(!onlyReadingShareModalVisible) {
+    if (!onlyReadingShareModalVisible) {
       Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
         this.setState({
           onlyReadingShareModalVisible: true
@@ -772,32 +866,32 @@ class DrawContent extends React.Component {
     }
   }
   getSearchFromLocation = location => {
-    if(!location.search) {
+    if (!location.search) {
       return {}
     }
     return location.search.substring(1).split('&').reduce((acc, curr) => {
       const [key, value] = curr.split('=')
-      return Object.assign({}, acc, {[key]: value})
+      return Object.assign({}, acc, { [key]: value })
     }, {})
   }
   createOnlyReadingShareLink = () => {
-    const {location} = this.props
+    const { location } = this.props
     //获取参数
-    const {board_id = '', appsSelectKey = '', card_id = ''} = this.getSearchFromLocation(location)
+    const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
 
     const payload = {
       board_id,
       rela_id: card_id,
       rela_type: appsSelectKey
     }
-    return createShareLink(payload).then(({code, data}) => {
-      if(code === '0') {
+    return createShareLink(payload).then(({ code, data }) => {
+      if (code === '0') {
         this.setState(() => {
           return {
             onlyReadingShareData: data
           }
         })
-      }else {
+      } else {
         message.error('获取分享信息失败')
         return new Error('can not create share link.')
       }
@@ -806,8 +900,8 @@ class DrawContent extends React.Component {
   handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
     const isStopShare = obj && obj['status'] && obj['status'] === '0'
     return modifOrStopShareLink(obj).then(res => {
-      if(res && res.code === '0') {
-        if(isStopShare) {
+      if (res && res.code === '0') {
+        if (isStopShare) {
           message.success('停止分享成功')
         } else {
           message.success('修改成功')
@@ -825,12 +919,17 @@ class DrawContent extends React.Component {
       message.error('操作失败')
     })
   }
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
   handleVisitControlChange = (flag) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {is_privilege = '0', card_id} = drawContent
+    const { drawContent = {} } = this.props
+    const { is_privilege = '0', card_id } = drawContent
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
-    if(flag === is_privilege_bool) {
+    if (flag === is_privilege_bool) {
       return
     }
     //toggle权限
@@ -840,112 +939,222 @@ class DrawContent extends React.Component {
       is_open: flag ? 1 : 0
     }
     toggleContentPrivilege(data).then(res => {
-  if(res && res.code === '0') {
-      this.visitControlUpdateCurrentModalData({is_privilege: flag ? '1':'0'}, flag)
-    } else {
-      message.error('设置内容权限失败，请稍后再试')
+      if (res && res.code === '0') {
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
+      } else {
+        message.error('设置内容权限失败，请稍后再试')
+      }
+    })
+  }
+
+  // 数组去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
     }
+    return temp_arr
+  }
+
+  // 访问控制的更新model中的数据
+  visitControlUpdateCurrentModalData = (obj = {}) => {
+    // console.log(obj, 'sssss_obj')
+    const { drawContent = {}, getTaskGroupListArrangeType } = this.props
+    const { dispatch } = this.props
+    const { privileges = [], board_id } = drawContent
+    // 这是移除的操作
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let new_drawContent = { ...drawContent, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+    // 这是添加成员的操作
+    // 这是更新弹窗中的priveleges
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let new_drawContent = { ...drawContent, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+
+    // 这是更新type类型
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = { ...item, content_privilege_code: obj.code }
+        } else {
+          new_item = { ...item }
+        }
+        return new_item
+      })
+      let new_drawContent = { ...drawContent, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+
+    // 访问控制的切换
+    if (obj && obj.type == 'privilege') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let new_drawContent = { ...drawContent, is_privilege: obj.is_privilege, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+
+    // 调用分组列表
+    dispatch({
+      type: 'projectDetailTask/getTaskGroupList',
+      payload: {
+        type: '2',
+        arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+        board_id: board_id
+      }
+    })
+    // 调用更新项目列表
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
     })
 
-    // console.log(flag, 'get visitcontrol change')
   }
-  visitControlUpdateCurrentModalData = (obj = {}) => {
-    const { datas: { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList=[] } } = this.props.model
-    const {card_id} = drawContent
 
-    for (let item in obj) {
-      drawContent[item] = obj[item]
-      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][item] = obj[item]
-    }
-    const updateObj ={
-      card_id
-    }
-    this.props.updateTask({updateObj})
-    this.props.updateDatasTask({drawContent, taskGroupList})
-  }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if(!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if(!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    const { drawContent = {} } = this.props
+    const { card_id } = drawContent
     const content_id = card_id
     const content_type = 'card'
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids,
+      user_ids: temp_ids,
     }).then(res => {
-      if(res && res.code === '0') {
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, {[curr]: 'read'})
-        }, {})
-        this.visitControlUpdateCurrentModalData({privileges: Object.assign({}, newMemberPrivilegesObj, privileges)})
+      if (res && res.code === '0') {
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
       }
     })
-    //设置特权，然后更新卡片详情
-    // console.log(ids, 'idddddds')
   }
+
+  /**
+   * 访问控制移除成员
+   * @param {String} id 移除成员对应的id
+   */
   handleVisitControlRemoveContentPrivilege = id => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
-    removeContentPrivilege({content_id: card_id, content_type: 'card', user_id: id}).then(res => {
+    let temp_id = []
+    temp_id.push(id)
+    removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let remainPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            remainPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: remainPrivileges})
-      }else{
+      if (isResOk(res)) {
+        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
+      } else {
         message.error('移除用户内容控制权限失败')
       }
     })
   }
+
+  /**
+   * 访问控制设置更新成员
+   * @param {String} id 设置成员对应的id
+   * @param {String} type 设置成员对应的字段
+   */
   handleVisitControlChangeContentPrivilege = (id, type) => {
-    const { datas: { drawContent = {}} } = this.props.model
-    const {card_id, privileges} = drawContent
+    const { drawContent = {} } = this.props
+    const { card_id } = drawContent
+    let temp_id = []
+    temp_id.push(id)
     const obj = {
       content_id: card_id,
       content_type: 'card',
       privilege_code: type,
-      user_ids: id
+      user_ids: temp_id
     }
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
-      if(isResOk(res)){
-        let changedPrivileges = {}
-        for(let item in privileges) {
-          if(item !== id) {
-            changedPrivileges[item] = privileges[item]
-          } else {
-            changedPrivileges[item] = type
-          }
-        }
-        this.visitControlUpdateCurrentModalData({privileges: changedPrivileges})
-      }else{
+      if (isResOk(res)) {
+        let temp_arr = []
+        temp_arr = res && res.data[0]
+        this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
+      } else {
         message.error('更新用户控制类型失败')
       }
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
-    if(type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+    if (type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
-
-    // console.log(id, type, 'get other person operator type from visitControl.')
   }
 
   //里程碑
   renderMiletonesMenu = () => {
-    const { datas: { milestoneList = [] }} = this.props.model
+    const { milestoneList = [] } = this.props
     return (
       <Menu onClick={this.setRelaMiletones}>
         {
@@ -963,9 +1172,9 @@ class DrawContent extends React.Component {
     const id_time_arr = e.key.split('__')
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
-    const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, type, due_time} = drawContent
-    if(!compareTwoTimestamp(deadline, due_time)) {
+    const { drawContent = {} } = this.props
+    const { card_id, type, due_time } = drawContent
+    if (!compareTwoTimestamp(deadline, due_time)) {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return
     }
@@ -983,7 +1192,7 @@ class DrawContent extends React.Component {
       }
     })
   }
-  cancelRelaMiletone = ({card_id, id}) => {
+  cancelRelaMiletone = ({ card_id, id }) => {
     const params = {
       rela_id: card_id,
       id,
@@ -998,21 +1207,21 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, isVisitControl} = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, isVisitControl } = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { datas: { milestoneList = [], isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [] } } = this.props.model
+    const { relations_Prefix = [], isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [], dispatch } = this.props
 
     const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
-    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data=[], is_shared } = drawContent
+    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data = [], is_shared } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
       avatar: '',
     }
-    if(executors.length) {
+    if (executors.length) {
       executor = executors[0]
     }
     label_data = label_data || []
@@ -1023,11 +1232,8 @@ class DrawContent extends React.Component {
       height: 0,
       contentFormat: 'html',
       value: editorState,
-      media: {uploadFn: this.myUploadFn},
+      media: { uploadFn: this.myUploadFn },
       onChange: (e) => {
-        // const { datas:{ drawContent = {} } } = this.props.model
-        // drawContent['description'] = e
-        // this.props.updateDatasTask({drawContent})
         this.setState({
           brafitEditHtml: e
         })
@@ -1054,19 +1260,19 @@ class DrawContent extends React.Component {
     const meetingMenu = (
       <Menu onClick={this.meetingMenuClick.bind(this)}>
         <Menu.Item key="1">
-          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
+          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
             &#xe760;
           </i>
           仅语音会议
         </Menu.Item>
         <Menu.Item key="2">
-          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
+          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
             &#xe601;
           </i>
           语音视频会议
         </Menu.Item>
         <Menu.Item key="3">
-          <i className={`${globalStyle.authTheme}`} style={{marginRight: 8}}>
+          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
             &#xe746;
           </i>
           屏幕或白板共享会议
@@ -1081,23 +1287,23 @@ class DrawContent extends React.Component {
           return (
             <SubMenu key={key} title={<span>{value.board_name}</span>}>
               {list_data.map((value2, key2) => {
-                return (<Menu.Item key={key2}>{ value2.list_name }</Menu.Item>)
+                return (<Menu.Item key={key2}>{value2.list_name}</Menu.Item>)
               })}
             </SubMenu>
-            )
+          )
         })}
       </Menu>
     )
 
     const topRightMenu = (
       <Menu onClick={this.topRightMenuClick.bind(this)}>
-        <Menu.Item key={'1'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+        <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
           <div className={DrawerContentStyles.elseProjectMemu}>
             归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
         {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE) && (
-          <Menu.Item key={'2'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+          <Menu.Item key={'2'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={DrawerContentStyles.elseProjectDangerMenu}>
               删除{currentNounPlanFilterName(TASKS)}
             </div>
@@ -1118,14 +1324,14 @@ class DrawContent extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        ...setUploadHeaderBaseInfo({contentDataType: CONTENT_DATA_TYPE_CARD}),
+        ...setUploadHeaderBaseInfo({ contentDataType: CONTENT_DATA_TYPE_CARD }),
       },
       showUploadList: true, //showUploadList,
       beforeUpload(e) {
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -1141,14 +1347,14 @@ class DrawContent extends React.Component {
         }
         // console.log('event', file)
         if (file.status === 'done' && file.response.code === '0') {
-          for(let i=0; i < fileList.length; i++) {
-            if(file.uid == fileList[i].uid) {
-              fileList.splice(i, 1, {...file, ...file.response.data})
+          for (let i = 0; i < fileList.length; i++) {
+            if (file.uid == fileList[i].uid) {
+              fileList.splice(i, 1, { ...file, ...file.response.data })
             }
           }
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
-          for(let i=0; i < fileList.length; i++) {
-            if(file.uid == fileList[i].uid) {
+          for (let i = 0; i < fileList.length; i++) {
+            if (file.uid == fileList[i].uid) {
               fileList.splice(i, 1)
             }
           }
@@ -1156,7 +1362,7 @@ class DrawContent extends React.Component {
           // fileList.pop()
         }
 
-        if(file.status === 'done' ) {
+        if (file.status === 'done') {
           that.setState({
             showUploadList: false
           })
@@ -1167,9 +1373,15 @@ class DrawContent extends React.Component {
         })
 
         setTimeout(function () {
-          const drawContentNew = {...drawContent}
+          const drawContentNew = { ...drawContent }
           drawContentNew['attachment_data'] = fileList
-          that.props.updateDatasTask({ drawContent: drawContentNew})
+          // that.props.updateDatasTask({ drawContent: drawContentNew })
+          dispatch({
+            type: 'projectDetailTask/updateDatas',
+            payload: {
+              drawContent: drawContentNew
+            }
+          })
         }, 300)
       },
       onPreview(e, a) {
@@ -1181,36 +1393,43 @@ class DrawContent extends React.Component {
           previewFileType: 'attachment',
         })
 
-        that.props.updateDatasFile({
-          seeFileInput: 'taskModule',
-          isInOpenFile: true,
-          filePreviewCurrentId: file_resource_id,
-          filePreviewCurrentFileId: file_id,
-          pdfDownLoadSrc: ''
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            seeFileInput: 'taskModule',
+            isInOpenFile: true,
+            filePreviewCurrentId: file_resource_id,
+            filePreviewCurrentFileId: file_id,
+            pdfDownLoadSrc: ''
+          }
         })
-
-        if(getSubfixName(file_name) == '.pdf') {
-          this.props.dispatch({
+        if (getSubfixName(file_name) == '.pdf') {
+          dispatch({
             type: 'projectDetailFile/getFilePDFInfo',
             payload: {
               id: file_id
             }
           })
         } else {
-          this.props.filePreview({id: file_resource_id, file_id})
+          dispatch({
+            type: 'projectDetailFile/filePreview',
+            payload: {
+              id: file_resource_id, file_id 
+            }
+          })
         }
       },
       onRemove(e) {
         const attachment_id = e.id || (e.response && e.response.data && e.response.data.attachment_id)
-        if(!attachment_id){
+        if (!attachment_id) {
           return
         }
         return new Promise((resolve, reject) => {
-          deleteTaskFile({attachment_id}).then((value) => {
-            if(value.code !=='0') {
+          deleteTaskFile({ attachment_id }).then((value) => {
+            if (value.code !== '0') {
               message.warn('删除失败，请重新删除。')
               reject()
-            }else {
+            } else {
               resolve()
             }
           }).catch(err => {
@@ -1224,374 +1443,383 @@ class DrawContent extends React.Component {
     };
 
     //任务负责人显示 点点点
-    const { excutorsOut_left = {}} = this.refs
+    const { excutorsOut_left = {} } = this.refs
     const excutorsOut_left_width_new = excutorsOut_left.clientWidth
 
-    return(
+    return (
       //
-      <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
-        <div style={{height: 'auto', width: '100%', position: 'relative'}}>
-          {/*没有编辑项目时才有*/}
-          {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
-            <div style={{height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20}} onClick={this.alarmNoEditPermission.bind(this)}></div>
-          )}
-          {/*项目挪动*/}
-          <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative'}}>
-            {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT)? ('') : (
-              <div style={{height: '100%', width: '70%', position: 'absolute', zIndex: '3'}} onClick={this.alarmNoEditPermission.bind(this)}></div>
+      <div style={{position: 'relative'}}>
+        {/* <div className={globalStyle.drawContent_mask}></div> */}
+        <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
+          <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
+            {/*没有编辑项目时才有*/}
+            {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
             )}
-            <div className={DrawerContentStyles.contain_1}>
-              <Dropdown overlay={projectGroupMenu}>
-                <div className={DrawerContentStyles.left}>
-                  <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
-                </div>
-              </Dropdown>
-              <div className={DrawerContentStyles.right}>
-                {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
-                <span style={{marginRight: '10px'}}>
-              {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
-              </span>
-              <InformRemind projectExecutors={drawContent.executors} rela_id={card_id} rela_type={type == '0'? '1' : '2'} user_remind_info={data} />
-              {/* <Dropdown overlay={topRightMenu}> */}
-              {drawContent.is_privilege && (
-                <span style={{marginRight: drawContent.is_privilege === '1' ? '46px' : '20px'}}>
-              <VisitControl
-                isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                principalList={drawContent.executors}
-                otherPrivilege={drawContent.privileges}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                id={drawContent.card_id}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
-              </span>
+            {/*项目挪动*/}
+            <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
+              {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
+                <div style={{ height: '100%', width: '70%', position: 'absolute', zIndex: '3' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
               )}
-              {/* </Dropdown> */}
-              <Dropdown overlay={topRightMenu}>
-                  <Icon type="ellipsis" style={{fontSize: 20, marginTop: 2, cursor: 'pointer'}} />
-                {/*</Dropdown>*/}
-                </Dropdown>
-              </div>
-            </div>
-          </div>
-
-
-          {/*标题*/}
-          <div className={DrawerContentStyles.divContent_2}>
-             <div className={DrawerContentStyles.contain_2}>
-               {type === '0' ?(
-                 <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive: DrawerContentStyles.nomalCheckBox} style={{width: 24, height: 24}}>
-                   <Icon type="check" style={{color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2}}/>
-                 </div>
-               ):(
-                 <div style={{width: 24, height: 24, color: '#595959'}}>
-                   <i className={globalStyle.authTheme} >&#xe709;</i>
-                 </div>
-               )}
-
-               {/*<TextArea defaultValue={card_name}*/}
-                         {/*autosize*/}
-                         {/*onBlur={this.titleTextAreaChangeBlur.bind(this)}*/}
-                         {/*onClick={this.setTitleIsEdit.bind(this, true)}*/}
-                         {/*autoFocus={true}*/}
-                         {/*maxLength={100}*/}
-                         {/*style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}*/}
-               {/*/>*/}
-               {!titleIsEdit ? (
-                 <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
-               ) : (
-                 <NameChangeInput
-                   autosize
-                   onBlur={this.titleTextAreaChangeBlur.bind(this)}
-                   onClick={this.setTitleIsEdit.bind(this, true)}
-                   setIsEdit={this.setTitleIsEdit.bind(this, true)}
-                   autoFocus={true}
-                   goldName={card_name}
-                   maxLength={100}
-                   nodeName={'textarea'}
-                   style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}
-                 />
-               )}
-             </div>
-          </div>
-          {/*<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>*/}
-          {/*任务负责人*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_3}>
-              <div>
-            {!executors.length ? (
-              <div>
-                <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
-                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
-                  <span>指派负责人</span>
-                </Dropdown>
-              </div>
-            ) : (
-                <div className={DrawerContentStyles.excutorsOut}>
-                  <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
-                  <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
-                    {executors.map((value, key) => {
-                      const { avatar, name, user_name, user_id } = value
-                      return (
-                        <div style={{display: 'flex', alignItems: 'center'}} key={user_id}>
-                          {avatar? (
-                            <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4}} src={avatar} />
-                          ) : (
-                            <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                              <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
-                            </div>
-                          )}
-                          <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8}}>{name || user_name || '佚名'}</div>
-                        </div>
-                      )
-                    })}
+              <div className={DrawerContentStyles.contain_1}>
+                <Dropdown overlay={projectGroupMenu}>
+                  <div className={DrawerContentStyles.left}>
+                    <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
                   </div>
-                  </Dropdown>
-
-                  <Dropdown overlay={<ExcutorList listData={executors}/>}>
-                    <div className={DrawerContentStyles.excutorsOut_right} style={{backgroundColor: (typeof excutorsOut_left_width ==='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new ==='number'&& excutorsOut_left_width_new > 340) ?'#f5f5f5': ''}}>
-                      <Icon type="ellipsis" style={{marginTop: 2, display: (typeof excutorsOut_left_width ==='number'&& excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new ==='number'&& excutorsOut_left_width_new > 340)?'block': 'none'}} />
-                    </div>
+                </Dropdown>
+                <div className={DrawerContentStyles.right}>
+                  {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
+                  <span style={{ marginRight: '10px' }}>
+                    {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
+                  </span>
+                  <InformRemind projectExecutors={drawContent.executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
+                  {/* <Dropdown overlay={topRightMenu}> */}
+                  {drawContent.is_privilege && (
+                    <span style={{ marginRight: drawContent.is_privilege === '1' ? '46px' : '20px' }}>
+                      <VisitControl
+                        board_id={board_id}
+                        isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
+                        handleVisitControlChange={this.handleVisitControlChange}
+                        principalList={drawContent.executors}
+                        otherPrivilege={drawContent.privileges}
+                        handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                        id={drawContent.card_id}
+                        handleAddNewMember={this.handleVisitControlAddNewMember}
+                      />
+                    </span>
+                  )}
+                  {/* </Dropdown> */}
+                  <Dropdown overlay={topRightMenu}>
+                    <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2, cursor: 'pointer' }} />
+                    {/*</Dropdown>*/}
                   </Dropdown>
                 </div>
-            )}
-          </div>
+              </div>
             </div>
-          </div>
 
-          {/*第三行设置*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_3}>
-              {/*负责人*/}
-              <div style={{display: 'none'}}>
-                {!executor.user_id ? (
-                   <div>
-                     <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{color: '#bfbfbf'}}>或</span>&nbsp;
-                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
-                       <span>指派负责人</span>
-                     </Dropdown>
-                   </div>
-                  ) : (
-                  <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>}>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                      {executor.avatar? (
-                        <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8}} src={executor.avatar} />
-                      ) : (
-                        <div style={{width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
-                          <Icon type={'user'} style={{fontSize: 12, color: '#8c8c8c'}}/>
-                        </div>
-                      )}
-                      <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80}}>{executor.user_name || '佚名'}</div>
+
+            {/*标题*/}
+            <div className={DrawerContentStyles.divContent_2}>
+              <div className={DrawerContentStyles.contain_2}>
+                {type === '0' ? (
+                  <div onClick={this.setIsCheck.bind(this)} className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive : DrawerContentStyles.nomalCheckBox} style={{ width: 24, height: 24 }}>
+                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
+                  </div>
+                ) : (
+                    <div style={{ width: 24, height: 24, color: '#595959' }}>
+                      <i className={globalStyle.authTheme} >&#xe709;</i>
                     </div>
-                  </Dropdown>
+                  )}
+
+                {/*<TextArea defaultValue={card_name}*/}
+                {/*autosize*/}
+                {/*onBlur={this.titleTextAreaChangeBlur.bind(this)}*/}
+                {/*onClick={this.setTitleIsEdit.bind(this, true)}*/}
+                {/*autoFocus={true}*/}
+                {/*maxLength={100}*/}
+                {/*style={{display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px'}}*/}
+                {/*/>*/}
+                {!titleIsEdit ? (
+                  <div className={DrawerContentStyles.contain_2_title} onClick={this.setTitleIsEdit.bind(this, true)}>{card_name}</div>
+                ) : (
+                    <NameChangeInput
+                      autosize
+                      onBlur={this.titleTextAreaChangeBlur.bind(this)}
+                      onClick={this.setTitleIsEdit.bind(this, true)}
+                      setIsEdit={this.setTitleIsEdit.bind(this, true)}
+                      autoFocus={true}
+                      goldName={card_name}
+                      maxLength={100}
+                      nodeName={'textarea'}
+                      style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', marginLeft: -4, padding: '0 4px' }}
+                    />
                   )}
               </div>
-              {/*时间*/}
-              <div style={{display: 'none'}}>
-                <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-              </div>
-              <div>
-                {start_time && due_time ? (''): (<span style={{color: '#bfbfbf'}}>设置</span>)}
-                <span style={{position: 'relative', cursor: 'pointer'}}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始' }
-                  <DatePicker
-                    disabledDate={this.disabledStartTime.bind(this)}
-                    onChange={this.startDatePickerChange.bind(this)}
-                    placeholder={'开始时间'}
-                    format="YYYY/MM/DD HH:mm"
-                    showTime={{format: 'HH:mm'}}
-                    style={{opacity: 0, width: !start_time? 16 : 100, height: 20, background: '#000000', cursor: 'pointer', position: 'absolute', right: !start_time? 8 : 0, zIndex: 1}} />
-                </span>
-                 &nbsp;
-                {start_time && due_time ?(<span style={{color: '#bfbfbf'}}>-</span>) : (<span style={{color: '#bfbfbf'}}>或</span>)}
-                &nbsp;
-                <span style={{position: 'relative'}}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                  <DatePicker
-                    disabledDate={this.disabledDueTime.bind(this)}
-                    placeholder={'截止时间'}
-                    format="YYYY/MM/DD HH:mm"
-                    showTime={{format: 'HH:mm'}}
-                    onChange={this.endDatePickerChange.bind(this)}
-                    style={{opacity: 0, width: !due_time? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1}} />
-                </span>
-              </div>
-              {type === '0'?('') :(
-                <div >
-                  <span style={{color: '#bfbfbf'}}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                </div>
-              )}
-              {type === '0'?('') :(
+            </div>
+            {/*<MeusearMutiple listData={data} keyCode={'user_id'}searchName={'name'} currentSelect = {executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>*/}
+            {/*任务负责人*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_3}>
                 <div>
-                  {/* <Dropdown overlay={meetingMenu}> */}
+                  {!executors.length ? (
+                    <div>
+                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
+                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <span>指派负责人</span>
+                      </Dropdown>
+                    </div>
+                  ) : (
+                      <div className={DrawerContentStyles.excutorsOut}>
+                        <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                          <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
+                            {executors.map((value, key) => {
+                              const { avatar, name, user_name, user_id } = value
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
+                                  {avatar ? (
+                                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
+                                  ) : (
+                                      <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                      </div>
+                                    )}
+                                  <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </Dropdown>
+
+                        <Dropdown overlay={<ExcutorList listData={executors} />}>
+                          <div className={DrawerContentStyles.excutorsOut_right} style={{ backgroundColor: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? '#f5f5f5' : '' }}>
+                            <Icon type="ellipsis" style={{ marginTop: 2, display: (typeof excutorsOut_left_width === 'number' && excutorsOut_left_width > 340) || (typeof excutorsOut_left_width_new === 'number' && excutorsOut_left_width_new > 340) ? 'block' : 'none' }} />
+                          </div>
+                        </Dropdown>
+                      </div>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            {/*第三行设置*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_3}>
+                {/*负责人*/}
+                <div style={{ display: 'none' }}>
+                  {!executor.user_id ? (
+                    <div>
+                      <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
+                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <span>指派负责人</span>
+                      </Dropdown>
+                    </div>
+                  ) : (
+                      <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          {executor.avatar ? (
+                            <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
+                          ) : (
+                              <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
+                                <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                              </div>
+                            )}
+                          <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 80 }}>{executor.user_name || '佚名'}</div>
+                        </div>
+                      </Dropdown>
+                    )}
+                </div>
+                {/*时间*/}
+                <div style={{ display: 'none' }}>
+                  <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                </div>
+                <div>
+                  {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)}
+                  <span style={{ position: 'relative', cursor: 'pointer' }}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始'}
+                    <DatePicker
+                      disabledDate={this.disabledStartTime.bind(this)}
+                      onChange={this.startDatePickerChange.bind(this)}
+                      placeholder={'开始时间'}
+                      format="YYYY/MM/DD HH:mm"
+                      showTime={{ format: 'HH:mm' }}
+                      style={{ opacity: 0, width: !start_time ? 16 : 100, height: 20, background: '#000000', cursor: 'pointer', position: 'absolute', right: !start_time ? 8 : 0, zIndex: 1 }} />
+                  </span>
+                  &nbsp;
+                {start_time && due_time ? (<span style={{ color: '#bfbfbf' }}>-</span>) : (<span style={{ color: '#bfbfbf' }}>或</span>)}
+                  &nbsp;
+                <span style={{ position: 'relative' }}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                    <DatePicker
+                      disabledDate={this.disabledDueTime.bind(this)}
+                      placeholder={'截止时间'}
+                      format="YYYY/MM/DD HH:mm"
+                      showTime={{ format: 'HH:mm' }}
+                      onChange={this.endDatePickerChange.bind(this)}
+                      style={{ opacity: 0, width: !due_time ? 50 : 100, cursor: 'pointer', height: 20, background: '#000000', position: 'absolute', right: 0, zIndex: 1 }} />
+                  </span>
+                </div>
+                {type === '0' ? ('') : (
+                  <div >
+                    <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                  </div>
+                )}
+                {type === '0' ? ('') : (
+                  <div>
+                    {/* <Dropdown overlay={meetingMenu}> */}
                     <span onClick={(e) => this.handleCreateVideoMeeting(card_name, card_id, executors, e)}>发起远程会议</span>
-                  {/* </Dropdown> */}
+                    {/* </Dropdown> */}
+                  </div>
+                )}
+                <div style={{ display: 'none' }}>
+                  {!isSetedAlarm ? (
+                    <Dropdown overlay={alarmMenu}>
+                      <span>设置提醒</span>
+                    </Dropdown>
+                  ) : (
+                      <Dropdown overlay={alarmMenu}>
+                        <span>{alarmTime}</span>
+                      </Dropdown>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            {/*富文本*/}
+            {!isInEdit ? (
+              <div className={DrawerContentStyles.divContent_1} >
+                <div style={{ marginTop: 20 }}>
+                  <Button size={'small'} style={{ fontSize: 12 }} onClick={this.goEdit.bind(this)}>编辑描述</Button>
+                </div>
+                {/*onClick={this.goEdit.bind(this)}*/}
+                <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
+                  <div style={{ cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: typeof description === 'object' ? description.toHTML() : description }}></div>
+                </div>
+              </div>
+            ) : (
+                <div>
+                  <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
+                    <BraftEditor {...editorProps} style={{ fontSize: 12 }} />
+                  </div>
+                  <div style={{ marginTop: 20, textAlign: 'right' }}>
+                    <Button size={'small'} style={{ fontSize: 12, marginRight: 16 }} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
+                    <Button size={'small'} style={{ fontSize: 12 }} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
+                  </div>
                 </div>
               )}
-              <div style={{display: 'none'}}>
-                {!isSetedAlarm ? (
-                  <Dropdown overlay={alarmMenu}>
-                    <span>设置提醒</span>
-                  </Dropdown>
-                ) : (
-                  <Dropdown overlay={alarmMenu}>
-                     <span>{alarmTime}</span>
-                  </Dropdown>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/*富文本*/}
-          {!isInEdit ? (
-            <div className={DrawerContentStyles.divContent_1} >
-              <div style={{marginTop: 20}}>
-                <Button size={'small'} style={{fontSize: 12}} onClick={this.goEdit.bind(this)}>编辑描述</Button>
-              </div>
-              {/*onClick={this.goEdit.bind(this)}*/}
-              <div className={DrawerContentStyles.contain_4} onClick={this.descriptionHTML.bind(this)} >
-                <div style={{cursor: 'pointer'}} dangerouslySetInnerHTML={{__html: typeof description === 'object'? description.toHTML() :description}}></div>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div className={DrawerContentStyles.editorWraper} onClick={this.editWrapClick.bind(this)}>
-                <BraftEditor {...editorProps} style={{fontSize: 12}}/>
-              </div>
-              <div style={{marginTop: 20, textAlign: 'right'}}>
-                <Button size={'small'} style={{fontSize: 12, marginRight: 16}} type={'primary'} onClick={this.saveBrafitEdit.bind(this)}>保存</Button>
-                <Button size={'small'} style={{fontSize: 12}} onClick={this.quitBrafitEdit.bind(this)}>取消</Button>
-              </div>
-            </div>
-          ) }
 
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1}>
             <ContentRaletion
-              {...this.props}
-              board_id ={board_id}
+              relations_Prefix={relations_Prefix}
+              board_id={board_id}
               link_id={card_id}
               link_local={'3'}
 
-            />
-          </div>
-
-          {/*添加里程碑*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.miletones}>
-              {
-                milestone_data['id']? (
-                  <div className={DrawerContentStyles.miletones_item}>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_logo}`}>&#xe633;</div>
-                    <div className={`${globalStyle.global_ellipsis} ${DrawerContentStyles.miletones_item_name}`}>{milestone_data['name']}</div>
-                    <Popconfirm title={'取消关联里程碑'} onConfirm={() => this.cancelRelaMiletone({card_id, id: milestone_data['id']})}>
-                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_delete}`}>&#xe70f;</div>
-                    </Popconfirm>
-                  </div>
-                ) : (
-                  <Dropdown overlay={this.renderMiletonesMenu()}>
-                    <div className={DrawerContentStyles.miletones_item_add} style={{marginTop: 8, width: 100}}>
-                      <Icon type="plus" style={{marginRight: 4}}/>里程碑
-                    </div>
-                  </Dropdown>
-                )
-              }
-
+              />
             </div>
-          </div>
 
-          {/*标签*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.contain_5}>
+            {/*添加里程碑*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.miletones}>
+                {
+                  milestone_data['id'] ? (
+                    <div className={DrawerContentStyles.miletones_item}>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_logo}`}>&#xe633;</div>
+                      <div className={`${globalStyle.global_ellipsis} ${DrawerContentStyles.miletones_item_name}`}>{milestone_data['name']}</div>
+                      <Popconfirm title={'取消关联里程碑'} onConfirm={() => this.cancelRelaMiletone({ card_id, id: milestone_data['id'] })}>
+                        <div className={`${globalStyle.authTheme} ${DrawerContentStyles.miletones_item_delete}`}>&#xe70f;</div>
+                      </Popconfirm>
+                    </div>
+                  ) : (
+                      <Dropdown overlay={this.renderMiletonesMenu()}>
+                        <div className={DrawerContentStyles.miletones_item_add} style={{ marginTop: 8, width: 100 }}>
+                          <Icon type="plus" style={{ marginRight: 4 }} />里程碑
+                    </div>
+                      </Dropdown>
+                    )
+                }
+
+              </div>
+            </div>
+
+            {/*标签*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.contain_5}>
                 {label_data.map((value, key) => {
                   let flag = false //如果项目列表
-                  for(let i = 0; i < boardTagList.length; i++) {
-                    if(value['label_id'] == boardTagList[i]['id']) {
+                  for (let i = 0; i < boardTagList.length; i++) {
+                    if (value['label_id'] == boardTagList[i]['id']) {
                       flag = true
                       break;
                     }
                   }
                   const { label_color = '90,90,90' } = value
-                  return(
+                  return (
                     flag && (
-<Tag closable
-                                 visible={true}
-                                 style={{marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)`}}
-                                 onClose={this.tagClose.bind(this, {label_id: value.label_id, label_name: value.label_name, key})}
-                                 key={key} >{value.label_name}</Tag>
-)
+                      <Tag closable
+                        visible={true}
+                        style={{ marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}
+                        onClose={this.tagClose.bind(this, { label_id: value.label_id, label_name: value.label_name, key })}
+                        key={key} >{value.label_name}</Tag>
+                    )
                   )
                 })}
 
-              <div>
-                {!isInAddTag ? (
-                  <div className={DrawerContentStyles.contain_5_add} style={{marginTop: 8, width: 100}} onClick={this.addTag.bind(this)}>
-                    <Icon type="plus" style={{marginRight: 4}}/>标签
+                <div>
+                  {!isInAddTag ? (
+                    <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
+                      <Icon type="plus" style={{ marginRight: 4 }} />标签
                   </div>
                 ) : (
-                  <Dropdown visible={this.state.tagDropdownVisible}
-                            overlay={<TagDropDown {...this.props} tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
-                    <div style={{marginTop: 8, position: 'relative', width: 'auto', height: 'auto'}}>
-                    <Input autoFocus={true} placeholder={'标签'}
-                           style={{height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100}}
-                           onChange={this.setTagInputValue.bind(this)}
-                           // onBlur={this.tagAddComplete.bind(this)}
-                           maxLength={8}
-                           onPressEnter={this.tagAddComplete.bind(this)} />
-                      <Icon type={'close'} style={{position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4}} onClick={this.quitAddTag.bind(this)}></Icon>
-                    </div>
-                  </Dropdown>
-                ) }
+                    <Dropdown visible={this.state.tagDropdownVisible}
+                      overlay={<TagDropDown tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
+                      <div style={{ marginTop: 8, position: 'relative', width: 'auto', height: 'auto' }}>
+                        <Input autoFocus={true} placeholder={'标签'}
+                          style={{ height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100 }}
+                          onChange={this.setTagInputValue.bind(this)}
+                          // onBlur={this.tagAddComplete.bind(this)}
+                          maxLength={8}
+                          onPressEnter={this.tagAddComplete.bind(this)} />
+                        <Icon type={'close'} style={{ position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4 }} onClick={this.quitAddTag.bind(this)}></Icon>
+                      </div>
+                    </Dropdown>
+                  )}
               </div>
 
+              </div>
             </div>
-          </div>
-          {child_data.length?(
-            <div className={DrawerContentStyles.divContent_1}>
-              <div className={DrawerContentStyles.spaceLine}></div>
-            </div>
-          ):('')}
+            {child_data.length ? (
+              <div className={DrawerContentStyles.divContent_1}>
+                <div className={DrawerContentStyles.spaceLine}></div>
+              </div>
+            ) : ('')}
 
 
           {/*添加子任务*/}
-          <DCAddChirdrenTask {...this.props}/>
+          <DCAddChirdrenTask />
 
-          {/*上传任务附件*/}
-          <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
-            <Upload {...uploadProps}>
-              <Button size={'small'} style={{fontSize: 12, marginTop: 16, }} >
-                <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
+            {/*上传任务附件*/}
+            <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
+              <Upload {...uploadProps}>
+                <Button size={'small'} style={{ fontSize: 12, marginTop: 16, }} >
+                  <Icon type="upload" />上传{currentNounPlanFilterName(TASKS)}附件
               </Button>
-            </Upload>
-            <div className={DrawerContentStyles.attach_file_list}>
-              {attachment_fileList.map((value, key) => {
-                const { name, lastModified, create_time, file_id, uid} = value
-                const now_time = new Date().getTime()
-                return(
-                  <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
-                    <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
-                    <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id})}>&#xe7f1;</div>
-                    <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id})}>&#xe70f;</div>
-                  </div>
-                )
-              })}
+              </Upload>
+              <div className={DrawerContentStyles.attach_file_list}>
+                {attachment_fileList.map((value, key) => {
+                  const { name, lastModified, create_time, file_id, uid } = value
+                  const now_time = new Date().getTime()
+                  return (
+                    <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_pre}`}>&#xe632;</div>
+                      <div className={DrawerContentStyles.attach_file_item_name}>{name}</div>
+                      <div className={DrawerContentStyles.attach_file_time}>{timestampToTimeNormal(create_time || now_time, '/', true)}</div>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: value, card_id })}>&#xe7f1;</div>
+                      <div className={`${globalStyle.authTheme} ${DrawerContentStyles.link_opera}`} onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: value, card_id })}>&#xe70f;</div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
 
           {/*查看任务附件*/}
-          <PreviewFileModal {...this.props} modalVisible={isInOpenFile} />
+          <PreviewFileModal modalVisible={isInOpenFile} />
           {/*查看*/}
-          <PreviewFileModalRichText {...this.props} isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+          <PreviewFileModalRichText isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
-          <div className={DrawerContentStyles.divContent_1}>
-            <div className={DrawerContentStyles.spaceLine} ></div>
+            <div className={DrawerContentStyles.divContent_1}>
+              <div className={DrawerContentStyles.spaceLine} ></div>
+            </div>
           </div>
+          {/*评论*/}
+          <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
+            <Comment {...this.props} leftSpaceDivWH={26}></Comment>
+          </div>
+          <div style={{ height: 100 }}></div>
         </div>
         {/*评论*/}
-        <div className={DrawerContentStyles.divContent_2} style={{marginTop: 20}}>
-          <Comment {...this.props} leftSpaceDivWH={26}></Comment>
+        <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
+          <Comment leftSpaceDivWH={26}></Comment>
         </div>
-        <div style={{height: 100}}></div>
+        <div style={{ height: 100 }}></div>
       </div>
     )
   }
@@ -1599,3 +1827,45 @@ class DrawContent extends React.Component {
 }
 
 export default withRouter(DrawContent)
+
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      drawContent = {},
+      projectGoupList = [],
+      taskGroupListIndex = 0,
+      taskGroupListIndex_index = 0,
+      taskGroupList = [],
+      getTaskGroupListArrangeType,
+      boardTagList = [],
+      relationTaskList = []
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+      milestoneList = [],
+      relations_Prefix = [],
+    }
+  },
+  projectDetailFile: {
+    datas: {
+      isInOpenFile
+    }
+  }
+}) {
+  return {
+    drawContent,
+    projectGoupList,
+    projectDetailInfoData,
+    taskGroupListIndex,
+    taskGroupListIndex_index,
+    taskGroupList,
+    milestoneList,
+    getTaskGroupListArrangeType,
+    isInOpenFile,
+    boardTagList,
+    relationTaskList,
+    relations_Prefix
+  }
+}

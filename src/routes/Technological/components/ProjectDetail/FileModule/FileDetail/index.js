@@ -1,11 +1,8 @@
 
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input } from 'antd';
-import Header from './Header'
 import FileDetailContent from "./FileDetailContent";
 
-const bodyHeight = document.querySelector('body').clientHeight
 export default class FileDetail extends React.Component {
   state = {
     clientHeight: document.documentElement.clientHeight,
@@ -33,9 +30,8 @@ export default class FileDetail extends React.Component {
     const { modalTop } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
     return (
-      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
-        {/*<Header {...this.props}/>*/}
-        <FileDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
+      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{ height: clientHeight - offsetTopDeviation, top: 0 }}>
+        <FileDetailContent clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation={offsetTopDeviation} modalTop={modalTop} />
       </div>
     )
   }

@@ -3,8 +3,9 @@ import DetailInfoModal from './DetailInfoModal'
 
 const DetailInfo = (props) => {
 
+  const { modalVisible, dispatch } = props
   return (
-    <DetailInfoModal {...props} />
+    <DetailInfoModal modalVisible={modalVisible} dispatch={dispatch} />
   )
 
 }

@@ -5,8 +5,8 @@ import {
   showConfirm,
   showDeleteConfirm
 } from '../../../../../../../components/headerOperateModal'
-import { PROJECT_FLOWS_FLOW_ABORT } from '../../../../../../../globalset/js/constant'
-import { checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction'
+import { PROJECT_FLOWS_FLOW_ABORT, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '../../../../../../../utils/businessFunction'
 import VisitControl from './../../../../VisitControl/index';
 import {
   toggleContentPrivilege,
@@ -14,6 +14,7 @@ import {
   removeContentPrivilege
 } from './../../../../../../../services/technological/project';
 import InformRemind from '@/components/InformRemind'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 export default class Header extends React.Component {
   state = {
@@ -30,10 +31,29 @@ export default class Header extends React.Component {
   close() {
     this.props.close()
   }
+  // 数组去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
+  // 访问控制蒙层的点击回调
+ alarmNoEditPermission = () => {
+  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+ }
+
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
     const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
     return processInfo;
   };
+
   genPrincipalListFromAssignees = (nodes = []) => {
     return nodes.reduce((acc, curr) => {
       if (curr.assignees && curr.assignees.length) {
@@ -55,85 +75,82 @@ export default class Header extends React.Component {
       return acc
     }, []);
   };
+
   isVisitControlOpen = () => {
     const {
       is_privilege
     } = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     return is_privilege === '1' ? true : false;
   };
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
   }
+
   handleVisitControlChangeContentPrivilege = (id, type) => {
     const { id: content_id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
+    let temp_id = []
+    temp_id.push(id)
     const obj = {
       content_id: content_id,
       content_type: 'flow',
       privilege_code: type,
-      user_ids: id
+      user_ids: temp_id
     }
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
-        let changedPrivileges = {}
-        for (let item in privileges) {
-          if (item !== id) {
-            changedPrivileges[item] = privileges[item]
-          } else {
-            changedPrivileges[item] = type
-          }
-        }
-        this.visitControlUpdateCurrentModalData({ privileges: changedPrivileges })
+        let temp_arr = []
+        temp_arr = res && res.data[0] 
+        this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.error('更新用户控制类型失败')
       }
     })
   }
+
   handleVisitControlRemoveContentPrivilege = id => {
-    const { id: content_id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
-    removeContentPrivilege({ content_id: content_id, content_type: 'flow', user_id: id }).then(res => {
+    removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
-        let remainPrivileges = {}
-        for (let item in privileges) {
-          if (item !== id) {
-            remainPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({ privileges: remainPrivileges })
+        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
         message.error('移除用户内容控制权限失败')
       }
     })
   }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if (!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if (!acc) return curr
-      return `${acc},${curr}`
-    }, '')
 
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
     const { id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
     const content_id = id
     const content_type = 'flow'
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids,
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        const newMemberPrivilegesObj = ids.reduce((acc, curr) => {
-          return Object.assign({}, acc, { [curr]: 'read' })
-        }, {})
-        this.visitControlUpdateCurrentModalData({ privileges: Object.assign({}, newMemberPrivilegesObj, privileges) })
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
       }
     })
   }
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
   handleVisitControlChange = flag => {
     const {
       is_privilege = '0',
@@ -152,8 +169,9 @@ export default class Header extends React.Component {
     };
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
+        let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData(
-          { is_privilege: flag ? '1' : '0' },
+          { is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr },
           flag
         );
       } else {
@@ -161,18 +179,130 @@ export default class Header extends React.Component {
       }
     });
   };
+
+  /**
+   * 这是一个公用的用来区分更新的是工作台流程列表还是项目详情中的流程列表
+   * @param {Array} newProcessInfo 这是需要更新流程的数据
+   * @param {String} type 这是规定只有时切换访问控制状态的时候才需要调用两个列表
+   */
+  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
+    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
+    const { status } = originProcessInfo
+    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { board_id } = projectDetailInfoData
+    const { dispatch } = this.props
+    if (projectDetailInfoData && projectDetailInfoData.length) {
+      if (type) {
+        dispatch({
+          type: 'projectDetailProcess/getProcessListByType',
+          payload: {
+            status: status,
+            board_id: board_id
+          }
+        })
+      }
+      dispatch({
+        type: 'projectDetailProcess/updateDatas',
+        payload: {
+          processInfo: newProcessInfo
+        }
+      })
+    } else {
+      if (type) {
+        dispatch({
+          type: 'workbench/getBackLogProcessList',
+          payload: {
+  
+          }
+        })
+      }
+      dispatch({
+        type: 'workbenchDetailProcess/updateDatas',
+        payload: {
+          processInfo: newProcessInfo
+        }
+      })
+    }
+  }
+
   visitControlUpdateCurrentModalData = obj => {
     const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const newProcessInfo = Object.assign({}, originProcessInfo, obj);
-    this.props.updateDatasProcess({
-      processInfo: newProcessInfo
-    });
-  };
+    const { privileges = [], status } = originProcessInfo
+    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { board_id } = projectDetailInfoData
+    const { dispatch } = this.props
+
+    // 访问控制开关
+    if (obj && obj.type &&  obj.type == 'privilege') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      // this.props.updateDatasProcess({
+      //   processInfo: newProcessInfo
+      // });
+      // 这是需要获取一下流程列表 区分工作台和项目列表
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
+      
+    };
+
+    // 访问控制添加
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 访问控制移除
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 这是更新type类型
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = {...item, content_privilege_code: obj.code}
+        } else {
+          new_item = {...item}
+        }
+        return new_item
+      })
+      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+  }
+
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
     const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
-    const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
@@ -274,7 +404,12 @@ export default class Header extends React.Component {
           <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{ float: 'right' }}>
+        <div style={{ float: 'right', position: 'relative' }}>
+          {
+            checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} style={{right: '40px'}} className={globalStyles.drawContent_mask}></div>
+            )
+          }
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
           <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span
@@ -288,6 +423,7 @@ export default class Header extends React.Component {
             }}
           >
             <VisitControl
+              board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
               principalList={principalList}
@@ -297,7 +433,7 @@ export default class Header extends React.Component {
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
             />
           </span>
-          <span style={{ marginTop: '-5px', float: 'right', marginLeft: '18px' }}>
+          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px' }}>
             <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
           <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />

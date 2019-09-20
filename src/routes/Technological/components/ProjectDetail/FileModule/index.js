@@ -11,7 +11,7 @@ const FileModuleIndex = (props) => {
 
   return(
    <div>
-     <FileIndex {...props} />
+     <FileIndex />
    </div>
   )
 };

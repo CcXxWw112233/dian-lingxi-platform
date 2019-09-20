@@ -5,7 +5,7 @@ import {
   ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP, PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_FLOW_FLOW_ACCESS, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME
 } from "../../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
 const Panel = Collapse.Panel;
@@ -23,43 +23,58 @@ export default class TemplateItem extends React.Component {
   }
   initGet(type) {
     const ref = this.refs.tempItemBott
-    if(ref) {
+    if (ref) {
       const height = ref.clientHeight
-      if(height >= 36) { //36为三行文字的高度
+      if (height >= 36) { //36为三行文字的高度
         this.setState({
           hasMore: true
         })
       }
     }
   }
-  templateStartClick({id}) {
-    this.props.getTemplateInfo && this.props.getTemplateInfo(id)
+  templateStartClick({ id }) {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailProcess/getTemplateInfo',
+      payload: {
+        id
+      }
+    })
   }
-  deleteTemplate({id}) {
-    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)){
+  deleteTemplate({ id }) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const that = this
+    const { dispatch } = this.props
     Modal.confirm({
       title: `确认删除该模板？`,
       zIndex: 2000,
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        that.props.deleteProcessTemplate && that.props.deleteProcessTemplate({id})
+        dispatch({
+          type: 'projectDetailProcess/deleteProcessTemplate',
+          payload: {
+            id
+          }
+        })
       }
     });
 
 
   }
   startEdit() {
-    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.updateDatasProcess({
-      processPageFlagStep: '2'
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        processPageFlagStep: '2'
+      }
     })
   }
   setShowBott() {
@@ -73,7 +88,7 @@ export default class TemplateItem extends React.Component {
     const { name, id, flow_template_node_list = [] } = itemValue
 
     return (
-      <div className={indexStyles.tem_item} style={{paddingBottom: hasMore ? 0 : 12}}>
+      <div className={indexStyles.tem_item} style={{ paddingBottom: hasMore ? 0 : 12 }}>
         <div className={indexStyles.tem_item_top}>
           <div className={`${indexStyles.tem_item_l} ${globalStyles.authTheme}`}>&#xe605;</div>
           <div className={indexStyles.tem_item_m}>
@@ -92,12 +107,12 @@ export default class TemplateItem extends React.Component {
 
         </div>
         <div className={indexStyles.tem_item_bott} ref={'tempItemBott'}>
-          <div className={`${indexStyles.tem_item_flow} ${globalStyles.authTheme} ${hasMore && !showBott ?indexStyles.tem_item_flow_hasMore: ''}`}>
+          <div className={`${indexStyles.tem_item_flow} ${globalStyles.authTheme} ${hasMore && !showBott ? indexStyles.tem_item_flow_hasMore : ''}`}>
             {flow_template_node_list.map((value, key) => {
               const { name, id } = value
               return (
                 <div className={indexStyles.tem_item_flow_item} key={id}>
-                  {name} {key < flow_template_node_list.length - 1 && (<i style={{fontStyle: 'normal'}}>&#8594;&nbsp;</i>)}
+                  {name} {key < flow_template_node_list.length - 1 && (<i style={{ fontStyle: 'normal' }}>&#8594;&nbsp;</i>)}
                 </div>
               )
             })}
@@ -106,7 +121,7 @@ export default class TemplateItem extends React.Component {
         </div>
         {hasMore && (
           <div
-            className={`${indexStyles.tem_item_bott_down} ${globalStyles.authTheme} ${showBott? indexStyles.tem_item_bott_down_up : indexStyles.tem_item_bott_down_down}`}
+            className={`${indexStyles.tem_item_bott_down} ${globalStyles.authTheme} ${showBott ? indexStyles.tem_item_bott_down_up : indexStyles.tem_item_bott_down_down}`}
             onClick={this.setShowBott.bind(this)}>&#xe7f0;</div>
         )}
 

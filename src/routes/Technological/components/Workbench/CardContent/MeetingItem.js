@@ -30,10 +30,10 @@ export default class MeetingItem extends React.Component {
 
     setBoardIdStorage(board_id)
 
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {
@@ -67,7 +67,7 @@ export default class MeetingItem extends React.Component {
 
   render() {
     const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
-    const { id, board_id } = itemValue
+    const { id, board_id, is_privilege } = itemValue
 
     const { name, start_time, due_time, org_id, board_name } = itemValue
     // console.log(itemValue, 'sss')
@@ -82,6 +82,16 @@ export default class MeetingItem extends React.Component {
               onClick={this.itemClick.bind(this)}
               style={{maxWidth: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
           </Tooltip>
+          {/* 添加访问控制小锁 */}
+          {
+            !(is_privilege == '0') && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <span style={{ color: 'rgba(0,0,0,0.50)', cursor: 'pointer', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </span>
+              </Tooltip>
+            )
+          }
           {
             projectTabCurrentSelectedProject == '0' && (
               <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
