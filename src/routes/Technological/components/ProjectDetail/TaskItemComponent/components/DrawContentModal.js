@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import DrawContent from '../DrawerContent'
-import {min_page_width} from "../../../../../../globalset/js/styles";
+import { min_page_width } from "../../../../../../globalset/js/styles";
 import CustormModal from '../../../../../../components/CustormModal'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -10,9 +10,9 @@ const TextArea = Input.TextArea
 class DrawContentModal extends React.Component {
   state = {}
 
-  componentDidMount() {}
+  componentDidMount() { }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillReceiveProps(nextProps) { }
 
   onCancel() {
     this.props.dispatch({
@@ -25,8 +25,8 @@ class DrawContentModal extends React.Component {
   }
 
   render() {
-    const { visible } = this.props;
-    return(
+    const { visible, setDrawerVisibleClose } = this.props;
+    return (
       <CustormModal
         visible={visible}
         width={'80%'}
@@ -35,7 +35,7 @@ class DrawContentModal extends React.Component {
         footer={null}
         destroyOnClose
         onCancel={this.onCancel.bind(this)}
-        overInner={<DrawContent {...this.props} />}
+        overInner={<DrawContent setDrawerVisibleClose={setDrawerVisibleClose} />}
       />
     )
   }

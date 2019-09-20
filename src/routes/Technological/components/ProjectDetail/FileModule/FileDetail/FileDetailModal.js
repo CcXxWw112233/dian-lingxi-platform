@@ -1,6 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message } from 'antd'
-import {min_page_width} from "../../../../../../globalset/js/styles";
+import { Form, Input, } from 'antd'
 import CustormModal from '../../../../../../components/CustormModal'
 import FileDetail from './index'
 const FormItem = Form.Item
@@ -10,13 +9,17 @@ const TextArea = Input.TextArea
 class FileDetailModal extends React.Component {
   state = {}
 
-  componentDidMount() {}
+  componentDidMount() { }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillReceiveProps(nextProps) { }
 
-  onCancel(){
-    this.props.updateDatasFile({
-      isInOpenFile: false
+  onCancel() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isInOpenFile: false
+      }
     })
   }
 
@@ -25,7 +28,7 @@ class FileDetailModal extends React.Component {
 
     const modalTop = 20
 
-    return(
+    return (
       <CustormModal
         visible={visible}
         width={'80%'}
@@ -35,12 +38,12 @@ class FileDetailModal extends React.Component {
         maskClosable={false}
         footer={null}
         destroyOnClose
-        bodyStyle={{top: 0}}
-        style={{top: modalTop}}
+        bodyStyle={{ top: 0 }}
+        style={{ top: modalTop }}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
+        overInner={<FileDetail modalTop={modalTop} />}
       />
     )
   }
 }
-export default Form.create()(FileDetailModal)
+export default FileDetailModal

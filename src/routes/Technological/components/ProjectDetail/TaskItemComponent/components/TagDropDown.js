@@ -2,8 +2,9 @@ import React from 'react'
 import TagDropDownStyles from './TagDropDown.less'
 import TagDropDownItem from './TagDropDownItem.js'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
-
+@connect(mapStateToProps)
 export default class TagDropDown extends React.Component {
 
   state = {
@@ -13,13 +14,13 @@ export default class TagDropDown extends React.Component {
   componentWillMount() {
     this.setResultArr(this.props)
   }
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setResultArr(nextProps)
   }
 
   setResultArr(props) {
-    const { datas: { boardTagList =[] } } = props.model
-    const { searchName='name', tagInputValue='' } = props
+    const { boardTagList = [] } = props
+    const { searchName = 'name', tagInputValue = '' } = props
     this.setState({
       resultArr: this.fuzzyQuery(boardTagList, searchName, tagInputValue)
     })
@@ -28,11 +29,11 @@ export default class TagDropDown extends React.Component {
   fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
     for (var i = 0; i < list.length; i++) {
-      if(searchName) {
+      if (searchName) {
         if (list[i][searchName].indexOf(keyWord) !== -1) {
           arr.push(list[i]);
         }
-      }else {
+      } else {
         if (list[i].indexOf(keyWord) !== -1) {
           arr.push(list[i]);
         }
@@ -43,7 +44,7 @@ export default class TagDropDown extends React.Component {
 
   toAdd() {
     const { tagInputValue, } = this.props
-    this.props.tagDropItemClick({name: tagInputValue})
+    this.props.tagDropItemClick({ name: tagInputValue })
   }
   render() {
     const { tagInputValue, } = this.props
@@ -51,7 +52,7 @@ export default class TagDropDown extends React.Component {
     return (
       <div className={TagDropDownStyles.outercontainer}>
         <div className={TagDropDownStyles.dropOut} >
-          <div className={TagDropDownStyles.dropItem} style={{display: `${tagInputValue?'flex': 'none'}`}}>
+          <div className={TagDropDownStyles.dropItem} style={{ display: `${tagInputValue ? 'flex' : 'none'}` }}>
             <div className={TagDropDownStyles.dropItem_left}>
               {tagInputValue}
             </div>
@@ -62,7 +63,7 @@ export default class TagDropDown extends React.Component {
 
           {resultArr.map((value, key) => {
             return (
-              <TagDropDownItem {...this.props} key={key} itemKey={key} itemValue={value} />
+              <TagDropDownItem key={key} tagDropItemClick={this.props.tagDropItemClick} itemKey={key} itemValue={value} />
             )
           })}
         </div>
@@ -71,4 +72,15 @@ export default class TagDropDown extends React.Component {
     )
   }
 
+}
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      boardTagList = [],
+    }
+  },
+}) {
+  return {
+    boardTagList
+  }
 }

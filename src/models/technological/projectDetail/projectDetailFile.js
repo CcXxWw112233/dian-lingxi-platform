@@ -656,6 +656,7 @@ export default modelExtend(projectDetail, {
       const new_breadcrumbList = yield select(selectBreadcrumbList)
       const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      const new_breadcrumbList_new_ = [...new_breadcrumbList]
       let temp_list = [...res.data]
       let temp_arr = []
       let default_arr = []
@@ -671,12 +672,12 @@ export default modelExtend(projectDetail, {
       // console.log(temp_arr, default_arr, 'sssss')
       if (isApiResponseOk(res)) {
         // 修改弹窗中的文件路径
-        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        new_breadcrumbList_new_[new_breadcrumbList_new_.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
-            breadcrumbList: new_breadcrumbList
+            breadcrumbList: new_breadcrumbList_new_
           }
         })
         if (isNeedPreviewFile) {

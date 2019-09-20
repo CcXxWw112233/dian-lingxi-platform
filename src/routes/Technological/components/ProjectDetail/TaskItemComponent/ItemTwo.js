@@ -1,7 +1,7 @@
 //任务
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, message, Tooltip } from 'antd'
+import { Icon, Collapse, message, Tooltip } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from 'rc-queue-anim'
 import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../../../utils/businessFunction";
@@ -11,7 +11,7 @@ import {
 } from "../../../../../globalset/js/constant";
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from "../../../../../utils/util";
-
+import { connect } from 'dva'
 
 const Panel = Collapse.Panel
 
@@ -21,6 +21,7 @@ if (ua.indexOf('chrome') != - 1 || ua.indexOf('safari') != - 1) {
   thumbMArgin = 6
 }
 
+@connect(mapStateToProps)
 export default class ItemTwo extends React.Component {
   state = {
     collapseClose: true, //折叠面板变化回调
@@ -32,15 +33,27 @@ export default class ItemTwo extends React.Component {
       return false
     }
     const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
-    const { datas: { taskGroupList } } = this.props.model
+    const { taskGroupList } = this.props
+    let new_arr = [...taskGroupList]
     const { card_id, is_realize = '0' } = itemValue
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
     }
-    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatasTask({ taskGroupList })
-    this.props.completeTask(obj)
+    new_arr[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList: new_arr
+      },
+    })
+    dispatch({
+      type: 'projectDetailTask/completeTask',
+      payload: {
+        ...obj
+      },
+    })
   }
   seeDetailInfo(data, e) {
     this.props.setDrawerVisibleOpen(data)
@@ -52,7 +65,7 @@ export default class ItemTwo extends React.Component {
   }
 
   render() {
-    const { itemValue = {}, isPropVisitControl } = this.props
+    const { itemValue = {}, isPropVisitControl, taskGroupListIndex_index, taskGroupListIndex, taskGroupList } = this.props
     const { card_id, card_name, child_data = [], is_realize = '0', executors = [], type = '0', start_time, due_time, label_data = [] } = itemValue
     let executor = {//任务执行人信息
       user_id: '',
@@ -64,7 +77,7 @@ export default class ItemTwo extends React.Component {
     }
     return (
       <div key={'2'} className={CreateTaskStyle.item_2} style={{ marginRight: thumbMArgin }} >
-        <div className={CreateTaskStyle.item_2_top} onClick={this.seeDetailInfo.bind(this, { drawContent: itemValue, taskGroupListIndex: this.props.taskGroupListIndex, taskGroupListIndex_index: this.props.taskGroupListIndex_index })}>
+        <div className={CreateTaskStyle.item_2_top} onClick={this.seeDetailInfo.bind(this, { drawContent: itemValue, taskGroupListIndex: taskGroupListIndex, taskGroupListIndex_index: taskGroupListIndex_index })}>
           {type === '0' ? (
             <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive : CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
               <Icon type="check" style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }} />
@@ -129,7 +142,13 @@ export default class ItemTwo extends React.Component {
                 <QueueAnim >
                   {child_data.map((value, key) => {
                     return (
-                      <ItemTwoChirldren ItemTwoChirldrenVaue={value} ItemTwoChirldrenIndex={key}{...this.props} key={key}></ItemTwoChirldren>
+                      <ItemTwoChirldren
+                        ItemTwoChirldrenVaue={value}
+                        ItemTwoChirldrenIndex={key} 
+                        taskGroupListIndex={taskGroupListIndex}
+                        taskGroupListIndex_index={taskGroupListIndex_index}
+                        key={key}>
+                      </ItemTwoChirldren>
                     )
                   })}
                 </QueueAnim>
@@ -154,3 +173,14 @@ const customPanelStyle = {
   border: 0,
   overflow: 'hidden',
 };
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      taskGroupList = []
+    }
+  },
+}) {
+  return {
+    taskGroupList
+  }
+}

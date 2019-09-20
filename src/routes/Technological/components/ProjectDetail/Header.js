@@ -25,10 +25,11 @@ import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } f
 import LcbInHeader from './components/LcbInHeader/index'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import globalStyle from '@/globalset/css/globalClassName.less'
+import { connect } from "dva/index";
 
 let is_starinit = null
 
-
+@connect(mapStateToProps)
 export default class Header extends React.Component {
   state = {
     isInitEntry: true, // isinitEntry isCollection用于处理收藏
@@ -51,7 +52,7 @@ export default class Header extends React.Component {
   }
   //初始化根据props设置state
   initSet(props) {
-    const { datas: { projectDetailInfoData = {} } } = props.model
+    const { projectDetailInfoData = {} } = props
     const { board_name } = projectDetailInfoData
     this.setState({
       localBoardName: board_name
@@ -71,7 +72,7 @@ export default class Header extends React.Component {
   }
   editBoardNameComplete(e) {
     this.setIsInEditBoardName()
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { board_id } = projectDetailInfoData
     const { board_name } = projectDetailInfoData
     const { localBoardName } = this.state
@@ -84,23 +85,47 @@ export default class Header extends React.Component {
       })
       return false
     }
-    this.props.updateProject({
-      board_id: board_id,
-      name: this.state.localBoardName
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateProject',
+      payload: {
+        board_id: board_id,
+        name: this.state.localBoardName
+      }
     })
   }
   //设置项目名称---end
 
   setProjectInfoDisplay() {
-    this.props.updateDatas({ projectInfoDisplay: !this.props.model.datas.projectInfoDisplay, isInitEntry: true })
+    const { projectInfoDisplay } = this.props
+    const { dispatch } = this.props
+
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        projectInfoDisplay: !projectInfoDisplay,
+        isInitEntry: true
+      }
+    })
   }
   gobackToProject() {
     // window.history.go(-1)
     const defferBoardDetailRoute = localStorage.getItem('defferBoardDetailRoute')
+    const { dispatch } = this.props
     if (defferBoardDetailRoute) {
-      this.props.routingJump(defferBoardDetailRoute)
+      dispatch({
+        type: 'projectDetail/routingJump',
+        payload: {
+          route: defferBoardDetailRoute
+        }
+      })
     } else {
-      this.props.routingJump('/technological/project')
+      dispatch({
+        type: 'projectDetail/routingJump',
+        payload: {
+          route: '/technological/project'
+        }
+      })
     }
   }
   //出现confirm-------------start
@@ -111,7 +136,7 @@ export default class Header extends React.Component {
   }
   confirm(board_id) {
     const that = this
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { org_id } = projectDetailInfoData
     if (!checkIsHasPermission(ORG_TEAM_BOARD_JOIN, org_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -129,12 +154,20 @@ export default class Header extends React.Component {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        that.props.quitProject({ board_id })
+        const { dispatch } = that.props
+        dispatch({
+          type: 'projectDetail/quitProject',
+          payload: {
+            board_id
+          }
+        })
       }
     });
   }
   confirm_2(board_id, type) {
     const that = this
+    const { dispatch } = this.props
+
     let defineNoun = '操作'
     switch (type) {
       case '0':
@@ -153,9 +186,20 @@ export default class Header extends React.Component {
       cancelText: '取消',
       onOk() {
         if (type === '1') {
-          that.props.archivedProject({ board_id, is_archived: '1' })
+          dispatch({
+            type: 'projectDetail/archivedProject',
+            payload: {
+              board_id, is_archived: '1'
+            }
+          })
         } else if (type === '0') {
-          that.props.deleteProject(board_id)
+          dispatch({
+            type: 'projectDetail/deleteProject',
+            payload: {
+              id: board_id,
+              isJump: true
+            }
+          })
         }
       }
     });
@@ -202,7 +246,6 @@ export default class Header extends React.Component {
           return false
         }
         this.confirm_2(board_id, '0')
-        // this.props.deleteProject(board_id)
         break
       case '4':
         this.confirm(board_id)
@@ -220,7 +263,7 @@ export default class Header extends React.Component {
   }
   //收藏
   starClick({ board_id }, e) {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { org_id } = projectDetailInfoData
     const { dispatch } = this.props
     // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
@@ -304,22 +347,34 @@ export default class Header extends React.Component {
     } else {
 
     }
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        appsSelectKey: key
+      }
+    })
+    dispatch({
+      type: 'projectDetail/appsSelect',
+      payload: {
+        appsSelectKey: key
+      }
+    })
 
-    this.props.updateDatas({
-      appsSelectKey: key
-    })
-    this.props.appsSelect({
-      appsSelectKey: key
-    })
   }
   //文档操作----start
   quitOperateFile() {
-    this.props.updateDatasFile({
-      selectedRowKeys: [],
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRowKeys: [],
+      }
     })
   }
   reverseSelection() {
-    const { datas: { selectedRowKeys = [], fileList = [] } } = this.props.model
+    const { selectedRowKeys = [], fileList = [] } = this.props
+    const { dispatch } = this.props
     const newSelectedRowKeys = []
     for (let i = 0; i < fileList.length; i++) {
       for (let val of selectedRowKeys) {
@@ -329,17 +384,25 @@ export default class Header extends React.Component {
         }
       }
     }
-    this.props.updateDatasFile({ selectedRowKeys: newSelectedRowKeys })
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRowKeys: newSelectedRowKeys
+      }
+    })
   }
   createDirectory() {
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
+    const { fileList = [], filedata_1 = [], isInAddDirectory = false } = this.props
     if (isInAddDirectory) { //正在创建的过程中不能添加多个
       return false
     }
+    const new_fileList_ = [...fileList]
+    const new_filedata_1_ = [...filedata_1]
+
     const obj = {
       file_id: '',
       file_name: '',
@@ -349,9 +412,17 @@ export default class Header extends React.Component {
       type: '1',
       isInAdd: true
     }
-    fileList.unshift(obj)
-    filedata_1.unshift(obj)
-    this.props.updateDatasFile({ fileList, filedata_1, isInAddDirectory: true })
+    new_fileList_.unshift(obj)
+    new_filedata_1_.unshift(obj)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        fileList: new_fileList_,
+         filedata_1: new_filedata_1_, 
+         isInAddDirectory: true
+      }
+    })
   }
   collectionFile() {
 
@@ -361,14 +432,19 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { fileList, selectedRowKeys } } = this.props.model
+    const { fileList, selectedRowKeys } = this.props
+    const { dispatch } = this.props
     let chooseArray = []
     for (let i = 0; i < selectedRowKeys.length; i++) {
       chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
     }
     const ids = chooseArray.join(',')
-    this.props.fileDownload({ ids })
-
+    dispatch({
+      type: 'projectDetailFile/fileDownload',
+      payload: {
+        ids
+      }
+    })
     //将要进行多文件下载的mp3文件地址，以组数的形式存起来（这里只例了3个地址）
     // let mp3arr = ["http://pe96wftsc.bkt.clouddn.com/ea416183ad91220856c8ff792e5132e1.zip?e=1536660365&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:XK9eRCWcG8yDztiL7zct2jrpIvc=","http://pe96wftsc.bkt.clouddn.com/2fc83d8439ab0d4507dc7154f3d50d3.pdf?e=1536659325&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:DGertCGKCr3Y407F6fY9ZGgkP4M=", "http://pe96wftsc.bkt.clouddn.com/ec611c887680f9264bb5db8e4cb33141.docx?e=1536659379&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:9IkALD1DjOBvQtv3uAvtzk5y694=",];
 
@@ -396,10 +472,14 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.updateDatasFile({
-      copyOrMove: '0', //copy是1
-      openMoveDirectoryType: '1',
-      moveToDirectoryVisiblie: true
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        copyOrMove: '0', //copy是1
+        openMoveDirectoryType: '1',
+        moveToDirectoryVisiblie: true
+      }
     })
   }
   copyFile() {
@@ -407,10 +487,14 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.updateDatasFile({
-      copyOrMove: '1', //copy是1
-      openMoveDirectoryType: '1',
-      moveToDirectoryVisiblie: true
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        copyOrMove: '1', //copy是1
+        openMoveDirectoryType: '1',
+        moveToDirectoryVisiblie: true
+      }
     })
   }
   deleteFile() {
@@ -418,15 +502,19 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { fileList, selectedRowKeys, projectDetailInfoData = {} } } = this.props.model
+    const { fileList, selectedRowKeys, projectDetailInfoData = {} } = this.props
     const { board_id } = projectDetailInfoData
     let chooseArray = []
     for (let i = 0; i < selectedRowKeys.length; i++) {
       chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id })
     }
-    this.props.fileRemove({
-      board_id,
-      arrays: JSON.stringify(chooseArray),
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/fileRemove',
+      payload: {
+        board_id,
+        arrays: JSON.stringify(chooseArray),
+      }
     })
   }
   //文档操作 ---end
@@ -435,24 +523,36 @@ export default class Header extends React.Component {
   //查询列表，改变方式
   handleaskAppMenuClick(board_id, e) {
     e.domEvent.stopPropagation();
+    const { dispatch } = this.props
     const { key } = e
-    this.props.updateDatasTask({
-      getTaskGroupListArrangeType: key
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        getTaskGroupListArrangeType: key
+      }
     })
-    this.props.getTaskGroupList({
-      type: '2',
-      board_id: board_id,
-      arrange_type: key,
-      operateType: '1'
+    dispatch({
+      type: 'projectDetailTask/getTaskGroupList',
+      payload: {
+        type: '2',
+        board_id: board_id,
+        arrange_type: key,
+        operateType: '1'
+      }
     })
+
   }
   //任务操作---end
 
   //团队展示发布编辑
   editTeamShowPreview() {
     const that = this
-    this.props.updateDatas({
-      editTeamShowPreview: true
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        editTeamShowPreview: true
+      }
     })
     setTimeout(function () { //延迟获取
       const html = document.getElementById('editTeamShow').innerHTML
@@ -460,9 +560,14 @@ export default class Header extends React.Component {
     }, 200)
   }
   editTeamShowSave() {
-    this.props.updateDatas({
-      editTeamShowSave: true
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        editTeamShowSave: true
+      }
     })
+
     setTimeout(function () { //延迟获取
       const html = document.getElementById('editTeamShow').innerHTML
       // console.log(html)
@@ -470,9 +575,11 @@ export default class Header extends React.Component {
   }
   //右方部分点击-----------------end
   getFieldFromProjectDetailInfoData = (...fields) => {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    // debugger
+    const { projectDetailInfoData = {} } = this.props
     if (!fields.length) return {}
     return fields.reduce((acc, curr) => {
+      // debugger
       let fieldObj = {}
       curr in projectDetailInfoData ? fieldObj[curr] = projectDetailInfoData[curr] : null
       return Object.assign({}, acc, fieldObj)
@@ -563,10 +670,13 @@ export default class Header extends React.Component {
     this.handleSetContentPrivilege(users_arr, 'read')
   }
   async visitControlUpdateCurrentProjectData(board_id) {
-    await this.props.updateProject({
-      board_id
+    const { dispatch } = this.props
+    await dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        board_id
+      }
     })
-
   }
 
   // 执行人列表去重
@@ -582,10 +692,20 @@ export default class Header extends React.Component {
     return temp_arr
   }
 
+  // 邀请人进项目
+  addMenbersInProject = (data) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/addMenbersInProject',
+      payload: {
+        ...data
+      }
+    })
+  }
 
   render() {
     const that = this
-    const { datas: { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1' } } = this.props.model
+    const { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1', dispatch } = this.props
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName } = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges, privileges_extend } = projectDetailInfoData
     let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
@@ -717,7 +837,12 @@ export default class Header extends React.Component {
 
           if (file.response && file.response.code == '0') {
             message.success(`上传成功。`);
-            that.props.getFileList({ folder_id: currentParrentDirectoryId })
+            dispatch({
+              type: 'projectDetailFile/getFileList',
+              payload: {
+                folder_id: currentParrentDirectoryId
+              }
+            })
           } else {
             message.error(file.response && file.response.message || '上传失败');
           }
@@ -952,10 +1077,52 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <DetailInfo {...this.props} modalVisible={projectInfoDisplay} />
-        <ShowAddMenberModal show_wechat_invite={true} {...this.props} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
-        <AddModalForm {...this.props} board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
+        <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} />
+        <ShowAddMenberModal  addMenbersInProject={this.addMenbersInProject}  show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <AddModalForm  board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
       </div>
     )
+  }
+}
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+      projectInfoDisplay,
+      appsSelectKey
+    }
+  },
+  projectDetailTask: {
+    datas: {
+      getTaskGroupListArrangeType = '1'
+    }
+  },
+  projectDetailFile: {
+    datas: {
+      selectedRowKeys = [],
+      fileList = [],
+      filedata_1 = [],
+      isInAddDirectory,
+      currentParrentDirectoryId,
+    }
+  },
+  projectDetailProcess: {
+    datas: {
+      processInfo = {},
+    }
+  }
+}) {
+  return {
+    projectDetailInfoData,
+    projectInfoDisplay,
+    selectedRowKeys,
+    fileList,
+    filedata_1,
+    isInAddDirectory,
+    processInfo,
+    currentParrentDirectoryId,
+    getTaskGroupListArrangeType,
+    appsSelectKey
   }
 }

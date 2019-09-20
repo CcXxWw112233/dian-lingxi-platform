@@ -2,8 +2,7 @@
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
-import { Icon, Checkbox, Collapse, Input, message, Dropdown, Menu, Modal, Button, Avatar, DatePicker, Tooltip } from 'antd'
-import QueueAnim from 'rc-queue-anim'
+import { Icon, Input, message, Dropdown, Menu, Modal, Button, DatePicker, Tooltip } from 'antd'
 // import ItemOne from './ItemOne'
 import ItemTwo from './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
@@ -17,11 +16,11 @@ import {
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
-
 const TextArea = Input.TextArea
-const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;
+import { connect } from 'dva';
 
+@connect(mapStateToProps)
 export default class TaskItem extends React.Component {
   state = {
     isAddEdit: false, //添加任务编辑状态
@@ -53,7 +52,13 @@ export default class TaskItem extends React.Component {
     const name = e.target.value
     if (name) {
       const obj = Object.assign(data, { name })
-      this.props.addTask(obj)
+      const { dispatch } = this.props
+      dispatch({
+        type: 'projectDetailTask/addTask',
+        payload: {
+          ...obj
+        }
+      })
     }
     this.setState({
       isAddEdit: false,
@@ -68,9 +73,16 @@ export default class TaskItem extends React.Component {
   }
   //负责人
   setList(id) {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { board_id } = projectDetailInfoData
-    this.props.removeProjectMenbers({ board_id, user_id: id })
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/removeProjectMenbers',
+      payload: {
+        board_id,
+        user_id: id
+      }
+    })
   }
   chirldrenTaskChargeChange(data) {
     this.setState({
@@ -107,7 +119,7 @@ export default class TaskItem extends React.Component {
   }
   checkAddNewTask() {
     const { addTaskType, due_time, start_time, addNewTaskName, executor } = this.state
-    const { projectDetailInfoData: { board_id }, getTaskGroupListArrangeType } = this.props.model.datas
+    const { projectDetailInfoData: { board_id }, getTaskGroupListArrangeType } = this.props
     const { taskItemValue: { list_id } } = this.props
     const obj = {
       board_id,
@@ -119,14 +131,20 @@ export default class TaskItem extends React.Component {
       type: addTaskType,
       add_type: !!list_id ? getTaskGroupListArrangeType : '0', //如果是 分组‘其他’，则固定0
     }
-    this.props.addTask(obj)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/addTask',
+      payload: {
+        ...obj
+      }
+    })
     this.reductionAddTaskOperate()
   }
 
   //点击分组操作
   handleMenuClick(e) {
     e.domEvent.stopPropagation();
-    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { projectDetailInfoData = {} } = this.props
     const { org_id } = projectDetailInfoData
     if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP, org_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -158,9 +176,13 @@ export default class TaskItem extends React.Component {
   deleteGroupItem() {
     const { taskItemValue = {}, itemKey } = this.props
     const { list_id } = taskItemValue
-    this.props.deleteTaskGroup({
-      id: list_id,
-      itemKey
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/deleteTaskGroup',
+      payload: {
+        id: list_id,
+        itemKey
+      }
     })
   }
 
@@ -174,7 +196,7 @@ export default class TaskItem extends React.Component {
     const { inputValue } = this.state
     const { taskItemValue, itemKey } = this.props
     const { list_name, list_id } = taskItemValue
-
+    const { dispatch } = this.props
     this.setState({
       isInEditName: false,
     })
@@ -182,11 +204,13 @@ export default class TaskItem extends React.Component {
     if (!inputValue || list_name == inputValue) {
       return false
     }
-
-    this.props.updateTaskGroup({
-      id: list_id,
-      name: inputValue,
-      itemKey
+    dispatch({
+      type: 'projectDetailTask/updateTaskGroup',
+      payload: {
+        id: list_id,
+        name: inputValue,
+        itemKey
+      }
     })
     this.setState({
       inputValue: '',
@@ -396,8 +420,8 @@ export default class TaskItem extends React.Component {
 
   render() {
     const { isAddEdit, isInEditName, executor = {}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
-    const { taskItemValue = {}, clientHeight } = this.props
-    const { projectDetailInfoData = {} } = this.props.model.datas
+    const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
+    const { projectDetailInfoData = {} } = this.props
     const { board_id, data = [], } = projectDetailInfoData
     const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges, privileges_extend = [] } = taskItemValue
     // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
@@ -531,10 +555,12 @@ export default class TaskItem extends React.Component {
           {card_data.map((value, key) => {
             const { card_id, is_privilege } = value
             return (
-              <ItemTwo itemValue={value} {...this.props}
+              <ItemTwo itemValue={value} 
                 taskGroupListIndex_index={key}
+                taskGroupListIndex={taskGroupListIndex}
                 isPropVisitControl={is_privilege === '0' ? false : true}
-                key={card_id} {...this.props} />
+                setDrawerVisibleOpen={setDrawerVisibleOpen}
+                key={card_id}  />
             )
           })}
           {/*</QueueAnim>*/}
@@ -605,5 +631,22 @@ export default class TaskItem extends React.Component {
 
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      getTaskGroupListArrangeType
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+    }
+  }
+}) {
+  return {
+    projectDetailInfoData,
+    getTaskGroupListArrangeType
   }
 }

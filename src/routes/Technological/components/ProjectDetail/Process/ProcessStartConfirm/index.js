@@ -12,22 +12,28 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FLOWS_FLOW_CREATE
 } from "../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
-
+import { checkIsHasPermissionInBoard } from "../../../../../../utils/businessFunction";
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class ProcessStartConfirm extends React.Component {
 
   nameChange(e) {
     const value = e.target.value
-    const { datas: { templateInfo = {} } } = this.props.model
-    templateInfo['name'] = value
-    this.props.updateDatasProcess({
-      templateInfo
+    const { templateInfo = {}, dispatch } = this.props
+    const new_tem = { ...templateInfo }
+    new_tem['name'] = value
+
+    dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        templateInfo: new_tem
+      }
     })
   }
   verrificationForm() {
     //校验启动流程时指定
-    const { datas: { processEditDatas = [] } } = this.props.model
-    for(let i = 0; i < processEditDatas.length; i ++ ) {
+    const { processEditDatas = [] } = this.props
+    for (let i = 0; i < processEditDatas.length; i++) {
       const currentData = processEditDatas[i]
 
       //之前因为必须截止时间类型为启动流程指定，后面必须指定截止时间
@@ -40,13 +46,13 @@ export default class ProcessStartConfirm extends React.Component {
       //   return false
       // }
 
-      if(currentData['assignee_type'] === '2'){
-        if(!currentData['assignees']) {
+      if (currentData['assignee_type'] === '2') {
+        if (!currentData['assignees']) {
           return false
         }
       }
-      if(currentData['node_type'] === '4' && currentData['cc_type'] === '1'){ //抄送
-        if(!currentData['recipients']) {
+      if (currentData['node_type'] === '4' && currentData['cc_type'] === '1') { //抄送
+        if (!currentData['recipients']) {
           return false
         }
       }
@@ -54,33 +60,43 @@ export default class ProcessStartConfirm extends React.Component {
     return true
   }
   startProcess() {
-    if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)){
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { processEditDatas, templateInfo = {} } } = this.props.model
+    const { processEditDatas, templateInfo = {}, dispatch } = this.props
     const { name, description, id } = templateInfo
-    this.props.createProcess({
-      description,
-      name,
-      nodes: JSON.stringify(processEditDatas),
-      template_id: id,
+
+    dispatch({
+      type: 'projectDetailProcess/createProcess',
+      payload: {
+        description,
+        name,
+        nodes: JSON.stringify(processEditDatas),
+        template_id: id,
+      }
     })
   }
   render() {
     const that = this
-    const { datas: { processEditDatas = [], templateInfo = {} } } = this.props.model
+    const { processEditDatas = [], templateInfo = {}, dispatch } = this.props
     const { name, description } = templateInfo
     const editorProps = {
       height: 0,
       contentFormat: 'html',
       placeholder: '输入流程描述',
-      contentStyle: {minHeight: 150, height: 'auto'},
+      contentStyle: { minHeight: 150, height: 'auto' },
       initialContent: description,
       onChange: (e) => {
-        const { datas: { templateInfo = {} } } = this.props.model
-        templateInfo['description'] = e.toHTML()
-        this.props.updateDatasProcess({templateInfo})
+        const { templateInfo = {} } = this.props
+        const new_tem = { ...templateInfo }
+        new_tem['description'] = e.toHTML()
+        dispatch({
+          type: 'projectDetailProcess/updateDatas',
+          payload: {
+            templateInfo: new_tem
+          }
+        })
       },
       fontSizes: [14],
       controls: [
@@ -93,52 +109,65 @@ export default class ProcessStartConfirm extends React.Component {
     const filterItem = (value, key) => {
       const { node_type } = value
       let containner = (<div></div>)
-       switch (node_type) {
-         case '1':
-           containner = (<ConfirmInfoOne itemKey={key} itemValue={value} {...this.props}/>)
-           break
-         case '2':
-           containner = (<ConfirmInfoTwo itemKey={key} itemValue={value} {...this.props}/>)
-           break
-         case '3':
-           containner = (<ConfirmInfoThree itemKey={key} itemValue={value} {...this.props}/>)
-           break
-         case '4':
-           containner = (<ConfirmInfoFour itemKey={key} itemValue={value} {...this.props}/>)
-           break
-         case '5':
-           containner = (<ConfirmInfoFive itemKey={key} itemValue={value} {...this.props}/>)
-           break
-         default:
-           containner = (<div></div>)
-               break
-       }
-       return containner
+      switch (node_type) {
+        case '1':
+          containner = (<ConfirmInfoOne itemKey={key} itemValue={value} />)
+          break
+        case '2':
+          containner = (<ConfirmInfoTwo itemKey={key} itemValue={value} />)
+          break
+        case '3':
+          containner = (<ConfirmInfoThree itemKey={key} itemValue={value} />)
+          break
+        case '4':
+          containner = (<ConfirmInfoFour itemKey={key} itemValue={value} />)
+          break
+        case '5':
+          containner = (<ConfirmInfoFive itemKey={key} itemValue={value} />)
+          break
+        default:
+          containner = (<div></div>)
+          break
+      }
+      return containner
     }
 
-    return(
+    return (
       <div>
         <Card className={indexStyles.confirmOutCard}>
           {/*<div className={indexStyles.toptitle}>*/}
-            {/*<div></div>*/}
-            {/*<div>投决立项</div>*/}
+          {/*<div></div>*/}
+          {/*<div>投决立项</div>*/}
           {/*</div>*/}
-          <div style={{marginTop: 14}}>
-            <Input placeholder={'输入流程名称'} defaultValue={name} style={{height: 40, fontSize: 18, color: '#262626'}} onChange={this.nameChange.bind(this)} />
+          <div style={{ marginTop: 14 }}>
+            <Input placeholder={'输入流程名称'} defaultValue={name} style={{ height: 40, fontSize: 18, color: '#262626' }} onChange={this.nameChange.bind(this)} />
           </div>
           <div className={indexStyles.editorWraper}>
-            <BraftEditor {...editorProps} style={{fontSize: 12}}/>
+            <BraftEditor {...editorProps} style={{ fontSize: 12 }} />
           </div>
-          <div style={{marginTop: 14}}>
+          <div style={{ marginTop: 14 }}>
             {processEditDatas.map((value, key) => {
               return (<div key={key}>{filterItem(value, key)}</div>)
             })}
           </div>
-          <div style={{textAlign: 'center', marginTop: 40}} >
-            <Button disabled={!!!name || !this.verrificationForm()} style={{height: 40, lineHeight: '40px', margin: '0 auto'}} type={'primary'} onClick={this.startProcess.bind(this)}>开始流程</Button>
+          <div style={{ textAlign: 'center', marginTop: 40 }} >
+            <Button disabled={!!!name || !this.verrificationForm()} style={{ height: 40, lineHeight: '40px', margin: '0 auto' }} type={'primary'} onClick={this.startProcess.bind(this)}>开始流程</Button>
           </div>
         </Card>
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailProcess: {
+    datas: {
+      processEditDatas = [],
+      templateInfo = {}
+    }
+  },
+}) {
+  return {
+    processEditDatas,
+    templateInfo
   }
 }
