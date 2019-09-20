@@ -14,9 +14,7 @@ import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import indexStyle from './index.less'
 
-@connect(({ informRemind: { historyList, is_history, is_add_remind } }) => ({
-    historyList, is_history, is_add_remind
-}))
+@connect(mapStateToProps)
 export default class BoarderfilesHeader extends Component {
     state = {
 
@@ -26,16 +24,15 @@ export default class BoarderfilesHeader extends Component {
 
     getUploadProps = () => {
         //console.log(this.props, "hhhhhh");
-        //console.log(this.props.model, "hhhhhh");
         const that = this;
-        const currentParrentDirectoryId = this.props.model.datas.currentParrentDirectoryId; 
+        const { currentParrentDirectoryId, board_id, dispatch } = this.props
         return {
             name: 'file',
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
             data: {
-                board_id: this.props.board_id,
+                board_id,
                 folder_id: currentParrentDirectoryId,
                 type: '1',
                 upload_type: '1'
@@ -69,7 +66,12 @@ export default class BoarderfilesHeader extends Component {
 
                     if (file.response && file.response.code == '0') {
                         message.success(`上传成功。`);
-                        that.props.getFileList({ folder_id: currentParrentDirectoryId })
+                        dispatch({
+                            type: 'projectDetailFile/getFileList',
+                            payload: {
+                                folder_id: currentParrentDirectoryId
+                            }
+                        })
                     } else {
                         message.error(file.response && file.response.message || '上传失败');
                     }
@@ -85,12 +87,16 @@ export default class BoarderfilesHeader extends Component {
 
     //文档操作----start
     quitOperateFile() {
-        this.props.updateDatasFile({
-            selectedRowKeys: [],
+        const { dispatch } = this.props
+        dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+                selectedRowKeys: [],
+            }
         })
     }
     reverseSelection() {
-        const { datas: { selectedRowKeys = [], fileList = [] } } = this.props.model
+        const { selectedRowKeys = [], fileList = [] } = this.props
         const newSelectedRowKeys = []
         for (let i = 0; i < fileList.length; i++) {
             for (let val of selectedRowKeys) {
@@ -100,14 +106,23 @@ export default class BoarderfilesHeader extends Component {
                 }
             }
         }
-        this.props.updateDatasFile({ selectedRowKeys: newSelectedRowKeys })
+        const { dispatch } = this.props
+        dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+                selectedRowKeys: newSelectedRowKeys,
+            }
+        })
     }
     createDirectory() {
         if (!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        const { datas: { fileList = [], filedata_1 = [], isInAddDirectory = false } } = this.props.model
+        const { fileList = [], filedata_1 = [], isInAddDirectory = false } = this.props
+        const new_fileList = [...fileList]
+        const new_filedata_1 = [...filedata_1]
+
         if (isInAddDirectory) { //正在创建的过程中不能添加多个
             return false
         }
@@ -120,9 +135,17 @@ export default class BoarderfilesHeader extends Component {
             type: '1',
             isInAdd: true
         }
-        fileList.unshift(obj)
-        filedata_1.unshift(obj)
-        this.props.updateDatasFile({ fileList, filedata_1, isInAddDirectory: true })
+        new_fileList.unshift(obj)
+        new_filedata_1.unshift(obj)
+        const { dispatch } = this.props
+        dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+                fileList: new_fileList,
+                filedata_1: new_filedata_1,
+                isInAddDirectory: true
+            }
+        })
     }
     collectionFile() {
 
@@ -132,14 +155,18 @@ export default class BoarderfilesHeader extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        const { datas: { fileList, selectedRowKeys } } = this.props.model
+        const { fileList, selectedRowKeys, dispatch } = this.props
         let chooseArray = []
         for (let i = 0; i < selectedRowKeys.length; i++) {
             chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
         }
         const ids = chooseArray.join(',')
-        this.props.fileDownload({ ids })
-
+        dispatch({
+            type: 'projectDetailFile/fileDownload',
+            payload: {
+                ids
+            }
+        })
         //将要进行多文件下载的mp3文件地址，以组数的形式存起来（这里只例了3个地址）
         // let mp3arr = ["http://pe96wftsc.bkt.clouddn.com/ea416183ad91220856c8ff792e5132e1.zip?e=1536660365&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:XK9eRCWcG8yDztiL7zct2jrpIvc=","http://pe96wftsc.bkt.clouddn.com/2fc83d8439ab0d4507dc7154f3d50d3.pdf?e=1536659325&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:DGertCGKCr3Y407F6fY9ZGgkP4M=", "http://pe96wftsc.bkt.clouddn.com/ec611c887680f9264bb5db8e4cb33141.docx?e=1536659379&token=OhRq8qrZN_CtFP_HreTEZh-6KDu4BW2oW876LYzj:9IkALD1DjOBvQtv3uAvtzk5y694=",];
 
@@ -167,10 +194,14 @@ export default class BoarderfilesHeader extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        this.props.updateDatasFile({
-            copyOrMove: '0', //copy是1
-            openMoveDirectoryType: '1',
-            moveToDirectoryVisiblie: true
+        const { dispatch } = this.props
+        dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+                copyOrMove: '0', //copy是1
+                openMoveDirectoryType: '1',
+                moveToDirectoryVisiblie: true
+            }
         })
     }
     copyFile() {
@@ -178,10 +209,14 @@ export default class BoarderfilesHeader extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        this.props.updateDatasFile({
-            copyOrMove: '1', //copy是1
-            openMoveDirectoryType: '1',
-            moveToDirectoryVisiblie: true
+        const { dispatch } = this.props
+        dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+                copyOrMove: '1', //copy是1
+                openMoveDirectoryType: '1',
+                moveToDirectoryVisiblie: true
+            }
         })
     }
     deleteFile() {
@@ -189,15 +224,19 @@ export default class BoarderfilesHeader extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        const { datas: { fileList, selectedRowKeys, projectDetailInfoData = {} } } = this.props.model
+        const { fileList, selectedRowKeys, projectDetailInfoData = {}, dispatch } = this.props
         const { board_id } = projectDetailInfoData
         let chooseArray = []
         for (let i = 0; i < selectedRowKeys.length; i++) {
             chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id })
         }
-        this.props.fileRemove({
-            board_id,
-            arrays: JSON.stringify(chooseArray),
+
+        dispatch({
+            type: 'projectDetailFile/fileRemove',
+            payload: {
+                board_id,
+                arrays: JSON.stringify(chooseArray),
+            }
         })
     }
     //文档操作 ---end
@@ -273,5 +312,39 @@ export default class BoarderfilesHeader extends Component {
                 {this.renderHeader()}
             </div>
         )
+    }
+}
+
+function mapStateToProps({
+    projectDetailFile: {
+        datas: {
+            currentParrentDirectoryId,
+            selectedRowKeys = [],
+            fileList = [],
+            filedata_1 = [],
+            isInAddDirectory = false,
+        }
+    },
+    projectDetail: {
+        datas: {
+            projectDetailInfoData = {}
+        }
+    },
+    informRemind: {
+        historyList,
+        is_history,
+        is_add_remind
+    }
+}) {
+    return {
+        currentParrentDirectoryId,
+        selectedRowKeys,
+        fileList,
+        filedata_1,
+        isInAddDirectory,
+        projectDetailInfoData,
+        historyList,
+        is_history,
+        is_add_remind
     }
 }
