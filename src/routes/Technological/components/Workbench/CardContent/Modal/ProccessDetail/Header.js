@@ -315,7 +315,7 @@ export default class Header extends React.Component {
 
         <div style={{ float: 'right', position: 'relative' }}>
           {
-            checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
               <div onClick={this.alarmNoEditPermission} style={{right: '40px', height: '50px'}} className={globalStyles.drawContent_mask}></div>
             )
           }

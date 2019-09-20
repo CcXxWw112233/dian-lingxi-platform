@@ -35,8 +35,8 @@ export default class Comment extends React.Component {
   }
   submitComment(editText) {
     const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, board_id, privileges = [] } = drawContent
-    if(!checkIsHasPermissionInVisitControl('comment', privileges, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))){
+    const { card_id, board_id, privileges = [], is_privilege } = drawContent
+    if(!checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -64,7 +64,7 @@ export default class Comment extends React.Component {
     const { editText } = this.state
     const { datas: { drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
-    const { privileges = [], board_id } = drawContent
+    const { privileges = [], board_id, is_privilege } = drawContent
     let suggestions = []
     for(let val of data) {
       if(val['full_name']) {
@@ -99,7 +99,7 @@ export default class Comment extends React.Component {
             <CommentListItem {...this.props}/>
           </div>
         </div>
-        { checkIsHasPermissionInVisitControl('comment', privileges, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) && (
+        { checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) && (
           <div className={CommentStyles.out}>
             <div>
               {avatar?(
