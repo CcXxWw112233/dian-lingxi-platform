@@ -434,7 +434,7 @@ export default class TaskItem extends React.Component {
 
     const operateMenu = () => {
       return (
-        <Menu onClick={this.handleMenuClick.bind(this)}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={this.handleMenuClick.bind(this)}>
           <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={CreateTaskStyle.elseProjectMemu}>
               重命名
@@ -502,7 +502,7 @@ export default class TaskItem extends React.Component {
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-                <Dropdown getPopupContainer={() => document.getElementById("title_l")} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
+                <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>

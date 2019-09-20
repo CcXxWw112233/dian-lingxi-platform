@@ -652,6 +652,7 @@ class VisitControl extends Component {
             trigger="click"
             visible={visible}
             onVisibleChange={this.onPopoverVisibleChange}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
           >
             {children ? (
               <span

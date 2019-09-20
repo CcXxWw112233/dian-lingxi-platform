@@ -15,7 +15,11 @@ import {
 } from './../../../../../../../services/technological/project';
 import InformRemind from '@/components/InformRemind'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
+@connect(({workbenchDetailProcess = {}, projectDetailProcess ={}}) => ({
+  workbenchDetailProcess, projectDetailProcess
+}))
 export default class Header extends React.Component {
   state = {
     controller: 0
@@ -50,11 +54,14 @@ export default class Header extends React.Component {
  }
 
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
-    const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
+    const { processInfo = {} } = this.props.model && this.props.model.datas
+    // const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
     return processInfo;
   };
 
   genPrincipalListFromAssignees = (nodes = []) => {
+    const { projectDetailInfoData = {} } = this.props.model && this.props.model.datas
+    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
     return nodes.reduce((acc, curr) => {
       if (curr.assignees && curr.assignees.length) {
         const genNewPersonList = (arr = []) => {
@@ -70,6 +77,21 @@ export default class Header extends React.Component {
           }));
         };
         const newPersonList = genNewPersonList(curr.assignees);
+        return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
+      } else if ( curr.assignee_type && curr.assignee_type == '1') {
+        const genNewPersonList = (arr = []) => {
+          return arr.map(user => ({
+            avatar: user.avatar,
+            name: user.full_name
+              ? user.full_name
+              : user.name
+                ? user.name
+                : user.user_id
+                  ? user.user_id
+                  : ''
+          }));
+        };
+        const newPersonList = genNewPersonList(data)
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
       }
       return acc
@@ -186,12 +208,29 @@ export default class Header extends React.Component {
    * @param {String} type 这是规定只有时切换访问控制状态的时候才需要调用两个列表
    */
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const { status } = originProcessInfo
-    const { projectDetailInfoData = {} } = this.props.model.datas
-    const { board_id } = projectDetailInfoData
-    const { dispatch } = this.props
-    if (projectDetailInfoData && projectDetailInfoData.length) {
+    const { workbenchDetailProcess = {}, projectDetailProcess ={}, dispatch } = this.props
+    let workbenchProcessInfoArr
+    let projectProcessInfoArr
+    let tempProcessInfo
+    if (workbenchDetailProcess && workbenchDetailProcess.datas && workbenchDetailProcess.datas.processInfo) {
+
+      workbenchProcessInfoArr = Object.keys(workbenchDetailProcess.datas.processInfo)
+      tempProcessInfo = workbenchDetailProcess.datas.processInfo
+    } else if (projectDetailProcess && projectDetailProcess.datas && projectDetailProcess.datas.processInfo) {
+
+      projectProcessInfoArr = Object.keys(projectDetailProcess.datas.processInfo)
+      tempProcessInfo = projectDetailProcess.datas.processInfo
+    }
+    const { status } = tempProcessInfo
+    const { board_id } = this.props.model && this.props.model.datas
+    if (projectProcessInfoArr && projectProcessInfoArr.length) { // 如果工作台中的processInfo不存在
+
+      dispatch({
+        type: 'projectDetailProcess/updateDatas',
+        payload: {
+          processInfo: newProcessInfo
+        }
+      })
       if (type) {
         dispatch({
           type: 'projectDetailProcess/getProcessListByType',
@@ -200,14 +239,14 @@ export default class Header extends React.Component {
             board_id: board_id
           }
         })
-      }
+      }     
+    } else if (workbenchProcessInfoArr && workbenchProcessInfoArr.length){
       dispatch({
-        type: 'projectDetailProcess/updateDatas',
+        type: 'workbenchDetailProcess/updateDatas',
         payload: {
           processInfo: newProcessInfo
         }
       })
-    } else {
       if (type) {
         dispatch({
           type: 'workbench/getBackLogProcessList',
@@ -215,22 +254,19 @@ export default class Header extends React.Component {
   
           }
         })
-      }
-      dispatch({
-        type: 'workbenchDetailProcess/updateDatas',
-        payload: {
-          processInfo: newProcessInfo
-        }
-      })
+      }     
     }
   }
 
   visitControlUpdateCurrentModalData = obj => {
-    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const { privileges = [], status } = originProcessInfo
-    const { projectDetailInfoData = {} } = this.props.model.datas
-    const { board_id } = projectDetailInfoData
-    const { dispatch } = this.props
+    const { workbenchDetailProcess, projectDetailProcess } = this.props
+    let tempProcessInfo
+    if (workbenchDetailProcess && workbenchDetailProcess.datas && workbenchDetailProcess.datas.processInfo) {
+      tempProcessInfo = workbenchDetailProcess.datas.processInfo
+    } else if (projectDetailProcess && projectDetailProcess.datas && projectDetailProcess.datas.processInfo) {
+      tempProcessInfo = projectDetailProcess.datas.processInfo
+    }
+    const { privileges = [] } = tempProcessInfo
 
     // 访问控制开关
     if (obj && obj.type &&  obj.type == 'privilege') {
@@ -243,7 +279,7 @@ export default class Header extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
       // this.props.updateDatasProcess({
       //   processInfo: newProcessInfo
       // });
@@ -263,7 +299,7 @@ export default class Header extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges}
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -275,7 +311,7 @@ export default class Header extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -292,7 +328,7 @@ export default class Header extends React.Component {
         }
         return new_item
       })
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges}
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -383,6 +419,7 @@ export default class Header extends React.Component {
       nodes
     } = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     const principalList = this.genPrincipalListFromAssignees(nodes);
+
     return (
       <div style={{
         height: '52px',
@@ -407,7 +444,7 @@ export default class Header extends React.Component {
         <div style={{ float: 'right', position: 'relative' }}>
           {
             checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
-              <div onClick={this.alarmNoEditPermission} style={{right: '40px'}} className={globalStyles.drawContent_mask}></div>
+              <div onClick={this.alarmNoEditPermission} style={{right: '40px', height: '50px'}} className={globalStyles.drawContent_mask}></div>
             )
           }
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
