@@ -21,11 +21,9 @@ export default class Technological extends React.Component {
   constructor(props) {
     super(props)
   }
-  componentWillMount() {
-    // this.setPageLoadType()
-  }
+
   componentDidMount() {
-    // this.historyListenSet()
+    this.historyListenSet()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,23 +62,7 @@ export default class Technological extends React.Component {
     })
   }
 
-  setPageLoadType = () => {
-    const { location: { pathname }, dispatch, page_load_type } = this.props
-    if (pathname.indexOf('/technological') !== -1) {
-      let page_load_type = 0;
-      if (pathname.indexOf('/simplemode') != -1) {
-        page_load_type = 1;
-      } else {
-        page_load_type = 2;
-      }
-      dispatch({
-        type: 'technological/updateDatas',
-        payload: {
-          page_load_type,
-        }
-      })
-    }
-  }
+  
 
   render() {
     const { page_load_type } = this.props;

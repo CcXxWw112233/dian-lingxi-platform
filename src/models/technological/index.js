@@ -62,7 +62,7 @@ export default {
         // //切换组织时需要重新加载
         if (location.pathname == '/technological') {
           dispatch({
-            type: 'routingReplace',
+            type: 'routingJump',
             payload: {
               route: 'technological/workbench'
             }
