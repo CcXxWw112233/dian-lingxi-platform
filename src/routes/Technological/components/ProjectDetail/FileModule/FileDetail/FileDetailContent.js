@@ -707,7 +707,7 @@ class FileDetailContent extends React.Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type) => {
+  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
     const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'
