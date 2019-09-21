@@ -50,6 +50,7 @@ export default modelExtend(projectDetail, {
       filedata_1: [], //文档列表--文件夹breadcrumbList
       filedata_2: [], //文档列表--文件
       selectedRowKeys: [], //选择的列表项
+      selectedRows: [], // 选择文件的元素项
       isInAddDirectory: false, //是否正在创建文件家判断标志
       moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
       openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
@@ -402,7 +403,7 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * getFolderList({ payload }, { select, call, put }) {
@@ -419,7 +420,7 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * filePreview({ payload }, { select, call, put }) {

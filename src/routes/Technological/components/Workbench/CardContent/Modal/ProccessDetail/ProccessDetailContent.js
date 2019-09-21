@@ -384,7 +384,7 @@ export default class FileDetailContent extends React.Component {
     const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits,
       filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
       filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false, processInfo = {}, relations_Prefix } } = this.props.model
-    const { privileges = [] } = processInfo
+    const { privileges = [], is_privilege } = processInfo
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
@@ -575,7 +575,7 @@ export default class FileDetailContent extends React.Component {
           {/* 这里将会有一个蒙层 */}
           <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
             {
-              checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
                 <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
               )
             }
@@ -613,7 +613,7 @@ export default class FileDetailContent extends React.Component {
           </div>
           {/* 这里将会有一个蒙层 */}
           {/* 这里是如果是评论,可以显示以及是可编辑状态 */}
-          {(checkIsHasPermissionInVisitControl('comment', privileges, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id))) && (
+          {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id))) && (
             <div className={indexStyles.fileDetailContentRight_bott}>
               <Comment2 {...this.props} ></Comment2>
             </div>

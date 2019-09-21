@@ -202,136 +202,8 @@ export default class Header extends React.Component {
     });
   };
 
-  /**
-   * 这是一个公用的用来区分更新的是工作台流程列表还是项目详情中的流程列表
-   * @param {Array} newProcessInfo 这是需要更新流程的数据
-   * @param {String} type 这是规定只有时切换访问控制状态的时候才需要调用两个列表
-   */
-  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const { workbenchDetailProcess = {}, projectDetailProcess ={}, dispatch } = this.props
-    let workbenchProcessInfoArr
-    let projectProcessInfoArr
-    let tempProcessInfo
-    if (workbenchDetailProcess && workbenchDetailProcess.datas && workbenchDetailProcess.datas.processInfo) {
-
-      workbenchProcessInfoArr = Object.keys(workbenchDetailProcess.datas.processInfo)
-      tempProcessInfo = workbenchDetailProcess.datas.processInfo
-    } else if (projectDetailProcess && projectDetailProcess.datas && projectDetailProcess.datas.processInfo) {
-
-      projectProcessInfoArr = Object.keys(projectDetailProcess.datas.processInfo)
-      tempProcessInfo = projectDetailProcess.datas.processInfo
-    }
-    const { status } = tempProcessInfo
-    const { board_id } = this.props.model && this.props.model.datas
-    if (projectProcessInfoArr && projectProcessInfoArr.length) { // 如果工作台中的processInfo不存在
-
-      dispatch({
-        type: 'projectDetailProcess/updateDatas',
-        payload: {
-          processInfo: newProcessInfo
-        }
-      })
-      if (type) {
-        dispatch({
-          type: 'projectDetailProcess/getProcessListByType',
-          payload: {
-            status: status,
-            board_id: board_id
-          }
-        })
-      }     
-    } else if (workbenchProcessInfoArr && workbenchProcessInfoArr.length){
-      dispatch({
-        type: 'workbenchDetailProcess/updateDatas',
-        payload: {
-          processInfo: newProcessInfo
-        }
-      })
-      if (type) {
-        dispatch({
-          type: 'workbench/getBackLogProcessList',
-          payload: {
-  
-          }
-        })
-      }     
-    }
-  }
-
   visitControlUpdateCurrentModalData = obj => {
-    const { workbenchDetailProcess, projectDetailProcess } = this.props
-    let tempProcessInfo
-    if (workbenchDetailProcess && workbenchDetailProcess.datas && workbenchDetailProcess.datas.processInfo) {
-      tempProcessInfo = workbenchDetailProcess.datas.processInfo
-    } else if (projectDetailProcess && projectDetailProcess.datas && projectDetailProcess.datas.processInfo) {
-      tempProcessInfo = projectDetailProcess.datas.processInfo
-    }
-    const { privileges = [] } = tempProcessInfo
-
-    // 访问控制开关
-    if (obj && obj.type &&  obj.type == 'privilege') {
-      let new_privileges = []
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
-          })
-        }
-      }
-      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
-      // this.props.updateDatasProcess({
-      //   processInfo: newProcessInfo
-      // });
-      // 这是需要获取一下流程列表 区分工作台和项目列表
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-      
-    };
-
-    // 访问控制添加
-    if (obj && obj.type && obj.type == 'add') {
-      let new_privileges = []
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
-          })
-        }
-      }
-      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges}
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
-    // 访问控制移除
-    if (obj && obj.type && obj.type == 'remove') {
-      let new_privileges = [...privileges]
-      new_privileges.map((item, index) => {
-        if (item.id == obj.removeId) {
-          new_privileges.splice(index, 1)
-        }
-      })
-      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
-    // 这是更新type类型
-    if (obj && obj.type && obj.type == 'change') {
-      let { id, content_privilege_code, user_info } = obj.temp_arr
-      let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
-        let new_item = item
-        if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
-        } else {
-          new_item = {...item}
-        }
-        return new_item
-      })
-      let newProcessInfo = {...tempProcessInfo, privileges: new_privileges}
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
+    this.props.visitControlUpdateCurrentModalData(obj)
   }
 
   render() {
@@ -443,7 +315,7 @@ export default class Header extends React.Component {
 
         <div style={{ float: 'right', position: 'relative' }}>
           {
-            checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
               <div onClick={this.alarmNoEditPermission} style={{right: '40px', height: '50px'}} className={globalStyles.drawContent_mask}></div>
             )
           }

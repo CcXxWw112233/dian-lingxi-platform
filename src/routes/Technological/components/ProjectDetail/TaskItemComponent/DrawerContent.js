@@ -18,7 +18,7 @@ import {
   PROJECT_TEAM_CARD_COMPLETE, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_BOARD, TASKS, CONTENT_DATA_TYPE_CARD
 } from "../../../../../globalset/js/constant";
 import {
-  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
   currentNounPlanFilterName, getSubfixName
 } from "../../../../../utils/businessFunction";
 import { deleteTaskFile } from '../../../../../services/technological/task'
@@ -125,9 +125,14 @@ class DrawContent extends React.Component {
   }
   topRightMenuClick({ key }) {
     const { drawContent = {}, dispatch } = this.props
-    const { card_id } = drawContent
+    const { card_id, privileges = [], board_id, is_privilege } = drawContent
     if (key === '1') {
-      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
+      // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
+      // 这里好像没有用上
+      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -139,7 +144,12 @@ class DrawContent extends React.Component {
         }
       })
     } else if (key === '2') {
-      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
+      // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
+      // 这里好像没有用上
+      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -183,12 +193,17 @@ class DrawContent extends React.Component {
   }
   //标题-------start
   setIsCheck() {
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
+    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [] } = this.props
+    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege } = drawContent
+    // 这是加上访问控制权限, 判断是否可完成
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [] } = this.props
-    const { is_realize = '0', card_id } = drawContent
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
@@ -1215,7 +1230,7 @@ class DrawContent extends React.Component {
     const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
-    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data = [], is_shared } = drawContent
+    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data = [], is_shared, privileges = [], is_privilege = '0' } = drawContent
     let executor = {//任务执行人信息 , 单个执行人情况
       user_id: '',
       user_name: '',
@@ -1302,7 +1317,7 @@ class DrawContent extends React.Component {
             归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
-        {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE) && (
+        {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id)) && (
           <Menu.Item key={'2'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={DrawerContentStyles.elseProjectDangerMenu}>
               删除{currentNounPlanFilterName(TASKS)}
@@ -1453,8 +1468,12 @@ class DrawContent extends React.Component {
         <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
           <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
             {/*没有编辑项目时才有*/}
-            {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
+            {/* {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
               <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+            )} */}
+            {/* 这里是给可不可以编辑的区域做的限制, 所以传入code字段为edit */}
+            {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
             )}
             {/*项目挪动*/}
             <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
@@ -1816,10 +1835,10 @@ class DrawContent extends React.Component {
           <div style={{ height: 100 }}></div>
         </div>
         {/*评论*/}
-        <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
+        {/* <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
           <Comment leftSpaceDivWH={26}></Comment>
         </div>
-        <div style={{ height: 100 }}></div>
+        <div style={{ height: 100 }}></div> */}
       </div>
     )
   }

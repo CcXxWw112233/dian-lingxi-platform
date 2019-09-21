@@ -15,7 +15,7 @@ import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import { REQUEST_DOMAIN_FILE } from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import MenuSearch from '../TecPublic/MenuSearch'
-import { checkIsHasPermissionInBoard, checkIsHasPermission } from "../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, checkIsHasPermission, checkIsHasPermissionInVisitControl } from "../../../../utils/businessFunction";
 import { ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP } from "../../../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import AddModalForm from './components/AddModalForm'
@@ -369,11 +369,12 @@ export default class Header extends React.Component {
       type: 'projectDetailFile/updateDatas',
       payload: {
         selectedRowKeys: [],
+        selectedRows: [],
       }
     })
   }
   reverseSelection() {
-    const { selectedRowKeys = [], fileList = [] } = this.props
+    const { selectedRowKeys = [], selectedRows = [], fileList = [] } = this.props
     const { dispatch } = this.props
     const newSelectedRowKeys = []
     for (let i = 0; i < fileList.length; i++) {
@@ -427,12 +428,59 @@ export default class Header extends React.Component {
   collectionFile() {
 
   }
+
+  // 获取当前需要下载或者移动或者复制或者删除的文件, 该方法返回boolean类型的值
+  getSelectedRows = () => {
+    const { selectedRows = [] } = this.props
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
+    let newSelectedRows = [...selectedRows]
+    let flag
+    let temp_arr = []
+    // 这是获取到选择的当前文件元素
+    newSelectedRows = newSelectedRows.filter(item => {
+      if (item.privileges && item.privileges.length) {
+        temp_arr.push(...item.privileges)
+      }
+      return temp_arr
+    })
+    let new_arr = []
+    // 这是取出当前操作人的权限
+    temp_arr && temp_arr.map(item => {
+      let { id } = item && item.user_info
+      if (id == user_id) {
+        new_arr.push(item)
+      }
+      return new_arr
+    })
+    // 这里是判断,只要存在read,就不能下载等操作
+    new_arr && new_arr.map(item => {
+      if (item.content_privilege_code == 'read') { // 这里进来了表示存在查看,不能下载等...
+        flag = false
+      } 
+      else {
+        flag = true
+      }
+      return flag
+    })
+    return flag
+  }
+
+
   downLoadFile() {
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+    // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    if (!this.getSelectedRows()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { fileList, selectedRowKeys } = this.props
+    const { fileList, selectedRowKeys, selectedRows, projectDetailInfoData = {} } = this.props
+    const { board_id, is_privilege, privileges = [] } = projectDetailInfoData
     const { dispatch } = this.props
     let chooseArray = []
     for (let i = 0; i < selectedRowKeys.length; i++) {
@@ -468,7 +516,10 @@ export default class Header extends React.Component {
     // })
   }
   moveFile() {
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    if (!this.getSelectedRows()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -483,7 +534,10 @@ export default class Header extends React.Component {
     })
   }
   copyFile() {
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    if (!this.getSelectedRows()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -498,7 +552,10 @@ export default class Header extends React.Component {
     })
   }
   deleteFile() {
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
+    if (!this.getSelectedRows()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -922,7 +979,9 @@ export default class Header extends React.Component {
           break
         case '4':
           if (selectedRowKeys.length) { //选择文件会改变
-            operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
+            // operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && 
+            operatorConent =
+            (
               <div style={{ display: 'flex', alignItems: 'center', color: '#595959' }} className={indexStyle.fileOperator}>
                 <div dangerouslySetInnerHTML={{ __html: this.state.iframes }}></div>
                 <div style={{ marginTop: 18 }}>
@@ -958,9 +1017,11 @@ export default class Header extends React.Component {
               </div>
             )
           } else {
-            operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
+            // operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && 
+            operatorConent =
+            (
               <div style={{ display: 'flex', alignItems: 'center', }}>
-                {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
+                {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id) && (
                   <Upload {...uploadProps} showUploadList={false}>
                     <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
                       <Icon type="upload" />上传
@@ -968,7 +1029,7 @@ export default class Header extends React.Component {
                   </Upload>
                 )}
 
-                {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER) && (
+                {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id) && (
                   <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.createDirectory.bind(this)}>
                     <Icon type="plus" />创建文件夹
                   </Button>
@@ -1067,7 +1128,8 @@ export default class Header extends React.Component {
                     flag = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)
                     break
                 }
-                return flag && (
+                // return flag && 
+                return (
                   <div className={appsSelectKey === key ? indexStyle.appsSelect : indexStyle.appsNoSelect} key={itemkey} onClick={this.appClick.bind(this, key)}>{app_code && currentNounPlanFilterName(app_code) ? currentNounPlanFilterName(app_code) : app_name}</div>
                 )
               })}
@@ -1101,6 +1163,7 @@ function mapStateToProps({
   projectDetailFile: {
     datas: {
       selectedRowKeys = [],
+      selectedRows = [],
       fileList = [],
       filedata_1 = [],
       isInAddDirectory,
@@ -1117,6 +1180,7 @@ function mapStateToProps({
     projectDetailInfoData,
     projectInfoDisplay,
     selectedRowKeys,
+    selectedRows,
     fileList,
     filedata_1,
     isInAddDirectory,
