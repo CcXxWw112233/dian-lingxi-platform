@@ -865,7 +865,7 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: folder_id
         }
       })
     }
@@ -889,7 +889,7 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: folder_id
         }
       })
     }
@@ -919,7 +919,7 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: folder_id
         }
       })
     }

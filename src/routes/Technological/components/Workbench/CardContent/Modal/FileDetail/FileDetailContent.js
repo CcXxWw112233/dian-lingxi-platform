@@ -702,7 +702,7 @@ class FileDetailContent extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges = [] } }, board_id } = this.props.model
+    const { datas: { currentPreviewFileData, currentPreviewFileData: { folder_id, privileges = [] } }, board_id } = this.props.model
     const { dispatch } = this.props
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
