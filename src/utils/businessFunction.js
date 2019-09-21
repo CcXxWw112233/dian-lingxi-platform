@@ -121,10 +121,8 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
   currentUserArr = currentUserArr.map(item => {
     if (!(item && item.user_info)) return false
     let { id } = item && item.user_info
-    let temp_user = []
     if (!id) return false
     if (user_id == id) { // 判断改成员能不能在自己的权限列表中查询到
-      temp_user.push(item)
       if (item.content_privilege_code == code) { // 如果说该成员的权限状态与code匹配, 返回true, 表示有权利
         flag = true
       } else { // 返回false,表示没有权利

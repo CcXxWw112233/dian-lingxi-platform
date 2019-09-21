@@ -8,7 +8,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FOLDER
 } from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
 import { FILES } from "../../../../../globalset/js/constant";
 import { currentNounPlanFilterName, getSubfixName } from "../../../../../utils/businessFunction";
 
@@ -36,12 +36,14 @@ export default class FileList extends React.Component {
 
   }
   //选择框单选或者全选
-  onSelectChange = (selectedRowKeys) => {
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    console.log(selectedRows, 'ssssss')
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        selectedRowKeys
+        selectedRowKeys,
+        selectedRows
       }
     })
     // console.log(selectedRowKeys)
@@ -49,15 +51,15 @@ export default class FileList extends React.Component {
 
   //item操作
   operationMenuClick(data, e) {
-    const { file_id, type, file_resource_id } = data
+    const { file_id, type, file_resource_id, privileges, is_privilege, board_id } = data
     const { projectDetailInfoData = {}, dispatch } = this.props
-    const { board_id } = projectDetailInfoData
+    // const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
       case '1':
         break
       case '2': // 下载
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -70,7 +72,7 @@ export default class FileList extends React.Component {
         })
         break
       case '3': // 移动
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -86,7 +88,7 @@ export default class FileList extends React.Component {
         })
         break
       case '4': // 复制
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -102,7 +104,7 @@ export default class FileList extends React.Component {
         })
         break
       case '5': // 移动到回收站
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -116,7 +118,7 @@ export default class FileList extends React.Component {
         })
         break
       case '99': // 访问控制
-        this.handleShowVisitControlModal(data)
+        // this.handleShowVisitControlModal(data)
         break
       default:
         break
@@ -225,7 +227,8 @@ export default class FileList extends React.Component {
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        selectedRowKeys: []
+        selectedRowKeys: [],
+        selectedRows: []
       }
     })
   }
@@ -656,6 +659,8 @@ export default class FileList extends React.Component {
     }).then(res => {
       if (res && res.code == '0') {
         // const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
+        let temp_arr = res && res.data
+        if (!Array.isArray(temp_arr)) return false
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
         message.error(errorText)
@@ -679,10 +684,10 @@ export default class FileList extends React.Component {
    * @param {Boolean} flag 开关切换
    */
   handleToggleContentPrivilege = flag => {
-    const { visitControlModalData: { folder_id, file_id } } = this.state
+    const { visitControlModalData: { folder_id, file_id, version_id } } = this.state
     const dataType = this.getVisitControlModalDataType()
     const data = {
-      content_id: dataType == "file" ? file_id : folder_id,
+      content_id: dataType == "file" ? version_id : folder_id,
       content_type: dataType == 'file' ? 'file' : 'folder',
       is_open: flag ? 1 : 0
     }
@@ -690,6 +695,7 @@ export default class FileList extends React.Component {
       const resOk = res => res && res.code == '0'
       if (resOk(res)) {
         let temp_arr = res && res.data
+        if (!Array.isArray(temp_arr)) return false
         this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
         message.error('设置内容权限失败，请稍后再试')
@@ -709,6 +715,7 @@ export default class FileList extends React.Component {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })
         }
@@ -732,6 +739,7 @@ export default class FileList extends React.Component {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })
         }
@@ -800,19 +808,19 @@ export default class FileList extends React.Component {
   }
 
   render() {
-    const { selectedRowKeys, fileList = [], board_id } = this.props
-    const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, shouldHideVisitControlPopover } = this.state;
+    const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
+    const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges }, shouldHideVisitControlPopover } = this.state;
     // 文件列表的点点点选项
     const operationMenu = (data) => {
-      const { type, is_privilege } = data
+      const { type, is_privilege, privileges, board_id } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {type != '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
+          {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
             <Menu.Item key="2">下载</Menu.Item>
           ) : ('')}
-          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) ? (
+          {(
             <Menu.Item key="99">
               {!shouldHideVisitControlPopover && (
                 <div
@@ -838,20 +846,21 @@ export default class FileList extends React.Component {
                 </div>
               )}
             </Menu.Item>
-          ) : ('')
+          )
           }
+          {/* PROJECT_FILES_FOLDER */}
           {
-            type != '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER) ? (
+            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
               <Menu.Item key="3">移动</Menu.Item>
             ) : ('')
           }
           {
-            type != '1' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) ? (
+            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
               <Menu.Item key="4">复制</Menu.Item>
             ) : ('')
           }
           {
-            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)) && (
               <Menu.Item key="5" >移到回收站</Menu.Item>
             )
           }
@@ -961,13 +970,15 @@ export default class FileList extends React.Component {
     ];
     const {
       // child_privilegeuser_ids, 
-      removeMemberPromptText, is_privilege, privileges = {}, fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
+      removeMemberPromptText, is_privilege, fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
     } = this.genVisitContorlData(visitControlModalData)
+
     return (
       <div className={indexStyles.tableOut} style={{ minHeight: (bodyOffsetHeight) }}>
         <Table
           rowSelection={{
             selectedRowKeys,
+            selectedRows,
             onChange: this.onSelectChange,
             getCheckboxProps: data => ({
               disabled: data.type === '1', //data.isInAdd === true || data.type === '1', // Column configuration not to be checked
@@ -1014,6 +1025,7 @@ function mapStateToProps({
       filedata_1,
       filedata_2,
       selectedRowKeys,
+      selectedRows,
       fileList = [],
       breadcrumbList = [],
       currentParrentDirectoryId
@@ -1031,6 +1043,7 @@ function mapStateToProps({
     filedata_2,
     projectDetailInfoData,
     selectedRowKeys,
+    selectedRows,
     fileList,
     board_id,
     breadcrumbList,

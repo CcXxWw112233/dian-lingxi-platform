@@ -124,7 +124,14 @@ class FileItem extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: version_id, //file_id,
       pdfDownLoadSrc: '',
+      currentPreviewFileData: data
     })
+    // this.props.dispatch({
+    //   type: 'workbenchFileDetail/updateDatas',
+    //   payload: {
+    //     currentPreviewFileData: data
+    //   }
+    // })
 
     if(getSubfixName(file_name) == '.pdf') {
       this.props.dispatch({
