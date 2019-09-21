@@ -115,9 +115,9 @@ class VisitControl extends Component {
       })
       handleVisitControlChange(true)
     }
-    
+
   }
-  
+
 
   // 我的理解是: 别的地方调用该popover的时候关闭或者打开的控制该状态的回调，
   onPopoverVisibleChange = visible => {
@@ -322,7 +322,7 @@ class VisitControl extends Component {
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
     let allMember = [...currentOrgAllMembersList];
     const getOthersPersonList = allMember =>
-    // console.log(allMember, 'ssssss_allMember')
+      // console.log(allMember, 'ssssss_allMember')
       Object.entries(otherPrivilege).reduce((acc, curr) => {
         // console.log({
         //   acc, curr,
@@ -482,9 +482,9 @@ class VisitControl extends Component {
             onChange={this.handleToggleVisitControl}
           />
         </span> */}
-        <div className={styles.title__operator} style={{cursor: 'pointer'}}>
+        <div className={styles.title__operator} style={{ cursor: 'pointer' }}>
           <Dropdown overlay={this.toggleVisitControl()} trigger={['click']}>
-            <span style={{fontSize: '14px', color: 'rgba(0,0,0,0.45)'}}>
+            <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
               <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
               <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
             </span>
@@ -552,7 +552,7 @@ class VisitControl extends Component {
         {/* <span className={styles.content__principalList_info}>
           {`${transPrincipalList.length}${principalInfo}`}
         </span> */}
-        <span className={`${styles.content__principalList_info}`} style={{color: 'rgba(0,0,0,0.25)'}}>默认可访问</span>
+        <span className={`${styles.content__principalList_info}`} style={{ color: 'rgba(0,0,0,0.25)' }}>默认可访问</span>
       </div>
     );
   };
@@ -625,7 +625,7 @@ class VisitControl extends Component {
           // onClick={this.handleAddNewMember}
           onClick={this.setShowAddMenberModalVisibile}
         >
-          添加成员
+          添加成员123
         </Button>
       </div>
     );

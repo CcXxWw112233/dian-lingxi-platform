@@ -45,9 +45,9 @@ export default class Header extends React.Component {
   }
 
   // 访问控制蒙层的点击回调
- alarmNoEditPermission = () => {
-  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
- }
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
 
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
     const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
@@ -105,7 +105,7 @@ export default class Header extends React.Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         let temp_arr = []
-        temp_arr = res && res.data[0] 
+        temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.error('更新用户控制类型失败')
@@ -212,7 +212,7 @@ export default class Header extends React.Component {
         dispatch({
           type: 'workbench/getBackLogProcessList',
           payload: {
-  
+
           }
         })
       }
@@ -233,7 +233,7 @@ export default class Header extends React.Component {
     const { dispatch } = this.props
 
     // 访问控制开关
-    if (obj && obj.type &&  obj.type == 'privilege') {
+    if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = []
       for (let item in obj) {
         if (item == 'privileges') {
@@ -243,13 +243,13 @@ export default class Header extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
       // this.props.updateDatasProcess({
       //   processInfo: newProcessInfo
       // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-      
+
     };
 
     // 访问控制添加
@@ -263,7 +263,7 @@ export default class Header extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -275,7 +275,7 @@ export default class Header extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -286,13 +286,13 @@ export default class Header extends React.Component {
       new_privileges = new_privileges.map((item) => {
         let new_item = item
         if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
+          new_item = { ...item, content_privilege_code: obj.code }
         } else {
-          new_item = {...item}
+          new_item = { ...item }
         }
         return new_item
       })
-      let newProcessInfo = {...originProcessInfo, privileges: new_privileges}
+      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -301,6 +301,7 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
+
     const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
     const { data = [], board_id } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
@@ -407,7 +408,7 @@ export default class Header extends React.Component {
         <div style={{ float: 'right', position: 'relative' }}>
           {
             checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
-              <div onClick={this.alarmNoEditPermission} style={{right: '40px'}} className={globalStyles.drawContent_mask}></div>
+              <div onClick={this.alarmNoEditPermission} style={{ right: '40px' }} className={globalStyles.drawContent_mask}></div>
             )
           }
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
@@ -431,6 +432,8 @@ export default class Header extends React.Component {
               otherPrivilege={privileges}
               handleAddNewMember={this.handleVisitControlAddNewMember}
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+              type='6'
+              id={id}
             />
           </span>
           <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px' }}>

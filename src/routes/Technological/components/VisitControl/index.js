@@ -612,8 +612,11 @@ class VisitControl extends Component {
       popoverPlacement,
       children,
       board_id,
-      onlyShowPopoverContent
+      onlyShowPopoverContent,
+      type,
+      id,
     } = this.props;
+
     const {
       addMemberModalVisible,
       visible,
@@ -698,7 +701,9 @@ class VisitControl extends Component {
           title="邀请他人一起参与"
           submitText="确定"
           show_wechat_invite={true}
-          board_id={board_id}
+          id={id}
+          _organization_id={localStorage.getItem('OrganizationId')}
+          type={type}
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}

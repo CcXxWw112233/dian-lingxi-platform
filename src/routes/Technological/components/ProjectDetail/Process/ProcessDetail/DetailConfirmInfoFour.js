@@ -2,12 +2,15 @@ import React from 'react'
 import indexStyles from './index.less'
 import styles from './index.css'
 import { Card, Input, Icon, DatePicker, Dropdown, Button, Tooltip, Avatar } from 'antd'
-import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
+// import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import { timestampToTimeNormal, timeToTimestamp } from "../../../../../../utils/util";
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import AvatarComps from '../../../../../../components/avatarMore'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+
+
 
 const { RangePicker } = DatePicker;
 
@@ -287,9 +290,12 @@ export default class DetailConfirmInfoFour extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
+              <Dropdown overlay={<MenuSearchPartner noMutiple={true} usersArray={users}
                 filterUserArray={assigneesArray}
-                setAssignees={this.setAssignees.bind(this)} />}>
+                setAssignees={this.setAssignees.bind(this)} />}
+                type='7'
+                rela_condition=''
+              >
                 {assignee_type !== '1' ? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>
               <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>

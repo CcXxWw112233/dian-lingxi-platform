@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import CustormModal from '../../../../../components/CustormModal'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { joinBoardQRCode } from '../../../../../services/technological/project';
+import { scanQrCodeJoin } from '../../../../../services/technological/index'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { message } from 'antd';
-// import { joinBoardQRCode } from '../../.'
+
 export default class WechatInviteToboard extends Component {
     constructor(props) {
         super(props)
@@ -22,11 +22,15 @@ export default class WechatInviteToboard extends Component {
         }
     }
     getQRCode = () => {
-        const { board_id } = this.props
-        joinBoardQRCode({ board_id, id: board_id }).then(res => {
+
+        const { type, id, _organization_id, rela_Condition } = this.props
+        const relaCondition = rela_Condition && ''
+        const userId = JSON.parse(localStorage.getItem('userInfo')).id
+
+        scanQrCodeJoin({ type: type, id: id, _organization_id: _organization_id, rela_condition: relaCondition, user_id: userId }).then(res => {
             if (isApiResponseOk(res)) {
                 this.setState({
-                    qr_code_src: res.message
+                    qr_code_src: res.data.code_url
                 })
             } else {
                 message.error(res.message)

@@ -75,8 +75,11 @@ export default class MenuSearchPartner extends React.Component {
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
 
+        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode,
 
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode } = this.props
+            type, id, } = this.props
+
+        const organizationId = localStorage.getItem('OrganizationId')
 
         return (
             <div>
@@ -84,7 +87,6 @@ export default class MenuSearchPartner extends React.Component {
                     selectedKeys={selectedKeys}
                     // onDeselect={this.handleMenuReallyDeselect}
                     onSelect={this.handleMenuReallySelect} multiple >
-
                     <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} style={{ marginBottom: 10 }} />
                     <div style={{ height: 32, lineHeight: '32px', color: 'rgb(73, 155, 230)' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                         邀请他人参与
@@ -102,10 +104,12 @@ export default class MenuSearchPartner extends React.Component {
 
                 <ShowAddMenberModal
                     // title={titleText}
-                    _organization_id={localStorage.getItem('OrganizationId')}
+                    _organization_id={organizationId}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
-                    // {...this.props} board_id={board_id}
+                    {...this.props}
+                    id={id}
+                    type={type}
                     modalVisible={this.state.ShowAddMenberModalVisibile}
                     setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
                 />

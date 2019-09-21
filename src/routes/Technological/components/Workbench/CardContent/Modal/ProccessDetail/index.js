@@ -31,10 +31,11 @@ export default class ProccessDetail extends React.Component {
     const { clientHeight, clientWidth } = this.state
     const { modalTop } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
+
     return (
-      <div className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
-        <Header status={this.props.status} {...this.props} close={this.props.close} setPreviewProccessModalVisibile = {this.props.setPreviewProccessModalVisibile}/>
-        <ProccessDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
+      <div className={indexStyles.fileDetailOut} style={{ height: clientHeight - offsetTopDeviation, top: 0 }}>
+        <Header status={this.props.status} {...this.props} close={this.props.close} setPreviewProccessModalVisibile={this.props.setPreviewProccessModalVisibile} />
+        <ProccessDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation={offsetTopDeviation} modalTop={modalTop} />
       </div>
     )
   }

@@ -1,9 +1,9 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //邀请新用户参与
-export async function inviteNewUserInProject({data}) {
+export async function inviteNewUserInProject({ data }) {
   //data 用户，手机号或者邮箱，多个逗号隔开
   return request({
     url: `${REQUEST_DOMAIN}/user/invite`,
@@ -54,7 +54,7 @@ export async function getGlobalSearchResultList(data) {
       ...data,
       _organization_id: localStorage.getItem('OrganizationId')
     }
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 //根据关键字获取条件列表
 export async function getGlobalSearchConditions(params) {
@@ -65,7 +65,7 @@ export async function getGlobalSearchConditions(params) {
       ...params,
       _organization_id: localStorage.getItem('OrganizationId')
     }
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 
 //查询固定条件
@@ -74,7 +74,7 @@ export async function getFixedConditions(params) {
     url: `${REQUEST_DOMAIN_BOARD}/query_condition/group`,
     method: 'GET',
     params
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 
 //获取和存储全组织的全部项目ID
@@ -92,5 +92,14 @@ export async function getUserAllOrgsBoardList(params) {
     url: `${REQUEST_DOMAIN}/organization/board/list`,
     method: 'GET',
     params
+  });
+}
+
+//生成扫码加入小程序二维码
+export async function scanQrCodeJoin(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/mini/QRCode`,
+    method: 'POST',
+    data
   });
 }

@@ -851,12 +851,12 @@ class DrawContent extends React.Component {
     return temp_arr
   }
 
-    /**
-   * 其他成员的下拉回调
-   * @param {String} id 这是用户的user_id
-   * @param {String} type 这是对应的用户字段
-   * @param {String} removeId 这是对应移除用户的id
-   */
+  /**
+ * 其他成员的下拉回调
+ * @param {String} id 这是用户的user_id
+ * @param {String} type 这是对应的用户字段
+ * @param {String} removeId 这是对应移除用户的id
+ */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -885,8 +885,8 @@ class DrawContent extends React.Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         let temp_arr = []
-        temp_arr = res && res.data[0] 
-       
+        temp_arr = res && res.data[0]
+
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.error('更新用户控制类型失败')
@@ -1038,7 +1038,7 @@ class DrawContent extends React.Component {
         dispatch({
           type: 'workbench/getResponsibleTaskList',
           payload: {
-            
+
           }
         })
       } else if (type == '1') { // 表示会议
@@ -1050,7 +1050,7 @@ class DrawContent extends React.Component {
         })
       }
     }
-    
+
   }
 
   //里程碑

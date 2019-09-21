@@ -10,6 +10,7 @@ import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../.
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 import UserCard from './../../../../../components/UserCard/index'
 import { connect } from "dva/index";
+import { getGlobalData } from "../../../../../utils/businessFunction";
 
 const TextArea = Input.TextArea
 
@@ -314,7 +315,13 @@ export default class DrawDetailInfo extends React.Component {
             </div>
           ) : (EditArea)}
         </div>
-        <ShowAddMenberModal addMenbersInProject={this.addMenbersInProject} show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          id={board_id}
+          type="1"
+          _organization_id={getGlobalData('aboutBoardOrganizationId')}
+          modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
       </div>
     )
   }

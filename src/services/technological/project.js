@@ -40,12 +40,7 @@ export async function setContentPrivilege(data) {
 
 //移除内容访问特权
 export async function removeContentPrivilege(data) {
-<<<<<<< HEAD
-  const { content_id, content_type, user_id } = data
-=======
-  // const {content_id, content_type, user_id} = data
   const { id } = data
->>>>>>> feature/performance_927
   //contend_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //user_id 用户id
