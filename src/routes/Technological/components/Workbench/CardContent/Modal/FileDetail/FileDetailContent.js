@@ -30,6 +30,7 @@ import withBodyClientDimens from './../../../../../../../components/HOC/withBody
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import {createShareLink, modifOrStopShareLink} from '@/services/technological/workbench'
 
 class FileDetailContent extends React.Component {
 
@@ -610,7 +611,7 @@ class FileDetailContent extends React.Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type) => {
+  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
     const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'
@@ -684,7 +685,7 @@ class FileDetailContent extends React.Component {
     }
     //toggle权限
     const data = {
-      content_id: file_id,
+      content_id: version_id,
       content_type: 'file',
       is_open: flag ? 1 : 0
     }
@@ -702,6 +703,7 @@ class FileDetailContent extends React.Component {
   // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
     const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges = [] } }, board_id } = this.props.model
+    const { dispatch } = this.props
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = []
