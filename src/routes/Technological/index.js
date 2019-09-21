@@ -11,20 +11,78 @@ import 'moment/locale/zh-cn';
 import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
 import GlobalSearch from './GlobalSearch'
+import QueryString from 'querystring'
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
 
+  constructor(props) {
+    super(props)
+  }
+  componentWillMount() {
+    // this.setPageLoadType()
+  }
+  componentDidMount() {
+    // this.historyListenSet()
+  }
+
   componentWillReceiveProps(nextProps) {
-    
+
+  }
+
+  getRouterParams = () => {
+    // 解析参数
+    const hash = window.location.hash
+    let path_name_arr
+    let path_name = '' //路由
+    let params_str = ''
+    let params = {} //路由携带的参数
+    if (hash.indexOf('?') != -1) {
+      path_name_arr = hash.match(/#([\S\/]*)\?/) //==>technological/projectDetail
+      params_str = hash.replace(/^#\/[\w\/]+\?/, '')
+      params = QueryString.parse(params_str) // 
+    } else {
+      path_name_arr = hash.match(/#([\S\/]*)/) //==>technological/projectDetail
+    }
+    path_name = path_name_arr[1]
+
+    return {
+      path_name,
+      params
+    }
+
+  }
+
+  // 获取technological层面的数据
+  historyListenSet = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/initGetTechnologicalDatas',
+      payload: {}
+    })
+  }
+
+  setPageLoadType = () => {
+    const { location: { pathname }, dispatch, page_load_type } = this.props
+    if (pathname.indexOf('/technological') !== -1) {
+      let page_load_type = 0;
+      if (pathname.indexOf('/simplemode') != -1) {
+        page_load_type = 1;
+      } else {
+        page_load_type = 2;
+      }
+      dispatch({
+        type: 'technological/updateDatas',
+        payload: {
+          page_load_type,
+        }
+      })
+    }
   }
 
   render() {
-
-    
-
     const { page_load_type } = this.props;
     const app = dva();
     const routes = [
@@ -62,7 +120,7 @@ export default class Technological extends React.Component {
         path: '/technological/investmentMap',
         component: () => import('./components/InvestmentMap'),
       },
-    
+
     ]
 
     const defaultLayout = (
@@ -100,7 +158,7 @@ export default class Technological extends React.Component {
 
     const simpleLayout = (
       <Layout >
-        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>        
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
@@ -127,7 +185,7 @@ export default class Technological extends React.Component {
     let layout = <div></div>
     switch (page_load_type) {
       case 0:
-        layout = '<div>page_load_type:0</div>'
+        layout = '<div></div>'
         break;
       case 1:
         layout = simpleLayout
@@ -152,10 +210,12 @@ export default class Technological extends React.Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: {
   datas: {
-    page_load_type
+    page_load_type,
   }
 }
 }) {
-  return { page_load_type }
+  return {
+    page_load_type,
+  }
 }
 
