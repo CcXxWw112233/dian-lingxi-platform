@@ -15,7 +15,7 @@ export default class ConfirmInfoFour extends React.Component {
   }
   //这里的逻辑用来设置固定人选时将名称替换成id
   componentWillMount(nextProps) {
-    const { processEditDatas = [], projectDetailInfoData = {} } = this.props
+    const { processEditDatas = [], projectDetailInfoData = {}, dispatch } = this.props
     const { itemKey } = this.props
     const { assignees, assignee_type, recipients, cc_type } = processEditDatas[itemKey]
     //推进人来源

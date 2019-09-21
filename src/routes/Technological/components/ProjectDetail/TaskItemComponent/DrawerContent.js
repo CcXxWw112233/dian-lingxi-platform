@@ -611,7 +611,7 @@ class DrawContent extends React.Component {
     const { card_id } = drawContent
     // drawContent['label_data'].splice(key, 1)
     const keyCode = label_id ? 'label_id' : 'label_name'
-  
+
     drawContent['label_data'].splice(key, 1)
     taskGroupList[taskGroupListIndex].card_data[taskGroupListIndex_index]['label_data'].splice(key, 1)
 
@@ -654,7 +654,7 @@ class DrawContent extends React.Component {
     const { card_id, label_data = [] } = drawContent
     const { board_id } = projectDetailInfoData
     label_data.push({ label_name: e.target.value })
-    
+
     dispatch({
       type: 'projectDetailTask/addTaskTag',
       payload: {
@@ -679,7 +679,7 @@ class DrawContent extends React.Component {
     const { board_id } = projectDetailInfoData
     const { name, color } = data
     label_data.push({ label_name: name, label_color: color })
-    
+
     dispatch({
       type: 'projectDetailTask/addTaskTag',
       payload: {
@@ -737,7 +737,7 @@ class DrawContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/filePreview',
         payload: {
-          id: file_id
+          file_id
         }
       })
     }
@@ -758,7 +758,7 @@ class DrawContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/fileDownload',
         payload: {
-          ids: file_resource_id, 
+          ids: file_resource_id,
           card_id
         }
       })
@@ -1429,7 +1429,7 @@ class DrawContent extends React.Component {
           dispatch({
             type: 'projectDetailFile/filePreview',
             payload: {
-              id: file_resource_id, file_id 
+              id: file_resource_id, file_id
             }
           })
         }
@@ -1463,7 +1463,7 @@ class DrawContent extends React.Component {
 
     return (
       //
-      <div style={{position: 'relative'}}>
+      <div style={{ position: 'relative' }}>
         {/* <div className={globalStyle.drawContent_mask}></div> */}
         <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
           <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
@@ -1704,13 +1704,13 @@ class DrawContent extends React.Component {
                 </div>
               )}
 
-          {/*关联*/}
-          <div className={DrawerContentStyles.divContent_1}>
-            <ContentRaletion
-              relations_Prefix={relations_Prefix}
-              board_id={board_id}
-              link_id={card_id}
-              link_local={'3'}
+            {/*关联*/}
+            <div className={DrawerContentStyles.divContent_1}>
+              <ContentRaletion
+                relations_Prefix={relations_Prefix}
+                board_id={board_id}
+                link_id={card_id}
+                link_local={'3'}
 
               />
             </div>
@@ -1767,21 +1767,21 @@ class DrawContent extends React.Component {
                     <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
                       <Icon type="plus" style={{ marginRight: 4 }} />标签
                   </div>
-                ) : (
-                    <Dropdown visible={this.state.tagDropdownVisible}
-                      overlay={<TagDropDown tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
-                      <div style={{ marginTop: 8, position: 'relative', width: 'auto', height: 'auto' }}>
-                        <Input autoFocus={true} placeholder={'标签'}
-                          style={{ height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100 }}
-                          onChange={this.setTagInputValue.bind(this)}
-                          // onBlur={this.tagAddComplete.bind(this)}
-                          maxLength={8}
-                          onPressEnter={this.tagAddComplete.bind(this)} />
-                        <Icon type={'close'} style={{ position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4 }} onClick={this.quitAddTag.bind(this)}></Icon>
-                      </div>
-                    </Dropdown>
-                  )}
-              </div>
+                  ) : (
+                      <Dropdown visible={this.state.tagDropdownVisible}
+                        overlay={<TagDropDown tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
+                        <div style={{ marginTop: 8, position: 'relative', width: 'auto', height: 'auto' }}>
+                          <Input autoFocus={true} placeholder={'标签'}
+                            style={{ height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100 }}
+                            onChange={this.setTagInputValue.bind(this)}
+                            // onBlur={this.tagAddComplete.bind(this)}
+                            maxLength={8}
+                            onPressEnter={this.tagAddComplete.bind(this)} />
+                          <Icon type={'close'} style={{ position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4 }} onClick={this.quitAddTag.bind(this)}></Icon>
+                        </div>
+                      </Dropdown>
+                    )}
+                </div>
 
               </div>
             </div>
@@ -1792,8 +1792,8 @@ class DrawContent extends React.Component {
             ) : ('')}
 
 
-          {/*添加子任务*/}
-          <DCAddChirdrenTask />
+            {/*添加子任务*/}
+            <DCAddChirdrenTask />
 
             {/*上传任务附件*/}
             <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
@@ -1819,10 +1819,10 @@ class DrawContent extends React.Component {
               </div>
             </div>
 
-          {/*查看任务附件*/}
-          <PreviewFileModal modalVisible={isInOpenFile} />
-          {/*查看*/}
-          <PreviewFileModalRichText isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
+            {/*查看任务附件*/}
+            <PreviewFileModal modalVisible={isInOpenFile} />
+            {/*查看*/}
+            <PreviewFileModalRichText isUsable={this.state.isUsable} setPreivewProp={this.setPreivewProp.bind(this)} previewFileType={this.state.previewFileType} previewFileSrc={this.state.previewFileSrc} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
             <div className={DrawerContentStyles.divContent_1}>
               <div className={DrawerContentStyles.spaceLine} ></div>

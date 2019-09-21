@@ -30,6 +30,7 @@ import withBodyClientDimens from './../../../../../../../components/HOC/withBody
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import {createShareLink, modifOrStopShareLink} from '@/services/technological/workbench'
 
 class FileDetailContent extends React.Component {
 

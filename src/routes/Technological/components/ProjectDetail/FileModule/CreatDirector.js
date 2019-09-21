@@ -20,8 +20,10 @@ export default class CreatDirector extends React.Component {
     const { board_id } = projectDetailInfoData
 
     const { fileList = [], filedata_1 = [] } = this.props
-    fileList.shift()
-    filedata_1.shift()
+    const new_fileList = [...fileList]
+    const new_filedata_1 = [...filedata_1]
+    new_fileList.shift()
+    new_filedata_1.shift()
 
     dispatch({
       type: 'projectDetailFile/addNewFolder',
@@ -34,21 +36,23 @@ export default class CreatDirector extends React.Component {
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        fileList,
-        filedata_1,
+        fileList: new_fileList,
+        filedata_1: new_filedata_1,
         isInAddDirectory: false
       }
     })
   }
   onCancel() {
     const { fileList = [], filedata_1 = [], dispatch } = this.props
-    fileList.shift()
-    filedata_1.shift()
+    const new_fileList = [...fileList]
+    const new_filedata_1 = [...filedata_1]
+    new_fileList.shift()
+    new_filedata_1.shift()
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        fileList,
-        filedata_1,
+        fileList: new_fileList,
+        filedata_1: new_filedata_1,
         isInAddDirectory: false
       }
     })
