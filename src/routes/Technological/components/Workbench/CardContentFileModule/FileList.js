@@ -246,6 +246,7 @@ export default class FileList extends React.Component {
   }
   openFile(data) {
     const { board_id, file_resource_id, file_id, id, folder_id } = data
+    this.open(data, '2')
     this.props.setPreviewFileModalVisibile()
     this.props.updateFileDatas({
       seeFileInput: 'file',

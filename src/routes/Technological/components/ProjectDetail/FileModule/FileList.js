@@ -37,7 +37,6 @@ export default class FileList extends React.Component {
   }
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys, selectedRows) => {
-    console.log(selectedRows, 'ssssss')
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailFile/updateDatas',
@@ -349,7 +348,7 @@ export default class FileList extends React.Component {
       payload: {
         isInOpenFile: true,
         seeFileInput: 'fileModule',
-        currentPreviewFileData: data,
+        // currentPreviewFileData: data,
         filePreviewCurrentFileId: file_id,
         filePreviewCurrentId: file_resource_id,
         filePreviewCurrentVersionId: version_id,
@@ -368,6 +367,12 @@ export default class FileList extends React.Component {
         type: 'projectDetailFile/filePreview',
         payload: {
           id: file_resource_id, file_id
+        }
+      })
+      dispatch({
+        type: 'projectDetailFile/fileInfoByUrl',
+        payload: {
+          file_id: file_id
         }
       })
     }

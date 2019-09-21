@@ -93,10 +93,10 @@ class FileItem extends React.Component {
     const { dispatch} = this.props
 
     setBoardIdStorage(board_id)
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-      return false;
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+    //   return false;
+    // }
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {

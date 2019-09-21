@@ -437,6 +437,7 @@ export default class Header extends React.Component {
     let newSelectedRows = [...selectedRows]
     let flag
     let temp_arr = []
+    let temp_code = []
     // 这是获取到选择的当前文件元素
     newSelectedRows = newSelectedRows.filter(item => {
       if (item.privileges && item.privileges.length) {
@@ -455,14 +456,16 @@ export default class Header extends React.Component {
     })
     // 这里是判断,只要存在read,就不能下载等操作
     new_arr && new_arr.map(item => {
-      if (item.content_privilege_code == 'read') { // 这里进来了表示存在查看,不能下载等...
-        flag = false
-      } 
-      else {
-        flag = true
-      }
-      return flag
+      temp_code.push(item.content_privilege_code)
+      return temp_code
     })
+
+    if (temp_code.indexOf('read') != -1 || temp_code.indexOf('comment') != -1) {
+      flag = false
+    } else {
+      flag = true
+    }
+
     return flag
   }
 

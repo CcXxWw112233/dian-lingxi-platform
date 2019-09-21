@@ -168,7 +168,7 @@ class VisitControl extends Component {
     const operatorType = key;
     const { handleClickedOtherPersonListOperatorItem, otherPrivilege, isPropVisitControl, board_id } = this.props;
     const { selectedOtherPersonId, removerOtherPersonId } = this.state;
-    if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT, board_id))) {
+    if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
       this.alarmNoEditPermission()
       return false
     }
@@ -383,14 +383,14 @@ class VisitControl extends Component {
     return (
       <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
         {
-          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT, board_id)) && (
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
             <Menu.Item key="unClock">
               开放访问
             </Menu.Item>
           )
         }
         {
-          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT, board_id)) && (
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
             <Menu.Item key="clock">
               仅列表人员访问
             </Menu.Item>

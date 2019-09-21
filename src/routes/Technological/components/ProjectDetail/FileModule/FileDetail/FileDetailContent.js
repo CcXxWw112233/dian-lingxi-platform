@@ -811,7 +811,7 @@ class FileDetailContent extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { currentPreviewFileData, currentPreviewFileData: { belong_folder_id, privileges = [], is_privilege }, board_id } = this.props
+    const { currentPreviewFileData, currentPreviewFileData: { folder_id, privileges = [], is_privilege }, board_id } = this.props
     const { dispatch } = this.props
 
     // 设置访问控制开关
@@ -836,7 +836,7 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id,
+          folder_id: folder_id,
         }
       })
     }
