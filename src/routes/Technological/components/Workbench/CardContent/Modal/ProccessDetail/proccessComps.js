@@ -174,7 +174,7 @@ export default class ProccessContent extends React.Component {
       {/* 这里将会有一个蒙层 */}
       <div style={{padding: '36px 34px 0 36px', position: 'relative'}}>
         {
-          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
             <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
           )
         }

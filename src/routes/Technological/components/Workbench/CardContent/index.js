@@ -51,12 +51,17 @@ const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-@connect(({ workbench, workbenchDetailProcess: {
+@connect((
+  { workbench, 
+    workbenchDetailProcess: {
   datas: {
     processInfo = {}
-  }
-} }) => ({
-  workbench, processInfo
+  }},
+   workbenchTaskDetail: {
+     datas: { projectDetailInfoData = {} }
+   }
+}) => ({
+  workbench, processInfo, projectDetailInfoData
 }))
 class CardContent extends React.Component {
   state = {
@@ -649,8 +654,10 @@ class CardContent extends React.Component {
         datas: {
           responsibleTaskList = []
         }
-      }
+      },
+      projectDetailInfoData = {}
     } = this.props;
+    const { data = [] } = projectDetailInfoData
     const { selected_board_data = [] } = itemValue; //已选board id
 
     const {
@@ -965,6 +972,7 @@ class CardContent extends React.Component {
             this
           )}
           visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+          principalList={data}
         />
         <TaskDetailModal
           {...this.props}

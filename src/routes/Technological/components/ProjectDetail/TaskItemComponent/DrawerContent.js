@@ -125,14 +125,14 @@ class DrawContent extends React.Component {
   }
   topRightMenuClick({ key }) {
     const { drawContent = {}, dispatch } = this.props
-    const { card_id, privileges = [], board_id, is_privilege } = drawContent
+    const { card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
     if (key === '1') {
       // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE)) {
       //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       //   return false
       // }
       // 这里好像没有用上
-      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
+      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -149,7 +149,7 @@ class DrawContent extends React.Component {
       //   return false
       // }
       // 这里好像没有用上
-      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
+      if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id))) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -198,9 +198,9 @@ class DrawContent extends React.Component {
     //   return false
     // }
     const { drawContent = {}, taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [] } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege } = drawContent
+    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
     // 这是加上访问控制权限, 判断是否可完成
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -1320,7 +1320,7 @@ class DrawContent extends React.Component {
             归档{currentNounPlanFilterName(TASKS)}
           </div>
         </Menu.Item>
-        {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id)) && (
+        {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_DELETE, board_id)) && (
           <Menu.Item key={'2'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={DrawerContentStyles.elseProjectDangerMenu}>
               删除{currentNounPlanFilterName(TASKS)}
@@ -1475,14 +1475,14 @@ class DrawContent extends React.Component {
               <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
             )} */}
             {/* 这里是给可不可以编辑的区域做的限制, 所以传入code字段为edit */}
-            {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
-              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+            {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, }} onClick={this.alarmNoEditPermission.bind(this)}></div>
             )}
             {/*项目挪动*/}
             <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
-              {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
+              {/* {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
                 <div style={{ height: '100%', width: '70%', position: 'absolute', zIndex: '3' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
-              )}
+              )} */}
               <div className={DrawerContentStyles.contain_1}>
                 <Dropdown overlay={projectGroupMenu}>
                   <div className={DrawerContentStyles.left}>

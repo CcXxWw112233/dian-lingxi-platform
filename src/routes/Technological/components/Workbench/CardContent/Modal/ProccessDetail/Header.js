@@ -13,11 +13,12 @@ import {
   setContentPrivilege,
   removeContentPrivilege
 } from './../../../../../../../services/technological/project';
+// import { projectDetailInfo } from '@/services/technological/projectDetail'
 import InformRemind from '@/components/InformRemind'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 
-@connect(({workbenchDetailProcess = {}, projectDetailProcess ={}}) => ({
+@connect(({ workbenchDetailProcess = {}, projectDetailProcess = {} }) => ({
   workbenchDetailProcess, projectDetailProcess
 }))
 export default class Header extends React.Component {
@@ -25,6 +26,7 @@ export default class Header extends React.Component {
     controller: 0
   }
   componentDidMount() {
+    // 判断是否有中止流程的权限
     if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
       return false
     }
@@ -49,9 +51,9 @@ export default class Header extends React.Component {
   }
 
   // 访问控制蒙层的点击回调
- alarmNoEditPermission = () => {
-  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
- }
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
 
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
     const { processInfo = {} } = this.props.model && this.props.model.datas
@@ -59,12 +61,19 @@ export default class Header extends React.Component {
     return processInfo;
   };
 
+  /**
+   * 获取流程执行人列表
+   * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
+   * 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的成员
+   * @param {Array} nodes 当前弹窗中所有节点的推进人
+   */
   genPrincipalListFromAssignees = (nodes = []) => {
-    const { projectDetailInfoData = {} } = this.props.model && this.props.model.datas
-    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
+    // const { projectDetailInfoData = {}, board_id } = this.props.model && this.props.model.datas
+    // const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { principalList = [] } = this.props // 需要从外部接受一个执行人列表
     return nodes.reduce((acc, curr) => {
-      if (curr.assignees && curr.assignees.length) {
-        const genNewPersonList = (arr = []) => {
+      if (curr.assignees && curr.assignees.length) { // 表示当前节点中存在推进人
+        const genNewPersonList = (arr = []) => { // 得到一个新的person列表
           return arr.map(user => ({
             avatar: user.avatar,
             name: user.full_name
@@ -78,7 +87,7 @@ export default class Header extends React.Component {
         };
         const newPersonList = genNewPersonList(curr.assignees);
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
-      } else if ( curr.assignee_type && curr.assignee_type == '1') {
+      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
         const genNewPersonList = (arr = []) => {
           return arr.map(user => ({
             avatar: user.avatar,
@@ -91,7 +100,20 @@ export default class Header extends React.Component {
                   : ''
           }));
         };
-        const newPersonList = genNewPersonList(data)
+        // 数组去重
+        const arrayNonRepeatfy = arr => {
+          let temp_arr = []
+          let temp_id = []
+          for (let i = 0; i < arr.length; i++) {
+            if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+              temp_arr.push(arr[i]);
+              temp_id.push(arr[i]['user_id'])
+            }
+          }
+          return temp_arr
+        }
+        // 执行人去重
+        const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
       }
       return acc
@@ -127,7 +149,7 @@ export default class Header extends React.Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         let temp_arr = []
-        temp_arr = res && res.data[0] 
+        temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.warning(res.message)
@@ -219,8 +241,8 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
-    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
+    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
@@ -325,8 +347,8 @@ export default class Header extends React.Component {
 
         <div style={{ float: 'right', position: 'relative' }}>
           {
-            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
-              <div onClick={this.alarmNoEditPermission} style={{right: '40px', height: '50px'}} className={globalStyles.drawContent_mask}></div>
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
             )
           }
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />

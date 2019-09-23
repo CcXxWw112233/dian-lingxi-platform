@@ -268,8 +268,9 @@ export default class PagingnationContent extends React.Component {
 
 
   render() {
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch } = this.props
+    const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch, projectDetailInfoData = {} } = this.props
     const { clientHeight, listData = [], status } = this.props
+    const { data = [] } = projectDetailInfoData
     const maxContentHeight = clientHeight - 108 - 150
     const allStep = []
     for (let i = 0; i < 20; i++) {
@@ -323,6 +324,7 @@ export default class PagingnationContent extends React.Component {
           close={this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
           visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+          principalList={data}
         />
       </div>
     )
@@ -349,7 +351,8 @@ function mapStateToProps({
   },
   projectDetail: {
     datas: {
-      board_id
+      board_id,
+      projectDetailInfoData = {}
     }
   },
 
@@ -362,5 +365,6 @@ function mapStateToProps({
     processComepletedList,
     board_id,
     processInfo,
+    projectDetailInfoData
   }
 }

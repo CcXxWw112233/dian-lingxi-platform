@@ -58,7 +58,7 @@ export default class FileList extends React.Component {
       case '1':
         break
       case '2': // 下载
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id))) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -71,7 +71,7 @@ export default class FileList extends React.Component {
         })
         break
       case '3': // 移动
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -87,7 +87,7 @@ export default class FileList extends React.Component {
         })
         break
       case '4': // 复制
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -103,7 +103,7 @@ export default class FileList extends React.Component {
         })
         break
       case '5': // 移动到回收站
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id))) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -822,7 +822,7 @@ export default class FileList extends React.Component {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data, board_id)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
+          {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
             <Menu.Item key="2">下载</Menu.Item>
           ) : ('')}
           {(
@@ -855,17 +855,17 @@ export default class FileList extends React.Component {
           }
           {/* PROJECT_FILES_FOLDER */}
           {
-            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
+            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
               <Menu.Item key="3">移动</Menu.Item>
             ) : ('')
           }
           {
-            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
+            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
               <Menu.Item key="4">复制</Menu.Item>
             ) : ('')
           }
           {
-            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)) && (
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)) && (
               <Menu.Item key="5" >移到回收站</Menu.Item>
             )
           }

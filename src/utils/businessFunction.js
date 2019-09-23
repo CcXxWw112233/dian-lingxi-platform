@@ -77,10 +77,11 @@ export const checkIsHasPermission = (code, param_org_id) => {
  * 缺点: 就是限制了code类型, 而且必须要在你知道的情况下
  * @param {String} code 对应用户的字段类型
  * @param {Array} privileges 该用户所在的权限列表
+ * @param {Array} principalList 该用户所在的执行人列表
  * @param {Boolean} permissionsValue 所有用户在项目中的权限
  * @return {Boolean} 该方法返回一个布尔类型的值, 为true 表示可以行使该权限
  */
-export const checkIsHasPermissionInVisitControl = (code, privileges, is_privilege, permissionsValue) => {
+export const checkIsHasPermissionInVisitControl = (code, privileges, is_privilege, principalList, permissionsValue) => {
   // 1. 从localstorage中获取当前操作的用户信息
   // 2. 在privileges列表中查找该用户, 如果找到了, 根据返回的code类型来判断该用户的操作权限
   // 3. 找不到, 那么就取permissionsValue中对应的权限
@@ -90,8 +91,12 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
   if (!Array.isArray(privileges)) { // 纯属为了高端, 没啥用
     return false
   }
-
+  if (!Array.isArray(principalList)) { // 纯属为了高端, 没啥用
+    return false
+  }
   let new_privileges = [...privileges]
+  let new_principalList = [...principalList]
+
   // 这是需要从privileges列表中找到当前操作的用户
   let currentUserArr = []
   new_privileges.find(item => {
@@ -104,16 +109,24 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
     }
   })
 
+  // 这是需要获取当前自己是否在执行人列表中
+  let currentPricipalListWhetherOrNotSelf = []
+  new_principalList.find(item => {
+    if (user_id == item.user_id) {
+      currentPricipalListWhetherOrNotSelf.push(item)
+      return currentPricipalListWhetherOrNotSelf
+    }
+  })
+
   /**
-   * 如果该用户不在权限列表中, 需要判断该访问控制是开放状态还是仅列表成员状态
-   * 如果是开放, 就去项目列表中的权限
-   * 如果是锁住的,那么就直接返回false,没有权限
+   * 如果该用户不在权限列表中, 那么就判断在不在执行人列表中
    */
   if (!(currentUserArr && currentUserArr.length)) {
-    if (is_privilege == '0') { // 表示是开放访问
+    // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
+    if (!(currentPricipalListWhetherOrNotSelf && currentPricipalListWhetherOrNotSelf.length)) {
       return flag = permissionsValue
-    } else { // 表示仅列表成员显示
-      return flag = false
+    } else { // 否则返回true, 代表有权限
+      return flag = true
     }
   }
 

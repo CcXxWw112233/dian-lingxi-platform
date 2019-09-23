@@ -25,7 +25,6 @@ import {
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
 import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
-import { checkIsHasPermissionInVisitControl, checkIsHasPermission } from '../../../../utils/businessFunction';
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({

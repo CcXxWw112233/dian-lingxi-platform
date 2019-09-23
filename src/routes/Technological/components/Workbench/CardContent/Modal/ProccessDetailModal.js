@@ -37,7 +37,7 @@ class ProcessDetailModal extends React.Component {
         bodyStyle={{top: 0}}
         style={{top: modalTop}}
         onCancel={this.onCancel.bind(this)}
-        overInner={<ProccessDetail visitControlUpdateCurrentModalData={this.props.visitControlUpdateCurrentModalData} {...this.props} status = {this.props.status} modalTop={modalTop}/>}
+        overInner={<ProccessDetail principalList={this.props.principalList} visitControlUpdateCurrentModalData={this.props.visitControlUpdateCurrentModalData} {...this.props} status = {this.props.status} modalTop={modalTop}/>}
       />
     )
   }
