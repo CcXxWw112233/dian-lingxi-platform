@@ -1043,11 +1043,12 @@ class DrawContent extends React.Component {
 
     // 访问控制的切换
     if (obj && obj.type == 'privilege') {
-      let new_privileges = []
+      let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
         }

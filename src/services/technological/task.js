@@ -102,7 +102,7 @@ export async function deleteTaskGroup(data) {
 // 任务列表
 export async function getTaskGroupList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card`,
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card`,
     method: 'GET',
     params,
   });

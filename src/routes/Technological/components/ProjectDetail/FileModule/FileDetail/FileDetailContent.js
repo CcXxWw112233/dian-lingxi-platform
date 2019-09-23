@@ -816,12 +816,12 @@ class FileDetailContent extends React.Component {
 
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
-      let new_privileges = []
+      let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            if (!Array.isArray(temp_arr)) return false
+            if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
         }
