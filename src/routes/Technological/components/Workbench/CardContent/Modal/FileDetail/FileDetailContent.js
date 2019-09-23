@@ -579,6 +579,19 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
   /**
    * 其他成员的下拉回调
    * @param {String} id 这是用户的user_id
