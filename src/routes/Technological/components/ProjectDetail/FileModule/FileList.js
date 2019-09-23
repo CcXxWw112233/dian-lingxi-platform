@@ -49,8 +49,8 @@ export default class FileList extends React.Component {
   }
 
   //item操作
-  operationMenuClick(data, e) {
-    const { file_id, type, file_resource_id, privileges, is_privilege, board_id } = data
+  operationMenuClick(data, board_id, e) {
+    const { file_id, type, file_resource_id, privileges, is_privilege } = data
     const { projectDetailInfoData = {}, dispatch } = this.props
     // const { board_id } = projectDetailInfoData
     const { key } = e
@@ -816,11 +816,11 @@ export default class FileList extends React.Component {
     const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges }, shouldHideVisitControlPopover } = this.state;
     // 文件列表的点点点选项
-    const operationMenu = (data) => {
-      const { type, is_privilege, privileges, board_id } = data
+    const operationMenu = (data, board_id) => {
+      const { type, is_privilege, privileges } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
-        <Menu onClick={this.operationMenuClick.bind(this, data)}>
+        <Menu onClick={this.operationMenuClick.bind(this, data, board_id)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
           {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
             <Menu.Item key="2">下载</Menu.Item>
@@ -956,7 +956,7 @@ export default class FileList extends React.Component {
           if (!isInAdd) {
             return (
               <div style={{ cursor: 'pointer' }}>
-                <Dropdown overlay={operationMenu(data)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
+                <Dropdown overlay={operationMenu(data, board_id)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
                   <Icon type="ellipsis" theme="outlined" style={{ fontSize: 22, color: '#000000' }}
                   // onClick={this.toggleDropdownVisible} 
                   />
