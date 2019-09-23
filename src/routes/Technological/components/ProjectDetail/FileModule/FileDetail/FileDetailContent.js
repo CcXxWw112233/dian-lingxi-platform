@@ -454,10 +454,10 @@ class FileDetailContent extends React.Component {
       case '1':
         break
       case '2':
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         //如果时pdf
         if (pdfDownLoadSrc) {
           window.open(pdfDownLoadSrc)
@@ -471,10 +471,10 @@ class FileDetailContent extends React.Component {
         }
         break
       case '3':
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         dispatch({
           type: 'projectDetailFile/updateDatas',
           payload: {
@@ -485,10 +485,10 @@ class FileDetailContent extends React.Component {
         })
         break
       case '4':
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         dispatch({
           type: 'projectDetailFile/updateDatas',
           payload: {
@@ -499,10 +499,10 @@ class FileDetailContent extends React.Component {
         })
         break
       case '5':
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
 
         dispatch({
           type: 'projectDetailFile/fileRemove',
@@ -811,7 +811,7 @@ class FileDetailContent extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { currentPreviewFileData, currentPreviewFileData: { folder_id, privileges = [], is_privilege }, board_id } = this.props
+    const { currentPreviewFileBaseInfo, currentPreviewFileBaseInfo: { folder_id, privileges = [], is_privilege }, board_id } = this.props
     const { dispatch } = this.props
 
     // 设置访问控制开关
@@ -826,11 +826,11 @@ class FileDetailContent extends React.Component {
           })
         }
       }
-      let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      let newCurrentPreviewFileData = { ...currentPreviewFileBaseInfo, is_privilege: obj.is_privilege, privileges: new_privileges }
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload: {
-          currentPreviewFileData: newCurrentPreviewFileData
+          currentPreviewFileBaseInfo: newCurrentPreviewFileData
         }
       })
       dispatch({
@@ -853,12 +853,12 @@ class FileDetailContent extends React.Component {
           })
         }
       }
-      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+      let newCurrentPreviewFileData = { ...currentPreviewFileBaseInfo, privileges: new_privileges }
 
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload: {
-          currentPreviewFileData: newCurrentPreviewFileData
+          currentPreviewFileBaseInfo: newCurrentPreviewFileData
         }
       })
 
@@ -878,12 +878,12 @@ class FileDetailContent extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+      let newCurrentPreviewFileData = { ...currentPreviewFileBaseInfo, privileges: new_privileges }
 
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload: {
-          currentPreviewFileData: newCurrentPreviewFileData
+          currentPreviewFileBaseInfo: newCurrentPreviewFileData
         }
       })
       dispatch({
@@ -907,12 +907,12 @@ class FileDetailContent extends React.Component {
         }
         return new_item
       })
-      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+      let newCurrentPreviewFileData = { ...currentPreviewFileBaseInfo, privileges: new_privileges }
 
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload: {
-          currentPreviewFileData: newCurrentPreviewFileData
+          currentPreviewFileBaseInfo: newCurrentPreviewFileData
         }
       })
 
@@ -927,8 +927,8 @@ class FileDetailContent extends React.Component {
   }
 
   getFieldFromPropsCurrentPreviewFileData = (...fields) => {
-    const { currentPreviewFileData = {} } = this.props
-    return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileData[curr] }), {})
+    const { currentPreviewFileBaseInfo = {} } = this.props
+    return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileBaseInfo[curr] }), {})
   }
   async handleClickedCommentItem(flag) {
     const { filePreviewCurrentFileId, dispatch } = this.props
@@ -1156,14 +1156,14 @@ class FileDetailContent extends React.Component {
       filePreviewIsUsable,
       filePreviewCurrentId,
       filePreviewIsRealImage = false,
-      currentPreviewFileData = {},
+      currentPreviewFileBaseInfo = {},
       fileType,
       dispatch,
       clientWidth
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege, privileges = [] } = currentPreviewFileData
+    const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
 
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
@@ -1641,7 +1641,7 @@ function mapStateToProps({
       breadcrumbList,
       isExpandFrame,
       pdfDownLoadSrc,
-      currentPreviewFileData = {},
+      currentPreviewFileBaseInfo = {},
       filePreviewPointNumCommits,
       fileType,
       currentParrentDirectoryId,
@@ -1668,7 +1668,7 @@ function mapStateToProps({
     breadcrumbList,
     isExpandFrame,
     pdfDownLoadSrc,
-    currentPreviewFileData,
+    currentPreviewFileBaseInfo,
     filePreviewPointNumCommits,
     fileType,
     currentParrentDirectoryId,
