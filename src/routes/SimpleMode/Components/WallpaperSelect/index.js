@@ -151,7 +151,7 @@ class WallpaperSelect extends Component {
                                     if (isColor(wallpaperItem.content)) {
                                         bgStyle = { backgroundColor: wallpaperItem.content };
                                     } else {
-                                        bgStyle = { backgroundImage: `url(${wallpaperItem.content})` };
+                                        bgStyle = { backgroundImage: `url(${wallpaperItem.content.replace('/wallpapers/','/wallpapers/thumbs/')})` };
                                     }
                                     return (
                                         <div id={wallpaperItem.id} key={wallpaperItem.id} className={`${indexStyles.wallpaperItem}`} style={bgStyle} onClick={e => this.selectMyWallpaper(wallpaperItem.id, wallpaperItem.content)}>
