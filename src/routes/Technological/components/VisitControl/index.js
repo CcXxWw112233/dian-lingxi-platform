@@ -111,13 +111,21 @@ class VisitControl extends Component {
   // };
   handleToggleVisitControl = (e) => {
     // console.log(e, 'ssssssss')
-    const { handleVisitControlChange } = this.props
+    const { handleVisitControlChange, isPropVisitControl, otherPrivilege = [], board_id } = this.props
     if (e.key == 'unClock') { // 表示关闭状态
+      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
       handleVisitControlChange(false)
     } else {
+      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
@@ -382,21 +390,26 @@ class VisitControl extends Component {
     const { isPropVisitControl, otherPrivilege = [], board_id } = this.props
     return (
       <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
-        {
+        {/* {
           checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
             <Menu.Item key="unClock">
               开放访问
             </Menu.Item>
           )
-        }
-        {
+        } */}
+        <Menu.Item key="unClock">
+          开放访问
+        </Menu.Item>
+        {/* {
           checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
             <Menu.Item key="clock">
               仅列表人员访问
             </Menu.Item>
           )
-        }
-        
+        } */}
+        <Menu.Item key="clock">
+          仅列表人员访问
+        </Menu.Item>
       </Menu>
     )
   }
