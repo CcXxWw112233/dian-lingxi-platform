@@ -958,7 +958,7 @@ class DrawContent extends React.Component {
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {
-        message.error('设置内容权限失败，请稍后再试')
+        message.warnning(res.message)
       }
     })
   }
@@ -1105,6 +1105,8 @@ class DrawContent extends React.Component {
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warnning(res.message)
       }
     })
   }
@@ -1121,7 +1123,7 @@ class DrawContent extends React.Component {
       if (isResOk(res)) {
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移除用户内容控制权限失败')
+        message.warning(res.message)
       }
     })
   }
@@ -1149,7 +1151,7 @@ class DrawContent extends React.Component {
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.error('更新用户控制类型失败')
+        message.warning(res.message)
       }
     })
   }

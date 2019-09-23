@@ -298,7 +298,7 @@ export default class TaskItem extends React.Component {
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
-        message.error('设置任务列表内容权限失败，请稍后再试')
+        message.warning(res.message)
       }
     })
   }
@@ -319,12 +319,17 @@ export default class TaskItem extends React.Component {
         message.success('移出用户成功')
         this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移出用户失败')
+        message.warning(res.message)
       }
     })
   }
 
-  // 下拉菜单的操作类型
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -333,7 +338,10 @@ export default class TaskItem extends React.Component {
     }
   }
 
-  // 访问控制的添加成员
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
     // const user_ids = users_arr.reduce((acc, curr) => {
@@ -365,10 +373,11 @@ export default class TaskItem extends React.Component {
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.error(errorText)
+        message.warning(res.message)
       }
     })
   }
+
   handleVisitControlPopoverVisible = (flag) => {
     if (!flag) {
       this.setState({

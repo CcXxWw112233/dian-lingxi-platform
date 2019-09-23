@@ -582,7 +582,7 @@ export default class FileList extends React.Component {
         message.success('移出用户成功')
         this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移出用户失败')
+        message.warning(res.message)
       }
     })
   }
@@ -612,7 +612,7 @@ export default class FileList extends React.Component {
         // const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
         this.visitControlUpdateCurrentProjectData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.error(errorText)
+        message.warning(res.message)
       }
     })
   }
@@ -668,7 +668,7 @@ export default class FileList extends React.Component {
         if (!Array.isArray(temp_arr)) return false
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.error(errorText)
+        message.warning(res.message)
       }
     })
   }
@@ -703,7 +703,7 @@ export default class FileList extends React.Component {
         if (!Array.isArray(temp_arr)) return false
         this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
-        message.error('设置内容权限失败，请稍后再试')
+        message.warning(res.message)
       }
     })
   }

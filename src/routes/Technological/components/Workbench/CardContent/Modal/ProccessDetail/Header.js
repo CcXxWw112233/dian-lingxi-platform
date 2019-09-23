@@ -130,22 +130,30 @@ export default class Header extends React.Component {
         temp_arr = res && res.data[0] 
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.error('更新用户控制类型失败')
+        message.warning(res.message)
       }
     })
   }
 
+  /**
+   * 访问控制移除成员
+   * @param {String} id 移除成员对应的id
+   */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移除用户内容控制权限失败')
+        message.warning(res.message)
       }
     })
   }
 
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
     const { id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
@@ -165,6 +173,8 @@ export default class Header extends React.Component {
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warning(res.message)
       }
     })
   }
@@ -197,7 +207,7 @@ export default class Header extends React.Component {
           flag
         );
       } else {
-        message.error('设置内容权限失败，请稍后再试');
+        message.warning(res.message);
       }
     });
   };

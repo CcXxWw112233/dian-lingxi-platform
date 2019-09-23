@@ -113,7 +113,7 @@ class VisitControl extends Component {
     // console.log(e, 'ssssssss')
     const { handleVisitControlChange, isPropVisitControl, otherPrivilege = [], board_id } = this.props
     if (e.key == 'unClock') { // 表示关闭状态
-      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -122,7 +122,7 @@ class VisitControl extends Component {
       })
       handleVisitControlChange(false)
     } else {
-      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         return false
       }
@@ -164,11 +164,6 @@ class VisitControl extends Component {
     });
   };
 
-  // 访问控制权限弹窗
-  alarmNoEditPermission = () => {
-    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-  }
-
   /**
    * 点击选中邀请进来的外部人员的下拉菜单的回调
    */
@@ -176,8 +171,8 @@ class VisitControl extends Component {
     const operatorType = key;
     const { handleClickedOtherPersonListOperatorItem, otherPrivilege, isPropVisitControl, board_id } = this.props;
     const { selectedOtherPersonId, removerOtherPersonId } = this.state;
-    if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
-      this.alarmNoEditPermission()
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
 

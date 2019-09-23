@@ -118,6 +118,7 @@ export async function fileMove(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'PUT',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
     data,
   });
 }
