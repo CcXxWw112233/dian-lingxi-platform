@@ -36,6 +36,8 @@ import { withRouter } from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { connect } from 'dva'
+import MenuSearchPartner from '../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+
 
 const SubMenu = Menu.SubMenu;
 
@@ -1544,13 +1546,13 @@ class DrawContent extends React.Component {
                   {!executors.length ? (
                     <div>
                       <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                <Dropdown overlay={<MenuSearchPartner listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                         <span>指派负责人</span>
                       </Dropdown>
                     </div>
                   ) : (
                       <div className={DrawerContentStyles.excutorsOut}>
-                        <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <Dropdown overlay={<MenuSearchPartner listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                           <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                             {executors.map((value, key) => {
                               const { avatar, name, user_name, user_id } = value

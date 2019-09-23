@@ -202,7 +202,7 @@ export default {
         }
 
         //组织切换重新加载
-        const { operateType, routingJumpPath='/technological?redirectHash', isNeedRedirectHash=true } = payload
+        const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
         if (operateType === 'changeOrg') {
           let redirectHash = locallocation.pathname
           if (locallocation.pathname === '/technological/projectDetail') {
@@ -211,9 +211,9 @@ export default {
           if (document.getElementById('iframImCircle')) {
             document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
           }
-          if(isNeedRedirectHash){
+          if (isNeedRedirectHash) {
             yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
-          }else{
+          } else {
             yield put(routerRedux.push(routingJumpPath));
           }
 
@@ -385,7 +385,7 @@ export default {
         message.error(res.message)
         return
       }
-    
+
       if (checked) {
         //极简模式只能是全组织
 
@@ -476,7 +476,7 @@ export default {
 
 
     * logout({ payload }, { select, call, put }) { //提交表单
-      if(!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
+      if (!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
         Cookies.remove('Authorization')
         Cookies.remove('refreshToken')
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
@@ -521,7 +521,7 @@ export default {
       return res
     },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
-      
+
       let res = yield call(getProjectList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -534,10 +534,10 @@ export default {
 
       }
     },
-    * fetchCurrentOrgAllMembers({ payload }, {call, put}) {
-      let res = yield call(getCurrentOrgAllMembers, {...payload})
+    * fetchCurrentOrgAllMembers({ payload }, { call, put }) {
+      let res = yield call(getCurrentOrgAllMembers, { ...payload })
       // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {

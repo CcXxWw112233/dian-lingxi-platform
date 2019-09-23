@@ -740,7 +740,7 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-   
+
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
@@ -761,7 +761,7 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-    
+
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
@@ -787,7 +787,7 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      
+
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {

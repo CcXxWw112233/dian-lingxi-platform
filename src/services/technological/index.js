@@ -103,3 +103,23 @@ export async function scanQrCodeJoin(data) {
     data
   });
 }
+
+//web端各种入口邀请人员加入组织
+export async function organizationInviteWebJoin(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/invite/web/join`,
+    method: 'POST',
+    data
+  });
+}
+
+export async function commInviteWebJoin(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/comm/invite/web/join`,
+    method: 'POST',
+    data
+  });
+}
+
+
+

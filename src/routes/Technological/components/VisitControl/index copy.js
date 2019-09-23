@@ -625,7 +625,7 @@ class VisitControl extends Component {
           // onClick={this.handleAddNewMember}
           onClick={this.setShowAddMenberModalVisibile}
         >
-          添加成员123
+          添加成员
         </Button>
       </div>
     );

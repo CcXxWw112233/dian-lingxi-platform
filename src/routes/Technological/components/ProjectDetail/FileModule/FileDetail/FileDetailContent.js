@@ -714,7 +714,6 @@ class FileDetailContent extends React.Component {
 
   // 访问控制设置回调
   handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
-    //debugger
     const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'

@@ -278,3 +278,6 @@ export async function joinBoardQRCode(params) {
     params
   }, { isNotLoading: true });
 }
+
+
+

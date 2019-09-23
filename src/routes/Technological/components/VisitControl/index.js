@@ -43,6 +43,7 @@ class VisitControl extends Component {
       ShowAddMenberModalVisibile: false,
       removerOtherPersonId: '', // 当前需要删除的成员id
     };
+    this.inputRef = React.createRef();
   }
 
   // 小图标的点击事件或者说访问控制的点击事件
@@ -62,12 +63,14 @@ class VisitControl extends Component {
 
   // 获取添加成员的回调
   handleGetAddNewMember = members => {
-    const { handleAddNewMember } = this.props;
+
+    const { handleAddNewMember, type, id, } = this.props;
+    const _organization_id = localStorage.getItem('OrganizationId')
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform');
     this.handleNotPlatformMember(members)
       .then(users_arr => [...users_arr, ...filterPlatformUsersId(members)])
-      .then(users_arr => handleAddNewMember(users_arr));
+      .then(users_arr => handleAddNewMember(users_arr, type, id, _organization_id));
   };
   async handleNotPlatformMember(members) {
     const isNotPlatformMember = m => m.type == 'other';
@@ -75,6 +78,9 @@ class VisitControl extends Component {
       if (!acc) return curr.user
       return `${acc},${curr.user}`
     }, '')
+
+
+
     //   .filter(m => isNotPlatformMember(m))
     //   .reduce((acc, curr) => {
     //     if (!acc) return curr.user;
@@ -557,7 +563,6 @@ class VisitControl extends Component {
         <Button
           type="primary"
           block
-          // onClick={this.handleAddNewMember}
           onClick={this.setShowAddMenberModalVisibile}
         >
           添加成员

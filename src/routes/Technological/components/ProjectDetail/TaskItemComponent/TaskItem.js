@@ -19,6 +19,8 @@ import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } f
 const TextArea = Input.TextArea
 const { RangePicker } = DatePicker;
 import { connect } from 'dva';
+import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../../services/technological/index'
+
 
 @connect(mapStateToProps)
 export default class TaskItem extends React.Component {
@@ -38,6 +40,7 @@ export default class TaskItem extends React.Component {
   constructor(props) {
     super(props)
   }
+
   gotoAddItem() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -334,18 +337,19 @@ export default class TaskItem extends React.Component {
   }
 
   // 访问控制的添加成员
-  handleVisitControlAddNewMember = (users_arr = []) => {
+  handleVisitControlAddNewMember = (users_arr = [], type, id, _organization_id) => {
     if (!users_arr.length) return
     // const user_ids = users_arr.reduce((acc, curr) => {
     //   if (!acc) return curr
     //   return `${acc},${curr}`
     // }, '')
-    this.handleSetContentPrivilege(users_arr, 'read')
+    this.handleSetContentPrivilege(users_arr, 'read', type, id, _organization_id)
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+  handleSetContentPrivilege = (users_arr, type, id, _organization_id, errorText = '访问控制添加人员失败，请稍后再试') => {
     const { taskItemValue = {} } = this.props
+    const inviteType = this.props.type
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
     const privilege_code = type
@@ -354,21 +358,40 @@ export default class TaskItem extends React.Component {
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
-    setContentPrivilege({
-      content_id,
-      content_type,
-      privilege_code,
-      user_ids: temp_ids
+    organizationInviteWebJoin({
+      _organization_id: _organization_id,
+      type: inviteType, //inviteType,
+      users: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        let temp_arr = []
-        temp_arr.push(res.data)
-        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
-      } else {
-        message.error(errorText)
+        commInviteWebJoin({
+          id: id,
+          role_id: res.data.role_id,
+          type: inviteType,
+          users: temp_ids,
+          rela_condition: '',
+        })
       }
     })
+
+    // setContentPrivilege({
+    //   content_id,
+    //   content_type,
+    //   privilege_code,
+    //   user_ids: temp_ids
+    // }).then(res => {
+    //   if (res && res.code === '0') {
+    //     let temp_arr = []
+    //     temp_arr.push(res.data)
+    //     this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
+    //   } else {
+    //     message.error(errorText)
+    //   }
+    // })
   }
+
+
+
   handleVisitControlPopoverVisible = (flag) => {
     if (!flag) {
       this.setState({
@@ -555,12 +578,12 @@ export default class TaskItem extends React.Component {
           {card_data.map((value, key) => {
             const { card_id, is_privilege } = value
             return (
-              <ItemTwo itemValue={value} 
+              <ItemTwo itemValue={value}
                 taskGroupListIndex_index={key}
                 taskGroupListIndex={taskGroupListIndex}
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 setDrawerVisibleOpen={setDrawerVisibleOpen}
-                key={card_id}  />
+                key={card_id} />
             )
           })}
           {/*</QueueAnim>*/}
