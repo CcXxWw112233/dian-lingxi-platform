@@ -20,6 +20,7 @@ import { message } from 'antd'
 import { MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
+import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
@@ -59,12 +60,14 @@ export default {
           })
         }
 
-        // //切换组织时需要重新加载
-        if (location.pathname == '/technological') {
+        //切换组织时需要重新加载
+        const param = QueryString.parse(location.search.replace('?', '')) || {}
+        const { redirectHash } = param
+        if (location.pathname === '/technological' && redirectHash) {
           dispatch({
-            type: 'routingJump',
+            type: 'routingReplace',
             payload: {
-              route: 'technological/workbench'
+              route: redirectHash
             }
           })
         }
@@ -122,11 +125,39 @@ export default {
       })
     },
 
-    // 获取用户信息
-    * getUSerInfo({ payload }, { select, call, put }) {
+    // 简单获取用户信息，设置用户的值
+    * simplGetUserInfo({ payload }, { select, call, put }) {
       const res = yield call(getUSerInfo)
       if (isApiResponseOk(res)) {
         const current_org = res.data.current_org || {}
+        // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userInfo: res.data, //当前用户信息
+            currentSelectOrganize: current_org
+          }
+        })
+        //当前选中的组织
+        localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
+        return res 
+      } else {
+        return {}
+      }
+    },
+
+    // 获取用户信息,相应的跳转操作
+    * getUSerInfo({ payload }, { select, call, put }) {
+      const simplGetUserInfo = yield put({
+        type: 'simplGetUserInfo',
+      })
+      const simplGetUserInfoSync = () => new Promise(resolve => {
+        resolve(simplGetUserInfo.then())
+      })
+      // 内容过滤处理end
+      const res = yield call(simplGetUserInfoSync) || {}
+      if (isApiResponseOk(res)) {
         const user_set = res.data.user_set || {}//当前选中的组织
         const current_org_id = user_set.current_org
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
@@ -139,17 +170,6 @@ export default {
           })
           return
         }
-
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            userInfo: res.data, //当前用户信息
-            currentSelectOrganize: current_org
-          }
-        })
-        //当前选中的组织
-        localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
-        localStorage.setItem('userInfo', JSON.stringify(res.data))
         const is_simple_model = user_set.is_simple_model
         if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
           // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
@@ -157,6 +177,19 @@ export default {
         } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
           // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
           yield put(routerRedux.push('/technological/simplemode/home'))
+        }
+        //组织切换重新加载
+        const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
+        if (operateType === 'changeOrg') {
+          const redirectHash = '/technological/workbench'
+          if (document.getElementById('iframImCircle')) {
+            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
+          }
+          if (isNeedRedirectHash) {
+            yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          } else {
+            yield put(routerRedux.push(routingJumpPath));
+          }
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -221,16 +254,12 @@ export default {
             isNeedRedirectHash: isNeedRedirectHash
           }
         })
-
-        //组织切换重新加载
         yield put({
           type: 'initGetTechnologicalDatas',
-          payload: {}
+          payload: {
+            
+          }
         })
-        yield put(routerRedux.push(`/technological`));
-        if (document.getElementById('iframImCircle')) {
-          document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
-        }
       } else {
         message.warn(`${currentNounPlanFilterName(ORGANIZATION)}切换出了点问题`, MESSAGE_DURATION_TIME)
       }
@@ -321,6 +350,12 @@ export default {
         message.error(res.message)
         return
       }
+
+      // 切换模式后查询用户信息一致性
+      yield put({
+        type: 'simplGetUserInfo',
+        payload: {}
+      })
 
       if (checked) {
         //极简模式只能是全组织
