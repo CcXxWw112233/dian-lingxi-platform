@@ -50,6 +50,7 @@ export default modelExtend(projectDetail, {
       filedata_1: [], //文档列表--文件夹breadcrumbList
       filedata_2: [], //文档列表--文件
       selectedRowKeys: [], //选择的列表项
+      selectedRows: [], // 选择文件的元素项
       isInAddDirectory: false, //是否正在创建文件家判断标志
       moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
       openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
@@ -74,6 +75,7 @@ export default modelExtend(projectDetail, {
       seeFileInput: '', //查看文件详情入口
       cardCommentAll: [], //文件动态列表
       pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
+      currentPreviewFileData: {}, // 当前操作的文件数据
     }
   },
   subscriptions: {
@@ -222,7 +224,8 @@ export default modelExtend(projectDetail, {
           payload: {
             filePreviewCurrentVersionList: res.data.version_list,
             filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '',
-            filePreviewCurrentId: res.data.base_info.file_resource_id
+            filePreviewCurrentId: res.data.base_info.file_resource_id,
+            currentPreviewFileBaseInfo: res.data.base_info
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList) || []
@@ -249,8 +252,7 @@ export default modelExtend(projectDetail, {
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
-        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2' })
-
+        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', belong_folder_id: res.data.base_info.folder_id })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -260,7 +262,8 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getFileList',
           payload: {
-            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].belong_folder_id // -2
           }
         })
       } else {
@@ -402,7 +405,7 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * getFolderList({ payload }, { select, call, put }) {
@@ -419,7 +422,7 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * filePreview({ payload }, { select, call, put }) {

@@ -25,6 +25,7 @@ import {
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
 import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
+import { checkIsHasPermissionInVisitControl, checkIsHasPermission } from '../../../../utils/businessFunction';
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
@@ -110,13 +111,21 @@ class VisitControl extends Component {
   // };
   handleToggleVisitControl = (e) => {
     // console.log(e, 'ssssssss')
-    const { handleVisitControlChange } = this.props
+    const { handleVisitControlChange, isPropVisitControl, otherPrivilege = [], board_id } = this.props
     if (e.key == 'unClock') { // 表示关闭状态
+      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
       handleVisitControlChange(false)
     } else {
+      if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
@@ -155,13 +164,22 @@ class VisitControl extends Component {
     });
   };
 
+  // 访问控制权限弹窗
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
+
   /**
    * 点击选中邀请进来的外部人员的下拉菜单的回调
    */
   handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
     const operatorType = key;
-    const { handleClickedOtherPersonListOperatorItem } = this.props;
+    const { handleClickedOtherPersonListOperatorItem, otherPrivilege, isPropVisitControl, board_id } = this.props;
     const { selectedOtherPersonId, removerOtherPersonId } = this.state;
+    if (!checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id))) {
+      this.alarmNoEditPermission()
+      return false
+    }
 
     if (operatorType === 'remove') {
       return this.setState({
@@ -369,12 +387,26 @@ class VisitControl extends Component {
   }
 
   toggleVisitControl = () => {
-    const { isPropVisitControl } = this.props
+    const { isPropVisitControl, otherPrivilege = [], board_id } = this.props
     return (
       <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
+            <Menu.Item key="unClock">
+              开放访问
+            </Menu.Item>
+          )
+        } */}
         <Menu.Item key="unClock">
           开放访问
         </Menu.Item>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
+            <Menu.Item key="clock">
+              仅列表人员访问
+            </Menu.Item>
+          )
+        } */}
         <Menu.Item key="clock">
           仅列表人员访问
         </Menu.Item>

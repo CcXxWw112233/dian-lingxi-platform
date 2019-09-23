@@ -25,14 +25,14 @@ export default class TaskItem extends React.Component {
       datas: { responsibleTaskList = [] }
     } = this.props.model;
     const { itemValue = {}, itemKey } = this.props;
-    const { is_realize, board_id, board_name, name, id, privileges = [] } = itemValue;
+    const { is_realize, board_id, board_name, name, id, privileges = [], is_privilege } = itemValue;
     const obj = {
       card_id: id,
       is_realize: is_realize === "1" ? "0" : "1"
     };
     setBoardIdStorage(board_id)
     // 这里是控制完成卡片的权限, 所以传入code为edit
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

@@ -13,12 +13,12 @@ import {
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
   ORG_UPMS_ORGANIZATION_GROUP
 } from "../../../../../globalset/js/constant";
+import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
 const TextArea = Input.TextArea
 const { RangePicker } = DatePicker;
-import { connect } from 'dva';
 
 @connect(mapStateToProps)
 export default class TaskItem extends React.Component {
@@ -555,12 +555,12 @@ export default class TaskItem extends React.Component {
           {card_data.map((value, key) => {
             const { card_id, is_privilege } = value
             return (
-              <ItemTwo itemValue={value} 
+              <ItemTwo itemValue={value}
                 taskGroupListIndex_index={key}
                 taskGroupListIndex={taskGroupListIndex}
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 setDrawerVisibleOpen={setDrawerVisibleOpen}
-                key={card_id}  />
+                key={card_id} />
             )
           })}
           {/*</QueueAnim>*/}

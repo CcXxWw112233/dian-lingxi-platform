@@ -1,5 +1,5 @@
 //项目归档
-import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
 
@@ -33,7 +33,7 @@ const createHeaderContentDataByFileId = (cardId) => {
 //文件列表包括文件夹
 export async function getFileList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file`,
+    url: `${REQUEST_DOMAIN_FILE}${REQUEST_INTERGFACE_VERSIONN}/file`,
     method: 'GET',
     headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
     params,
