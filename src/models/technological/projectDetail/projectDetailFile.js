@@ -82,65 +82,68 @@ export default modelExtend(projectDetail, {
     setup({ dispatch, history }) {
       history.listen((location) => {
 
-        const param = QueryString.parse(location.search.replace('?', ''))
-        board_id = param.board_id
-        appsSelectKey = param.appsSelectKey
-        file_id = param.file_id
-        folder_id = param.folder_id
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
 
-        dispatch({
-          type: 'updateDatas',
-          payload: {
-            filePreviewCurrentFileId: file_id
-          }
-        })
-
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
-
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          file_id = param.file_id
+          folder_id = param.folder_id
           dispatch({
-            type: 'getFolderList',
+            type: 'updateDatas',
             payload: {
-              board_id: board_id
+              filePreviewCurrentFileId: file_id
             }
           })
+          if (appsSelectKey == '4') {
+            dispatch({
+              type: 'getFolderList',
+              payload: {
+                board_id: board_id
+              }
+            })
 
-          if (folder_id) {
-            dispatch({
-              type: 'getfolderInfo',
-              payload: {
-                folder_id
-              }
-            })
-          } else {
-            dispatch({
-              type: 'initialget',
-              payload: {
-                id: board_id
-              }
-            })
+            if (folder_id) {
+              dispatch({
+                type: 'getfolderInfo',
+                payload: {
+                  folder_id
+                }
+              })
+            } else {
+              dispatch({
+                type: 'initialget',
+                payload: {
+                  id: board_id
+                }
+              })
+            }
+            if (file_id) {
+              dispatch({
+                type: 'previewFileByUrl',
+                payload: {
+                  file_id,
+                }
+              })
+
+              dispatch({
+                type: 'getCardCommentListAll',
+                payload: {
+                  id: file_id
+                }
+              })
+
+            }
           }
-          if (file_id) {
-            dispatch({
-              type: 'previewFileByUrl',
-              payload: {
-                file_id,
-              }
-            })
 
-            dispatch({
-              type: 'getCardCommentListAll',
-              payload: {
-                id: file_id
-              }
-            })
-
-          }
 
         }
+
       })
     },
   },
   effects: {
+    
     //文档----------start
     * initialget({ payload }, { select, call, put }) {
       const { id } = payload
@@ -460,17 +463,17 @@ export default modelExtend(projectDetail, {
       const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
       const new_filePreviewCurrentVersionList = yield select(selectFilePreviewCurrentVersionList)
       let temp_list = [...new_filePreviewCurrentVersionList]
-        let temp_arr = []
-        let default_arr = []
-        for (let val of temp_list) {
-          if (val['file_id'] == file_id) {
-            // console.log(val, 'ssssss')
-            temp_arr.unshift(val)
-          }
-          if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
-            default_arr.push(val)
-          }
+      let temp_arr = []
+      let default_arr = []
+      for (let val of temp_list) {
+        if (val['file_id'] == file_id) {
+          // console.log(val, 'ssssss')
+          temp_arr.unshift(val)
         }
+        if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
+          default_arr.push(val)
+        }
+      }
 
       if (isApiResponseOk(res)) {
         // yield put({
