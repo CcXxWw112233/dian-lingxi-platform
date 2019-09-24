@@ -2,6 +2,7 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Card, Icon, DatePicker, Dropdown, Tooltip } from 'antd'
 import MenuSearchMultiple from './MenuSearchMultiple'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 import { timeToTimestamp } from '../../../../../../utils/util'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import { connect } from 'dva'
@@ -158,7 +159,8 @@ export default class ConfirmInfoOne extends React.Component {
         case '2':
           container = (
             <div>
-              <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}>
+              {/* <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}> */}
+              <Dropdown overlay={<MenuSearchPartner usersArray={users} setAssignees={this.setAssignees.bind(this)} invitationType='7' invitationId={board_id} />}>
                 {assigneesArray.length ? (
                   <div style={{ display: 'flex' }}>
                     {assigneesArray.map((value, key) => {

@@ -1417,6 +1417,9 @@ class FileDetailContent extends React.Component {
                 notShowPrincipal={true}
                 handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
                 handleAddNewMember={this.handleVisitControlAddNewMember}
+                invitationType='9'
+                invitationId={filePreviewCurrentFileId}
+                invitationOrg={localStorage.getItem('OrganizationId')}
               />
             </span>
             <div style={{ cursor: 'pointer' }}>

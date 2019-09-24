@@ -155,7 +155,7 @@ export default class DrawDetailInfo extends React.Component {
   }
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
-    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } = this.props
+    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], invitationId, invitationType } = this.props
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
     data = data || []
@@ -318,9 +318,9 @@ export default class DrawDetailInfo extends React.Component {
         <ShowAddMenberModal
           addMenbersInProject={this.addMenbersInProject}
           show_wechat_invite={true}
-          id={board_id}
-          type="1"
-          _organization_id={getGlobalData('aboutBoardOrganizationId')}
+          invitationId={invitationId}
+          invitationType={invitationType}
+          invitationOrg={getGlobalData('aboutBoardOrganizationId')}
           modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
       </div>
     )

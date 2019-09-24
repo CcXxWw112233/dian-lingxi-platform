@@ -85,7 +85,6 @@ export default class MenuSearchPartner extends React.Component {
         })
     }
     setShowAddMenberModalVisibile() {
-
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
@@ -96,12 +95,8 @@ export default class MenuSearchPartner extends React.Component {
     }
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-
         const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode,
-
-            type, id, } = this.props
-
-        const organizationId = localStorage.getItem('OrganizationId')
+            invitationType, invitationId, rela_Condition, } = this.props
 
         return (
             <div>
@@ -151,12 +146,13 @@ export default class MenuSearchPartner extends React.Component {
 
                 <ShowAddMenberModal
                     // title={titleText}
-                    _organization_id={organizationId}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
                     {...this.props}
-                    id={id}
-                    type={type}
+                    invitationType={invitationType}
+                    invitationId={invitationId}
+                    rela_Condition={rela_Condition}
+                    invitationOrg={localStorage.getItem('OrganizationId')}
                     modalVisible={this.state.ShowAddMenberModalVisibile}
                     setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
                 />

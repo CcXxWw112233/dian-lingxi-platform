@@ -1,6 +1,9 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
+import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
+import { checkIsHasPermissionInBoard, } from "../../../../../utils/businessFunction";
+import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
 
 export default class DCMenuItemOne extends React.Component {
   state = {
@@ -62,6 +65,15 @@ export default class DCMenuItemOne extends React.Component {
       resultArr
     })
   }
+  setShowAddMenberModalVisibile() {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
   render() {
     const { execusorList, canNotRemoveItem, currentExecutor = {} } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
@@ -75,15 +87,14 @@ export default class DCMenuItemOne extends React.Component {
           </div>
 
 
-          <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.handleMenuReallyClick.bind()}>
-            <div className={DrawerContentStyles.menuOneitemDiv} >
-              <div style={{ height: 20, width: 20, borderRadius: 20, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
-                <Icon type={'&#xe70b;'} style={{ fontSize: 12, color: 'rgb(73, 155, 230)', marginTop: 4, display: 'block' }} />
+          <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile}>
+            <div className={DrawerContentStyles.menuItemDiv} >
+              <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
               </div>
               <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
             </div>
           </div>
-
 
           {resultArr.map((value, key) => {
             const { user_id, full_name, fullName, mobile, email, avatar, name } = value
@@ -108,6 +119,18 @@ export default class DCMenuItemOne extends React.Component {
             )
           })}
         </div>
+
+        <ShowAddMenberModal
+          // title={titleText}
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          {...this.props}
+          // invitationType={invitationType}
+          // invitationId={invitationId}
+          invitationOrg={localStorage.getItem('OrganizationId')}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+        />
       </div>
     )
   }

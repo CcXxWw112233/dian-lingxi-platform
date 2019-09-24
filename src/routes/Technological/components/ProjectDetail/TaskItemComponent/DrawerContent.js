@@ -1479,6 +1479,9 @@ class DrawContent extends React.Component {
                   {drawContent.is_privilege && (
                     <span style={{ marginRight: drawContent.is_privilege === '1' ? '46px' : '20px' }}>
                       <VisitControl
+                        invitationId={card_id}
+                        invitationType='3'
+                        invitationOrg={localStorage.getItem('OrganizationId')}
                         board_id={board_id}
                         isPropVisitControl={drawContent.is_privilege === '0' ? false : true}
                         handleVisitControlChange={this.handleVisitControlChange}
@@ -1552,7 +1555,15 @@ class DrawContent extends React.Component {
                     </div>
                   ) : (
                       <div className={DrawerContentStyles.excutorsOut}>
-                        <Dropdown overlay={<MenuSearchPartner listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <Dropdown overlay={
+                          <MenuSearchPartner
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data}
+                            keyCode={'user_id'}
+                            searchName={'name'}
+                            currentSelect={executors}
+                            chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                           <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                             {executors.map((value, key) => {
                               const { avatar, name, user_name, user_id } = value

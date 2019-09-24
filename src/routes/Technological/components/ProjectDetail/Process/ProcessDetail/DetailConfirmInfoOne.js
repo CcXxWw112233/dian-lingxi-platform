@@ -9,6 +9,7 @@ import { timeToTimestamp, timestampToTimeNormal } from "../../../../../../utils/
 import Cookies from "js-cookie";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import AvatarComps from '../../../../../../components/avatarMore'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const { RangePicker } = DatePicker;
 
@@ -146,8 +147,10 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, relations_Prefix } } = this.props.model
     const { itemKey, itemValue } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
-    const { curr_node_sort, status } = processInfo //当前节点
+    const { curr_node_sort, status, curr_node_id, } = processInfo //当前节点
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
+    const invitationId = processInfo.id
+
     // console.log( processEditDatas[itemKey])
     //推进人来源
     const users = projectDetailInfoData.data
@@ -282,7 +285,11 @@ export default class DetailConfirmInfoOne extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
+              {/* <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users} */}
+              <Dropdown overlay={<MenuSearchPartner noMutiple={true} usersArray={users}
+                invitationType='8'
+                invitationId={invitationId}
+                rela_Condition={curr_node_id}
                 filterUserArray={assigneesArray}
                 setAssignees={this.setAssignees.bind(this)} />}>
                 {assignee_type !== '1' ? (<div>重新指派推进人</div>) : (<div></div>)}

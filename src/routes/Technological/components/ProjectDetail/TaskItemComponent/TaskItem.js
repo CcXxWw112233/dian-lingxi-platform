@@ -337,39 +337,40 @@ export default class TaskItem extends React.Component {
   }
 
   // 访问控制的添加成员
-  handleVisitControlAddNewMember = (users_arr = [], type, id, _organization_id) => {
+  handleVisitControlAddNewMember = (users_arr = [], params) => {
     if (!users_arr.length) return
     // const user_ids = users_arr.reduce((acc, curr) => {
     //   if (!acc) return curr
     //   return `${acc},${curr}`
     // }, '')
-    this.handleSetContentPrivilege(users_arr, 'read', type, id, _organization_id)
+    this.handleSetContentPrivilege(users_arr, 'read', params)
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, id, _organization_id, errorText = '访问控制添加人员失败，请稍后再试') => {
+  handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', params) => {
+    console.log(params, '8888888');
+
     const { taskItemValue = {} } = this.props
-    const inviteType = this.props.type
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
-    const privilege_code = type
     const content_id = list_id
     let temp_ids = [] // 用来保存用户的id
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
     organizationInviteWebJoin({
-      _organization_id: _organization_id,
-      type: inviteType, //inviteType,
+      _organization_id: params.invitationOrg,
+      type: params.invitationType,
       users: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
         commInviteWebJoin({
-          id: id,
+          id: params.invitationId,
           role_id: res.data.role_id,
-          type: inviteType,
+          type: params.invitationType,
           users: temp_ids,
-          rela_condition: '',
+          rela_condition: params.rela_condition,
         })
       }
     })
@@ -446,6 +447,7 @@ export default class TaskItem extends React.Component {
     const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
     const { projectDetailInfoData = {} } = this.props
     const { board_id, data = [], } = projectDetailInfoData
+
     const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges, privileges_extend = [] } = taskItemValue
     // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
     const projectParticipant = card_data.reduce((acc, curr) =>
@@ -494,6 +496,8 @@ export default class TaskItem extends React.Component {
                 style={{ padding: '4px 10px' }}
               >
                 <VisitControl
+                  invitationType='5'
+                  invitationId={list_id}
                   board_id={board_id}
                   popoverPlacement={'rightTop'}
                   isPropVisitControl={is_privilege === '0' ? false : true}

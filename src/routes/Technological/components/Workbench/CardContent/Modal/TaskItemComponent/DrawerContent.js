@@ -1373,6 +1373,8 @@ class DrawContent extends React.Component {
             <span style={{ marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px' }}>
               {drawContent.card_id && (
                 <VisitControl
+                  invitationId={card_id}
+                  invitationType='3'
                   board_id={board_id}
                   isPropVisitControl={is_privilege === '1' ? true : false}
                   handleVisitControlChange={this.handleVisitControlChange}

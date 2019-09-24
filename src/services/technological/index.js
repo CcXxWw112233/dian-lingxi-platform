@@ -104,7 +104,7 @@ export async function scanQrCodeJoin(data) {
   });
 }
 
-//web端各种入口邀请人员加入组织
+//web端各种入口邀请人员加入组织===1
 export async function organizationInviteWebJoin(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite/web/join`,
@@ -112,7 +112,7 @@ export async function organizationInviteWebJoin(data) {
     data
   });
 }
-
+//web端各种入口邀请人员加入组织===2
 export async function commInviteWebJoin(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/comm/invite/web/join`,

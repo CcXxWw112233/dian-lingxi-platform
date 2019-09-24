@@ -387,9 +387,10 @@ class InviteOtherWithBatch extends Component {
       isShowBatchInvite,
       children,
       show_wechat_invite,
-      id,
-      _organization_id,
       type,
+      invitationType,
+      invitationId,
+      invitationOrg,
     } = this.props;
     const transedTextAreaValue = this.handleTransMentionSelectedOtherMembersMobileString();
     const isValidTextAreaValueMobileOrEmail =
@@ -549,7 +550,7 @@ class InviteOtherWithBatch extends Component {
 
         {
           show_wechat_invite && (
-            <WechatInviteToboard id={id} _organization_id={_organization_id} type={type} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
+            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
           )
         }
 

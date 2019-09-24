@@ -53,6 +53,7 @@ export default class FileList extends React.Component {
     const { projectDetailInfoData = {}, dispatch } = this.props
     const { board_id } = projectDetailInfoData
     const { key } = e
+
     switch (key) {
       case '1':
         break
@@ -802,9 +803,13 @@ export default class FileList extends React.Component {
   render() {
     const { selectedRowKeys, fileList = [], board_id } = this.props
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, shouldHideVisitControlPopover } = this.state;
+
     // 文件列表的点点点选项
     const operationMenu = (data) => {
-      const { type, is_privilege } = data
+      const { type, is_privilege, file_id, folder_id } = data
+      const invitationType = type != '1' ? '9' : '10'
+      const invitationId = type != '1' ? file_id : folder_id
+
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
@@ -832,6 +837,9 @@ export default class FileList extends React.Component {
                     handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
                     handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
                     handleAddNewMember={this.handleVisitControlAddNewMember}
+                    invitationType={invitationType}
+                    invitationId={invitationId}
+                    invitationOrg={localStorage.getItem('OrganizationId')}
                   >
                     <span>访问控制&nbsp;&nbsp;<span className={globalStyles.authTheme}>&#xe7eb;</span></span>
                   </VisitControl>

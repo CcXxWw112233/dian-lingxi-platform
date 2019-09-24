@@ -81,7 +81,7 @@ class ShowAddMenberModal extends React.Component {
     const { getFieldDecorator } = this.props.form;
     const { stepThreeContinueDisabled } = this.state
     const step_3 = (
-      <InviteOtherWithBatch isDisableSubmitWhenNoSelectItem={true} directReturnStr={true} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} show_wechat_invite={true} id={localStorage.getItem('OrganizationId')} type='11' _organization_id={localStorage.getItem('OrganizationId')} />
+      <InviteOtherWithBatch isDisableSubmitWhenNoSelectItem={true} directReturnStr={true} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} show_wechat_invite={true} invitationId={localStorage.getItem('OrganizationId')} invitationType='11' invitationOrg={localStorage.getItem('OrganizationId')} />
     )
     const title = (<div style={{ textAlign: 'center' }}>邀请他人</div>)
     // const step_3 = (

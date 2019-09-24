@@ -23,11 +23,11 @@ export default class WechatInviteToboard extends Component {
     }
     getQRCode = () => {
 
-        const { type, id, _organization_id, rela_Condition } = this.props
+        const { invitationType, invitationId, invitationOrg, rela_Condition } = this.props
         const relaCondition = rela_Condition && ''
         const userId = JSON.parse(localStorage.getItem('userInfo')).id
-
-        scanQrCodeJoin({ type: type, id: id, _organization_id: _organization_id, rela_condition: relaCondition, user_id: userId }).then(res => {
+        console.log(this.props, 'WechatInviteToboard==========');
+        scanQrCodeJoin({ type: invitationType, id: invitationId, _organization_id: invitationOrg, rela_condition: relaCondition, user_id: userId }).then(res => {
             if (isApiResponseOk(res)) {
                 this.setState({
                     qr_code_src: res.data.code_url

@@ -64,13 +64,16 @@ class VisitControl extends Component {
   // 获取添加成员的回调
   handleGetAddNewMember = members => {
 
-    const { handleAddNewMember, type, id, } = this.props;
-    const _organization_id = localStorage.getItem('OrganizationId')
+    const { handleAddNewMember, invitationType,
+      invitationId, invitationOrg } = this.props;
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform');
+    const params = {
+      invitationType: invitationType, invitationId: invitationId, invitationOrg: invitationOrg, rela_condition: ''
+    }
     this.handleNotPlatformMember(members)
       .then(users_arr => [...users_arr, ...filterPlatformUsersId(members)])
-      .then(users_arr => handleAddNewMember(users_arr, type, id, _organization_id));
+      .then(users_arr => handleAddNewMember(users_arr, params));
   };
   async handleNotPlatformMember(members) {
     const isNotPlatformMember = m => m.type == 'other';
@@ -618,8 +621,9 @@ class VisitControl extends Component {
       children,
       board_id,
       onlyShowPopoverContent,
-      type,
-      id,
+      invitationType,
+      invitationId,
+      invitationOrg,
     } = this.props;
 
     const {
@@ -702,13 +706,13 @@ class VisitControl extends Component {
           />
         </Modal> */}
         <ShowAddMenberModal
-          {...this.props}
+          // {...this.props}
           title="邀请他人一起参与"
           submitText="确定"
           show_wechat_invite={true}
-          id={id}
-          _organization_id={localStorage.getItem('OrganizationId')}
-          type={type}
+          invitationId={invitationId}
+          invitationType={invitationType}
+          invitationOrg={invitationOrg}
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}

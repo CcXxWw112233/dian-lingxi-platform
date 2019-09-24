@@ -83,9 +83,9 @@ class ShowAddMenberModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, show_wechat_invite, id, _organization_id, type } = this.props;
+    const { modalVisible, show_wechat_invite, invitationId, invitationOrg, invitationType } = this.props;
     const { wechat_invite_visible } = this.state
-    console.log(this.props, 'hhhh');
+    console.log(this.props, 'ShowAddMenberModal=====');
 
     return (
       <div>
@@ -103,7 +103,7 @@ class ShowAddMenberModal extends React.Component {
         </CustormModal>
         {
           show_wechat_invite && (
-            <WechatInviteToboard id={id} _organization_id={_organization_id} type={type} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
+            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
           )
         }
       </div>
