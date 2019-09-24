@@ -31,95 +31,82 @@ let appsSelectKey = null
 let card_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailTask',
-  state: [],
+  state: {
+    datas: {
+
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        const param = QueryString.parse(location.search.replace('?', ''))
-        board_id = param.board_id
-        appsSelectKey = param.appsSelectKey
-        card_id = param.card_id
-        dispatch({
-          type: 'updateDatas',
-          payload: {
-            card_id
-          }
-        })
 
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '3') {
-          // dispatch({
-          //   type: 'updateDatas',
-          //   payload: {
-          //     drawContent: {}, //任务右方抽屉内容
-          //     drawerVisible: false, //查看任务的抽屉是否可见
-          //     cardCommentList: [], //任务评论列表
-          //     projectGoupList: [], //项目分组列表
-          //     taskGroupList: [], //任务列表
-          //     boardTagList: [], //项目标签列表
-          //     getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
-          //   }
-          // })
-
-          dispatch({
-            type: 'getProjectGoupList',
-            payload: {
-            }
-          })
-
-          dispatch({
-            type: 'getBoardTagList',
-            payload: {
-              board_id
-            }
-          })
-
-          //两者都去查询列表接口，不同的地方在于如果有card_id则要先查询任务列表，匹配得到taskGroupListIndex和taskGroupListIndex_index然后再去查询任务详细信息，
-          if (card_id) {
-            dispatch({
-              type: 'getTaskGroupListByUrl', //'getTaskGroupList',
-              payload: {
-                type: '2',
-                board_id: board_id,
-                arrange_type: '1'
-              }
-            })
-            dispatch({
-              type: 'getCardCommentListAll',
-              payload: {
-                id: card_id
-              }
-            })
-            // dispatch({
-            //   type: 'getCardDetail',
-            //   payload: {
-            //     id: card_id
-            //   }
-            // })
-
-          } else {
-            dispatch({
-              type: 'getTaskGroupList',
-              payload: {
-                type: '2',
-                board_id: board_id,
-                arrange_type: '1'
-              }
-            })
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          card_id = param.card_id
+          if (appsSelectKey == '3') {
             dispatch({
               type: 'updateDatas',
               payload: {
-                drawContent: {}, //任务右方抽屉内容
-                drawerVisible: false, //查看任务的抽屉是否可见
-                // cardCommentList: [], //任务评论列表
-                // projectGoupList: [], //项目分组列表
-                // taskGroupList: [], //任务列表
-                // boardTagList: [], //项目标签列表
-                // getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+                card_id
               }
             })
-          }
 
+            dispatch({
+              type: 'getProjectGoupList',
+              payload: {
+              }
+            })
+
+            dispatch({
+              type: 'getBoardTagList',
+              payload: {
+                board_id
+              }
+            })
+            //两者都去查询列表接口，不同的地方在于如果有card_id则要先查询任务列表，匹配得到taskGroupListIndex和taskGroupListIndex_index然后再去查询任务详细信息，
+            if (card_id) {
+              dispatch({
+                type: 'getTaskGroupListByUrl', //'getTaskGroupList',
+                payload: {
+                  type: '2',
+                  board_id: board_id,
+                  arrange_type: '1'
+                }
+              })
+              dispatch({
+                type: 'getCardCommentListAll',
+                payload: {
+                  id: card_id
+                }
+              })
+
+            } else {
+              dispatch({
+                type: 'getTaskGroupList',
+                payload: {
+                  type: '2',
+                  board_id: board_id,
+                  arrange_type: '1'
+                }
+              })
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  drawContent: {}, //任务右方抽屉内容
+                  drawerVisible: false, //查看任务的抽屉是否可见
+                  // cardCommentList: [], //任务评论列表
+                  // projectGoupList: [], //项目分组列表
+                  // taskGroupList: [], //任务列表
+                  // boardTagList: [], //项目标签列表
+                  // getTaskGroupListArrangeType: '1', //1按分组 2按执行人 3按标签
+                }
+              })
+            }
+          }
         }
+
       })
     },
   },
@@ -298,9 +285,9 @@ export default modelExtend(projectDetail, {
         }
         let taskGroupListIndex = 0
         let taskGroupListIndex_index = 0
-        for(let i = 0; i < res.data.length; i ++) {
+        for (let i = 0; i < res.data.length; i++) {
           if (res.data[i]['card_data']) {
-            for(let j = 0; j < res.data[i]['card_data'].length; j ++) {
+            for (let j = 0; j < res.data[i]['card_data'].length; j++) {
               if (card_id === res.data[i]['card_data'][j]['card_id']) {
                 taskGroupListIndex = i
                 taskGroupListIndex_index = j

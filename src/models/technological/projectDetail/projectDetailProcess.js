@@ -75,79 +75,81 @@ export default modelExtend(projectDetail, {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen(async (location) => {
-        const param = QueryString.parse(location.search.replace('?', ''))
-        board_id = param.board_id
-        appsSelectKey = param.appsSelectKey
-        flow_id = param.flow_id
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '2') {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              //流程
-              processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
-              node_type: '1', //节点类型， 默认1
-              processCurrentEditStep: 0, //编辑第几步，默认 0
-              processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-              processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
-              templateInfo: {}, //所选择的流程模板的信息数据
-              processInfo: {}, //所选中的流程的信息
-              workFlowComments: [],
-              processCurrentCompleteStep: 0
-            }
-          })
-          dispatch({
-            type: 'getProcessTemplateList',
-            payload: {
-              id: board_id
-            }
-          })
-
-          // dispatch({
-          //   type: 'getProcessInfoByUrl',
-          //   payload: {
-          //     currentProcessInstanceId: flow_id
-          //   }
-          // })
-          if (flow_id) {
+      history.listen((location) => {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          flow_id = param.flow_id
+          if (appsSelectKey == '2') {
             dispatch({
-              type: 'getProcessInfoByUrl',
+              type: 'updateDatas',
               payload: {
-                currentProcessInstanceId: flow_id
+                //流程
+                processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+                node_type: '1', //节点类型， 默认1
+                processCurrentEditStep: 0, //编辑第几步，默认 0
+                processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+                processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+                templateInfo: {}, //所选择的流程模板的信息数据
+                processInfo: {}, //所选中的流程的信息
+                workFlowComments: [],
+                processCurrentCompleteStep: 0
               }
             })
-
             dispatch({
-              type: 'projectDetailInfo',
+              type: 'getProcessTemplateList',
               payload: {
                 id: board_id
               }
             })
 
-            dispatch({
-              type: 'getWorkFlowComment',
-              payload: {
-                flow_instance_id: flow_id
-              }
-            })
-
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                processDetailModalVisible: true,
-                totalId: {
-                  flow: flow_id,
-                  board: board_id
+            // dispatch({
+            //   type: 'getProcessInfoByUrl',
+            //   payload: {
+            //     currentProcessInstanceId: flow_id
+            //   }
+            // })
+            if (flow_id) {
+              dispatch({
+                type: 'getProcessInfoByUrl',
+                payload: {
+                  currentProcessInstanceId: flow_id
                 }
-              }
-            })
-          } else {
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                processDetailModalVisible: false
-              }
-            })
+              })
+
+              dispatch({
+                type: 'projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+
+              dispatch({
+                type: 'getWorkFlowComment',
+                payload: {
+                  flow_instance_id: flow_id
+                }
+              })
+
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  processDetailModalVisible: true,
+                  totalId: {
+                    flow: flow_id,
+                    board: board_id
+                  }
+                }
+              })
+            } else {
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  processDetailModalVisible: false
+                }
+              })
+            }
           }
 
         }

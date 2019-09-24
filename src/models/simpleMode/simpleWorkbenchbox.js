@@ -20,7 +20,7 @@ export default {
     },
     subscriptions: {
         setup({ dispatch, history }) {
-            history.listen(async (location) => {
+            history.listen((location) => {
                 message.destroy()
                 //头部table key
                 if (location.pathname.indexOf('technological/simplemode/workbench') !== -1) {
@@ -40,7 +40,7 @@ export default {
 
         },
         * getFileList({ payload }, { call, put }) {
-            const { folder_id, board_id, calback} = payload;
+            const { folder_id, board_id, calback } = payload;
             const res = yield call(getBoardFileList, { folder_id, board_id: board_id });
             //console.log("res", res);
             if (isApiResponseOk(res)) {
@@ -179,7 +179,7 @@ export default {
                 yield put({
                     type: 'projectDetail/getRelationsSelectionPre',
                     payload: {
-                        
+
                     }
                 })
                 //缓存下来当前项目的权限
