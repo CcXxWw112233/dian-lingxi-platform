@@ -576,7 +576,7 @@ export default class FileDetailContent extends React.Component {
           <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
             {
               checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
-                <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                <div onClick={this.alarmNoEditPermission} style={{bottom: '62px'}} className={globalStyles.drawContent_mask}></div>
               )
             }
             <ContentRaletion

@@ -30,7 +30,7 @@ import withBodyClientDimens from './../../../../../../../components/HOC/withBody
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
-import {createShareLink, modifOrStopShareLink} from '@/services/technological/workbench'
+import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 
 class FileDetailContent extends React.Component {
 
@@ -600,7 +600,7 @@ class FileDetailContent extends React.Component {
    */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
-      id:id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -639,7 +639,7 @@ class FileDetailContent extends React.Component {
     }).then(res => {
       if (res && res.code === '0') {
         let temp_arr = []
-        temp_arr = res && res.data[0] 
+        temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.warning(res.message)
@@ -647,10 +647,10 @@ class FileDetailContent extends React.Component {
     })
   }
 
-   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
-   */
+  /**
+  * 添加成员的回调
+  * @param {Array} users_arr 添加成员的数组
+  */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
     this.handleSetContentPrivilege(users_arr, 'read')
@@ -739,7 +739,7 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'workbench/getUploadedFileList',
         payload: {
-          
+
         }
       })
     }
@@ -1012,6 +1012,12 @@ class FileDetailContent extends React.Component {
       return iframe
     }
 
+    const zoomPictureParams = {
+      board_id,
+      is_privilege,
+      privileges,
+    }
+
     const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
       return (
@@ -1026,11 +1032,11 @@ class FileDetailContent extends React.Component {
 
     const punctuateDom = (
       <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
-        {
+        {/* {
           checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
             <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
           )
-        }
+        } */}
         {filePreviewUrl && (
           <ZoomPicture
             {...this.props}
@@ -1046,6 +1052,7 @@ class FileDetailContent extends React.Component {
             filePreviewCurrentFileId={filePreviewCurrentFileId}
             filePreviewCurrentId={filePreviewCurrentId}
             workbenchType={"workbenchType"}
+            zoomPictureParams={zoomPictureParams}
           />
         )}
       </div>
@@ -1239,7 +1246,7 @@ class FileDetailContent extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
           return false
         }
         if (file.status === 'uploading') {
@@ -1305,7 +1312,7 @@ class FileDetailContent extends React.Component {
 
 
           <div className={indexStyles.fileDetailHeadRight}>
-            <div style={{position: 'relative'}}>
+            <div style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1320,7 +1327,7 @@ class FileDetailContent extends React.Component {
                   uploadProps={uploadProps} />
               )}
             </div>
-            <div style={{position: 'relative'}}>
+            <div style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1331,29 +1338,32 @@ class FileDetailContent extends React.Component {
               </Button>
             </div>
             <span style={{ marginLeft: '10px' }}></span>
-            <div style={{position: 'relative', display: 'flex'}}>
-              {
-                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
-                  <div style={{height: '50px'}} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-                )
-              }
-              <div style={{lineHeight: is_privilege == '0' && '56px'}}>
+            {/* <div style={{position: 'relative', display: 'flex'}}> */}
+            <div style={{ position: 'relative' }}>
+              <span>
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                    <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  )
+                }
                 <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
-              </div>
-              <div style={{ marginTop: is_privilege == '0' && '18px', alignItems: is_privilege == '0' && 'center', lineHeight: is_privilege == '1' && '0px' }}>
-                <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px', marginTop: '2px' }}>
-                  <VisitControl
-                    board_id={board_id}
-                    isPropVisitControl={is_privilege === '0' ? false : true}
-                    handleVisitControlChange={this.handleVisitControlChange}
-                    otherPrivilege={privileges}
-                    notShowPrincipal={true}
-                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                    handleAddNewMember={this.handleVisitControlAddNewMember}
-                  />
-                </span>
-              </div>
+              </span>
+
             </div>
+            {/* <div> */}
+              <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px'}}>
+                <VisitControl
+                  board_id={board_id}
+                  isPropVisitControl={is_privilege === '0' ? false : true}
+                  handleVisitControlChange={this.handleVisitControlChange}
+                  otherPrivilege={privileges}
+                  notShowPrincipal={true}
+                  handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                  handleAddNewMember={this.handleVisitControlAddNewMember}
+                />
+              </span>
+            {/* </div> */}
+            {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
               {seeFileInput === 'fileModule' ? (
                 <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' })}>
@@ -1387,10 +1397,10 @@ class FileDetailContent extends React.Component {
 
             {/*width: isExpandFrame?0:420*/}
             {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{position: 'relative'}}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
-                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  <div style={{bottom: '62px'}} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
               <ContentRaletion
@@ -1416,7 +1426,7 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
+            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) ) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 {...this.props} ></Comment2>
               </div>
@@ -1443,6 +1453,7 @@ class FileDetailContent extends React.Component {
                   filePreviewCurrentFileId={filePreviewCurrentFileId}
                   filePreviewCurrentId={filePreviewCurrentId}
                   workbenchType={"workbenchType"}
+                  zoomPictureParams={zoomPictureParams}
                 />
               )}
             </div>

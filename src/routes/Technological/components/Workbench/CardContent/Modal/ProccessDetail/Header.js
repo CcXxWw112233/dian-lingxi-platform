@@ -345,12 +345,12 @@ export default class Header extends React.Component {
           <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{ float: 'right', position: 'relative' }}>
-          {
+        <div style={{ float: 'right'}}>
+          {/* {
             checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
               <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
             )
-          }
+          } */}
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
           <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span
@@ -374,10 +374,23 @@ export default class Header extends React.Component {
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
             />
           </span>
-          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px' }}>
+          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+                <div onClick={this.alarmNoEditPermission} style={{ height: '50px' }} className={globalStyles.drawContent_mask}></div>
+              )
+            }
             <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
-          <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
+          {/* <span style={{position: 'relative'}}>
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id) ) ? ('') : (
+                <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
+              )
+            }
+            <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
+          </span> */}
+          
         </div>
       </div>
     )

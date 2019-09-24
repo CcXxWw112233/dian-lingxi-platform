@@ -4,7 +4,7 @@ import CreateTaskStyle from './CreateTask.less'
 import { Icon, Collapse, message, Tooltip } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from 'rc-queue-anim'
-import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN,
   TASKS
@@ -28,14 +28,18 @@ export default class ItemTwo extends React.Component {
   }
   itemOneClick(e) {
     e.stopPropagation();
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
     const { taskGroupList } = this.props
     let new_arr = [...taskGroupList]
-    const { card_id, is_realize = '0' } = itemValue
+    const { card_id, is_realize = '0', privileges = [], executors = [], is_privilege } = itemValue
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'

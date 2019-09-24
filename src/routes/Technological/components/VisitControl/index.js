@@ -666,6 +666,7 @@ class VisitControl extends Component {
     );
     return (
       <div
+        style={{position: 'relative', zIndex: 6666}}
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >
