@@ -62,11 +62,11 @@ export async function fileCopy(data) {
 
 //文件下载
 export async function fileDownload(params) {
-  //debugger
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/download`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.ids),
     params: {
       ...params,
       _organization_id: getGlobalData('aboutBoardOrganizationId')
@@ -76,11 +76,10 @@ export async function fileDownload(params) {
 
 //文件预览
 export async function filePreview(params) {
-
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     params,
   });
 }
@@ -118,7 +117,6 @@ export async function fileMove(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'PUT',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
     data,
   });
 }

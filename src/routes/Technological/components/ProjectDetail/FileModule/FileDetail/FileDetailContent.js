@@ -1528,7 +1528,7 @@ class FileDetailContent extends React.Component {
               </span>
 
             </div>
-            <div style={{position:'relative'}}>
+            {/* <div style={{position:'relative'}}> */}
               <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px'}}>
                 <VisitControl
                   board_id={board_id}
@@ -1540,7 +1540,7 @@ class FileDetailContent extends React.Component {
                   handleAddNewMember={this.handleVisitControlAddNewMember}
                 />
               </span>
-            </div>
+            {/* </div> */}
             {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
               {seeFileInput === 'fileModule' ? (

@@ -955,10 +955,11 @@ class DrawContent extends React.Component {
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
+        // message.success('设置成功', MESSAGE_DURATION_TIME)
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {
-        message.warnning(res.message)
+        message.warning(res.message)
       }
     })
   }
@@ -1102,11 +1103,12 @@ class DrawContent extends React.Component {
       user_ids: temp_ids,
     }).then(res => {
       if (res && res.code === '0') {
+        // message.success('添加用户成功')
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.warnning(res.message)
+        message.warn(res.message)
       }
     })
   }
@@ -1121,9 +1123,10 @@ class DrawContent extends React.Component {
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        // message.success('移除用户成功')
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.warning(res.message)
+        message.warn(res.message)
       }
     })
   }
@@ -1147,11 +1150,12 @@ class DrawContent extends React.Component {
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        // message.success('设置成功')
         let temp_arr = []
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.warning(res.message)
+        message.warn(res.message)
       }
     })
   }

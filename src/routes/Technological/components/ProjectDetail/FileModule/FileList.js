@@ -369,10 +369,13 @@ export default class FileList extends React.Component {
           id: file_resource_id, file_id
         }
       })
+      // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
+      // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
       dispatch({
         type: 'projectDetailFile/fileInfoByUrl',
         payload: {
-          file_id: file_id
+          file_id: file_id,
+          isNotNecessaryUpdateBread: true
         }
       })
     }

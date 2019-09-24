@@ -886,7 +886,6 @@ class DrawContent extends React.Component {
       if (isResOk(res)) {
         let temp_arr = []
         temp_arr = res && res.data[0]
-
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
         message.warning(res.message)
