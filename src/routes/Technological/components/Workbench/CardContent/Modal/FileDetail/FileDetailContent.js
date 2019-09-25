@@ -592,11 +592,9 @@ class FileDetailContent extends React.Component {
     return temp_arr
   }
 
-  /**
-   * 其他成员的下拉回调
-   * @param {String} id 这是用户的user_id
-   * @param {String} type 这是对应的用户字段
-   * @param {String} removeId 这是对应移除用户的id
+ /**
+   * 访问控制移除成员
+   * @param {String} id 移除成员对应的id
    */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
@@ -604,13 +602,22 @@ class FileDetailContent extends React.Component {
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
-        message.success('移出用户成功')
+        setTimeout(() => {
+          message.success('移除用户成功')
+        }, 500)
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
         message.warning(res.message)
       }
     })
   }
+
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -638,6 +645,9 @@ class FileDetailContent extends React.Component {
       user_ids: temp_id
     }).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = []
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
@@ -659,15 +669,45 @@ class FileDetailContent extends React.Component {
   // 访问控制设置回调
   handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
     //debugger
-    const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
+    const { version_id, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'
     const privilege_code = type
-    let temp_ids = [] // 用来保存用户的id
+    let temp_ids = [] // 用来保存添加用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
     if (!Array.isArray(users_arr)) return false
+    // 这是所有添加成员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+    
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -675,6 +715,9 @@ class FileDetailContent extends React.Component {
       user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
         let temp_arr = []
         temp_arr.push(res.data)
         if (!Array.isArray(temp_arr)) return false
@@ -704,6 +747,9 @@ class FileDetailContent extends React.Component {
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {

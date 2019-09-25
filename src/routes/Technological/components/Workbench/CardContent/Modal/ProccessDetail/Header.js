@@ -85,21 +85,6 @@ export default class Header extends React.Component {
                   : ''
           }));
         };
-        const newPersonList = genNewPersonList(curr.assignees);
-        return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
-      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
-        const genNewPersonList = (arr = []) => {
-          return arr.map(user => ({
-            avatar: user.avatar,
-            name: user.full_name
-              ? user.full_name
-              : user.name
-                ? user.name
-                : user.user_id
-                  ? user.user_id
-                  : ''
-          }));
-        };
         // 数组去重
         const arrayNonRepeatfy = arr => {
           let temp_arr = []
@@ -113,7 +98,11 @@ export default class Header extends React.Component {
           return temp_arr
         }
         // 执行人去重
-        const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))
+        const newPersonList = genNewPersonList(arrayNonRepeatfy(curr.assignees));
+        return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
+      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
+        // const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))
+        const newPersonList = []
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
       }
       return acc
@@ -148,6 +137,9 @@ export default class Header extends React.Component {
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = []
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
@@ -165,6 +157,9 @@ export default class Header extends React.Component {
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('移除用户成功')
+        }, 500)
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
         message.warning(res.message)
@@ -178,13 +173,42 @@ export default class Header extends React.Component {
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
-    const { id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
+    const { id, privileges = [] } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
     const content_id = id
     const content_type = 'flow'
-    let temp_ids = [] // 用来保存用户的id
+    let temp_ids = [] // 用来保存添加用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
+    // 这是所有添加成员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+    
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
     setContentPrivilege({
       content_id,
       content_type,
@@ -192,6 +216,9 @@ export default class Header extends React.Component {
       user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
@@ -223,6 +250,9 @@ export default class Header extends React.Component {
     };
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData(
           { is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr },

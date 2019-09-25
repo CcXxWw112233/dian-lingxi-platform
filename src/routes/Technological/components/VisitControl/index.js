@@ -2,29 +2,25 @@ import React, { Component } from 'react';
 import {
   Popover,
   Tooltip,
-  Switch,
   Menu,
   Dropdown,
   Button,
   Modal,
   message,
-  Icon
 } from 'antd';
 import { connect } from 'dva';
 import styles from './index.less';
 import globalStyles from './../../../../globalset/css/globalClassName.less';
 import AvatarList from './AvatarList/index';
-import InviteOthers from './../InviteOthers/index';
 import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png';
 import { inviteNewUserInProject } from './../../../../services/technological/index';
-import { fetchUsersByIds } from './../../../../services/organization/index';
 import classNames from 'classnames/bind';
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
-import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
+import { checkIsHasPermissionInBoard } from "@/utils/businessFunction";
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
@@ -75,25 +71,14 @@ class VisitControl extends Component {
       if (!acc) return curr.user
       return `${acc},${curr.user}`
     }, '')
-    //   .filter(m => isNotPlatformMember(m))
-    //   .reduce((acc, curr) => {
-    //     if (!acc) return curr.user;
-    //     return `${acc},${curr.user}`;
-    //   }, '');
-    // debugger
     if (!users) return Promise.resolve([]);
     let res = await inviteNewUserInProject({ data: users });
-    // if (!res || res.code != '0') {
-    //   message.error('注册平台外用户失败.');
-    //   return Promise.resolve([]);
-    // }
-    // let usersId = res.data.map(u => u.id);
-    // return Promise.resolve(usersId);
     let users_arr = res.data;
     return Promise.resolve(users_arr);
   }
   handleInviteMemberReturnResult = members => {
     this.handleGetAddNewMember(members);
+    
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
@@ -109,7 +94,6 @@ class VisitControl extends Component {
   //   handleVisitControlChange(checked);
   // };
   handleToggleVisitControl = (e) => {
-    // console.log(e, 'ssssssss')
     const { handleVisitControlChange, isPropVisitControl, otherPrivilege = [], board_id } = this.props
     if (e.key == 'unClock') { // 表示关闭状态
       if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
@@ -130,9 +114,7 @@ class VisitControl extends Component {
       })
       handleVisitControlChange(true)
     }
-
   }
-
 
   // 我的理解是: 别的地方调用该popover的时候关闭或者打开的控制该状态的回调，
   onPopoverVisibleChange = visible => {
@@ -154,7 +136,8 @@ class VisitControl extends Component {
 
   /**
    * 获取当前操作的对象的id
-   * @param {Object} item 当前操作的对象
+   * @param {String} removerId 当前需要移除的id
+   * @param {String} userId 当前用户id
    */
   handleClickedOtherPersonListItem = (removerId, userId) => {
     this.setState({
@@ -247,20 +230,9 @@ class VisitControl extends Component {
 
   // 获取负责人列表
   genPrincipalList = (principalList = []) => {
-    // console.log(principalList, 'sssssss')
-    // ？？？ 我的理解是:检测数组中的每一个元素是否是String, 为什么要检测？
-    // const isStr = str => typeof str === 'string'
-    // const isArrEleAllStr = arr => arr.every(i => isStr(i))
-    // if (!isArrEleAllStr(principalList)) {
-    //   this.setState({
-    //     transPrincipalList: principalList
-    //   })
-    //   return
-    // }
     this.setState({
       transPrincipalList: principalList
     })
-
   }
 
   // 这是分析检测其他人的权限
@@ -271,15 +243,11 @@ class VisitControl extends Component {
         return
       }
       return otherPrivilege && otherPrivilege.every(item => {
-        // console.log('sssss', item)
         return currentOrgAllMembersList.find(each => each.id === item.user_info.id)
       });
     }
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
-
-    // console.log('ssss_2', Object.entries(otherPrivilege))
     let allMember = [...currentOrgAllMembersList];
-    // console.log(allMember, 'ssssss_allMember')
     const getOthersPersonList = (arr) => {
       if (!(otherPrivilege instanceof Array)) {
         return
@@ -295,23 +263,19 @@ class VisitControl extends Component {
             !!avatar && this.isValidAvatar(avatar)
               ? avatar
               : defaultUserAvatar,
-          // privilege: privilageType
           privilege: content_privilege_code
         };
         return [...acc, obj];
       }, []);
     }
-    // this.setState({
-    //   othersPersonList: getOthersPersonList(allMember)
-    // });
     if (!isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList(currentOrgAllMembersList)) {
       // 过滤那些不在组织中的人
       if (!(otherPrivilege instanceof Array)) {
         return
       }
-      const notFoundInOrgAllMembersListMembers = otherPrivilege.filter(
-        item => !currentOrgAllMembersList.find(each => each.id === item.user_info.id)
-      );
+      // const notFoundInOrgAllMembersListMembers = otherPrivilege.filter(
+      //   item => !currentOrgAllMembersList.find(each => each.id === item.user_info.id)
+      // );
       this.setState({
         othersPersonList: getOthersPersonList(allMember)
       });
@@ -381,26 +345,12 @@ class VisitControl extends Component {
   }
 
   toggleVisitControl = () => {
-    const { isPropVisitControl, otherPrivilege = [], board_id } = this.props
+    const { isPropVisitControl } = this.props
     return (
       <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
-        {/* {
-          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
-            <Menu.Item key="unClock">
-              开放访问
-            </Menu.Item>
-          )
-        } */}
         <Menu.Item key="unClock">
           开放访问
         </Menu.Item>
-        {/* {
-          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
-            <Menu.Item key="clock">
-              仅列表人员访问
-            </Menu.Item>
-          )
-        } */}
         <Menu.Item key="clock">
           仅列表人员访问
         </Menu.Item>
@@ -411,7 +361,6 @@ class VisitControl extends Component {
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
     const { isPropVisitControl, type } = this.props;
-    // console.log(isPropVisitControl, 'sssssss')
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86b;
@@ -730,6 +679,7 @@ class VisitControl extends Component {
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+          addMenbersInProject={this.addMenbersInProject}
         />
         <Modal
           visible={comfirmRemoveModalVisible}

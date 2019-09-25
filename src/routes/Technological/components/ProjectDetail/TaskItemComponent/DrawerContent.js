@@ -956,6 +956,9 @@ class DrawContent extends React.Component {
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
         // message.success('设置成功', MESSAGE_DURATION_TIME)
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {

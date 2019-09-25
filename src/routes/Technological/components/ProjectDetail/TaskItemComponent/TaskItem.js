@@ -11,7 +11,7 @@ import { timeToTimestamp, stopPropagation } from '../../../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
-  ORG_UPMS_ORGANIZATION_GROUP
+  ORG_UPMS_ORGANIZATION_GROUP,
 } from "../../../../../globalset/js/constant";
 import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
@@ -146,7 +146,7 @@ export default class TaskItem extends React.Component {
     e.domEvent.stopPropagation();
     const { projectDetailInfoData = {} } = this.props
     const { org_id } = projectDetailInfoData
-    if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP, org_id)) {
+    if (!checkIsHasPermission(PROJECT_TEAM_CARD_GROUP, org_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

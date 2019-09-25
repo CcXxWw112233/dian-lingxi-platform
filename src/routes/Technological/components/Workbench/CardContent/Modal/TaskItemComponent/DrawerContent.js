@@ -884,6 +884,9 @@ class DrawContent extends React.Component {
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = []
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
@@ -905,6 +908,9 @@ class DrawContent extends React.Component {
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('移除用户成功')
+        }, 500)
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
         message.warning(res.message)
@@ -918,14 +924,45 @@ class DrawContent extends React.Component {
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
     const { datas: { drawContent = {} } } = this.props.model
-    const { card_id, privileges } = drawContent
+    const { card_id, privileges = [] } = drawContent
     const content_id = card_id
     const content_type = 'card'
-    let temp_ids = [] // 用来保存用户的id
+    let temp_ids = [] // 用来保存添加用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
+
+    // 这是所有添加成员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+    
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -933,6 +970,9 @@ class DrawContent extends React.Component {
       user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
@@ -960,6 +1000,9 @@ class DrawContent extends React.Component {
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {
