@@ -161,7 +161,10 @@ export default class DrawDetailInfo extends React.Component {
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     const manImageDropdown = (props) => {
       const { role_id, role_name = '...', name, email = '...', avatar, mobile = '...', user_id, organization = '...', we_chat = '...' } = props
-      if (!isHasOrgMemberQueryPermission()) {
+      // if (!isHasOrgMemberQueryPermission()) {
+      //   return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
+      // }
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id)) {
         return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       }
       // return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
