@@ -242,17 +242,18 @@ export async function fileInfoByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/info/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
-//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)
-export async function fileInfoByUrl_2(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/info`,
-    method: 'GET',
-    params,
-  });
-}
+//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)(废弃)
+// export async function fileInfoByUrl_2(params) {
+//   return request({
+//     url: `${REQUEST_DOMAIN_FILE}/file/info`,
+//     method: 'GET',
+//     params,
+//   });
+// }
 
 //获取pdf信息
 export async function getFilePDFInfo(params) {
