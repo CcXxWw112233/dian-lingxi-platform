@@ -153,7 +153,6 @@ export default class Boundary extends Component {
 			// dispatch(routerRedux.push('/technological/workbench'))
 			return
 		}
-
 		const { inputList, new_user_board_id, new_user_org_id } = this.state
 		let new_input_list = [...inputList]
 		// let phoneTemp = [] // 定义一个手机号的空数组
@@ -178,7 +177,6 @@ export default class Boundary extends Component {
 			board_id: new_user_board_id,
 			users: allTemp
 		}
-
 		organizationInviteWebJoin({
 			_organization_id: new_user_org_id,
 			type: '12',

@@ -1207,6 +1207,9 @@ class DrawContent extends React.Component {
       }
     })
   }
+  addMenbersInProject = (data) => {
+    console.log(data, 'ssss')
+  }
   render() {
     that = this
     const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, isVisitControl } = this.state
@@ -1549,7 +1552,12 @@ class DrawContent extends React.Component {
                   {!executors.length ? (
                     <div>
                       <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                <Dropdown overlay={<MenuSearchPartner listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                <Dropdown overlay={
+                        <MenuSearchPartner
+                          // addMenbersInProject={this.addMenbersInProject}
+                          invitationType='4'
+                          invitationId={card_id}
+                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                         <span>指派负责人</span>
                       </Dropdown>
                     </div>
@@ -1557,6 +1565,7 @@ class DrawContent extends React.Component {
                       <div className={DrawerContentStyles.excutorsOut}>
                         <Dropdown overlay={
                           <MenuSearchPartner
+                            // addMenbersInProject={this.addMenbersInProject}
                             invitationType='4'
                             invitationId={card_id}
                             listData={data}

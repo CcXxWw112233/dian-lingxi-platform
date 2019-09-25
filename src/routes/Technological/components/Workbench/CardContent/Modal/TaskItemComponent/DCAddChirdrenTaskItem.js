@@ -144,6 +144,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { localChildTaskName, isInEditTaskName } = this.state
+    console.log(chirldTaskItemValue, 'hhhhhh');
 
     let executor = {//任务执行人信息
       user_id: '',
@@ -197,7 +198,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16 }}>&#xe70f;</div>
             </Popconfirm>
             <Dropdown overlay={
-              <DCMenuItemOne invitationType='' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
+              <DCMenuItemOne invitationType='4' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
             }>
               {executor.user_id ? (
                 <Tooltip title={executor.user_name || executor.full_name || '佚名'}>

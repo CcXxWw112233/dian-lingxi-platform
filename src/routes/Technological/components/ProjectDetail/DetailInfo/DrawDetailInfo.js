@@ -145,6 +145,8 @@ export default class DrawDetailInfo extends React.Component {
 
   // 邀请人进项目
   addMenbersInProject = (data) => {
+    console.log(data, '555555');
+
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetail/addMenbersInProject',
@@ -153,6 +155,8 @@ export default class DrawDetailInfo extends React.Component {
       }
     })
   }
+
+  
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], invitationId, invitationType } = this.props

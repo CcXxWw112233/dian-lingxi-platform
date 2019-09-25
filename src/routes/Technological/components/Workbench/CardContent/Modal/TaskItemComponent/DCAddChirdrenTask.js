@@ -190,7 +190,7 @@ export default class DCAddChirdrenTask extends React.Component {
               </div>
               <div style={{ display: isShowUserCalendar ? 'flex' : 'none' }} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
+                  <DCMenuItemOne invitationType='4' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
                 }>
                   {/* <Dropdown overlay={
                   <MenuSearchPartner

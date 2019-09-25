@@ -108,7 +108,6 @@ export default class MenuSearchMultiple extends React.Component {
         <div style={{ margin: '0 10px 10px 10px' }}>
           <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
         </div>
-
         {
           resultArr.map((value, key) => {
             const { avatar, name, user_name, user_id } = value

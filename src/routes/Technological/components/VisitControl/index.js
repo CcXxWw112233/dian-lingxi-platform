@@ -25,6 +25,8 @@ import {
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
 import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
+import { isApiResponseOk } from '@/utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../services/technological/index'
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
@@ -230,7 +232,30 @@ class VisitControl extends Component {
     });
     this.togglePopoverVisible
   };
-
+  addMenbersInProject = (data) => {
+    const { invitationType, invitationId, rela_Condition, } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: invitationType,
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: invitationType,
+          users: temp_ids,
+          rela_condition: rela_Condition,
+        }).then(res => {
+          if (isApiResponseOk(res) == 0) {
+            //...
+          }
+        })
+      }
+    })
+  }
   //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE)) {
@@ -706,7 +731,7 @@ class VisitControl extends Component {
           />
         </Modal> */}
         <ShowAddMenberModal
-          // {...this.props}
+          {...this.props}
           title="邀请他人一起参与"
           submitText="确定"
           show_wechat_invite={true}
@@ -716,6 +741,7 @@ class VisitControl extends Component {
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+          addMenbersInProject={this.addMenbersInProject}
         />
         <Modal
           visible={comfirmRemoveModalVisible}

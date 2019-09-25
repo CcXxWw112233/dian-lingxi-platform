@@ -1171,6 +1171,9 @@ class FileDetailContent extends React.Component {
             <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
               <VisitControl
+                invitationType='9'
+                invitationId={filePreviewCurrentId}
+                invitationOrg={localStorage.getItem('OrganizationId')}
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 handleVisitControlChange={this.handleVisitControlChange}
                 otherPrivilege={privileges}

@@ -763,6 +763,7 @@ export default class Header extends React.Component {
               invitationId={board_id}
               board_id={board_id}
               type="board_list"
+              invitationOrg={localStorage.getItem('OrganizationId')}
               popoverPlacement={'leftTop'}
               isPropVisitControl={is_privilege == '0' ? false : true}
               principalList={new_projectParticipant}

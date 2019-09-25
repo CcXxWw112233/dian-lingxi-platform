@@ -236,7 +236,7 @@ class InviteOtherWithBatch extends Component {
     const {
       handleInviteMemberReturnResult,
       isShowSubmitBtn,
-      directReturnStr
+      directReturnStr,
     } = this.props;
     //如果有提交按钮, 则点击提交按钮的时候统一处理数据
     if (isShowSubmitBtn) return;

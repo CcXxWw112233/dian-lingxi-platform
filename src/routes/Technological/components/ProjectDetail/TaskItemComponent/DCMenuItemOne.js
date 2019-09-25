@@ -1,9 +1,11 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
-import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
+import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import { checkIsHasPermissionInBoard, } from "../../../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 
 export default class DCMenuItemOne extends React.Component {
   state = {
@@ -65,6 +67,33 @@ export default class DCMenuItemOne extends React.Component {
       resultArr
     })
   }
+  addMenbersInProject = (data) => {
+    console.log(data, 'MenuSearchPartner=====');
+
+    const { invitationType, invitationId, rela_Condition, } = this.props
+    console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: invitationType,
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: invitationType,
+          users: temp_ids,
+          rela_condition: rela_Condition,
+        }).then(res => {
+          if (isApiResponseOk(res) == 0) {
+            //...
+          }
+        })
+      }
+    })
+  }
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -87,8 +116,8 @@ export default class DCMenuItemOne extends React.Component {
           </div>
 
 
-          <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile}>
-            <div className={DrawerContentStyles.menuItemDiv} >
+          <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+            <div style={{ display: 'flex', alignItems: 'center' }} >
               <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
                 <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
               </div>
@@ -121,7 +150,6 @@ export default class DCMenuItemOne extends React.Component {
         </div>
 
         <ShowAddMenberModal
-          // title={titleText}
           addMenbersInProject={this.addMenbersInProject}
           show_wechat_invite={true}
           {...this.props}
@@ -129,7 +157,7 @@ export default class DCMenuItemOne extends React.Component {
           // invitationId={invitationId}
           invitationOrg={localStorage.getItem('OrganizationId')}
           modalVisible={this.state.ShowAddMenberModalVisibile}
-          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
         />
       </div>
     )

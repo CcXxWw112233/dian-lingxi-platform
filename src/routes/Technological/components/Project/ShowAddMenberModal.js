@@ -83,7 +83,7 @@ class ShowAddMenberModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, show_wechat_invite, invitationId, invitationOrg, invitationType } = this.props;
+    const { modalVisible, show_wechat_invite, invitationId, invitationOrg, invitationType, rela_Condition } = this.props;
     const { wechat_invite_visible } = this.state
     console.log(this.props, 'ShowAddMenberModal=====');
 
@@ -103,7 +103,7 @@ class ShowAddMenberModal extends React.Component {
         </CustormModal>
         {
           show_wechat_invite && (
-            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
+            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} rela_Condition={rela_Condition} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
           )
         }
       </div>
@@ -113,9 +113,9 @@ class ShowAddMenberModal extends React.Component {
 export default Form.create()(ShowAddMenberModal)
 
 ShowAddMenberModal.defaultProps = {
-  // _organization_id: '', //传递进来的所属组织id
-  // type: '',  //传递进来的对象类型
-  // id: '', //传递进来的对象id
+  // invitationId: '', //传递进来的所属组织id
+  // invitationType: '',  //传递进来的对象类型
+  // invitationOrg: '', //传递进来的对象id
   show_wechat_invite: false, //显示微信邀请
   addMenbersInProject: function () { },//提交回调
   setShowAddMenberModalVisibile: function () { }, //设置显示隐藏

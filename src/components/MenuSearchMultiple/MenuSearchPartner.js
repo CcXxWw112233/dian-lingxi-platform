@@ -2,9 +2,11 @@ import React from 'react'
 // import MenuSearchStyles from './MenuSearch.less'
 import { Input, Menu, Spin, Icon } from 'antd'
 import indexStyles from './MenuSearchPartner.less'
-import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
+import ShowAddMenberModal from '../../routes/Technological/components/Project/ShowAddMenberModal'
 import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
+import { isApiResponseOk } from '../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
 
 export default class MenuSearchPartner extends React.Component {
     state = {
@@ -13,14 +15,27 @@ export default class MenuSearchPartner extends React.Component {
         selectedKeys: []
     }
     componentWillMount() {
+        // const { keyWord } = this.state
+        // const { listData, searchName, selectedKeys = [] } = this.props
+        // this.setState({
+        //     resultArr: this.fuzzyQuery(listData, searchName, keyWord),
+        //     selectedKeys
+        // }, () => {
+        //     this.setState({
+        //         resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+        //     })
+        // })
         const { keyWord } = this.state
-        const { listData, searchName, selectedKeys = [] } = this.props
+        let selectedKeys = []
+        const { listData = [], searchName, currentSelect = [] } = this.props
+        for (let val of currentSelect) {
+            selectedKeys.push(val['user_id'])
+        }
         this.setState({
-            resultArr: this.fuzzyQuery(listData, searchName, keyWord),
             selectedKeys
         }, () => {
             this.setState({
-                resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+                resultArr: this.fuzzyQuery(listData, searchName, keyWord),
             })
         })
     }
@@ -76,12 +91,39 @@ export default class MenuSearchPartner extends React.Component {
         return arr;
     }
     onChange = (e) => {
-        const { listData, searchName } = this.props
+        const { listData = [], searchName } = this.props
         const keyWord = e.target.value
         const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
         this.setState({
             keyWord,
             resultArr
+        })
+    }
+    addMenbersInProject = (data) => {
+        console.log(data, 'MenuSearchPartner=====');
+
+        const { invitationType, invitationId, rela_Condition, } = this.props
+        console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
+        const temp_ids = data.users.split(",")
+        const invitation_org = localStorage.getItem('OrganizationId')
+        organizationInviteWebJoin({
+            _organization_id: invitation_org,
+            type: invitationType,
+            users: temp_ids
+        }).then(res => {
+            if (res && res.code === '0') {
+                commInviteWebJoin({
+                    id: invitationId,
+                    role_id: res.data.role_id,
+                    type: invitationType,
+                    users: temp_ids,
+                    rela_condition: rela_Condition,
+                }).then(res => {
+                    if (isApiResponseOk(res) == 0) {
+                        //...
+                    }
+                })
+            }
         })
     }
     setShowAddMenberModalVisibile() {
@@ -100,23 +142,22 @@ export default class MenuSearchPartner extends React.Component {
 
         return (
             <div>
-                <Menu style={{ padding: 8 }}
+                <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
                     selectedKeys={selectedKeys}
-                    // onDeselect={this.handleMenuReallyDeselect}
+                    onDeselect={this.handleMenuReallyDeselect.bind(this)}
                     onSelect={this.handleMenuReallySelect} multiple >
-                    <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} style={{ marginBottom: 10 }} />
-                    {/* <div style={{ height: 32, lineHeight: '32px', color: 'rgb(73, 155, 230)' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                        邀请他人参与
-                    </div> */}
+
+                    <div style={{ margin: '0 10px 10px 10px' }}>
+                        <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
+                    </div>
                     <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                        <div className={indexStyles.menuItemDiv} >
+                        <div style={{ display: 'flex', alignItems: 'center' }} >
                             <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
                                 <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
                             </div>
                             <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
                         </div>
                     </div>
-
                     {
                         resultArr.map((value, key) => {
                             const { avatar, name, user_name, user_id } = value

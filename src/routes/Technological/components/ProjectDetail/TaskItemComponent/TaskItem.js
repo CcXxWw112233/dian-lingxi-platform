@@ -338,6 +338,7 @@ export default class TaskItem extends React.Component {
 
   // 访问控制的添加成员
   handleVisitControlAddNewMember = (users_arr = [], params) => {
+
     if (!users_arr.length) return
     // const user_ids = users_arr.reduce((acc, curr) => {
     //   if (!acc) return curr
@@ -348,7 +349,6 @@ export default class TaskItem extends React.Component {
 
   // 访问控制添加成员
   handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', params) => {
-    console.log(params, '8888888');
 
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
@@ -358,7 +358,6 @@ export default class TaskItem extends React.Component {
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
-
     organizationInviteWebJoin({
       _organization_id: params.invitationOrg,
       type: params.invitationType,
