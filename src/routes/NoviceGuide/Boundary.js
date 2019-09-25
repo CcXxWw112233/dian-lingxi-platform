@@ -177,6 +177,7 @@ export default class Boundary extends Component {
 			board_id: new_user_board_id,
 			users: allTemp
 		}
+		console.log('DCMenuItemOne===222==');
 		organizationInviteWebJoin({
 			_organization_id: new_user_org_id,
 			type: '12',

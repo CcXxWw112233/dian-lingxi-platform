@@ -4,8 +4,8 @@ import { Icon, Input, Button, DatePicker, Menu } from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import { checkIsHasPermissionInBoard, } from "../../../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
-import { isApiResponseOk } from '../../../../../utils/handleResponseData';
-import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
+import { isApiResponseOk } from '@/utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
 
 export default class DCMenuItemOne extends React.Component {
   state = {
@@ -68,7 +68,7 @@ export default class DCMenuItemOne extends React.Component {
     })
   }
   addMenbersInProject = (data) => {
-    console.log(data, 'MenuSearchPartner=====');
+    console.log('DCMenuItemOne=====');
 
     const { invitationType, invitationId, rela_Condition, } = this.props
     console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
@@ -104,7 +104,7 @@ export default class DCMenuItemOne extends React.Component {
     })
   }
   render() {
-    const { execusorList, canNotRemoveItem, currentExecutor = {}, invitationType, invitationId } = this.props //currentExecutor当前已选执行人
+    const { execusorList, canNotRemoveItem, currentExecutor = {}, invitationType, invitationId, isInvitation } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
     const executorUserId = currentExecutor.user_id
 
@@ -115,14 +115,15 @@ export default class DCMenuItemOne extends React.Component {
             <Input placeholder={'请输入负责人名称'} value={keyWord} style={{ width: 160, marginTop: 6 }} onChange={this.onChange.bind(this)} />
           </div>
 
-
-          <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-            <div style={{ display: 'flex', alignItems: 'center' }} >
-              <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
-                <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+          <div>
+            {isInvitation == true ? (<div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+              <div style={{ display: 'flex', alignItems: 'center' }} >
+                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                  <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+                </div>
+                <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
               </div>
-              <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
-            </div>
+            </div>) : ''}
           </div>
 
           {resultArr.map((value, key) => {

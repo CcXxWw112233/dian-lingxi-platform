@@ -7,22 +7,46 @@ import {
   ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, NOT_HAS_PERMISION_COMFIRN, MEMBERS, CATCH_UP, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
   ORG_TEAM_BOARD_QUERY, MESSAGE_DURATION_TIME
 } from "../../../../globalset/js/constant";
-import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
-import {message} from "antd/lib/index";
+import { checkIsHasPermission, currentNounPlanFilterName } from "../../../../utils/businessFunction";
+import { message } from "antd/lib/index";
+import { isApiResponseOk } from "@/utils/handleResponseData";
+import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
 
 export default class Header extends React.Component {
   state = {
     ShowAddMenberModalVisibile: false,
   };
   addMembers(data) {
-    const { users } = data
-    this.props.inviteJoinOrganization({
-      members: users,
-      // org_id: Cookies.get('org_id')
+
+    const { invitationType, invitationId, rela_Condition } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: '11',
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitation_org,
+          role_id: res.data.role_id,
+          type: '11',
+          users: temp_ids,
+          rela_condition: rela_Condition,
+        }).then(res => {
+
+        })
+      }
     })
+
+    // const { users } = data
+    // this.props.inviteJoinOrganization({
+    //   members: users,
+    //   // org_id: Cookies.get('org_id')
+    // })
   }
   setShowAddMenberModalVisibile() {
-    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
+    if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -32,7 +56,7 @@ export default class Header extends React.Component {
   }
 
   render() {
-    const { datas: { member_count = 0}} = this.props.model
+    const { datas: { member_count = 0 } } = this.props.model
     const menu = () => (
       <Menu>
         <Menu.Item key={'1'}>
@@ -40,7 +64,7 @@ export default class Header extends React.Component {
         </Menu.Item>
         <Menu.Item key={'2'} disabled>
           {/*<Tooltip placement="top" title={'即将上线'}>*/}
-            管理层
+          管理层
           {/*</Tooltip>*/}
         </Menu.Item>
         <Menu.Item key={'3'} disabled>
@@ -74,25 +98,25 @@ export default class Header extends React.Component {
     );
     return (
       <div>
-      <div className={indexStyle.headerOut}>
-        <div className={indexStyle.left}>
-          <div>全部{currentNounPlanFilterName(MEMBERS)} · {member_count}</div>
-          <Dropdown overlay={menu()}>
-             <div><Icon type="down" style={{fontSize: 14, color: '#595959'}}/></div>
-          </Dropdown>
-        </div>
+        <div className={indexStyle.headerOut}>
+          <div className={indexStyle.left}>
+            <div>全部{currentNounPlanFilterName(MEMBERS)} · {member_count}</div>
+            <Dropdown overlay={menu()}>
+              <div><Icon type="down" style={{ fontSize: 14, color: '#595959' }} /></div>
+            </Dropdown>
+          </div>
 
-        <div className={indexStyle.right}>
-          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
-            <div style={{marginRight: 12}} onClick={this.setShowAddMenberModalVisibile.bind(this)}>添加{currentNounPlanFilterName(MEMBERS)}</div>
-          )}
-          {/*<Tooltip title={'该功能尚未上线，敬请期待！'}>*/}
+          <div className={indexStyle.right}>
+            {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
+              <div style={{ marginRight: 12 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>添加{currentNounPlanFilterName(MEMBERS)}</div>
+            )}
+            {/*<Tooltip title={'该功能尚未上线，敬请期待！'}>*/}
             {/*<div>批量导入{currentNounPlanFilterName(MEMBERS)}</div>*/}
-          {/*</Tooltip>*/}
-          <Icon type="appstore-o" style={{fontSize: 14, marginTop: 18, marginLeft: 16, color: '#e5e5e5'}}/>
+            {/*</Tooltip>*/}
+            <Icon type="appstore-o" style={{ fontSize: 14, marginTop: 18, marginLeft: 16, color: '#e5e5e5' }} />
+          </div>
         </div>
-      </div>
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} invitationId={localStorage.getItem('OrganizationId')} invitationType='11' invitationOrg={localStorage.getItem('OrganizationId')} />
 
       </div>
     )

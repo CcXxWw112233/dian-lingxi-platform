@@ -11,9 +11,10 @@ import NoPermissionUserCard from './../../../../../components/NoPermissionUserCa
 import UserCard from './../../../../../components/UserCard/index'
 import { connect } from "dva/index";
 import { getGlobalData } from "../../../../../utils/businessFunction";
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 
 const TextArea = Input.TextArea
-
 
 // const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。如果使用中需要问题，可以随时联系我们进行交流或反馈：https://lingxi.di-an.com'
 const detaiDescription = '添加简介'
@@ -145,18 +146,67 @@ export default class DrawDetailInfo extends React.Component {
 
   // 邀请人进项目
   addMenbersInProject = (data) => {
-    console.log(data, '555555');
+    const { invitationType, invitationId, rela_Condition, dispatch } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: invitationType,
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: invitationType,
+          users: temp_ids,
+          rela_condition: rela_Condition,
+        }).then(res => {
+          if (isApiResponseOk(res)) {
+            if (invitationType === '1') {
+              dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+              dispatch({
+                type: 'projectDetailTask/getCardDetail',
+                payload: {
+                  id: card_id
+                }
+              })
+              dispatch({
+                type: 'workbenchTaskDetail/projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+              dispatch({
+                type: 'workbenchTaskDetail/getCardDetail',
+                payload: {
+                  id,
+                  board_id,
+                  calback: function (data) {
+                    dispatch({
+                      type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                      payload: {
+                        _organization_id: data.org_id
+                      }
+                    })
+                  }
+                }
+              })
+            } else if (invitationType === '4') {
 
-    const { dispatch } = this.props
-    dispatch({
-      type: 'projectDetail/addMenbersInProject',
-      payload: {
-        ...data
+            }
+          }
+        })
       }
     })
   }
 
-  
+
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], invitationId, invitationType } = this.props

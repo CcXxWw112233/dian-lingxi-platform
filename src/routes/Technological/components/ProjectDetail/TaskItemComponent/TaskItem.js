@@ -351,11 +351,11 @@ export default class TaskItem extends React.Component {
     //   if (!acc) return curr
     //   return `${acc},${curr}`
     // }, '')
-    this.handleSetContentPrivilege(users_arr, 'read', params)
+    this.handleSetContentPrivilege(users_arr, 'read')
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', params) => {
+  handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', ) => {
 
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
@@ -365,34 +365,21 @@ export default class TaskItem extends React.Component {
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
-    organizationInviteWebJoin({
-      _organization_id: params.invitationOrg,
-      type: params.invitationType,
-      users: temp_ids
+
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.warning(res.message)
+        message.error(errorText)
       }
     })
-
-    // setContentPrivilege({
-    //   content_id,
-    //   content_type,
-    //   privilege_code,
-    //   user_ids: temp_ids
-    // }).then(res => {
-    //   if (res && res.code === '0') {
-    //     let temp_arr = []
-    //     temp_arr.push(res.data)
-    //     this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
-    //   } else {
-    //     message.error(errorText)
-    //   }
-    // })
   }
 
   handleVisitControlPopoverVisible = (flag) => {

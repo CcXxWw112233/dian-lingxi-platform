@@ -18,8 +18,8 @@ import { message } from "antd/lib/index";
 import { connect, } from 'dva';
 import hobbyImg from '@/assets/sider_left/smile.png'
 import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
-import {isApiResponseOk} from "@/utils/handleResponseData";
-
+import { isApiResponseOk } from "@/utils/handleResponseData";
+import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 let timer;
@@ -52,15 +52,15 @@ export default class SiderLeft extends React.Component {
     this.getInitList()
   }
 
-   // 获取通知设置的列表
-   getInitList = () => {
+  // 获取通知设置的列表
+  getInitList = () => {
     getUsersNoticeSettingList().then((res) => {
-        if (isApiResponseOk(res)) {
-            // console.log(res, 'sssss')
-            // console.log(res, 'ssss')
-        } else {
-            message.error(res.message)
-        }
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'sssss')
+        // console.log(res, 'ssss')
+      } else {
+        message.error(res.message)
+      }
     })
   }
 
@@ -148,16 +148,38 @@ export default class SiderLeft extends React.Component {
   }
 
   addMembers(data) {
-    const { users } = data
-    const { currentSelectOrganize = {}, dispatch } = this.props
-    const { id } = currentSelectOrganize
-    dispatch({
-      type: 'technological/inviteJoinOrganization',
-      payload: {
-        members: users,
-        // org_id: id
+
+    const { invitationType, invitationId, rela_Condition } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: '11',
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: '11',
+          users: temp_ids,
+          rela_condition: rela_Condition,
+        }).then(res => {
+
+        })
       }
     })
+
+    // const { users } = data
+    // const { currentSelectOrganize = {}, dispatch } = this.props
+    // const { id } = currentSelectOrganize
+    // dispatch({
+    //   type: 'technological/inviteJoinOrganization',
+    //   payload: {
+    //     members: users,
+    //     // org_id: id
+    //   }
+    // })
   }
 
   // 切换组织的点击事件
@@ -277,14 +299,14 @@ export default class SiderLeft extends React.Component {
         break
     }
   }
-    //选择全组织, 默认回到工作台
-    nextMenuClick(key) {
-      let data = {
-        key: key,
-        code: 'Workbench'
-      }
-      this.menuClick(data)
+  //选择全组织, 默认回到工作台
+  nextMenuClick(key) {
+    let data = {
+      key: key,
+      code: 'Workbench'
     }
+    this.menuClick(data)
+  }
 
   //设置全局搜索
   setGlobalSearchModalVisible() {
@@ -341,7 +363,7 @@ export default class SiderLeft extends React.Component {
     // console.log(checked, 'sssss')
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { is_simple_model } = user_set
-    const { dispatch} = this.props
+    const { dispatch } = this.props
     dispatch({
       type: 'technological/setShowSimpleModel',
       payload: {
@@ -349,7 +371,7 @@ export default class SiderLeft extends React.Component {
         checked
       }
     })
-  
+
   }
 
 
@@ -669,7 +691,7 @@ export default class SiderLeft extends React.Component {
 
         <CreateOrganizationModal dispatch={this.props.dispatch} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)} />
 
-        <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} invitationId={localStorage.getItem('OrganizationId')} invitationType='11' invitationOrg={localStorage.getItem('OrganizationId')} />
 
         {this.state.NotificationSettingsModalVisible && (
           <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />

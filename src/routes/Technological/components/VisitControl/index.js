@@ -70,12 +70,9 @@ class VisitControl extends Component {
       invitationId, invitationOrg } = this.props;
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform');
-    const params = {
-      invitationType: invitationType, invitationId: invitationId, invitationOrg: invitationOrg, rela_condition: ''
-    }
     this.handleNotPlatformMember(members)
       .then(users_arr => [...users_arr, ...filterPlatformUsersId(members)])
-      .then(users_arr => handleAddNewMember(users_arr, params));
+      .then(users_arr => handleAddNewMember(users_arr));
   };
   async handleNotPlatformMember(members) {
     const isNotPlatformMember = m => m.type == 'other';

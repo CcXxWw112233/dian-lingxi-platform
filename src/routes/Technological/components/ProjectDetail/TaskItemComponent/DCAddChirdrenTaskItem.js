@@ -33,7 +33,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   //初始化根据props设置state
   initSet(props) {
     const { chirldTaskItemValue } = this.props
-    const {  due_time, executors=[], card_name  } = chirldTaskItemValue
+    const { due_time, executors = [], card_name } = chirldTaskItemValue
     let local_executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -215,7 +215,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
     const { card_id, is_realize = '0' } = chirldTaskItemValue
-    const { projectDetailInfoData = {} } = this.props
+    const { projectDetailInfoData = {}, drawContent = {}, } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { local_card_name, isInEditTaskName, local_executor = {}, local_due_time } = this.state
 
@@ -249,7 +249,13 @@ export default class DCAddChirdrenTaskItem extends React.Component {
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16 }}>&#xe70f;</div>
             </Popconfirm>
             <Dropdown overlay={
-              <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={local_executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
+              <DCMenuItemOne
+                deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={local_executor}
+                execusorList={data}
+                setList={this.setList.bind(this)}
+                chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} isInvitation={true}
+                invitationType='4'
+                invitationId={drawContent.list_id} />
             }>
               {local_executor.user_id ? (
                 <Tooltip title={local_executor.user_name || local_executor.full_name || '佚名'}>

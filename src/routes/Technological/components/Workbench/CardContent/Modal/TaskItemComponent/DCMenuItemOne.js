@@ -1,6 +1,9 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Menu } from 'antd'
+// import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+// import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
+// import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 
 export default class DCMenuItemOne extends React.Component {
   state = {
@@ -62,8 +65,43 @@ export default class DCMenuItemOne extends React.Component {
       resultArr
     })
   }
+
+  addMenbersInProject = (data) => {
+    // const { invitationType, invitationId, rela_Condition, } = this.props
+    // console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
+    // const temp_ids = data.users.split(",")
+    // const invitation_org = localStorage.getItem('OrganizationId')
+    // organizationInviteWebJoin({
+    //   _organization_id: invitation_org,
+    //   type: invitationType,
+    //   users: temp_ids
+    // }).then(res => {
+    //   if (res && res.code === '0') {
+    //     commInviteWebJoin({
+    //       id: invitationId,
+    //       role_id: res.data.role_id,
+    //       type: invitationType,
+    //       users: temp_ids,
+    //       rela_condition: rela_Condition,
+    //     }).then(res => {
+    //       if (isApiResponseOk(res)) {
+    //         //...
+    //       }
+    //     })
+    //   }
+    // })
+  }
+  setShowAddMenberModalVisibile() {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
   render() {
-    const { execusorList, canNotRemoveItem, currentExecutor = {} } = this.props //currentExecutor当前已选执行人
+    const { execusorList, canNotRemoveItem, currentExecutor = {}, invitationType, invitationId, isInvitation } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
     const executorUserId = currentExecutor.user_id
 
@@ -72,6 +110,16 @@ export default class DCMenuItemOne extends React.Component {
         <div className={DrawerContentStyles.menuOne}>
           <div style={{ width: 160, height: 42, margin: '0 auto' }}>
             <Input placeholder={'请输入负责人名称'} value={keyWord} style={{ width: 160, marginTop: 6 }} onChange={this.onChange.bind(this)} />
+          </div>
+          <div>
+            {isInvitation == true ? (<div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+              <div style={{ display: 'flex', alignItems: 'center' }} >
+                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                  <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+                </div>
+                <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
+              </div>
+            </div>) : ('')}
           </div>
           {resultArr.map((value, key) => {
             const { user_id, full_name, fullName, mobile, email, avatar, name } = value
@@ -96,6 +144,16 @@ export default class DCMenuItemOne extends React.Component {
             )
           })}
         </div>
+        {/* <ShowAddMenberModal
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          {...this.props}
+          invitationType={invitationType}
+          invitationId={invitationId}
+          invitationOrg={localStorage.getItem('OrganizationId')}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+        /> */}
       </div>
     )
   }

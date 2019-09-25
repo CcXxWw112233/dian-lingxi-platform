@@ -7,7 +7,11 @@ import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
+import { connect } from 'dva';
 
+@connect(({ technological, }) => ({
+    technological
+}))
 export default class MenuSearchPartner extends React.Component {
     state = {
         resultArr: [],
@@ -100,10 +104,8 @@ export default class MenuSearchPartner extends React.Component {
         })
     }
     addMenbersInProject = (data) => {
-        console.log(data, 'MenuSearchPartner=====');
-
-        const { invitationType, invitationId, rela_Condition, } = this.props
-        console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
+        console.log('MenuSearchPartner=====');
+        const { invitationType, invitationId, rela_Condition, dispatch } = this.props
         const temp_ids = data.users.split(",")
         const invitation_org = localStorage.getItem('OrganizationId')
         organizationInviteWebJoin({
@@ -119,8 +121,45 @@ export default class MenuSearchPartner extends React.Component {
                     users: temp_ids,
                     rela_condition: rela_Condition,
                 }).then(res => {
-                    if (isApiResponseOk(res) == 0) {
-                        //...
+                    return
+                    if (isApiResponseOk(res)) {
+                        if (invitationType === '4') {
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'projectDetailTask/getCardDetail',
+                                payload: {
+                                    id: card_id
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchTaskDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchTaskDetail/getCardDetail',
+                                payload: {
+                                    id,
+                                    board_id,
+                                    calback: function (data) {
+                                        dispatch({
+                                            type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                                            payload: {
+                                                _organization_id: data.org_id
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        } else if (invitationType === '4') {
+
+                        }
                     }
                 })
             }
@@ -137,8 +176,7 @@ export default class MenuSearchPartner extends React.Component {
     }
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode,
-            invitationType, invitationId, rela_Condition, } = this.props
+        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, } = this.props
 
         return (
             <div>

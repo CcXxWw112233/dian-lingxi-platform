@@ -38,6 +38,8 @@ import VisitControl from './../../../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../../../services/technological/project'
 import InformRemind from '@/components/InformRemind'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import MenuSearchPartner from '../../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -1378,9 +1380,6 @@ class DrawContent extends React.Component {
             <span style={{ marginTop: '-2px', marginRight: is_privilege === '1' ? '30px' : '10px' }}>
               {drawContent.card_id && (
                 <VisitControl
-                  invitationId={card_id}
-                  invitationType='3'
-                  board_id={board_id}
                   isPropVisitControl={is_privilege === '1' ? true : false}
                   handleVisitControlChange={this.handleVisitControlChange}
                   principalList={executors}
@@ -1446,13 +1445,31 @@ class DrawContent extends React.Component {
                   {!executors.length ? (
                     <div>
                       <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                  <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                  <Dropdown overlay={
+                        <MenuSearchPartner
+                          // addMenbersInProject={this.addMenbersInProject}
+                          invitationType='4'
+                          invitationId={card_id}
+                          listData={data}
+                          keyCode={'user_id'}
+                          searchName={'name'}
+                          currentSelect={executors}
+                          chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                         <span>指派负责人</span>
                       </Dropdown>
                     </div>
                   ) : (
                       <div className={DrawerContentStyles.excutorsOut}>
-                        <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <Dropdown overlay={
+                          <MenuSearchPartner
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data}
+                            keyCode={'user_id'}
+                            searchName={'name'}
+                            currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                        >
+
                           <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                             {executors.map((value, key) => {
                               const { avatar, name, user_name, user_id } = value
@@ -1487,16 +1504,27 @@ class DrawContent extends React.Component {
             <div className={DrawerContentStyles.divContent_1}>
               <div className={DrawerContentStyles.contain_3}>
                 {/*负责人*/}
-                <div style={{ display: 'none' }}>
+                {/* <div style={{ display: 'none' }}>
                   {!executor.user_id ? (
                     <div>
                       <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                      <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
-                        <span>指派负责人</span>
+                      <Dropdown overlay={
+                        <MenuSearchPartner
+                          // addMenbersInProject={this.addMenbersInProject}
+                          invitationType='4'
+                          invitationId={card_id}
+                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                      >                        <span>指派负责人</span>
                       </Dropdown>
                     </div>
                   ) : (
-                      <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                      <Dropdown overlay={
+                        <MenuSearchPartner
+                          // addMenbersInProject={this.addMenbersInProject}
+                          invitationType='4'
+                          invitationId={card_id}
+                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                      >                      }>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           {executor.avatar ? (
                             <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
@@ -1509,7 +1537,7 @@ class DrawContent extends React.Component {
                         </div>
                       </Dropdown>
                     )}
-                </div>
+                </div> */}
                 {/*时间*/}
                 <div style={{ display: 'none' }}>
                   <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
