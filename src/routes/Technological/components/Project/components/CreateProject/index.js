@@ -476,7 +476,7 @@ class CreateProject extends React.Component {
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
         {/* 他人信息 */}
-        <InviteOthers _organization_id={_organization_id} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+        <InviteOthers _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
         {/* 确认 */}
         <div style={{marginTop: 20, marginBottom: 20, }}>
           <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
