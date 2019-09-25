@@ -157,8 +157,11 @@ class Gantt extends Component {
 
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
-
-    if (!!start_time || !!due_time) { //如果有截至时间或者开始时间
+    const schedule_cards_has_this = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id) != -1  //排期任务是否含有该条
+    console.log('sssss', {
+      schedule_cards_has_this
+    })
+    if ((!!start_time || !!due_time) && !schedule_cards_has_this) { //如果有截至时间或者开始时间
       // 排期了则过滤掉当前
       list_group_new[group_index].lane_data.cards.push(
         { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
