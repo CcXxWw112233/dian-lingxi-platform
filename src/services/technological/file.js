@@ -135,6 +135,7 @@ export async function fileVersionist(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/version_list`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.version_id),
     params,
   });
 }
