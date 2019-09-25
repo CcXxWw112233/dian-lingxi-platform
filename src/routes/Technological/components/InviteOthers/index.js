@@ -4,29 +4,29 @@ import styles from './index.less'
 import { connect } from 'dva'
 import { debounce } from './../../../../utils/util'
 import { validateTel, validateEmail } from './../../../../utils/verify'
-import { associateUser } from './../../../../services/technological/workbench'
+import { associateUser, getCurrentOrgAccessibleAllMembers, getCurrentOrgAllMembers, getProjectUserList } from './../../../../services/technological/workbench'
 import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png'
-import defaultOrgAvatar from './../../../../assets/invite/org_default_avatar@2x.png'
 import { getPinyin } from './../../../../utils/pinyin'
 import classNames from 'classnames/bind'
+import { getAccessibleGroupList, getGroupList } from './../../../../services/technological/organizationMember'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
 
-@connect(({ technological, organizationMember, workbench }) => ({
-  currentOrg: technological.datas.currentSelectOrganize,
-  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList,
-  projectListWithUsers: workbench.datas.projectUserList,
-  groupList:
-    organizationMember.datas && organizationMember.datas.groupList
-      ? organizationMember.datas.groupList
-      : []
+@connect(({
+  technological: {
+    datas: {
+      currentSelectOrganize = {},
+    }
+  },
+}) => ({
+  currentSelectOrganize,
 }))
 class InviteOthers extends Component {
   constructor(props) {
     super(props)
-    const { currentOrgAllMembersList } = props
     this.fetchUsers = debounce(this.fetchUsers, 300)
     this.state = {
       local_organization_id: this.props._organization_id, //传递进来的orgid
@@ -34,10 +34,11 @@ class InviteOthers extends Component {
       inputRet: [],
       fetching: false, // 是否在搜索查询
       selectedMember: [], //已经选择的成员或平台外人员
-      membersListToSelect: Array.isArray(currentOrgAllMembersList)
-        ? currentOrgAllMembersList
-        : [], //人员选择列表
+      currentOrgAllMembersList: [], //人员列表
+      membersListToSelect: [],//人员选择列表
       projectList: [], //我参与的项目列表
+      projectUserList: [],
+      groupList: [], //组织成员分组
       currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
       currentMemberListSet: 'org', //当前显示的集合 org || group-id || project-id
       isInSelectedList: false, //是否仅显示列表的
@@ -82,15 +83,17 @@ class InviteOthers extends Component {
     const splitSymbol = this.genSplitSymbol()
     return `${icon}${splitSymbol}${name}${splitSymbol}${user}${splitSymbol}${isFromPlatForm}${
       id ? `${splitSymbol}${id}` : ''
-    }`
+      }`
   }
 
   // 给一个成员默认的结构
   genUserToDefinedMember = user => {
+    // console.log('sssss', { user })
     if (!user || !(user.id || user.user_id)) return
     const {
       avatar = 'default',
       full_name = 'default',
+      name,
       mobile,
       email,
       id,
@@ -100,7 +103,7 @@ class InviteOthers extends Component {
     return this.parseUserValueStr(
       this.genUserValueStr(
         avatar,
-        full_name,
+        name,
         mobileOrEmail,
         true,
         id ? id : user_id
@@ -139,7 +142,7 @@ class InviteOthers extends Component {
             if (res.code && res.code === '0') {
               //如果查到了用户
               if (res.data && res.data.length) {
-              const users = res.data.map(i => {
+                const users = res.data.map(i => {
                   const { avatar, name, id, mobile, email } = i
                   const value = this.genUserValueStr(
                     avatar,
@@ -173,7 +176,7 @@ class InviteOthers extends Component {
                 })
               } else {
                 const isValidUser = this.isValidMobileOrValidEmail(user)
-                if(!isValidUser) {
+                if (!isValidUser) {
                   this.setState({
                     fetching: false,
                   })
@@ -219,8 +222,8 @@ class InviteOthers extends Component {
     const { selectedMember } = this.state
     const selectedUser = this.parseUserValueStr(value.key)
     const isHasSameMemberInSelectedMember = () =>
-      selectedMember.find(item => item.user === selectedUser.user)
-      //如果该用户已经在被选择的列表中了
+      selectedMember.find(item => item.id ? item.id === selectedUser.id : false)
+    //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
       message.destroy()
       message.info('已选择该用户')
@@ -243,10 +246,10 @@ class InviteOthers extends Component {
 
   // 当没有提交的时候返回的结果
   handleReturnResultWhenNotShowSubmitBtn = () => {
-    const {handleInviteMemberReturnResult, isShowSubmitBtn} = this.props
-      if(isShowSubmitBtn) return
-      const {selectedMember} = this.state
-      handleInviteMemberReturnResult(selectedMember)
+    const { handleInviteMemberReturnResult, isShowSubmitBtn } = this.props
+    if (isShowSubmitBtn) return
+    const { selectedMember } = this.state
+    handleInviteMemberReturnResult(selectedMember)
   }
 
   // 取消选中时的回调
@@ -285,7 +288,7 @@ class InviteOthers extends Component {
     return (
       <p className={styles.input__select_wrapper}>
         <span className={styles.input__select_avatar_img}>
-          <img src={this.isAvatarValid(avatar) ? avatar : defaultUserAvatar} style={{borderRadius: '50%'}} width="24" height="24" alt="" />
+          <img src={this.isAvatarValid(avatar) ? avatar : defaultUserAvatar} style={{ borderRadius: '50%' }} width="24" height="24" alt="" />
         </span>
         <span className={styles.input__select_user}>{user}</span>
         <span className={styles.input__select_name}>({name ? name : '匿名用户'})</span>
@@ -362,14 +365,14 @@ class InviteOthers extends Component {
         ele.full_name
           ? ele.full_name
           : ele.nickname
-          ? ele.nickname
-          : ele.mobile
-          ? ele.mobile
-          : ele.email
-          ? ele.email
-          : ele.name
-          ? ele.name
-          : 'garbage data'
+            ? ele.nickname
+            : ele.mobile
+              ? ele.mobile
+              : ele.email
+                ? ele.email
+                : ele.name
+                  ? ele.name
+                  : 'garbage data'
       const aNameCapital = getPinyin(getName(a), '').toUpperCase()[0]
       const bNameCapital = getPinyin(getName(b), '').toUpperCase()[0]
       return aNameCapital.localeCompare(bNameCapital)
@@ -388,8 +391,8 @@ class InviteOthers extends Component {
   handleClickedInviteFromProject = () => {
     const { dispatch } = this.props
     const initProjectList = () => {
-      const { projectListWithUsers } = this.props
-      if (!projectListWithUsers.length) {
+      const { projectUserList } = this.state
+      if (!projectUserList.length) {
         message.destroy()
         message.info('当前没有创建任何项目')
         return
@@ -397,7 +400,7 @@ class InviteOthers extends Component {
       this.setState({
         isInSelectedList: true,
         step: 'project-list',
-        projectList: projectListWithUsers.map(({ board_id, board_name }) => ({
+        projectList: projectUserList.map(({ board_id, board_name }) => ({
           board_id,
           board_name
         }))
@@ -405,10 +408,11 @@ class InviteOthers extends Component {
     }
     // 获取项目列表 ？？
     const fetchProjectList = async () => {
-      await dispatch({
-        type: 'workbench/getProjectUserList',
-        payload: {}
-      })
+      // await dispatch({
+      //   type: 'workbench/getProjectUserList',
+      //   payload: {}
+      // })
+      // await this.getProjectUserList()
       return initProjectList()
     }
     fetchProjectList()
@@ -418,8 +422,8 @@ class InviteOthers extends Component {
   handleClickedInviteFromProjectList = (id, e) => {
     if (e) e.stopPropagation()
     const getProjectMembers = () => {
-      const { projectListWithUsers } = this.props
-      const findProject = projectListWithUsers.find(
+      const { projectUserList } = this.state
+      const findProject = projectUserList.find(
         item => item.board_id === id
       )
       const isProjectWithUsers = findProject
@@ -443,7 +447,7 @@ class InviteOthers extends Component {
   handleClickedInviteFromGroupList = (id, e) => {
     if (e) e.stopPropagation()
     const getGroupMembers = () => {
-      const { groupList } = this.props
+      const { groupList = [] } = this.state
       const findGroup = groupList.find(item => item.id === id)
       const isGroupWithMembers = findGroup
         ? findGroup.members && Array.isArray(findGroup.members)
@@ -458,7 +462,7 @@ class InviteOthers extends Component {
 
   // 点击返回的操作
   handleBack = () => {
-    const { currentOrgAllMembersList, groupList } = this.props
+    const { currentOrgAllMembersList } = this.state
     const { step } = this.state
     const [type, id] = step.split('-')
     //step: 当前的步进 home || group-list || group-id || project-list ||project-id
@@ -540,7 +544,7 @@ class InviteOthers extends Component {
           selectedMember: [...selectedMember, ...findItemNotInSelectedList]
         }
       }, () => {
-      this.handleReturnResultWhenNotShowSubmitBtn()
+        this.handleReturnResultWhenNotShowSubmitBtn()
       })
     }
   }
@@ -549,20 +553,39 @@ class InviteOthers extends Component {
   getGroupList = (payload = {}) => {
     const { dispatch } = this.props
     const { _organization_id } = payload
-    if(!_organization_id || _organization_id == '0') {
+    if (!_organization_id || _organization_id == '0') {
       return
     }
-    dispatch({
-      type: 'organizationMember/getGroupList',
-      payload: {
-        ...payload
+    getAccessibleGroupList({ ...payload }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          groupList: res.data
+        })
+      } else {
+        message.warn(res.message)
+      }
+
+    })
+    getCurrentOrgAccessibleAllMembers({ ...payload }).then(res => {
+      if (isApiResponseOk(res)) {
+        const users = res.data.users
+        this.setState({
+          currentOrgAllMembersList: users,
+          membersListToSelect: users
+        })
+      } else {
+        message.warn(res.message)
       }
     })
-    dispatch({
-      type: 'technological/fetchCurrentOrgAllMembers',
-      payload: {
-        ...payload
+    getProjectUserList().then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          projectUserList: res.data
+        })
+      } else {
+        message.warn(res.message)
       }
+
     })
   }
 
@@ -582,8 +605,8 @@ class InviteOthers extends Component {
 
   componentDidMount() {
     const { _organization_id, shouldNotGetGroupInDidMount } = this.props
-    if(!shouldNotGetGroupInDidMount) {
-      this.getGroupList({ 
+    if (!shouldNotGetGroupInDidMount) {
+      this.getGroupList({
         _organization_id
       })
     }
@@ -591,17 +614,15 @@ class InviteOthers extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    const { _organization_id, currentOrgAllMembersList } = nextProps
+    const { _organization_id } = nextProps
     const { local_organization_id } = this.state
-    if(local_organization_id != _organization_id) {
+    if (local_organization_id != _organization_id) {
       this.setState({
         local_organization_id: _organization_id
       })
-      this.getGroupList({_organization_id})
+      this.getGroupList({ _organization_id })
     }
-    this.setState({
-      membersListToSelect: currentOrgAllMembersList
-    })
+
   }
 
   // 渲染没有数据的时候
@@ -612,7 +633,7 @@ class InviteOthers extends Component {
   // 渲染列表的结构
   renderSelectList = () => {
     const { step, projectList, isInSelectedList } = this.state
-    const { groupList } = this.props
+    const { groupList = [] } = this.state
     const selectHome = () => (
       <>
         <div
@@ -687,7 +708,7 @@ class InviteOthers extends Component {
       invite__select_list_wrapper: true,
       invite__select_list_wrapper_with_out_border_bottom: isInSelectedList
     })
-    
+
     const mapCallback = condition[step]
     const wrapper = (
       <div className={selectListWrapper}>
@@ -700,8 +721,7 @@ class InviteOthers extends Component {
     const {
       title,
       submitText,
-      currentOrg,
-      currentOrgAllMembersList,
+      currentSelectOrganize,
       isShowTitle,
       isShowSubmitBtn,
       children,
@@ -714,10 +734,15 @@ class InviteOthers extends Component {
       selectedMember,
       membersListToSelect,
       isInSelectedList,
+      currentOrgAllMembersList,
       step
     } = this.state
 
-    const isGetData = () => currentOrg && currentOrgAllMembersList
+    // console.log('ssss', {
+    //   selectedMember
+    // })
+
+    const isGetData = () => currentSelectOrganize && currentOrgAllMembersList
     if (!isGetData()) {
       return this.renderWhenNoData()
     }
@@ -748,8 +773,8 @@ class InviteOthers extends Component {
             onChange={this.handleInputChange}
             onSelect={this.handleInputSelected}
             onDeselect={this.handleInputDeselected}
-            style={{ width: '100%'}}
-            dropdownStyle={{zIndex: '9999'}}
+            style={{ width: '100%' }}
+            dropdownStyle={{ zIndex: '9999' }}
             blur={this.handleInputBlur}
           >
             {inputRet.map(item => (
@@ -787,12 +812,12 @@ class InviteOthers extends Component {
                       }
                     />
                   ) : (
-                    <span
-                      className={
-                        styles.invite__select_member_item_operator_unselected
-                      }
-                    />
-                  )}
+                      <span
+                        className={
+                          styles.invite__select_member_item_operator_unselected
+                        }
+                      />
+                    )}
                 </div>
                 {sortedMembersListToSelect.map(item => (
                   <div
@@ -828,12 +853,12 @@ class InviteOthers extends Component {
                           }
                         />
                       ) : (
-                        <span
-                          className={
-                            styles.invite__select_member_item_operator_unselected
-                          }
-                        />
-                      )}
+                          <span
+                            className={
+                              styles.invite__select_member_item_operator_unselected
+                            }
+                          />
+                        )}
                     </span>
                   </div>
                 ))}
@@ -845,15 +870,15 @@ class InviteOthers extends Component {
           <div className={styles.invite__result_list}>
             {selectedMember.map(item => (
               <div key={item.user} className={styles.invite__result_list_item}>
-                <Tooltip overlayStyle={{zIndex: '9999'}} title={item.type === 'other' ? item.user : item.name}>
+                <Tooltip overlayStyle={{ zIndex: '9999' }} title={item.type === 'other' ? item.user : item.name}>
                   <div className={styles.invite__result_list_item_img_wrapper}>
                     <img
                       src={
                         item.type === 'other'
                           ? defaultUserAvatar
                           : this.isAvatarValid(item.icon)
-                          ? item.icon
-                          : defaultUserAvatar
+                            ? item.icon
+                            : defaultUserAvatar
                       }
                       alt=""
                       width="24"
@@ -889,7 +914,7 @@ InviteOthers.defaultProps = {
   submitText: '完成创建', //提交按钮文字
   isDisableSubmitWhenNoSelectItem: false, //如果没有选择 item 就禁用提交
   isShowSubmitBtn: true, //是否显示提交按钮
-  handleInviteMemberReturnResult: function() {
+  handleInviteMemberReturnResult: function () {
     message.info('邀请他人组件， 需要被提供一个回调函数')
   },
   _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
