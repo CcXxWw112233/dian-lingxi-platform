@@ -568,7 +568,7 @@ class InviteOthers extends Component {
     })
     getCurrentOrgAccessibleAllMembers({ ...payload }).then(res => {
       if (isApiResponseOk(res)) {
-        const users = res.data.users
+        const users = res.data.users || []
         this.setState({
           currentOrgAllMembersList: users,
           membersListToSelect: users
