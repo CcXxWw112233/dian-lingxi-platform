@@ -88,10 +88,12 @@ class InviteOthers extends Component {
 
   // 给一个成员默认的结构
   genUserToDefinedMember = user => {
+    // console.log('sssss', { user })
     if (!user || !(user.id || user.user_id)) return
     const {
       avatar = 'default',
       full_name = 'default',
+      name,
       mobile,
       email,
       id,
@@ -101,7 +103,7 @@ class InviteOthers extends Component {
     return this.parseUserValueStr(
       this.genUserValueStr(
         avatar,
-        full_name,
+        name,
         mobileOrEmail,
         true,
         id ? id : user_id
@@ -735,6 +737,10 @@ class InviteOthers extends Component {
       currentOrgAllMembersList,
       step
     } = this.state
+
+    // console.log('ssss', {
+    //   selectedMember
+    // })
 
     const isGetData = () => currentSelectOrganize && currentOrgAllMembersList
     if (!isGetData()) {
