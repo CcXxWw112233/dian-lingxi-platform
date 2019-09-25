@@ -330,20 +330,20 @@ export default class Header extends React.Component {
   appClick(key) {
     if (key === '2') {
       //流程
-      if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
     } else if (key === '3') { // 任务
-      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
     } else if (key === '4') { //文档
-      if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
     } else {
 
     }
