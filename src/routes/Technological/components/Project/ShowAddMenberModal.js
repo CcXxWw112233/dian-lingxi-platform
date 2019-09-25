@@ -91,7 +91,7 @@ class ShowAddMenberModal extends React.Component {
         <CustormModal
           visible={modalVisible}
           width={472}
-          zIndex={1100}
+          zIndex={1009}
           maskClosable={false}
           footer={null}
           destroyOnClose
