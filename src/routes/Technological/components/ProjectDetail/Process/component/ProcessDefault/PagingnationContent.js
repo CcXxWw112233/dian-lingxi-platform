@@ -117,10 +117,10 @@ export default class PagingnationContent extends React.Component {
   }
   //getProcessListByType
   async processItemClick(obj) {
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { dispatch } = this.props
     await dispatch({
       type: 'projectDetailProcess/getWorkFlowComment',

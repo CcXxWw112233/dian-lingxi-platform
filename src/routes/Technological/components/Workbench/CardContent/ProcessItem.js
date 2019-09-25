@@ -56,10 +56,10 @@ export default class ProcessItem extends React.Component {
     setBoardIdStorage(this.state.value.board_id)
     const { dispatch } = this.props
 
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {
@@ -67,10 +67,10 @@ export default class ProcessItem extends React.Component {
       }
     })
     this.props.updatePublicDatas({ board_id: this.state.value.board_id })
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     //--change in 2019/3/26--end
     await this.setState({
       totalId: {

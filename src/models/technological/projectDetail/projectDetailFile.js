@@ -420,7 +420,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * filePreview({ payload }, { select, call, put }) {
-      const { file_id, file_resource_id, version_id } = payload
+      const { file_id, file_resource_id, version_id, whetherToggleFilePriview } = payload
       const res = yield call(filePreview, { id: file_id })
       if (isApiResponseOk(res)) {
         yield put({
@@ -445,17 +445,20 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-        // yield put({
-        //   type: 'newFileInfoByUrl',
-        //   payload: {
-        //     file_id
-        //   }
-        // })
-
+        // 表示只有版本切换预览的时候才会更新
+        if (whetherToggleFilePriview) {
+          yield put({
+            type: 'newFileInfoByUrl',
+            payload: {
+              file_id
+            }
+          })
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    // 这是用来修改版本信息中预览切换文件时, 面包屑路径的变化
     * newFileInfoByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
@@ -476,14 +479,6 @@ export default modelExtend(projectDetail, {
       }
 
       if (isApiResponseOk(res)) {
-        // yield put({
-        //   type: 'updateDatas',
-        //   payload: {
-        //     filePreviewCurrentVersionList: res.data.version_list,
-        //     filePreviewCurrentVersionId: res.data.version_list.length?res.data.version_list[0]['version_id']: '',
-        //     // filePreviewCurrentId: res.data.base_info.file_resource_id
-        //   }
-        // })
         new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',

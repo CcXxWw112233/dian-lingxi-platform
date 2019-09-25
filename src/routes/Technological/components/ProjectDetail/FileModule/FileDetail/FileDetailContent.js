@@ -1014,7 +1014,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/filePreview',
         payload: {
-          id: file_resource_id, file_id: id
+          id: file_resource_id, file_id: id,
+          whetherToggleFilePriview: true
         }
       })
     }
