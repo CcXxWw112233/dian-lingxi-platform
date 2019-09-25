@@ -101,7 +101,7 @@ export default class ProccessContent extends React.Component {
  render() {
    const { isShowAll } = this.state
    const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [], board_id }} = this.props.model
-   const { name, description, status, privileges = [], } = processInfo //status 1 正在进行 2,暂停 3完成
+   const { name, description, status, privileges = [], is_privilege} = processInfo //status 1 正在进行 2,暂停 3完成
    const data = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
@@ -173,11 +173,11 @@ export default class ProccessContent extends React.Component {
       </div>
       {/* 这里将会有一个蒙层 */}
       <div style={{padding: '36px 34px 0 36px', position: 'relative'}}>
-        {
-          checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
             <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
           )
-        }
+        } */}
         {processEditDatas.map((value, key) => {
           return (
             <div key={key}>

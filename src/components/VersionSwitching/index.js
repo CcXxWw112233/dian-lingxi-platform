@@ -110,14 +110,14 @@ export default class index extends Component {
     const getVersionItemMenu = (list) => {
       return (
         // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <Menu selectable={true} style={{ width: 400, maxHeight: '314px' }}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
           <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
             <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span className={indexStyles.version_title}>版本信息</span>
               <span onClick={() => { this.handleCloseChg() }} className={indexStyles.version_close}>x</span>
             </div>
           </div>
-          <Menu onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
               const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
               // console.log(remarks, 'sssssss')
@@ -193,7 +193,7 @@ export default class index extends Component {
     // 显示点点点的下拉菜单
     const versionItemMenu = ({ list, file_id, file_name }) => {
       return (
-        <Menu onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
           <Menu.Item key="1">设为主版本</Menu.Item>
           <Menu.Item key="3">编辑版本信息</Menu.Item>
           <Menu.Item key="2" disabled>移到回收站</Menu.Item>
@@ -203,7 +203,7 @@ export default class index extends Component {
 
     return (
       <div>
-        <Dropdown visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
+        <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
           <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
             <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息
                 </Button>

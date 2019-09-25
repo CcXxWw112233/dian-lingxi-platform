@@ -239,7 +239,7 @@ class BoardFiles extends Component {
   }
   render() {
     const { dispatch } = this.props
-    const { datas: { selectedRowKeys = [] } } = this.props.model
+    const { selectedRowKeys = [] } = this.props
     const updateDatasFile = (payload) => {
       dispatch({
         type: 'projectDetailFile/updateDatas',
@@ -249,11 +249,11 @@ class BoardFiles extends Component {
     const { boardSelectVisible, boardFileContentVisible, currentBoardId } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    
+
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
-    
+
     return (
       <div className={indexStyles.boardFilesContainer}>
         {
@@ -264,7 +264,7 @@ class BoardFiles extends Component {
                   allOrgBoardTreeList.map((org, orgkey) => {
                     //全组织或者当前组织
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
-                      
+
                       return org.board_list && org.board_list.length > 0 && (
                         <div key={org.org_id}>
                           <div className={indexStyles.groupName}>{org.org_name}</div>
@@ -296,11 +296,15 @@ class BoardFiles extends Component {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '16px' }}>
-                <BoarderfilesHeader board_id={currentBoardId} updateDatasFile={updateDatasFile} {...this.getFileModuleProps()} selectedRowKeys={selectedRowKeys} />
+                <BoarderfilesHeader
+                  board_id={currentBoardId}
+                  updateDatasFile={updateDatasFile}
+                  //  {...this.getFileModuleProps()} 
+                  selectedRowKeys={selectedRowKeys} />
               </div>
 
               <FileModule
-                {...this.getFileModuleProps()}
+                // {...this.getFileModuleProps()}
                 marginTop={'0px'}
                 fileModuleBack={this.fileModuleBack}
                 showBackBtn={true}
@@ -319,7 +323,7 @@ class BoardFiles extends Component {
 
 
 function mapStateToProps({
-  modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,
+  // modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,
   simpleWorkbenchbox: {
     boardListData,
     currentBoardDetail,
@@ -328,15 +332,21 @@ function mapStateToProps({
   simplemode: {
     allOrgBoardTreeList,
     simplemodeCurrentProject
+  },
+  projectDetailFile: {
+    datas: {
+      selectedRowKeys
+    }
   }
 }) {
 
-  const modelObj = {
-    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
-  }
+  // const modelObj = {
+  //   datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
+  // }
 
   return {
-    modal, model: modelObj, loading,
+    // modal, model: modelObj, loading,
+    selectedRowKeys,
     boardListData,
     currentBoardDetail,
     boardFileListData,

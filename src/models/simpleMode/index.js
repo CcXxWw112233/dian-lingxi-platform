@@ -28,11 +28,11 @@ export default {
     },
     subscriptions: {
         setup({ dispatch, history }) {
-            history.listen(async (location) => {
+            history.listen((location) => {
                 if (location.pathname.indexOf('/technological/simplemode') !== -1) {
-                    const initData = async () => {
-                        await Promise.all([
-                            await dispatch({
+                    const initData = () => {
+                        Promise.all([
+                            dispatch({
                                 type: 'initSimplemodeCommData',
                                 payload: {}
                             }),

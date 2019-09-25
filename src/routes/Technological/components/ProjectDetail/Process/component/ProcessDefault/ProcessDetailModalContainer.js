@@ -293,6 +293,8 @@ export default class ProccessDetailModalContainer extends React.Component {
                     getProcessListByType={getProcessListByType}
                     close={close}
                     modalVisible={modalVisible}
+                    visitControlUpdateCurrentModalData={this.props.visitControlUpdateCurrentModalData}
+                    principalList={this.props.principalList}
                 />
             </div>
         )

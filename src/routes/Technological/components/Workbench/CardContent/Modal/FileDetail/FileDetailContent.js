@@ -10,7 +10,7 @@ import CommentListItem2 from './Comment/CommentListItem2'
 import { getRelations, JoinRelation } from "../../../../../../../services/technological/task";
 import { isApiResponseOk } from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
-import { checkIsHasPermissionInBoard, getSubfixName } from "../../../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "../../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW, PROJECT_FILES_FILE_DELETE,
@@ -30,6 +30,7 @@ import withBodyClientDimens from './../../../../../../../components/HOC/withBody
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 
 class FileDetailContent extends React.Component {
 
@@ -359,6 +360,11 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  // 访问控制权限弹窗
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
+
 
   //header
   closeFile() {
@@ -572,66 +578,119 @@ class FileDetailContent extends React.Component {
       message.error('操作失败')
     })
   }
-  handleVisitControlRemoveContentPrivilege = id => {
 
-    const { file_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('file_id', 'privileges')
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
+  handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
-      content_id: file_id,
-      content_type: 'file',
-      user_id: id
+      id: id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        const newPrivileges = {}
-        for (let item in privileges) {
-          if (item !== id) {
-            newPrivileges[item] = privileges[item]
-          }
-        }
-        this.visitControlUpdateCurrentModalData({ privileges: newPrivileges })
+        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移出用户失败')
+        message.warning(res.message)
       }
     })
   }
-  handleClickedOtherPersonListOperatorItem = (id, type) => {
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
-      this.handleVisitControlRemoveContentPrivilege(id)
+      this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
-      this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+      this.handleVisitControlChangeContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
-  handleVisitControlAddNewMember = (ids = []) => {
-    if (!ids.length) return
-    const user_ids = ids.reduce((acc, curr) => {
-      if (!acc) return curr
-      return `${acc},${curr}`
-    }, '')
-    this.handleSetContentPrivilege(user_ids, 'read')
-  }
-  handleSetContentPrivilege = (ids, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+
+  /**
+   * 访问控制设置更新成员
+   * @param {String} id 设置成员对应的id
+   * @param {String} type 设置成员对应的字段
+   */
+  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
     const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
     const content_id = version_id
     const content_type = 'file'
     const privilege_code = type
-    const user_ids = ids
+    let temp_id = []
+    temp_id.push(id)
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids
+      user_ids: temp_id
     }).then(res => {
       if (res && res.code === '0') {
-        const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
-        this.visitControlUpdateCurrentModalData({ privileges: Object.assign({}, privileges, addedPrivileges) })
+        let temp_arr = []
+        temp_arr = res && res.data[0]
+        this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.error(errorText)
+        message.warning(res.message)
       }
     })
   }
+
+  /**
+  * 添加成员的回调
+  * @param {Array} users_arr 添加成员的数组
+  */
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    this.handleSetContentPrivilege(users_arr, 'read')
+  }
+
+  // 访问控制设置回调
+  handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
+    //debugger
+    const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
+    const content_id = version_id
+    const content_type = 'file'
+    const privilege_code = type
+    let temp_ids = [] // 用来保存用户的id
+    if (!Array.isArray(users_arr)) return false
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        let temp_arr = []
+        temp_arr.push(res.data)
+        if (!Array.isArray(temp_arr)) return false
+        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
   handleVisitControlChange = (flag) => {
-    const { is_privilege = '0', file_id } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'file_id')
+    const { is_privilege = '0', version_id } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'version_id')
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag === is_privilege_bool) {
@@ -639,29 +698,117 @@ class FileDetailContent extends React.Component {
     }
     //toggle权限
     const data = {
-      content_id: file_id,
+      content_id: version_id,
       content_type: 'file',
       is_open: flag ? 1 : 0
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
-        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0' }, flag)
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
       } else {
-        message.error('设置内容权限失败，请稍后再试')
+        message.warning(res.message)
       }
     })
     // console.log(flag, 'get visitcontrol change')
   }
+
+  // 访问控制更新数据
   visitControlUpdateCurrentModalData = obj => {
-    const { datas: { currentPreviewFileData, currentPreviewFileData: { belong_folder_id } } } = this.props.model
-    const newCurrentPreviewFileData = Object.assign({}, currentPreviewFileData, obj)
-    this.props.updateDatasFile({
-      currentPreviewFileData: newCurrentPreviewFileData
-    })
-    this.props.getFileList({
-      folder_id: belong_folder_id
-    })
+    const { datas: { currentPreviewFileData, currentPreviewFileData: { folder_id, privileges = [] } }, board_id } = this.props.model
+    const { dispatch } = this.props
+    // 设置访问控制开关
+    if (obj && obj.type && obj.type == 'privilege') {
+      let new_privileges = [...privileges]
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (temp_arr && !temp_arr.length) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+      dispatch({
+        type: 'workbench/getUploadedFileList',
+        payload: {
+
+        }
+      })
+    }
+
+    // 添加成员
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (!Array.isArray(temp_arr)) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
+    // 移除成员
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
+    // 修改成员
+    if (obj && obj.type && obj.type == 'change') {
+      let { id } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = { ...item, content_privilege_code: obj.code }
+        } else {
+          new_item = { ...item }
+        }
+        return new_item
+      })
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
   }
+
   getFieldFromPropsCurrentPreviewFileData = (...fields) => {
     const { datas: { currentPreviewFileData = {} } } = this.props.model
     return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileData[curr] }), {})
@@ -859,10 +1006,16 @@ class FileDetailContent extends React.Component {
 
     const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { is_privilege, privileges } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
+    }
+
+    const zoomPictureParams = {
+      board_id,
+      is_privilege,
+      privileges,
     }
 
     const getVersionItem = (value, key) => {
@@ -878,7 +1031,12 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center' }}>
+      <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
+            <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+          )
+        } */}
         {filePreviewUrl && (
           <ZoomPicture
             {...this.props}
@@ -894,6 +1052,7 @@ class FileDetailContent extends React.Component {
             filePreviewCurrentFileId={filePreviewCurrentFileId}
             filePreviewCurrentId={filePreviewCurrentId}
             workbenchType={"workbenchType"}
+            zoomPictureParams={zoomPictureParams}
           />
         )}
       </div>
@@ -931,7 +1090,7 @@ class FileDetailContent extends React.Component {
           ) : ('')}
 
         </div>
-        {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT) && (
+        {(
           <div className={indexStyles.pictureEditState} style={{ left: (this.props.clientWidth - (isExpandFrame ? 0 : 420)) / 2 }} onClick={this.setEditMode.bind(this)}>
             {!editMode ? ('添加圈点评论') : ('退出圈点模式')}
           </div>
@@ -1087,7 +1246,7 @@ class FileDetailContent extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
           return false
         }
         if (file.status === 'uploading') {
@@ -1113,7 +1272,7 @@ class FileDetailContent extends React.Component {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+          {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) && (
             <Menu.Item key="2">下载</Menu.Item>
           )}
           {/*<Menu.Item key="3">移动</Menu.Item>*/}
@@ -1153,27 +1312,48 @@ class FileDetailContent extends React.Component {
 
 
           <div className={indexStyles.fileDetailHeadRight}>
-            {seeFileInput === 'fileModule' && (
-              <VersionSwitching {...params}
-                handleVersionItem={this.handleVersionItem}
-                getVersionItemMenuClick={this.getVersionItemMenuClick}
-                handleFileVersionDecription={this.handleFileVersionDecription}
-                handleFileVersionValue={this.handleFileVersionValue}
-                uploadProps={uploadProps} />
-            )}
-            {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-              <Button className={indexStyles.download} style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, pdfDownLoadSrc })}>
+            <div style={{ position: 'relative' }}>
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
+                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              }
+              {seeFileInput === 'fileModule' && (
+                <VersionSwitching {...params}
+                  handleVersionItem={this.handleVersionItem}
+                  getVersionItemMenuClick={this.getVersionItemMenuClick}
+                  handleFileVersionDecription={this.handleFileVersionDecription}
+                  handleFileVersionValue={this.handleFileVersionValue}
+                  uploadProps={uploadProps} />
+              )}
+            </div>
+            <div style={{ position: 'relative' }}>
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
+                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              }
+              <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
               </Button>
-            )}
-
+            </div>
             <span style={{ marginLeft: '10px' }}></span>
-            <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
+            {/* <div style={{position: 'relative', display: 'flex'}}> */}
+            <div style={{ position: 'relative' }}>
+              <span>
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                    <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  )
+                }
+                <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
+              </span>
+
+            </div>
+            {/* <div> */}
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
               <VisitControl
-                invitationType='9'
-                invitationId={filePreviewCurrentId}
-                invitationOrg={localStorage.getItem('OrganizationId')}
+                board_id={board_id}
                 isPropVisitControl={is_privilege === '0' ? false : true}
                 handleVisitControlChange={this.handleVisitControlChange}
                 otherPrivilege={privileges}
@@ -1182,6 +1362,8 @@ class FileDetailContent extends React.Component {
                 handleAddNewMember={this.handleVisitControlAddNewMember}
               />
             </span>
+            {/* </div> */}
+            {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
               {seeFileInput === 'fileModule' ? (
                 <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' })}>
@@ -1215,7 +1397,12 @@ class FileDetailContent extends React.Component {
 
             {/*width: isExpandFrame?0:420*/}
             {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                  <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              }
               <ContentRaletion
                 {...this.props}
                 board_id={board_id}
@@ -1239,7 +1426,7 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
+            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 {...this.props} ></Comment2>
               </div>
@@ -1266,6 +1453,7 @@ class FileDetailContent extends React.Component {
                   filePreviewCurrentFileId={filePreviewCurrentFileId}
                   filePreviewCurrentId={filePreviewCurrentId}
                   workbenchType={"workbenchType"}
+                  zoomPictureParams={zoomPictureParams}
                 />
               )}
             </div>

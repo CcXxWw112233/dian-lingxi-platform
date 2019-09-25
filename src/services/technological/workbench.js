@@ -154,6 +154,18 @@ export async function getCurrentOrgAllMembers(params = {}) {
   })
 }
 
+//获取当前组织的所有成员信息（经过访问控制）
+export async function getCurrentOrgAccessibleAllMembers(params = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/accessible/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
 //获取项目流程模板
 export async function getProgressTemplateList(params) {
   return request({

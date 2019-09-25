@@ -13,14 +13,20 @@ import {
   setContentPrivilege,
   removeContentPrivilege
 } from './../../../../../../../services/technological/project';
+// import { projectDetailInfo } from '@/services/technological/projectDetail'
 import InformRemind from '@/components/InformRemind'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
+@connect(({ workbenchDetailProcess = {}, projectDetailProcess = {} }) => ({
+  workbenchDetailProcess, projectDetailProcess
+}))
 export default class Header extends React.Component {
   state = {
     controller: 0
   }
   componentDidMount() {
+    // 判断是否有中止流程的权限
     if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_ABORT)) {
       return false
     }
@@ -50,14 +56,24 @@ export default class Header extends React.Component {
   }
 
   getVisitControlDataFromPropsModelDatasProcessInfo = () => {
-    const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
+    const { processInfo = {} } = this.props.model && this.props.model.datas
+    // const { model: { datas: { processInfo = {} } = {} } = {} } = this.props;
     return processInfo;
   };
 
+  /**
+   * 获取流程执行人列表
+   * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
+   * 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的成员
+   * @param {Array} nodes 当前弹窗中所有节点的推进人
+   */
   genPrincipalListFromAssignees = (nodes = []) => {
+    // const { projectDetailInfoData = {}, board_id } = this.props.model && this.props.model.datas
+    // const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { principalList = [] } = this.props // 需要从外部接受一个执行人列表
     return nodes.reduce((acc, curr) => {
-      if (curr.assignees && curr.assignees.length) {
-        const genNewPersonList = (arr = []) => {
+      if (curr.assignees && curr.assignees.length) { // 表示当前节点中存在推进人
+        const genNewPersonList = (arr = []) => { // 得到一个新的person列表
           return arr.map(user => ({
             avatar: user.avatar,
             name: user.full_name
@@ -70,6 +86,34 @@ export default class Header extends React.Component {
           }));
         };
         const newPersonList = genNewPersonList(curr.assignees);
+        return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
+      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
+        const genNewPersonList = (arr = []) => {
+          return arr.map(user => ({
+            avatar: user.avatar,
+            name: user.full_name
+              ? user.full_name
+              : user.name
+                ? user.name
+                : user.user_id
+                  ? user.user_id
+                  : ''
+          }));
+        };
+        // 数组去重
+        const arrayNonRepeatfy = arr => {
+          let temp_arr = []
+          let temp_id = []
+          for (let i = 0; i < arr.length; i++) {
+            if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+              temp_arr.push(arr[i]);
+              temp_id.push(arr[i]['user_id'])
+            }
+          }
+          return temp_arr
+        }
+        // 执行人去重
+        const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
       }
       return acc
@@ -108,22 +152,30 @@ export default class Header extends React.Component {
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.error('更新用户控制类型失败')
+        message.warning(res.message)
       }
     })
   }
 
+  /**
+   * 访问控制移除成员
+   * @param {String} id 移除成员对应的id
+   */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移除用户内容控制权限失败')
+        message.warning(res.message)
       }
     })
   }
 
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
     const { id, privileges } = this.getVisitControlDataFromPropsModelDatasProcessInfo()
@@ -143,6 +195,8 @@ export default class Header extends React.Component {
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warning(res.message)
       }
     })
   }
@@ -175,135 +229,20 @@ export default class Header extends React.Component {
           flag
         );
       } else {
-        message.error('设置内容权限失败，请稍后再试');
+        message.warning(res.message);
       }
     });
   };
 
-  /**
-   * 这是一个公用的用来区分更新的是工作台流程列表还是项目详情中的流程列表
-   * @param {Array} newProcessInfo 这是需要更新流程的数据
-   * @param {String} type 这是规定只有时切换访问控制状态的时候才需要调用两个列表
-   */
-  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const { status } = originProcessInfo
-    const { projectDetailInfoData = {} } = this.props.model.datas
-    const { board_id } = projectDetailInfoData
-    const { dispatch } = this.props
-    if (projectDetailInfoData && projectDetailInfoData.length) {
-      if (type) {
-        dispatch({
-          type: 'projectDetailProcess/getProcessListByType',
-          payload: {
-            status: status,
-            board_id: board_id
-          }
-        })
-      }
-      dispatch({
-        type: 'projectDetailProcess/updateDatas',
-        payload: {
-          processInfo: newProcessInfo
-        }
-      })
-    } else {
-      if (type) {
-        dispatch({
-          type: 'workbench/getBackLogProcessList',
-          payload: {
-
-          }
-        })
-      }
-      dispatch({
-        type: 'workbenchDetailProcess/updateDatas',
-        payload: {
-          processInfo: newProcessInfo
-        }
-      })
-    }
-  }
-
   visitControlUpdateCurrentModalData = obj => {
-    const originProcessInfo = this.getVisitControlDataFromPropsModelDatasProcessInfo();
-    const { privileges = [], status } = originProcessInfo
-    const { projectDetailInfoData = {} } = this.props.model.datas
-    const { board_id } = projectDetailInfoData
-    const { dispatch } = this.props
-
-    // 访问控制开关
-    if (obj && obj.type && obj.type == 'privilege') {
-      let new_privileges = []
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
-          })
-        }
-      }
-      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
-      // this.props.updateDatasProcess({
-      //   processInfo: newProcessInfo
-      // });
-      // 这是需要获取一下流程列表 区分工作台和项目列表
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-
-    };
-
-    // 访问控制添加
-    if (obj && obj.type && obj.type == 'add') {
-      let new_privileges = []
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
-          })
-        }
-      }
-      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges }
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
-    // 访问控制移除
-    if (obj && obj.type && obj.type == 'remove') {
-      let new_privileges = [...privileges]
-      new_privileges.map((item, index) => {
-        if (item.id == obj.removeId) {
-          new_privileges.splice(index, 1)
-        }
-      })
-      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
-    // 这是更新type类型
-    if (obj && obj.type && obj.type == 'change') {
-      let { id, content_privilege_code, user_info } = obj.temp_arr
-      let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
-        let new_item = item
-        if (item.id == id) {
-          new_item = { ...item, content_privilege_code: obj.code }
-        } else {
-          new_item = { ...item }
-        }
-        return new_item
-      })
-      let newProcessInfo = { ...originProcessInfo, privileges: new_privileges }
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
-    }
-
+    this.props.visitControlUpdateCurrentModalData(obj)
   }
 
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
-    const { data = [], board_id } = projectDetailInfoData //任务执行人列表
+    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
+    const { data = [] } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
@@ -384,6 +323,7 @@ export default class Header extends React.Component {
       nodes
     } = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     const principalList = this.genPrincipalListFromAssignees(nodes);
+
     return (
       <div style={{
         height: '52px',
@@ -405,12 +345,12 @@ export default class Header extends React.Component {
           <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{ float: 'right', position: 'relative' }}>
-          {
-            checkIsHasPermissionInVisitControl('edit', privileges, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
-              <div onClick={this.alarmNoEditPermission} style={{ right: '40px' }} className={globalStyles.drawContent_mask}></div>
+        <div style={{ float: 'right' }}>
+          {/* {
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
             )
-          }
+          } */}
           <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
           <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span
@@ -437,10 +377,23 @@ export default class Header extends React.Component {
               invitationOrg={localStorage.getItem('OrganizationId')}
             />
           </span>
-          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px' }}>
+          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+                <div onClick={this.alarmNoEditPermission} style={{ height: '50px' }} className={globalStyles.drawContent_mask}></div>
+              )
+            }
             <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
-          <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
+          {/* <span style={{position: 'relative'}}>
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id) ) ? ('') : (
+                <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
+              )
+            }
+            <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
+          </span> */}
+
         </div>
       </div>
     )

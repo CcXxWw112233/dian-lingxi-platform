@@ -75,6 +75,13 @@ const MiniBoxNavigations = (props) => {
                 currentSelectedWorkbenchBox: box
             }
         })
+        dispatch({
+            type: 'simplemode/getOrgBoardData',
+            payload: {
+                currentSelectedWorkbenchBox: box
+            }
+        })
+        
 
     }
 

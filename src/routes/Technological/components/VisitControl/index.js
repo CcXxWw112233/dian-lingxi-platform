@@ -121,13 +121,21 @@ class VisitControl extends Component {
   // };
   handleToggleVisitControl = (e) => {
     // console.log(e, 'ssssssss')
-    const { handleVisitControlChange } = this.props
+    const { handleVisitControlChange, isPropVisitControl, otherPrivilege = [], board_id } = this.props
     if (e.key == 'unClock') { // 表示关闭状态
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
       handleVisitControlChange(false)
     } else {
+      if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return false
+      }
       this.setState({
         toggle_selectedKey: e.key
       })
@@ -171,8 +179,12 @@ class VisitControl extends Component {
    */
   handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
     const operatorType = key;
-    const { handleClickedOtherPersonListOperatorItem } = this.props;
+    const { handleClickedOtherPersonListOperatorItem, otherPrivilege, isPropVisitControl, board_id } = this.props;
     const { selectedOtherPersonId, removerOtherPersonId } = this.state;
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
 
     if (operatorType === 'remove') {
       return this.setState({
@@ -232,30 +244,7 @@ class VisitControl extends Component {
     });
     this.togglePopoverVisible
   };
-  addMenbersInProject = (data) => {
-    const { invitationType, invitationId, rela_Condition, } = this.props
-    const temp_ids = data.users.split(",")
-    const invitation_org = localStorage.getItem('OrganizationId')
-    organizationInviteWebJoin({
-      _organization_id: invitation_org,
-      type: invitationType,
-      users: temp_ids
-    }).then(res => {
-      if (res && res.code === '0') {
-        commInviteWebJoin({
-          id: invitationId,
-          role_id: res.data.role_id,
-          type: invitationType,
-          users: temp_ids,
-          rela_condition: rela_Condition,
-        }).then(res => {
-          if (isApiResponseOk(res) == 0) {
-            //...
-          }
-        })
-      }
-    })
-  }
+
   //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE)) {
@@ -403,12 +392,26 @@ class VisitControl extends Component {
   }
 
   toggleVisitControl = () => {
-    const { isPropVisitControl } = this.props
+    const { isPropVisitControl, otherPrivilege = [], board_id } = this.props
     return (
       <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
+            <Menu.Item key="unClock">
+              开放访问
+            </Menu.Item>
+          )
+        } */}
         <Menu.Item key="unClock">
           开放访问
         </Menu.Item>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', otherPrivilege, isPropVisitControl, checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) && (
+            <Menu.Item key="clock">
+              仅列表人员访问
+            </Menu.Item>
+          )
+        } */}
         <Menu.Item key="clock">
           仅列表人员访问
         </Menu.Item>
@@ -677,6 +680,7 @@ class VisitControl extends Component {
     );
     return (
       <div
+        style={{ position: 'relative', zIndex: 6666 }}
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >
@@ -689,6 +693,7 @@ class VisitControl extends Component {
             trigger="click"
             visible={visible}
             onVisibleChange={this.onPopoverVisibleChange}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
           >
             {children ? (
               <span
@@ -735,13 +740,9 @@ class VisitControl extends Component {
           title="邀请他人一起参与"
           submitText="确定"
           show_wechat_invite={true}
-          invitationId={invitationId}
-          invitationType={invitationType}
-          invitationOrg={invitationOrg}
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
-          addMenbersInProject={this.addMenbersInProject}
         />
         <Modal
           visible={comfirmRemoveModalVisible}

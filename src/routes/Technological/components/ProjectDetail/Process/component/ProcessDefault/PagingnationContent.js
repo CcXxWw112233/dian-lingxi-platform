@@ -117,10 +117,10 @@ export default class PagingnationContent extends React.Component {
   }
   //getProcessListByType
   async processItemClick(obj) {
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { dispatch } = this.props
     await dispatch({
       type: 'projectDetailProcess/getWorkFlowComment',
@@ -161,10 +161,116 @@ export default class PagingnationContent extends React.Component {
     });
   }
 
+  // 数组去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
+  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
+    const { dispatch, board_id, processInfo = {} } = this.props
+    const { status } = processInfo
+    dispatch({
+      type: 'projectDetailProcess/updateDatas',
+      payload: {
+        processInfo: newProcessInfo
+      }
+    })
+    if (type) {
+      dispatch({
+        type: 'projectDetailProcess/getProcessListByType',
+        payload: {
+          status: status,
+          board_id: board_id
+        }
+      })
+    }     
+  }
+
+  // 访问控制中流程操作
+  visitControlUpdateCurrentModalData = obj => {
+    const { processInfo = {} } = this.props
+    const { privileges = [] } = processInfo
+
+    // 访问控制开关
+    if (obj && obj.type &&  obj.type == 'privilege') {
+      let new_privileges = [...privileges]
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (temp_arr && !temp_arr.length) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      // this.props.updateDatasProcess({
+      //   processInfo: newProcessInfo
+      // });
+      // 这是需要获取一下流程列表 区分工作台和项目列表
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
+      
+    };
+
+    // 访问控制添加
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 访问控制移除
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 这是更新type类型
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = {...item, content_privilege_code: obj.code}
+        } else {
+          new_item = {...item}
+        }
+        return new_item
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+  }
+
 
   render() {
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch } = this.props
+    const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch, projectDetailInfoData = {} } = this.props
     const { clientHeight, listData = [], status } = this.props
+    const { data = [] } = projectDetailInfoData
     const maxContentHeight = clientHeight - 108 - 150
     const allStep = []
     for (let i = 0; i < 20; i++) {
@@ -217,6 +323,8 @@ export default class PagingnationContent extends React.Component {
           getProcessListByType={this.getProcessListByType.bind(this)}
           close={this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
+          visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+          principalList={data}
         />
       </div>
     )
@@ -237,12 +345,14 @@ function mapStateToProps({
       processDoingList = [],
       processStopedList = [],
       processComepletedList = [],
-      processDetailModalVisible
+      processDetailModalVisible,
+      processInfo = {}
     }
   },
   projectDetail: {
     datas: {
-      board_id
+      board_id,
+      projectDetailInfoData = {}
     }
   },
 
@@ -253,6 +363,8 @@ function mapStateToProps({
     processDoingList,
     processStopedList,
     processComepletedList,
-    board_id
+    board_id,
+    processInfo,
+    projectDetailInfoData
   }
 }

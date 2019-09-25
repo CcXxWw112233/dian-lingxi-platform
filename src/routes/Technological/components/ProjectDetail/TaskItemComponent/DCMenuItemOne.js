@@ -104,7 +104,7 @@ export default class DCMenuItemOne extends React.Component {
     })
   }
   render() {
-    const { execusorList, canNotRemoveItem, currentExecutor = {} } = this.props //currentExecutor当前已选执行人
+    const { execusorList, canNotRemoveItem, currentExecutor = {}, invitationType, invitationId } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
     const executorUserId = currentExecutor.user_id
 
@@ -153,8 +153,8 @@ export default class DCMenuItemOne extends React.Component {
           addMenbersInProject={this.addMenbersInProject}
           show_wechat_invite={true}
           {...this.props}
-          // invitationType={invitationType}
-          // invitationId={invitationId}
+          invitationType={invitationType}
+          invitationId={invitationId}
           invitationOrg={localStorage.getItem('OrganizationId')}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}

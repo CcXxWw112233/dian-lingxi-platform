@@ -13,14 +13,14 @@ import {
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
   ORG_UPMS_ORGANIZATION_GROUP
 } from "../../../../../globalset/js/constant";
+import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
-const TextArea = Input.TextArea
-const { RangePicker } = DatePicker;
-import { connect } from 'dva';
 import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../../services/technological/index'
 
+const TextArea = Input.TextArea
+const { RangePicker } = DatePicker;
 
 @connect(mapStateToProps)
 export default class TaskItem extends React.Component {
@@ -301,7 +301,7 @@ export default class TaskItem extends React.Component {
         let temp_arr = res && res.data
         this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
-        message.error('设置任务列表内容权限失败，请稍后再试')
+        message.warning(res.message)
       }
     })
   }
@@ -322,12 +322,17 @@ export default class TaskItem extends React.Component {
         message.success('移出用户成功')
         this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
       } else {
-        message.error('移出用户失败')
+        message.warning(res.message)
       }
     })
   }
 
-  // 下拉菜单的操作类型
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -336,9 +341,11 @@ export default class TaskItem extends React.Component {
     }
   }
 
-  // 访问控制的添加成员
-  handleVisitControlAddNewMember = (users_arr = [], params) => {
-
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
+  handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
     // const user_ids = users_arr.reduce((acc, curr) => {
     //   if (!acc) return curr
@@ -364,13 +371,11 @@ export default class TaskItem extends React.Component {
       users: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        commInviteWebJoin({
-          id: params.invitationId,
-          role_id: res.data.role_id,
-          type: params.invitationType,
-          users: temp_ids,
-          rela_condition: params.rela_condition,
-        })
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warning(res.message)
       }
     })
 
@@ -389,8 +394,6 @@ export default class TaskItem extends React.Component {
     //   }
     // })
   }
-
-
 
   handleVisitControlPopoverVisible = (flag) => {
     if (!flag) {
@@ -482,7 +485,7 @@ export default class TaskItem extends React.Component {
 
     const operateMenu = () => {
       return (
-        <Menu onClick={this.handleMenuClick.bind(this)}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={this.handleMenuClick.bind(this)}>
           <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={CreateTaskStyle.elseProjectMemu}>
               重命名
@@ -552,7 +555,7 @@ export default class TaskItem extends React.Component {
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-                <Dropdown getPopupContainer={() => document.getElementById("title_l")} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
+                <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>

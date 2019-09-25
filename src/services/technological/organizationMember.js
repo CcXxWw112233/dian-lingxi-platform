@@ -80,6 +80,19 @@ export async function getGroupList(params) {
     }      
   });
 }
+
+//分组列表（访问控制）
+export async function getAccessibleGroupList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/accessible/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      // _organization_id: localStorage.getItem('OrganizationId'),
+    }      
+  });
+}
+
 //更新分组
 export async function updateGroup(data) {
   return request({

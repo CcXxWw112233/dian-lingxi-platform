@@ -6,7 +6,7 @@ import CommentListItem from './CommentListItem'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
 } from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
 import CommentMention from '../../../../../components/CommentMention'
 import { connect } from 'dva';
 
@@ -30,12 +30,16 @@ export default class Comment extends React.Component {
     })
   }
   submitComment(editText) {
-    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)) {
+    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    const { drawContent = {} } = this.props
+    const { card_id, board_id, privileges = [], is_privilege, executors = [] } = drawContent
+    if(!(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)))){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { drawContent = {} } = this.props
-    const { card_id } = drawContent
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailTask/addCardNewComment',
@@ -66,7 +70,8 @@ export default class Comment extends React.Component {
   }
 
   render() {
-    const { projectDetailInfoData = {} } = this.props
+    const { projectDetailInfoData = {}, drawContent = {} } = this.props
+    const { privileges = [], board_id, is_privilege, executors = [] } = drawContent
     const { data = [] } = projectDetailInfoData
     let suggestions = []
     for (let val of data) {
@@ -88,7 +93,7 @@ export default class Comment extends React.Component {
             <CommentListItem />
           </div>
         </div>
-        {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH) && (
+        {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))) && (
           <div className={CommentStyles.out}>
             <div>
               {avatar ? (

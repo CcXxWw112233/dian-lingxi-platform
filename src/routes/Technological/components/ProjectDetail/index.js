@@ -47,20 +47,44 @@ import {
 // }
 
 const ProjectDetail = (props) => {
-  const { appsSelectKey } = props
+  const { appsSelectKey, projectDetailInfoData = {} } = props
+
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
+    /**
+     * 检验是否有获取对应appData的权限
+     * @param {String} key 传入对应的渲染app数据的key值
+     * @return {Boolean} 该方法返回布尔类型的值
+     */
+    const checkIsHasPermissionInAppData = (key) => {
+      let  { app_data = [] } = projectDetailInfoData
+      let flag
+      let new_appData = [...app_data]
+      // 如果说是一个空数组, 那么表示都没有权限 
+      if (new_appData && !new_appData.length) return false
+      if (!Array.isArray(new_appData)) return false
+      new_appData = new_appData && new_appData.find(item => {
+        if (item.key == key) { // 如果能够匹配对应的app那么就有权限
+          flag = true
+        } else {
+          flag = false
+        }
+        return flag
+      })
+      return flag
+    }
+
     switch (appsSelectKey) {
       case '2':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) &&
+        appFace = checkIsHasPermissionInAppData('2') &&
           (<ProcessIndex />)
         break
       case '3':
-        appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) &&
+        appFace = checkIsHasPermissionInAppData('3') &&
           (<CreateTask />)
         break
       case '4':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) &&
+        appFace = checkIsHasPermissionInAppData('4') &&
           (<FileModule />)
         break
       default:
@@ -82,10 +106,11 @@ const ProjectDetail = (props) => {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ projectDetail: {
   datas: {
-    appsSelectKey
+    appsSelectKey,
+    projectDetailInfoData = {}
   }
 } }) {
-  return { appsSelectKey }
+  return { appsSelectKey, projectDetailInfoData }
 }
 export default connect(mapStateToProps)(ProjectDetail)
 
