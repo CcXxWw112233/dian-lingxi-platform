@@ -39,7 +39,12 @@ const Organization = (options) => {
     // window.history.go(-1)
     const nextPath = getUrlQueryString(window.location.href, 'nextpath')
     // console.log(nextPath)
-    routingJump(nextPath)
+    if (nextPath) {
+      routingJump(nextPath)
+    } else {
+      routingJump('/technological/workbench')
+      // window.history.go(-1)
+    }
   }
 
   const asyncProprs = {
@@ -149,10 +154,10 @@ const Organization = (options) => {
       <div className={indexStyles.main}>
         {
           showBackBtn && (
-<div className={indexStyles.back} onClick={historyGoBack}>
-            <Icon type="left" theme="outlined" />返回
+            <div className={indexStyles.back} onClick={historyGoBack}>
+              <Icon type="left" theme="outlined" />返回
           </div>
-)}
+          )}
 
         <div className={indexStyles.topTitle}>
           <Icon type="home" theme="outlined" style={{ color: color_4, fontSize: 32 }} />
