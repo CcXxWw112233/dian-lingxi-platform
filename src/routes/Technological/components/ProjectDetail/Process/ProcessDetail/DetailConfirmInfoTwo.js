@@ -17,6 +17,7 @@ import { getRelations, JoinRelation } from "../../../../../../services/technolog
 import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
 import AvatarComps from '../../../../../../components/avatarMore'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
@@ -139,8 +140,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
     let willSetAssignee = ''
     for (let i = 0; i < assignees.length; i++) {
       if (assignees[i].user_id === currentUserId) {
-        assignees[i] = data[0]
-        willSetAssignee = data[0]
+        // assignees[i] = data.[0]
+        // willSetAssignee = data.[0]
+        assignees[i] = data.selectedKeys[0]
+        willSetAssignee = data.selectedKeys[0]
         break;
       }
     }
@@ -266,10 +269,10 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, isInOpenFile, relations_Prefix } } = this.props.model
-    const { itemKey, itemValue } = this.props //所属列表位置
+    const { itemKey, itemValue, invitationType } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
 
-    const { curr_node_sort, status } = processInfo //当前节点
+    const { curr_node_sort, status, curr_node_id } = processInfo //当前节点
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline, deadline_value, is_workday, sort, enable_opinion, enable_revocation, require_data = {} } = processEditDatas[itemKey]
     const { limit_file_num, limit_file_type, limit_file_size } = require_data
     const fileDataList = processEditDatas[itemKey].data || [] //已上传文件列表
@@ -286,7 +289,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         fileTypeArrayText.push('视频')
       }
     }
-
+    const invitationId = processInfo.id
     //推进人来源
     const users = projectDetailInfoData.data
 
@@ -425,9 +428,23 @@ export default class DetailConfirmInfoTwo extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div style={{ marginRight: '120px' }} className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
-                filterUserArray={assigneesArray}
-                setAssignees={this.setAssignees.bind(this)} />}>
+              <Dropdown overlay={
+                // <MenuSearchMultiple 
+                // noMutiple={true} 
+                // usersArray={users}
+                // filterUserArray={assigneesArray}
+                // setAssignees={this.setAssignees.bind(this)} />
+                <MenuSearchPartner
+                  invitationType='8'
+                  invitationId={invitationId}
+                  rela_Condition={curr_node_id}
+                  listData={users}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  chirldrenTaskChargeChange={this.setAssignees.bind(this)}
+                  board_id={board_id}
+                />
+              }>
                 {assignee_type !== '1' ? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>
               <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>

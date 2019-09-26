@@ -68,10 +68,8 @@ export default class DCMenuItemOne extends React.Component {
     })
   }
   addMenbersInProject = (data) => {
-    console.log('DCMenuItemOne=====');
 
     const { invitationType, invitationId, rela_Condition, } = this.props
-    console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
     const temp_ids = data.users.split(",")
     const invitation_org = localStorage.getItem('OrganizationId')
     organizationInviteWebJoin({

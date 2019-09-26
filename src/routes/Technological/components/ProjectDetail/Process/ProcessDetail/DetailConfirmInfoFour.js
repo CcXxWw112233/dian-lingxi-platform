@@ -10,8 +10,6 @@ import ContentRaletion from '../../../../../../components/ContentRaletion'
 import AvatarComps from '../../../../../../components/avatarMore'
 import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
-
-
 const { RangePicker } = DatePicker;
 
 //里程碑确认信息
@@ -96,8 +94,10 @@ export default class DetailConfirmInfoFour extends React.Component {
     let willSetAssignee = ''
     for (let i = 0; i < assignees.length; i++) {
       if (assignees[i].user_id === currentUserId) {
-        assignees[i] = data[0]
-        willSetAssignee = data[0]
+        // assignees[i] = data.[0]
+        // willSetAssignee = data.[0]
+        assignees[i] = data.selectedKeys[0]
+        willSetAssignee = data.selectedKeys[0]
         break;
       }
     }
@@ -146,14 +146,15 @@ export default class DetailConfirmInfoFour extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, relations_Prefix } } = this.props.model
-    const { itemKey, itemValue } = this.props //所属列表位置
+    const { itemKey, itemValue, invitationType } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
 
-    const { curr_node_sort, status } = processInfo //当前节点
+    const { curr_node_sort, status, curr_node_id } = processInfo //当前节点
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline_value, deadline, is_workday, sort, enable_opinion, enable_revocation, recipients = [] } = processEditDatas[itemKey]
     // console.log( processEditDatas[itemKey])
     //推进人来源
     const users = projectDetailInfoData.data
+    const invitationId = processInfo.id
 
     //推进人
     const assigneesArray = assignees || []
@@ -290,9 +291,23 @@ export default class DetailConfirmInfoFour extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchPartner noMutiple={true} usersArray={users}
-                filterUserArray={assigneesArray}
-                setAssignees={this.setAssignees.bind(this)} />}
+              <Dropdown overlay={
+                // <MenuSearchPartner
+                //   noMutiple={true}
+                //   usersArray={users}
+                //   filterUserArray={assigneesArray}
+                //   setAssignees={this.setAssignees.bind(this)} />
+                <MenuSearchPartner
+                  invitationType='8'
+                  invitationId={invitationId}
+                  rela_Condition={curr_node_id}
+                  listData={users}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  chirldrenTaskChargeChange={this.setAssignees.bind(this)}
+                  board_id={board_id}
+                />
+              }
                 type='7'
                 rela_condition=''
               >

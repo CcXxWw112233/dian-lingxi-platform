@@ -104,8 +104,7 @@ export default class MenuSearchPartner extends React.Component {
         })
     }
     addMenbersInProject = (data) => {
-        console.log('MenuSearchPartner=====');
-        const { invitationType, invitationId, rela_Condition, dispatch } = this.props
+        const { invitationType, invitationId, rela_Condition, dispatch, board_id, } = this.props
         const temp_ids = data.users.split(",")
         const invitation_org = localStorage.getItem('OrganizationId')
         organizationInviteWebJoin({
@@ -121,7 +120,6 @@ export default class MenuSearchPartner extends React.Component {
                     users: temp_ids,
                     rela_condition: rela_Condition,
                 }).then(res => {
-                    return
                     if (isApiResponseOk(res)) {
                         if (invitationType === '4') {
                             dispatch({
@@ -133,7 +131,7 @@ export default class MenuSearchPartner extends React.Component {
                             dispatch({
                                 type: 'projectDetailTask/getCardDetail',
                                 payload: {
-                                    id: card_id
+                                    id: invitationId
                                 }
                             })
                             dispatch({
@@ -145,20 +143,45 @@ export default class MenuSearchPartner extends React.Component {
                             dispatch({
                                 type: 'workbenchTaskDetail/getCardDetail',
                                 payload: {
-                                    id,
-                                    board_id,
+                                    id: board_id,
+                                    board_id: board_id,
                                     calback: function (data) {
                                         dispatch({
                                             type: 'workbenchPublicDatas/getRelationsSelectionPre',
                                             payload: {
-                                                _organization_id: data.org_id
+                                                _organization_id: invitation_org
                                             }
                                         })
                                     }
                                 }
                             })
-                        } else if (invitationType === '4') {
-
+                        } else if (invitationType === '7') {
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: invitationId
+                                }
+                            })
+                        } else if (invitationType === '8') {
+                            debugger
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'projectDetailProcess/getProcessInfo',
+                                payload: {
+                                    id: invitationId
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchDetailProcess/getProcessInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
                         }
                     }
                 })

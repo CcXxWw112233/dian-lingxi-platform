@@ -1633,7 +1633,8 @@ class DrawContent extends React.Component {
                             // addMenbersInProject={this.addMenbersInProject}
                             invitationType='4'
                             invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
+                            board_id={board_id}/>}
                         >
                           <span>指派负责人</span>
                         </Dropdown>
@@ -1644,7 +1645,8 @@ class DrawContent extends React.Component {
                             <MenuSearchPartner
                               invitationType='4'
                               invitationId={card_id}
-                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
+                              board_id={board_id}/>}
                           >
                             <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                               {executors.map((value, key) => {

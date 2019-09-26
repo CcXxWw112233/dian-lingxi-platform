@@ -1454,7 +1454,9 @@ class DrawContent extends React.Component {
                           keyCode={'user_id'}
                           searchName={'name'}
                           currentSelect={executors}
-                          chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                          chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                          board_id={board_id} />
+                      }>
                         <span>指派负责人</span>
                       </Dropdown>
                     </div>
@@ -1467,7 +1469,8 @@ class DrawContent extends React.Component {
                             listData={data}
                             keyCode={'user_id'}
                             searchName={'name'}
-                            currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                            currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            board_id={board_id} />}
                         >
 
                           <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>

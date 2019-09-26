@@ -163,6 +163,8 @@ export default class DrawDetailInfo extends React.Component {
           rela_condition: rela_Condition,
         }).then(res => {
           if (isApiResponseOk(res)) {
+            const { projectDetailInfoData = {} } = this.props
+            const { board_id } = projectDetailInfoData
             if (invitationType === '1') {
               dispatch({
                 type: 'projectDetail/projectDetailInfo',
@@ -170,35 +172,33 @@ export default class DrawDetailInfo extends React.Component {
                   id: board_id
                 }
               })
-              dispatch({
-                type: 'projectDetailTask/getCardDetail',
-                payload: {
-                  id: card_id
-                }
-              })
+              // dispatch({
+              //   type: 'projectDetailTask/getCardDetail',
+              //   payload: {
+              //     id: card_id
+              //   }
+              // })
               dispatch({
                 type: 'workbenchTaskDetail/projectDetailInfo',
                 payload: {
                   id: board_id
                 }
               })
-              dispatch({
-                type: 'workbenchTaskDetail/getCardDetail',
-                payload: {
-                  id,
-                  board_id,
-                  calback: function (data) {
-                    dispatch({
-                      type: 'workbenchPublicDatas/getRelationsSelectionPre',
-                      payload: {
-                        _organization_id: data.org_id
-                      }
-                    })
-                  }
-                }
-              })
-            } else if (invitationType === '4') {
-
+              // dispatch({
+              //   type: 'workbenchTaskDetail/getCardDetail',
+              //   payload: {
+              //     id: board_id,
+              //     board_id: board_id,
+              //     calback: function () {
+              //       dispatch({
+              //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+              //         payload: {
+              //           _organization_id: invitation_org
+              //         }
+              //       })
+              //     }
+              //   }
+              // })
             }
           }
         })
