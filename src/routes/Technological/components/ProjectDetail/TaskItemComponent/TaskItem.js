@@ -531,11 +531,11 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div style={{position:'relative', zIndex: 1008}} id="title_l" className={CreateTaskStyle.title_l}>
+            <div style={{position:'relative'}} id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-                <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
+                <Dropdown zIndex={5} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>

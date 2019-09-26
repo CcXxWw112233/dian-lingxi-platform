@@ -52,6 +52,9 @@ export default class ElseProject extends React.Component{
   }
   confirm(board_id ) {
     const that = this
+    console.log(that.props, 'ssssssss')
+    const { datas: { currentSelectedProjectMenuItem } } = that.props.model
+    console.log()
     Modal.confirm({
       title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{color: 'rgba(0,0,0, .8)', fontSize: 14}}>
@@ -63,7 +66,7 @@ export default class ElseProject extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk() {
-         that.props.quitProject({board_id})
+         that.props.quitProject({board_id, currentSelectedProjectMenuItem})
       }
     });
   }
