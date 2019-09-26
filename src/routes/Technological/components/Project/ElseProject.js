@@ -102,7 +102,7 @@ export default class ElseProject extends React.Component{
           that.props.deleteProject(board_id)
           // Promise.resolve(that.props.deleteProject(board_id)).then(() => {
           //   dispatch({
-          //     type: 'project/fetchProjectListAndUpdateProjectGroupTree',
+          //     type: 'project/fetchProjectGroupTree',
           //     payload: {}
           //   })
           // })

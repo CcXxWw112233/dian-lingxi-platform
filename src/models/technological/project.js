@@ -341,6 +341,12 @@ export default {
             type: '1'
           }
         })
+        yield put({
+          type: 'fetchProjectGroupTree',
+          payload: {
+            
+          }
+        })
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
