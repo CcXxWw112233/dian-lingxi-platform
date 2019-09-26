@@ -11,7 +11,7 @@ const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 
 class Gantt extends Component {
-  
+
   constructor(props) {
     super(props)
     this.state = {
@@ -132,7 +132,7 @@ class Gantt extends Component {
         param.list_id = data['list_id']
       } else {
         param.board_id = gantt_board_id
-        param.list_id = current_list_group_id == '0'? '': current_list_group_id
+        param.list_id = current_list_group_id == '0' ? '' : current_list_group_id
       }
     }
 
@@ -156,20 +156,26 @@ class Gantt extends Component {
     const list_group_new = [...list_group]
 
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
-    const group_index_cards_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
-    const schedule_cards_has_this = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id) != -1  //排期任务是否含有该条
-    console.log('sssss', {
-      schedule_cards_has_this
-    })
-    if ((!!start_time || !!due_time) && !schedule_cards_has_this) { //如果有截至时间或者开始时间
+    const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+    const group_index_card_no_times_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
+    const schedule_cards_has_this = group_index_cards_index != -1  //排期任务是否含有该条
+
+    // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
+
+    if (schedule_cards_has_this) {
+      this.handleHasScheduleCard({ card_id, drawContent })
+      return
+    }
+
+    if ((!!start_time || !!due_time)) { //如果有截至时间或者开始时间 (!!start_time || !!due_time)
       // 排期了则过滤掉当前
       list_group_new[group_index].lane_data.cards.push(
-        { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+        { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...drawContent }
       )
-      list_group_new[group_index].lane_data.card_no_times.splice(group_index_cards_index, 1) //[group_index_cards_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+      list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
     } else {
-      list_group_new[group_index].lane_data.card_no_times[group_index_cards_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
-      list_group_new[group_index].lane_data.card_no_times[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_cards_index]['card_name']  
+      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...drawContent }
+      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['card_name']
     }
     dispatch({
       type: 'gantt/handleListGroup',
