@@ -229,7 +229,7 @@ export default class DrawDetailInfo extends React.Component {
       const { is_visitor } = props
       return (
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
-          {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return (

@@ -49,7 +49,7 @@ export default class ContentRaletion extends React.Component {
         relations: res.data || []
       })
     } else {
-
+      message.warn(res.message)
     }
   }
   async addRelation(data) {
@@ -57,6 +57,7 @@ export default class ContentRaletion extends React.Component {
     if (isApiResponseOk(res)) {
       this.getRelations()
     } else {
+      message.warn(res.message)
       this.handleRelationContentRepeatError(res)
     }
   }
