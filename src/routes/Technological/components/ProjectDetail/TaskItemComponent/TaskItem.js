@@ -145,8 +145,8 @@ export default class TaskItem extends React.Component {
   handleMenuClick(e) {
     e.domEvent.stopPropagation();
     const { projectDetailInfoData = {} } = this.props
-    const { org_id } = projectDetailInfoData
-    if (!checkIsHasPermission(PROJECT_TEAM_CARD_GROUP, org_id)) {
+    const { org_id, board_id } = projectDetailInfoData
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
