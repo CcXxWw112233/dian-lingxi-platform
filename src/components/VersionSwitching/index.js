@@ -110,6 +110,7 @@ export default class index extends Component {
     const getVersionItemMenu = (list) => {
       return (
         // onClick={this.getVersionItemMenuClick.bind(this, list)}
+        <div style={{position: 'relative'}} id="versionPanePosition">
         <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
           <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
             <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -140,7 +141,7 @@ export default class index extends Component {
                         />
                       </div>
                     ) : (
-                        <div className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
+                        <div style={{position: 'relative'}} className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
                           <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
                           {
                             remarks && remarks != '' ? (
@@ -165,7 +166,7 @@ export default class index extends Component {
                           }
                           <span className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</span>
                           <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                            <Dropdown overlay={versionItemMenu({ list, file_id, file_name })}
+                            <Dropdown getPopupContainer={() => document.getElementById("versionPanePosition")} overlay={versionItemMenu({ list, file_id, file_name })}
                               // getPopupContainer={triggerNode => triggerNode.parentNode}
                               onClick={(e) => { this.handleStopPro(e) }}
                               trigger={['click']}
@@ -188,12 +189,13 @@ export default class index extends Component {
             </Upload>
           </div>
         </Menu>
+        </div>
       )
     }
     // 显示点点点的下拉菜单
     const versionItemMenu = ({ list, file_id, file_name }) => {
       return (
-        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
+        <Menu getPopupContainer={() => document.getElementById("versionPanePosition")} onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
           <Menu.Item key="1">设为主版本</Menu.Item>
           <Menu.Item key="3">编辑版本信息</Menu.Item>
           <Menu.Item key="2" disabled>移到回收站</Menu.Item>
@@ -202,7 +204,7 @@ export default class index extends Component {
     }
 
     return (
-      <div>
+      <div style={{position:'relative'}}>
         <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
           <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
             <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息

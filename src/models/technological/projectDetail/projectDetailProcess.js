@@ -621,6 +621,10 @@ export default modelExtend(projectDetail, {
       let res1 = yield select(selectProjectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
       // console.log('this is addWorkFlowComment', res1, res2)
+      if (!isApiResponseOk(res2)) {
+        message.warn(res2.message)
+        return false
+      }
       yield put({
         type: 'updateDatas',
         payload: {

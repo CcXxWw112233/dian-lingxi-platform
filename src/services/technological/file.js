@@ -206,6 +206,7 @@ export async function addFileCommit(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'POST',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_id),
     data,
   });
 }

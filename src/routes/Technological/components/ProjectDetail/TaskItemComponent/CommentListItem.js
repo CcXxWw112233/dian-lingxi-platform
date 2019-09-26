@@ -80,7 +80,7 @@ export default class CommentListItem extends React.Component {
         case 'board.card.create':
           messageContainer = (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>{`${data.creator.name} 创建了 ${data.content.card.name} 任务`}</div>
+              <div>{`${data.creator.name} 创建了 ${data.content.card.name} ${data.card_type == '0' ? '任务' : '会议'}`}</div>
               <div style={{ color: '#BFBFBF', fontSize: '12px' }}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )
@@ -96,7 +96,7 @@ export default class CommentListItem extends React.Component {
         case 'board.card.update.name':
           messageContainer = (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>{`${data.creator.name} 修改了 ${data.content.card.name} 任务的名称 为 *`}</div>
+              <div>{`${data.creator.name} 修改了 原${data.content.rela_data && data.content.rela_data.name} 任务的名称 为 ${data.content.card && data.content.card.name}`}</div>
               <div style={{ color: '#BFBFBF', fontSize: '12px' }}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )

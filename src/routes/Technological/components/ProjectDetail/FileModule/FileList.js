@@ -754,12 +754,13 @@ export default class FileList extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentProjectData = obj => {
-    const { visitControlModalData, visitControlModalData: { belong_folder_id, privileges } } = this.state
-    const { dispatch } = this.props
+    const { visitControlModalData, visitControlModalData: { belong_folder_id, privileges, file_id } } = this.state
+    const { dispatch, selectedRows = [] } = this.props
 
     // 访问控制开关切换
     if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = []
+      
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
@@ -779,6 +780,10 @@ export default class FileList extends React.Component {
           folder_id: belong_folder_id
         }
       })
+      // 这里是也要更新选中的列表, 但是需要这个选择列表存在的情况下
+      if (selectedRows && selectedRows.length) {
+        this.updateSelectedRowsData({new_privileges, is_privilege: obj.is_privilege, file_id})
+       }
     }
 
     // 访问控制添加
@@ -794,16 +799,19 @@ export default class FileList extends React.Component {
         }
       }
       let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-   
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
           folder_id: belong_folder_id
         }
       })
+      if (selectedRows && selectedRows.length) {
+        this.updateSelectedRowsData({new_privileges, file_id})
+       }
     }
 
     // 访问控制移除
@@ -825,6 +833,9 @@ export default class FileList extends React.Component {
           folder_id: belong_folder_id
         }
       })
+      if (selectedRows && selectedRows.length) {
+        this.updateSelectedRowsData({new_privileges, file_id})
+       }
     }
 
     // 访问控制设置
@@ -851,9 +862,33 @@ export default class FileList extends React.Component {
           folder_id: belong_folder_id
         }
       })
+      if (selectedRows && selectedRows.length) {
+        this.updateSelectedRowsData({new_privileges, file_id})
+       }
     }
 
 
+  }
+
+  // 文件选中列表中的更新数据
+  updateSelectedRowsData = (obj) => {
+    const { selectedRows = [], dispatch } = this.props
+    let new_selectedRows = [...selectedRows]
+    new_selectedRows = new_selectedRows && new_selectedRows.map(item => {
+      let new_item = item
+      if (item.file_id == obj.file_id) {
+        new_item = {...item, privileges: obj.new_privileges, is_privilege: obj.is_privilege ? obj.is_privilege : item.is_privilege}
+      } else {
+        new_item = {...item}
+      }
+      return new_item
+    })
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRows: new_selectedRows
+      }
+    })
   }
 
   render() {
@@ -861,7 +896,7 @@ export default class FileList extends React.Component {
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges }, shouldHideVisitControlPopover } = this.state;
     // 文件列表的点点点选项
     const operationMenu = (data, board_id) => {
-      const { type, is_privilege, privileges } = data
+      const { type, is_privilege, privileges, file_id } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data, board_id)}>

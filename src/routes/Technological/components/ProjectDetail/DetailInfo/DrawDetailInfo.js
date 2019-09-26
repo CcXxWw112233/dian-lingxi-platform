@@ -170,7 +170,7 @@ export default class DrawDetailInfo extends React.Component {
       // return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
-          <div className={DrawDetailInfoStyle.manImageDropdown_top}>
+          <div style={{position:'relative'}} className={DrawDetailInfoStyle.manImageDropdown_top}>
             <div className={DrawDetailInfoStyle.left}>
               {avatar ? (
                 <img src={avatar} />
@@ -191,7 +191,7 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             </div>
             {role_id === '3' ? ('') : (
-              <Dropdown overlay={manOperateMenu(props)}>
+              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)}>
                 <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             )}
@@ -228,7 +228,7 @@ export default class DrawDetailInfo extends React.Component {
     const manOperateMenu = (props) => {
       const { is_visitor } = props
       return (
-        <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} style={{width: '92px'}} onClick={this.handleSetRoleMenuClick.bind(this, props)}>
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
@@ -287,11 +287,11 @@ export default class DrawDetailInfo extends React.Component {
                 if (key < avatarList.length - 1) {
                   const { avatar, user_id } = value
                   return (
-                    <div className={DrawDetailInfoStyle.manImageItem} key={key}>
+                    <div style={{position: 'relative'}} className={DrawDetailInfoStyle.manImageItem} key={key}>
                       {/*<div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>*/}
                       {/*<Icon type="close" />*/}
                       {/*</div>*/}
-                      <Dropdown overlay={manImageDropdown(value)}>
+                      <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manImageDropdown(value)}>
                         {avatar ? (<img src={avatar} />) : (
                           <div style={{ width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
                             <Icon type={'user'} style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }} />

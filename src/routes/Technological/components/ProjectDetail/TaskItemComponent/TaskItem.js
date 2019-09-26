@@ -531,7 +531,7 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div id="title_l" className={CreateTaskStyle.title_l}>
+            <div style={{position:'relative'}} id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
