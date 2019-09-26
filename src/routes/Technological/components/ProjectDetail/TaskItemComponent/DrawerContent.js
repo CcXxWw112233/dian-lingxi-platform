@@ -740,6 +740,12 @@ class DrawContent extends React.Component {
           file_id
         }
       })
+      dispatch({
+        type: 'projectDetailFile/fileInfoByUrl',
+        payload: {
+          file_id
+        }
+      })
     }
   }
   attachmentItemOpera({ type, data = {}, card_id }, e) {

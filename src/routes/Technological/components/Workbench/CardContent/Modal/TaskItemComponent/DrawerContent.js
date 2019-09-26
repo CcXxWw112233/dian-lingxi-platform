@@ -671,6 +671,12 @@ class DrawContent extends React.Component {
       })
     } else {
       this.props.filePreview({ id: file_resource_id, file_id })
+      this.props.dispatch({
+        type: 'workbenchFileDetail/fileInfoByUrl',
+        payload: {
+          file_id
+        }
+      })
     }
   }
   attachmentItemOpera({ type, data }, e) {
