@@ -246,7 +246,6 @@ export default modelExtend(projectDetail, {
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
         newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
-        console.log(newbreadcrumbList, 'sssssss_newbreadcrumbList')
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {
