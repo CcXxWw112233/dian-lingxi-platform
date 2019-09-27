@@ -239,7 +239,7 @@ export default class SiderLeft extends React.Component {
           }
         })
 
-        this.nextMenuClick(key)
+        // this.nextMenuClick(key)
 
         break
       default: // 其他组织的切换
@@ -272,7 +272,7 @@ export default class SiderLeft extends React.Component {
           }
         })
 
-        this.nextMenuClick(0)
+        // this.nextMenuClick(0)
 
         break
     }

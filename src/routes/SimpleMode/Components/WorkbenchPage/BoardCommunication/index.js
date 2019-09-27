@@ -509,7 +509,6 @@ class BoardCommunication extends Component {
                 type: 'simpleWorkbenchbox/getFileList',
                 payload: {
                     board_id: currentBoardDetail.board_id
-
                 }
             });
         }

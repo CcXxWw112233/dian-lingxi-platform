@@ -1,10 +1,11 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message } from 'antd'
-import DragValidation from '../../../../../../components/DragValidation'
-import {validateEmail, validateTel} from "../../../../../../utils/verify";
-import {MESSAGE_DURATION_TIME} from "../../../../../../globalset/js/constant";
+import { Modal, Form, Button, Input } from 'antd'
+import { connect } from 'dva';
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
+
+@connect(mapStateToProps)
 class SaveTemplate extends React.Component {
 
   state = {
@@ -18,7 +19,7 @@ class SaveTemplate extends React.Component {
   nameChange(e) {
     const value = e.target.value
     let flag = true
-    if(value) {
+    if (value) {
       flag = false
     }
     this.setState({
@@ -36,8 +37,7 @@ class SaveTemplate extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { datas: { projectDetailInfoData = {}, processEditDatas } } = this.props.model
-        const { board_id } = projectDetailInfoData
+        const { board_id, dispatch } = this.props
         values['board_id'] = board_id
         values['is_retain'] = '1'
         values['node_data'] = this.props.requestFilterProcessEditDatas()//processEditDatas
@@ -49,7 +49,12 @@ class SaveTemplate extends React.Component {
         })
         this.props.setSaveTemplateModalVisible()
         //发送请求
-        this.props.saveProcessTemplate ? this.props.saveProcessTemplate(values) : false
+        dispatch({
+          type: 'projectDetailProcess/saveProcessTemplate',
+          payload: {
+            ...values
+          }
+        })
       }
     });
   }
@@ -59,34 +64,34 @@ class SaveTemplate extends React.Component {
     const { stepContinueDisabled } = this.state
 
     const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>保存为模板</div>
-        <FormItem style={{width: 336}}>
+      <Form onSubmit={this.handleSubmit} style={{ margin: '0 auto', width: 336 }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>保存为模板</div>
+        <FormItem style={{ width: 336 }}>
           {getFieldDecorator('name', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
-            <Input placeholder={'输入模板名称'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50}/>
+            <Input placeholder={'输入模板名称'} style={{ height: 40 }} onChange={this.nameChange.bind(this)} maxLength={50} />
           )}
         </FormItem>
 
         {/* 描述 */}
-        <FormItem style={{width: 336}}>
+        <FormItem style={{ width: 336 }}>
           {getFieldDecorator('description', {
             rules: [{ required: false, message: '', whitespace: true }],
           })(
-            <TextArea style={{height: 208, resize: 'none'}}
-                      onChange={this.descriptionChange.bind(this)}
-                      placeholder="模板描述（选填）" maxLength={300}/>
+            <TextArea style={{ height: 208, resize: 'none' }}
+              onChange={this.descriptionChange.bind(this)}
+              placeholder="模板描述（选填）" maxLength={300} />
           )}
         </FormItem>
         {/* 确认 */}
         <FormItem>
-          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>保存</Button>
+          <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{ marginTop: 20, width: 208, height: 40 }}>保存</Button>
         </FormItem>
       </Form>
     )
 
-    return(
+    return (
       <div>
         <Modal
           visible={saveTemplateModalVisible} //saveTemplateModalVisible
@@ -95,7 +100,7 @@ class SaveTemplate extends React.Component {
           footer={null}
           maskClosable={false}
           destroyOnClose
-          style={{textAlign: 'center'}}
+          style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
         >
           {step_3}
@@ -105,3 +110,26 @@ class SaveTemplate extends React.Component {
   }
 }
 export default Form.create()(SaveTemplate)
+function mapStateToProps({
+  projectDetailProcess: {
+    datas: {
+      processEditDatasRecords = [],
+      processEditDatas = [],
+      processCurrentEditStep,
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData: {
+        board_id
+      }
+    }
+  }
+}) {
+  return {
+    processEditDatasRecords,
+    processEditDatas,
+    processCurrentEditStep,
+    board_id
+  }
+}

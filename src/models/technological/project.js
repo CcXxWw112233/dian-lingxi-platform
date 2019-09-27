@@ -278,17 +278,25 @@ export default {
     },
 
     * quitProject({ payload }, { select, call, put }) {
-      let res = yield call(quitProject, payload)
+      const { board_id, currentSelectedProjectMenuItem } = payload
+      let res = yield call(quitProject, {board_id})
       if(isApiResponseOk(res)) {
         yield put({
           type: 'fetchCurrentProjectGroupProjectList',
           payload: {
+            keyword: currentSelectedProjectMenuItem,
             calback: function () {
               message.success('已退出项目', MESSAGE_DURATION_TIME)
             },
             type: '1'
           }
         })
+        yield put({
+          type: 'fetchProjectGroupTree',
+          payload: {
+
+          }
+        })   
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -341,6 +349,13 @@ export default {
             type: '1'
           }
         })
+        yield put({
+          type: 'fetchProjectGroupTree',
+          payload: {
+
+          }
+        })    
+      
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

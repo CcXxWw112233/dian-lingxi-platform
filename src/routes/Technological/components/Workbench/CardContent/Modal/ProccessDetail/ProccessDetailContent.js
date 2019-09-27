@@ -1,17 +1,18 @@
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer } from 'antd';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, message } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
-import {stopPropagation} from "../../../../../../../utils/util";
+import { stopPropagation } from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
-import {getRelations, JoinRelation} from "../../../../../../../services/technological/task";
-import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
+import { getRelations, JoinRelation } from "../../../../../../../services/technological/task";
+import { isApiResponseOk } from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import { timestampToHM, judgeTimeDiffer, judgeTimeDiffer_ten } from '../../../../../../../utils/util'
-import {checkIsHasPermissionInBoard, currentNounPlanFilterName} from '../../../../../../../utils/businessFunction'
-import {FLOWS, PROJECT_FLOWS_FLOW_COMMENT} from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl, checkIsHasPermission } from '../../../../../../../utils/businessFunction'
+import { FLOWS, PROJECT_FLOWS_FLOW_COMMENT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
 
 export default class FileDetailContent extends React.Component {
@@ -20,13 +21,13 @@ export default class FileDetailContent extends React.Component {
     commentList: []
   }
 
-  versionItemClick({value, key}){
+  versionItemClick({ value, key }) {
     const { file_resource_id, file_id } = value
     this.setState({
       imgLoaded: false
     })
-    this.props.updateFileDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
-    this.props.filePreview({id: file_resource_id, file_id})
+    this.props.updateFileDatas({ filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id })
+    this.props.filePreview({ id: file_resource_id, file_id })
     this.setState({
       imgLoaded: false,
       editMode: true,
@@ -56,11 +57,11 @@ export default class FileDetailContent extends React.Component {
     this.x1 = 0
     this.y1 = 0
     this.isDragging = false
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
   }
 
   componentWillMount() {
-    const { datas: { filePreviewCommitPoints=[]} }= this.props.model
+    const { datas: { filePreviewCommitPoints = [] } } = this.props.model
 
     this.setState({
       rects: filePreviewCommitPoints
@@ -72,34 +73,39 @@ export default class FileDetailContent extends React.Component {
     // this.getRelations()
   }
 
+  // 访问控制蒙层的点击回调
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
+
   //获取关联内容
   async getRelations(data) {
-    const { datas: { board_id, filePreviewCurrentFileId } }= this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId } } = this.props.model
     const res = await getRelations({
       board_id,
       link_id: filePreviewCurrentFileId,
       link_local: '4'
     })
-    if(isApiResponseOk(res)) {
+    if (isApiResponseOk(res)) {
       this.setState({
         relations: res.data || []
       })
-    }else{
-
+    } else {
+      message.warn(res.message)
     }
   }
   async addRelation(data) {
     const res = await JoinRelation(data)
-    if(isApiResponseOk(res)) {
+    if (isApiResponseOk(res)) {
       this.getRelations()
-    }else{
-
+    } else {
+      message.warn(res.message)
     }
   }
 
   componentWillReceiveProps(nextProps) {
     const rects = []
-    const { datas: { filePreviewCommitPoints=[]} }= nextProps.model
+    const { datas: { filePreviewCommitPoints = [] } } = nextProps.model
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -113,7 +119,7 @@ export default class FileDetailContent extends React.Component {
   previewImgLoad(e) {
     const { maxImageWidth } = this.state
     this.setState({
-      imgWidth: e.target.width >= maxImageWidth? maxImageWidth : e.target.width,
+      imgWidth: e.target.width >= maxImageWidth ? maxImageWidth : e.target.width,
       imgHeight: e.target.height,
       imgLoaded: true
     })
@@ -160,7 +166,7 @@ export default class FileDetailContent extends React.Component {
     })
   }
   isObj(obj) {
-    if(!obj || typeof obj !=='object') {
+    if (!obj || typeof obj !== 'object') {
       return false
     } else {
       return true
@@ -172,26 +178,26 @@ export default class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
-    if(!this.isDragging) {
+    this.SelectedRect = { x: 0, y: 0 }
+    if (!this.isDragging) {
       const { punctuateArea, imgHeight, imgWidth } = this.state
 
       let x = this.x1
       let y = this.y1
 
-      if(imgWidth - x < punctuateArea/2) { //右边界
+      if (imgWidth - x < punctuateArea / 2) { //右边界
         x = imgWidth - punctuateArea
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         x = 0
       } else {
-        x = x - punctuateArea/2
+        x = x - punctuateArea / 2
       }
-      if(imgHeight - y < punctuateArea/2) { //下边界
+      if (imgHeight - y < punctuateArea / 2) { //下边界
         y = imgHeight - punctuateArea
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         y = 0
       } else {
-        y = y - punctuateArea/2
+        y = y - punctuateArea / 2
       }
       const property = {
         x: x,
@@ -216,7 +222,7 @@ export default class FileDetailContent extends React.Component {
   operateAreaBlur(e) {
     const that = this
     setTimeout(function () {
-      if(that.state.mentionFocus) {
+      if (that.state.mentionFocus) {
         return false
       }
       that.setState({
@@ -259,7 +265,7 @@ export default class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
     this.isDragging = false
 
     /*定义鼠标移动事件*/
@@ -269,7 +275,7 @@ export default class FileDetailContent extends React.Component {
   }
   onmousemove(e) {
     //mousedown 后开始拖拽时添加
-    if(!this.isDragging) {
+    if (!this.isDragging) {
       const property = {
         x: this.x1,
         y: this.y1,
@@ -301,8 +307,8 @@ export default class FileDetailContent extends React.Component {
       const y = e.clientY - target.offsetTop - modalTop;
       //------------------------
       //设置高度
-      this.SelectedRect.x= x-this.x1;
-      this.SelectedRect.y= y-this.y1;
+      this.SelectedRect.x = x - this.x1;
+      this.SelectedRect.y = y - this.y1;
 
       const { imgWidth, imgHeight, punctuateArea } = this.state
 
@@ -312,21 +318,21 @@ export default class FileDetailContent extends React.Component {
       let width = Math.abs(this.SelectedRect.x)
       let height = Math.abs(this.SelectedRect.y)
 
-      if(imgWidth - px - width< 0) { //右边界
+      if (imgWidth - px - width < 0) { //右边界
         width = imgWidth - px
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         width = 0
       } else {
-        width = x - punctuateArea/2
+        width = x - punctuateArea / 2
       }
-      if(imgHeight - py - height < 0) { //下边界
+      if (imgHeight - py - height < 0) { //下边界
         height = imgHeight - py
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         height = 0
       } else {
-        height = y - punctuateArea/2
+        height = y - punctuateArea / 2
       }
-      const property ={
+      const property = {
         x: px,
         y: py,
         width: Math.abs(this.SelectedRect.x),
@@ -346,7 +352,7 @@ export default class FileDetailContent extends React.Component {
     this.stopDragging()
   }
 
-  setEditMode(){
+  setEditMode() {
     this.setState({
       editMode: !this.state.editMode
     })
@@ -359,7 +365,7 @@ export default class FileDetailContent extends React.Component {
   }
   deleteComment(data, e) {
     e.stopPropagation()
-    if(window.location.hash.indexOf('projectDetail')!=-1) {
+    if (window.location.hash.indexOf('projectDetail') != -1) {
       this.props.dispatch({
         type: 'projectDetailProcess/deleteWorkFlowComment',
         payload: data
@@ -372,23 +378,23 @@ export default class FileDetailContent extends React.Component {
     }
   }
   render() {
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
-    const { clientHeight, offsetTopDeviation } =this.props
-
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations } = this.state
+    const { clientHeight, offsetTopDeviation, principalList = [] } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
-    const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, 
-      filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, 
-      filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, currentProcessInstanceId, seeFileInput, filePreviewCommitPoints, filePreviewCommits,
+      filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false, processInfo = {}, relations_Prefix } } = this.props.model
+    const { privileges = [], is_privilege } = processInfo
     const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="'+src+'"></iframe>'
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
     }
 
-    const getVersionItem = (value, key ) => {
+    const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
       return (
-        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, {value, key})}>
-          <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, { value, key })}>
+          <div className={filePreviewCurrentVersionKey === key ? indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{update_time}</div>
           <div className={indexStyles.size}>{file_size}</div>
@@ -402,7 +408,7 @@ export default class FileDetailContent extends React.Component {
       let messageContain = (<div></div>)
       let pin = action.split('.')
       let nodeName = `${pin[1]}_${pin[2]}`
-      const { id } = localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')): ''
+      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : ''
       switch (action) {
         case 'board.flow.tpl.add.or.delete':
           contain = `创建${currentNounPlanFilterName(FLOWS)}模板`
@@ -411,9 +417,9 @@ export default class FileDetailContent extends React.Component {
           let juge = judgeTimeDiffer_ten(messageValue.create_time)
           messageContain = (
             <div>
-              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '20px'}}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                 <div>
-                  <img style={{width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left'}} src={messageValue.creator.avatar}></img>
+                  <img style={{ width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left' }} src={messageValue.creator.avatar}></img>
                   <div style={{
                     height: '30px',
                     fontSize: '12px',
@@ -425,84 +431,85 @@ export default class FileDetailContent extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginLeft: '12px',
-                    lineHeight: '17px', }}>{messageValue.creator.name}</div>
+                    lineHeight: '17px',
+                  }}>{messageValue.creator.name}</div>
                 </div>
-                <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+                <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
               </div>
-              <div style={{display: 'flex', justifyContent: 'space-between', margin: '15px 0 15px 55px', color: '#595959', fontSize: '14px', fontFamily: 'PingFangSC-Regular'}}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '15px 0 15px 55px', color: '#595959', fontSize: '14px', fontFamily: 'PingFangSC-Regular' }}>
                 <div>{messageValue.text}</div>
-                {id === messageValue.creator.id && !juge?<div onClick={this.deleteComment.bind(this, {id: messageValue.id, flow_instance_id: currentProcessInstanceId})} style={{color: 'red', cursor: 'pointer'}}>删除</div>:''}
+                {id === messageValue.creator.id && !juge ? <div onClick={this.deleteComment.bind(this, { id: messageValue.id, flow_instance_id: currentProcessInstanceId })} style={{ color: 'red', cursor: 'pointer' }}>删除</div> : ''}
               </div>
             </div>
           )
           break
         case 'board.flow.instance.initiate':
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div>
                 <div></div>
-                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 启动{currentNounPlanFilterName(FLOWS)}「{messageValue.content[nodeName].name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.reject':
           contain = `拒绝${currentNounPlanFilterName(FLOWS)}任务`
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div >
                 <div ></div>
-                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 拒绝{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.recall':
           contain = `撤回${currentNounPlanFilterName(FLOWS)}任务`
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div >
                 <div ></div>
-                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 撤回{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.reassign':
           contain = '重新指派审批人'
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div >
                 <div ></div>
-                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」节点「{messageValue.content.flow_node_instance.name}」中重新指定审批人 {messageValue.assignee}。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.instance.discontinue':
           contain = `${currentNounPlanFilterName(FLOWS)}文件上传`
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div >
                 <div ></div>
-                <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.flow_instance_name}」 上传了文件「{messageValue.file_name}」。</div>
               </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           break
         case 'board.flow.task.pass':
-          messageContain=(
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
+          messageContain = (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
               <div >
-                  <div ></div>
-                  <div style={{marginLeft: '10px'}}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
-                </div>
-              <div style={{color: '#BFBFBF', fontSize: '12px', marginRight: '12px'}}>{judgeTimeDiffer(messageValue.create_time)}</div>
+                <div ></div>
+                <div style={{ marginLeft: '10px' }}>「{messageValue.creator.name}」 在{currentNounPlanFilterName(FLOWS)}「{messageValue.content.board.name}」 中完成了任务「{messageValue.content.flow_node_instance.name}」。</div>
+              </div>
+              <div style={{ color: '#BFBFBF', fontSize: '12px', marginRight: '12px' }}>{judgeTimeDiffer(messageValue.create_time)}</div>
             </div>
           )
           contain = `完成${currentNounPlanFilterName(FLOWS)}任务`
@@ -513,29 +520,29 @@ export default class FileDetailContent extends React.Component {
       return messageContain
     }
     const punctuateDom = (
-      <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-        <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
-          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
-          {imgLoaded && editMode? (
-            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+      <div style={{ height: '100%', width: '100%' }} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
+        <div style={{ margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth }} />
+          {imgLoaded && editMode ? (
+            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{ height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0 }}>
               {rects.map((value, key) => {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this, {currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this, { currentRect: JSON.parse(coordinates), point_number: flag })} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{ position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
                   </div>
                 )
               })}
-              {isInEdditOperate?(
+              {isInEdditOperate ? (
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}} />
-              ):('')}
+                  style={{ position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }} />
+              ) : ('')}
 
-              {isInAdding? (
-                <div style={{position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+              {isInAdding ? (
+                <div style={{ position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y + currentRect.height + 10 }}>
                   <Comment {...this.props} currentRect={currentRect} setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
                 </div>
               ) : ('')}
@@ -544,39 +551,45 @@ export default class FileDetailContent extends React.Component {
           ) : ('')}
 
         </div>
-        <div className={indexStyles.pictureEditState} style={{left: (this.props.clientWidth - (isExpandFrame? 0:420)) / 2 }} onClick={this.setEditMode.bind(this)}>
-          {!editMode?('添加圈点评论'):('退出圈点模式')}
+        <div className={indexStyles.pictureEditState} style={{ left: (this.props.clientWidth - (isExpandFrame ? 0 : 420)) / 2 }} onClick={this.setEditMode.bind(this)}>
+          {!editMode ? ('添加圈点评论') : ('退出圈点模式')}
         </div>
       </div>
     )
     const iframeDom = (
       <div className={indexStyles.fileDetailContentLeft}
-      dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+        dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
     )
 
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-        <div className={indexStyles.fileDetailContentLeft} style={{overflowY: 'scroll'}}>
-            <ProcessDetail {...this.props} />
-            {/* <h1> hello world </h1> */}
+      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
+        <div className={indexStyles.fileDetailContentLeft} style={{ overflowY: 'scroll' }}>
+          <ProcessDetail {...this.props} />
+          {/* <h1> hello world </h1> */}
         </div>
 
-        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
+        <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}>
 
           {/*width: isExpandFrame?0:420*/}
           {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-              <ContentRaletion
-                {...this.props}
-                board_id ={board_id}
-                isShowAll = {this.state.isShowAll}
-                link_id={currentProcessInstanceId}
-                link_local={'2'}
-              />
-            </div>
+          {/* 这里将会有一个蒙层 */}
+          <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+                <div onClick={this.alarmNoEditPermission} style={{bottom: '62px'}} className={globalStyles.drawContent_mask}></div>
+              )
+            }
+            <ContentRaletion
+              relations_Prefix={relations_Prefix}
+              board_id={board_id}
+              isShowAll={this.state.isShowAll}
+              link_id={currentProcessInstanceId}
+              link_local={'2'}
+            />
+          </div>
 
-          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-            <div style={{fontSize: '12px', color: '#595959'}}>
+          <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
+            <div style={{ fontSize: '12px', color: '#595959' }}>
               <div>
                 <div></div>
                 {/* <div style={{display: 'flex', justifyContent: 'center',marginTop: '12px' ,fontSize: '14px', cursor: 'pointer', color: '#499BE6'}} onClick={this.setIsShowAll.bind(this)}>{!this.state.isShowAll? '查看全部': '收起部分'}</div> */}
@@ -596,9 +609,11 @@ export default class FileDetailContent extends React.Component {
                 </div>
               </div>
             </div>
-            <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
+            <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
           </div>
-          {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT) && (
+          {/* 这里将会有一个蒙层 */}
+          {/* 这里是如果是评论,可以显示以及是可编辑状态 */}
+          {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT, board_id))) && (
             <div className={indexStyles.fileDetailContentRight_bott}>
               <Comment2 {...this.props} ></Comment2>
             </div>

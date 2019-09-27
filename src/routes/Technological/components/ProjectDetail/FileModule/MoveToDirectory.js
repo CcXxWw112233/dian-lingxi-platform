@@ -1,22 +1,29 @@
 import React from 'react'
-import { Input, Button, Modal, Tree, message } from 'antd'
+import { Modal, Tree, message } from 'antd'
 import indexStyles from './index.less'
+import { connect } from 'dva';
 
 const TreeNode = Tree.TreeNode;
 
-
+@connect(mapStateToProps)
 export default class MoveToDirectory extends React.Component {
 
-  state={
+  state = {
     selectFolderId: '',
   }
 
   onCancel = () => {
-    this.props.updateDatasFile({moveToDirectoryVisiblie: false})
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        moveToDirectoryVisiblie: false
+      }
+    })
   }
   //重新改变面包屑，递归
   findChildrenParent = (arr, childDataKey, key, value, originalData, callback) => {
-    const { datas: { breadcrumbList = [] } } = this.props.model
+    const { breadcrumbList = [] } = this.props
     for (var i = 0; i < arr.length; i++) {
       if (arr[i][key] == value) {
         callback(arr[i])
@@ -31,60 +38,82 @@ export default class MoveToDirectory extends React.Component {
         this.findChildrenParent(arr[i][childDataKey], childDataKey, key, value, originalData, callback);
       }
     }
-    this.props.updateDatasFile({
-      breadcrumbList
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        breadcrumbList
+      }
     })
   }
 
   onOk = () => {
+    const { dispatch } = this.props
     const that = this
     const selectFolderId = this.state.selectFolderId
-    if(!selectFolderId) {
+    if (!selectFolderId) {
       message.warn('请选择一个目标文件夹')
       return false
     }
-    this.props.updateDatasFile({moveToDirectoryVisiblie: false})
-    const { datas: { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } } = this.props.model
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        moveToDirectoryVisiblie: false
+      }
+    })
+    const { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } = this.props
 
     let file_ids
     //分别从多文件选择， fileList单条信息 ， 文件预览进来
-    if(openMoveDirectoryType === '1') {
+    if (openMoveDirectoryType === '1') {
       let chooseArray = []
-      for(let i=0; i < selectedRowKeys.length; i++ ){
+      for (let i = 0; i < selectedRowKeys.length; i++) {
         chooseArray.push(fileList[selectedRowKeys[i]].file_id)
       }
       file_ids = chooseArray.join(',')
-    }else if (openMoveDirectoryType === '2'){
+    } else if (openMoveDirectoryType === '2') {
       file_ids = currentFileListMenuOperatorId
-    }else if(openMoveDirectoryType === '3') {
+    } else if (openMoveDirectoryType === '3') {
       file_ids = filePreviewCurrentFileId
       //存在文件移动的情况同时是从文件预览进来的,移动过后改变面包屑路径
-      if(copyOrMove === '0') {
+      if (copyOrMove === '0') {
         breadcrumbList.splice(0, breadcrumbList.length - 1)
-        this.props.updateDatasFile({
-          currentParrentDirectoryId: selectFolderId,
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            currentParrentDirectoryId: selectFolderId,
+          }
         })
-        this.findChildrenParent([{...treeFolderData}], 'child_data', 'folder_id', selectFolderId, [{...treeFolderData}], function (data) {
+        this.findChildrenParent([{ ...treeFolderData }], 'child_data', 'folder_id', selectFolderId, [{ ...treeFolderData }], function (data) {
           data['type'] = '1'
           data['file_name'] = data['folder_name']
           data['file_id'] = data['folder_id']
           breadcrumbList.unshift(data)
-          that.props.updateDatasFile({
-            breadcrumbList
+          dispatch({
+            type: 'projectDetailFile/updateDatas',
+            payload: {
+              breadcrumbList
+            }
           })
         });
       }
     }
 
-    if(copyOrMove === '0'){ //移动0 复制1
-      this.props.fileMove({
-        file_ids,
-        folder_id: selectFolderId
+    if (copyOrMove === '0') { //移动0 复制1
+      dispatch({
+        type: 'projectDetailFile/fileMove',
+        payload: {
+          file_ids,
+          folder_id: selectFolderId
+        }
       })
-    }else {
-      this.props.fileCopy({
-        file_ids,
-        folder_id: selectFolderId
+    } else {
+      dispatch({
+        type: 'projectDetailFile/fileCopy',
+        payload: {
+          file_ids,
+          folder_id: selectFolderId
+        }
       })
     }
 
@@ -96,11 +125,11 @@ export default class MoveToDirectory extends React.Component {
     })
   }
 
-  render () {
-    const { datas: { moveToDirectoryVisiblie, copyOrMove, treeFolderData = {}} } = this.props.model
+  render() {
+    const { moveToDirectoryVisiblie, copyOrMove, treeFolderData = {} } = this.props
 
     const loop = data => {
-      if(!data || !data.length){
+      if (!data || !data.length) {
         return
       }
       return data.map((item) => {
@@ -111,7 +140,7 @@ export default class MoveToDirectory extends React.Component {
             </TreeNode>
           );
         }
-        return <TreeNode key={item.folder_id} title={item.folder_name}/>;
+        return <TreeNode key={item.folder_id} title={item.folder_name} />;
       });
     }
     return (
@@ -137,5 +166,34 @@ export default class MoveToDirectory extends React.Component {
         </Modal>
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailFile: {
+    datas: {
+      breadcrumbList = [],
+      moveToDirectoryVisiblie,
+      copyOrMove,
+      treeFolderData = {},
+      fileList = [],
+      selectedRowKeys,
+      currentFileListMenuOperatorId,
+      openMoveDirectoryType,
+      filePreviewCurrentFileId,
+
+
+    }
+  },
+}) {
+  return {
+    breadcrumbList,
+    moveToDirectoryVisiblie,
+    copyOrMove,
+    treeFolderData,
+    fileList,
+    selectedRowKeys,
+    currentFileListMenuOperatorId,
+    openMoveDirectoryType,
+    filePreviewCurrentFileId,
   }
 }

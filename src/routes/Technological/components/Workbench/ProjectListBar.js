@@ -210,7 +210,7 @@ class ProjectListBar extends Component {
   }
   handleWinResize = () => {
     const { projectList } = this.props;
-    const listRefChildren = this.listRef.current.children;
+    const listRefChildren = (this.listRef && this.listRef.current) && this.listRef.current.children;
     if (listRefChildren) {
       const childNodeOffsetTopList = [...listRefChildren].map(childNode => {
         return childNode.offsetTop;

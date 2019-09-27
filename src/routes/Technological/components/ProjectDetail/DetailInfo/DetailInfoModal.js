@@ -1,11 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import DrawDetailInfo from './DrawDetailInfo'
-import {min_page_width} from "../../../../../globalset/js/styles";
 import CustormModal from '../../../../../components/CustormModal'
-const FormItem = Form.Item
-const TextArea = Input.TextArea
-
 
 class DetailInfoModal extends React.Component {
   state = {}
@@ -15,8 +11,12 @@ class DetailInfoModal extends React.Component {
   componentWillReceiveProps(nextProps) {}
 
   onCancel(){
-    this.props.updateDatas({
-      projectInfoDisplay: false
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        projectInfoDisplay: false
+      }
     })
   }
 
@@ -32,7 +32,7 @@ class DetailInfoModal extends React.Component {
         footer={null}
         destroyOnClose
         onCancel={this.onCancel.bind(this)}
-        overInner={<DrawDetailInfo {...this.props} />}
+        overInner={<DrawDetailInfo />}
       />
     )
   }

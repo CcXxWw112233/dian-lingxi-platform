@@ -6,21 +6,34 @@ import MoveToDirectory from './MoveToDirectory'
 import BreadCrumbFileNav from './BreadCrumbFileNav'
 import FileDetail from './FileDetail'
 import FileDetailModal from './FileDetail/FileDetailModal'
+import { connect } from 'dva';
 
+@connect(mapStateToProps)
 export default class FileIndex extends React.Component {
   render() {
-    const { datas: { isInOpenFile } = false } = this.props.model;
+    const { isInOpenFile, dispatch } = this.props
     const { marginTop = '20px' } = this.props;
     return (
       <div>
         {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
         <div className={indexStyles.fileOut} style={{ marginTop: marginTop }}>
-          <BreadCrumbFileNav {...this.props} />
-          <FileList {...this.props} />
-          <MoveToDirectory {...this.props} />
+          <BreadCrumbFileNav />
+          <FileList />
+          <MoveToDirectory />
         </div>
-        <FileDetailModal {...this.props} visible={isInOpenFile} />
+        <FileDetailModal visible={isInOpenFile} dispatch={dispatch}/>
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailFile: {
+    datas: {
+      isInOpenFile
+    }
+  },
+}) {
+  return {
+    isInOpenFile
   }
 }

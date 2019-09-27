@@ -50,6 +50,7 @@ export default modelExtend(projectDetail, {
       filedata_1: [], //文档列表--文件夹breadcrumbList
       filedata_2: [], //文档列表--文件
       selectedRowKeys: [], //选择的列表项
+      selectedRows: [], // 选择文件的元素项
       isInAddDirectory: false, //是否正在创建文件家判断标志
       moveToDirectoryVisiblie: false, // 是否显示移动到文件夹列表
       openMoveDirectoryType: '', //打开移动或复制弹窗方法 ‘1’：多文件选择。 2：‘单文件选择’，3 ‘从预览入口进入’
@@ -74,71 +75,75 @@ export default modelExtend(projectDetail, {
       seeFileInput: '', //查看文件详情入口
       cardCommentAll: [], //文件动态列表
       pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
+      currentPreviewFileData: {}, // 当前操作的文件数据
     }
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
 
-        const param = QueryString.parse(location.search.replace('?', ''))
-        board_id = param.board_id
-        appsSelectKey = param.appsSelectKey
-        file_id = param.file_id
-        folder_id = param.folder_id
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
 
-        dispatch({
-          type: 'updateDatas',
-          payload: {
-            filePreviewCurrentFileId: file_id
-          }
-        })
-
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '4') {
-
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          file_id = param.file_id
+          folder_id = param.folder_id
           dispatch({
-            type: 'getFolderList',
+            type: 'updateDatas',
             payload: {
-              board_id: board_id
+              filePreviewCurrentFileId: file_id
             }
           })
+          if (appsSelectKey == '4') {
+            dispatch({
+              type: 'getFolderList',
+              payload: {
+                board_id: board_id
+              }
+            })
 
-          if (folder_id) {
-            dispatch({
-              type: 'getfolderInfo',
-              payload: {
-                folder_id
-              }
-            })
-          } else {
-            dispatch({
-              type: 'initialget',
-              payload: {
-                id: board_id
-              }
-            })
+            if (folder_id) {
+              dispatch({
+                type: 'getfolderInfo',
+                payload: {
+                  folder_id
+                }
+              })
+            } else {
+              dispatch({
+                type: 'initialget',
+                payload: {
+                  id: board_id
+                }
+              })
+            }
+            if (file_id) {
+              dispatch({
+                type: 'previewFileByUrl',
+                payload: {
+                  file_id,
+                }
+              })
+
+              dispatch({
+                type: 'getCardCommentListAll',
+                payload: {
+                  id: file_id
+                }
+              })
+
+            }
           }
-          if (file_id) {
-            dispatch({
-              type: 'previewFileByUrl',
-              payload: {
-                file_id,
-              }
-            })
 
-            dispatch({
-              type: 'getCardCommentListAll',
-              payload: {
-                id: file_id
-              }
-            })
-
-          }
 
         }
+
       })
     },
   },
   effects: {
+    
     //文档----------start
     * initialget({ payload }, { select, call, put }) {
       const { id } = payload
@@ -214,7 +219,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
-      const { file_id } = payload
+      const { file_id, isNotNecessaryUpdateBread } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
       if (isApiResponseOk(res)) {
         yield put({
@@ -222,45 +227,49 @@ export default modelExtend(projectDetail, {
           payload: {
             filePreviewCurrentVersionList: res.data.version_list,
             filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '',
-            filePreviewCurrentId: res.data.base_info.file_resource_id
+            filePreviewCurrentId: res.data.base_info.file_resource_id,
+            currentPreviewFileBaseInfo: res.data.base_info,
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList) || []
         let arr = []
         const target_path = res.data.target_path
         // 递归添加路径
-        // const digui = (name, data) => {
-        //   if(data[name]) {
-        //     arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
-        //     digui(name, data[name])
-        //   }else if(data['parent_id'] == '0'){
-        //     arr.push({file_name: '根目录', file_id: data.id, type: '1'})
-        //   }
-        // }
-        // digui('parent_folder', target_path)
-        // const newbreadcrumbList = arr.reverse()
-        // newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2'})
-        //递归添加路径
         const digui = (name, data) => {
-          if (data[name] && data['parent_id'] != '0') {
-            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+          if(data[name]) {
+            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
             digui(name, data[name])
+          }else if(data['parent_id'] == '0'){
+            arr.push({file_name: '根目录', file_id: data.id, type: '1'})
           }
         }
         digui('parent_folder', target_path)
-        const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
-        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2' })
-
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            breadcrumbList: newbreadcrumbList
-          }
-        })
+        const newbreadcrumbList = arr.reverse()
+        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', belong_folder_id: res.data.base_info.folder_id})
+        //递归添加路径
+        // const digui = (name, data) => {
+        //   if (data[name] && data['parent_id'] != '0') {
+        //     arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+        //     digui(name, data[name])
+        //   }
+        // }
+        // digui('parent_folder', target_path)
+        // const newbreadcrumbList = [].concat(breadcrumbList, arr.reverse())
+        // newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', belong_folder_id: res.data.base_info.folder_id })
+        // 这是针对文件列表中的设置,
+        if (!isNotNecessaryUpdateBread) {
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              breadcrumbList: newbreadcrumbList
+            }
+          })
+        }
         yield put({
           type: 'getFileList',
           payload: {
-            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].belong_folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].belong_folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
           }
         })
       } else {
@@ -402,7 +411,7 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * getFolderList({ payload }, { select, call, put }) {
@@ -419,11 +428,11 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
+        message.warning(res.message)
       }
     },
     * filePreview({ payload }, { select, call, put }) {
-      const { file_id, file_resource_id, version_id } = payload
+      const { file_id, file_resource_id, version_id, whetherToggleFilePriview } = payload
       const res = yield call(filePreview, { id: file_id })
       if (isApiResponseOk(res)) {
         yield put({
@@ -448,53 +457,15 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-        yield put({
-          type: 'newFileInfoByUrl',
-          payload: {
-            file_id
-          }
-        })
-
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    },
-    * newFileInfoByUrl({ payload }, { select, call, put }) {
-      const { file_id } = payload
-      let res = yield call(fileInfoByUrl, { id: file_id })
-      const new_breadcrumbList = yield select(selectBreadcrumbList)
-      const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
-      const new_filePreviewCurrentVersionList = yield select(selectFilePreviewCurrentVersionList)
-      let temp_list = [...new_filePreviewCurrentVersionList]
-        let temp_arr = []
-        let default_arr = []
-        for (let val of temp_list) {
-          if (val['file_id'] == file_id) {
-            // console.log(val, 'ssssss')
-            temp_arr.unshift(val)
-          }
-          if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
-            default_arr.push(val)
-          }
+        // 表示只有版本切换预览的时候才会更新
+        if (whetherToggleFilePriview) {
+          yield put({
+            type: 'fileInfoByUrl',
+            payload: {
+              file_id
+            }
+          })
         }
-
-      if (isApiResponseOk(res)) {
-        // yield put({
-        //   type: 'updateDatas',
-        //   payload: {
-        //     filePreviewCurrentVersionList: res.data.version_list,
-        //     filePreviewCurrentVersionId: res.data.version_list.length?res.data.version_list[0]['version_id']: '',
-        //     // filePreviewCurrentId: res.data.base_info.file_resource_id
-        //   }
-        // })
-        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            breadcrumbList: new_breadcrumbList
-          }
-        })
-        //debugger
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -546,7 +517,8 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            selectedRowKeys: []
+            selectedRowKeys: [],
+            selectedRows: []
           }
         })
         yield put({
@@ -597,7 +569,8 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            selectedRowKeys: []
+            selectedRowKeys: [],
+            selectedRows: []
           }
         })
         yield put({
@@ -626,7 +599,8 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            selectedRowKeys: []
+            selectedRowKeys: [],
+            selectedRows: []
           }
         })
         yield put({
@@ -656,6 +630,7 @@ export default modelExtend(projectDetail, {
       const new_breadcrumbList = yield select(selectBreadcrumbList)
       const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      const new_breadcrumbList_new_ = [...new_breadcrumbList]
       let temp_list = [...res.data]
       let temp_arr = []
       let default_arr = []
@@ -671,12 +646,12 @@ export default modelExtend(projectDetail, {
       // console.log(temp_arr, default_arr, 'sssss')
       if (isApiResponseOk(res)) {
         // 修改弹窗中的文件路径
-        new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        new_breadcrumbList_new_[new_breadcrumbList_new_.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data,
-            breadcrumbList: new_breadcrumbList
+            breadcrumbList: new_breadcrumbList_new_
           }
         })
         if (isNeedPreviewFile) {

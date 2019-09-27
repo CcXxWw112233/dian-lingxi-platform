@@ -1,7 +1,6 @@
 //文件列表包括文件夹
-import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
-import { func } from "prop-types";
 
 const createHeaderContentData = (contentType, contentId) => {
   
@@ -92,7 +91,6 @@ export async function completeProcessTask(data) {
 }
 //撤回流程任务
 export async function rebackProcessTask(data) {
-  
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/recall`,
     method: 'PUT',
@@ -102,7 +100,6 @@ export async function rebackProcessTask(data) {
 }
 //拒绝
 export async function rejectProcessTask(data) {
-
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reject`,
     method: 'PUT',
@@ -114,7 +111,6 @@ export async function rejectProcessTask(data) {
 
 //重新指定推进人
 export async function resetAsignees(data) {
-
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/reassign_assignee`,
     method: 'PUT',
@@ -143,7 +139,6 @@ export async function fillFormComplete(data) {
 }
 //流程文件上传
 export async function processFileUpload(data) {
-  //debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/flowtask/upload`,
     method: 'POST',
@@ -174,13 +169,15 @@ export async function deleteProcessFile(data) {
 //获取流程列表 进行中 已终止 已完成
 export async function getProcessListByType(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FLOWS}/workflow/list`,
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/list`,
     method: 'GET',
     params,
   }, {isNotLoading: true});
 }
+
 //工作台 流程modal 评论提交
 export async function addWorkFlowComment(data) {
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
     method: 'POST',
@@ -190,7 +187,6 @@ export async function addWorkFlowComment(data) {
 }
 
 export async function getWorkFlowComment(params) {
-  
   let res = request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment`,
     method: 'GET',
@@ -201,7 +197,6 @@ export async function getWorkFlowComment(params) {
 }
 //终止流程
 export async function workflowEnd(data) {
-  
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/end/${data.id}`,
     method: 'PUT',
@@ -220,6 +215,7 @@ export async function workflowDelete(data) {
 }
 //删除流程评论
 export async function deleteWorkFlowComment(data) {
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/comment/${data.id}`,
     method: 'DELETE',
@@ -230,6 +226,7 @@ export async function deleteWorkFlowComment(data) {
 
 //设置流程节点截止日期
 export async function setDueTimeInFlowsNode(data) {
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/node/deadline/set`,
     method: 'PUT',
@@ -239,6 +236,7 @@ export async function setDueTimeInFlowsNode(data) {
 }
 //设置流程实例截止日期
 export async function setDueTimeInFlowsInstance(data) {
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/workflow/instance/deadline/set`,
     method: 'PUT',
