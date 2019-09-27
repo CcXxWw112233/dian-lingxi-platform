@@ -101,7 +101,8 @@ class ProjectMenu extends Component {
           }
         })
       )
-    }).catch(err => console.log('切换项目列表失败：' + err))
+    })
+    // .catch(err => console.log('切换项目列表失败：' + err))
   };
   adjustArchivedProjectAlign = text => {
     const archivedProject = '已归档项目';
@@ -533,7 +534,7 @@ class ProjectMenu extends Component {
     } else {
       params['_organization_id'] = org_id
     }
-    console.log('sssss_1', { org_id })
+    // console.log('sssss_1', { org_id })
     // debugger
     Promise.resolve(
       dispatch({

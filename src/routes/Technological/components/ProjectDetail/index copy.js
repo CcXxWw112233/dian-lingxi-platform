@@ -53,11 +53,11 @@ class ProjectDetail extends Component {
 
   componentWillMount() {
     this.historyListenSet()
-    console.log('sss', 111)
+    // console.log('sss', 111)
   }
 
   componentWillUnmount() {
-    console.log('sss', 3333)
+    // console.log('sss', 3333)
     this.initialData()
     const { dispatch } = this.props
     dispatch({//清空项目默认页面可见数据--（一进来就看到的）
@@ -67,7 +67,7 @@ class ProjectDetail extends Component {
   }
 
   componentDidMount() {
-    console.log('sss', 222)
+    // console.log('sss', 222)
   }
 
   filterAppsModule = () => {

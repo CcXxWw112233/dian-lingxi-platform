@@ -45,7 +45,7 @@ export default class Header extends Component {
     onChange = (e) => {
         const value = e.target.value
         const { dispatch } = this.props
-        console.log('sss', value)
+        // console.log('sss', value)
         dispatch({
             type: "xczNews/updateDatas",
             payload: {

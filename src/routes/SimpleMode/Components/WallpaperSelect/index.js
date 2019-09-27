@@ -98,7 +98,7 @@ class WallpaperSelect extends Component {
             this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.content);
         }
 
-        console.log("上一张")
+        // console.log("上一张")
     }
 
     selectNextWallpaper = () => {
@@ -120,7 +120,7 @@ class WallpaperSelect extends Component {
             this.selectMyWallpaper(currentWallpaper.id, currentWallpaper.content);
         }
 
-        console.log("下一张")
+        // console.log("下一张")
     }
     render() {
         const { wallpaperSelectModalVisiable } = this.state;
