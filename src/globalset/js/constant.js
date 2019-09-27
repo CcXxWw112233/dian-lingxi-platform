@@ -44,10 +44,10 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
 // export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
   if (NODE_ENV == 'development') {
-    // return 'ws://test.lingxi.new-di.com/websocket' 
+    return 'ws://test.lingxi.new-di.com/websocket' 
     // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    return 'ws://192.168.1.68/websocket'
+    // return 'ws://192.168.1.68/websocket'
   } else {
     const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`

@@ -5,8 +5,8 @@ import commonStyles from './common.less'
 import { Icon } from 'antd'
 import { connect } from 'dva'
 
-@connect(({xczNews = []}) => ({
-    xczNews, 
+@connect(({ xczNews = [] }) => ({
+    xczNews,
 }))
 export default class SearchArticlesList extends Component {
 
@@ -15,10 +15,10 @@ export default class SearchArticlesList extends Component {
         var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y, M, D;
         Y = date.getFullYear();
-        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1);
-        D = date.getDate() ;
+        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+        D = date.getDate();
         return Y + "-" + M + "-" + D + " "
-     }
+    }
 
     // 分页加载操作
     onScroll = () => {
@@ -35,13 +35,13 @@ export default class SearchArticlesList extends Component {
 
         const { dispatch, xczNews, location } = this.props;
         const { is_onscroll_do_paging, page_no, searchList = {}, defaultArr = [] } = xczNews;
-        let new_page_no = page_no || 0;   
+        let new_page_no = page_no || 0;
 
         // scrollTop >= (scrollHeight - windowHeight)
-        if (scrollHeight - 40 <= (scrollTop + windowHeight) ) {
+        if (scrollHeight - 40 <= (scrollTop + windowHeight)) {
             // console.log('page_no', page_no)
 
-            if(!is_onscroll_do_paging) {
+            if (!is_onscroll_do_paging) {
                 return false
             }
 
@@ -58,7 +58,7 @@ export default class SearchArticlesList extends Component {
                     dispatch({
                         type: 'xczNews/getHeaderSearch',
                         payload: {
-                            
+
                         }
                     })
                 }, 300)
@@ -67,12 +67,12 @@ export default class SearchArticlesList extends Component {
                     dispatch({
                         type: 'xczNews/getAreasArticles',
                         payload: {
-                            
+
                         }
                     })
                 }, 300)
             }
-            
+
         }
     }
 
@@ -89,7 +89,7 @@ export default class SearchArticlesList extends Component {
         })
         window.addEventListener('scroll', this.onScroll)
     }
-    
+
     // 销毁滚动事件
     componentWillUnmount() {
         window.removeEventListener('scroll', this.onScroll)
@@ -110,35 +110,42 @@ export default class SearchArticlesList extends Component {
         })
     }
 
-     // 渲染 的组件
-     renderInfo() {
+    // 渲染 的组件
+    renderInfo() {
         const { xczNews, location = {} } = this.props;
-        const {searchList = {}, defaultArr = [], onSearchButton, contentVal, page_size, page_no } = xczNews;
+        const { searchList = {}, defaultArr = [], onSearchButton, contentVal, page_size, page_no } = xczNews;
         const { total, records } = searchList;
 
         let name = '';
 
-        if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/hot') {
+        // if (location.pathname == '/simpleMode/WorkbenchPage/xczNews/hot') {
+        //     name = '热点'
+        // } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/highRise') {
+        //     name = '高层'
+        // } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/authority') {
+        //     name = '权威'
+        // } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/dataBase') {
+        //     name = '资料库'
+        // }
+
+        if (location.pathname == '/technological/simplemode/workbench/xczNews/hot') {
             name = '热点'
-
-        } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/highRise') {
+        } else if (location.pathname == '/technological/simplemode/workbench/xczNews/highRise') {
             name = '高层'
-  
-        } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/authority') {
+        } else if (location.pathname == 'technological/simplemode/workbench/xczNews/authority') {
             name = '权威'
-
-        } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/dataBase') {
+        } else if (location.pathname == '/technological/simplemode/workbench/xczNews/dataBase') {
             name = '资料库'
-    
         }
+
         return (
             <div className={commonStyles.mainContainer}>
                 {
-                   location.pathname != '/SimpleMode/WorkbenchPage/xczNews/area' && contentVal && onSearchButton && (
+                    location.pathname != '/SimpleMode/WorkbenchPage/xczNews/area' && contentVal && onSearchButton && (
                         <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                            <i 
+                            <i
                                 style={{ fontStyle: 'normal', display: 'inline-block', marginRight: 10, cursor: 'pointer', fontSize: 12 }}
-                                onClick={ () => { this.handleBack() } }
+                                onClick={() => { this.handleBack() }}
                             >
                                 <Icon type="left" />返回
                             </i>
@@ -168,22 +175,22 @@ export default class SearchArticlesList extends Component {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className={commonStyles.li}>
-                                                    <div className={commonStyles.left}>
-                                                        <img src="" />
-                                                    </div>
-                                                    <div className={commonStyles.right}>
-                                                        <div className={commonStyles.message}>
-                                                            <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                    <div className={commonStyles.li}>
+                                                        <div className={commonStyles.left}>
+                                                            <img src="" />
                                                         </div>
-                                                        <div className={commonStyles.img_note}>
-                                                            <span>{item.origin_name}</span>
-                                                            <span>{this.getdate(item.publish_time)}</span>
+                                                        <div className={commonStyles.right}>
+                                                            <div className={commonStyles.message}>
+                                                                <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                            </div>
+                                                            <div className={commonStyles.img_note}>
+                                                                <span>{item.origin_name}</span>
+                                                                <span>{this.getdate(item.publish_time)}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ) 
-                                        }   
+                                                )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -191,28 +198,28 @@ export default class SearchArticlesList extends Component {
                     })
                 }
                 {
-                   searchList && searchList.records && searchList.records.length < page_size ? (
+                    searchList && searchList.records && searchList.records.length < page_size ? (
                         <p style={{ textAlign: 'center', paddingTop: 20 }}>没有更多数据啦...</p>
                     ) : (
-                        <p style={{ textAlign: 'center', paddingTop: 20 }}>疯狂加载中...</p>
-                    )
+                            <p style={{ textAlign: 'center', paddingTop: 20 }}>疯狂加载中...</p>
+                        )
                 }
             </div>
         )
 
 
-     }
-     
+    }
+
     render() {
         return (
             <div>
-                { this.renderInfo() }
+                {this.renderInfo()}
             </div>
-            
+
         )
-    
+
     }
 
 
-        
+
 }
