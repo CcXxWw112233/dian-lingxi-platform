@@ -128,11 +128,11 @@ class InviteOthers extends Component {
 
   // 进行搜索, 发送请求
   fetchUsers = user => {
-    if (!user || user == '' || user == ' ') return
     const trimStr = (str) => {
       return str.replace(/(^\s+)|(\s+$)/g, '')
     }
     let new_user = trimStr(user)
+    if (!new_user || new_user == '' || new_user == ' ') return
     // console.log(new_user, 'sssssss')
     // return
     this.setState(
