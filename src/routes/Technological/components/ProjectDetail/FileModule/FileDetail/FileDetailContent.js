@@ -415,6 +415,14 @@ class FileDetailContent extends React.Component {
         breadcrumbList: new_arr_,
       }
     })
+    dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isInOpenFile: false,
+        filePreviewUrl: '',
+        breadcrumbList: new_arr_,
+      }
+    })
   }
   zoomFrame() {
     const { isExpandFrame, dispatch } = this.props
