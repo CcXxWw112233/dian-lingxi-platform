@@ -180,7 +180,7 @@ export default class GetRowGanttItem extends Component {
                                 data-targetclassname="specific_example"
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
-                                style={{color: is_over_duetime?'#FF7875': '#FAAD14'}}
+                                style={{color: is_over_duetime?'#FFA39E': '#FFC069'}}
                               >&#xe6a0;</div>
                             </Dropdown>
                           )
@@ -191,7 +191,7 @@ export default class GetRowGanttItem extends Component {
                               <div
                                 data-targetclassname="specific_example"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
-                                style={{ height: item_height - 12, backgroundColor: is_over_duetime?'#FF7875': '#FAAD14' }}
+                                style={{ height: item_height - 12, backgroundColor: is_over_duetime?'#FFA39E': '#FFC069' }}
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
                                 onMouseOver={e => e.stopPropagation()}
