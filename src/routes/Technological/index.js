@@ -13,6 +13,7 @@ import SiderRight from './Sider/SiderRight'
 import GlobalSearch from './GlobalSearch'
 import QueryString from 'querystring'
 import { initWs } from '../../components/WsNewsDynamic'
+import Cookies from 'js-cookie'
 
 const { Sider, Content } = Layout;
 
