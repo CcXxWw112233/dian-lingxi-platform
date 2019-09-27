@@ -245,7 +245,7 @@ export default modelExtend(projectDetail, {
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', belong_folder_id: res.data.base_info.folder_id})
+        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {
@@ -269,7 +269,7 @@ export default modelExtend(projectDetail, {
           type: 'getFileList',
           payload: {
             // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
-            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].belong_folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].belong_folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
           }
         })
       } else {
