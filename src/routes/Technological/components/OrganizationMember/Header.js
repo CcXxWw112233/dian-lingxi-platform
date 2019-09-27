@@ -31,7 +31,7 @@ export default class Header extends React.Component {
           id: invitation_org,
           role_id: res.data.role_id,
           type: '11',
-          users: temp_ids,
+          users: res.data.users,
           rela_condition: rela_Condition,
         }).then(res => {
 

@@ -117,7 +117,7 @@ export default class MenuSearchPartner extends React.Component {
                     id: invitationId,
                     role_id: res.data.role_id,
                     type: invitationType,
-                    users: temp_ids,
+                    users: res.data.users,
                     rela_condition: rela_Condition,
                 }).then(res => {
                     if (isApiResponseOk(res)) {
@@ -163,7 +163,6 @@ export default class MenuSearchPartner extends React.Component {
                                 }
                             })
                         } else if (invitationType === '8') {
-                            debugger
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',
                                 payload: {

@@ -158,7 +158,6 @@ export default class Boundary extends Component {
 		// let phoneTemp = [] // 定义一个手机号的空数组
 		// let emailTemp = [] // 定义一个邮箱的空数组
 		let allTemp = new Array(); // 所有的数组列表
-		// console.log(allTemp, 'ssss')
 		for (const val of new_input_list) {
 			const result = val['value']
 			if (val['value'] != '') {
@@ -170,27 +169,35 @@ export default class Boundary extends Component {
 			// 	emailTemp.push(result)
 			// }
 		}
-		// console.log(allTemp, 'ssss')
-		const allTempStr = allTemp.join(',')
-		// console.log(allTempStr, 'ssss')
+		// console.log(allTemp, 'ssss===allTemp')
+		// const allTempStr = allTemp.join(',')
 		const data = {
 			board_id: new_user_board_id,
 			users: allTemp
 		}
-		console.log('DCMenuItemOne===222==');
+
 		organizationInviteWebJoin({
 			_organization_id: new_user_org_id,
 			type: '12',
-			users: allTempStr,
+			users: allTemp,
 		}).then(res => {
 			if (res && res.code === '0') {
 				commInviteWebJoin({
 					id: new_user_board_id,
 					role_id: res.data.role_id,
 					type: '12',
-					users: allTempStr,
+					users: res.data.users,
 					rela_condition: '',
+				}).then(res => {
+					if (isApiResponseOk(res)) {
+						dispatch(routerRedux.push('/technological/simplemode/home'))
+						// dispatch(routerRedux.push('/technological/workbench'))
+					} else {
+						message.error(res.message)
+					}
 				})
+			} else {
+				message.error(res.message)
 			}
 		})
 

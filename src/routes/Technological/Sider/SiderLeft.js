@@ -162,7 +162,7 @@ export default class SiderLeft extends React.Component {
           id: invitationId,
           role_id: res.data.role_id,
           type: '11',
-          users: temp_ids,
+          users: res.data.users,
           rela_condition: rela_Condition,
         }).then(res => {
 
