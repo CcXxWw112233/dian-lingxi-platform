@@ -219,7 +219,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
-      const { file_id, isNotNecessaryUpdateBread } = payload
+      const { file_id, isNotNecessaryUpdateBread, whetherUpdateFileList } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
       if (isApiResponseOk(res)) {
         yield put({
@@ -246,6 +246,7 @@ export default modelExtend(projectDetail, {
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
         newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
+        console.log(newbreadcrumbList, 'sssssss_newbreadcrumbList')
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {
@@ -265,13 +266,15 @@ export default modelExtend(projectDetail, {
             }
           })
         }
-        yield put({
-          type: 'getFileList',
-          payload: {
-            // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
-            folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
-          }
-        })
+        if (whetherUpdateFileList) { // 只有文件弹窗以及文件列表中需要调用fileList
+          yield put({
+            type: 'getFileList',
+            payload: {
+              // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+              folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+            }
+          })
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

@@ -777,7 +777,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       // 这里是也要更新选中的列表, 但是需要这个选择列表存在的情况下
@@ -806,7 +807,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
@@ -830,7 +832,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
@@ -859,7 +862,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
