@@ -309,6 +309,7 @@ export default {
     },
 
     * addMenbersInProject({ payload }, { select, call, put }) {
+      const currentSelectedProjectMenuItem = yield select(state => state['project'].datas.currentSelectedProjectMenuItem)
       let res = yield call(addMenbersInProject, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -317,6 +318,13 @@ export default {
             calback: function () {
               message.success('成功添加项目成员', MESSAGE_DURATION_TIME)
             },
+            type: '1'
+          }
+        })
+        yield put({
+          type: 'fetchCurrentProjectGroupProjectList',
+          payload: {
+            keyword: currentSelectedProjectMenuItem,
             type: '1'
           }
         })

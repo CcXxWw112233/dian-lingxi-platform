@@ -615,7 +615,7 @@ class VisitControl extends Component {
     );
     return (
       <div
-        style={{position: 'relative', zIndex: 1005}}
+        style={{position: 'relative'}}
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >
