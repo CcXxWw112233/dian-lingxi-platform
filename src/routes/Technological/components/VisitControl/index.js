@@ -347,7 +347,7 @@ class VisitControl extends Component {
   toggleVisitControl = () => {
     const { isPropVisitControl } = this.props
     return (
-      <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
+      <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
         <Menu.Item key="unClock">
           开放访问
         </Menu.Item>
@@ -385,8 +385,8 @@ class VisitControl extends Component {
                   {isPropVisitControl ? clockIcon : unClockIcon}
                   <span className={styles.title__text_content}>访问权限</span>
                 </span>
-                <div className={styles.title__operator} style={{ cursor: 'pointer' }}>
-                  <Dropdown overlay={this.toggleVisitControl()} trigger={['click']}>
+                <div className={styles.title__operator} style={{ cursor: 'pointer', position: 'relative' }}>
+                  <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.toggleVisitControl()} trigger={['click']}>
                     <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
                       <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
                       <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
@@ -615,7 +615,7 @@ class VisitControl extends Component {
     );
     return (
       <div
-        style={{position: 'relative', zIndex: 6666}}
+        style={{position: 'relative', zIndex: 1005}}
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >

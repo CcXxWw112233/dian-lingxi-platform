@@ -23,6 +23,7 @@ export default modelExtend(technological, {
       projectList: [],
       boxList: [],
       workbench_show_gantt_card: '0', //工作台是否显示甘特图卡片，0默认不显示，1显示
+      projectTabCurrentSelectedProject: '0',
     }
   },
   subscriptions: {
@@ -845,7 +846,7 @@ export default modelExtend(technological, {
       }
     },
     setProjectTabCurrentSelectedProject(state, action) {
-      const { projectId } = action.payload
+      const { projectId = '0'} = action.payload
       return {
         ...state,
         datas: { ...state.datas, projectTabCurrentSelectedProject: projectId }
