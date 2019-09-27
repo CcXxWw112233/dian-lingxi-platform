@@ -10,6 +10,7 @@ export default {
     datas: {
       projectGroupTree: {}, //项目分组
       projectGroupSearchTree: [], //项目分组搜索树
+      currentSelectedProjectMenuItem: '', //当前选择的item
     }
   },
   subscriptions: {
@@ -23,18 +24,6 @@ export default {
               collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
             }
           })
-          // dispatch({
-          //   type: 'getProjectList',
-          //   payload: {
-          //     type: '1'
-          //   }
-          // })
-          // dispatch({
-          //   type: 'getAppsList',
-          //   payload: {
-          //     type: '2'
-          //   }
-          // })
           dispatch({
             type: 'setCurrentSelectedProjectMenuItem',
             payload: {
