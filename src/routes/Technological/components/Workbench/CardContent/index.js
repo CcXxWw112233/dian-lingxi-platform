@@ -244,6 +244,10 @@ class CardContent extends React.Component {
       payload: { id: board_id }
     });
     await this.props.dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: { id: board_id }
+    });
+    await this.props.dispatch({
       type: 'workbenchDetailProcess/getWorkFlowComment',
       payload: { flow_instance_id: flowID }
     });
