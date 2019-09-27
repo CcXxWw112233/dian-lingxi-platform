@@ -880,6 +880,7 @@ class FileDetailContent extends React.Component {
         type: 'projectDetailFile/getFileList',
         payload: {
           folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -908,7 +909,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -932,7 +934,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -962,7 +965,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }

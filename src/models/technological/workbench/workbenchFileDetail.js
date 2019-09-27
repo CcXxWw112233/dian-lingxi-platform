@@ -111,7 +111,7 @@ export default {
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', belong_folder_id: res.data.base_info.folder_id})
+        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
         yield put({
           type: 'updateDatas',
           payload: {

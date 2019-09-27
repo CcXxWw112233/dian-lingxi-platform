@@ -273,7 +273,7 @@ export default class Header extends React.Component {
     const id = this.props.model.datas.totalId.flow
     const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const ellipsis = <Icon type="ellipsis" onClick={() => { console.log(2) }} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
+    const ellipsis = <Icon type="ellipsis" style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
         type: 'workbenchDetailProcess/workflowDelete',
@@ -339,7 +339,7 @@ export default class Header extends React.Component {
 
     const dataSource = [
       this.state.controller === 1 ? { content: '终止流程', click: showConfirm.bind(this, processEnd.bind(this)) } : undefined,
-      { content: '移入回收站', click: this.state.controller === 1 ? showDeleteConfirm.bind(this, processDelete.bind(this)) : console.log('没权限') }
+      { content: '移入回收站', click: this.state.controller === 1 ? showDeleteConfirm.bind(this, processDelete.bind(this)) : '' }
     ]
     let r = dataSource.reduce((r, c) => {
       return [

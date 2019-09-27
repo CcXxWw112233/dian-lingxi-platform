@@ -108,7 +108,7 @@ class Gantt extends Component {
           message.warn('创建任务失败')
         }
       })
-      .catch(err => console.log(err));
+      // .catch(err => message.error(err));
   }
   handleGetNewTaskParams(data) {
     const { datas: { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } } = this.props.model

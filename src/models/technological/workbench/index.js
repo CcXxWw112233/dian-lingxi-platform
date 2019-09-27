@@ -845,7 +845,7 @@ export default modelExtend(technological, {
       }
     },
     setProjectTabCurrentSelectedProject(state, action) {
-      const { projectId } = action.payload
+      const { projectId = '0'} = action.payload
       return {
         ...state,
         datas: { ...state.datas, projectTabCurrentSelectedProject: projectId }

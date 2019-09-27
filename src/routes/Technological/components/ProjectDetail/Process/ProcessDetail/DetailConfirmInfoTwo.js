@@ -256,7 +256,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
       filePreviewCurrentFileId: file_id,
     })
     this.props.filePreview({ id: file_resource_id, file_id: file_id })
-
+    this.props.dispatch({
+      type: 'projectDetailFile/fileInfoByUrl',
+      payload: {
+        file_id
+      }
+    })
   }
 
   render() {
