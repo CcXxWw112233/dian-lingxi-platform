@@ -602,7 +602,6 @@ class BoardCommunication extends Component {
         //console.log('文件夹', keys, event);
         const { dispatch } = this.props;
         const fileId = keys[0]
-        console.log("sssss", event);
 
         this.setState({
             selectBoardFileDropdownVisible: false,
