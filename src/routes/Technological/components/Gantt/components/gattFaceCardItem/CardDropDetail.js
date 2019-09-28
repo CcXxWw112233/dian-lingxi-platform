@@ -15,7 +15,7 @@ const CardDropDetail = (props) => {
   
     return (
         <div className={styles.drop_card}>
-            <div className={styles.triangle}></div>
+            {/* <div className={styles.triangle}></div> */}
             <div className={`${styles.specific_example_content}`}>
                 <div className={`${styles.card_item_status}`} style={{ marginTop: is_realize == '1' ? -2 : 2 }}>
                     <CheckItem is_realize={is_realize} />

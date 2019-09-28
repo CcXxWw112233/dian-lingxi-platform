@@ -8,8 +8,9 @@ import { task_item_height, task_item_margin_top, date_area_height } from './cons
 import { isSamDay } from './getDate'
 import { updateTask } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
-import { message, Dropdown } from 'antd'
+import { message, Dropdown, Popover  } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
+import { filterDueTimeSpan } from './ganttBusiness'
 
 // 参考自http://www.jq22.com/webqd1348
 
@@ -316,10 +317,21 @@ export default class GetRowTaskItem extends Component {
 
     render() {
         const { itemValue = {} } = this.props
-        const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = itemValue
+        const {
+            left,
+            top, width,
+            height,
+            name, id,
+            board_id, is_realize,
+            executors = [], label_data = [],
+            is_has_start_time, is_has_end_time,
+            start_time, due_time
+        } = itemValue
         const { local_left, local_top, local_width } = this.state
+        const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
+
         return (
-            <Dropdown placement="bottomRight" overlay={<CardDropDetail {...itemValue} />} key={id}>
+            <Popover  placement="bottom" content={<CardDropDetail {...itemValue} />} key={id}>
                 <div
                     className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
@@ -333,12 +345,18 @@ export default class GetRowTaskItem extends Component {
                         opacity: 0.5,
                         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
-                    onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseMove={(e) => this.onMouseMove(e)}
-                // onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                    // 拖拽
+                    // onMouseDown={(e) => this.onMouseDown(e)}
+                    // onMouseMove={(e) => this.onMouseMove(e)}
+                    // 不拖拽
+                    onMouseMove={(e) => e.stopPropagation()}
+                    onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
                 >
                     <div
                         data-targetclassname="specific_example"
+                        style={{
+                            opacity: is_realize == '1' ? 0.5 : 1
+                        }}
                         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                         // onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
@@ -355,7 +373,14 @@ export default class GetRowTaskItem extends Component {
                             className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                             // onMouseDown={(e) => e.stopPropagation()}
                             onMouseMove={(e) => e.preventDefault()}
-                        >{name}</div>
+                        >
+                            {name}
+                            <span className={indexStyles.due_time_description}>
+                                {
+                                    is_overdue && is_realize != '1' && due_description
+                                }
+                            </span>
+                        </div>
                         <div data-targetclassname="specific_example"
                             // onMouseDown={(e) => e.stopPropagation()} 
                             onMouseMove={(e) => e.preventDefault()}
@@ -364,7 +389,7 @@ export default class GetRowTaskItem extends Component {
                         </div>
                     </div>
                 </div>
-            </Dropdown>
+            </Popover>
         )
     }
 }
