@@ -1,3 +1,18 @@
+const handleTimeDetailReturn = (timestamp) => {
+  if (!timeStamp) {
+    return {}
+  }
+  const time = new Date(timestamp);
+  const year = time.getFullYear()
+  const month = time.getMonth() + 1
+  const date = time.getDate()
+  const day = time.getDay()
+  const hours = time.getHours()
+  const minutes = time.getMinutes()
+  return {
+    year, month, date, day, hours, minutes
+  }
+}
 
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
@@ -49,7 +64,8 @@ export const timestampToTime = (timestamp, flag) => {
   }
   const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + '年';
+  const now_year = new Date().getFullYear()
+  let Y = now_year == date.getFullYear()? '' : date.getFullYear() + '年';
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
@@ -350,20 +366,26 @@ export const handleTimeStampToDate = (timeStamp) => {
     return false
   }
   const now = new Date();
-  const day = new Date(timeStamp).getDay() !== 0 ? new Date(timeStamp).getDay() : 7;
+  const year_ = now.getFullYear()
+  const month_ = now.getMonth() + 1
+  const date_ = now.getDate()
   const nowTime = now.getTime();
+  const new_now_time = new Date(`${year_}/${month_}/${date_} 0:0`).getTime()
+
+  const ob_time = new Date(timeStamp)
+  const ob_day = ob_time.getDay() !== 0 ? ob_time.getDay() : 7;
+  const ob_year = ob_time.getFullYear()
+  const ob_month = ob_time.getMonth() + 1
+  const ob_date = ob_time.getDate()
+  const ob_new_timestamp = new Date(`${ob_year}/${ob_month}/${ob_date} 23:59`).getTime()
 
   let DateDescription
-
-  // console.log('ssss',
-  //   isSamDay(nowTime, timeStamp), isSameWeek(timeStamp, nowTime), day
-  // )
 
   if (isSamDay(nowTime, timeStamp)) {
     DateDescription = '今天'
   } else {
-    if (isSameWeek(timeStamp, nowTime)) {
-      switch (day) {
+    if (isSameWeek(ob_new_timestamp, new_now_time)) {
+      switch (ob_day) {
         case 1:
           DateDescription = '本周一'
           break
@@ -393,7 +415,6 @@ export const handleTimeStampToDate = (timeStamp) => {
       DateDescription = timestampToTime(timeStamp)
     }
   }
-
 
   return DateDescription
 }
