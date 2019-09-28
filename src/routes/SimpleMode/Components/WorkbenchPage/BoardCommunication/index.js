@@ -420,6 +420,8 @@ class BoardCommunication extends Component {
                         })
                         this.updatePublicDatas({ board_id })
                         this.getFileModuleProps().getBoardMembers({ id: board_id })
+                    } else {
+                      message.warn(apiResult.message)
                     }
                 }).catch((error, e) => {
                     // console.log(error);
@@ -433,6 +435,8 @@ class BoardCommunication extends Component {
                 message.destroy()
                 message.success('上传成功');
 
+            } else {             
+              message.warn(apiResult.message)
             }
 
             this.initModalSelect()
@@ -598,7 +602,7 @@ class BoardCommunication extends Component {
         //console.log('文件夹', keys, event);
         const { dispatch } = this.props;
         const fileId = keys[0]
-        //console.log("selectedNodes", event.selectedNodes[0].props.title);
+        console.log("sssss", event);
 
         this.setState({
             selectBoardFileDropdownVisible: false,
