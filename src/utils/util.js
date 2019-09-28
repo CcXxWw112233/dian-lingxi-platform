@@ -1,3 +1,4 @@
+
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24;
@@ -341,4 +342,58 @@ export const timeColor = (timestamp) => {
     }
   }
   return color
+}
+
+// 时间戳转成相应的日期
+export const handleTimeStampToDate = (timeStamp) => {
+  if (!timeStamp) {
+    return false
+  }
+  const now = new Date();
+  const day = new Date(timeStamp).getDay() !== 0 ? new Date(timeStamp).getDay() : 7;
+  const nowTime = now.getTime();
+
+  let DateDescription
+
+  // console.log('ssss',
+  //   isSamDay(nowTime, timeStamp), isSameWeek(timeStamp, nowTime), day
+  // )
+
+  if (isSamDay(nowTime, timeStamp)) {
+    DateDescription = '今天'
+  } else {
+    if (isSameWeek(timeStamp, nowTime)) {
+      switch (day) {
+        case 1:
+          DateDescription = '本周一'
+          break
+        case 2:
+          DateDescription = '本周二'
+          break
+        case 3:
+          DateDescription = '本周三'
+          break
+        case 4:
+          DateDescription = '本周四'
+          break
+        case 5:
+          DateDescription = '本周五'
+          break
+        case 6:
+          DateDescription = '本周六'
+          break
+        case 7:
+          DateDescription = '本周日'
+          break
+        default:
+          DateDescription = timestampToTime(timeStamp)
+          break
+      }
+    } else {
+      DateDescription = timestampToTime(timeStamp)
+    }
+  }
+
+
+  return DateDescription
 }

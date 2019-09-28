@@ -3,7 +3,7 @@ import React from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
-import { timestampToTime } from '@/utils/util.js'
+import { timestampToTime, handleTimeStampToDate } from '@/utils/util.js'
 import { filterDueTimeSpan } from '../../ganttBusiness'
 
 const CardDropDetail = (props) => {
@@ -13,6 +13,9 @@ const CardDropDetail = (props) => {
         start_time, due_time, is_has_start_time, is_has_end_time 
     }
   
+    const new_start_time = start_time.toString().length > 10 ? Number(start_time) : Number(start_time) * 1000
+    const new_due_time = due_time && (due_time.toString().length > 10 ? Number(due_time) : Number(due_time) * 1000)
+
     return (
         <div className={styles.drop_card}>
             {/* <div className={styles.triangle}></div> */}
@@ -29,7 +32,7 @@ const CardDropDetail = (props) => {
             </div>
             <div className={styles.time_area}
                 style={{ background: filterDueTimeSpan(cal_time_span_params).is_overdue ? '#FF7875' : '#69C0FF' }}>
-                {timestampToTime(start_time)}{due_time && '—'}{timestampToTime(due_time)}
+                {handleTimeStampToDate(new_start_time)}{due_time && '—'}{handleTimeStampToDate(new_due_time)}
                 <span style={{ marginLeft: 6 }}>
                     {filterDueTimeSpan(cal_time_span_params).due_description}
                 </span>
