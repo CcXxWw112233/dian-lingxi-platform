@@ -66,6 +66,12 @@ export default class ProcessItem extends React.Component {
         _organization_id: obj.org_id
       }
     })
+    dispatch({
+      type: 'projectDetail/getRelationsSelectionPre',
+      payload: {
+        _organization_id: obj.org_id
+      }
+    })
     this.props.updatePublicDatas({ board_id: this.state.value.board_id })
     // if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
