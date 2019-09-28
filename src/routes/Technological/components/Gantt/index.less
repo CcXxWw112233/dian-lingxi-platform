@@ -63,7 +63,7 @@
 .dateArea{
   display: flex;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   left: 0;
   width: auto;
   height: @date_area_height;
@@ -161,6 +161,7 @@
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     position: absolute;
     // background-color: #1890FF;
+    z-index: 1;
     box-sizing: border-box;
     border-radius: 2px;
     cursor: pointer;
@@ -174,6 +175,11 @@
     overflow: hidden;
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
+    .due_time_description {
+      color: #FF4D4F;
+      font-size: 14px;
+      margin-left: 4px;
+    }
     .specific_example_content {
       overflow: hidden;
       background-color: #ffffff;
@@ -227,7 +233,7 @@
           position: relative;
           z-index: 0;
           top: 0px;
-          left: 24px;
+          left: 43px;
         }
         .board_miletiones_flagpole {
           box-sizing: border-box;
@@ -236,7 +242,7 @@
           position: relative;
           z-index: 0;
           top: -12px;
-          left: 21px;;
+          left: 40px;;
          
         }
         .ganttDetailItem_item{
@@ -262,7 +268,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     background-color: #FFFFFF;
     box-shadow:1px 0px 4px 0px rgba(0,0,0,0.15);
     display: flex;
@@ -302,17 +308,17 @@
         }
       }
      
-      .list_head_top:hover{
-        *{
-          color: #40A9FF;
-        }
-        .operator {
-          display: inline-block;
-        }
-        .operator:hover {
-          background:rgba(230,247,255,1);
-        }
-      }
+      // .listHeadItem:hover{
+      //   *{
+      //     color: #40A9FF;
+      //   }
+      //   .operator {
+      //     display: inline-block;
+      //   }
+      //   .operator:hover {
+      //     background:rgba(230,247,255,1);
+      //   }
+      // }
 
       .list_head_body {
         flex: 1;
@@ -471,6 +477,18 @@
 
       }
     }
+    .listHeadItem:hover{
+      // *{
+      //   color: #40A9FF;
+      // }
+      .operator {
+        color: #40A9FF;
+        display: inline-block;
+      }
+      .operator:hover {
+        background:rgba(230,247,255,1);
+      }
+    }
   }
 }
 
@@ -483,7 +501,7 @@
    box-shadow:1px -3px 4px 0px rgba(0,0,0,0.15);
    padding-right: @group_head_padding;
    border-bottom: 1px solid #E8E8E8;
-   z-index: 2;
+   z-index: 3;
    .set_content {
      height: @date_area_height;
      display: flex;

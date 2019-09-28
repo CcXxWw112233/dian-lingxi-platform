@@ -11,6 +11,8 @@ import { date_area_height, task_item_height, task_item_margin_top } from './cons
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
+import { filterDueTimeSpan } from './ganttBusiness'
+
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
@@ -413,8 +415,9 @@ export default class GetRowGantt extends Component {
           const { list_data = [], list_id } = value
           return (
             list_data.map((value2, key) => {
-              const { left, start_time, end_time, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time } = value2
               // const { id, left, width, start_time, end_time } = value2
+              const {  end_time ,left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+              const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
               return (
                 <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
                   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
@@ -442,6 +445,9 @@ export default class GetRowGantt extends Component {
                     >
                       <div
                         data-targetclassname="specific_example"
+                        style={{
+                          opacity: is_realize == '1'? 0.5: 1,
+                        }}
                         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                         onMouseDown={(e) => e.stopPropagation()} >
                         <div data-targetclassname="specific_example"
@@ -449,7 +455,14 @@ export default class GetRowGantt extends Component {
                           <CheckItem is_realize={is_realize} />
                         </div>
                         <div data-targetclassname="specific_example"
-                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>{name}</div>
+                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                          {name}
+                          <span className={indexStyles.due_time_description}>
+                            {
+                              is_overdue && due_description
+                            }
+                          </span>
+                        </div>
                         <div data-targetclassname="specific_example"
                           onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                           <AvatarList users={executors} size={'small'} />
