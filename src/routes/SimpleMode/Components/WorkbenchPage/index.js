@@ -10,7 +10,7 @@ import XczNews from './XczNews/index'
 
 class WorkbenchPage extends Component {
     constructor(props) {
-        console.log("WorkbenchPage组件初始化");
+        // console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
             BoardPlanVisible: false,

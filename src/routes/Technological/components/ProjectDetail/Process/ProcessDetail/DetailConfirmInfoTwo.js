@@ -248,15 +248,35 @@ export default class DetailConfirmInfoTwo extends React.Component {
       openPDF({ id: file_id })
       return false
     }
-
     this.props.updateDatasFile({
       seeFileInput: 'taskModule',
       isInOpenFile: true,
       filePreviewCurrentId: file_resource_id,
       filePreviewCurrentFileId: file_id,
     })
-    this.props.filePreview({ id: file_resource_id, file_id: file_id })
 
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        seeFileInput: 'taskModule',
+        isInOpenFile: true,
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentFileId: file_id,
+      }
+    })
+    // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+    this.props.dispatch({
+      type: 'projectDetailFile/filePreview',
+      payload: {
+        id: file_resource_id, file_id: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/fileInfoByUrl',
+      payload: {
+        file_id
+      }
+    })
   }
 
   render() {
@@ -266,7 +286,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, isInOpenFile, relations_Prefix } } = this.props.model
-    const { itemKey, itemValue } = this.props //所属列表位置
+    const { itemKey, itemValue, dispatch } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
 
     const { curr_node_sort, status } = processInfo //当前节点
@@ -631,15 +651,39 @@ export default class DetailConfirmInfoTwo extends React.Component {
           openPDF({ id: file_id })
           return false
         }
-
         that.props.updateDatasFile({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
           filePreviewCurrentFileId: file_id,
         })
-        that.props.filePreview({ id: file_resource_id, file_id: file_id })
-        that.props.dispatch({
+        // that.props.filePreview({ id: file_resource_id, file_id: file_id })
+        // that.props.dispatch({
+        //   type: 'projectDetailFile/fileInfoByUrl',
+        //   payload: {
+        //     file_id
+        //   }
+        // })
+        // console.log('sssss', {
+        //   dispatch
+        // })
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            seeFileInput: 'taskModule',
+            isInOpenFile: true,
+            filePreviewCurrentId: file_resource_id,
+            filePreviewCurrentFileId: file_id,
+          }
+        })
+        // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+        dispatch({
+          type: 'projectDetailFile/filePreview',
+          payload: {
+            id: file_resource_id, file_id: file_id
+          }
+        })
+        dispatch({
           type: 'projectDetailFile/fileInfoByUrl',
           payload: {
             file_id

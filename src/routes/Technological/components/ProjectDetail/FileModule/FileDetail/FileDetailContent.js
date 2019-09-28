@@ -415,6 +415,14 @@ class FileDetailContent extends React.Component {
         breadcrumbList: new_arr_,
       }
     })
+    dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isInOpenFile: false,
+        filePreviewUrl: '',
+        breadcrumbList: new_arr_,
+      }
+    })
   }
   zoomFrame() {
     const { isExpandFrame, dispatch } = this.props
@@ -880,6 +888,7 @@ class FileDetailContent extends React.Component {
         type: 'projectDetailFile/getFileList',
         payload: {
           folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -908,7 +917,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -932,7 +942,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }
@@ -962,7 +973,8 @@ class FileDetailContent extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: folder_id
+          folder_id: folder_id,
+          whetherUpdateFileList: true
         }
       })
     }

@@ -382,7 +382,7 @@ export default class DetailConfirmInfoThree extends React.Component {
         if (form_data[i]['is_required'] == '1') { //必填的情况下
           const verification_rule = form_data[i]['verification_rule']
           const value = form_data[i]['default_value']
-          console.log(i, verification_rule, validateTel(''))
+          // console.log(i, verification_rule, validateTel(''))
           switch (verification_rule) {
             case 'mobile':
               valiResult = validateTel(value)

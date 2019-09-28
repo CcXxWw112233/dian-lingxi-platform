@@ -70,7 +70,7 @@ class Login extends React.Component {
     })
   }
   reloadCode(){
-    console.log(window.location)
+    // console.log(window.location)
     //
   }
   passwordLogin() {

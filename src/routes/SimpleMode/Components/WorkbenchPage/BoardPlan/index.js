@@ -9,7 +9,7 @@ export default class index extends Component {
     render() {
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
-        console.log(contentHeight);
+        // console.log(contentHeight);
         return (
             <div>
                 <Gantt gantt_card_height={contentHeight} />

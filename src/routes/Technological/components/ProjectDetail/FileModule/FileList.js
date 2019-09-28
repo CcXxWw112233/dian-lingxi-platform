@@ -777,7 +777,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       // 这里是也要更新选中的列表, 但是需要这个选择列表存在的情况下
@@ -806,7 +807,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
@@ -830,7 +832,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
@@ -859,7 +862,8 @@ export default class FileList extends React.Component {
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
-          folder_id: belong_folder_id
+          folder_id: belong_folder_id,
+          whetherUpdateFileList: true
         }
       })
       if (selectedRows && selectedRows.length) {
@@ -899,7 +903,7 @@ export default class FileList extends React.Component {
       const { type, is_privilege, privileges, file_id } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
-        <Menu onClick={this.operationMenuClick.bind(this, data, board_id)}>
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={this.operationMenuClick.bind(this, data, board_id)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
           {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
             <Menu.Item key="2">下载</Menu.Item>
@@ -1034,8 +1038,8 @@ export default class FileList extends React.Component {
           const { isInAdd } = data
           if (!isInAdd) {
             return (
-              <div style={{ cursor: 'pointer' }}>
-                <Dropdown overlay={operationMenu(data, board_id)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
+              <div style={{ cursor: 'pointer', position: 'relative' }}>
+                <Dropdown zIndex={5} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operationMenu(data, board_id)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
                   <Icon type="ellipsis" theme="outlined" style={{ fontSize: 22, color: '#000000' }}
                   // onClick={this.toggleDropdownVisible} 
                   />

@@ -422,7 +422,7 @@ class BoardCommunication extends Component {
                         this.getFileModuleProps().getBoardMembers({ id: board_id })
                     }
                 }).catch((error, e) => {
-                    console.log(error);
+                    // console.log(error);
                     message.destroy()
                     message.error('上传失败');
                 })
@@ -437,7 +437,7 @@ class BoardCommunication extends Component {
 
             this.initModalSelect()
         }).catch((error, e) => {
-            console.log(error);
+            // console.log(error);
             message.destroy()
             this.initModalSelect()
 
@@ -522,12 +522,12 @@ class BoardCommunication extends Component {
     }
 
     onChange = value => {
-        console.log(value);
+        // console.log(value);
         this.setState({ value });
     };
 
     onSelectBoard = (keys, event) => {
-        console.log(event, "event");
+        // console.log(event, "event");
         const { dispatch } = this.props;
         const { is_selectFolder } = this.state;
         if (keys.length > 0) {
@@ -612,7 +612,7 @@ class BoardCommunication extends Component {
     };
 
     handleSelectBoardFileDropdownVisibleChange = flag => {
-        console.log('sddddff');
+        // console.log('sddddff');
         this.setState({ selectBoardFileDropdownVisible: flag });
     };
 
@@ -719,7 +719,7 @@ class BoardCommunication extends Component {
     renderSelectBoardFileTreeList = () => {
         const { boardFileTreeData = [], boardFolderTreeData = [], is_file_tree_loading } = this.props.simpleBoardCommunication;
         const { is_selectFolder } = this.state;
-        console.log('is_selectFolder', { boardFolderTreeData, boardFileTreeData });
+        // console.log('is_selectFolder', { boardFolderTreeData, boardFileTreeData });
         if (is_file_tree_loading) {
             return (
                 <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
@@ -763,7 +763,7 @@ class BoardCommunication extends Component {
     }
 
     onDragEnterCapture = (e) => {
-        console.log("ssssss");
+        // console.log("ssssss");
         this.setState({
             dragEnterCaptureFlag: true
         });
@@ -777,14 +777,14 @@ class BoardCommunication extends Component {
     }
 
     handleOk = e => {
-        console.log(e);
+        // console.log(e);
         this.setState({
             selectBoardFileModalVisible: false,
         });
     };
 
     handleCancel = e => {
-        console.log(e);
+        // console.log(e);
         this.initModalSelect()
     };
 

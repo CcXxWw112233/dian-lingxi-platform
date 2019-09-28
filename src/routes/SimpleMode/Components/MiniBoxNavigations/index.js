@@ -72,7 +72,14 @@ const MiniBoxNavigations = (props) => {
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                currentSelectedWorkbenchBox: box
+                currentSelectedWorkbenchBox: box,
+
+            }
+        })
+        dispatch({
+            type: 'simpleWorkbenchbox/updateDatas',
+            payload: {
+                currentBoardDetail: {}
             }
         })
         dispatch({
@@ -81,7 +88,7 @@ const MiniBoxNavigations = (props) => {
                 currentSelectedWorkbenchBox: box
             }
         })
-        
+
 
     }
 

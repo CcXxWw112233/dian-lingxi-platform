@@ -23,7 +23,7 @@ class BoardDropdownSelect extends Component {
   }
 
   onSelectBoard = (data) => {
-    console.log(data, 'bbbbb');
+    // console.log(data, 'bbbbb');
     if (data.key === 'add') {
       //console.log("onSelectBoard");
       this.setState({
