@@ -5,7 +5,7 @@ const Task = (props) => {
 
   return(
    <div>
-     <CreateTask  />
+     <CreateTask />
    </div>
   )
 };

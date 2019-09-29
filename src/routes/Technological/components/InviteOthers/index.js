@@ -35,7 +35,7 @@ class InviteOthers extends Component {
       fetching: false, // 是否在搜索查询
       selectedMember: [], //已经选择的成员或平台外人员
       currentOrgAllMembersList: [], //人员列表
-      membersListToSelect: [],//人员选择列表
+      membersListToSelect: [], //人员选择列表
       projectList: [], //我参与的项目列表
       projectUserList: [],
       groupList: [], //组织成员分组

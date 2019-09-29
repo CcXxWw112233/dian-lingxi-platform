@@ -158,7 +158,7 @@ class Gantt extends Component {
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
     const group_index_card_no_times_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
-    const schedule_cards_has_this = group_index_cards_index != -1  //排期任务是否含有该条
+    const schedule_cards_has_this = group_index_cards_index != -1 //排期任务是否含有该条
 
     // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
 

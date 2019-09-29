@@ -83,7 +83,7 @@ class VisitControl extends Component {
   }
   handleInviteMemberReturnResult = members => {
     this.handleGetAddNewMember(members);
-    
+
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
@@ -623,7 +623,7 @@ class VisitControl extends Component {
     );
     return (
       <div
-        style={{position: 'relative'}}
+        style={{ position: 'relative' }}
         className={styles.wrapper}
         onClick={e => this.handleClickedInVisitControl(e)}
       >

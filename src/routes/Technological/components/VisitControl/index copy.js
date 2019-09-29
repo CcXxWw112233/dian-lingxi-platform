@@ -762,7 +762,7 @@ class VisitControl extends Component {
           {...this.props}
           title="邀请他人一起参与"
           submitText="确定"
-          show_wechat_invite={true}
+          show_wechat_invite={false}
           board_id={board_id}
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}

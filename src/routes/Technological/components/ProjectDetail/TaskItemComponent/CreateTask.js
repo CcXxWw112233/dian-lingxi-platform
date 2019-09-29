@@ -283,7 +283,7 @@ export default class CreateTask extends React.Component {
               )
             })}
             {getTaskGroupListArrangeType === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-              <CreateItem  />
+              <CreateItem />
             ) : ('')}
           </div>
         </div>

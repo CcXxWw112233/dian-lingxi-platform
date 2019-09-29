@@ -182,8 +182,12 @@ export default class MenuSearchPartner extends React.Component {
                                 }
                             })
                         }
+                    } else {
+                        message.warn(res.message, MESSAGE_DURATION_TIME)
                     }
                 })
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         })
     }
