@@ -1,6 +1,6 @@
 import React from 'react'
 // import MenuSearchStyles from './MenuSearch.less'
-import { Input, Menu, Spin, Icon } from 'antd'
+import { Input, Menu, Spin, Icon, message } from 'antd'
 import indexStyles from './MenuSearchPartner.less'
 import ShowAddMenberModal from '../../routes/Technological/components/Project/ShowAddMenberModal'
 import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
