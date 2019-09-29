@@ -898,7 +898,8 @@ export default class FileList extends React.Component {
 
   render() {
     const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
-    const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges }, shouldHideVisitControlPopover } = this.state;
+    const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges = [], privileges_extend = [] }, shouldHideVisitControlPopover } = this.state;
+    const new_projectParticipant = (privileges_extend && privileges_extend.length) ? this.arrayNonRepeatfy([].concat(...privileges_extend)) : []
     // 文件列表的点点点选项
     const operationMenu = (data, board_id) => {
       const { type, is_privilege, privileges, file_id } = data
@@ -919,9 +920,9 @@ export default class FileList extends React.Component {
                     board_id={board_id}
                     popoverPlacement={'rightTop'}
                     isPropVisitControl={is_privilege == '0' ? false : true}
-                    // principalList={new_projectParticipant}
+                    principalList={new_projectParticipant}
                     principalInfo='位任务列表负责人'
-                    notShowPrincipal={true}
+                    // notShowPrincipal={true}
                     otherPrivilege={privileges}
                     otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
                     removeMemberPromptText='移出后用户将不能访问此任务列表'
