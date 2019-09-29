@@ -1,6 +1,7 @@
 import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+import { getGlobalData } from "@/utils/businessFunction";
 
 //邀请新用户参与
 export async function inviteNewUserInProject({ data }) {
@@ -106,10 +107,14 @@ export async function scanQrCodeJoin(data) {
 
 //web端各种入口邀请人员加入组织===1
 export async function organizationInviteWebJoin(data) {
+  const { _organization_id } = data
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite/web/join`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: _organization_id == '0' ? getGlobalData('aboutBoardOrganizationId') : _organization_id
+    }
   });
 }
 //web端各种入口邀请人员加入组织===2
