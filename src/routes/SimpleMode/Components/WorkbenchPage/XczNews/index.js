@@ -139,7 +139,7 @@ export default class index extends Component {
 															onScroll={this.onScroll}
 															id="xczContentWrapper" 
 															ref="xczContentWrapper" 
-															style={{ maxHeight: contentHeight + 'px', overflowY: 'auto', marginTop: '16px'}} className={globalStyles.global_vertical_scrollbar}>
+															style={{ maxHeight: contentHeight + 'px', overflowY: 'auto', marginTop: '16px'}} className={globalStyles.global_vertical_scrollbar}
 														>
 															<Switch>
 																	{/* <Route path="/technological/xczNews" exact component={ SearchArticlesList } /> */}
