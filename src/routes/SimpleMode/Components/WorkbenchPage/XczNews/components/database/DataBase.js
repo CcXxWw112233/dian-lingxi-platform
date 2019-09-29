@@ -28,6 +28,10 @@ export default class DataBase extends Component {
             type: 'xczNews/updateDatas',
             payload: {
                 dataBaseFlag: false,
+                hotFlag: false,
+                highRiseFlag: false,
+                authorityFlag: false,
+                areaFlag: false
             }
         })
         dispatch({

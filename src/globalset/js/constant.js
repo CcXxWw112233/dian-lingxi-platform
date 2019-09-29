@@ -27,7 +27,7 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
   if (NODE_ENV == 'development') {
     // api = 'http://192.168.1.39:8092'
-    api = 'https://knowapi.new-di.com'
+    api = REQUEST_DOMAIN_ARTICLE
   } else {
     // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
     //   api = REQUEST_DOMAIN_ARTICLE

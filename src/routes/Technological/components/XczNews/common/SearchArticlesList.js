@@ -80,13 +80,14 @@ export default class SearchArticlesList extends Component {
     componentDidMount() {
         const { dispatch, xczNews } = this.props;
         const { searchList = {}, defaultArr = [] } = xczNews;
+        this.scrollWrapper = this.refs.scrollWrapper
 
-        dispatch({
-            type: 'xczNews/updateDatas',
-            payload: {
-                // defaultArr: [...searchList.records]
-            }
-        })
+        // dispatch({
+        //     type: 'xczNews/updateDatas',
+        //     payload: {
+        //         // defaultArr: [...searchList.records]
+        //     }
+        // })
         window.addEventListener('scroll', this.onScroll)
     }
     
@@ -106,6 +107,7 @@ export default class SearchArticlesList extends Component {
                 highRiseFlag: true,
                 authorityFlag: true, // 权威的开关
                 dataBaseFlag: true, // 资料库的开关
+                areaFlag: true
             }
         })
     }
@@ -132,71 +134,74 @@ export default class SearchArticlesList extends Component {
     
         }
         return (
-            <div className={commonStyles.mainContainer}>
-                {
-                   location.pathname != '/technological/xczNews/area' && contentVal && onSearchButton && (
-                        <p style={{ marginLeft: 25, paddingTop: 15 }}>
-                            <i 
-                                style={{ fontStyle: 'normal', display: 'inline-block', marginRight: 10, cursor: 'pointer', fontSize: 12 }}
-                                onClick={ () => { this.handleBack() } }
-                            >
-                                <Icon type="left" />返回
-                            </i>
-                            <span>{`在"${name}"中含"${contentVal}"的全部结果共"${total}"条`}</span>
-                        </p>
-                    )
-                }
-                {
-                    defaultArr.map(item => {
-                        // console.log(item)
-                        return (
-                            <div className={commonStyles.info}>
-                                <div className={commonStyles.news}>
-                                    <div className={commonStyles.ul}>
-                                        {
-                                            !item.hasImg ? (
-                                                <div className={commonStyles.li}>
-                                                    <div className={commonStyles.right}>
-                                                        <div className={commonStyles.message}>
-                                                            <i className={commonStyles.dot}></i>
-                                                            <a className={commonStyles.text} target="_blank" href={item.origin_url}>{item.title}</a>
-                                                        </div>
-                                                        <div className={commonStyles.dot_note}>
-                                                            <span>{item.origin_name}</span>
-                                                            <span>{this.getdate(item.publish_time)}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className={commonStyles.li}>
-                                                    <div className={commonStyles.left}>
-                                                        <img src="" />
-                                                    </div>
-                                                    <div className={commonStyles.right}>
-                                                        <div className={commonStyles.message}>
-                                                            <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
-                                                        </div>
-                                                        <div className={commonStyles.img_note}>
-                                                            <span>{item.origin_name}</span>
-                                                            <span>{this.getdate(item.publish_time)}</span>
+            // <div id="scrollWrapper" ref="scrollWrapper" style={{maxHeight: windowHeight, overflowY: 'auto', marginTop: '16px'}} className={globalStyles.global_vertical_scrollbar}>
+            <div id="scrollWrapper" ref="scrollWrapper">
+                <div className={commonStyles.mainContainer}>
+                    {
+                    location.pathname != '/technological/xczNews/area' && contentVal && onSearchButton && (
+                            <p style={{ marginLeft: 25, paddingTop: 15 }}>
+                                <i 
+                                    style={{ fontStyle: 'normal', display: 'inline-block', marginRight: 10, cursor: 'pointer', fontSize: 12 }}
+                                    onClick={ () => { this.handleBack() } }
+                                >
+                                    <Icon type="left" />返回
+                                </i>
+                                <span>{`在"${name}"中含"${contentVal}"的全部结果共"${total}"条`}</span>
+                            </p>
+                        )
+                    }
+                    {
+                        defaultArr.map(item => {
+                            // console.log(item)
+                            return (
+                                <div className={commonStyles.info}>
+                                    <div className={commonStyles.news}>
+                                        <div className={commonStyles.ul}>
+                                            {
+                                                !item.hasImg ? (
+                                                    <div className={commonStyles.li}>
+                                                        <div className={commonStyles.right}>
+                                                            <div className={commonStyles.message}>
+                                                                <i className={commonStyles.dot}></i>
+                                                                <a className={commonStyles.text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                            </div>
+                                                            <div className={commonStyles.dot_note}>
+                                                                <span>{item.origin_name}</span>
+                                                                <span>{this.getdate(item.publish_time)}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ) 
-                                        }   
+                                                ) : (
+                                                    <div className={commonStyles.li}>
+                                                        <div className={commonStyles.left}>
+                                                            <img src="" />
+                                                        </div>
+                                                        <div className={commonStyles.right}>
+                                                            <div className={commonStyles.message}>
+                                                                <a className={commonStyles.img_text} target="_blank" href={item.origin_url}>{item.title}</a>
+                                                            </div>
+                                                            <div className={commonStyles.img_note}>
+                                                                <span>{item.origin_name}</span>
+                                                                <span>{this.getdate(item.publish_time)}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) 
+                                            }   
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )
+                        })
+                    }
+                    {
+                    searchList && searchList.records && searchList.records.length < page_size ? (
+                            <p style={{ textAlign: 'center', paddingTop: 20 }}>没有更多数据啦...</p>
+                        ) : (
+                            <p style={{ textAlign: 'center', paddingTop: 20 }}>疯狂加载中...</p>
                         )
-                    })
-                }
-                {
-                   searchList && searchList.records && searchList.records.length < page_size ? (
-                        <p style={{ textAlign: 'center', paddingTop: 20 }}>没有更多数据啦...</p>
-                    ) : (
-                        <p style={{ textAlign: 'center', paddingTop: 20 }}>疯狂加载中...</p>
-                    )
-                }
+                    }
+                </div>
             </div>
         )
 
