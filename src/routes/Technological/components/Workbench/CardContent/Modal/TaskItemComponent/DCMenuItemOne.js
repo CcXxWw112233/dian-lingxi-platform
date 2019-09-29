@@ -1,6 +1,8 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Menu } from 'antd'
+import { Icon, Input, message, DatePicker, Menu } from 'antd'
+import { checkIsHasPermissionInBoard} from '../../../../../../../utils/businessFunction'
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant'
 // import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 // import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 // import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
