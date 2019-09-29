@@ -107,9 +107,7 @@ export default class Header extends Component {
     }
 
     render() {
-        const { xczNews, location } = this.props;  
-        console.log(location, 'ssssss');
-                      
+        const { xczNews, location } = this.props;                
         const { tabs } = this.state;
         const { inputValue } = xczNews;
         return (

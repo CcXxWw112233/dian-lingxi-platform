@@ -40,6 +40,7 @@ export default {
     highRiseFlag: true, // 高层的开关
     authorityFlag: true, // 权威的开关
     dataBaseFlag: true, // 资料库的开关
+    areaFlag: true, // 地区的开关
     total: 10, // 默认文章的总数
     page_size: 10, // 默认显示10条
     page_no: 1, // 默认第一页
@@ -118,6 +119,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1
             }
           })
@@ -139,6 +141,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -160,6 +163,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -193,6 +197,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -221,6 +226,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: false,
               page_no: 1
             }
           })
