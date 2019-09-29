@@ -54,6 +54,7 @@ export default class FileList extends React.Component {
     const { projectDetailInfoData = {}, dispatch } = this.props
     // const { board_id } = projectDetailInfoData
     const { key } = e
+
     switch (key) {
       case '1':
         break
@@ -828,7 +829,7 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-    
+
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {
@@ -858,7 +859,7 @@ export default class FileList extends React.Component {
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
-      
+
       dispatch({
         type: 'projectDetailFile/getFileList',
         payload: {

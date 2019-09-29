@@ -1397,17 +1397,17 @@ class FileDetailContent extends React.Component {
 
             </div>
             {/* <div> */}
-              <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px'}}>
-                <VisitControl
-                  board_id={board_id}
-                  isPropVisitControl={is_privilege === '0' ? false : true}
-                  handleVisitControlChange={this.handleVisitControlChange}
-                  otherPrivilege={privileges}
-                  notShowPrincipal={true}
-                  handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                  handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
-              </span>
+            <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
+              <VisitControl
+                board_id={board_id}
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                otherPrivilege={privileges}
+                notShowPrincipal={true}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+              />
+            </span>
             {/* </div> */}
             {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
@@ -1443,10 +1443,10 @@ class FileDetailContent extends React.Component {
 
             {/*width: isExpandFrame?0:420*/}
             {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{position: 'relative'}}>
+            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
-                  <div style={{bottom: '62px'}} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
               <ContentRaletion
@@ -1472,7 +1472,7 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) ) && (
+            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 {...this.props} ></Comment2>
               </div>

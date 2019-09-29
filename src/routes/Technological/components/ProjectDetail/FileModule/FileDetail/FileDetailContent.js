@@ -1585,17 +1585,20 @@ class FileDetailContent extends React.Component {
 
             </div>
             {/* <div style={{position:'relative'}}> */}
-              <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px'}}>
-                <VisitControl
-                  board_id={board_id}
-                  isPropVisitControl={is_privilege === '0' ? false : true}
-                  handleVisitControlChange={this.handleVisitControlChange}
-                  otherPrivilege={privileges}
-                  notShowPrincipal={true}
-                  handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                  handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
-              </span>
+            <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
+              <VisitControl
+                board_id={board_id}
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                otherPrivilege={privileges}
+                notShowPrincipal={true}
+                invitationType='9'
+                invitationId={filePreviewCurrentFileId}
+                invitationOrg={localStorage.getItem('OrganizationId')}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+              />
+            </span>
             {/* </div> */}
             {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
@@ -1634,7 +1637,7 @@ class FileDetailContent extends React.Component {
             <div style={{ position: 'relative' }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
-                  <div style={{bottom: '62px'}} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
               <ContentRaletion

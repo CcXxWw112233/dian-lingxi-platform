@@ -3,14 +3,15 @@ import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
-import {deepClone, timeToTimestamp} from '../../../../../../../utils/util'
-import {currentNounPlanFilterName} from "../../../../../../../utils/businessFunction";
-import {FLOWS, TASKS} from "../../../../../../../globalset/js/constant";
+import { deepClone, timeToTimestamp } from '../../../../../../../utils/util'
+import { currentNounPlanFilterName } from "../../../../../../../utils/businessFunction";
+import { FLOWS, TASKS } from "../../../../../../../globalset/js/constant";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
+import MenuSearchPartner from '../../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const TextArea = Input.TextArea
 
-export default class DCAddChirdrenTask extends React.Component{
+export default class DCAddChirdrenTask extends React.Component {
   state = {
     isSelectUserIcon: false, // default '#8c8c8c, hover #595959
     isSelectCalendarIcon: false,
@@ -32,7 +33,7 @@ export default class DCAddChirdrenTask extends React.Component{
   setList(id) {
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { board_id } = projectDetailInfoData
-    this.props.removeProjectMenbers({board_id, user_id: id})
+    this.props.removeProjectMenbers({ board_id, user_id: id })
   }
   chirldrenTaskChargeChange(data) {
     let executors = []
@@ -43,9 +44,9 @@ export default class DCAddChirdrenTask extends React.Component{
     })
   }
 
-  deleteExcutor(data){
+  deleteExcutor(data) {
     let executors = []
-     const obj = {
+    const obj = {
       user_id: '',
       user_name: '',
       avatar: ''
@@ -106,7 +107,7 @@ export default class DCAddChirdrenTask extends React.Component{
     })
   }
   setchirldTaskNameBlur(e) {
-    if(!this.state.isCanBlurDo) {
+    if (!this.state.isCanBlurDo) {
       return false
     }
     this.setState({
@@ -128,22 +129,22 @@ export default class DCAddChirdrenTask extends React.Component{
 
   //新增任务回车键处理
   handlerMultiEnter(e) {
-    if(!e.target.value) {
+    if (!e.target.value) {
       return
     }
     let code = e.keyCode;
     let ctrl = e.ctrlKey;
     let shift = e.shiftKey;
     let alt = e.altKey;
-    if(code == '10' && ctrl && !shift && !alt) {
+    if (code == '10' && ctrl && !shift && !alt) {
       //ctrl + enter
       // return;
     }
-    if(code == '13' && !ctrl && shift && !alt) {
+    if (code == '13' && !ctrl && shift && !alt) {
       //shift + enter
       // return;
     }
-    if(code == '13' && !ctrl && !shift && !alt) {
+    if (code == '13' && !ctrl && !shift && !alt) {
       //只按了enter
       this.addChirldTask()
       this.refs.childTaskInput.blur()
@@ -161,57 +162,72 @@ export default class DCAddChirdrenTask extends React.Component{
       full_name: '',
       avatar: '',
     }
-    if(executors.length) {
+    if (executors.length) {
       executor = executors[0]
     }
 
-    return(
+    return (
       <div className={DrawerContentStyles.divContent_1}>
         {child_data.map((value, key) => {
           return (
-            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue ={value} key={value.card_id} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue={value} key={value.card_id} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
-          <div style={{width: '100%'}}>
+          <div style={{ width: '100%' }}>
             <div className={DrawerContentStyles.contain_7_add}>
               <div>
-                <Icon type="plus" style={{marginRight: 4}}/>
+                <Icon type="plus" style={{ marginRight: 4 }} />
                 <input
-                       ref={'childTaskInput'}
-                       onFocus={this.addInputFocus.bind(this)}
-                       placeholder={`子${currentNounPlanFilterName(TASKS)}`}
-                       onChange={this.setchirldTaskNameChange.bind(this)}
-                       onBlur={this.setchirldTaskNameBlur.bind(this)}
-                       onKeyDown={this.handlerMultiEnter.bind(this)}
-                       value={this.state.name}
+                  ref={'childTaskInput'}
+                  onFocus={this.addInputFocus.bind(this)}
+                  placeholder={`子${currentNounPlanFilterName(TASKS)}`}
+                  onChange={this.setchirldTaskNameChange.bind(this)}
+                  onBlur={this.setchirldTaskNameBlur.bind(this)}
+                  onKeyDown={this.handlerMultiEnter.bind(this)}
+                  value={this.state.name}
                 />
               </div>
-              <div style={{display: isShowUserCalendar ? 'flex':'none'}} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
+              <div style={{ display: isShowUserCalendar ? 'flex' : 'none' }} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}/>
+                  <DCMenuItemOne invitationType='4' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
                 }>
-                  {executor.user_id? (
+                  {/* <Dropdown overlay={
+                  <MenuSearchPartner
+                    keyCode={'board_id'}
+                    // onCheck={this.selectMultiple.bind(this)}
+                    selectedKeys={executor}
+                    menuSearchSingleSpinning={false}
+                    Inputlaceholder={'搜索项目'}
+                    searchName={'board_name'}
+                    listData={data}
+
+                    id=''
+                    type='4'
+                    />
+                }> */}
+
+                  {executor.user_id ? (
                     <Tooltip title={executor.full_name || '佚名'}>
                       {/*{imgOrAvatar(executor.avatar)}*/}
-                      <Avatar size={16} src={executor.avatar} style={{fontSize: 14, margin: '4px 12px 0 12px', }}>{executor.full_name.substring(0, 1) || '佚'}</Avatar>
+                      <Avatar size={16} src={executor.avatar} style={{ fontSize: 14, margin: '4px 12px 0 12px', }}>{executor.full_name.substring(0, 1) || '佚'}</Avatar>
                     </Tooltip>
                   ) : (
-                    <div>
-                      {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
-                      <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{fontSize: 16, margin: '0 12px', cursor: 'pointer'}}>&#xe70c;</div>
-                    </div>
-                  )}
+                      <div>
+                        {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
+                        <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, margin: '0 12px', cursor: 'pointer' }}>&#xe70c;</div>
+                      </div>
+                    )}
                   {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>*/}
                 </Dropdown>
-                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}`} style={{fontSize: 16, marginRight: '12px', cursor: 'pointer'}}>&#xe709;</div>
+                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon ? DrawerContentStyles.calendarIconNormal : DrawerContentStyles.calendarIconSelected}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe709;</div>
                 {/*<Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>*/}
                 <DatePicker onChange={this.datePickerChange.bind(this)}
-                            placeholder={'选择截止日期'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{format: 'HH:mm'}}
-                            style={{opacity: 0, width: 16, background: '#000000', position: 'absolute', right: 50, zIndex: 2}} />
-                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{width: 40, height: 20, padding: '0 5px', fontSize: 12, }}>保存</Button>
+                  placeholder={'选择截止日期'}
+                  format="YYYY/MM/DD HH:mm"
+                  showTime={{ format: 'HH:mm' }}
+                  style={{ opacity: 0, width: 16, background: '#000000', position: 'absolute', right: 50, zIndex: 2 }} />
+                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{ width: 40, height: 20, padding: '0 5px', fontSize: 12, }}>保存</Button>
               </div>
             </div>
           </div>

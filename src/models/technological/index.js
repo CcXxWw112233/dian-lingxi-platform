@@ -141,7 +141,7 @@ export default {
         //当前选中的组织
         localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
         localStorage.setItem('userInfo', JSON.stringify(res.data))
-        return res 
+        return res
       } else {
         return {}
       }
@@ -257,7 +257,7 @@ export default {
         yield put({
           type: 'initGetTechnologicalDatas',
           payload: {
-            
+
           }
         })
       } else {

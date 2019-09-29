@@ -17,6 +17,8 @@ import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
+import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../../services/technological/index'
+
 const TextArea = Input.TextArea
 const { RangePicker } = DatePicker;
 
@@ -38,6 +40,7 @@ export default class TaskItem extends React.Component {
   constructor(props) {
     super(props)
   }
+
   gotoAddItem() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -352,16 +355,17 @@ export default class TaskItem extends React.Component {
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+  handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
-    const privilege_code = type
     const content_id = list_id
     let temp_ids = [] // 用来保存用户的id
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -373,7 +377,7 @@ export default class TaskItem extends React.Component {
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.warning(res.message)
+        message.error(errorText)
       }
     })
   }
@@ -432,6 +436,7 @@ export default class TaskItem extends React.Component {
     const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
     const { projectDetailInfoData = {} } = this.props
     const { board_id, data = [], } = projectDetailInfoData
+
     const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges, privileges_extend = [] } = taskItemValue
     // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
     const projectParticipant = card_data.reduce((acc, curr) =>
@@ -480,6 +485,8 @@ export default class TaskItem extends React.Component {
                 style={{ padding: '4px 10px' }}
               >
                 <VisitControl
+                  invitationType='5'
+                  invitationId={list_id}
                   board_id={board_id}
                   popoverPlacement={'rightTop'}
                   isPropVisitControl={is_privilege === '0' ? false : true}

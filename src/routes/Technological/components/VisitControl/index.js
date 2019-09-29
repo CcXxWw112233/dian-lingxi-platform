@@ -20,7 +20,9 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
 } from "@/globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "@/utils/businessFunction";
+import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
+import { isApiResponseOk } from '@/utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../services/technological/index'
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
@@ -39,6 +41,7 @@ class VisitControl extends Component {
       ShowAddMenberModalVisibile: false,
       removerOtherPersonId: '', // 当前需要删除的成员id
     };
+    this.inputRef = React.createRef();
   }
 
   // 小图标的点击事件或者说访问控制的点击事件
@@ -58,7 +61,9 @@ class VisitControl extends Component {
 
   // 获取添加成员的回调
   handleGetAddNewMember = members => {
-    const { handleAddNewMember } = this.props;
+
+    const { handleAddNewMember, invitationType,
+      invitationId, invitationOrg } = this.props;
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform');
     this.handleNotPlatformMember(members)
@@ -532,7 +537,6 @@ class VisitControl extends Component {
         <Button
           type="primary"
           block
-          // onClick={this.handleAddNewMember}
           onClick={this.setShowAddMenberModalVisibile}
         >
           添加成员
@@ -587,8 +591,12 @@ class VisitControl extends Component {
       popoverPlacement,
       children,
       board_id,
-      onlyShowPopoverContent
+      onlyShowPopoverContent,
+      invitationType,
+      invitationId,
+      invitationOrg,
     } = this.props;
+
     const {
       addMemberModalVisible,
       visible,
@@ -675,7 +683,6 @@ class VisitControl extends Component {
           title="邀请他人一起参与"
           submitText="确定"
           show_wechat_invite={true}
-          board_id={board_id}
           new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}

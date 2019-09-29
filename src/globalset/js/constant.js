@@ -27,7 +27,7 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
   if (NODE_ENV == 'development') {
     // api = 'http://192.168.1.39:8092'
-    // api = 'https://knowapi.new-di.com'
+    api = 'https://knowapi.new-di.com'
   } else {
     // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
     //   api = REQUEST_DOMAIN_ARTICLE
@@ -47,7 +47,7 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
     return 'ws://test.lingxi.new-di.com/websocket'
     // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    // return 'ws://192.168.1.39/websocket'
+    // return 'ws://192.168.1.68/websocket'
   } else {
     const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`

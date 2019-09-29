@@ -375,7 +375,7 @@ export default class Header extends React.Component {
           <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
         </div>
 
-        <div style={{ float: 'right'}}>
+        <div style={{ float: 'right' }}>
           {/* {
             checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
               <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
@@ -402,6 +402,9 @@ export default class Header extends React.Component {
               otherPrivilege={privileges}
               handleAddNewMember={this.handleVisitControlAddNewMember}
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+              invitationType='6'
+              invitationId={id}
+              invitationOrg={localStorage.getItem('OrganizationId')}
             />
           </span>
           <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
@@ -420,7 +423,7 @@ export default class Header extends React.Component {
             }
             <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
           </span> */}
-          
+
         </div>
       </div>
     )

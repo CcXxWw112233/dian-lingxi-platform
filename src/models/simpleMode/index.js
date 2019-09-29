@@ -4,7 +4,7 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
-import { getUserAllOrgsBoardList } from '@/services/technological/index'
+import { getUserAllOrgsBoardList, } from '@/services/technological/index'
 export default {
     namespace: 'simplemode',
     state: {

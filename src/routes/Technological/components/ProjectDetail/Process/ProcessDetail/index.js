@@ -192,21 +192,22 @@ export default class ProcessDetail extends React.Component {
     const filterForm = (value, key) => {
       const { node_type } = value
       let container = (<div></div>)
+      const invitationType = '8'
       switch (node_type) {
         case '1':
-          container = (<DetailConfirmInfoOne {...this.props} itemKey={key} itemValue={value} />)
+          container = (<DetailConfirmInfoOne {...this.props} itemKey={key} itemValue={value} invitationType={invitationType} />)
           break;
         case '2':
-          container = (<DetailConfirmInfoTwo {...this.props} itemKey={key} itemValue={value} />)
+          container = (<DetailConfirmInfoTwo {...this.props} itemKey={key} itemValue={value} invitationType={invitationType} />)
           break;
         case '3':
-          container = (<DetailConfirmInfoThree {...this.props} itemKey={key} itemValue={value} />)
+          container = (<DetailConfirmInfoThree {...this.props} itemKey={key} itemValue={value} invitationType={invitationType} />)
           break;
         case '4':
-          container = (<DetailConfirmInfoFour {...this.props} itemKey={key} itemValue={value} />)
+          container = (<DetailConfirmInfoFour {...this.props} itemKey={key} itemValue={value} invitationType={invitationType} />)
           break;
         case '5':
-          container = (<DetailConfirmInfoFive {...this.props} itemKey={key} itemValue={value} />)
+          container = (<DetailConfirmInfoFive {...this.props} itemKey={key} itemValue={value} invitationType={invitationType} />)
           break;
         default:
           container = (<div></div>)
