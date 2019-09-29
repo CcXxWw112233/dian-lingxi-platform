@@ -355,11 +355,12 @@ export default class TaskItem extends React.Component {
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
 
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
+    const privilege_code = type
     const content_id = list_id
     let temp_ids = [] // 用来保存用户的id
     users_arr && users_arr.map(item => {
@@ -538,7 +539,7 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div style={{position:'relative'}} id="title_l" className={CreateTaskStyle.title_l}>
+            <div style={{ position: 'relative' }} id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
