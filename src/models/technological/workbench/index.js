@@ -23,6 +23,7 @@ export default modelExtend(technological, {
       projectList: [],
       boxList: [],
       workbench_show_gantt_card: '0', //工作台是否显示甘特图卡片，0默认不显示，1显示
+      projectTabCurrentSelectedProject: '0',
     }
   },
   subscriptions: {
@@ -77,7 +78,9 @@ export default modelExtend(technological, {
             // })
             dispatch({
               type: 'getBoxList',
-              payload: {}
+              payload: {
+                init_load: true
+              }
             }),
             dispatch({
               type: 'getProjectList',
@@ -88,12 +91,12 @@ export default modelExtend(technological, {
               //   payload: {}
               // })
             ])
-            dispatch({
-              type: 'handleCurrentSelectedProjectChange',
-              payload: {
-                board_id: '0'
-              }
-            })
+            // dispatch({
+            //   type: 'handleCurrentSelectedProjectChange',
+            //   payload: {
+            //     board_id: '0'
+            //   }
+            // })
           }
           initData()
         }
@@ -297,8 +300,9 @@ export default modelExtend(technological, {
       }
     },
 
-    * getBoxList({ payload }, { select, call, put }) {
+    * getBoxList({ payload = {} }, { select, call, put }) {
       const calback = payload && payload.calback
+      const { init_load } = payload
       let res = yield call(getBoxList, {})
 
       if (calback && typeof calback === 'function') {
@@ -334,6 +338,13 @@ export default modelExtend(technological, {
             board_id: projectId
           }
         })
+        if(init_load) {
+          yield put({
+            type: 'handleCurrentSelectedProjectChange',
+            payload: {
+            }
+          })
+        }
       } else {
         message.warn('获取工作台看板数据失败， 请稍后再试')
       }
@@ -835,7 +846,7 @@ export default modelExtend(technological, {
       }
     },
     setProjectTabCurrentSelectedProject(state, action) {
-      const { projectId } = action.payload
+      const { projectId = '0'} = action.payload
       return {
         ...state,
         datas: { ...state.datas, projectTabCurrentSelectedProject: projectId }

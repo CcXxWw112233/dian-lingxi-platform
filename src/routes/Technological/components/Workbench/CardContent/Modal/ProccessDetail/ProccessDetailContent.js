@@ -91,7 +91,7 @@ export default class FileDetailContent extends React.Component {
         relations: res.data || []
       })
     } else {
-
+      message.warn(res.message)
     }
   }
   async addRelation(data) {
@@ -99,7 +99,7 @@ export default class FileDetailContent extends React.Component {
     if (isApiResponseOk(res)) {
       this.getRelations()
     } else {
-
+      message.warn(res.message)
     }
   }
 

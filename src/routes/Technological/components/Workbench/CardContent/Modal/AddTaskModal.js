@@ -396,7 +396,7 @@ class AddTaskModal extends Component {
       .then(() => {
         this.handleAddTaskModalCancel();
       })
-      .catch(err => console.log(err));
+      // .catch(err => console.log(err));
   };
   getTaskTypeText = () => {
     const { taskType } = this.props;

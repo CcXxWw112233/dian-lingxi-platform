@@ -12,6 +12,8 @@ import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
 import GlobalSearch from './GlobalSearch'
 import QueryString from 'querystring'
+import { initWs } from '../../components/WsNewsDynamic'
+import Cookies from 'js-cookie'
 
 const { Sider, Content } = Layout;
 
@@ -24,6 +26,27 @@ export default class Technological extends React.Component {
 
   componentDidMount() {
     this.historyListenSet()
+    this.connectWsToModel()
+  }
+
+  connectWsToModel = () => {
+    const { dispatch } = this.props
+    const calback = function (event) {
+      setTimeout(function () {
+        if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
+          const calback = function (event) {
+            dispatch({
+              type: 'connectWsToModel',
+              payload: {
+                event
+              }
+            })
+          }
+          initWs(calback)
+        }
+      }, 3000)
+    }
+    initWs(calback)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -62,7 +85,7 @@ export default class Technological extends React.Component {
     })
   }
 
-  
+
 
   render() {
     const { page_load_type } = this.props;

@@ -822,6 +822,7 @@ export default modelExtend(projectDetail, {
         } else {
         }
       } else {
+        message.warn(res.message)
       }
     },
 

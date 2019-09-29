@@ -127,7 +127,6 @@ export default class SearchArticlesList extends Component {
         // } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/dataBase') {
         //     name = '资料库'
         // }
-
         if (location.pathname == '/technological/simplemode/workbench/xczNews/hot') {
             name = '热点'
         } else if (location.pathname == '/technological/simplemode/workbench/xczNews/highRise') {

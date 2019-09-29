@@ -738,7 +738,7 @@ const Workbench = (props) => {
   }
 
   let isPropVisitControl = false
-  const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
+  // const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />

@@ -11,7 +11,7 @@ import { timeToTimestamp, stopPropagation } from '../../../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
-  ORG_UPMS_ORGANIZATION_GROUP
+  ORG_UPMS_ORGANIZATION_GROUP,
 } from "../../../../../globalset/js/constant";
 import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
@@ -148,8 +148,8 @@ export default class TaskItem extends React.Component {
   handleMenuClick(e) {
     e.domEvent.stopPropagation();
     const { projectDetailInfoData = {} } = this.props
-    const { org_id } = projectDetailInfoData
-    if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP, org_id)) {
+    const { org_id, board_id } = projectDetailInfoData
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -538,11 +538,11 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div id="title_l" className={CreateTaskStyle.title_l}>
+            <div style={{position:'relative'}} id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
-                <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
+                <Dropdown zIndex={5} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operateMenu()} trigger={['click']} visible={taskGroupOperatorDropdownMenuVisible} onVisibleChange={this.handleTaskGroupOperatorDropdownMenuVisibleChange}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>

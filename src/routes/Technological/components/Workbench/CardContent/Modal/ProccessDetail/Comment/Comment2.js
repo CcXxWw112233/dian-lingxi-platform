@@ -72,10 +72,10 @@ export default class Comment extends React.Component {
       // return;
     }
     if(code == '13' && !ctrl && !shift && !alt) {
-      if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT)){
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if(!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_COMMENT)){
+      //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      //   return false
+      // }
       const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
       const { text } = this.state
       const flow_instance_id = this.props.model.datas.totalId.flow

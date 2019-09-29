@@ -112,7 +112,7 @@ export default class Area extends Component {
 
      // handleSelectCity 每一个市级地区的点击选择事件
      handleSelectCity(id, parentId) {
-        console.log(parentId)
+        // console.log(parentId)
         const { dispatch } = this.props;
         dispatch({
             type: 'xczNews/updateDatas',
@@ -297,9 +297,9 @@ export default class Area extends Component {
 
     // 选项的点击
     areaSelectOption(deep, id, parentId) {
-        console.log(deep, id)
+        // console.log(deep, id)
         const { dispatch } = this.props;
-        console.log(1111)
+        // console.log(1111)
         if (deep == 1) {
             dispatch({
                 type: 'xczNews/updateDatas',

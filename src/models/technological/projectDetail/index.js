@@ -87,8 +87,8 @@ export default {
       board_id = param.board_id
       appsSelectKey = param.appsSelectKey
       if(!board_id) {
-        history.go(-1)
-        console.log('ssss', 112)
+        window.history.go(-1)
+        // console.log('ssss', 112)
         return
       }
       setBoardIdStorage(board_id)

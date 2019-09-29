@@ -27,9 +27,9 @@ export default class ProcessItem extends React.Component {
   }
   componentDidMount() {
     const { itemValue = {} } = this.props
-    const { flow_node_name, flow_template_name, name, board_name, board_id, status = '1', flow_instance_id, org_id } = itemValue //status 1running 2stop 3 complete
+    const { flow_node_name, flow_instance_name, flow_template_name, name, board_name, board_id, status = '1', flow_instance_id, org_id } = itemValue //status 1running 2stop 3 complete
     this.setState({
-      value: { flow_node_name, flow_template_name, name, board_name, board_id, status, flow_instance_id, org_id }
+      value: { flow_node_name, flow_template_name, name, board_name, board_id, status, flow_instance_id, org_id, flow_instance_name }
     })
   }
   async gotoBoardDetail(obj) {
@@ -62,6 +62,12 @@ export default class ProcessItem extends React.Component {
     // }
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      payload: {
+        _organization_id: obj.org_id
+      }
+    })
+    dispatch({
+      type: 'projectDetail/getRelationsSelectionPre',
       payload: {
         _organization_id: obj.org_id
       }
@@ -112,9 +118,9 @@ export default class ProcessItem extends React.Component {
     return (
       <div className={indexstyles.processItem}>
         <div className={indexstyles.processText}>
-          <Tooltip title={this.state.value.flow_node_name}>
+          <Tooltip title={this.state.value.flow_node_name || this.state.value.flow_instance_name}>
             <span className={indexstyles.ellipsis} style={{ cursor: 'pointer' }} onClick={this.click.bind(this, obj)}>
-              {this.state.value.flow_node_name || this.state.value.name} {this.state.value.flow_template_name}
+              {this.state.value.flow_node_name || this.state.value.flow_instance_name} {this.state.value.flow_template_name}
             </span>
           </Tooltip>
           {/* <span onClick={this.gotoBoardDetail.bind(this, obj)} style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>

@@ -437,7 +437,7 @@ class VisitControl extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps, 'ssssssss')
+    // console.log(nextProps, 'ssssssss')
     this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps);
   }
 

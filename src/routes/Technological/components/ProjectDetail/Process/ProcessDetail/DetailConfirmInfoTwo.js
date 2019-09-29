@@ -251,15 +251,35 @@ export default class DetailConfirmInfoTwo extends React.Component {
       openPDF({ id: file_id })
       return false
     }
-
     this.props.updateDatasFile({
       seeFileInput: 'taskModule',
       isInOpenFile: true,
       filePreviewCurrentId: file_resource_id,
       filePreviewCurrentFileId: file_id,
     })
-    this.props.filePreview({ id: file_resource_id, file_id: file_id })
 
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        seeFileInput: 'taskModule',
+        isInOpenFile: true,
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentFileId: file_id,
+      }
+    })
+    // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+    this.props.dispatch({
+      type: 'projectDetailFile/filePreview',
+      payload: {
+        id: file_resource_id, file_id: file_id
+      }
+    })
+    this.props.dispatch({
+      type: 'projectDetailFile/fileInfoByUrl',
+      payload: {
+        file_id
+      }
+    })
   }
 
   render() {
@@ -269,7 +289,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, isInOpenFile, relations_Prefix } } = this.props.model
-    const { itemKey, itemValue, invitationType } = this.props //所属列表位置
+    const { itemKey, itemValue, dispatch } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
 
     const { curr_node_sort, status, curr_node_id } = processInfo //当前节点
@@ -296,11 +316,22 @@ export default class DetailConfirmInfoTwo extends React.Component {
     //推进人
     const assigneesArray = assignees || []
     //判断当前用户是否有操作权限--从推进人列表里面获得id，和当前操作人的id
-    let currentUserCanOperate = false
+    let currentUserCanOperate = false //操作
+    let currentUserCanReback = true //用户是否有撤回权限，属于操作权限的子范畴
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const currentUserId = userInfo.id //当前用户id, 用于替换
-    for (let i = 0; i < assignees.length; i++) {
-      if (assignees[i].user_id === currentUserId) {
+    //任何人的情况下,需要匹配在不在项目内，否则需要确认是否是指定的推进人
+    let compare_user_arr = []
+    if (assignee_type == '1') {
+      compare_user_arr = users
+      if (typeof assignees == 'Array') {
+        currentUserCanReback = assignees.findIndex(item => item.user_id == currentUserId) != -1 //在任何人的情况下，谁完成谁才能撤回
+      }
+    } else {
+      compare_user_arr = assignees
+    }
+    for (let val of compare_user_arr) {
+      if (val['user_id'] == currentUserId) {
         currentUserCanOperate = true
         break
       }
@@ -380,7 +411,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
             }}>
               {timestampToTimeNormal(deadline, '/', true) || '设置截止时间'}
               {
-                (Number(sort) >= Number(curr_node_sort)) && (
+                (Number(sort) >= Number(curr_node_sort)) && currentUserCanOperate && (
                   <DatePicker onChange={this.datePickerChange.bind(this)}
                     onOpenChange={this.datePikerOnOpenChange.bind(this)}
                     placeholder={'选择截止时间'}
@@ -412,12 +443,12 @@ export default class DetailConfirmInfoTwo extends React.Component {
     }
     const filterBottOperate = () => {
       let container = (<div></div>)
-      if ((currentUserCanOperate || assignee_type === '1') && status !== '3') {
+      if ((currentUserCanOperate) && status !== '3') {
         if (Number(sort) < Number(curr_node_sort)) {
           if (Number(curr_node_sort) - Number(sort) === 1) { //相邻才能有撤回
             container = (
               <div>
-                {enable_revocation === '1' ? (
+                {enable_revocation === '1' && currentUserCanReback ? (
                   <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                     <Button onClick={this.setOpinionModalVisible.bind(this, '0')} style={{ color: 'red' }}>撤回</Button>
                   </div>
@@ -466,7 +497,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
       let contianner = (
         <div></div>
       )
-      if (currentUserCanOperate || assignee_type === '1') {
+      if (currentUserCanOperate) {
         // console.log('sss', itemKey, 'all')
         if (Number(sort) < Number(curr_node_sort)) {
           // console.log('sss', itemKey, 2)
@@ -637,15 +668,44 @@ export default class DetailConfirmInfoTwo extends React.Component {
           openPDF({ id: file_id })
           return false
         }
-
         that.props.updateDatasFile({
           seeFileInput: 'taskModule',
           isInOpenFile: true,
           filePreviewCurrentId: file_resource_id,
           filePreviewCurrentFileId: file_id,
         })
-        that.props.filePreview({ id: file_resource_id, file_id: file_id })
-
+        // that.props.filePreview({ id: file_resource_id, file_id: file_id })
+        // that.props.dispatch({
+        //   type: 'projectDetailFile/fileInfoByUrl',
+        //   payload: {
+        //     file_id
+        //   }
+        // })
+        // console.log('sssss', {
+        //   dispatch
+        // })
+        dispatch({
+          type: 'projectDetailFile/updateDatas',
+          payload: {
+            seeFileInput: 'taskModule',
+            isInOpenFile: true,
+            filePreviewCurrentId: file_resource_id,
+            filePreviewCurrentFileId: file_id,
+          }
+        })
+        // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+        dispatch({
+          type: 'projectDetailFile/filePreview',
+          payload: {
+            id: file_resource_id, file_id: file_id
+          }
+        })
+        dispatch({
+          type: 'projectDetailFile/fileInfoByUrl',
+          payload: {
+            file_id
+          }
+        })
       }
     }
     let node_amount = this.props.model.datas && this.props.model.datas.processInfo && this.props.model.datas.processInfo.node_amount
