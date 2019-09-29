@@ -118,7 +118,7 @@ export default class SearchArticlesList extends Component {
 
         let name = '';
 
-        // if (location.pathname == '/simpleMode/WorkbenchPage/xczNews/hot') {
+        // if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/hot') {
         //     name = '热点'
         // } else if (location.pathname == '/SimpleMode/WorkbenchPage/xczNews/highRise') {
         //     name = '高层'
@@ -131,12 +131,11 @@ export default class SearchArticlesList extends Component {
             name = '热点'
         } else if (location.pathname == '/technological/simplemode/workbench/xczNews/highRise') {
             name = '高层'
-        } else if (location.pathname == 'technological/simplemode/workbench/xczNews/authority') {
+        } else if (location.pathname == '/technological/simplemode/workbench/xczNews/authority') {
             name = '权威'
         } else if (location.pathname == '/technological/simplemode/workbench/xczNews/dataBase') {
             name = '资料库'
         }
-
         return (
             <div className={commonStyles.mainContainer}>
                 {
