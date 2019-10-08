@@ -8,6 +8,7 @@ import QueryString from 'querystring'
 import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import { PROJECT_TEAM_CARD_GROUP } from "../../../../../globalset/js/constant";
 import { connect } from 'dva';
+import TaskDetailModal from '@/components/TaskDetailModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
 let defaultScrollLeft = 0;
@@ -289,10 +290,15 @@ export default class CreateTask extends React.Component {
         </div>
 
         {/*任务详细弹窗*/}
-        <DrawContentModal
+        {/* <DrawContentModal
           dispatch={dispatch}
           visible={drawerVisible}
-          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} />
+          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} /> */}
+          <TaskDetailModal 
+            dispatch={dispatch}
+            task_detail_modal_visible={drawerVisible}
+            set_task_detail_modal_visible={this.setDrawerVisibleClose.bind(this)}
+          />
       </div>
     )
   }

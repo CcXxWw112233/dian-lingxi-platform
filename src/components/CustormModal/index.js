@@ -1,8 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import { min_page_width } from "./../../globalset/js/styles";
-import indexstyles from './index.less'
-import { userInfo } from 'os';
+import './index.less'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
@@ -94,6 +93,7 @@ class CustormModal extends React.Component {
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
+        wrapClassName="wrapModal"
       >
         {overInner}
       </Modal>

@@ -17,13 +17,13 @@ export default class DetailModal extends React.Component {
 
 
   render() {
-    const { modalVisible } = this.props
+    const { modalVisible, width } = this.props
 
     const modalTop = 20
     return(
       <CustormModal
         visible={modalVisible}
-        width={'90%'}
+        width={ width || '90%'}
         close={this.props.close}
         closable={false}
         maskClosable={false}
