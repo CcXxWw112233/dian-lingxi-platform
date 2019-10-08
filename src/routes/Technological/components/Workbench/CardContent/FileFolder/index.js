@@ -21,7 +21,7 @@ class FileFolder extends Component {
     };
   }
   initData = nextProps => {
-    const {file_list, folder_list} = nextProps
+    const { file_list, folder_list } = nextProps
     this.setState({
       currentFolderLayer: 0,
       currentFileList: file_list,
@@ -30,22 +30,22 @@ class FileFolder extends Component {
         folder_name: '根目录',
         id: '0',
       },
-      breadCrumbList: [{folder_name: '根目录', id: '0'}]
+      breadCrumbList: [{ folder_name: '根目录', id: '0' }]
     })
   }
   genUpdateData = (dataObj, id) => {
-    const {breadCrumbList} = this.state
+    const { breadCrumbList } = this.state
     const newBreadCrumbList = breadCrumbList.reduce((acc, curr) => {
       const isResultBreadCrumbNodeInResult = acc.find(i => i.id === id)
-      if(isResultBreadCrumbNodeInResult) {
+      if (isResultBreadCrumbNodeInResult) {
         return acc
       }
       return [...acc, curr]
-    },[])
-    this.handleUpdateCurrentData(dataObj, {breadCrumbList: newBreadCrumbList})
+    }, [])
+    this.handleUpdateCurrentData(dataObj, { breadCrumbList: newBreadCrumbList })
   }
-  handleUpdateCurrentData = (folderInfo, {breadCrumbList}) => {
-    const {folder_name, id, child_folder_list = [], file_list = []} = folderInfo
+  handleUpdateCurrentData = (folderInfo, { breadCrumbList }) => {
+    const { folder_name, id, child_folder_list = [], file_list = [] } = folderInfo
     this.setState({
       currentFolderLayer: breadCrumbList.length,
       currentFileList: file_list,
@@ -58,28 +58,28 @@ class FileFolder extends Component {
     })
   }
   findFolderFromCurrentFolderLayer = id => {
-    const {currentFolderList} = this.state
+    const { currentFolderList } = this.state
     return currentFolderList.find(i => i.id === id)
   }
   handleOpenFolder = (e, shouldOpendId) => {
     if (e) e.stopPropagation();
     //因为每次点击文件夹，只能点击到当前的下一层文件夹
     const folderInfo = this.findFolderFromCurrentFolderLayer(shouldOpendId)
-    const {breadCrumbList} = this.state
-    const {folder_name, id} = folderInfo
-    const newBreadCrumbList = [...breadCrumbList, {folder_name, id}]
-    this.handleUpdateCurrentData(folderInfo, {breadCrumbList: newBreadCrumbList})
+    const { breadCrumbList } = this.state
+    const { folder_name, id } = folderInfo
+    const newBreadCrumbList = [...breadCrumbList, { folder_name, id }]
+    this.handleUpdateCurrentData(folderInfo, { breadCrumbList: newBreadCrumbList })
   };
   isClickedCurrentLayer = clickedFolderId => {
-    const {currentFolderInfo: {id}} = this.state
+    const { currentFolderInfo: { id } } = this.state
     return id === clickedFolderId ? true : false
   }
   handleCurrentLayer = shouldTurnedLayerFolderId => {
-    const {breadCrumbList} = this.state
-    const {folder_list} = this.props
+    const { breadCrumbList } = this.state
+    const { folder_list } = this.props
     //因为点击的 folder 肯定会存在于 breadCumbList
     //如果点击的是根目录
-    if(shouldTurnedLayerFolderId === '0') {
+    if (shouldTurnedLayerFolderId === '0') {
       this.initData(this.props)
       return
     }
@@ -88,15 +88,15 @@ class FileFolder extends Component {
     let resultData = folder_list
     //第一层数据的数据结构，和其他层数据结构不同，所以需要区分
     let index = 0
-    for(let folder  of breadCrumbList.slice(1)) {
-      const {id} = folder
+    for (let folder of breadCrumbList.slice(1)) {
+      const { id } = folder
       index++
-      if(index === 1) {
+      if (index === 1) {
         resultData = resultData.find(i => i.id === id)
       } else {
         resultData = resultData.child_folder_list.find(i => i.id === id)
       }
-      if(id === shouldTurnedLayerFolderId) {
+      if (id === shouldTurnedLayerFolderId) {
         break;
       }
     }
@@ -105,7 +105,7 @@ class FileFolder extends Component {
   handleClickedBreadCrumb = (e, folderId) => {
     if (e) e.stopPropagation();
     //如果点面包屑的当前层级
-    if(this.isClickedCurrentLayer(folderId)) {
+    if (this.isClickedCurrentLayer(folderId)) {
       return
     }
     //处理需要显示的层级数据
@@ -169,20 +169,20 @@ class FileFolder extends Component {
     return <>{currentFileList.map(this.renderFileItem)}</>;
   };
   isTheSameArr = (arr1 = [], arr2 = []) => {
-    if(!(Array.isArray(arr1) && Array.isArray(arr2))) {
+    if (!(Array.isArray(arr1) && Array.isArray(arr2))) {
       return false
     }
-    if(arr1.length !== arr2.length) {
+    if (arr1.length !== arr2.length) {
       return false
     }
     return arr1.every(i1 => arr2.find(i2 => i1.id === i2.id))
   }
   handleGetNewFileListAndFolderList = nextProps => {
-    const{file_list: next_file_list, folder_list: next_folder_list} = nextProps
-    const{file_list, folder_list} = this.props
+    const { file_list: next_file_list, folder_list: next_folder_list } = nextProps
+    const { file_list, folder_list } = this.props
     const isTheSameFileList = this.isTheSameArr(file_list, next_file_list)
     const isTheSameFolderList = this.isTheSameArr(folder_list, next_folder_list)
-    if(isTheSameFileList && isTheSameFolderList) {
+    if (isTheSameFileList && isTheSameFolderList) {
       return
     }
     return this.initData(nextProps)
@@ -208,7 +208,7 @@ class FileFolder extends Component {
 FileFolder.defaultProps = {
   file_list: [], //第一层(根目录)的文件列表
   folder_list: [], //文件夹列表
-  shouldFileItemSetPreviewFileModalVisibile: function() {}, //点击file item 的回调函数
+  shouldFileItemSetPreviewFileModalVisibile: function () { }, //点击file item 的回调函数
 };
 
 export default FileFolder;

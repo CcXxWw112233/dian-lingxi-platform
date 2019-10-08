@@ -29,6 +29,7 @@ import withBodyClientDimens from './../../../../../../components/HOC/withBodyCli
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import ShareAndInvite from './../../../ShareAndInvite/index'
 import { connect } from 'dva';
 
 @connect(mapStateToProps)
@@ -690,10 +691,10 @@ class FileDetailContent extends React.Component {
     })
   }
 
-   /**
-   * 访问控制移除成员
-   * @param {String} id 移除成员对应的id
-   */
+  /**
+  * 访问控制移除成员
+  * @param {String} id 移除成员对应的id
+  */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
       id: id
@@ -741,12 +742,12 @@ class FileDetailContent extends React.Component {
     })
   }
 
-   /**
-  * 其他成员的下拉回调
-  * @param {String} id 这是用户的user_id
-  * @param {String} type 这是对应的用户字段
-  * @param {String} removeId 这是对应移除用户的id
-  */
+  /**
+ * 其他成员的下拉回调
+ * @param {String} id 这是用户的user_id
+ * @param {String} type 这是对应的用户字段
+ * @param {String} removeId 这是对应移除用户的id
+ */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -796,7 +797,7 @@ class FileDetailContent extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
       message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
@@ -1187,7 +1188,7 @@ class FileDetailContent extends React.Component {
 
   render() {
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue, onlyReadingShareModalVisible, onlyReadingShareData, } = this.state
     const { clientHeight, offsetTopDeviation, relations_Prefix = [] } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -1573,6 +1574,14 @@ class FileDetailContent extends React.Component {
                   <div style={{height: '50px'}} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               } */}
+
+            <ShareAndInvite
+              // is_shared={is_shared} 
+              is_shared=''
+              onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
+              handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+
+
             <div style={{ position: 'relative' }}>
               <span>
                 {

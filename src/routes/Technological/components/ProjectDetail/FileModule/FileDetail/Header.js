@@ -293,9 +293,9 @@ class Header extends React.Component {
             </Button>
           )}
 
-          <span style={{ marginLeft: '10px' }}>
-            {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
-          </span>
+          {/* <span style={{ marginLeft: '10px' }}>
+            <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+          </span> */}
           {/*<Button style={{height: 24, marginLeft:14}} >*/}
           {/*<Icon type="star" />收藏*/}
           {/*</Button>*/}
