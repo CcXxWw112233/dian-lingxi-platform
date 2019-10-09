@@ -107,6 +107,7 @@ export default class MenuSearchPartner extends React.Component {
         const { invitationType, invitationId, rela_Condition, dispatch, board_id, } = this.props
         const temp_ids = data.users.split(",")
         const invitation_org = localStorage.getItem('OrganizationId')
+
         organizationInviteWebJoin({
             _organization_id: invitation_org,
             type: invitationType,
@@ -143,7 +144,7 @@ export default class MenuSearchPartner extends React.Component {
                             dispatch({
                                 type: 'workbenchTaskDetail/getCardDetail',
                                 payload: {
-                                    id: board_id,
+                                    id: invitationId,
                                     board_id: board_id,
                                     calback: function (data) {
                                         dispatch({
