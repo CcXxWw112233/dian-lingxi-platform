@@ -125,9 +125,12 @@ export default class Technological extends React.Component {
         path: '/technological/investmentMap',
         component: () => import('./components/InvestmentMap'),
       }, {
-        path: '/technological/readonlyShare',
+        path: '/technological/readonlyShare/accessInterface',
         component: () => import('./ReadonlyShare/AccessInterface')
-      }
+      }, {
+        path: '/technological/readonlyShare/detailedShare',
+        component: () => import('./ReadonlyShare/DetailedShare')
+      },
     ]
 
     const defaultLayout = (

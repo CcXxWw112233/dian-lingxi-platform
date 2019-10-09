@@ -3,10 +3,10 @@ import CreateTask from './CreateTask'
 
 const Task = (props) => {
 
-  return(
-   <div>
-     <CreateTask />
-   </div>
+  return (
+    <div>
+      <CreateTask />
+    </div>
   )
 };
 
