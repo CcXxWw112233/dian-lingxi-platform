@@ -62,7 +62,7 @@ export default class DetailContent extends React.Component {
           }
 
 
-          <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
+          <div className={`${indexStyles.fileDetailContentRight_middle} ${globalStyles.global_vertical_scrollbar}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
 
             <div
               className={indexStyles.lookAll}

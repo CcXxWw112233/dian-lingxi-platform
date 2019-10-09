@@ -30,7 +30,7 @@ export default class DetailModal extends React.Component {
         footer={null}
         destroyOnClose
         bodyStyle={{top: 0}}
-        style={{top: modalTop}}
+        style={{top: modalTop, padding: '20px 84px'}}
         onCancel={this.onCancel.bind(this)}
         overInner={<DetailDom {...this.props} modalTop={modalTop}/>}
       />

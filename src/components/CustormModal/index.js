@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import { min_page_width } from "./../../globalset/js/styles";
-import './index.less'
+import indexStyles from  './index.less'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
@@ -81,7 +81,7 @@ class CustormModal extends React.Component {
       <Modal
         title={title}
         visible={visible}
-        width={width}
+        width={maskWidth}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
@@ -89,11 +89,11 @@ class CustormModal extends React.Component {
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
         maskStyle={{ height: clientHeight, width: maskWidth, ...maskStyle }}
-        style={{ width: maskWidth, ...style }}
+        style={{ width: maskWidth, ...style, marginRight: siderRightWidth + 100 }}
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName="wrapModal"
+        wrapClassName={indexStyles.wrapModal}
       >
         {overInner}
       </Modal>
