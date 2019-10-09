@@ -233,7 +233,7 @@ export default class CreateTask extends React.Component {
     //添加url
   }
 
-  setDrawerVisibleClose() {
+  setDrawerVisibleClose = () => {
     // this.setState({
     //   drawerVisible: false,
     // })
@@ -248,7 +248,13 @@ export default class CreateTask extends React.Component {
   //右方抽屉弹窗---end
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
-    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch } = this.props
+    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch, drawContent = {}, is_show_org_name, is_all_org, currentUserOrganizes = [] } = this.props
+    const taskDetailModalHeaderParams = {
+      drawContent,
+      is_show_org_name, is_all_org,
+      currentUserOrganizes
+    }
+
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if (clientHeight < 900) {
       corretDegree = 44
@@ -297,7 +303,8 @@ export default class CreateTask extends React.Component {
           <TaskDetailModal 
             dispatch={dispatch}
             task_detail_modal_visible={drawerVisible}
-            set_task_detail_modal_visible={this.setDrawerVisibleClose.bind(this)}
+            set_task_detail_modal_visible={this.setDrawerVisibleClose}
+            taskDetailModalHeaderParams={taskDetailModalHeaderParams}
           />
       </div>
     )
@@ -309,11 +316,19 @@ function mapStateToProps({
       taskGroupList = [],
       drawerVisible = false,
       getTaskGroupListArrangeType = '1',
+      drawContent = {}
     }
   },
   projectDetail: {
     datas: {
       board_id
+    }
+  },
+  technological: {
+    datas: {
+      is_show_org_name,
+      is_all_org,
+      currentUserOrganizes = []
     }
   }
 }) {
@@ -321,6 +336,10 @@ function mapStateToProps({
     taskGroupList,
     drawerVisible,
     getTaskGroupListArrangeType,
-    board_id
+    board_id,
+    drawContent,
+    is_show_org_name,
+    is_all_org,
+    currentUserOrganizes
   }
 }

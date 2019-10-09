@@ -89,7 +89,7 @@ class CustormModal extends React.Component {
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
         maskStyle={{ height: clientHeight, width: maskWidth, ...maskStyle }}
-        style={{ width: maskWidth, ...style, marginRight: siderRightWidth + 100 }}
+        style={{ width: maskWidth, ...style, marginRight: siderRightWidth + 100, padding: '20px 84px' }}
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
