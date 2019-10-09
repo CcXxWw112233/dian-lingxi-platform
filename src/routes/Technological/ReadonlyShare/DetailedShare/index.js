@@ -1,24 +1,18 @@
 import React from 'react'
-import indexStyles from './index.less'
-import CustormModal from '../../../../components/CustormModal'
-import FileModule from '../FileModule'
+import FileDetailModal from './FileDetailShare/FileDetailModal'
+import TaskDetailShare from './TaskDetailShare/CreateTask'
 
-export default class DetailedShare extends React.Component {
+export default class index extends React.Component {
     state = {
-        drawerVisible: false,
+
     }
 
     render() {
         return (
-            <CustormModal
-                visible={true}
-                width={'80%'}
-                zIndex={1006}
-                maskClosable={false}
-                footer={null}
-                destroyOnClose
-                overInner={<FileModule />}
-            />
+            // <FileDetailModal visible={true}
+            // />
+            // <ProccessDetailShare />
+            <TaskDetailShare />
         )
     }
 }

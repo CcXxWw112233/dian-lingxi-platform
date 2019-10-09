@@ -18,7 +18,7 @@ export default class FileDetail extends React.Component {
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
-
+  
   resizeTTY(type) {
     const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
     const clientWidth = document.documentElement.clientWidth
@@ -30,12 +30,12 @@ export default class FileDetail extends React.Component {
 
   render() {
     const { clientHeight, clientWidth } = this.state
-    const { modalTop, offsetTopDeviation = 100, componentHeight, componentWidth } = this.props
+    const { modalTop, offsetTopDeviation = 100, componentHeight, componentWidth} = this.props
     //offsetTopDeviation 用来计算偏移量偏差
     return (
-      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{ height: clientHeight - offsetTopDeviation, top: 0 }}>
+      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
         {/*<Header {...this.props}/>*/}
-        <FileDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} componentHeight={componentHeight} componentWidth={componentWidth} offsetTopDeviation={offsetTopDeviation} modalTop={modalTop} />
+        <FileDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} componentHeight={componentHeight} componentWidth={componentWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
       </div>
     )
   }
