@@ -641,7 +641,7 @@ class DrawContent extends React.Component {
   }
   //标签-------------end
 
-  alarmNoEditPermission() {
+  alarmNoEditPermission = () => {
     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
   }
   //任务附件预览黄
@@ -1421,7 +1421,7 @@ class DrawContent extends React.Component {
             {/* </div> */}
             <span style={{ marginTop: '-2px', marginRight: '5px', position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
-                <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission.bind(this)}></div>
+                <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
               )}
               <InformRemind workbenchExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
             </span>
@@ -1439,16 +1439,21 @@ class DrawContent extends React.Component {
               )}
             </span>
             {this.props.needDelete && (
-              <Dropdown overlay={topRightMenu}>
-                <span style={{ position: 'absolute', right: 80, top: -2 }} >
-                  <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2 }} />
-                </span>
-              </Dropdown>
+             <span style={{marginTop: '-2px'}}>
+               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+                  <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
+                )}
+                <Dropdown overlay={topRightMenu}>
+                  <span>
+                    <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2 }} />
+                  </span>
+                </Dropdown>
+             </span> 
             )}
           </div>
           <div style={{ position: 'relative' }}>
             {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
-              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission}></div>
             )}
             {/*标题*/}
             <div className={DrawerContentStyles.divContent_2}>
@@ -1671,7 +1676,7 @@ class DrawContent extends React.Component {
           {/*关联*/}
           <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
             {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
-              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission}></div>
             )}
             <ContentRaletion
               {...this.props}
@@ -1688,7 +1693,7 @@ class DrawContent extends React.Component {
 
           <div style={{ position: 'relative' }}>
             {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
-              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
+              <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20 }} onClick={this.alarmNoEditPermission}></div>
             )}
             {/*添加里程碑*/}
             <div className={DrawerContentStyles.divContent_1}>
