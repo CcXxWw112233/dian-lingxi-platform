@@ -53,6 +53,7 @@ export default class GetRowGanttItem extends Component {
     let current_date_miletones = [] //当前日期的所有里程碑列表
     let current_date_board_miletones = [] //当前日期对应的项目的所有里程碑列表
     let is_over_duetime = false
+    let is_all_realized = '1'
     if (!timestamp || group_view_type != '1' || gantt_board_id != '0') { //只有在全部项目下的项目视图才可以看
       return {
         flag,
@@ -67,23 +68,45 @@ export default class GetRowGanttItem extends Component {
       }
     }
 
-    if(Number(timestamp) < new Date().getTime()) { //小于今天算逾期
+    if (Number(timestamp) < new Date().getTime()) { //小于今天算逾期
       is_over_duetime = true
     }
 
-    for(let val of current_date_miletones) {
-      if(val['board_id'] == list_id) {
+    for (let val of current_date_miletones) {
+      if (val['board_id'] == list_id) {
         flag = true
         current_date_board_miletones.push(val)
       }
     }
-
+    for (let val of current_date_board_miletones) {
+      if(val['is_all_realized'] == '0') {
+        is_all_realized = '0'
+        break
+      }
+    }
     return {
       is_over_duetime,
       flag,
+      is_all_realized,
       current_date_board_miletones,
     }
   }
+
+  // 里程碑是否过期的颜色设置
+  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
+    if (!has_lcb) {
+      return ''
+    }
+    if (is_over_duetime) {
+      if (is_all_realized == '0') { //存在未完成任务
+        return '#FFA39E'
+      } else { //全部任务已完成
+        return 'rgba(0,0,0,0.15)'
+      }
+    }
+    return ''
+  }
+
   set_miletone_detail_modal_visible = () => {
     const { miletone_detail_modal_visible } = this.state
     this.setState({
@@ -124,7 +147,7 @@ export default class GetRowGanttItem extends Component {
     const idarr = e.key.split('__')
     const id = idarr[1]
     const board_id = idarr[0]
-    this.setCurrentSelectedProjectMembersList({board_id})
+    this.setCurrentSelectedProjectMembersList({ board_id })
     this.set_miletone_detail_modal_visible()
     // this.getMilestoneDetail(id)
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
@@ -163,10 +186,11 @@ export default class GetRowGanttItem extends Component {
               <div className={indexStyles.ganttAreaItem} key={key}>
                 <div className={indexStyles.ganttDetail} style={{ height: item_height }}>
                   {date_inner.map((value2, key2) => {
-                    const { week_day, timestamp, } = value2
-                    const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
-                    const current_date_board_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_board_miletones
-                    const is_over_duetime = this.isHasMiletoneList(Number(timestamp)).is_over_duetime
+                    const { week_day, timestamp, timestampEnd } = value2
+                    const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
+                    const current_date_board_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_board_miletones
+                    const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
+                    const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
                     return (
                       <div className={`${indexStyles.ganttDetailItem}`}
                         key={key2}
@@ -180,7 +204,10 @@ export default class GetRowGanttItem extends Component {
                                 data-targetclassname="specific_example"
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
-                                style={{color: is_over_duetime?'#FFA39E': '#FFC069'}}
+                                style={{
+                                  // color: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                                  color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                                }}
                               >&#xe6a0;</div>
                             </Dropdown>
                           )
@@ -191,11 +218,15 @@ export default class GetRowGanttItem extends Component {
                               <div
                                 data-targetclassname="specific_example"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
-                                style={{ height: item_height - 12, backgroundColor: is_over_duetime?'#FFA39E': '#FFC069' }}
+                                style={{
+                                  height: item_height - 12,
+                                  //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                                  background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                                }}
                                 onClick={this.seeMiletones}
                                 onMouseDown={e => e.stopPropagation()}
                                 onMouseOver={e => e.stopPropagation()}
-                                // onMouseMove
+                              // onMouseMove
                               />
                             </Dropdown>
                           )

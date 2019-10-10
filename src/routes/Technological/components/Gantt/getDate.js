@@ -61,6 +61,7 @@ function getNeedDate(timestring) {
     week_day,
     date_string,
     timestamp: new Date(date_string).getTime(),
+    timestampEnd: new Date(`${date_string} 23:59`).getTime(),
     week_day_name: getWeekDay(week_day),
   }
 }

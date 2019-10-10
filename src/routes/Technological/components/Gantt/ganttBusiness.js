@@ -90,7 +90,7 @@ const handleDescription = (date, hour) => {
     }
 }
 // 计算任务的逾期情况和时间跨度
-export const filterDueTimeSpan = ({ start_time, due_time, is_has_end_time, is_has_start_time }) => {
+export const filterDueTimeSpan = ({ start_time, due_time, is_has_end_time, is_has_start_time, is_realize }) => {
     let due_description = ''
     if (!!!due_time) {
         return {
@@ -112,7 +112,7 @@ export const filterDueTimeSpan = ({ start_time, due_time, is_has_end_time, is_ha
     //总长
     const { span_date, span_hour } = calTimeSpan(new_due_time, new_start_time)
 
-    if (due_time_span < 0) { //非逾期
+    if (due_time_span < 0 || is_realize == '1') { //非逾期
         const { date_des, hour_des } = handleDescription(span_date, span_hour)
         if (is_has_end_time && is_has_start_time) {
             due_description = `共${date_des}${hour_des}`

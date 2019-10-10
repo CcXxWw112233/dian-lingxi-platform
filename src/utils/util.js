@@ -1,5 +1,5 @@
-const handleTimeDetailReturn = (timestamp) => {
-  if (!timeStamp) {
+export const handleTimeDetailReturn = (timestamp) => {
+  if (!timestamp) {
     return {}
   }
   const time = new Date(timestamp);

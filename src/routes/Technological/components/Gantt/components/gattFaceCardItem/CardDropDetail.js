@@ -10,7 +10,7 @@ const CardDropDetail = (props) => {
     const { name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = props
 
     const cal_time_span_params = {
-        start_time, due_time, is_has_start_time, is_has_end_time
+        start_time, due_time, is_has_start_time, is_has_end_time, is_realize
     }
 
     const new_start_time = start_time.toString().length > 10 ? Number(start_time) : Number(start_time) * 1000
@@ -31,7 +31,7 @@ const CardDropDetail = (props) => {
                 </div>
             </div>
             <div className={styles.time_area}
-                style={{ background: filterDueTimeSpan(cal_time_span_params).is_overdue ? '#FF7875' : '#69C0FF' }}>
+                style={{ background: filterDueTimeSpan(cal_time_span_params).is_overdue && is_realize == '0'? '#FF7875' : '#69C0FF' }}>
                 {handleTimeStampToDate(new_start_time)}
                 {due_time && '—'}
                 {handleTimeStampToDate(new_due_time)}
