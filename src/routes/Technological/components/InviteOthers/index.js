@@ -38,8 +38,8 @@ class InviteOthers extends Component {
       membersListToSelect: [], //人员选择列表
       projectList: [], //我参与的项目列表
       projectUserList: [],
-      groupList: [], //组织成员分组
-      currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
+      groupList: [], //企业职员分组
+      currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有职员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
       currentMemberListSet: 'org', //当前显示的集合 org || group-id || project-id
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
@@ -86,7 +86,7 @@ class InviteOthers extends Component {
       }`
   }
 
-  // 给一个成员默认的结构
+  // 给一个职员默认的结构
   genUserToDefinedMember = user => {
     // console.log('sssss', { user })
     if (!user || !(user.id || user.user_id)) return
@@ -923,7 +923,7 @@ InviteOthers.defaultProps = {
   handleInviteMemberReturnResult: function () {
     message.info('邀请他人组件， 需要被提供一个回调函数')
   },
-  _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
+  _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的企业，默认取当前操作项目的对应的企业id
   shouldNotGetGroupInDidMount: false, //false默认，true的时候在componentDidMount 里面做getGroupList请求
 }
 

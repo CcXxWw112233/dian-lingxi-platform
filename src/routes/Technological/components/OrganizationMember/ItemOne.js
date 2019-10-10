@@ -81,7 +81,7 @@ export default class ItemOne extends React.Component {
         break
     }
   }
-  //加入组织
+  //加入企业
   joinOrganization({member_id}) {
     this.props.joinOrganization({id: member_id})
   }
@@ -95,7 +95,7 @@ export default class ItemOne extends React.Component {
     const that = this
     Modal.confirm({
       title: `确认要移除这个用户吗？`,
-      content: '同时在本组织中将此用户移出所有项目',
+      content: '同时在本企业中将此用户移出所有项目',
       okText: '确认',
       cancelText: '取消',
       onOk() {
@@ -160,7 +160,7 @@ export default class ItemOne extends React.Component {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
     }, function () {
-      if(this.state.isShowBottDetail){ //点击打开的时候，如果成员信息未存在就请求
+      if(this.state.isShowBottDetail){ //点击打开的时候，如果职员信息未存在就请求
         const role_detailInfo = groupList[parentKey]['members'][itemKey]['role_detailInfo'] || {}
         let role_detailInfo_is_has = false
         for(let val in role_detailInfo) {
@@ -230,7 +230,7 @@ export default class ItemOne extends React.Component {
           {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
             <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
-                加入组织
+                加入企业
               </div>
             </Menu.Item>
           ) : ('')}
@@ -287,7 +287,7 @@ export default class ItemOne extends React.Component {
                <div>{role}</div>
              </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>
-              <div>组织：</div>
+              <div>企业：</div>
               <div>{organization_name}</div>
             </div>
             <div className={CreateTaskStyle.item_1_bott_con1_item}>

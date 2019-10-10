@@ -176,7 +176,7 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
-  //添加项目组成员操作
+  //添加项目组职员操作
   setShowAddMenberModalVisibile = () => {
     this.setState({
       show_add_menber_visible: !this.state.show_add_menber_visible
@@ -187,7 +187,7 @@ export default class GroupListHeadItem extends Component {
     const { dispatch } = this.props
     addMenbersInProject({ ...values }).then(res => {
       if (isApiResponseOk(res)) {
-        message.success('已成功添加项目成员')
+        message.success('已成功添加项目职员')
         setTimeout(() => {
           dispatch({
             type: 'gantt/getAboutUsersBoards',
@@ -339,7 +339,7 @@ export default class GroupListHeadItem extends Component {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
           gantt_board_id == '0' && (
             <Menu.Item key={'invitation'}>
-              邀请成员加入
+              邀请职员加入
             </Menu.Item>
           )}
         {

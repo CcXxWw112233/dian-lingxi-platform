@@ -21,7 +21,7 @@ class DrawerInformContent extends Component {
             avatar: "",
             id: "0",
             user_id: '0',
-            name: "项目全体成员",
+            name: "项目全体职员",
         }
         switch (type) {
             case '1': // 任务

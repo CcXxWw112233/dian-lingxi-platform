@@ -235,7 +235,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     if (isSelectedAll) {
       return (
         <div className={styles.contentListItemWrapper}>
-          <span className={styles.contentListItemContent} title="全体成员">
+          <span className={styles.contentListItemContent} title="全体职员">
             <img
               className={styles.contentListItemImg}
               src={personGroupImg}

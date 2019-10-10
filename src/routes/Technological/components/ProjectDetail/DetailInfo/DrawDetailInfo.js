@@ -132,7 +132,7 @@ export default class DrawDetailInfo extends React.Component {
   }
   //点击区域描述可编辑区域-----------end
 
-  //点击添加成员操作
+  //点击添加职员操作
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -258,7 +258,7 @@ export default class DrawDetailInfo extends React.Component {
               <div>{role_name}</div>
             </div>
             {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
-            {/*<div>组织：</div>*/}
+            {/*<div>企业：</div>*/}
             {/*<div>{organization}</div>*/}
             {/*</div>*/}
             <div className={DrawDetailInfoStyle.detailItem}>
@@ -301,7 +301,7 @@ export default class DrawDetailInfo extends React.Component {
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
             <Menu.Item key={'removeMember'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
               <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
-                移除成员
+                移除职员
               </div>
             </Menu.Item>
           )}

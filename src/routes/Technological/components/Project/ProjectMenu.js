@@ -41,7 +41,7 @@ class ProjectMenu extends Component {
   }
   getSelectedItemKeywordOrId = () => {
     const {selectedKeys} = this.state
-    //除了已归档项目的key为'archived-${组织id}'的形式，其他都是 id
+    //除了已归档项目的key为'archived-${企业id}'的形式，其他都是 id
     const [key] = selectedKeys
     if(key.includes('archived')) {
       return {
@@ -319,7 +319,7 @@ class ProjectMenu extends Component {
     if (edit_tree_node === key) {
       return this.genEditTreeNodeTitle(layer);
     }
-    //第一层，组织
+    //第一层，企业
     const editGroupName = (
       <Item key={`edit-${title}-${key}-${org_id}`}>修改分组名称</Item>
     );

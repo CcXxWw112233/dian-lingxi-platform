@@ -328,7 +328,7 @@ export default class TaskItem extends React.Component {
   }
 
   /**
-   * 其他成员的下拉回调
+   * 其他职员的下拉回调
    * @param {String} id 这是用户的user_id
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
@@ -342,8 +342,8 @@ export default class TaskItem extends React.Component {
   }
 
   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -354,7 +354,7 @@ export default class TaskItem extends React.Component {
     this.handleSetContentPrivilege(users_arr, 'read')
   }
 
-  // 访问控制添加成员
+  // 访问控制添加职员
   handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
 
     const { taskItemValue = {} } = this.props
@@ -444,7 +444,7 @@ export default class TaskItem extends React.Component {
       // console.log(acc, '------', curr, 'sssssss')
       [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
     )
-    // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
+    // 2. 如果存在extend列表中的职员也要拼接进来, 然后去重
     const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
     let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)

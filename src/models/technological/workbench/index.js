@@ -44,7 +44,7 @@ export default modelExtend(technological, {
                 projectList: [], //项目列表
                 projectStarList: [],
                 projectUserList: [], //项目列表（只返回用户信息）
-                orgMembers: [], //组织用户列表
+                orgMembers: [], //企业用户列表
                 boxUsableList: [], //用户当前可用盒子列表
                 boxCheckDisabled: false,
                 imData: {}, //用户信息
@@ -52,11 +52,11 @@ export default modelExtend(technological, {
                 filePreviewUrl: '', //预览文档src
                 current_file_resource_id: '', //当前操作文档id
                 processInfo: {}, //所选中的流程的信息
-                currentOrgFileUploads: [], //当前组织下我上传的文档列表
+                currentOrgFileUploads: [], //当前企业下我上传的文档列表
                 currentSelectedProjectMembersList: [],
                 currentSelectedProjectFileFolderList: [], //当前选择的项目文件夹目录成绩
                 projectTabCurrentSelectedProject: '0', //当前选择的项目tabs - board_id || '0' - 所有项目
-                currentOrgAllMembers: [], //用户的当前组织所有成员（未分类)，
+                currentOrgAllMembers: [], //用户的当前企业所有成员（未分类)，
                 responsibleTaskList: [],
                 uploadedFileList: [],
                 backLogProcessList: [],
@@ -732,7 +732,7 @@ export default modelExtend(technological, {
       }
     },
 
-    //查询用户在当前组织内上传的文档
+    //查询用户在当前企业内上传的文档
     * getCurrentOrgFileUploads({ payload }, { select, call, put }) {
       let res = yield call(getCurrentOrgFileUploads, payload)
       if (isApiResponseOk(res)) {

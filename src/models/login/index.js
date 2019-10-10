@@ -55,7 +55,7 @@ export default {
       const { has_org } = res.data
       const { is_simple_model } = res.data.user_set
       // console.log(is_simple_model, 'sssssss')
-      //如果存在组织， 否则跳到指引页面
+      //如果存在企业， 否则跳到指引页面
       if (isApiResponseOk(res)) {
         if (has_org == '1') {
           // if (is_simple_model == '0') {

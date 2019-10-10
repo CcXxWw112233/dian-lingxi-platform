@@ -114,7 +114,7 @@ export default class ElseProject extends React.Component{
   }
 
   //出现confirm-------------end
-  //添加项目组成员操作
+  //添加项目组职员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile

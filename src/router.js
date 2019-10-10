@@ -59,7 +59,7 @@ const Routers = function ({ history, app }) {
         document.title = '灵犀-找回密码'
         break
       case '/organizationManager':
-        document.title = '灵犀-组织管理'
+        document.title = '灵犀-企业管理'
         break
       case '/technological/accoutSet':
         document.title = '灵犀-账户设置'
