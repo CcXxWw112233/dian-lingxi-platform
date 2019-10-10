@@ -7,8 +7,8 @@ import {
   UPLOAD_FILE_SIZE, PROJECTS, ORGANIZATION, MEMBERS
 } from "../../globalset/js/constant";
 import Cookies from 'js-cookie'
-import {validateEmail, validateEmailSuffix} from "../../utils/verify";
-import {checkIsHasPermission, currentNounPlanFilterName} from "../../utils/businessFunction";
+import { validateEmail, validateEmailSuffix } from "../../utils/verify";
+import { checkIsHasPermission, currentNounPlanFilterName } from "../../utils/businessFunction";
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const RadioGroup = Radio.Group;
@@ -24,7 +24,7 @@ export default class BaseInfo extends React.Component {
     saveButtonDisabled: false, //确认按钮是否可点击
   }
   storeChange(key, value) {
-    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    const { datas: { currentOrganizationInfo = {} } } = this.props.model
     currentOrganizationInfo[key] = value
     this.props.updateDatas({
       currentOrganizationInfo
@@ -34,7 +34,7 @@ export default class BaseInfo extends React.Component {
     const value = e.target.value
     this.storeChange('name', value)
     let flag = true
-    if(value) {
+    if (value) {
       flag = false
     }
     this.setState({
@@ -45,11 +45,11 @@ export default class BaseInfo extends React.Component {
     this.storeChange('member_join_model', e.target.value)
   }
   memberJoinContent(e) {
-    const newvalue = e.target.value? e.target.value.replace(/\s/gim, ',') : ''
+    const newvalue = e.target.value ? e.target.value.replace(/\s/gim, ',') : ''
     this.storeChange('member_join_content', newvalue)
   }
   deleteUpload() {
-    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    const { datas: { currentOrganizationInfo = {} } } = this.props.model
     currentOrganizationInfo['logo'] = ''
     currentOrganizationInfo['logo_id'] = ''
     this.props.updateDatas({
@@ -57,29 +57,29 @@ export default class BaseInfo extends React.Component {
     })
   }
   finallySave() {
-    if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
+    if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    const { datas: { currentOrganizationInfo = {} } } = this.props.model
     const { name, logo_id, member_join_model, member_join_content, id } = currentOrganizationInfo
 
     //将邮箱后缀转化
     let new_member_join_content = member_join_content
-    if(member_join_model === '3'){
+    if (member_join_model === '3') {
       let memberArr = member_join_content.split(',') //转成数组
       let newMemberArr = []
       for (let val of memberArr) {
-        if (val !== ''){
+        if (val !== '') {
           newMemberArr.push(val)
         }
       }
-      if(!member_join_content) {
+      if (!member_join_content) {
         message.warn('请输入邮箱后缀名。', MESSAGE_DURATION_TIME)
         return false
       }
-      for(let val of newMemberArr ) {
-        if(!validateEmailSuffix(val)) {
+      for (let val of newMemberArr) {
+        if (!validateEmailSuffix(val)) {
           message.warn('请正确输入邮箱后缀名。', MESSAGE_DURATION_TIME)
           return false
         }
@@ -94,13 +94,13 @@ export default class BaseInfo extends React.Component {
       org_id: id
     }
     this.props.updateOrganization(obj)
-  //  请求
+    //  请求
   }
   render() {
     const { uploading, saveButtonDisabled } = this.state
-    const { datas: { currentOrganizationInfo = {} }} = this.props.model
+    const { datas: { currentOrganizationInfo = {} } } = this.props.model
     const { logo, name, logo_id, member_join_model, member_join_content } = currentOrganizationInfo
-    const newMember_join_content = member_join_content? member_join_content.replace(/\,/gim, ' ') : ''
+    const newMember_join_content = member_join_content ? member_join_content.replace(/\,/gim, ' ') : ''
     const that = this
     const uploadProps = {
       name: 'file',
@@ -112,14 +112,14 @@ export default class BaseInfo extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)){
+        if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_EDIT)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -152,7 +152,7 @@ export default class BaseInfo extends React.Component {
           })
         }
         if (file.response && file.response.code == '0') {
-          const obj = {...currentOrganizationInfo}
+          const obj = { ...currentOrganizationInfo }
           obj.logo = file.response.data.url
           that.props.updateDatas({
             currentOrganizationInfo: obj
@@ -166,42 +166,68 @@ export default class BaseInfo extends React.Component {
         <div className={indexStyles.baseInfo_title}>
           {currentNounPlanFilterName(ORGANIZATION)}名称
         </div>
-        <Input placeholder={`输入${currentNounPlanFilterName(ORGANIZATION)}名称`} value={name} style={{marginTop: 8}} onChange={this.nameChange.bind(this)}/>
+        <Input placeholder={`输入${currentNounPlanFilterName(ORGANIZATION)}名称`} value={name} style={{ marginTop: 8 }} onChange={this.nameChange.bind(this)} />
         <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(ORGANIZATION)}LOGO
         </div>
         <div className={indexStyles.baseInfo_des}>你的企业标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
         <div className={indexStyles.UploadOut}>
-          {logo? (
+          {logo ? (
             <img src={logo} />
           ) : (
-            <div className={indexStyles.instepImg}></div>
-          )}
+              <div className={indexStyles.instepImg}></div>
+            )}
           <div className={indexStyles.delete} onClick={this.deleteUpload.bind(this)}>删除</div>
           <Upload {...uploadProps} showUploadList={false} accept={"image/jpg, image/jpeg,  image/png"}>
             <Button>
               <Icon type="upload" /> Click to Upload
             </Button>
           </Upload>
-          <div style={{width: 120}} >
-            {uploading?(
-              <span><Icon type="loading" style={{fontSize: 20, marginLeft: 12}}/>'上传中...'</span>
-            ):('')}
+          <div style={{ width: 120 }} >
+            {uploading ? (
+              <span><Icon type="loading" style={{ fontSize: 20, marginLeft: 12 }} />'上传中...'</span>
+            ) : ('')}
           </div>
+        </div>
+
+        <div className={indexStyles.baseInfo_title_2}>
+          付费信息
+        </div>
+        <div className={indexStyles.paymentInfoWrapper}>
+          {
+            false &&
+            <div className={indexStyles.isFreeTrial}>
+              <p className={indexStyles.title}>当前处于免费试用状态，享受高级功能与更优质的服务，请升级为付费版本。</p>
+              <p className={indexStyles.description}>免费版本的协作人数限制10人以内，项目数量限制在15个以内。</p>
+              <Button type={'primary'} >付费升级</Button>
+              <Button className={indexStyles.moreInfo} >
+                了解更多
+              </Button>
+            </div>
+          }
+          {
+            true &&
+            <div className={indexStyles.paymemtInfo}>
+              <Button type={'primary'} >续费</Button>
+              <Button className={indexStyles.moreInfo} >
+                查看订单
+              </Button>
+            </div>
+          }
         </div>
 
         <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(MEMBERS)}加入模式
         </div>
         <div className={indexStyles.baseInfo_des}>设置新{currentNounPlanFilterName(MEMBERS)}以何种方式加入或找到{currentNounPlanFilterName(ORGANIZATION)}。</div>
-        <RadioGroup onChange={this.ratioOnChange} value={member_join_model} style={{marginTop: 8}}>
+        <RadioGroup onChange={this.ratioOnChange} value={member_join_model} style={{ marginTop: 8 }}>
           <Radio style={radioStyle} value={'1'}>仅能通过邀请加入</Radio>
           <Radio style={radioStyle} value={'2'}>申请加入者需通过许可</Radio>
           <Radio style={radioStyle} value={'3'}>任意满足以下邮箱后缀名并完成邮件认证的用户可自动加入。</Radio>
         </RadioGroup>
-        <Input placeholder={'@examlpe.com'} style={{marginTop: 8}} onChange={this.memberJoinContent.bind(this)} value={newMember_join_content}/>
-        <div className={indexStyles.baseInfo_des} style={{color: '#BFBFBF'}}>请使用空格符号分隔多个后缀名</div>
-        <div style={{margin: '0 auto', marginTop: 20, textAlign: 'center'}}>
+        <Input placeholder={'@examlpe.com'} style={{ marginTop: 8 }} onChange={this.memberJoinContent.bind(this)} value={newMember_join_content} />
+        <div className={indexStyles.baseInfo_des} style={{ color: '#BFBFBF' }}>请使用空格符号分隔多个后缀名</div>
+        <div style={{ margin: '0 auto', marginTop: 20, textAlign: 'center' }}>
           <Button type={'primary'} onClick={this.finallySave.bind(this)} disabled={saveButtonDisabled}>保存</Button>
         </div>
       </div>

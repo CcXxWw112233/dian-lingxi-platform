@@ -1,179 +1,205 @@
 @import "../../globalset/css/constant";
+
 .organizationOut {
-  //min-width: 1440px;
+  //min-width     : 1440px;
   background-color: #FFFFFF;
-  .main{
-    width: 700px;
-    height: auto;
-    margin: 0 auto;
+
+  .main {
+    width         : 700px;
+    height        : auto;
+    margin        : 0 auto;
     padding-bottom: 100px;
   }
+
   .back {
-    cursor: pointer;
-    margin-top: 20px;
-    border-radius: 20px;
+    cursor          : pointer;
+    margin-top      : 20px;
+    border-radius   : 20px;
     background-color: #E8E8E8;
-    color: #595959;
-    font-size: 14px;
-    line-height: 22px;
-    height: 22px;
-    width: 68px;
-    text-align: center;
+    color           : #595959;
+    font-size       : 14px;
+    line-height     : 22px;
+    height          : 22px;
+    width           : 68px;
+    text-align      : center;
   }
-  .topTitle{
-    margin: 0 auto;
+
+  .topTitle {
+    margin    : 0 auto;
     margin-top: 20px;
     text-align: center;
-    .titleName{
+
+    .titleName {
       margin-top: 20px;
       text-align: center;
-      font-size: 24px;
-      color: @color_2;
+      font-size : 24px;
+      color     : @color_2;
     }
-    .tabsOut{
+
+    .tabsOut {
       margin-top: 20px;
     }
   }
 }
 
-.TabPaneContent{
+.TabPaneContent {
   text-align: left;
-  .childrenPanelContent{
+
+  .childrenPanelContent {
     padding-left: 52px;
   }
 }
 
 .addParrentPanel {
-  background: #FAFAFA;
-  border: 1px solid rgba(217,217,217,1);
+  background   : #FAFAFA;
+  border       : 1px solid rgba(217, 217, 217, 1);
   border-radius: 4px;
-  box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);
-  width: 100%;
-  height: 30px;
-  line-height: 30px;
-  margin-top: 10px;
-  text-align: center;
-  color: #8c8c8c;
-  font-size: 16px;
-  cursor: pointer;
+  box-shadow   : 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
+  width        : 100%;
+  height       : 30px;
+  line-height  : 30px;
+  margin-top   : 10px;
+  text-align   : center;
+  color        : #8c8c8c;
+  font-size    : 16px;
+  cursor       : pointer;
 }
 
 //父级panel
-.parrentPanaelHeader{
-  display: flex;
+.parrentPanaelHeader {
+  display        : flex;
   justify-content: space-between;
-  align-items: center;
-  .parrentPanaelHeader_l{
+  align-items    : center;
+
+  .parrentPanaelHeader_l {
     display: flex;
+
     >div:nth-child(2) {
-      background: #E8E8E8;
+      background   : #E8E8E8;
       border-radius: 11px;
-      width: 66px;
-      height: 22px;
-      line-height: 22px;
-      text-align: center;
-      font-size: 12px;
-      margin-left: 12px;
+      width        : 66px;
+      height       : 22px;
+      line-height  : 22px;
+      text-align   : center;
+      font-size    : 12px;
+      margin-left  : 12px;
     }
 
   }
-  .parrentPanaelHeader_r{
-    display: none;
+
+  .parrentPanaelHeader_r {
+    display     : none;
     margin-right: 16px;
-    font-size: 16px;
+    font-size   : 16px;
   }
 }
-.parrentPanaelHeader:hover{
-  .parrentPanaelHeader_r{
+
+.parrentPanaelHeader:hover {
+  .parrentPanaelHeader_r {
     display: block;
   }
 }
 
 //menu
-.elseProjectMemu{
+.elseProjectMemu {
   padding: 4px 10px;
 }
-.elseProjectDangerMenu{
-  width: 100%;
-  height: 100%;
-  color: #F5222D ;
+
+.elseProjectDangerMenu {
+  width  : 100%;
+  height : 100%;
+  color  : #F5222D;
   padding: 4px 10px;
 
 }
-.elseProjectDangerMenu:hover ,.elseProjectDangerMenu:active{
+
+.elseProjectDangerMenu:hover,
+.elseProjectDangerMenu:active {
   background: #FFE7E8;
 }
 
 //基本信息
-.baseInfoOut{
+.baseInfoOut {
   text-align: left;
-  color: @color_2;
-  .baseInfo_title{
+  color     : @color_2;
+
+  .baseInfo_title {
     font-weight: bold;
   }
-  .baseInfo_title_2{
-    margin-top: 20px;
+
+  .baseInfo_title_2 {
+    margin-top : 20px;
     font-weight: bold;
   }
-  .baseInfo_des{
-    font-size: 12px;
+
+  .baseInfo_des {
+    font-size : 12px;
     margin-top: 4px;
   }
 }
-.UploadOut{
-  display: flex;
+
+.UploadOut {
+  display    : flex;
   align-items: center;
-  margin-top: 10px;
-  .instepImg{
-    width: 64px;
-    height: 64px;
-    border-radius: 4px;
+  margin-top : 10px;
+
+  .instepImg {
+    width           : 64px;
+    height          : 64px;
+    border-radius   : 4px;
     background-color: @color-link-normal;
-    margin-right: 16px;
+    margin-right    : 16px;
   }
-  img{
-    width: 64px;
-    height: 64px;
+
+  img {
+    width        : 64px;
+    height       : 64px;
     border-radius: 4px;
-    margin-right: 16px;
+    margin-right : 16px;
   }
-  .delete{
-    color: @color_5;
-    cursor: pointer;
+
+  .delete {
+    color       : @color_5;
+    cursor      : pointer;
     margin-right: 12px;
   }
 }
 
 //名词定义
-.nounDefinitout{
+.nounDefinitout {
   text-align: left;
-  display: flex;
-  .nounDefinit_col{
-    flex: 1;
-    font-size: 0;
+  display   : flex;
+
+  .nounDefinit_col {
+    flex      : 1;
+    font-size : 0;
     //position: relative;
     box-sizing: border-box;
-    .nounDefinit_col_title{
+
+    .nounDefinit_col_title {
       background-color: #FAFAFA;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
+      font-size       : 14px;
+      font-weight     : bold;
+      cursor          : pointer;
     }
-    .nounDefinit_col_item, .nounDefinit_col_title{
-      height: 54px;
-      font-size: 14px;
-      border-top: 1px solid #e5e5e5;
-      border-right: 1px solid #e5e5e5;
-      display: flex;
+
+    .nounDefinit_col_item,
+    .nounDefinit_col_title {
+      height         : 54px;
+      font-size      : 14px;
+      border-top     : 1px solid #e5e5e5;
+      border-right   : 1px solid #e5e5e5;
+      display        : flex;
       justify-content: center;
-      align-items: center;
+      align-items    : center;
     }
-    .nounDefinit_col_item{
-      input{
-        outline: none;
-        border: none;
-        width: 100%;
-        padding: 0 10px;
+
+    .nounDefinit_col_item {
+      input {
+        outline   : none;
+        border    : none;
+        width     : 100%;
+        padding   : 0 10px;
         box-sizing: border-box;
         text-align: center;
 
@@ -181,32 +207,73 @@
     }
   }
 }
-.contain1{
+
+.paymentInfoWrapper {
+  margin-top   : 6px;
+  width        : 650px;
+  height       : 128px;
+  background   : rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  border       : 1px solid rgba(0, 0, 0, 0.09);
+
+  .isFreeTrial {
+    padding: 16px 20px;
+    p{
+      margin-bottom:8px!important;
+    }
+    .title {
+      height     : 20px;
+      font-size  : 14px;
+      font-weight: 600;
+      color      : rgba(89, 89, 89, 1);
+      line-height: 20px;
+    }
+
+    .description {
+      height   : 20px;
+      font-size: 14px;
+      color      : rgba(89, 89, 89, 1);
+      line-height: 20px;
+    }
+    .moreInfo{
+      margin-left: 8px;
+    }
+  }
+  .paymemtInfo {
+    padding: 16px 20px;
+  }
+}
+
+.contain1 {
   text-align: left;
-  color: #262626;
+  color     : #262626;
   margin-top: 12px;
-  span{
+
+  span {
     color: #595959;
   }
 }
-.contain2{
+
+.contain2 {
   margin-top: 30px;
 }
-.selectedDefinite{
-  border: 2px solid rgba(24,144,255,1);
+
+.selectedDefinite {
+  border    : 2px solid rgba(24, 144, 255, 1);
   box-sizing: border-box;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  position  : absolute;
+  width     : 100%;
+  height    : 100%;
+  top       : 0;
+  left      : 0;
 }
-.selectedDefinite2{
-  border: 2px solid rgba(24,144,255,1);
+
+.selectedDefinite2 {
+  border: 2px solid rgba(24, 144, 255, 1);
 
 }
 
-.noSelectedDefinite{
+.noSelectedDefinite {
   border: none;
 
 }
