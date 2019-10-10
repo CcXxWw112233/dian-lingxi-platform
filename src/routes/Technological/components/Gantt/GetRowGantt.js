@@ -422,7 +422,7 @@ export default class GetRowGantt extends Component {
                 <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
                   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
                     <GetRowTaskItem
-                      key={`${id}_${start_time}_${end_time}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                       itemValue={value2}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.isDragging}
