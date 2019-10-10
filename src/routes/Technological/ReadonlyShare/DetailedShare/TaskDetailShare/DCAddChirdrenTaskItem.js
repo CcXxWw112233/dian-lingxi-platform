@@ -2,8 +2,8 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popconfirm, } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timestampToTimeNormal, timeToTimestamp } from '../../../utils/util'
-import globalStyles from '../../../globalset/css/globalClassName.less'
+import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 const TextArea = Input.TextArea
 
 export default class DCAddChirdrenTaskItem extends React.Component {

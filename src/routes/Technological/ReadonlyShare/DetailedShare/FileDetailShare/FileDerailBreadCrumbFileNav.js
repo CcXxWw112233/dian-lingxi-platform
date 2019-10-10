@@ -2,7 +2,7 @@
 import React from 'react'
 import { Breadcrumb, Menu, Dropdown, Icon } from 'antd'
 import indexStyles from './index.less'
-import globalStyles from '@/globalset/css/globalClassName.less'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 
 export default class FileDerailBreadCrumbFileNav extends React.Component {
   state = {

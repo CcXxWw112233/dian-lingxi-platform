@@ -1,20 +1,20 @@
 //分组列表
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import globalStyle from '../../../globalset/css/globalClassName.less'
+import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import { Icon, Checkbox, Collapse, Input, message, Dropdown, Menu, Modal, Button, Avatar, DatePicker } from 'antd'
 import QueueAnim from 'rc-queue-anim'
 import ItemOne from './ItemOne'
 import ItemTwo from './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timeToTimestamp, stopPropagation } from '../../../utils/util'
+import { timeToTimestamp, stopPropagation } from '../../../../../utils/util'
 
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
   ORG_UPMS_ORGANIZATION_GROUP
-} from "../../../globalset/js/constant";
-import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../utils/businessFunction";
+} from "../../../../../globalset/js/constant";
+import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 const TextArea = Input.TextArea
 const Panel = Collapse.Panel
 const { RangePicker } = DatePicker;

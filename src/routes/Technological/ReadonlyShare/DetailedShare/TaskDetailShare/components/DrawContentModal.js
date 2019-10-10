@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import DrawContent from '../DrawerContent'
-import CustormModal from '../../../components/CustormModal'
+import CustormModal from '../../../../../../components/CustormModal'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 

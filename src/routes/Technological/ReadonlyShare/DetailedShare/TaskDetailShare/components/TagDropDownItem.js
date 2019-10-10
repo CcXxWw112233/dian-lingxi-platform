@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input, Popconfirm, Dropdown } from 'antd'
 import TagDropDownStyles from './TagDropDown.less'
-import globalStyles from '../../../globalset/css/globalClassName.less'
+import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 
 export default class TagDropDownItem extends React.Component {
 

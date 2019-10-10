@@ -7,10 +7,10 @@ import {
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_DOWNLOAD, PROJECT_FILES_FILE_EDIT,
   REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPDATE,
   UPLOAD_FILE_SIZE
-} from "@/globalset/js/constant";
+} from "../../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
-import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { setUploadHeaderBaseInfo } from '../../../../../utils/businessFunction'
 
 export default class Header extends React.Component {
   state = {}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment2.less'
-import { timestampToTimeNormal, judgeTimeDiffer, judgeTimeDiffer_ten } from "@/utils/util";
+import { timestampToTimeNormal, judgeTimeDiffer, judgeTimeDiffer_ten } from "../../../../../../utils/util";
 
 const Dragger = Upload.Dragger
 

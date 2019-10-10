@@ -1,11 +1,11 @@
 import React from 'react'
 import { Icon, Modal, message } from 'antd'
-import Settings from '@/components/headerOperate'
+import Settings from '../../../../../components/headerOperate'
 import {
   showConfirm,
   showDeleteConfirm
-} from '@/components/headerOperateModal'
-import { PROJECT_FLOWS_FLOW_ABORT, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN } from '@/globalset/js/constant'
+} from '../../../../../components/headerOperateModal'
+import { PROJECT_FLOWS_FLOW_ABORT, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '../../../../../utils/businessFunction'
 import VisitControl from '../../../components/VisitControl/index';
 import {
@@ -14,10 +14,10 @@ import {
   removeContentPrivilege
 } from './../../../../../services/technological/project';
 // import { projectDetailInfo } from '@/services/technological/projectDetail'
-import InformRemind from '@/components/InformRemind'
-import globalStyles from '@/globalset/css/globalClassName.less'
+import InformRemind from '../../../../../components/InformRemind'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 // import ShareAndInvite from '../../../ShareAndInvite/index'
-import { createShareLink, modifOrStopShareLink, } from '@/services/technological/workbench'
+import { createShareLink, modifOrStopShareLink, } from '../../../../../services/technological/workbench'
 import { connect } from 'dva'
 
 @connect(({ workbenchDetailProcess = {}, projectDetailProcess = {} }) => ({

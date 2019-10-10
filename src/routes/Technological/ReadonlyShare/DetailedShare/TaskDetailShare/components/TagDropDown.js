@@ -1,7 +1,7 @@
 import React from 'react'
 import TagDropDownStyles from './TagDropDown.less'
 import TagDropDownItem from './TagDropDownItem.js'
-import globalStyles from '../../../globalset/css/globalClassName.less'
+import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 
 
 export default class TagDropDown extends React.Component {

@@ -1,32 +1,32 @@
 import React from 'react'
 import indexStyles from './index.less'
-import globalStyles from '@/globalset/css/globalClassName.less'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
-import ContentRaletion from '@/components/ContentRaletion'
-import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
+import ContentRaletion from '../../../../../components/ContentRaletion'
+import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW, PROJECT_FILES_FILE_DELETE,
   PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE
-} from "@/globalset/js/constant";
+} from "../../../../../globalset/js/constant";
 import { message } from "antd/lib/index";
 import Cookies from "js-cookie";
 
 import VisitControl from '../../../components/VisitControl/index'
-import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '@/services/technological/project'
+import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../../../../services/technological/project'
 
-import ZoomPicture from '@/components/ZoomPicture/index'
-import withBodyClientDimens from '@/components/HOC/withBodyClientDimens'
+import ZoomPicture from '../../../../../components/ZoomPicture/index'
+import withBodyClientDimens from '../../../../../components/HOC/withBodyClientDimens'
 
-import InformRemind from '@/components/InformRemind'
-import VersionSwitching from '@/components/VersionSwitching'
-import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
-import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
+import InformRemind from '../../../../../components/InformRemind'
+import VersionSwitching from '../../../../../components/VersionSwitching'
+import { setUploadHeaderBaseInfo } from '../../../../../utils/businessFunction'
+import { createShareLink, modifOrStopShareLink } from '../../../../../services/technological/workbench'
 // import ShareAndInvite from '../../../ShareAndInvite/index'
 
 class FileDetailContent extends React.Component {

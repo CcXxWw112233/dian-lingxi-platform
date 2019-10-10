@@ -6,8 +6,8 @@ import { Icon, Checkbox, Collapse, Input, message } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_GROUP,
   PROJECT_FILES_FILE_EDIT
-} from "../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../utils/businessFunction";
+} from "../../../../../globalset/js/constant";
+import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 
 const Panel = Collapse.Panel
 

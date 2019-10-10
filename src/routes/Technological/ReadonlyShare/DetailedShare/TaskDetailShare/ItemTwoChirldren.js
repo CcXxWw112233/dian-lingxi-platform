@@ -3,8 +3,8 @@ import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, message } from 'antd'
 import QueueAnim from 'rc-queue-anim'
-import { checkIsHasPermissionInBoard } from "../../../utils/businessFunction";
-import { MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN } from "../../../globalset/js/constant";
+import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
+import { MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN } from "../../../../../globalset/js/constant";
 const Panel = Collapse.Panel
 
 export default class ItemTwoChirldren extends React.Component {

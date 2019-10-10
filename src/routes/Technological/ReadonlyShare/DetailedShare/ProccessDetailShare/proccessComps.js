@@ -1,6 +1,6 @@
 import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
-import globalStyles from '@/globalset/css/globalClassName.less'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Icon, message } from 'antd'
 import DetailConfirmInfoTwo from '../../../components/ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../components/ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
@@ -8,7 +8,7 @@ import DetailConfirmInfoThree from '../../../components/ProjectDetail/Process/Pr
 import DetailConfirmInfoFour from '../../../components/ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFour'
 import DetailConfirmInfoFive from '../../../components/ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFive'
 
-import { FLOWS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '@/globalset/js/constant'
+import { FLOWS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '../../../../../globalset/js/constant'
 
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProccessContent extends React.Component {

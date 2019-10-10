@@ -8,9 +8,9 @@ import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
-} from "../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../utils/businessFunction";
-import CommentMention from '../../../components/CommentMention'
+} from "../../../../../globalset/js/constant";
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
+import CommentMention from '../../../../../components/CommentMention'
 
 const { toString, toContentState } = Mention;
 

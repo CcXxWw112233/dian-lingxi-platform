@@ -4,13 +4,13 @@ import CreateTaskStyle from './CreateTask.less'
 import { Icon, Checkbox, Collapse, message, } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from 'rc-queue-anim'
-import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN,
   TASKS
-} from "../../../globalset/js/constant";
-import globalStyle from '../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from "../../../utils/util";
+} from "../../../../../globalset/js/constant";
+import globalStyle from '../../../../../globalset/css/globalClassName.less'
+import { timestampToTimeNormal } from "../../../../../utils/util";
 
 const Panel = Collapse.Panel
 

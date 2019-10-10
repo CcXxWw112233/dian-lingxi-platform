@@ -7,10 +7,10 @@ import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
 import { getRelations, JoinRelation } from "../../../../../services/technological/task";
 import { isApiResponseOk } from "../../../../../utils/handleResponseData";
-import ContentRaletion from '@/components/ContentRaletion'
+import ContentRaletion from '../../../../../components/ContentRaletion'
 import { judgeTimeDiffer, judgeTimeDiffer_ten } from '../../../../../utils/util'
 import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl } from '../../../../../utils/businessFunction'
-import { FLOWS, PROJECT_FLOWS_FLOW_COMMENT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '@/globalset/js/constant'
+import { FLOWS, PROJECT_FLOWS_FLOW_COMMENT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
 
 export default class FileDetailContent extends React.Component {

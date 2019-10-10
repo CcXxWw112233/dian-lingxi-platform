@@ -3,7 +3,7 @@ import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'an
 import CommentStyles from './Comment.less'
 import 'emoji-mart/css/emoji-mart.css'
 import CommentListItem from './CommentListItem'
-import CommentMention from '@/components/CommentMention'
+import CommentMention from '../../../../../../components/CommentMention'
 
 
 const { toString, toContentState } = Mention;

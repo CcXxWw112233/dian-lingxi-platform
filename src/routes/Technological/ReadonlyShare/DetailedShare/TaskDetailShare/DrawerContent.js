@@ -2,7 +2,7 @@ import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Tag, Input, Dropdown, Menu, DatePicker, Popconfirm, message } from 'antd'
 import BraftEditor from 'braft-editor'
-import NameChangeInput from '../../../components/NameChangeInput'
+import NameChangeInput from '../../../../../components/NameChangeInput'
 
 // import 'braft-editor/dist/braft.css'
 import 'braft-editor/dist/index.css'
@@ -12,29 +12,28 @@ import DCMenuItemOne from './DCMenuItemOne'
 import { Modal } from "antd/lib/index";
 import Comment from './Comment'
 import Cookies from 'js-cookie'
-import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../../../utils/util'
+import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../../../../../utils/util'
 import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
   PROJECT_FILES_FILE_EDIT, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_BOARD_EDIT, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE,
   PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_BOARD, TASKS, CONTENT_DATA_TYPE_CARD
-} from "../../../globalset/js/constant";
+} from "../../../../../globalset/js/constant";
 import {
   checkIsHasPermissionInBoard, checkIsHasPermission, checkIsHasPermissionInVisitControl,
   currentNounPlanFilterName, openPDF, getSubfixName
-} from "../../../utils/businessFunction";
-import { deleteTaskFile, } from '../../../services/technological/task'
-import globalStyle from '../../../globalset/css/globalClassName.less'
+} from "../../../../../utils/businessFunction";
+import { deleteTaskFile, } from '../../../../../services/technological/task'
+import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
 import ExcutorList from './components/ExcutorList'
-import ContentRaletion from '../../../components/ContentRaletion'
-import { createMeeting, createShareLink, modifOrStopShareLink } from '../../../services/technological/workbench'
-import ShareAndInvite from './../../../../ShareAndInvite/index'
-import VisitControl from './../../../../VisitControl/index'
-import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../../services/technological/project'
-import InformRemind from '../../../components/InformRemind'
-import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
-import MenuSearchPartner from '../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+import ContentRaletion from '../../../../../components/ContentRaletion'
+import { createMeeting, createShareLink, modifOrStopShareLink } from '../../../../../services/technological/workbench'
+import VisitControl from '../../../components/VisitControl/index'
+import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../../../../services/technological/project'
+import InformRemind from '../../../../../components/InformRemind'
+import { setUploadHeaderBaseInfo } from '../../../../../utils/businessFunction'
+import MenuSearchPartner from '../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
@@ -1401,7 +1400,6 @@ class DrawContent extends React.Component {
           {/*项目挪动*/}
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
-            <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
             {/*<div className={DrawerContentStyles.contain_1}>*/}
             {/*<Dropdown overlay={projectGroupMenu}>*/}
             {/*<div className={DrawerContentStyles.left}>*/}
@@ -1418,7 +1416,6 @@ class DrawContent extends React.Component {
               正在分享中
             </span>
             <span>
-              <ShareAndInvite />
             </span> */}
             <span style={{ marginTop: '-2px', marginRight: '5px', position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (

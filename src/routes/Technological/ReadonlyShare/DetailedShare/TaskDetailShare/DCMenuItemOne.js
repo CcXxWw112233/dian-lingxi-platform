@@ -1,8 +1,8 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, message, DatePicker, Menu } from 'antd'
-import { checkIsHasPermissionInBoard } from '../../../utils/businessFunction'
-import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 
 export default class DCMenuItemOne extends React.Component {
   state = {

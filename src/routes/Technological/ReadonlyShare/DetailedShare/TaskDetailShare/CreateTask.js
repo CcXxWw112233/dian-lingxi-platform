@@ -4,7 +4,7 @@ import TaskItem from './TaskItem'
 import CreateItem from './CreateItem'
 import DrawerContent from './DrawerContent'
 import { Drawer } from 'antd'
-import { stopPropagation } from "../../../utils/util";
+import { stopPropagation } from "../../../../../utils/util";
 import DrawContentModal from './components/DrawContentModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
