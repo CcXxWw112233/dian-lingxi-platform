@@ -1084,6 +1084,8 @@ class DrawContent extends React.Component {
       }
       let new_drawContent = { ...drawContent, is_privilege: obj.is_privilege, privileges: new_privileges }
       this.props.updateDatasTask({ drawContent: new_drawContent })
+      // 处理甘特图中卡片数据
+      this.props.handleChangeCard({ card_id, drawContent: new_drawContent })
       // 这里去更新了工作台任务/会议的列表
       if (type == '0') { // 表示任务
         dispatch({
@@ -1439,7 +1441,7 @@ class DrawContent extends React.Component {
               )}
             </span>
             {this.props.needDelete && (
-             <span style={{marginTop: '-2px'}}>
+             <span style={{marginTop: '-2px', position: 'relative'}}>
                {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                   <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                 )}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { Avatar, Dropdown, Menu, Input, message } from 'antd'
+import { Avatar, Dropdown, Menu, Input, message, Tooltip } from 'antd'
 import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
@@ -123,18 +123,29 @@ export default class GroupListHeadItem extends Component {
         <div className={indexStyles.no_time_card_area}>
           {
             list_no_time_data.map((value, key) => {
-              const { name, id, is_realize, executors = [], label_data = [], board_id } = value || {}
+              const { name, id, is_realize, executors = [], label_data = [], board_id, is_privilege } = value || {}
               return (
                 <div
                   onClick={() => this.noTimeCardClick({ id, board_id })}
                   style={{ background: this.setLableColor(label_data) }}
                   className={indexStyles.no_time_card_area_card_item}
-                  key={id}>
+                  key={`${id}-${is_privilege}`}>
                   <div className={indexStyles.no_time_card_area_card_item_inner}>
                     <div className={`${indexStyles.card_item_status}`}>
                       <CheckItem is_realize={is_realize} />
                     </div>
-                    <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}>{name}</div>
+                    <div className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}>
+                      {name}
+                      {
+                        !(is_privilege == '0') && (
+                          <Tooltip title="已开启访问控制" placement="top">
+                              <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
+                              <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                              </span>
+                          </Tooltip>
+                        )
+                      }
+                    </div>
                     <div>
                       <AvatarList users={executors} size={'small'} />
                     </div>
