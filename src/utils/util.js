@@ -342,3 +342,22 @@ export const timeColor = (timestamp) => {
   }
   return color
 }
+
+
+export const isOverdueTime = (timestamp) => {
+  if (!!!timestamp) {
+    return ''
+  }
+  const new_timestamp = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const today = new Date()
+  const today_timestamp = today.getTime()
+  const today_year = today.getFullYear()
+  const today_month = today.getMonth()
+  const today_day = today.getDate()
+  const today_last_time = (new Date(today_year, today_month, today_day, '23', '59', '59')).getTime()
+  let color = ''
+  if (new_timestamp < today_timestamp) { //逾期
+      return true;
+  }
+  return false
+}
