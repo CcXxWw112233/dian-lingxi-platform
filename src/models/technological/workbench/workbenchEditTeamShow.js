@@ -24,7 +24,7 @@ export default modelExtend(technological, {
               editTeamShowPreview: false, //编辑预览状态
               editTeamShowSave: false, //编辑保存状态
               teamShowTypeList: [], //团队秀类型
-              currentOrgTeamShowList: [], //当前组织团队秀类型
+              currentOrgTeamShowList: [], //当前企业团队秀类型
               operateType: '1', //1新增， 2 修改
               //页面操作数据
               name: '',

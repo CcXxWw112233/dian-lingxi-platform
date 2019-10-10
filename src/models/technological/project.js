@@ -316,7 +316,7 @@ export default {
           type: 'getProjectList',
           payload: {
             calback: function () {
-              message.success('成功添加项目成员', MESSAGE_DURATION_TIME)
+              message.success('成功添加项目职员', MESSAGE_DURATION_TIME)
             },
             type: '1'
           }

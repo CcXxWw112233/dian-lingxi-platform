@@ -572,8 +572,8 @@ export default class FileList extends React.Component {
   }
 
   /**
-   * 访问控制移除成员
-   * @param {String} id 移除成员对应的id
+   * 访问控制移除职员
+   * @param {String} id 移除职员对应的id
    */
   handleVisitControlRemoveContentPrivilege = id => {
     const content_id = this.getVisitControlModalDataId()
@@ -594,9 +594,9 @@ export default class FileList extends React.Component {
   }
 
   /**
-  * 访问控制设置更新成员
-  * @param {String} id 设置成员对应的id
-  * @param {String} type 设置成员对应的字段
+  * 访问控制设置更新职员
+  * @param {String} id 设置职员对应的id
+  * @param {String} type 设置职员对应的字段
   */
   handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
     const { visitControlModalData: { folder_id, version_id, privileges } } = this.state
@@ -627,7 +627,7 @@ export default class FileList extends React.Component {
   }
 
   /**
-   * 其他成员的下拉回调
+   * 其他职员的下拉回调
    * @param {String} id 这是用户的user_id
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
@@ -641,8 +641,8 @@ export default class FileList extends React.Component {
   }
 
   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -653,7 +653,7 @@ export default class FileList extends React.Component {
     this.handleSetContentPrivilege(users_arr, 'read')
   }
 
-  // 访问控制设置成员
+  // 访问控制设置职员
   handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
 
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -667,7 +667,7 @@ export default class FileList extends React.Component {
     let new_ids = [] // 用来保存权限列表中用户id
     let new_privileges = [...privileges]
 
-    // 这是所有添加成员的id列表
+    // 这是所有添加职员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
@@ -686,7 +686,7 @@ export default class FileList extends React.Component {
     
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
-      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
       return false
     } else { // 否则表示进行了全选, 那么就过滤
       temp_ids = temp_ids && temp_ids.filter(item => {

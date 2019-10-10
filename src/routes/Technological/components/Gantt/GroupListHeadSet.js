@@ -103,7 +103,7 @@ export default class GroupListHeadSet extends Component {
 
     createBoard = () => {
         if (!this.isHasCreatBoardPermission()) {
-            message.warn('您在该组织没有创建项目权限')
+            message.warn('您在该企业没有创建项目权限')
             return false
         }
         this.setAddProjectModalVisible()

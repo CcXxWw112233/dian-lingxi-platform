@@ -174,7 +174,7 @@ class SiderRight extends React.Component {
     const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
     const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
     if (mentionSelectedOtherMembersMobileString === "error") {
-      message.error("组织外成员手机号格式有误，请检查");
+      message.error("企业外成员手机号格式有误，请检查");
       return;
     }
     const mergedMeetingMemberStr = [
@@ -273,7 +273,7 @@ class SiderRight extends React.Component {
     return orgList.reduce((acc, curr) => {
       const isHasRepeatedNameItem =
         orgList.filter(item => item.full_name === curr.full_name).length >= 2;
-      //如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
+      //如果列表中有重复的名称职员存在，那么附加手机号或者邮箱
       //形式： full_name(mobile|email)
       if (isHasRepeatedNameItem) {
         const item = `${curr.full_name}(${
@@ -503,7 +503,7 @@ class SiderRight extends React.Component {
                 >
                   <Mention
                     style={{ width: "100%", height: "56px" }}
-                    placeholder="使用@符号查找加入同一组织内的成员"
+                    placeholder="使用@符号查找加入同一企业内的职员"
                     suggestions={selectedSuggestions}
                     multiLines
                     onSearchChange={this.handleVideoMeetingMemberChange}
@@ -616,7 +616,7 @@ class SiderRight extends React.Component {
             {/*&#xe710;*/}
             {/*</div>*/}
             {/*<div className={indexStyles.right}>*/}
-            {/*<input className={indexStyles.input} placeholder={'查找团队成员或项目'} />*/}
+            {/*<input className={indexStyles.input} placeholder={'查找团队职员或项目'} />*/}
             {/*</div>*/}
             {/*</div>*/}
             {/*<div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>*/}

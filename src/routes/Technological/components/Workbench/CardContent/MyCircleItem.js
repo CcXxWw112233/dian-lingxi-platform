@@ -100,11 +100,11 @@ export default class MyCircleItem extends React.Component {
                })}
              </div>
            </div>
-           {/*组织圈*/}
+           {/*企业圈*/}
            <div className={indexstyles.circleGroup}>
              <div className={indexstyles.circleGroup_top} onClick={this.setIsShowBottDetail_2.bind(this, 'bott_2')}>
                <div>
-                 组织圈
+                 企业圈
                </div>
                <div className={`${indexstyles.circleGroup_top_caret} ${isShowBottDetail_2 !=='1' ? (isShowBottDetail_2 === '2' ?indexstyles.upDown_up: indexstyles.upDown_down) : ''}`}>
                  <Icon type="caret-down" style={{fontSize: 16}} />

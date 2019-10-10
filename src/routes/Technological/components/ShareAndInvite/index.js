@@ -137,7 +137,7 @@ class ShareAndInvite extends Component {
           <span>只读分享</span>
         </Menu.Item>
         <Menu.Item key="inviteNewMember">
-          <span>邀请新成员</span>
+          <span>邀请新职员</span>
         </Menu.Item>
       </Menu>
     );

@@ -154,7 +154,7 @@ export default class MapManage extends React.Component {
               <div>{role_name}</div>
             </div>
             {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
-              {/*<div>组织：</div>*/}
+              {/*<div>企业：</div>*/}
               {/*<div>{organization}</div>*/}
             {/*</div>*/}
             <div className={indexStyles.detailItem}>
@@ -197,7 +197,7 @@ export default class MapManage extends React.Component {
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
             <Menu.Item key={'removeMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={indexStyles.elseProjectDangerMenu}>
-                移除成员
+                移除职员
               </div>
             </Menu.Item>
           )}

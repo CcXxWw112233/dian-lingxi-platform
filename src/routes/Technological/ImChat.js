@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '../../globalset/css/globalClassName.less'
 import { operateIm } from './operateDom'
 
-//设置点击区域用于 im关闭 imclick 这个类名在本组件和圈子成员聊天组件中应用
+//设置点击区域用于 im关闭 imclick 这个类名在本组件和圈子职员聊天组件中应用
 document.onclick=function (e) {
   const className = e.target.className
   if(!className || typeof className !== 'string') {

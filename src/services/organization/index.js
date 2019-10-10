@@ -13,7 +13,7 @@ export async function fetchUsersByIds({ids}){
 }
 
 
-//更新组织
+//更新企业
 export async function updateOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
@@ -25,7 +25,7 @@ export async function updateOrganization(data) {
   });
 }
 
-//上传组织logo
+//上传企业logo
 export async function uploadOrganizationLogo(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/logo_upload`,

@@ -35,7 +35,7 @@ export default {
           dispatch({
             type: 'updateDatas',
             payload: {
-              currentOrganizationInfo: { //组织信息
+              currentOrganizationInfo: { //企业信息
                 name,
                 member_join_model,
                 member_join_content,
@@ -46,7 +46,7 @@ export default {
               },
               content_tree_data: [], //可访问内容
               function_tree_data: [],
-              orgnization_role_data: [], //组织角色数据
+              orgnization_role_data: [], //企业角色数据
               project_role_data: [], //项目角色数据
               tabSelectKey: '1',
               // permission_data: [], //权限数据
@@ -94,7 +94,7 @@ export default {
           type: 'getUSerInfo',
           payload: {
             calBack: function () {
-              message.success('更新组织信息成功', MESSAGE_DURATION_TIME)
+              message.success('更新企业信息成功', MESSAGE_DURATION_TIME)
             }
           }
         })
@@ -110,7 +110,7 @@ export default {
         calBack()
       }
       if (isApiResponseOk(res)) {
-        //当前选中的组织
+        //当前选中的企业
         if (res.data.current_org) {
           localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
         }
@@ -166,7 +166,7 @@ export default {
           // }
           // role_data[i]['already_has_content_permission_trans'] = already_has_content_permission_trans
         }
-        if (type === '1') { //组织角色数据
+        if (type === '1') { //企业角色数据
           yield put({
             type: 'updateDatas',
             payload: {

@@ -32,7 +32,7 @@ export default class Boundary extends Component {
 		pVerify: null, // 定义一个从子组件中获取的手机验证状态
 		eVerify: null, // 定义一个从子组件中获取的邮箱验证状态
 		new_user_board_id: '', // 新用户默认创建的id
-		new_user_org_id: '', // 新用户默认创建的组织id
+		new_user_org_id: '', // 新用户默认创建的企业id
 		img_src: '', // 小程序二维码链接
 		all_input_val: '', // 所有的inputValue
 	}
@@ -40,7 +40,7 @@ export default class Boundary extends Component {
 
 	// 点击ok
 	handleNext = async () => {
-		// 获取新用户默认创建组织和项目
+		// 获取新用户默认创建企业和项目
 		const res = await createDefaultOrg()
 		if (isApiResponseOk(res)) {
 			this.setState({

@@ -11,7 +11,7 @@ class CreateOrganizationModal extends React.Component {
   state = {
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
-    operateType: '0', //0默认申请加入 ‘1’创建组织
+    operateType: '0', //0默认申请加入 ‘1’创建企业
     createButtonVisible: false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
@@ -31,7 +31,7 @@ class CreateOrganizationModal extends React.Component {
     }
     this.setState({
       stepContinueDisabled: this.state.operateType === '1'? flag : true,
-      createButtonVisible: this.state.operateType === '0'? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建组织，则隐藏
+      createButtonVisible: this.state.operateType === '0'? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建企业，则隐藏
       seachAreaVisible: this.state.operateType === '0'? !flag : false,
     })
 
@@ -70,7 +70,7 @@ class CreateOrganizationModal extends React.Component {
     const { name, id } = data
     this.setState({
       name,
-      org_id: id, //请求加入组织id
+      org_id: id, //请求加入企业id
       seachAreaVisible: false,
       stepContinueDisabled: false
     })
@@ -116,7 +116,7 @@ class CreateOrganizationModal extends React.Component {
 
     const formContain = (
       <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>创建或加入组织</div>
+        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>创建或加入企业</div>
         <FormItem style={{width: 336}}>
           {getFieldDecorator('name', {
             rules: [{ required: false, message: '', whitespace: true }],
@@ -124,7 +124,7 @@ class CreateOrganizationModal extends React.Component {
             <div style={{position: 'relative'}}>
               <Input placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120, height: 40}}/>
               {createButtonVisible? (
-                <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
+                <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建企业</Button>) : ('')}
                  {searchOrganizationList.length? (
                    <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
                      <Spin spinning={spinning} size={'small'}>
@@ -135,7 +135,7 @@ class CreateOrganizationModal extends React.Component {
                    </div>
                  ):(
                    <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
-                     <div>未找到符合搜索条件的组织</div>
+                     <div>未找到符合搜索条件的企业</div>
                    </div>
                  )}
 
@@ -155,7 +155,7 @@ class CreateOrganizationModal extends React.Component {
           </FormItem>
         ) : (
           <div>
-            {/*组织性质*/}
+            {/*企业性质*/}
             <FormItem style={{width: 336}}>
               {getFieldDecorator('property', {
                 initialValue: '1',
@@ -186,7 +186,7 @@ class CreateOrganizationModal extends React.Component {
                 </Select>
               )}
             </FormItem>
-            <div style={{marginTop: -8, textAlign: 'left', fontSize: 13, color: '#8c8c8c'}}>准确填写信息有助于我们为你安排专属顾问，协助你与你的组织成员快速上手使用。</div>
+            <div style={{marginTop: -8, textAlign: 'left', fontSize: 13, color: '#8c8c8c'}}>准确填写信息有助于我们为你安排专属顾问，协助你与你的企业成员快速上手使用。</div>
           </div>
           )}
 

@@ -23,21 +23,21 @@ import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
 
-// 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
+// 该model用于存放公用的 企业/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
-let locallocation //保存location在组织切换
+let locallocation //保存location在企业切换
 export default {
   namespace: 'technological',
   state: {
     model_is_import: true, //模块是否注入标志
     datas: {
-      currentUserOrganizes: [], //用户组织列表
-      is_show_org_name: true, // 是否显示组织名称
-      is_all_org: true, //是否全部组织
+      currentUserOrganizes: [], //用户企业列表
+      is_show_org_name: true, // 是否显示企业名称
+      is_all_org: true, //是否全部企业
       menuList: [], // 侧边栏功能导航列表
       page_load_type: 0,
       currentUserWallpaperContent: null,
-      currentSelectOrganize: {}, //用户当前组织
+      currentSelectOrganize: {}, //用户当前企业
     }
   },
   subscriptions: {
@@ -60,7 +60,7 @@ export default {
           })
         }
 
-        //切换组织时需要重新加载
+        //切换企业时需要重新加载
         const param = QueryString.parse(location.search.replace('?', '')) || {}
         const { redirectHash } = param
         if (location.pathname === '/technological' && redirectHash) {
@@ -78,11 +78,11 @@ export default {
 
     // 初始化请求数据
     * initGetTechnologicalDatas({ payload }, { select, call, put }) {
-      // 如果获取不到组织id就默认存储0
+      // 如果获取不到企业id就默认存储0
       if (!localStorage.getItem('OrganizationId')) {
         setOrganizationIdStorage('0')
       }
-      //查询所在组织列表
+      //查询所在企业列表
       yield put({
         type: 'getCurrentUserOrganizes',
         payload: {}
@@ -99,20 +99,20 @@ export default {
         type: 'getUSerInfo',
         payload: {}
       })
-      yield put({ //  获取当前成员在组织中的权限列表
+      yield put({ //  获取当前成员在企业中的权限列表
         type: 'getUserOrgPermissions',
         payload: {}
       })
-      yield put({ //  获取当前成员所以项目的权限列表
+      yield put({ //  获取当前职员所以项目的权限列表
         type: 'getUserBoardPermissions',
         payload: {}
       })
-      //获取当前的用户当前组织的项目列表,
+      //获取当前的用户当前企业的项目列表,
       yield put({
         type: 'getCurrentOrgProjectList',
         payload: {}
       })
-      //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
+      //获取用户当前企业的企业职员(如果非全企业，而是具有确认企业的情况下调用)
       if (localStorage.getItem('OrganizationId') != '0') {
         yield put({
           type: 'fetchCurrentOrgAllMembers',
@@ -130,7 +130,7 @@ export default {
       const res = yield call(getUSerInfo)
       if (isApiResponseOk(res)) {
         const current_org = res.data.current_org || {}
-        // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
+        // 如果用户已选了某个确认的企业，而与当前前端缓存中企业不一致，则默认执行改变企业操作，并刷新
         yield put({
           type: 'updateDatas',
           payload: {
@@ -138,7 +138,7 @@ export default {
             currentSelectOrganize: current_org
           }
         })
-        //当前选中的组织
+        //当前选中的企业
         localStorage.setItem('currentSelectOrganize', JSON.stringify(current_org))
         localStorage.setItem('userInfo', JSON.stringify(res.data))
         return res
@@ -158,9 +158,9 @@ export default {
       // 内容过滤处理end
       const res = yield call(simplGetUserInfoSync) || {}
       if (isApiResponseOk(res)) {
-        const user_set = res.data.user_set || {}//当前选中的组织
+        const user_set = res.data.user_set || {}//当前选中的企业
         const current_org_id = user_set.current_org
-        // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
+        // 如果用户已选了某个确认的企业，而与当前前端缓存中企业不一致，则默认执行改变企业操作，并刷新
         if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
           yield put({
             type: 'changeCurrentOrg',
@@ -178,7 +178,7 @@ export default {
           // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
           yield put(routerRedux.push('/technological/simplemode/home'))
         }
-        //组织切换重新加载
+        //企业切换重新加载
         const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
         if (operateType === 'changeOrg') {
           const redirectHash = '/technological/workbench'
@@ -196,7 +196,7 @@ export default {
       }
     },
 
-    // 获取和存储全组织的全部项目
+    // 获取和存储全企业的全部项目
     * getUserAllOrgsAllBoards({ payload }, { select, call, put }) {
       let res = yield call(getUserAllOrgsAllBoards, payload)
       if (isApiResponseOk(res)) {
@@ -206,20 +206,20 @@ export default {
       }
     },
 
-    //组织 ----------- start
-    * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属组织列表
+    //企业 ----------- start
+    * getCurrentUserOrganizes({ payload }, { select, call, put }) { //当前用户所属企业列表
       let res = yield call(getCurrentUserOrganizes, {})
       // console.log(res, 'get current use organization list.+++++++++++++++++++++++++++++++++++')
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            currentUserOrganizes: res.data, ////当前用户所属组织列表
-            // currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的组织
+            currentUserOrganizes: res.data, ////当前用户所属企业列表
+            // currentSelectOrganize: res.data.length? res.data[0] : {}  //当前选中的企业
           }
         })
 
-        //创建后做切换组织操作
+        //创建后做切换企业操作
         const { operateType } = payload
         if (operateType === 'create') {
           yield put({
@@ -230,7 +230,7 @@ export default {
           })
         }
 
-        if (res.data.length) { //当前选中的组织id OrgId要塞在sessionStorage
+        if (res.data.length) { //当前选中的企业id OrgId要塞在sessionStorage
           Cookies.set('org_id', res.data[0].id, { expires: 30, path: '' })
         }
         const { calback } = payload
@@ -240,7 +240,7 @@ export default {
       } else {
       }
     },
-    * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
+    * changeCurrentOrg({ payload }, { select, call, put }) { //切换企业
       const { org_id, operateType, routingJumpPath, isNeedRedirectHash } = payload
       // console.log("sssss", org_id)
       let res = yield call(changeCurrentOrg, { org_id })
@@ -334,7 +334,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    // 获取设置显示组织名称
+    // 获取设置显示企业名称
     * getSetShowOrgName({ payload }, { select, call, put }) {
       let res = yield call(getSetShowOrgName, payload)
       if (!isApiResponseOk(res)) {
@@ -358,7 +358,7 @@ export default {
       })
 
       if (checked) {
-        //极简模式只能是全组织
+        //极简模式只能是全企业
 
         localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
         localStorage.setItem('OrganizationId', 0)
@@ -394,20 +394,20 @@ export default {
       }
     },
 
-    //组织 -----------end
+    //企业 -----------end
 
-    //权限---start获取用户的全部组织和全部项目权限
+    //权限---start获取用户的全部企业和全部项目权限
     * getUserOrgPermissions({ payload }, { select, call, put }) {
       const res = yield call(getUserOrgPermissions, payload)
       // debugger
       if (isApiResponseOk(res)) {
         const OrganizationId = localStorage.getItem('OrganizationId')
-        // 全组织的情况下，直接存【组织=》权限】列表
+        // 全企业的情况下，直接存【企业=》权限】列表
         if (OrganizationId == '0') {
           localStorage.setItem('userOrgPermissions', JSON.stringify(res.data))
           return
         }
-        // 非全组织的情况下需要过滤出对应的当前选择的组织，获取对应的权限
+        // 非全企业的情况下需要过滤出对应的当前选择的企业，获取对应的权限
         const userInfo = localStorage.getItem('userInfo') || '{}'
         const { current_org = {} } = JSON.parse(userInfo)
         const current_org_id = current_org['id']
