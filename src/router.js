@@ -168,7 +168,7 @@ const Routers = function ({ history, app }) {
       import('./models/simpleMode/simpleWorkbenchbox'),
       import('./models/simpleMode/simpleBoardCommunication'),
       import('./models/organizationManager'),
-      
+
       import('./models/technological/informRemind'),
 
 
@@ -206,6 +206,12 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/iframeOut',
       component: () => import('./routes/IframeOut'),
+    }, {
+      path: '/readonly_share/:id',
+      component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index')
+    }, {
+      path: '/share_detailed',
+      component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index')
     },
   ]
   //去掉exact

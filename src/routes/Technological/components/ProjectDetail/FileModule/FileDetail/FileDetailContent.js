@@ -627,14 +627,14 @@ class FileDetailContent extends React.Component {
   }
 
   createOnlyReadingShareLink = () => {
-    const { location } = this.props
-    //获取参数
-    const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
-
+    // const { location } = this.props
+    // //获取参数
+    // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
+    const { currentPreviewFileBaseInfo: { file_id, board_id, }, } = this.props
     const payload = {
       board_id,
       rela_id: file_id,
-      rela_type: appsSelectKey
+      rela_type: '3'
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -1524,7 +1524,7 @@ class FileDetailContent extends React.Component {
     const visitControlParams = {
       privileges, is_privilege
     }
-
+    const { currentPreviewFileBaseInfo: { is_shared }, } = this.props
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
@@ -1576,12 +1576,9 @@ class FileDetailContent extends React.Component {
               } */}
 
             <ShareAndInvite
-              // is_shared={is_shared} 
-              is_shared=''
+              is_shared={is_shared}
               onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
               handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-
-
             <div style={{ position: 'relative' }}>
               <span>
                 {

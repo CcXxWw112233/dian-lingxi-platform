@@ -803,11 +803,10 @@ class DrawContent extends React.Component {
 
     const { datas: { drawContent = {} } } = this.props.model
     const { board_id, card_id } = drawContent
-
     const payload = {
       board_id,
       rela_id: card_id,
-      rela_type: '3'
+      rela_type: '1'
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {

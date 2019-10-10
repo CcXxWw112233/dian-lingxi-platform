@@ -289,8 +289,7 @@ export default class Header extends React.Component {
   }
   createOnlyReadingShareLink = () => {
 
-    const { datas: { drawContent = {} } } = this.props.model
-    const { board_id, card_id } = drawContent
+    const { datas: { drawContent: { board_id, card_id } } } = this.props.model
 
     const payload = {
       board_id,
@@ -491,11 +490,11 @@ export default class Header extends React.Component {
             <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
           </span> */}
 
-          <ShareAndInvite
+          {/* <ShareAndInvite
             // is_shared={is_shared}
             is_shared=''
             onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-            handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+            handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
         </div>
       </div>
     )

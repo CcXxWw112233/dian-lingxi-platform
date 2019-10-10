@@ -796,8 +796,7 @@ class DrawContent extends React.Component {
   }
   createOnlyReadingShareLink = () => {
 
-    const { datas: { drawContent = {} } } = this.props.model
-    const { board_id, card_id } = drawContent
+    const { datas: { drawContent: { board_id, card_id } } } = this.props.model
 
     const payload = {
       board_id,

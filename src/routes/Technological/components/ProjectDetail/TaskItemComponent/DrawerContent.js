@@ -894,15 +894,16 @@ class DrawContent extends React.Component {
     }, {})
   }
   createOnlyReadingShareLink = () => {
-    const { location } = this.props
-
+    // const { location } = this.props
     //获取参数
-    const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
+    // const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
 
+    const { drawContent = {} } = this.props
+    const { board_id, card_id, } = drawContent
     const payload = {
       board_id,
       rela_id: card_id,
-      rela_type: appsSelectKey
+      rela_type: '1'
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -1284,7 +1285,7 @@ class DrawContent extends React.Component {
     const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
-    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], privileges = [], is_privilege = '0' } = drawContent
+    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], privileges = [], is_privilege = '0', is_shared } = drawContent
     if (executors.length) {
     }
     label_data = label_data || []
@@ -1521,11 +1522,10 @@ class DrawContent extends React.Component {
                   </Dropdown>
                 </span>
                 <div className={DrawerContentStyles.right}>
-                  {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
+                  {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
                   <span style={{ marginRight: '10px' }}>
                     <ShareAndInvite
-                      // is_shared={is_shared} 
-                      is_shared=''
+                      is_shared={is_shared}
                       onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
                       data={onlyReadingShareData}
                       handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />

@@ -537,14 +537,15 @@ class FileDetailContent extends React.Component {
     }, {})
   }
   createOnlyReadingShareLink = () => {
-    const { location } = this.props
-    //获取参数
-    const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
+    // const { location } = this.props
+    // //获取参数
+    // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
 
+    const { datas: { currentPreviewFileData: { file_id, board_id, } } } = this.props.model
     const payload = {
-      board_id,
+      board_id: board_id,
+      rela_type: '3',
       rela_id: file_id,
-      rela_type: appsSelectKey
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -1069,6 +1070,7 @@ class FileDetailContent extends React.Component {
 
     const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
+
       return (
         <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, { value, key })}>
           <div className={filePreviewCurrentVersionKey === key ? indexStyles.point : indexStyles.point2}></div>
@@ -1344,6 +1346,8 @@ class FileDetailContent extends React.Component {
       editValue,
     }
 
+    const { datas: { currentPreviewFileData: { is_shared } } } = this.props.model
+
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
@@ -1390,11 +1394,9 @@ class FileDetailContent extends React.Component {
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
             <ShareAndInvite
-              // is_shared={is_shared}
-              is_shared=''
+              is_shared={is_shared}
               onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
               handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-
             <div style={{ position: 'relative' }}>
               <span>
                 {
