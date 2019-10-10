@@ -36,6 +36,8 @@ import { withRouter } from 'react-router-dom'
 import NameChangeInput from '../../../../../components/NameChangeInput'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { connect } from 'dva'
+import MenuSearchPartner from '../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+
 
 const SubMenu = Menu.SubMenu;
 
@@ -1008,7 +1010,7 @@ class DrawContent extends React.Component {
         }
       })
     }
-    // 这是添加成员的操作
+    // 这是添加职员的操作
     // 这是更新弹窗中的priveleges
     if (obj && obj.type && obj.type == 'add') {
       let new_privileges = []
@@ -1092,8 +1094,8 @@ class DrawContent extends React.Component {
   }
 
   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -1107,7 +1109,7 @@ class DrawContent extends React.Component {
     let new_ids = [] // 用来保存权限列表中用户id
     let new_privileges = [...privileges]
 
-    // 这是所有添加成员的id列表
+    // 这是所有添加职员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
@@ -1122,10 +1124,10 @@ class DrawContent extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
-      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
       return false
     } else { // 否则表示进行了全选, 那么就过滤
       temp_ids = temp_ids && temp_ids.filter(item => {
@@ -1134,7 +1136,7 @@ class DrawContent extends React.Component {
         }
       })
     }
-    
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -1155,8 +1157,8 @@ class DrawContent extends React.Component {
   }
 
   /**
-   * 访问控制移除成员
-   * @param {String} id 移除成员对应的id
+   * 访问控制移除职员
+   * @param {String} id 移除职员对应的id
    */
   handleVisitControlRemoveContentPrivilege = id => {
     let temp_id = []
@@ -1175,9 +1177,9 @@ class DrawContent extends React.Component {
   }
 
   /**
-   * 访问控制设置更新成员
-   * @param {String} id 设置成员对应的id
-   * @param {String} type 设置成员对应的字段
+   * 访问控制设置更新职员
+   * @param {String} id 设置职员对应的id
+   * @param {String} type 设置职员对应的字段
    */
   handleVisitControlChangeContentPrivilege = (id, type) => {
     const { drawContent = {} } = this.props
@@ -1206,7 +1208,7 @@ class DrawContent extends React.Component {
   }
 
   /**
-   * 其他成员的下拉回调
+   * 其他职员的下拉回调
    * @param {String} id 这是用户的user_id
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
@@ -1271,6 +1273,9 @@ class DrawContent extends React.Component {
         ...params
       }
     })
+  }
+  addMenbersInProject = (data) => {
+    console.log(data, 'ssss')
   }
   render() {
     that = this
@@ -1532,16 +1537,16 @@ class DrawContent extends React.Component {
               {/* {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
                 <div style={{ height: '100%', width: '70%', position: 'absolute', zIndex: '3' }} onClick={this.alarmNoEditPermission.bind(this)}></div>
               )} */}
-              <div className={DrawerContentStyles.contain_1} style={{position: 'relative'}}>
+              <div className={DrawerContentStyles.contain_1} style={{ position: 'relative' }}>
                 {/* {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                   <div className={globalStyle.drawContent_mask} style={{ left: 20 }} onClick={this.alarmNoEditPermission}></div>
                 )} */}
-                <span style={{position: 'relative'}}>
+                <span style={{ position: 'relative' }}>
                   {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                     <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                   )}
                   <Dropdown overlay={projectGroupMenu}>
-                    <div className={DrawerContentStyles.left} style={{position: 'relative'}}>
+                    <div className={DrawerContentStyles.left} style={{ position: 'relative' }}>
                       <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
                     </div>
                   </Dropdown>
@@ -1632,13 +1637,26 @@ class DrawContent extends React.Component {
                     {!executors.length ? (
                       <div>
                         <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                <Dropdown overlay={
+                          <MenuSearchPartner
+                            // addMenbersInProject={this.addMenbersInProject}
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
+                            board_id={board_id}/>}
+                        >
                           <span>指派负责人</span>
                         </Dropdown>
                       </div>
                     ) : (
                         <div className={DrawerContentStyles.excutorsOut}>
-                          <Dropdown overlay={<MeusearMutiple listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                          <Dropdown overlay={
+                            <MenuSearchPartner
+                              invitationType='4'
+                              invitationId={card_id}
+                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
+                              board_id={board_id}/>}
+                          >
                             <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
                               {executors.map((value, key) => {
                                 const { avatar, name, user_name, user_id } = value
@@ -1673,16 +1691,27 @@ class DrawContent extends React.Component {
               <div className={DrawerContentStyles.divContent_1}>
                 <div className={DrawerContentStyles.contain_3}>
                   {/*负责人*/}
-                  <div style={{ display: 'none' }}>
+                  {/* <div style={{ display: 'none' }}>
                     {!executor.user_id ? (
                       <div>
                         <span onClick={this.setChargeManIsSelf.bind(this)}>认领</span>&nbsp;<span style={{ color: '#bfbfbf' }}>或</span>&nbsp;
-                     <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                     <Dropdown overlay={
+                          <MenuSearchPartner
+                            // addMenbersInProject={this.addMenbersInProject}
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}
+                        >
                           <span>指派负责人</span>
                         </Dropdown>
                       </div>
                     ) : (
-                        <Dropdown overlay={<DCMenuItemOne execusorList={data} setList={this.setList.bind(this)} currentExecutor={executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                        <Dropdown overlay={
+                          <MenuSearchPartner
+                            // addMenbersInProject={this.addMenbersInProject}
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
                           <div style={{ display: 'flex', alignItems: 'center' }}>
                             {executor.avatar ? (
                               <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
@@ -1695,7 +1724,7 @@ class DrawContent extends React.Component {
                           </div>
                         </Dropdown>
                       )}
-                  </div>
+                  </div> */}
                   {/*时间*/}
                   <div style={{ display: 'none' }}>
                     <span style={{ color: '#bfbfbf' }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
@@ -1774,7 +1803,7 @@ class DrawContent extends React.Component {
                 )}
             </div>
             {/*关联*/}
-            <div className={DrawerContentStyles.divContent_1} style={{position: 'relative'}}>
+            <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} style={{ left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission}></div>
               )}
@@ -1786,7 +1815,7 @@ class DrawContent extends React.Component {
 
               />
             </div>
-            <div style={{position: 'relative'}}>
+            <div style={{ position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} style={{ left: 20 }} onClick={this.alarmNoEditPermission}></div>
               )}

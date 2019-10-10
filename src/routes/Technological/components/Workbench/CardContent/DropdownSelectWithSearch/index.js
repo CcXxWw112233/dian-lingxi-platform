@@ -109,7 +109,7 @@ class DropdownSelectWithSearch extends Component {
                 <span className={styles.addNewProject__content_item_icon} />
                 <span className={styles.addNewProject__content_item_title}>
                   新建项目
-                  {/* 该组织无项目 */}
+                  {/* 该企业无项目 */}
                 </span>
               </p>
             </div>

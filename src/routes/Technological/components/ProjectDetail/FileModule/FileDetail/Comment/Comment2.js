@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Icon,  Mention, } from 'antd'
+import { Icon, Mention, } from 'antd'
 import CommentStyles from './Comment2.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { connect } from 'dva'

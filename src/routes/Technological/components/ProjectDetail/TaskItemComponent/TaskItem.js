@@ -17,6 +17,8 @@ import { connect } from 'dva';
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
+import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../../services/technological/index'
+
 const TextArea = Input.TextArea
 const { RangePicker } = DatePicker;
 
@@ -38,6 +40,7 @@ export default class TaskItem extends React.Component {
   constructor(props) {
     super(props)
   }
+
   gotoAddItem() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -325,7 +328,7 @@ export default class TaskItem extends React.Component {
   }
 
   /**
-   * 其他成员的下拉回调
+   * 其他职员的下拉回调
    * @param {String} id 这是用户的user_id
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
@@ -339,8 +342,8 @@ export default class TaskItem extends React.Component {
   }
 
   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -351,8 +354,9 @@ export default class TaskItem extends React.Component {
     this.handleSetContentPrivilege(users_arr, 'read')
   }
 
-  // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+  // 访问控制添加职员
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+
     const { taskItemValue = {} } = this.props
     const { list_id, privileges } = taskItemValue
     const content_type = 'lists'
@@ -362,6 +366,7 @@ export default class TaskItem extends React.Component {
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -373,7 +378,7 @@ export default class TaskItem extends React.Component {
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.warning(res.message)
+        message.error(errorText)
       }
     })
   }
@@ -432,13 +437,14 @@ export default class TaskItem extends React.Component {
     const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
     const { projectDetailInfoData = {} } = this.props
     const { board_id, data = [], } = projectDetailInfoData
+
     const { list_name, list_id, card_data = [], editable, is_privilege = '0', privileges, privileges_extend = [] } = taskItemValue
     // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
     const projectParticipant = card_data.reduce((acc, curr) =>
       // console.log(acc, '------', curr, 'sssssss')
       [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
     )
-    // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
+    // 2. 如果存在extend列表中的职员也要拼接进来, 然后去重
     const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
     let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
@@ -480,6 +486,8 @@ export default class TaskItem extends React.Component {
                 style={{ padding: '4px 10px' }}
               >
                 <VisitControl
+                  invitationType='5'
+                  invitationId={list_id}
                   board_id={board_id}
                   popoverPlacement={'rightTop'}
                   isPropVisitControl={is_privilege === '0' ? false : true}
@@ -531,7 +539,7 @@ export default class TaskItem extends React.Component {
                 </Tooltip>
               )
             }
-            <div style={{position:'relative'}} id="title_l" className={CreateTaskStyle.title_l}>
+            <div style={{ position: 'relative' }} id="title_l" className={CreateTaskStyle.title_l}>
               <div className={CreateTaskStyle.title_l_name}>{list_name}</div>
               <div><Icon type="right" className={[CreateTaskStyle.nextIcon]} /></div>
               {editable === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (

@@ -18,7 +18,7 @@ export default modelExtend(technological, {
             Promise.all([dispatch({
               type: 'updateDatas',
               payload: {
-                mapOrganizationList: [], //有权限查看地图的组织
+                mapOrganizationList: [], //有权限查看地图的企业
               }
             }),
             ])

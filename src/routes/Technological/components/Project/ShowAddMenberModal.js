@@ -62,7 +62,7 @@ class ShowAddMenberModal extends React.Component {
   }
 
   renderUsersList = () => {
-    const { _organization_id, show_wechat_invite, title, submitText } = this.props
+    const { _organization_id, show_wechat_invite, title, submitText, } = this.props
     const container = (
       <Form style={{ margin: '0 auto', width: 336 }}>
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div>
@@ -83,7 +83,7 @@ class ShowAddMenberModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, show_wechat_invite, board_id } = this.props;
+    const { modalVisible, show_wechat_invite, board_id, invitationType, invitationId, rela_Condition, invitationOrg } = this.props;
     const { wechat_invite_visible } = this.state
 
     return (
@@ -102,7 +102,7 @@ class ShowAddMenberModal extends React.Component {
         </CustormModal>
         {
           show_wechat_invite && (
-            <WechatInviteToboard board_id={board_id} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
+            <WechatInviteToboard board_id={board_id} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} rela_Condition={rela_Condition} />
           )
         }
       </div>
@@ -112,7 +112,7 @@ class ShowAddMenberModal extends React.Component {
 export default Form.create()(ShowAddMenberModal)
 
 ShowAddMenberModal.defaultProps = {
-  _organization_id: undefined, //传递进来的组织id
+  _organization_id: undefined, //传递进来的企业id
   board_id: '', //传递进来的项目id
   show_wechat_invite: false, //显示微信邀请
   addMenbersInProject: function () { //提交回调

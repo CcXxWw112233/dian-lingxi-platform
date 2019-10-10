@@ -200,7 +200,7 @@ export default class PagingnationContent extends React.Component {
     const { privileges = [] } = processInfo
 
     // 访问控制开关
-    if (obj && obj.type &&  obj.type == 'privilege') {
+    if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {

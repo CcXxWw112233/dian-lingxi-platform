@@ -19,15 +19,15 @@ export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小�
 export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
 export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
 export const WE_APP_ID = (appType) => { //返回小程序后台appid
-  return appType === '1'? '1029567653519429632' : '1029565930193162240'
+  return appType === '1' ? '1029567653519429632' : '1029565930193162240'
 }
 
 // 晓策志接口
 export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
-  if(NODE_ENV == 'development') {
+  if (NODE_ENV == 'development') {
     // api = 'http://192.168.1.39:8092'
-    // api = 'https://knowapi.new-di.com'
+    api = REQUEST_DOMAIN_ARTICLE
   } else {
     // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
     //   api = REQUEST_DOMAIN_ARTICLE
@@ -43,13 +43,13 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
 // export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
-  if(NODE_ENV == 'development') {
-    return 'ws://test.lingxi.new-di.com/websocket' 
+  if (NODE_ENV == 'development') {
+    return 'ws://test.lingxi.new-di.com/websocket'
     // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
-    // return 'ws://192.168.1.39/websocket'
+    // return 'ws://192.168.1.68/websocket'
   } else {
-    const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
+    const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
   }
 })(NODE_ENV, window.location)
@@ -58,7 +58,7 @@ export const MAP_URL = 'https://map.di-an.com' //投资地图-正式环境
 // export const MAP_URL = 'http://maptest.new-di.com/' //投资地图-测试环境
 
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-export const WEBSOCKET_PORT= '9326' //WS链接地址
+export const WEBSOCKET_PORT = '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
 export const IM_HTTP_PATH = '/im/index.html'//`${window.location.protocol}//${window.location.host}/im`
 
@@ -84,8 +84,8 @@ export const APP_KEY = {
 export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
 export const ORG_TEAM_BOARD_JOIN = 'org:team:board:join' //加入项目 permission_type=1
 export const ORG_UPMS_ORGANIZATION_MEMBER_ADD = 'org:upms:organization:member:add' //添加成员 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_EDIT = 'org:upms:organization:member:edit' //编辑成员 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_REMOVE = 'org:upms:organization:member:remove' //移除成员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_EDIT = 'org:upms:organization:member:edit' //编辑职员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_REMOVE = 'org:upms:organization:member:remove' //移除职员 permission_type=1
 export const ORG_UPMS_ORGANIZATION_GROUP = 'org:upms:organization:group' //管理分组 permission_type=1
 export const ORG_UPMS_ORGANIZATION_EDIT = 'org:upms:organization:edit' //编辑基本信息 permission_type=1
 export const ORG_UPMS_ORGANIZATION_DELETE = 'org:upms:organization:delete' //删除组织 permission_type=1
@@ -94,8 +94,8 @@ export const ORG_UPMS_ORGANIZATION_ROLE_EDIT = 'org:upms:organization:role:edit'
 export const ORG_UPMS_ORGANIZATION_ROLE_DELETE = 'org:upms:organization:role:delete' //删除角色 permission_type=1
 export const ORG_TEAM_BOARD_QUERY = 'org:team:board:query' //查看项目 permission_type=1
 export const ORG_TEAM_BOARD_EDIT = 'org:team:board:edit' //编辑项目 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看成员 permission_type=1
-export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //成员管理 permission_type=2
+export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看职员 permission_type=1
+export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //职员管理 permission_type=2
 export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
 export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2
 export const PROJECT_TEAM_BOARD_DELETE = 'project:team:board:delete' //删除项目 permission_type=2
@@ -124,7 +124,7 @@ export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //�
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
 
 //名词定义
-export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
+export const NORMAL_NOUN_PLAN = { "Organization": "企业", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "Members": "职员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
@@ -145,4 +145,4 @@ export const CONTENT_DATA_TYPE_FILE = 'file'
 export const CONTENT_DATA_TYPE_FOLDER = 'folder'
 export const CONTENT_DATA_TYPE_FLOW = 'flow'
 
-export const FILE_TYPE_UPLOAD_WHITELISTED= '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'
+export const FILE_TYPE_UPLOAD_WHITELISTED = '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'

@@ -2,6 +2,7 @@ import React from 'react'
 import indexStyles from './index.less'
 import { Card, Icon, DatePicker, Dropdown, Tooltip } from 'antd'
 import MenuSearchMultiple from './MenuSearchMultiple'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 import { timeToTimestamp } from '../../../../../../utils/util'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import { connect } from 'dva'
@@ -86,12 +87,20 @@ export default class ConfirmInfoOne extends React.Component {
       }
     })
   }
-  setAssignees(data) {
+  // setAssignees(data) {
+  chirldrenTaskChargeChange(data) {
+
     const { processEditDatas = {}, dispatch } = this.props
     const { itemKey } = this.props
-    const str = data.join(',')
+    const str = data.selectedKeys.join(',')
     const new_processEditDatas = [...processEditDatas]
     new_processEditDatas[itemKey]['assignees'] = str
+
+    // const { processEditDatas = {}, dispatch } = this.props
+    // const { itemKey } = this.props
+    // const str = data.join(',')
+    // const new_processEditDatas = [...processEditDatas]
+    // new_processEditDatas[itemKey]['assignees'] = str
 
     dispatch({
       type: 'projectDetailProcess/updateDatas',
@@ -100,6 +109,7 @@ export default class ConfirmInfoOne extends React.Component {
       }
     })
   }
+
   setIsShowBottDetail() {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
@@ -124,7 +134,7 @@ export default class ConfirmInfoOne extends React.Component {
   render() {
     const { due_time, isShowBottDetail, ConfirmInfoOut_1_bott_Id, relations = [] } = this.state
     const { processEditDatas = [], projectDetailInfoData = {}, relations_Prefix } = this.props
-    const { itemKey } = this.props
+    const { itemKey, invitationType } = this.props
     const { board_id } = projectDetailInfoData
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
     //推进人来源
@@ -158,7 +168,19 @@ export default class ConfirmInfoOne extends React.Component {
         case '2':
           container = (
             <div>
-              <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}>
+              <Dropdown overlay={
+                // <MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />
+                <MenuSearchPartner
+                  invitationType={invitationType}
+                  invitationId={board_id}
+                  listData={users}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                  board_id={board_id}
+                />
+              }
+              >
                 {assigneesArray.length ? (
                   <div style={{ display: 'flex' }}>
                     {assigneesArray.map((value, key) => {

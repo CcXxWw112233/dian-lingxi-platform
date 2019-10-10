@@ -109,7 +109,7 @@ class AddTaskModal extends Component {
       selectedOrg: {
         org_name: '',
         org_id: '',
-      }, //选择的组织
+      }, //选择的企业
       currentSelectedProject: getCurrentSelectedProject(
         isUseInGantt,
         projectIdWhenUseInGantt,
@@ -495,7 +495,7 @@ class AddTaskModal extends Component {
       }
     }
   }
-  // 选择组织
+  // 选择企业
   renderSelectOrg = () => {
     const { selectedOrg = {} } = this.state
     return (
@@ -503,7 +503,7 @@ class AddTaskModal extends Component {
        overlay={<OrgSearchAndSelect orgSelectedChange={this.orgSelectedChange}/>}>
         <div className={styles.org_selected_out}>
           <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe7c6;</div>
-          <div>{selectedOrg.org_name || `选择组织`}</div>
+          <div>{selectedOrg.org_name || `选择企业`}</div>
           <div className={`${globalStyles.authTheme} ${styles.down_logo}`}>&#xe7ee;</div>
         </div>
       </Dropdown>
@@ -712,7 +712,7 @@ class AddTaskModal extends Component {
     //有的项目没有开启目前的内容类型，将其过滤出去
     const filteredNoThatTypeProject = projectList.filter(item => {
       let board_is_in_selected_org = false //项目是否在所选择的org_内
-      // 如果是全组织的情况下就需要选择， 否则需要先选择组织
+      // 如果是全企业的情况下就需要选择， 否则需要先选择企业
       if(localStorage.getItem('OrganizationId') == '0') {
          if(item.org_id == selectedOrg.org_id) {
           board_is_in_selected_org = true
@@ -743,7 +743,7 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
-              {/* 选择组织 */}
+              {/* 选择企业 */}
               {
                 localStorage.getItem('OrganizationId') == '0' && (
                 <div>

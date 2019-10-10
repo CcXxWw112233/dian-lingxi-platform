@@ -57,7 +57,7 @@ const ProjectDetail = (props) => {
      * @return {Boolean} 该方法返回布尔类型的值
      */
     const checkIsHasPermissionInAppData = (key) => {
-      let  { app_data = [] } = projectDetailInfoData
+      let { app_data = [] } = projectDetailInfoData
       let flag
       let new_appData = [...app_data]
       // 如果说是一个空数组, 那么表示都没有权限 

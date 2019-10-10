@@ -4,7 +4,7 @@ import { Input } from 'antd';
 import { Link } from 'dva/router'
 import { connect } from 'dva'
 
-@connect(({xczNews = []}) => ({xczNews}))
+@connect(({ xczNews = [] }) => ({ xczNews }))
 export default class Header extends Component {
     state = {
         searchTimer: null,
@@ -21,7 +21,7 @@ export default class Header extends Component {
                 "path": "/technological/simplemode/workbench/xczNews/highRise",
                 "text": "高层"
             },
-            {   
+            {
                 "flag": 3,
                 "name": "authority",
                 "path": "/technological/simplemode/workbench/xczNews/authority",
@@ -95,21 +95,19 @@ export default class Header extends Component {
         })
 
         const { searchTimer } = this.state
-        if(searchTimer) {
+        if (searchTimer) {
             clearTimeout(searchTimer)
         }
         this.setState({
             searchTimer: setTimeout(() => {
-                 this.getHeaderSearch()
+                this.getHeaderSearch()
             }, 500)
         })
-      
+
     }
 
     render() {
-        const { xczNews, location } = this.props;  
-        console.log(location, 'ssssss');
-                      
+        const { xczNews, location } = this.props;                
         const { tabs } = this.state;
         const { inputValue } = xczNews;
         return (
@@ -128,7 +126,7 @@ export default class Header extends Component {
                                             <Link id={item.flag} to={item.path}>{item.text}</Link>
                                         )
                                     }
-                                    
+
                                 })
                             }
                         </div>
@@ -136,7 +134,7 @@ export default class Header extends Component {
                     {
                         location.pathname !== '/technological/simplemode/workbench/xczNews/area' && (
                             <div className={headerStyles.Search}>
-                                <Input.Search 
+                                <Input.Search
                                     type="text"
                                     value={inputValue}
                                     allowClear={true}
@@ -149,7 +147,7 @@ export default class Header extends Component {
                             </div>
                         )
                     }
-                </div>   
+                </div>
             </div>
         )
     }

@@ -165,7 +165,14 @@ export default modelExtend(projectDetail, {
               file_id,
             }
           })
-        } else {
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: result.data.folder_id
+            }
+          })
+        } 
+        else {
           yield put({
             type: 'getFileList',
             payload: {

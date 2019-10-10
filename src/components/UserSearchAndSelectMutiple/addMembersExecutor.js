@@ -108,7 +108,7 @@ export default class AddMembersExecutor extends React.Component {
     for (let i = 0; i < arr.length; i++) {
       // 添加的思路
       // if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说user_id存在
-      //   if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部成员, 没有执行人
+      //   if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部职员, 没有执行人
       //     // 就将它从第一个后面插入
       //     console.log('进来了', 'ssss_第一个if')
       //     const deItem = arr.splice(i, 1)
@@ -135,7 +135,7 @@ export default class AddMembersExecutor extends React.Component {
       }
 
       if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
-        if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部成员, 没有执行人
+        if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部职员, 没有执行人
           // 就将它从第一个后面插入
           // console.log('进来了', 'ssss_第一个if')
           const deItem = arr.splice(i, 1)

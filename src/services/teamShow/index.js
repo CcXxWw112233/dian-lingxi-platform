@@ -49,7 +49,7 @@ export async function deleteTeamShow(data) {
   });
 }
 
-//获取当前前组织下所有的展示列表
+//获取当前前企业下所有的展示列表
 export async function getCurrentOrgTeamShowList(params) {
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/show/current_list`,

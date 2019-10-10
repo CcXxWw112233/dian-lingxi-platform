@@ -10,9 +10,11 @@ import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../.
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 import UserCard from './../../../../../components/UserCard/index'
 import { connect } from "dva/index";
+import { getGlobalData } from "../../../../../utils/businessFunction";
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 
 const TextArea = Input.TextArea
-
 
 // const detaiDescription = '欢迎使用灵犀，为了帮助你更好的上手使用好灵犀，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。如果使用中需要问题，可以随时联系我们进行交流或反馈：https://lingxi.di-an.com'
 const detaiDescription = '添加简介'
@@ -130,7 +132,7 @@ export default class DrawDetailInfo extends React.Component {
   }
   //点击区域描述可编辑区域-----------end
 
-  //点击添加成员操作
+  //点击添加职员操作
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -144,17 +146,70 @@ export default class DrawDetailInfo extends React.Component {
 
   // 邀请人进项目
   addMenbersInProject = (data) => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'projectDetail/addMenbersInProject',
-      payload: {
-        ...data
+    const { invitationType, invitationId, rela_Condition, dispatch } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: invitationType,
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: invitationType,
+          users: res.data.users,
+          rela_condition: rela_Condition,
+        }).then(res => {
+          if (isApiResponseOk(res)) {
+            const { projectDetailInfoData = {} } = this.props
+            const { board_id } = projectDetailInfoData
+            if (invitationType === '1') {
+              dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+              // dispatch({
+              //   type: 'projectDetailTask/getCardDetail',
+              //   payload: {
+              //     id: card_id
+              //   }
+              // })
+              dispatch({
+                type: 'workbenchTaskDetail/projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+              // dispatch({
+              //   type: 'workbenchTaskDetail/getCardDetail',
+              //   payload: {
+              //     id: board_id,
+              //     board_id: board_id,
+              //     calback: function () {
+              //       dispatch({
+              //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+              //         payload: {
+              //           _organization_id: invitation_org
+              //         }
+              //       })
+              //     }
+              //   }
+              // })
+            }
+          }
+        })
       }
     })
   }
+
+
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
-    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [] } = this.props
+    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], invitationId, invitationType } = this.props
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
 
     data = data || []
@@ -170,7 +225,7 @@ export default class DrawDetailInfo extends React.Component {
       // return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
-          <div style={{position:'relative'}} className={DrawDetailInfoStyle.manImageDropdown_top}>
+          <div style={{position: 'relative'}} className={DrawDetailInfoStyle.manImageDropdown_top}>
             <div className={DrawDetailInfoStyle.left}>
               {avatar ? (
                 <img src={avatar} />
@@ -203,7 +258,7 @@ export default class DrawDetailInfo extends React.Component {
               <div>{role_name}</div>
             </div>
             {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
-            {/*<div>组织：</div>*/}
+            {/*<div>企业：</div>*/}
             {/*<div>{organization}</div>*/}
             {/*</div>*/}
             <div className={DrawDetailInfoStyle.detailItem}>
@@ -246,7 +301,7 @@ export default class DrawDetailInfo extends React.Component {
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
             <Menu.Item key={'removeMember'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
               <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
-                移除成员
+                移除职员
               </div>
             </Menu.Item>
           )}
@@ -317,7 +372,13 @@ export default class DrawDetailInfo extends React.Component {
             </div>
           ) : (EditArea)}
         </div>
-        <ShowAddMenberModal addMenbersInProject={this.addMenbersInProject} show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          invitationId={invitationId}
+          invitationType={invitationType}
+          invitationOrg={getGlobalData('aboutBoardOrganizationId')}
+          modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
       </div>
     )
   }

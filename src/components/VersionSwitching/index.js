@@ -204,7 +204,7 @@ export default class index extends Component {
     }
 
     return (
-      <div style={{position:'relative'}}>
+      <div style={{position: 'relative'}}>
         <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
           <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
             <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息

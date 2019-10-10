@@ -2,8 +2,8 @@ import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
-import {validateEmail, validateTel} from "../../../../utils/verify";
-import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import { validateEmail, validateTel } from "../../../../utils/verify";
+import { MESSAGE_DURATION_TIME } from "../../../../globalset/js/constant";
 import CustormModal from '../../../../components/CustormModal'
 import InviteOtherWithBatch from './../InviteOthersWithBatch/index'
 
@@ -30,7 +30,7 @@ class ShowAddMenberModal extends React.Component {
     })
   }
   handleInviteTextAreaPressEnter = (e) => {
-    if(e) e.stopPropagation()
+    if (e) e.stopPropagation()
   }
   onCancel = () => {
     this.props.setShowAddMenberModalVisibile()
@@ -40,7 +40,7 @@ class ShowAddMenberModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        if(this.state.users) {
+        if (this.state.users) {
           // let users = this.state.users.replace(/\n/gim, ',') //替代换行符
           // let usersArr = users.split(',') //转成数组
           // let usersNewArr = []
@@ -57,16 +57,16 @@ class ShowAddMenberModal extends React.Component {
           //   }
           // }
           // values['users'] = users
-          this.props.addMembers?this.props.addMembers(values): false
+          this.props.addMembers ? this.props.addMembers(values) : false
         }
         this.props.setShowAddMenberModalVisibile()
-       //  此处为邀请加入组织
+        //  此处为邀请加入企业
       }
     });
   }
   handleSubmitNew = () => {
-    const {users} = this.state
-    this.props.addMembers?this.props.addMembers({users}): false
+    const { users } = this.state
+    this.props.addMembers ? this.props.addMembers({ users }) : false
     this.props.setShowAddMenberModalVisibile()
   }
   handleInviteMemberReturnResult = str => {
@@ -77,13 +77,13 @@ class ShowAddMenberModal extends React.Component {
     })
   }
   render() {
-    const { modalVisible } = this.props;
+    const { modalVisible, invitationType, invitationId, invitationOrg } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { stepThreeContinueDisabled } = this.state
     const step_3 = (
-      <InviteOtherWithBatch isDisableSubmitWhenNoSelectItem={true} directReturnStr={true} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+      <InviteOtherWithBatch isDisableSubmitWhenNoSelectItem={true} directReturnStr={true} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} show_wechat_invite={true} invitationId={invitationId} invitationType={invitationType} invitationOrg={invitationOrg} />
     )
-    const title = (<div style={{textAlign: 'center'}}>邀请他人</div>)
+    const title = (<div style={{ textAlign: 'center' }}>邀请他人</div>)
     // const step_3 = (
     //   <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
     //     <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>邀请他人</div>
@@ -110,7 +110,7 @@ class ShowAddMenberModal extends React.Component {
     //   </Form>
     // )
 
-    return(
+    return (
       <div>
         <CustormModal
           visible={modalVisible} //modalVisible
@@ -119,7 +119,7 @@ class ShowAddMenberModal extends React.Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          style={{textAlign: 'center'}}
+          style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
           overInner={step_3}
           title={title}
