@@ -788,6 +788,8 @@ class FileDetailContent extends React.Component {
 
         }
       })
+      // 这里是用来更新甘特图中的文件列表
+      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
     }
 
     // 添加成员

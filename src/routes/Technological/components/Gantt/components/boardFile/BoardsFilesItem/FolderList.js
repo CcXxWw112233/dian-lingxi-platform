@@ -151,9 +151,9 @@ export default class FolderList extends Component {
             <div className={styles.folder_list}>
                 {
                     file_data.map(item => {
-                        const { id } = item
+                        const { id, is_privilege } = item
                         return (
-                            <div key={id}>
+                            <div key={`${id}-${is_privilege}`}>
                                 <FolderItem
                                     current_folder_id={current_folder_id}
                                     getFolderFileList={this.props.getFolderFileList}

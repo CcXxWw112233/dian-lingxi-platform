@@ -10,6 +10,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import FileDetailModal from '../../../../Workbench/CardContent/Modal/FileDetailModal'
 const { Dragger } = Upload
 export default class Index extends Component {
     constructor(props) {
@@ -82,6 +83,13 @@ export default class Index extends Component {
         } else {
             message.error('获取数据失败')
         }
+    }
+
+    // 是否需要更新文件列表, 当访问控制设置时
+    whetherUpdateFolderListData = (folder_id) => {
+      if (folder_id) {
+        this.getFolderFileList({id: folder_id})
+      }
     }
 
     setShowDrag = (bool) => {
@@ -186,7 +194,7 @@ export default class Index extends Component {
     render() {
         const { bread_paths = [], file_data = [], current_folder_id, show_drag } = this.state
         const { board_id } = this.props
-
+        
         return (
             <div
                 data-drag_area={'area_top'}
@@ -222,6 +230,15 @@ export default class Index extends Component {
                     </Dragger>
                 </div>
                 {/* )} */}
+                <FileDetailModal 
+                  {...this.props.fileDetailModalDatas}
+                  setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                  modalVisible={this.props.fileDetailModalDatas.previewFileModalVisibile}
+                  setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                  updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
+                  updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
+                  whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                />
             </div>
         )
     }
