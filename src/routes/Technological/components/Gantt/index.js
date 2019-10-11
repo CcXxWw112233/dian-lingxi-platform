@@ -78,6 +78,7 @@ class Gantt extends Component {
     })
   }
 
+  // 添加任务 -----------start
   addTaskModalVisibleChange = flag => {
     this.setAddTaskModalVisible(flag)
   };
@@ -98,17 +99,33 @@ class Gantt extends Component {
     )
       .then(res => {
         if (res) {
-          dispatch({
-            type: 'gantt/getGanttData',
-            payload: {
-              not_set_loading: true
-            }
-          })
+          // dispatch({
+          //   type: 'gantt/getGanttData',
+          //   payload: {
+          //     not_set_loading: true
+          //   }
+          // })
+          this.insertTaskToListGroup(res)
         } else {
           message.warn('创建任务失败')
         }
       })
       // .catch(err => message.error(err));
+  }
+  // 添加完一条任务后，将某1条任务塞进去
+  insertTaskToListGroup = (data) => {
+    const { dispatch } = this.props
+    const { datas: { list_group = [], current_list_group_id, } } = this.props.model
+    const list_group_new = [...list_group]
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    list_group_new[group_index].lane_data.cards.push(data)
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new,
+        not_set_scroll_top: true 
+      }
+    })
   }
   handleGetNewTaskParams(data) {
     const { datas: { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } } = this.props.model
@@ -139,6 +156,7 @@ class Gantt extends Component {
     this.addNewTask(param)
     this.setAddTaskModalVisible(false)
   }
+  // 添加任务 -----------end
 
   //修改某一个任务
   handleChangeCard = ({ card_id, drawContent }) => {
