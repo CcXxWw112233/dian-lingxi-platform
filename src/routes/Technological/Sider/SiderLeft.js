@@ -344,13 +344,13 @@ export default class SiderLeft extends React.Component {
   openPayUpgradeModal = (e) => {
     e.stopPropagation();
     this.setState({
-      payUpgradeModalVisible:true
+      payUpgradeModalVisible: true
     });
    }
 
    setPayUpgradeModalVisible = (visible) => {
     this.setState({
-      payUpgradeModalVisible:visible
+      payUpgradeModalVisible: visible
     });
    }
 

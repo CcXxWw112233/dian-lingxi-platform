@@ -25,7 +25,7 @@ export default class BaseInfo extends React.Component {
     logo_id: '',
     uploading: false,
     saveButtonDisabled: false, //确认按钮是否可点击
-    orderListVisible: false,//是否显示订单列表
+    orderListVisible: false, //是否显示订单列表
     payUpgradeModalVisible: false,
   }
   storeChange(key, value) {
@@ -299,8 +299,8 @@ export default class BaseInfo extends React.Component {
         </div>
         <div className={indexStyles.paymentInfoWrapper}>
           {
-            paymentInfo.is_free_trial === '1' &&
-            <div className={indexStyles.isFreeTrial}>
+            paymentInfo.is_free_trial === '1' && (
+<div className={indexStyles.isFreeTrial}>
               <p className={indexStyles.title}>当前处于免费试用状态，享受高级功能与更优质的服务，请升级为付费版本。</p>
               <p className={indexStyles.description}>免费版本的协作人数限制10人以内，项目数量限制在15个以内。</p>
               <Button type={'primary'} onClick={()=>{this.openPayUpgradeModal()}}>付费升级</Button>
@@ -308,10 +308,10 @@ export default class BaseInfo extends React.Component {
                 了解更多
               </Button> */}
             </div>
-          }
+)}
           {
-            paymentInfo.is_free_trial && paymentInfo.is_free_trial === '0' &&
-            <div className={indexStyles.paymemtInfo}>
+            paymentInfo.is_free_trial && paymentInfo.is_free_trial === '0' && (
+<div className={indexStyles.paymemtInfo}>
               <div className={indexStyles.info}>
                 <Row className={indexStyles.item}>
                   <Col span={4} className={indexStyles.itemLabel}>企业ID</Col>
@@ -353,13 +353,15 @@ export default class BaseInfo extends React.Component {
               </div>
 
               {
-                this.state.orderListVisible && <div className={indexStyles.orderList}>
+                this.state.orderListVisible && (
+<div className={indexStyles.orderList}>
                   <Table columns={this.orderListColumns} rowKey={'id'} dataSource={payOrderList} pagination={false} />
                 </div>
+)
               }
 
             </div>
-          }
+)}
         </div>
 
         <div className={indexStyles.baseInfo_title_2}>
