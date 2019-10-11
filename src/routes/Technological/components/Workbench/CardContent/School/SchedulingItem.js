@@ -13,8 +13,12 @@ export default class SchedulingItem extends React.Component {
     // this.props.updateTaskDatas({board_id})
     // this.props.updateFileDatas({board_id})
     this.props.updatePublicDatas({ board_id })
-    this.props.getCardDetail({id, board_id})
-    this.props.setTaskDetailModalVisibile()
+    this.props.getCardDetail({
+      id,
+      board_id,
+      calback: this.props.setTaskDetailModalVisibile,
+    })
+    // this.props.setTaskDetailModalVisibile()
   }
 
   render() {
@@ -23,9 +27,9 @@ export default class SchedulingItem extends React.Component {
     return (
       <div className={indexstyles.meetingItem} onClick={this.itemClick.bind(this)} >
         <div>
-          <Icon type="calendar" style={{fontSize: 16, color: '#8c8c8c'}}/>
+          <Icon type="calendar" style={{ fontSize: 16, color: '#8c8c8c' }} />
         </div>
-        <div>{name}<span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
+        <div>{name}<span style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'pointer' }}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span></div>
       </div>
     )
   }

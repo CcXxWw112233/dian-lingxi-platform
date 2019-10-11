@@ -96,10 +96,10 @@ export default class DetailConfirmInfoThree extends React.Component {
     let willSetAssignee = ''
     for (let i = 0; i < assignees.length; i++) {
       if (assignees[i].user_id === currentUserId) {
-        // assignees[i] = data.[0]
-        // willSetAssignee = data.[0]
-        assignees[i] = data.selectedKeys[0]
-        willSetAssignee = data.selectedKeys[0]
+        assignees[i] = data[0]
+        willSetAssignee = data[0]
+        // assignees[i] = data.selectedKeys[0]
+        // willSetAssignee = data.selectedKeys[0]
         break;
       }
     }
@@ -304,21 +304,21 @@ export default class DetailConfirmInfoThree extends React.Component {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
               <Dropdown overlay={
-                // <MenuSearchMultiple
-                //   noMutiple={true}
-                //   usersArray={users}
-                //   filterUserArray={assigneesArray}
-                //   setAssignees={this.setAssignees.bind(this)} />
-                <MenuSearchPartner
-                  invitationType='8'
-                  invitationId={invitationId}
-                  rela_Condition={curr_node_id}
-                  listData={users}
-                  keyCode={'user_id'}
-                  searchName={'name'}
-                  chirldrenTaskChargeChange={this.setAssignees.bind(this)}
-                  board_id={board_id}
-                />
+                <MenuSearchMultiple
+                  noMutiple={true}
+                  usersArray={users}
+                  filterUserArray={assigneesArray}
+                  setAssignees={this.setAssignees.bind(this)} />
+                // <MenuSearchPartner
+                //   invitationType='8'
+                //   invitationId={invitationId}
+                //   rela_Condition={curr_node_id}
+                //   listData={users}
+                //   keyCode={'user_id'}
+                //   searchName={'name'}
+                //   chirldrenTaskChargeChange={this.setAssignees.bind(this)}
+                //   board_id={board_id}
+                // />
               }>
                 {assignee_type !== '1' ? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>

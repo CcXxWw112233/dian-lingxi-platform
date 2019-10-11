@@ -124,19 +124,20 @@ export default modelExtend(projectDetail, {
       let res = yield call(getCardDetail, { id })
       if (isApiResponseOk(res)) {
         yield put({
-          type: 'getCardCommentList',
-          payload: {
-            id
-          }
-        })
-        yield put({
           type: 'updateDatas',
           payload: {
             drawerVisible: true,
             drawContent: res.data,
           }
         })
+        yield put({
+          type: 'getCardCommentList',
+          payload: {
+            id
+          }
+        })
       } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
@@ -900,7 +901,7 @@ export default modelExtend(projectDetail, {
           })
         }
       } else {
-        message.warn(res.message)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * taskCancelRelaMiletones({ payload }, { select, call, put }) {
@@ -917,7 +918,7 @@ export default modelExtend(projectDetail, {
           })
         }
       } else {
-        message.warn(res.message)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     }
 
