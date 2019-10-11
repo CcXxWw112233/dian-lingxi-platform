@@ -16,13 +16,13 @@ class DetailedShare extends React.Component {
         return (
             <div>
                 {
-                    rela_type === '1' ? <div>ok<TaskDetailShare /></div> : ''
+                    rela_type === '1' ? <div><TaskDetailShare /></div> : ''
                 }
                 {
-                    rela_type === '2' ? <div>ok2<ProccessDetailShare /></div> : ''
+                    rela_type === '2' ? <div><ProccessDetailShare /></div> : ''
                 }
                 {
-                    rela_type === '3' ? <div>ok3<FileDetailModal {...this.props} visible={true} /></div> : ''
+                    rela_type === '3' ? <div><FileDetailModal {...this.props} visible={true} /></div> : ''
                 }
             </div>
         )
