@@ -197,60 +197,86 @@ export default class CreateTask extends React.Component {
   fnScroll(e) {
     this.scrollLeft = e.target.scrollLeft
   }
+
   // 右方抽屉弹窗---start
+  // 点击弹窗的回调
   setDrawerVisibleOpen(data) {
 
     const { drawContent: { card_id }, taskGroupListIndex_index, taskGroupListIndex } = data
     //不需要及时更新drawcontent
     const { dispatch } = this.props
+    // dispatch({
+    //   type: 'projectDetailTask/updateDatas',
+    //   payload: {
+    //     taskGroupListIndex, 
+    //     taskGroupListIndex_index, 
+    //     drawerVisible: true,
+    //     card_id 
+    //   }
+    // })
+    
+    // 这是点击的时候提前去更新model中的数据, 然后在加载
     dispatch({
-      type: 'projectDetailTask/getCardDetail',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id: card_id,
+        drawerVisible: true,
+        card_id, // 在这个model中外部保存一个card_id
       }
     })
+
     dispatch({
-      type: 'projectDetailTask/updateDatas',
-      payload: {
-        taskGroupListIndex,
-        taskGroupListIndex_index,
-        // drawerVisible: true,
-        card_id
-      }
-    })
-    dispatch({
-      type: 'projectDetailTask/getCardCommentList',
-      payload: {
-        id: card_id
-      }
-    })
-    dispatch({
-      type: 'projectDetailTask/getCardCommentListAll',
+      type: 'publicTaskDetailModal/getCardDetail',
       payload: {
         id: card_id
       }
     })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardCommentList',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardDetail',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardCommentListAll',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
     //添加url
   }
 
+  // 关闭弹窗的回调
   setDrawerVisibleClose = () => {
     // this.setState({
     //   drawerVisible: false,
     // })
     const { dispatch } = this.props
     dispatch({
-      type: 'projectDetailTask/updateDatas',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
         drawerVisible: false,
+        drawContent: {}, // 将弹窗中的数据清除
+        card_id: ''
       }
     })
+    // dispatch({
+    //   type: 'projectDetailTask/updateDatas',
+    //   payload: {
+    //     drawerVisible: false,
+    //   }
+    // })
   }
   //右方抽屉弹窗---end
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
-    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch, drawContent = {}, is_show_org_name, is_all_org, currentUserOrganizes = [] } = this.props
+    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch, is_show_org_name, is_all_org, currentUserOrganizes = [] } = this.props
     const taskDetailModalHeaderParams = {
-      drawContent,
       is_show_org_name, is_all_org,
       currentUserOrganizes
     }
@@ -303,7 +329,7 @@ export default class CreateTask extends React.Component {
           <TaskDetailModal 
             dispatch={dispatch}
             task_detail_modal_visible={drawerVisible}
-            set_task_detail_modal_visible={this.setDrawerVisibleClose}
+            setTaskDetailModalVisible={this.setDrawerVisibleClose}
             taskDetailModalHeaderParams={taskDetailModalHeaderParams}
           />
       </div>
@@ -314,9 +340,8 @@ function mapStateToProps({
   projectDetailTask: {
     datas: {
       taskGroupList = [],
-      drawerVisible = false,
+      // drawerVisible = false,
       getTaskGroupListArrangeType = '1',
-      drawContent = {}
     }
   },
   projectDetail: {
@@ -330,6 +355,9 @@ function mapStateToProps({
       is_all_org,
       currentUserOrganizes = []
     }
+  },
+  publicTaskDetailModal: {
+    drawerVisible
   }
 }) {
   return {
@@ -337,7 +365,6 @@ function mapStateToProps({
     drawerVisible,
     getTaskGroupListArrangeType,
     board_id,
-    drawContent,
     is_show_org_name,
     is_all_org,
     currentUserOrganizes

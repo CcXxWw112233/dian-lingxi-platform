@@ -6,7 +6,7 @@ import HeaderContent from './HeaderContent'
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {
-    this.props.set_task_detail_modal_visible && this.props.set_task_detail_modal_visible()
+    this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
   }
 
   //评论
@@ -69,7 +69,7 @@ export default class TaskDetailModal extends Component {
 
 TaskDetailModal.defaultProps = {
   task_detail_modal_visible: false, // 设置任务详情弹窗是否显示, 默认为 false 不显示
-  set_task_detail_modal_visible: function() { }, // 设置任务详情弹窗是否显示
+  setTaskDetailModalVisible: function() { }, // 设置任务详情弹窗是否显示
   users: [], // 用户列表
   handleTaskDetailChange: function() { },
 }

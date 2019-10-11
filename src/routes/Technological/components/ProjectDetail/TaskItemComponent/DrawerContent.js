@@ -1275,7 +1275,7 @@ class DrawContent extends React.Component {
     })
   }
   addMenbersInProject = (data) => {
-    console.log(data, 'ssss')
+    // console.log(data, 'ssss')
   }
   render() {
     that = this

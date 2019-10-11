@@ -1,0 +1,73 @@
+import { getCardDetail, completeTask } from '../../../services/technological/task'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { message } from 'antd'
+import { currentNounPlanFilterName } from "../../../utils/businessFunction";
+import { MEMBERS, MESSAGE_DURATION_TIME, PROJECTS, TASKS } from "../../../globalset/js/constant";
+export default {
+  namespace: 'publicTaskDetailModal',
+  state: {
+
+  },
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen((location) => {
+      })
+    },
+  },
+  effects: {
+    /**
+     * 获取任务详情: 需要参数当前任务id
+     * @param {String} id 当前任务的id 
+     */
+    * getCardDetail({ payload }, { call, put }) {
+      const { id } = payload
+      let res = yield call(getCardDetail,{ id })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawerVisible: true,
+            drawContent: res.data,
+          }
+        })
+      }
+    },
+    /**
+     * 设置完成任务: 需要参数 is_realize
+     * @param {String} is_realize 是否完成 0 未完成 1 已完成
+     */
+    * completeTask({ payload }, { call, put }) { //
+      const { is_realize, card_id, board_id } = payload
+      let res = yield call(completeTask, { is_realize, card_id })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id,
+            calback: function () {
+              // const remind_message_str = res.data && res.data.remind_code !=  '0'? `${res.data.error_msg}`: ''
+              if (res.data && res.data.remind_code != '0') { //通知提醒专用
+                const remind_message_str = `，${res.data.error_msg}`
+                message.warn(is_realize === '1' ? `已完成该${currentNounPlanFilterName(TASKS)}${remind_message_str}` :
+                  `已将该${currentNounPlanFilterName(TASKS)}设置未完成${remind_message_str}`, MESSAGE_DURATION_TIME)
+              } else {
+                message.success(is_realize === '1' ? `已完成该${currentNounPlanFilterName(TASKS)}` :
+                  `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
+              }
+            }
+          }
+        })
+
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+  },
+  reducers: {
+    updateDatas(state, action) {
+      return {
+        ...state, ...action.payload
+      }
+    }
+  }
+}

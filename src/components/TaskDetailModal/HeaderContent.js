@@ -5,12 +5,14 @@ import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermiss
 import { TASKS } from '../../globalset/js/constant'
 import VisitControl from '@/routes/Technological/components/VisitControl/index'
 import HeaderContentRightMenu from './HeaderContentRightMenu'
+import { connect } from 'dva'
 
-export default class HeaderContent extends Component {
+class HeaderContent extends Component {
   render() {
-    const { taskDetailModalHeaderParams } = this.props
-    const { is_show_org_name, is_all_org, currentUserOrganizes = [], drawContent } = taskDetailModalHeaderParams
+    const { publicTaskDetailModal: { drawContent = {} }, taskDetailModalHeaderParams } = this.props
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
+    const { currentUserOrganizes = [], is_all_org, is_show_org_name  } = taskDetailModalHeaderParams
+
     return (
       <div style={{display: 'flex', alignItems: 'center'}}>
         {/* 这里是头部左边 */}
@@ -48,3 +50,9 @@ HeaderContent.defaultProps = {
   board_name: '', // 项目名
   card_id: '', // 任务id
 }
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({ publicTaskDetailModal }) {
+  return { publicTaskDetailModal }
+}
+export default connect(mapStateToProps)(HeaderContent)

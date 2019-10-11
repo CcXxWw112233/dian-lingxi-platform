@@ -138,6 +138,7 @@ const Routers = function ({ history, app }) {
       import('./models/technological/workbench/gantt'),
       import('./models/technological/public/milestoneDetail'),
       import('./models/technological/public/publicModalComment'),
+      import('./models/technological/public/publicTaskDetailModal'),
       import('./models/technological/workbench/investmentMap'),
 
       import('./models/technological/accountSet'),
