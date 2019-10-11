@@ -420,6 +420,8 @@ class BoardCommunication extends Component {
                         })
                         this.updatePublicDatas({ board_id })
                         this.getFileModuleProps().getBoardMembers({ id: board_id })
+                    } else {
+                      message.warn(apiResult.message)
                     }
                 }).catch((error, e) => {
                     // console.log(error);
@@ -433,6 +435,8 @@ class BoardCommunication extends Component {
                 message.destroy()
                 message.success('上传成功');
 
+            } else {             
+              message.warn(apiResult.message)
             }
 
             this.initModalSelect()
@@ -449,7 +453,7 @@ class BoardCommunication extends Component {
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let list = []
         allOrgBoardTreeList.map((org, orgKey) => {
-            //全组织或者当前组织
+            //全企业或者当前企业
             if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
                 //children
                 //isLeaf: true
@@ -576,7 +580,6 @@ class BoardCommunication extends Component {
     };
 
     onSelectFile = (keys, event) => {
-        //console.log('Trigger Select', keys, event);
         const { dispatch } = this.props;
         if (!event.selectedNodes[0]) {
             return;
@@ -587,9 +590,13 @@ class BoardCommunication extends Component {
             message.warn('文件夹不能被选择');
             return;
         }
+        const fileName = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.title) && event.selectedNodes[0].props.title
+        const versionId = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.version_id) && event.selectedNodes[0].props.version_id
+        const fileResourceId = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.file_resource_id) && event.selectedNodes[0].props.file_resource_id
+        const folder_id = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.folder_id) && event.selectedNodes[0].props.folder_id
         this.setState({
             selectBoardFileDropdownVisible: false,
-            currentfile: { fileId: fileId, fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
+            currentfile: { fileId: fileId, fileName: fileName, versionId: versionId, fileResourceId: fileResourceId, folder_id: folder_id },
             selectBoardFileCompleteDisabled: false
         });
     };
@@ -597,12 +604,17 @@ class BoardCommunication extends Component {
     onSelectFolder = (keys, event) => {
         //console.log('文件夹', keys, event);
         const { dispatch } = this.props;
+        if (!event.selectedNodes[0]) {
+            return;
+        }
         const fileId = keys[0]
-        //console.log("selectedNodes", event.selectedNodes[0].props.title);
-
+        const fileName = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.title) && event.selectedNodes[0].props.title
+        const versionId = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.version_id) && event.selectedNodes[0].props.version_id
+        const fileResourceId = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.file_resource_id) && event.selectedNodes[0].props.file_resource_id
+        const folder_id = (event.selectedNodes[0] && event.selectedNodes[0].props && event.selectedNodes[0].props.folder_id) && event.selectedNodes[0].props.folder_id
         this.setState({
             selectBoardFileDropdownVisible: false,
-            currentfile: { fileId: fileId, fileName: event.selectedNodes[0].props.title, versionId: event.selectedNodes[0].props.version_id, fileResourceId: event.selectedNodes[0].props.file_resource_id, folder_id: event.selectedNodes[0].props.folder_id },
+            currentfile: { fileId: fileId, fileName: fileName, versionId: versionId, fileResourceId: fileResourceId, folder_id: folder_id },
             selectBoardFileCompleteDisabled: false
         });
     };

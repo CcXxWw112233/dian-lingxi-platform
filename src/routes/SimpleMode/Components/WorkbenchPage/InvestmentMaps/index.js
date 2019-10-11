@@ -56,7 +56,7 @@ export default class index extends React.Component {
             <div className={indexStyles.mapsContainer} style={{height: contentHeight+'px'}}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false ? (
                     <div className={indexStyles.boardSelectWapper}>
-                        <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>
+                        <div className={indexStyles.groupName}>请选择一个企业进行查看地图</div>
                         <div className={indexStyles.boardItemWapper}>
                             {
                                 mapOrganizationList && mapOrganizationList.map((value, key) => {

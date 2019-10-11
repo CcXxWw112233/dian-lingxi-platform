@@ -32,7 +32,7 @@ export default class SimpleNavigation extends Component {
         this.state = {
             collapsed: collapsed,
             createOrganizationVisable: false,
-            ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
+            ShowAddMenberModalVisibile: false, // 显示邀请企业成员的弹框
             NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
             is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
             is_simplemode: is_simplemode,
@@ -118,7 +118,7 @@ export default class SimpleNavigation extends Component {
         this.routingJump(`/technological/${route}`)
     }
 
-    //创建或加入组织
+    //创建或加入企业
     setCreateOrgnizationOModalVisable() {
         this.setState({
             createOrganizationVisable: !this.state.createOrganizationVisable
@@ -133,7 +133,7 @@ export default class SimpleNavigation extends Component {
         })
     }
 
-    //添加组织成员操作
+    //添加企业职员操作
     setShowAddMenberModalVisibile() {
         if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -169,7 +169,7 @@ export default class SimpleNavigation extends Component {
         }
     }
 
-    // 切换组织的点击事件
+    // 切换企业的点击事件
     handleOrgListMenuClick = (e) => {
 
         const { key } = e
@@ -177,7 +177,7 @@ export default class SimpleNavigation extends Component {
         const { currentUserOrganizes = [] } = this.props
         const { id } = currentUserOrganizes
         const { dispatch, is_show_org_name } = this.props
-        //是否拥有查看成员入口
+        //是否拥有查看职员入口
         const isHasMemberView = () => {
             return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
         }
@@ -197,7 +197,7 @@ export default class SimpleNavigation extends Component {
         }
 
         switch (key) {
-            case '24': // 匹配团队成员
+            case '24': // 匹配团队职员
                 //isHasMemberView() && this.routingJump('/technological/organizationMember')
                 dispatch({
                     type: 'organizationMember/updateDatas',
@@ -205,8 +205,8 @@ export default class SimpleNavigation extends Component {
                         groupList: [], //全部分组
                         TreeGroupModalVisiblie: false, //树状分组是否可见
                         groupTreeList: [], //树状分组数据
-                        currentBeOperateMemberId: '', //当前被操作的成员id
-                        roleList: [], //当前组织角色列表
+                        currentBeOperateMemberId: '', //当前被操作的职员id
+                        roleList: [], //当前企业角色列表
                         menuSearchSingleSpinning: false, //获取分组负责人转转转
                     }
                 })
@@ -237,19 +237,19 @@ export default class SimpleNavigation extends Component {
                 this.props.updateStates({
                     simpleDrawerVisible: true,
                     simpleDrawerContent: <OrganizationMember />,
-                    simpleDrawerTitle: '团队成员'
+                    simpleDrawerTitle: '团队职员'
 
                 });
                 break
                 break
-            case '23': // 匹配成员管理后台
+            case '23': // 匹配职员管理后台
                 //isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
                 const currentSelectOrganize = localStorage.getItem('currentSelectOrganize') ? JSON.parse(localStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(localStorage.getItem('currentSelectOrganize'))
                 const { name, member_join_model, member_join_content, logo, logo_id, id } = currentSelectOrganize
                 dispatch({
                     type: 'organizationManager/updateDatas',
                     payload: {
-                        currentOrganizationInfo: { //组织信息
+                        currentOrganizationInfo: { //企业信息
                             name,
                             member_join_model,
                             member_join_content,
@@ -260,7 +260,7 @@ export default class SimpleNavigation extends Component {
                         },
                         content_tree_data: [], //可访问内容
                         function_tree_data: [],
-                        orgnization_role_data: [], //组织角色数据
+                        orgnization_role_data: [], //企业角色数据
                         project_role_data: [], //项目角色数据
                         tabSelectKey: '1',
                         // permission_data: [], //权限数据
@@ -300,7 +300,7 @@ export default class SimpleNavigation extends Component {
                 });
 
                 break
-            case '22': // 匹配邀请成员加入弹框显示
+            case '22': // 匹配邀请职员加入弹框显示
                 checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
                 break
             case '20': // 匹配用户设置
@@ -339,10 +339,10 @@ export default class SimpleNavigation extends Component {
             case 'subShowSimple':
                 this.handleMode
                 break
-            case '10': // 创建或加入新组织
+            case '10': // 创建或加入新企业
                 this.setCreateOrgnizationOModalVisable()
                 break
-            case '0': // 匹配全部组织
+            case '0': // 匹配全部企业
 
                 this.setState({
                     is_disabled: false
@@ -386,7 +386,7 @@ export default class SimpleNavigation extends Component {
                 this.logout(e)
                 break
 
-            default: // 其他组织的切换
+            default: // 其他企业的切换
 
                 this.seeMapAuthority(e)
 
@@ -461,7 +461,7 @@ export default class SimpleNavigation extends Component {
 
     }
 
-    // 是否显示全部组织
+    // 是否显示全部企业
     handleShowAllOrg(checked) {
         const { dispatch, is_show_org_name, is_all_org } = this.props
         const { is_disabled } = this.state
@@ -495,7 +495,7 @@ export default class SimpleNavigation extends Component {
 
     }
     render() {
-        //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+        //currentUserOrganizes currentSelectOrganize企业列表和当前企业
         const {
             menuList = [],
             naviHeadTabIndex = {},
@@ -510,7 +510,7 @@ export default class SimpleNavigation extends Component {
         const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
         const { logo, id } = currentSelectOrganize
 
-        //是否拥有查看成员入口
+        //是否拥有查看职员入口
         const isHasMemberView = () => {
             return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
         }
@@ -539,7 +539,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.team}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
-                                        <span className={indexStyles.middle_text}>团队成员</span>
+                                        <span className={indexStyles.middle_text}>团队职员</span>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -552,7 +552,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.bank}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
-                                        <span className={indexStyles.middle_text}>组织管理后台</span>
+                                        <span className={indexStyles.middle_text}>企业管理后台</span>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -565,7 +565,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.addUsers}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
-                                        <span className={indexStyles.middle_text}>邀请成员加入</span>
+                                        <span className={indexStyles.middle_text}>邀请职员加入</span>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -600,7 +600,7 @@ export default class SimpleNavigation extends Component {
                     >
                         {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
                         <Menu.Item key="subShowOrgName">
-                            <span>显示组织名称
+                            <span>显示企业名称
                       <Switch
                                     style={{ display: 'inline-block', marginLeft: 8 }}
                                     onClick={(checked) => { this.handleShowAllOrg(checked) }}
@@ -659,7 +659,7 @@ export default class SimpleNavigation extends Component {
                     <Menu.Item key="0" className={indexStyles.org_name}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <img src={linxiLogo} className={indexStyles.org_img} />
-                            <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
+                            <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部企业</span>
                         </div>
                     </Menu.Item>
                     {currentUserOrganizes.map((value, key) => {

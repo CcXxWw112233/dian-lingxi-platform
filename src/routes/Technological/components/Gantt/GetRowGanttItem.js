@@ -133,7 +133,7 @@ export default class GetRowGanttItem extends Component {
       </Menu>
     )
   }
-  // 过滤项目成员
+  // 过滤项目职员
   setCurrentSelectedProjectMembersList = ({ board_id }) => {
     const { about_user_boards = [] } = this.props
     const users = (about_user_boards.find(item => item.board_id == board_id) || {}).users

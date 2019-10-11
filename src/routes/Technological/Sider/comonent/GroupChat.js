@@ -37,7 +37,7 @@ export default class GroupChat extends React.Component {
   render(){
     const avatar = 'http://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/2018-11-13/172f2c924443a267cea532150e76d344.jpg'
     const { collapsed, itemValue = {} } = this.props
-    const { id, type } = itemValue// type 0组织 1 人
+    const { id, type } = itemValue// type 0企业 1 人
     const { isShowBottDetail, ConfirmInfoOut_1_bott_Id } = this.state
 
     return(
@@ -48,7 +48,7 @@ export default class GroupChat extends React.Component {
             <div className={indexStyles.badge}></div>
           </div>
           <div className={indexStyles.contain_3_item_top_middle}>
-            <div className={indexStyles.contain_3_item_top_middle_top}>这是组织或者项目或者成员</div>
+            <div className={indexStyles.contain_3_item_top_middle_top}>这是企业或者项目或者成员</div>
             <div className={indexStyles.contain_3_item_top_middle_bott}>最新的一条消息最新的一条消息</div>
           </div>
           {type=='0'?(

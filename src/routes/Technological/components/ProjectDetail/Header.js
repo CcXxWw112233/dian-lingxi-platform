@@ -206,7 +206,7 @@ export default class Header extends React.Component {
   }
 
   //出现confirm-------------end
-  //添加项目组成员操作
+  //添加项目组职员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
@@ -420,8 +420,8 @@ export default class Header extends React.Component {
       type: 'projectDetailFile/updateDatas',
       payload: {
         fileList: new_fileList_,
-         filedata_1: new_filedata_1_, 
-         isInAddDirectory: true
+        filedata_1: new_filedata_1_,
+        isInAddDirectory: true
       }
     })
   }
@@ -701,6 +701,7 @@ export default class Header extends React.Component {
     }
   }
   handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
+
     const { board_id, board_id: content_id } = this.getFieldFromProjectDetailInfoData('board_id')
     const content_type = 'board'
     const privilege_code = type
@@ -809,7 +810,7 @@ export default class Header extends React.Component {
         {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
           <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={indexStyle.elseProjectMemu}>
-              邀请成员加入
+              邀请职员加入
             </div>
           </Menu.Item>
         )}
@@ -818,8 +819,11 @@ export default class Header extends React.Component {
           // style={{marginLeft: '-35px'}}
           >
             <VisitControl
+              invitationType="2"
+              invitationId={board_id}
               board_id={board_id}
               type="board_list"
+              invitationOrg={localStorage.getItem('OrganizationId')}
               popoverPlacement={'leftTop'}
               isPropVisitControl={is_privilege == '0' ? false : true}
               principalList={new_projectParticipant}
@@ -1142,9 +1146,9 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} />
-        <ShowAddMenberModal  addMenbersInProject={this.addMenbersInProject}  show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
-        <AddModalForm  board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
+        <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} invitationType='1' invitationId={board_id} />
+        <ShowAddMenberModal addMenbersInProject={this.addMenbersInProject} show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <AddModalForm board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
       </div>
     )
   }

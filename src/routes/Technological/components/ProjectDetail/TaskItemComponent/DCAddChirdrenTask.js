@@ -195,7 +195,7 @@ export default class DCAddChirdrenTask extends React.Component {
           const { card_id, card_name, due_time, executors = [] } = value
           const { user_id } = executors[0] || {}
           return (
-            <DCAddChirdrenTaskItem  chirldTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem chirldTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
@@ -215,8 +215,16 @@ export default class DCAddChirdrenTask extends React.Component {
               </div>
               <div style={{ display: isShowUserCalendar ? 'flex' : 'none' }} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
+                  <DCMenuItemOne
+                    deleteExcutor={this.deleteExcutor.bind(this)}
+                    currentExecutor={executor}
+                    execusorList={data}
+                    setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                    isInvitation={false} />
                 }>
+                  {/* <Dropdown overlay={
+                  <MenuSearchPartner />
+                }> */}
                   {executor.user_id ? (
                     <Tooltip title={executor.full_name || '佚名'}>
                       {/*{imgOrAvatar(executor.avatar)}*/}

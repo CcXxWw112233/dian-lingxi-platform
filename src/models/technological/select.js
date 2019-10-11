@@ -50,7 +50,7 @@ export const selectNewsDynamicListOriginal = state => state[(`newsDynamic`)].dat
 export const selectGroupList = state => state[(`organizationMember`)].datas.groupList //
 
 
-//组织
+//企业
 export const selectCurrentUserOrganizes = state => state[(`organizationMember`)].datas.currentUserOrganizes //
 export const selectCurrentSelectOrganize = state => state[(`organizationMember`)].datas.currentSelectOrganize //
 

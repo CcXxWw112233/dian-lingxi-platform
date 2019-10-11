@@ -57,7 +57,7 @@ export default class PersonNews extends React.Component {
     });
   }
 
-  //创建或加入组织
+  //创建或加入企业
   setCreateOrgnizationOModalVisable() {
     this.setState({
       createOrganizationVisable: !this.state.createOrganizationVisable
@@ -175,7 +175,7 @@ export default class PersonNews extends React.Component {
     transWidth = isShowBottDetail ? transWidth - siderRightWidth : transWidth;
 
     const { datas = {} } = this.props.model;
-    const { currentUserOrganizes = [], currentSelectOrganize = {} } = datas; //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const { currentUserOrganizes = [], currentSelectOrganize = {} } = datas; //currentUserOrganizes currentSelectOrganize企业列表和当前企业
     const { current_org = {}, name, avatar } = localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
       : {};

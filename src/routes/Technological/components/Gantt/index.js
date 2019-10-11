@@ -176,7 +176,7 @@ class Gantt extends Component {
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
     const group_index_card_no_times_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
-    const schedule_cards_has_this = group_index_cards_index != -1  //排期任务是否含有该条
+    const schedule_cards_has_this = group_index_cards_index != -1 //排期任务是否含有该条
 
     // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
 
@@ -565,6 +565,15 @@ class Gantt extends Component {
       })
     }
 
+    const fileDetailModalDatas = {
+      ...this.props,
+      ...CreateTaskProps,
+      ...FileModuleProps,
+      previewFileModalVisibile,
+      updateDatasTask,
+      updateDatasFile
+    }
+
     return (
       <div>
         <GanttFace
@@ -574,8 +583,9 @@ class Gantt extends Component {
           gantt_board_id={gantt_board_id}
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
           is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
+          fileDetailModalDatas={fileDetailModalDatas}
         />
-        <FileDetailModal
+        {/* <FileDetailModal
           {...this.props}
           {...CreateTaskProps}
           {...FileModuleProps}
@@ -586,7 +596,7 @@ class Gantt extends Component {
           updateDatasFile={updateDatasFile}
           updateTaskDatas={updateDatasTask}
           updateFileDatas={updateDatasFile}
-        />
+        /> */}
 
         <TaskDetailModal
           {...this.props}

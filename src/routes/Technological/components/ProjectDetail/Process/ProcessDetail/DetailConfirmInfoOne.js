@@ -9,6 +9,7 @@ import { timeToTimestamp, timestampToTimeNormal } from "../../../../../../utils/
 import Cookies from "js-cookie";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import AvatarComps from '../../../../../../components/avatarMore'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const { RangePicker } = DatePicker;
 
@@ -84,6 +85,8 @@ export default class DetailConfirmInfoOne extends React.Component {
     })
   }
   setAssignees(data) { //替换掉当前操作人
+    console.log(data, 'pppp');
+
     const { datas: { processEditDatas = [], projectDetailInfoData = [], processInfo = {} } } = this.props.model
 
     const { itemKey } = this.props
@@ -97,6 +100,8 @@ export default class DetailConfirmInfoOne extends React.Component {
       if (assignees[i].user_id === currentUserId) {
         assignees[i] = data[0]
         willSetAssignee = data[0]
+        // assignees[i] = data.selectedKeys[0]
+        // willSetAssignee = data.selectedKeys[0]
         break;
       }
     }
@@ -144,10 +149,12 @@ export default class DetailConfirmInfoOne extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { datas: { processEditDatas, projectDetailInfoData = [], processInfo = {}, relations_Prefix } } = this.props.model
-    const { itemKey, itemValue } = this.props //所属列表位置
+    const { itemKey, itemValue, invitationType } = this.props //所属列表位置
     const { board_id } = projectDetailInfoData
-    const { curr_node_sort, status } = processInfo //当前节点 status 1/2/3 运行中/终止/结束
+    const { curr_node_sort, status, curr_node_id, } = processInfo //当前节点
     const { id, name, description, assignees = [], assignee_type, deadline_type, deadline, deadline_value, is_workday, sort, enable_opinion, enable_revocation } = processEditDatas[itemKey]
+    const invitationId = processInfo.id
+
     // console.log( processEditDatas[itemKey])
     //推进人来源
     const users = projectDetailInfoData.data
@@ -162,7 +169,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     let compare_user_arr = []
     if (assignee_type == '1') {
       compare_user_arr = users
-      if(typeof assignees == 'Array') {
+      if (typeof assignees == 'Array') {
         currentUserCanReback = assignees.findIndex(item => item.user_id == currentUserId) != -1 //在任何人的情况下，谁完成谁才能撤回
       }
     } else {
@@ -282,7 +289,7 @@ export default class DetailConfirmInfoOne extends React.Component {
           if (Number(curr_node_sort) - Number(sort) === 1) { //相邻才能有撤回
             container = (
               <div>
-                {enable_revocation === '1' && currentUserCanReback? (
+                {enable_revocation === '1' && currentUserCanReback ? (
                   <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
                     <Button onClick={this.setOpinionModalVisible.bind(this, '0')} style={{ color: 'red' }}>撤回</Button>
                   </div>
@@ -293,9 +300,24 @@ export default class DetailConfirmInfoOne extends React.Component {
         } else if (Number(sort) === Number(curr_node_sort)) {
           container = (
             <div className={indexStyles.ConfirmInfoOut_1_bott_right_operate}>
-              <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users}
-                filterUserArray={assigneesArray}
-                setAssignees={this.setAssignees.bind(this)} />}>
+              {/* <Dropdown overlay={<MenuSearchMultiple noMutiple={true} usersArray={users} */}
+              <Dropdown overlay={
+                <MenuSearchMultiple
+                  noMutiple={true}
+                  usersArray={users}
+                  filterUserArray={assigneesArray}
+                  setAssignees={this.setAssignees.bind(this)} />
+                // <MenuSearchPartner
+                //   invitationType='8'
+                //   invitationId={invitationId}
+                //   rela_Condition={curr_node_id}
+                //   listData={users}
+                //   keyCode={'user_id'}
+                //   searchName={'name'}
+                //   chirldrenTaskChargeChange={this.setAssignees.bind(this)}
+                //   board_id={board_id}
+                // />
+              }>
                 {assignee_type !== '1' ? (<div>重新指派推进人</div>) : (<div></div>)}
               </Dropdown>
               <Button type={'primary'} onClick={this.setOpinionModalVisible.bind(this, '1')}>完成</Button>

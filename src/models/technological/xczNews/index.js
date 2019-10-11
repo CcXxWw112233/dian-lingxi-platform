@@ -1,10 +1,10 @@
 import { routerRedux } from "dva/router";
 
-import { 
-  getHotTabs, 
-  getHotArticles, 
-  getHighRiseArticles, 
-  getAuthorityArticles, 
+import {
+  getHotTabs,
+  getHotArticles,
+  getHighRiseArticles,
+  getAuthorityArticles,
   getDataBase,
   getAreas,
   getAreasArticles,
@@ -40,6 +40,7 @@ export default {
     highRiseFlag: true, // 高层的开关
     authorityFlag: true, // 权威的开关
     dataBaseFlag: true, // 资料库的开关
+    areaFlag: true, // 地区的开关
     total: 10, // 默认文章的总数
     page_size: 10, // 默认显示10条
     page_no: 1, // 默认第一页
@@ -81,8 +82,8 @@ export default {
             cityValue: '', // 市级选择的value
             area_ids: '', // 地区对应的id 
             defaultCityValue: 'cityTown',
-            defaultProvinceValue: 'province', 
-            XczNewsOrganizationList: [], //有权限查看晓策志的组织
+            defaultProvinceValue: 'province',
+            XczNewsOrganizationList: [], //有权限查看晓策志的企业
           }
         })
         if (location.pathname.indexOf('/xczNews') != -1) {
@@ -93,19 +94,13 @@ export default {
               defaultArr: [],
             }
           })
-           
+
         }
         if (location.pathname.indexOf('/xczNews/hot') != -1) {
           dispatch({
             type: "getHotTabs",
             payload: {
-              
-            }
-          }),
-          dispatch({
-            type: "getHotArticles",
-            payload: {
-              
+
             }
           }),
           dispatch({
@@ -118,6 +113,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1
             }
           })
@@ -126,7 +122,7 @@ export default {
           dispatch({
             type: "getHighRiseArticles",
             payload: {
-              
+
             }
           }),
           dispatch({
@@ -139,6 +135,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -147,7 +144,7 @@ export default {
           dispatch({
             type: "getAuthorityArticles",
             payload: {
-               
+
             }
           }),
           dispatch({
@@ -160,6 +157,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -168,21 +166,21 @@ export default {
           dispatch({
             type: "getDataBase",
             payload: {
-              
-            }
-          }),
-          dispatch({
-            type: "getDataBaseArticlesList",
-            payload: {
 
             }
           }),
-          dispatch({
-            type: "getDataBaseDetail",
-            payload: {
+            dispatch({
+              type: "getDataBaseArticlesList",
+              payload: {
 
-            }
-          })
+              }
+            }),
+            dispatch({
+              type: "getDataBaseDetail",
+              payload: {
+
+              }
+            })
           dispatch({
             type: "updateDatas",
             payload: {
@@ -193,6 +191,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: true,
               page_no: 1,
             }
           })
@@ -204,9 +203,9 @@ export default {
 
             }
           }),
-          dispatch({
-            type: "getAreasArticles",
-            payload: {
+            dispatch({
+              type: "getAreasArticles",
+              payload: {
 
             }
           }),
@@ -221,6 +220,7 @@ export default {
               highRiseFlag: true,
               authorityFlag: true, // 权威的开关
               dataBaseFlag: true, // 资料库的开关
+              areaFlag: false,
               page_no: 1
             }
           })
@@ -228,13 +228,13 @@ export default {
       })
     },
   },
-  effects: { 
+  effects: {
     // 获取热点tabs
     * getHotTabs({ payload = {} }, { select, call, put }) {
       // console.log(payload, 'payload.....')
       // console.log(2222222)
-      const res = yield call(getHotTabs, {...payload})
-      if(!isApiResponseOk(res)) {
+      const res = yield call(getHotTabs, { ...payload })
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -249,8 +249,8 @@ export default {
 
     // 获取热点文章
     * getHotArticles({ payload = {} }, { select, call, put }) {
-      const res = yield call(getHotArticles, {...payload});
-      if(!isApiResponseOk(res)) {
+      const res = yield call(getHotArticles, { ...payload });
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -265,8 +265,8 @@ export default {
 
     // 获取高层的文章
     * getHighRiseArticles({ payload = {} }, { select, call, put }) {
-      const res = yield call(getHighRiseArticles, {...payload});
-      if(!isApiResponseOk(res)) {
+      const res = yield call(getHighRiseArticles, { ...payload });
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -281,7 +281,7 @@ export default {
 
     // 获取权威的文章
     * getAuthorityArticles({ payload = {} }, { select, call, put }) {
-      const res = yield call(getAuthorityArticles, {...payload});
+      const res = yield call(getAuthorityArticles, { ...payload });
       // console.log(res)
       yield put({
         type: 'updateDatas',
@@ -293,8 +293,8 @@ export default {
 
     // 获取资料库的数据
     * getDataBase({ payload = {} }, { select, call, put }) {
-      const res = yield call(getDataBase, {...payload});
-      if(!isApiResponseOk(res)) {
+      const res = yield call(getDataBase, { ...payload });
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -311,68 +311,68 @@ export default {
     * getAreas({ payload = {} }, { select, call, put }) {
       const provinceData = yield select((state) => getSelectState(state, 'provinceData'))
       const cityData = yield select((state) => getSelectState(state, 'cityData'))
-      const res = yield call(getAreas, {...payload});
-      if(!isApiResponseOk(res)) {
+      const res = yield call(getAreas, { ...payload });
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
-     // 地区数据结构的处理
-     let newCityObj = res.data[0] && res.data[0].child
-     // console.log(newCityObj)
-     for (let key in newCityObj) {
-         // console.log(newCityObj[key])
-         // {id: "110000", name: "北京市", deep: "1", parent_id: "0", child: Array(2)}
-         // 这里遍历的key是第一层数据的key 有: id, name, child
-         let tempArr = []; // 临时的数组保存起来
-         let provinceName = (newCityObj[key]).name // 每次遍历得到的省级名称 北京市、江苏省....
-         let provinceId = (newCityObj[key]).id // 每次遍历得到省级的Id
-         let tempProvince = {}; // 中间省级变量
-         let tempCity = {}; // 中间城市变量
-         // 将省级名称以及id连接起来
-         tempProvince = {
-             id: provinceId,
-             name: provinceName
-         }
-         // 将连接起来的新结构放进数组中
-         provinceData.push(tempProvince) // 把每一个省级名称都添加进去 [{}, {},....]
-         let children = newCityObj[key].child // 取出第二层的市级数据
-         // 想要的数据结构 -> [{ proviceName: '北京市', cityData: [{ id: 1, name: '直辖市' }] }]
-         for (let index = 0; index < children.length; index++) {
-            //  console.log(children[index])
-             let childName = children[index].name; // 每一个市级的名称
-             let childId = children[index].id // 每一个市级的id
-             let parentId = children[index].parent_id // 每一个市级对应的父级id
-             // 将市级名称以及id连接起来
-             tempCity = {
-                 id: childId,
-                 name: childName,
-                 parentId: parentId
-             }
-             tempArr.push(tempCity) // 把新连接的数据放进数组中
-             cityData[(newCityObj[key]).id]=tempArr // 保存在省级名称的的级别下面 湖南省: ["长沙市", ...]
-         }
-         
-     }
-     yield put({
-       type: 'updateDatas',
-       payload: {
-         cityList: newCityObj,
-         provinceData: provinceData,
-         cityData: cityData
-       }
-     })
+      // 地区数据结构的处理
+      let newCityObj = res.data[0] && res.data[0].child
+      // console.log(newCityObj)
+      for (let key in newCityObj) {
+        // console.log(newCityObj[key])
+        // {id: "110000", name: "北京市", deep: "1", parent_id: "0", child: Array(2)}
+        // 这里遍历的key是第一层数据的key 有: id, name, child
+        let tempArr = []; // 临时的数组保存起来
+        let provinceName = (newCityObj[key]).name // 每次遍历得到的省级名称 北京市、江苏省....
+        let provinceId = (newCityObj[key]).id // 每次遍历得到省级的Id
+        let tempProvince = {}; // 中间省级变量
+        let tempCity = {}; // 中间城市变量
+        // 将省级名称以及id连接起来
+        tempProvince = {
+          id: provinceId,
+          name: provinceName
+        }
+        // 将连接起来的新结构放进数组中
+        provinceData.push(tempProvince) // 把每一个省级名称都添加进去 [{}, {},....]
+        let children = newCityObj[key].child // 取出第二层的市级数据
+        // 想要的数据结构 -> [{ proviceName: '北京市', cityData: [{ id: 1, name: '直辖市' }] }]
+        for (let index = 0; index < children.length; index++) {
+          //  console.log(children[index])
+          let childName = children[index].name; // 每一个市级的名称
+          let childId = children[index].id // 每一个市级的id
+          let parentId = children[index].parent_id // 每一个市级对应的父级id
+          // 将市级名称以及id连接起来
+          tempCity = {
+            id: childId,
+            name: childName,
+            parentId: parentId
+          }
+          tempArr.push(tempCity) // 把新连接的数据放进数组中
+          cityData[(newCityObj[key]).id] = tempArr // 保存在省级名称的的级别下面 湖南省: ["长沙市", ...]
+        }
+
+      }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cityList: newCityObj,
+          provinceData: provinceData,
+          cityData: cityData
+        }
+      })
 
     },
 
-     // 获取点击时候地区的文章
-     * getAreasArticles({ payload = {} }, { select, call, put }) {
+    // 获取点击时候地区的文章
+    * getAreasArticles({ payload = {} }, { select, call, put }) {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
       const area_ids = yield select((state) => getSelectState(state, 'area_ids'))
       const page_size = yield select((state) => getSelectState(state, 'page_size'))
       const page_no = yield select((state) => getSelectState(state, 'page_no'))
       const defaultArr = yield select((state) => getSelectState(state, 'defaultArr'))
       const res = yield call(getAreasArticles, { page_size, page_no, area_ids });
-      if(!isApiResponseOk(res)) {
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -392,7 +392,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          is_onscroll_do_paging: res.data.records.length < page_size ? false: true
+          is_onscroll_do_paging: res.data.records.length < page_size ? false : true
         }
       })
 
@@ -403,7 +403,7 @@ export default {
       const keyword = yield select((state) => getSelectState(state, 'areaSearchValue'))
       const searchId = yield select((state) => getSelectState(state, 'searchId'))
       const res = yield call(getAreasSearch, { keyword });
-      if(!isApiResponseOk(res)) {
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -419,9 +419,9 @@ export default {
     // 获取地区定位的ip
     * getAreasLocation({ payload = {} }, { select, call, put }) {
       const locationDataObj = yield select((state) => getSelectState(state, 'locationDataObj'))
-      if(locationDataObj && locationDataObj.length) return
+      if (locationDataObj && locationDataObj.length) return
       const res = yield call(getAreasLocation, {});
-      if(!isApiResponseOk(res)) {
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -460,16 +460,16 @@ export default {
       const page_size = yield select((state) => getSelectState(state, 'page_size'))
       const page_no = yield select((state) => getSelectState(state, 'page_no'))
       const defaultArr = yield select((state) => getSelectState(state, 'defaultArr'))
-      
+
       const params = {
         category_ids, keywords, page_size, page_no
       }
-      if(path.indexOf('/technological/xczNews/hot') != -1) {
+      if (path.indexOf('/technological/xczNews/hot') != -1) {
         params.hotspot_id = hotspot_id
       }
-      if(searchList && searchList.length) return
-      const res = yield call(getHeaderSearch, {...params, ...payload})
-      if(!isApiResponseOk(res)) {
+      if (searchList && searchList.length) return
+      const res = yield call(getHeaderSearch, { ...params, ...payload })
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -492,7 +492,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          is_onscroll_do_paging: res.data.records.length < page_size ? false: true,
+          is_onscroll_do_paging: res.data.records.length < page_size ? false : true,
         }
       })
     },
@@ -500,9 +500,9 @@ export default {
     // 获取所有的文章列表
     * getCommonArticlesList({ payload = {} }, { select, call, put }) {
       const searchList = yield select((state) => getSelectState(state, 'searchList'))
-      if(searchList && searchList.length) return
+      if (searchList && searchList.length) return
       const res = yield call(getCommonArticlesList)
-      if(!isApiResponseOk(res)) {
+      if (!isApiResponseOk(res)) {
         message.error(res.message)
         return
       }
@@ -514,18 +514,18 @@ export default {
         },
       })
     },
-    // 获取有权限查看的组织列表
-    * getXczNewsQueryUser({ payload = {} }, { select, call, put }) { 
+    // 获取有权限查看的企业列表
+    * getXczNewsQueryUser({ payload = {} }, { select, call, put }) {
       let res = yield call(getXczNewsQueryUser, payload)
-      
-      if(isApiResponseOk(res)) {
+
+      if (isApiResponseOk(res)) {
         yield put({
-            type: 'updateDatas',
-            payload: {
-                XczNewsOrganizationList: res.data
-            }
-          })
-      }else {
+          type: 'updateDatas',
+          payload: {
+            XczNewsOrganizationList: res.data
+          }
+        })
+      } else {
 
       }
     },

@@ -38,7 +38,7 @@ export async function removeMembersWithGroup(data) {
   });
 }
 
-//将访客加入组织
+//将访客加入企业
 export async function joinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/visitor/invite`,
@@ -58,7 +58,7 @@ export async function removeUserVisitor(data) {
   });
 }
 
-//给成员设置分组
+//给职员设置分组
 export async function setMemberWitchGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/member/set`,
@@ -155,7 +155,7 @@ export async function inviteMemberToGroup(data) {
   });
 }
 
-//查询当前用户所拥有或所属组织
+//查询当前用户所拥有或所属企业
 export async function getCurrentUserOrganizes(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
@@ -164,7 +164,7 @@ export async function getCurrentUserOrganizes(params) {
   }, { isNotLoading: true} );
 }
 
-// 切换组织
+// 切换企业
 export async function changeCurrentOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/changecurrentorg/${data.org_id}`,
@@ -173,7 +173,7 @@ export async function changeCurrentOrg(data) {
   });
 }
 
-//查询当前组织角色
+//查询当前企业角色
 export async function getCurrentOrgRole(params) {
   return request({
     url: `${REQUEST_DOMAIN}/role/query`,
@@ -184,7 +184,7 @@ export async function getCurrentOrgRole(params) {
     }      
   });
 }
-//给成员设置角色
+//给职员设置角色
 export async function setMemberRole(data) {
   return request({
     url: `${REQUEST_DOMAIN}/role/set`,
@@ -194,7 +194,7 @@ export async function setMemberRole(data) {
 }
 
 
-//模糊查询组织列表
+//模糊查询企业列表
 export async function getSearchOrganizationList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/search`,
@@ -203,7 +203,7 @@ export async function getSearchOrganizationList(params) {
   }, { isNotLoading: true} );
 }
 
-//创建组织
+//创建企业
 export async function createOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
@@ -212,7 +212,7 @@ export async function createOrganization(data) {
   });
 }
 
-//更新组织
+//更新企业
 export async function updateOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
@@ -224,7 +224,7 @@ export async function updateOrganization(data) {
   });
 }
 
-//申请加入组织
+//申请加入企业
 export async function applyJoinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/apply`,
@@ -233,7 +233,7 @@ export async function applyJoinOrganization(data) {
   });
 }
 
-//邀请成员加入组织
+//邀请职员加入企业
 export async function inviteJoinOrganization(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite`,
@@ -245,7 +245,7 @@ export async function inviteJoinOrganization(data) {
   });
 }
 
-//上传组织logo
+//上传企业logo
 export async function uploadOrganizationLogo(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/logo_upload`,
@@ -254,7 +254,7 @@ export async function uploadOrganizationLogo(data) {
   });
 }
 
-//获取组织成员信息
+//获取企业职员信息
 export async function getMemberInfo(params) {
   return request({
     url: `${REQUEST_DOMAIN}/member`,
@@ -266,7 +266,7 @@ export async function getMemberInfo(params) {
   });
 }
 
-//获取某个分组的成员 => 用于设置分组负责人
+//获取某个分组的职员 => 用于设置分组负责人
 export async function getMembersInOneGroup(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group/members`,
@@ -277,7 +277,7 @@ export async function getMembersInOneGroup(params) {
     }
   }, {isNotLoading: true});
 }
-//获取某个分组的成员 => 用于设置分组负责人
+//获取某个分组的职员 => 用于设置分组负责人
 export async function setGroupLeader(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/leader/set`,
@@ -286,7 +286,7 @@ export async function setGroupLeader(data) {
   });
 }
 
-//组织成员获取权限列表 =>获取自己在组织中的权限--已废弃
+//企业职员获取权限列表 =>获取自己在企业中的权限--已废弃
 export async function getOrganizationMemberPermissions(params) {
   return request({
     url: `${REQUEST_DOMAIN}/permissions/member`,
@@ -295,7 +295,7 @@ export async function getOrganizationMemberPermissions(params) {
   });
 }
 
-//获取用户所有组织所有权限
+//获取用户所有企业所有权限
 export async function getUserOrgPermissions(params) {
   return request({
     url: `${REQUEST_DOMAIN}/permissions/org`,
@@ -312,7 +312,7 @@ export async function getUserBoardPermissions(params) {
   }, {isNotLoading: true});
 }
 
-// 用户设置是否显示组织名称
+// 用户设置是否显示企业名称
 export async function getSetShowOrgName(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/set`,

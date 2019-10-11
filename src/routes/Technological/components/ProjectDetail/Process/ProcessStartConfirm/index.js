@@ -109,21 +109,22 @@ export default class ProcessStartConfirm extends React.Component {
     const filterItem = (value, key) => {
       const { node_type } = value
       let containner = (<div></div>)
+      const invitationType = '7'
       switch (node_type) {
         case '1':
-          containner = (<ConfirmInfoOne itemKey={key} itemValue={value} />)
+          containner = (<ConfirmInfoOne itemKey={key} itemValue={value} invitationType={invitationType} />)
           break
         case '2':
-          containner = (<ConfirmInfoTwo itemKey={key} itemValue={value} />)
+          containner = (<ConfirmInfoTwo itemKey={key} itemValue={value} invitationType={invitationType} />)
           break
         case '3':
-          containner = (<ConfirmInfoThree itemKey={key} itemValue={value} />)
+          containner = (<ConfirmInfoThree itemKey={key} itemValue={value} invitationType={invitationType} />)
           break
         case '4':
-          containner = (<ConfirmInfoFour itemKey={key} itemValue={value} />)
+          containner = (<ConfirmInfoFour itemKey={key} itemValue={value} invitationType={invitationType} />)
           break
         case '5':
-          containner = (<ConfirmInfoFive itemKey={key} itemValue={value} />)
+          containner = (<ConfirmInfoFive itemKey={key} itemValue={value} invitationType={invitationType} />)
           break
         default:
           containner = (<div></div>)

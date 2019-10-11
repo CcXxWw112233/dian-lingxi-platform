@@ -262,7 +262,7 @@ class BoardFiles extends Component {
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {
-                    //全组织或者当前组织
+                    //全企业或者当前企业
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
 
                       return org.board_list && org.board_list.length > 0 && (

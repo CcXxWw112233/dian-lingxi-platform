@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
-import { Input, Menu, Dropdown, message } from 'antd'
+import { Input, Menu, Dropdown, message, Tooltip } from 'antd'
 import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
 import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
@@ -150,10 +150,10 @@ export default class FolderItem extends Component {
         } = data;
         const { dispatch } = this.props
         setBoardIdStorage(board_id)
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-            return false;
-        }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+        //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+        //     return false;
+        // }
 
         dispatch({
             type: 'workbenchFileDetail/getCardCommentListAll',
@@ -266,7 +266,7 @@ export default class FolderItem extends Component {
 
     render() {
         const { itemValue = {} } = this.props
-        const { name, id, type } = itemValue
+        const { name, id, type, is_privilege } = itemValue
         const { is_show_change, input_folder_value, local_name } = this.state
         return (
             <div>
@@ -284,7 +284,15 @@ export default class FolderItem extends Component {
                             <div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
                                 <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType({ type, local_name }) }}></div>
                                 <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{local_name}</div>
-
+                                {
+                                    !(is_privilege == '0') && (
+                                    <Tooltip title="已开启访问控制" placement="top">
+                                        <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
+                                        <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                                        </div>
+                                    </Tooltip>
+                                    )
+                                }
                                 <Dropdown overlay={this.renderOperateItemDropMenu()}>
                                     <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
                                 </Dropdown>

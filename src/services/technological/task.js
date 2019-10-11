@@ -233,7 +233,7 @@ export async function removeTaskTag(data) {
   });
 }
 
-// 移出项目成员
+// 移出项目职员
 export async function removeProjectMenbers(data) {
 
   return request({
@@ -342,7 +342,7 @@ export async function getCardDetail(params) {
     url: `${REQUEST_DOMAIN_BOARD}/card/detail/${params.id}`,
     method: 'GET',
     headers: createHeaderContentDataByCardId(params.id),
-    params
+    // params
   });
 }
 

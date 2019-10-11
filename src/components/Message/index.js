@@ -6,7 +6,7 @@ message.config({
   top: 50,
   duration: 3,
   maxCount: 1,
-  // getContainer:() => document.getElementsByClassName('page_style_1'),
+  getContainer: () => document.getElementById('message_mout_parent'),
 });
 
 notification.config({

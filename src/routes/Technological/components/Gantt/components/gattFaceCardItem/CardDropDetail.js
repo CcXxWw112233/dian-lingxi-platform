@@ -1,5 +1,6 @@
 import styles from './index.less'
 import React from 'react'
+import { Tooltip } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
@@ -7,7 +8,7 @@ import { timestampToTime, handleTimeStampToDate } from '@/utils/util.js'
 import { filterDueTimeSpan } from '../../ganttBusiness'
 
 const CardDropDetail = (props) => {
-    const { name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = props
+    const { is_privilege, name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = props
 
     const cal_time_span_params = {
         start_time, due_time, is_has_start_time, is_has_end_time, is_realize
@@ -24,7 +25,16 @@ const CardDropDetail = (props) => {
                     <CheckItem is_realize={is_realize} />
                 </div>
                 <div className={`${styles.card_item_name}`}>
-                    {`${name}`}
+									{`${name}`}
+									{
+										!(is_privilege == '0') && (
+											<Tooltip title="已开启访问控制" placement="top">
+													<span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', cursor: 'pointer', marginLeft: '5px' }}>
+													<span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+													</span>
+											</Tooltip>
+										)
+									}
                 </div>
                 <div>
                     <AvatarList users={executors} size={'small'} />

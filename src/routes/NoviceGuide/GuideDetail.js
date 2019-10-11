@@ -13,12 +13,12 @@ export default class GuideDetail extends React.Component {
   state={
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
-    operateType: '0', //0默认申请加入 ‘1’创建组织
+    operateType: '0', //0默认申请加入 ‘1’创建企业
     createButtonVisible: false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
     searchOrganizationList: [], //搜索列表
-    orgProperty: '1', //组织性质
+    orgProperty: '1', //企业性质
     spinning: false,
   }
   nameChange(e) {
@@ -36,7 +36,7 @@ export default class GuideDetail extends React.Component {
     }, () => {
       this.setState({
         stepContinueDisabled: this.state.operateType === '1'? flag : true,
-        createButtonVisible: this.state.operateType === '0'? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建组织，则隐藏
+        createButtonVisible: this.state.operateType === '0'? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建企业，则隐藏
         seachAreaVisible: this.state.operateType === '0'? !flag : false,
       })
 
@@ -96,7 +96,7 @@ export default class GuideDetail extends React.Component {
     const { name, id } = data
     this.setState({
       name,
-      org_id: id, //请求加入组织id
+      org_id: id, //请求加入企业id
       seachAreaVisible: false,
       stepContinueDisabled: false
     })
@@ -119,14 +119,14 @@ export default class GuideDetail extends React.Component {
           <img src={logo} />
         </div>
         <div className={indexStyles.contain2}>欢迎使用灵犀协作</div>
-        <div className={indexStyles.contain3}>查找并加入你的组织，轻松连接工作的伙伴与项目：</div>
+        <div className={indexStyles.contain3}>查找并加入你的企业，轻松连接工作的伙伴与项目：</div>
 
         <div className={indexStyles.contain4}>
 
           <div style={{position: 'relative'}}>
             <Input placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120, height: 40}}/>
             {createButtonVisible? (
-              <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
+              <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建企业</Button>) : ('')}
             {searchOrganizationList.length? (
               <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
                 <Spin spinning={spinning} size={'small'}>
@@ -137,7 +137,7 @@ export default class GuideDetail extends React.Component {
               </div>
             ):(
               <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
-                <div>未找到符合搜索条件的组织</div>
+                <div>未找到符合搜索条件的企业</div>
               </div>
             )}
 
@@ -147,7 +147,7 @@ export default class GuideDetail extends React.Component {
             ''
           ) : (
             <div>
-              {/*组织性质*/}
+              {/*企业性质*/}
               <Select style={{ height: 40, width: 350, marginTop: 16 }} value={orgProperty} size={'large'} placeholder={'请选择'} onChange={this.setOrgProperty.bind(this)}>
                 <Option value="1">投资商</Option>
                 <Option value="2">设计院</Option>
@@ -161,7 +161,7 @@ export default class GuideDetail extends React.Component {
           )}
 
           <Button type={operateType === '0'?'' : 'primary'} disabled={stepContinueDisabled} onClick={this.submitButton.bind(this)} style={{marginTop: 20, width: 208, height: 40}}>
-            {operateType === '0'? '申请加入' : '创建组织'}
+            {operateType === '0'? '申请加入' : '创建企业'}
           </Button>
         </div>
 

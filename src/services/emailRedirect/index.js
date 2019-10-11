@@ -10,7 +10,7 @@ export async function confirmEmail(params) {
   });
 }
 
-//点击邮件确认加入组织,验证
+//点击邮件确认加入企业,验证
 export async function confirmJoinORG(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/apply/email/confirm`,

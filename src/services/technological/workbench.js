@@ -141,7 +141,7 @@ export async function createMeeting(payload) {
   //flag: 2 //会议类型，全局调用时，值为：2
 }
 
-//获取当前组织的所有成员信息
+//获取当前企业的所有成员信息
 export async function getCurrentOrgAllMembers(params = {}) {
   
   return request({
@@ -154,7 +154,7 @@ export async function getCurrentOrgAllMembers(params = {}) {
   })
 }
 
-//获取当前组织的所有成员信息（经过访问控制）
+//获取当前企业的所有职员信息（经过访问控制）
 export async function getCurrentOrgAccessibleAllMembers(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN}/member/accessible/list`,
@@ -239,7 +239,7 @@ export async function getCurrentResponsibleTask() {
   })
 }
 
-//获取当前选择的项目的成员列表
+//获取当前选择的项目的职员列表
 export async function getCurrentSelectedProjectMembersList({projectId}) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,
@@ -291,7 +291,7 @@ export async function getProjectStarList(params) {
   });
 }
 
-//获取组织成员列表
+//获取企业职员列表
 export async function getOrgMembers(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group`,
@@ -345,7 +345,7 @@ export async function completeTask(data) {
   });
 }
 
-//获取当前组织下我上传的文档上传的文档
+//获取当前企业下我上传的文档上传的文档
 export async function getCurrentOrgFileUploads(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/uploading`,

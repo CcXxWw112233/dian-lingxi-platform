@@ -7,6 +7,7 @@ import MenuSearchMultiple from './MenuSearchMultiple'
 // import ConfirmInfoThreeThree from './ConfirmInfoThree_Three'
 import { timeToTimestamp } from "../../../../../../utils/util";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
+import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 import { connect } from 'dva'
 
 //里程碑确认信息
@@ -85,7 +86,15 @@ export default class ConfirmInfoThree extends React.Component {
       }
     })
   }
-  setAssignees(data) {
+  setAssignees = (data) => {
+    // chirldrenTaskChargeChange(data) {
+
+    // const { processEditDatas = {}, dispatch } = this.props
+    // const { itemKey } = this.props
+    // const str = data.selectedKeys.join(',')
+    // const new_processEditDatas = [...processEditDatas]
+    // new_processEditDatas[itemKey]['assignees'] = str
+
     const { processEditDatas = {}, dispatch } = this.props
     const { itemKey } = this.props
     const str = data.join(',')
@@ -99,6 +108,7 @@ export default class ConfirmInfoThree extends React.Component {
       }
     })
   }
+
   setIsShowBottDetail() {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
@@ -125,7 +135,7 @@ export default class ConfirmInfoThree extends React.Component {
     const { ConfirmInfoOut_1_bott_Id } = this.state
 
     const { processEditDatas = [], projectDetailInfoData = {}, relations_Prefix = [] } = this.props
-    const { itemKey } = this.props
+    const { itemKey, invitationType } = this.props
     const { board_id } = projectDetailInfoData
     const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
     //推进人来源
@@ -160,7 +170,18 @@ export default class ConfirmInfoThree extends React.Component {
         case '2':
           container = (
             <div>
-              <Dropdown overlay={<MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />}>
+              <Dropdown overlay={
+                <MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />
+
+                // <MenuSearchPartner
+                //   invitationType={invitationType}
+                //   invitationId={board_id}
+                //   listData={users}
+                //   keyCode={'user_id'}
+                //   searchName={'name'}
+                //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                //   board_id={board_id} />
+              }>
                 {assigneesArray.length ? (
                   <div style={{ display: 'flex' }}>
                     {assigneesArray.map((value, key) => {
