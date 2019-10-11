@@ -38,11 +38,21 @@ export default function request(options = {}, elseSet = {}) {
 
   const header_base_info = setRequestHeaderBaseInfo({ data, params, headers })
 
+  /***
+   * 用于打开分享的任务,文件,流程等详情的接口加上请求头
+   */
+  let headers_share = {}
+  if (window.location.hash.indexOf('/share_detailed')) {
+    headers_share = {
+      ShareLinkInfo: localStorage.getItem('shareLinkInfo')
+    }
+  }
+
   return new Promise((resolve, reject) => {
     axios({
       ...{
         url,
-        headers: { ...header, ...headers, ...header_base_info, },
+        headers: { ...header, ...headers, ...header_base_info, ...headers_share },
         method,
         params: {
           ...params,

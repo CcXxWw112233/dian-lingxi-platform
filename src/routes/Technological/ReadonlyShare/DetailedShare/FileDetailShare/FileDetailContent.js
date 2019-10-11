@@ -87,10 +87,10 @@ class FileDetailContent extends React.Component {
   }
 
   componentWillMount() {
-    const { datas: { filePreviewCommitPoints = [] } } = this.props.model
-    this.setState({
-      rects: filePreviewCommitPoints
-    })
+    // const { datas: { filePreviewCommitPoints = [] } } = this.props.model
+    // this.setState({
+    //   rects: filePreviewCommitPoints
+    // })
   }
 
   componentWillReceiveProps(nextProps) {

@@ -541,13 +541,12 @@ class FileDetailContent extends React.Component {
     // //获取参数
     // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
 
-    const { datas: { currentPreviewFileData: { file_id, board_id, } } } = this.props.model
-    console.log(this.props.model, 'dddd');
+    const { datas: { currentPreviewFileData: { version_id, board_id, } } } = this.props.model
 
     const payload = {
       board_id: board_id,
       rela_type: '3',
-      rela_id: file_id,
+      rela_id: version_id,  //文件版本id
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -1347,8 +1346,6 @@ class FileDetailContent extends React.Component {
       is_edit_version_description,
       editValue,
     }
-    console.log(this.props, 'dddd');
-
     const { datas: { currentPreviewFileData: { is_shared } } } = this.props.model
 
     return (

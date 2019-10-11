@@ -9,10 +9,9 @@ export default class index extends React.Component {
 
     render() {
         return (
-            <FileDetailModal {...this.props} visible={true} />
-
+            <TaskDetailShare />
+            // <FileDetailModal {...this.props} visible={true} />
             // <ProccessDetailShare />
-            // <TaskDetailShare />
         )
     }
 }

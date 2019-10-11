@@ -8,6 +8,8 @@ import { verificationShareLink, } from "../../../../services/technological/workb
 import { MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
 import { routerRedux } from "dva/router";
 import { connect } from 'dva';
+import md5 from 'md5'
+import { Base64 } from 'js-base64';
 
 @connect(({ AccessInterface }) => ({
     AccessInterface
@@ -22,6 +24,12 @@ export default class AccessInterface extends React.Component {
             password: ''
         }
         this.verificationShareInfo(params)
+    }
+
+    createRandomCode = (number) => {
+        var random = Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, number - 1));
+
+        return random;
     }
 
     verificationShareInfo(params) {
@@ -40,9 +48,52 @@ export default class AccessInterface extends React.Component {
             password: password,
             token: token,
         }
-        verificationShareLink(payload).then(({ code, message }) => {
+        verificationShareLink(payload).then(({ code, message, data }) => {
+
+            console.log(data, 'dddd');
+
             if (code === '0') {
                 if (check_type === '2') {  //2=验证密码 才跳转
+
+                    const hash = data.hash
+                    //生成10位数的随机码
+                    const randomCode = this.createRandomCode(10)
+
+                    //未来时间 = 当前时间 + 1分钟, 转成字符串, 截取10位(秒级)
+                    var newDate = new Date;
+                    const futureDate = newDate.setMinutes(newDate.getMinutes() + 1).toString();
+                    const futureTimestamp = futureDate.substr(0, 10);
+
+                    // hash randomCode timestamp 按照顺序拼接
+                    let arrNew = new Array()
+                    arrNew.push(hash)
+                    arrNew.push(randomCode)
+                    arrNew.push(futureTimestamp)
+                    const signature = arrNew.join('')
+                    //md5加密成32位小写
+                    const signature_md5 = md5(signature)
+                    const shareLinkInfo = {
+                        "hash": hash,
+                        "signature": signature_md5,
+                        "randomCode": randomCode,
+                        "timestamp": futureTimestamp,
+                    }
+
+                    const shareLinkInfo_value = Base64.encode(shareLinkInfo)
+
+                    /***
+                     * 示例data:  {"hash":"eyJyZWxhSWQiOjExODE4NTE5Nzc1NDY2MDA0NDgsInJlbGFUeXBlIjoxfQ==","signature":"8088109ab4b9b6a139785a4c4601b396","randomCode":"2234","timestamp":"1570698304"}
+                     * 
+                     * hash： 分享链接验证返回
+                     * signature ：签名
+                     * randomCode：随机码
+                     * timestamp ：时间戳十位 未来一分钟
+                     * signature 该值为 hash randomCode timestamp 三个的值md5加密
+                     * 然后整个字符串base64加密放入ShareLinkInfo 里面
+                     */
+                    localStorage.setItem('shareLinkInfo', shareLinkInfo_value)
+
+
                     const { dispatch } = this.props;
                     dispatch(
                         routerRedux.push('/share_detailed')
