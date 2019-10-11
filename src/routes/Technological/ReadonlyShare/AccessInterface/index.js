@@ -11,9 +11,7 @@ import { connect } from 'dva';
 import md5 from 'md5'
 import { Base64 } from 'js-base64';
 
-@connect(({ AccessInterface }) => ({
-    AccessInterface
-}))
+@connect()
 export default class AccessInterface extends React.Component {
     state = {
         verificationCode: '',  //输入的验证码
@@ -50,10 +48,8 @@ export default class AccessInterface extends React.Component {
         }
         verificationShareLink(payload).then(({ code, message, data }) => {
 
-            console.log(data, 'dddd');
-
             if (code === '0') {
-                if (check_type === '2') {  //2=验证密码 才跳转
+                if (check_type === '2') {  //2=验证密码 才跳转详情页
 
                     const hash = data.hash
                     //生成10位数的随机码
@@ -96,7 +92,7 @@ export default class AccessInterface extends React.Component {
 
                     const { dispatch } = this.props;
                     dispatch(
-                        routerRedux.push('/share_detailed')
+                        routerRedux.push(`/share_detailed?${data.rela_type}`)
                     )
                 }
             } else {

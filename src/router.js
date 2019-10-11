@@ -214,6 +214,7 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index')
     },
   ]
+
   //去掉exact
   return (
     <Router history={history}>
