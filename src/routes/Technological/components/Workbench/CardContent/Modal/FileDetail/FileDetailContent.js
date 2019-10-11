@@ -1345,6 +1345,7 @@ class FileDetailContent extends React.Component {
       is_edit_version_description,
       editValue,
     }
+    console.log(this.props, 'dddd');
 
     const { datas: { currentPreviewFileData: { is_shared } } } = this.props.model
 

@@ -21,7 +21,7 @@ export default class FileIndex extends React.Component {
           <FileList />
           <MoveToDirectory />
         </div>
-        <FileDetailModal visible={isInOpenFile} dispatch={dispatch}/>
+        <FileDetailModal {...this.props} visible={isInOpenFile} dispatch={dispatch} />
       </div>
     )
   }
