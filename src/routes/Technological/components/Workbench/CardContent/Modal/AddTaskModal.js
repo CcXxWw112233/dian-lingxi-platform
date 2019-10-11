@@ -99,7 +99,7 @@ class AddTaskModal extends Component {
     }
 
     const getCurrentSelectedProjectMember = (isUseInGantt, currentSelectedprojectMemberListWhenUseInGantt) => {
-      if(isUseInGantt) {
+      if (isUseInGantt) {
         return currentSelectedprojectMemberListWhenUseInGantt
       }
       return []
@@ -131,13 +131,13 @@ class AddTaskModal extends Component {
       due_time: due_time
     });
   };
-  handleAddTaskModalOk = () => {};
+  handleAddTaskModalOk = () => { };
   handleAddTaskModalCancel = () => {
     //取消之后回归公共tab_bar board_id到缓存
     const {
       datas: { projectTabCurrentSelectedProject }
     } = this.props.workbench;
-    setBoardIdStorage( projectTabCurrentSelectedProject);
+    setBoardIdStorage(projectTabCurrentSelectedProject);
 
     const { dispatch } = this.props;
     dispatch({
@@ -278,9 +278,9 @@ class AddTaskModal extends Component {
     }
     const paramObj = this.getNewTaskParams();
 
-    if(isUseInGantt) {
+    if (isUseInGantt) {
       handleGetNewTaskParams(paramObj)
-    }else {
+    } else {
       this.addNewTask(paramObj);
       this.addNewMeeting(paramObj);
       this.uploadNewFile();
@@ -396,7 +396,7 @@ class AddTaskModal extends Component {
       .then(() => {
         this.handleAddTaskModalCancel();
       })
-      // .catch(err => console.log(err));
+    // .catch(err => console.log(err));
   };
   getTaskTypeText = () => {
     const { taskType } = this.props;
@@ -500,7 +500,7 @@ class AddTaskModal extends Component {
     const { selectedOrg = {} } = this.state
     return (
       <Dropdown
-       overlay={<OrgSearchAndSelect orgSelectedChange={this.orgSelectedChange}/>}>
+        overlay={<OrgSearchAndSelect orgSelectedChange={this.orgSelectedChange} />}>
         <div className={styles.org_selected_out}>
           <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe7c6;</div>
           <div>{selectedOrg.org_name || `选择组织`}</div>
@@ -570,9 +570,9 @@ class AddTaskModal extends Component {
     }
 
     const isShouldNotDisableSubmitBtnInDucument = () => {
-      if(taskType === 'MY_DOCUMENT') {
+      if (taskType === 'MY_DOCUMENT') {
         return !isInUploadFile
-      }else {
+      } else {
         return true
       }
     }
@@ -640,8 +640,8 @@ class AddTaskModal extends Component {
 
         // 遍历filelist 如果有一个状态没返回（上传状态）,则设置isInUploadFile的状态true
         let isInUploadFileFlag = false
-        for(let val of fileList) {
-          if(!val['response']) {
+        for (let val of fileList) {
+          if (!val['response']) {
             isInUploadFileFlag = true
           }
         }
@@ -666,7 +666,7 @@ class AddTaskModal extends Component {
           {
             attachment_fileList: fileList
           },
-          () => {}
+          () => { }
         );
         // drawContent["attachment_data"] = fileList;
         // that.props.updateDatasTask({
@@ -713,10 +713,10 @@ class AddTaskModal extends Component {
     const filteredNoThatTypeProject = projectList.filter(item => {
       let board_is_in_selected_org = false //项目是否在所选择的org_内
       // 如果是全组织的情况下就需要选择， 否则需要先选择组织
-      if(localStorage.getItem('OrganizationId') == '0') {
-         if(item.org_id == selectedOrg.org_id) {
+      if (localStorage.getItem('OrganizationId') == '0') {
+        if (item.org_id == selectedOrg.org_id) {
           board_is_in_selected_org = true
-         }
+        }
       } else {
         board_is_in_selected_org = true
       }
@@ -746,49 +746,49 @@ class AddTaskModal extends Component {
               {/* 选择组织 */}
               {
                 localStorage.getItem('OrganizationId') == '0' && (
-                <div>
-                 {this.renderSelectOrg()}
-                </div>
+                  <div>
+                    {this.renderSelectOrg()}
+                  </div>
                 )
               }
-              
+
               {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
-              {(isUseInGantt && projectMemberListWhenUseInGantt != '0')? (
+              {(isUseInGantt && projectMemberListWhenUseInGantt != '0') ? (
                 <div className={styles.groupList__wrapper}>
                   {currentSelectedProject.board_name}
                 </div>
-                ): (
-                <DropdownSelectWithSearch
-                  list={filteredNoThatTypeProject}
-                  _organization_id={selectedOrg.org_id}
-                  initSearchTitle="选择项目"
-                  selectedItem={currentSelectedProject}
-                  handleSelectedItem={this.handleSelectedItem}
-                  isShouldDisableDropdown={isUseInGantt && projectIdWhenUseInGantt}
-                />
-              )}
+              ) : (
+                  <DropdownSelectWithSearch
+                    list={filteredNoThatTypeProject}
+                    _organization_id={selectedOrg.org_id}
+                    initSearchTitle="选择项目"
+                    selectedItem={currentSelectedProject}
+                    handleSelectedItem={this.handleSelectedItem}
+                    isShouldDisableDropdown={isUseInGantt && projectIdWhenUseInGantt}
+                  />
+                )}
               {/*在甘特图中传递了项目id和任务分组id的情况下，会固定不允许选择*/}
-              {(isUseInGantt && projectMemberListWhenUseInGantt != '0' && !!projectGroupListId)?(
+              {(isUseInGantt && projectMemberListWhenUseInGantt != '0' && !!projectGroupListId) ? (
                 <div className={styles.groupList__wrapper}>
                   {currentSelectedProjectGroupListItem.list_name}
                 </div>
-              ): (
-                <div className={styles.groupList__wrapper}>
-                {(taskType === 'RESPONSIBLE_TASK' ||
-                  taskType === 'MEETIMG_ARRANGEMENT') && (
-                  <DropdownSelectWithSearch
-                    list={currentSelectedProjectGroupList}
-                    initSearchTitle="任务分组"
-                    selectedItem={currentSelectedProjectGroupListItem}
-                    handleSelectedItem={this.handleSelectedProjectGroupItem}
-                    isShowIcon={false}
-                    isSearch={false}
-                    isCanCreateNew={false}
-                    isProjectGroupMode={true}
-                    isShouldDisableDropdown={isUseInGantt && currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
-                  />
-                )}
-                </div>
+              ) : (
+                  <div className={styles.groupList__wrapper}>
+                    {(taskType === 'RESPONSIBLE_TASK' ||
+                      taskType === 'MEETIMG_ARRANGEMENT') && (
+                        <DropdownSelectWithSearch
+                          list={currentSelectedProjectGroupList}
+                          initSearchTitle="任务分组"
+                          selectedItem={currentSelectedProjectGroupListItem}
+                          handleSelectedItem={this.handleSelectedProjectGroupItem}
+                          isShowIcon={false}
+                          isSearch={false}
+                          isCanCreateNew={false}
+                          isProjectGroupMode={true}
+                          isShouldDisableDropdown={isUseInGantt && currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                        />
+                      )}
+                  </div>
                 )}
 
             </div>
@@ -814,78 +814,78 @@ class AddTaskModal extends Component {
           </div>
           <div className={styles.addTaskModalTaskTitle}>
             {taskType === 'RESPONSIBLE_TASK' ||
-            taskType === 'MEETIMG_ARRANGEMENT' ? (
-              <Input
-                value={addTaskTitle}
-                onChange={this.handleAddTaskModalTaskTitleChange}
-              />
-            ) : (
-              <div style={{ textAlign: 'center' }}>
-                {!isShouldNotDisableSubmitBtn() ? (
-                  <Tooltip placement="bottom" title="请选择具体项目和文件夹">
-                    <Button
-                      block={true}
-                      disabled={!isShouldNotDisableSubmitBtn()}
-                    >
-                      <span style={{ width: '442px' }}>
-                        点击此处/拖拽文件到对话框
+              taskType === 'MEETIMG_ARRANGEMENT' ? (
+                <Input
+                  value={addTaskTitle}
+                  onChange={this.handleAddTaskModalTaskTitleChange}
+                />
+              ) : (
+                <div style={{ textAlign: 'center' }}>
+                  {!isShouldNotDisableSubmitBtn() ? (
+                    <Tooltip placement="bottom" title="请选择具体项目和文件夹">
+                      <Button
+                        block={true}
+                        disabled={!isShouldNotDisableSubmitBtn()}
+                      >
+                        <span style={{ width: '442px' }}>
+                          点击此处/拖拽文件到对话框
                       </span>
-                    </Button>
-                  </Tooltip>
-                ) : (
-                  <Upload {...uploadProps}>
-                    <Button
-                      block={true}
-                      disabled={!isShouldNotDisableSubmitBtn()}
-                    >
-                      <span style={{ width: '442px' }}>
-                        点击此处/拖拽文件到对话框
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                      <Upload {...uploadProps}>
+                        <Button
+                          block={true}
+                          disabled={!isShouldNotDisableSubmitBtn()}
+                        >
+                          <span style={{ width: '442px' }}>
+                            点击此处/拖拽文件到对话框
                       </span>
-                    </Button>
-                  </Upload>
-                )}
-              </div>
-            )}
+                        </Button>
+                      </Upload>
+                    )}
+                </div>
+              )}
           </div>
           {taskType === 'RESPONSIBLE_TASK' ||
-          taskType === 'MEETIMG_ARRANGEMENT' ? (
-            <div className={styles.addTaskModalFooter}>
-              <div className={styles.addTaskModalOperator}>
-                <DropdownMultipleSelectWithSearch
-                  itemTitle={
-                    taskType === 'RESPONSIBLE_TASK' ? '执行人' : '参与人'
-                  }
-                  list={
-                    currentSelectedProject.board_id && !isUseInGantt
-                      ? currentSelectedProjectMembersList : isUseInGantt && projectMemberListWhenUseInGantt ? projectMemberListWhenUseInGantt : []
-                  }
-                  handleSelectedItemChange={this.handleSelectedItemChange}
-                  currentSelectedProjectMember={currentSelectedProjectMember}
-                />
-              </div>
-              <div className={styles.confirmBtn}>
-                <Button
-                  type="primary"
-                  disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
-                  onClick={this.handleClickedSubmitBtn}
-                >
-                  完成
+            taskType === 'MEETIMG_ARRANGEMENT' ? (
+              <div className={styles.addTaskModalFooter}>
+                <div className={styles.addTaskModalOperator}>
+                  <DropdownMultipleSelectWithSearch
+                    itemTitle={
+                      taskType === 'RESPONSIBLE_TASK' ? '执行人' : '参与人'
+                    }
+                    list={
+                      currentSelectedProject.board_id && !isUseInGantt
+                        ? currentSelectedProjectMembersList : isUseInGantt && projectMemberListWhenUseInGantt ? projectMemberListWhenUseInGantt : []
+                    }
+                    handleSelectedItemChange={this.handleSelectedItemChange}
+                    currentSelectedProjectMember={currentSelectedProjectMember}
+                  />
+                </div>
+                <div className={styles.confirmBtn}>
+                  <Button
+                    type="primary"
+                    disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
+                    onClick={this.handleClickedSubmitBtn}
+                  >
+                    完成
                 </Button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className={styles.addTaskModalFooter}>
-              <div className={styles.confirmBtnRight}>
-                <Button
-                  type="primary"
-                  disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
-                  onClick={this.handleClickedSubmitBtn}
-                >
-                  完成
+            ) : (
+              <div className={styles.addTaskModalFooter}>
+                <div className={styles.confirmBtnRight}>
+                  <Button
+                    type="primary"
+                    disabled={!isShouldNotDisableSubmitBtn() || !isShouldNotDisableSubmitBtnInDucument()}
+                    onClick={this.handleClickedSubmitBtn}
+                  >
+                    完成
                 </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </Modal>
     );
@@ -897,7 +897,7 @@ AddTaskModal.defaultProps = {
   projectIdWhenUseInGantt: '', //如果是在甘特图中使用，那么传项目 id
   projectGroupListId: '', //项目分组id
   projectGroupLists: [], //当前选择项目任务分组列表
-  handleGetNewTaskParams: function() { //返回当前新建 modal 用户提交的所有参数
+  handleGetNewTaskParams: function () { //返回当前新建 modal 用户提交的所有参数
 
   },
   projectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，需要将当前选中的项目成员列表传入

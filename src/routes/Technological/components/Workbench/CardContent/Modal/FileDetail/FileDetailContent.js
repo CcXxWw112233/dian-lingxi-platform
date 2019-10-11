@@ -542,6 +542,8 @@ class FileDetailContent extends React.Component {
     // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
 
     const { datas: { currentPreviewFileData: { file_id, board_id, } } } = this.props.model
+    console.log(this.props.model, 'dddd');
+
     const payload = {
       board_id: board_id,
       rela_type: '3',
