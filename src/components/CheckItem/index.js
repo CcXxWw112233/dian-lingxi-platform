@@ -4,7 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 const Index = (props) => {
     const { is_realize } = props
     const checkClick = (e) => {
-        e.stopPropagation()
+        // e.stopPropagation()
     }
     return (
         <div

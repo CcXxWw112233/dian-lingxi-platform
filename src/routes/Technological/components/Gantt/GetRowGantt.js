@@ -79,9 +79,21 @@ export default class GetRowGantt extends Component {
 
   }
 
+  // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
+  stopPropagationEle = (e) => {
+    if (
+      e.target.dataset.targetclassname == 'specific_example' ||
+      e.target.className.indexOf('authTheme') != -1 || 
+      e.target.className.indexOf('ant-avatar') != -1
+    ) { //不能滑动到某一个任务实例上
+      return true
+    }
+    return false
+  }
+
   //鼠标拖拽移动
   dashedMousedown(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
@@ -98,7 +110,7 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     this.setIsDragging(true)
@@ -131,7 +143,7 @@ export default class GetRowGantt extends Component {
     })
   }
   dashedDragMouseup(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     const { currentRect = {} } = this.state
@@ -273,51 +285,7 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  //遍历,做排序--交叉
-  taskItemToTop() {
-    const { dispatch } = this.props
-
-    //根据所获得的分组数据转换所需要的数据
-    const { list_group = [] } = this.props
-
-    const list_group_new = [...list_group]
-
-    //设置分组区域高度, 并为每一个任务新增一条
-    for (let i = 0; i < list_group_new.length; i++) {
-      const list_data = list_group_new[i]['list_data']
-      const length = list_data.length
-      for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
-        const item = list_data[j]
-        let isoverlap = true //是否重叠，默认不重叠
-        if (j > 0) {
-          for (let k = 0; k < j; k++) {
-            if (list_data[j]['start_time'] < list_data[k]['end_time'] || list_data[k]['end_time'] < list_data[j]['start_time']) {
-
-            } else {
-              isoverlap = false
-              item.top = list_data[k].top
-              // console.log(k, j)
-              break
-            }
-          }
-        }
-        list_group_new[i]['list_data'][j] = item
-
-        if (!isoverlap) {
-          break
-        }
-
-      }
-    }
-
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        list_group: list_group_new
-      }
-    })
-  }
-
+ 
   //点击某个实例,或者创建任务
   setSpecilTaskExample = ({ id, board_id, top }, e) => {
     if (e) {
@@ -408,7 +376,7 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
-            zIndex: this.isDragging ? 1 : 0
+            zIndex: this.isDragging ? 2 : 1
           }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
@@ -416,19 +384,19 @@ export default class GetRowGantt extends Component {
           return (
             list_data.map((value2, key) => {
               // const { id, left, width, start_time, end_time } = value2
-              const {  end_time ,left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+              const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
               const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
               return (
                 <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
                   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
-                    <GetRowTaskItem
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                      itemValue={value2}
-                      setSpecilTaskExample={this.setSpecilTaskExample}
-                      ganttPanelDashedDrag={this.isDragging}
-                      list_id={list_id}
-                    />
-                    {/* 
+                  <GetRowTaskItem
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    itemValue={value2}
+                    setSpecilTaskExample={this.setSpecilTaskExample}
+                    ganttPanelDashedDrag={this.isDragging}
+                    list_id={list_id}
+                  />
+                  {/* 
                     <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"

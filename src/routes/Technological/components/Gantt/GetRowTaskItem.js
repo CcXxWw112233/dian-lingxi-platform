@@ -8,7 +8,7 @@ import { task_item_height, task_item_margin_top, date_area_height } from './cons
 import { isSamDay } from './getDate'
 import { updateTask } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
-import { message, Dropdown, Popover  } from 'antd'
+import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan } from './ganttBusiness'
 
@@ -325,13 +325,13 @@ export default class GetRowTaskItem extends Component {
             board_id, is_realize,
             executors = [], label_data = [],
             is_has_start_time, is_has_end_time,
-            start_time, due_time
+            start_time, due_time, is_privilege
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
 
         return (
-            <Popover  placement="bottom" content={<CardDropDetail {...itemValue} />} key={id}>
+            <Popover placement="bottom" content={<CardDropDetail {...itemValue} />} key={id}>
                 <div
                     className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
@@ -372,13 +372,26 @@ export default class GetRowTaskItem extends Component {
                             className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                             // onMouseDown={(e) => e.stopPropagation()}
                             onMouseMove={(e) => e.preventDefault()}
+                            style={{ display: 'flex' }}
                         >
                             {name}
-                            <span className={indexStyles.due_time_description}>
+                            {
+                                is_privilege != '0' && (
+                                    <Tooltip title="已开启访问控制" placement="top">
+                                        <span className={`${globalStyles.authTheme}`}
+                                            style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
+                                            data-targetclassname="specific_example">
+                                            &#xe7ca;
+                                        </span>
+                                    </Tooltip>
+                                )
+                            }
+                            <span className={indexStyles.due_time_description} data-targetclassname="specific_example">
                                 {
                                     is_overdue && is_realize != '1' && due_description
                                 }
                             </span>
+
                         </div>
                         <div data-targetclassname="specific_example"
                             // onMouseDown={(e) => e.stopPropagation()} 
