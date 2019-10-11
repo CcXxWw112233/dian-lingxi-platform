@@ -235,6 +235,7 @@ export async function filePreviewByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     params,
   });
 }
