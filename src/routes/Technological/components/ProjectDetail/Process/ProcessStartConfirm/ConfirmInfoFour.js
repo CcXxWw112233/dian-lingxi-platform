@@ -111,11 +111,18 @@ export default class ConfirmInfoFour extends React.Component {
       }
     })
   }
-  // setAssignees(data) {
-  chirldrenTaskChargeChange(data) {
+  setAssignees = (data) => {
+    // chirldrenTaskChargeChange(data) {
+
+    // const { processEditDatas = {}, dispatch } = this.props
+    // const { itemKey } = this.props
+    // const str = data.selectedKeys.join(',')
+    // const new_processEditDatas = [...processEditDatas]
+    // new_processEditDatas[itemKey]['assignees'] = str
+
     const { processEditDatas = {}, dispatch } = this.props
     const { itemKey } = this.props
-    const str = data.selectedKeys.join(',')
+    const str = data.join(',')
     const new_processEditDatas = [...processEditDatas]
     new_processEditDatas[itemKey]['assignees'] = str
 
@@ -223,14 +230,16 @@ export default class ConfirmInfoFour extends React.Component {
           container = (
             <div>
               <Dropdown overlay={
-                <MenuSearchPartner
-                  invitationType={invitationType}
-                  invitationId={board_id}
-                  listData={users}
-                  keyCode={'user_id'}
-                  searchName={'name'}
-                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
-                  board_id={board_id}/>
+                <MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />
+
+                // <MenuSearchPartner
+                //   invitationType={invitationType}
+                //   invitationId={board_id}
+                //   listData={users}
+                //   keyCode={'user_id'}
+                //   searchName={'name'}
+                //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
+                //   board_id={board_id}/>
               }>
                 {assigneesArray.length ? (
                   <div style={{ display: 'flex' }}>
