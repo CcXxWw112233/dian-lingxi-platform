@@ -153,10 +153,10 @@ export default class Index extends Component {
             },
             beforeUpload(e) {
                 that.setShowDrag(false)
-                if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
-                    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-                    return false
-                }
+                // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
+                //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                //     return false
+                // }
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
