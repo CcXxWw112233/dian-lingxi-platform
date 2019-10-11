@@ -142,6 +142,14 @@ export default class MenuSearchPartner extends React.Component {
                                 }
                             })
                             dispatch({
+                                type: 'projectDetailTask/getTaskGroupList',
+                                payload: {
+                                    type: '2',
+                                    board_id: board_id,
+                                    arrange_type: '1',
+                                }
+                            })
+                            dispatch({
                                 type: 'workbenchTaskDetail/getCardDetail',
                                 payload: {
                                     id: invitationId,

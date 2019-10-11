@@ -51,6 +51,7 @@ export default class TaskItem extends React.Component {
       `/technological/projectDetail?board_id=${board_id}&appsSelectKey=3&card_id=${id}`
     );
   }
+
   itemClick(data, e) {
     const { dispatch } = this.props
     const { id, board_id, org_id } = data;
@@ -66,10 +67,14 @@ export default class TaskItem extends React.Component {
         _organization_id: org_id
       }
     })
+
     this.props.updatePublicDatas({ board_id });
-    this.props.getCardDetail({ id, board_id });
-    this.props.setTaskDetailModalVisibile();
-    // debugger
+    this.props.getCardDetail({
+      id,
+      board_id,
+      calback: this.props.setTaskDetailModalVisibile
+    });
+
     this.props.dispatch({
       type: 'workbenchTaskDetail/getCardCommentListAll',
       payload: {
