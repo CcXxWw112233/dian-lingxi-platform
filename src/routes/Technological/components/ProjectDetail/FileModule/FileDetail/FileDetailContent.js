@@ -1660,7 +1660,7 @@ class FileDetailContent extends React.Component {
             </div>
 
 
-            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
+            {(
               <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
                 <CommentListItem2 commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
               </div>
