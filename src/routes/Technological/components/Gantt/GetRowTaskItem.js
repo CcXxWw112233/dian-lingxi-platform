@@ -66,6 +66,7 @@ export default class GetRowTaskItem extends Component {
 
     }
 
+    // 标签的颜色
     setLableColor = (label_data) => {
         let bgColor = ''
         let b = ''
@@ -88,6 +89,7 @@ export default class GetRowTaskItem extends Component {
         return b
     }
 
+    // 任务弹窗
     setSpecilTaskExample = (data) => {
         const { is_moved } = this.state
         if (is_moved) {
@@ -175,7 +177,7 @@ export default class GetRowTaskItem extends Component {
         const nl = nx - (this.x - this.l);
         const nt = ny - (this.y - this.t);
         this.setState({
-            local_top: nt,
+            // local_top: nt,
             local_left: nl,
         })
     }
@@ -264,11 +266,10 @@ export default class GetRowTaskItem extends Component {
         if ('right' == drag_type) {
             this.overDragCompleteHandleRight()
         } else if ('position' == drag_type) {
-            this.overDragComp
+            this.overDragCompleteHandlePositon()
         } else {
 
         }
-
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
@@ -279,7 +280,7 @@ export default class GetRowTaskItem extends Component {
         const end_time_position = local_left + local_width
         const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
         const date = date_arr_one_level[end_time_index]
-        const end_time_timestamp = date.timestamp
+        const end_time_timestamp = date.timestampEnd
         updateData.due_time = end_time_timestamp
         if (isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
@@ -309,6 +310,43 @@ export default class GetRowTaskItem extends Component {
             })
     }
     overDragCompleteHandlePositon = () => {
+        const { itemValue: { id, end_time, start_time, board_id, left } } = this.props
+        const { local_left, local_width, local_width_origin } = this.state
+        const { date_arr_one_level, ceilWidth } = this.props
+        const updateData = {}
+
+        const date_span = local_width / ceilWidth
+        const start_time_index = Math.floor(local_left / ceilWidth)
+        const start_date = date_arr_one_level[start_time_index]
+        const start_time_timestamp = start_date.timestamp
+        //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
+        const end_time_timestamp = start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000
+        updateData.start_time = start_time_timestamp
+        updateData.due_time = end_time_timestamp
+        if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
+            this.setState({
+                local_left: left
+            })
+            return
+        }
+        updateTask({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
+            .then(res => {
+                if (isApiResponseOk(res)) {
+                    this.handleHasScheduleCard({
+                        card_id: id,
+                        updateData
+                    })
+                } else {
+                    this.setState({
+                        local_left: left
+                    })
+                    message.error(res.message)
+                }
+            }).catch(err => {
+                message.error('更新失败')
+            })
+    }
+    updateTask = (data = {}) => {
 
     }
     // 拖拽完成后的事件处理---end
@@ -362,9 +400,9 @@ export default class GetRowTaskItem extends Component {
                     onMouseDown={(e) => this.onMouseDown(e)}
                     onMouseMove={(e) => this.onMouseMove(e)}
                     onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
-                    // 不拖拽
-                    // onMouseMove={(e) => e.stopPropagation()}
-                    // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                // 不拖拽
+                // onMouseMove={(e) => e.stopPropagation()}
+                // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
                 >
                     <div
                         data-targetclassname="specific_example"
