@@ -29,6 +29,7 @@ export default class GetRowTaskItem extends Component {
             local_top: 0,
             local_left: 0,
             drag_type: 'position', // position/left/right 拖动位置/延展左边/延展右边
+            is_moved: false, //当前mouseDown后，是否被拖动过
         }
 
         this.x = 0
@@ -88,6 +89,10 @@ export default class GetRowTaskItem extends Component {
     }
 
     setSpecilTaskExample = (data) => {
+        const { is_moved } = this.state
+        if (is_moved) {
+            return
+        }
         const { setSpecilTaskExample } = this.props
         setSpecilTaskExample(data)
     }
@@ -117,6 +122,9 @@ export default class GetRowTaskItem extends Component {
         if (this.is_down == false) {
             return;
         }
+        this.setState({
+            is_moved: true
+        })
         const { drag_type } = this.state
         if ('position' == drag_type) {
             this.changePosition(e)
@@ -227,7 +235,6 @@ export default class GetRowTaskItem extends Component {
     // 拖拽完成后松开鼠标
     onMouseUp = (e) => {
         e.stopPropagation()
-        // console.log("sssssssss", 'upl')
         this.x = 0
         this.y = 0
         this.l = 0
@@ -238,10 +245,17 @@ export default class GetRowTaskItem extends Component {
         this.is_down = false
         this.setTargetDragTypeCursor('pointer')
         this.setState({
-            local_width_flag: this.state.local_width
+            local_width_flag: this.state.local_width,
         })
         window.onmousemove = null;
         window.onmuseup = null;
+
+        setTimeout(() => {
+            this.setState({
+                is_moved: false
+            })
+        }, 200)
+
     }
 
     // 拖拽完成后的事件处理---start
@@ -345,11 +359,12 @@ export default class GetRowTaskItem extends Component {
                         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     // 拖拽
-                    // onMouseDown={(e) => this.onMouseDown(e)}
-                    // onMouseMove={(e) => this.onMouseMove(e)}
+                    onMouseDown={(e) => this.onMouseDown(e)}
+                    onMouseMove={(e) => this.onMouseMove(e)}
+                    onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
                     // 不拖拽
-                    onMouseMove={(e) => e.stopPropagation()}
-                    onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                    // onMouseMove={(e) => e.stopPropagation()}
+                    // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
                 >
                     <div
                         data-targetclassname="specific_example"
