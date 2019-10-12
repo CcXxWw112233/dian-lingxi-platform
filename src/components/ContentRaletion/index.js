@@ -30,7 +30,7 @@ export default class ContentRaletion extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { board_id, link_id, link_local } = nextProps
     const { local_link_id } = this.state
-    if (link_id && local_link_id != link_id) {
+    if (link_id && local_link_id != link_id && local_link_id != '') {
       this.getRelations({ board_id, link_id, link_local })
       this.setState({
         local_link_id: link_id

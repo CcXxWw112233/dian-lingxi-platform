@@ -64,7 +64,7 @@ export default class Header extends React.Component {
   /**
    * 获取流程执行人列表
    * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
-   * 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的成员
+   * 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的职员
    * @param {Array} nodes 当前弹窗中所有节点的推进人
    */
   genPrincipalListFromAssignees = (nodes = []) => {
@@ -100,7 +100,7 @@ export default class Header extends React.Component {
         // 执行人去重
         const newPersonList = genNewPersonList(arrayNonRepeatfy(curr.assignees));
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
-      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
+      } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的职员
         // const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))
         const newPersonList = []
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
@@ -150,8 +150,8 @@ export default class Header extends React.Component {
   }
 
   /**
-   * 访问控制移除成员
-   * @param {String} id 移除成员对应的id
+   * 访问控制移除职员
+   * @param {String} id 移除职员对应的id
    */
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({ id: id }).then(res => {
@@ -168,8 +168,8 @@ export default class Header extends React.Component {
   }
 
   /**
-   * 添加成员的回调
-   * @param {Array} users_arr 添加成员的数组
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -181,7 +181,7 @@ export default class Header extends React.Component {
     let temp_ids = [] // 用来保存添加用户的id
     let new_ids = [] // 用来保存权限列表中用户id
     let new_privileges = [...privileges]
-    // 这是所有添加成员的id列表
+    // 这是所有添加职员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
@@ -200,7 +200,7 @@ export default class Header extends React.Component {
     
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
-      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
       return false
     } else { // 否则表示进行了全选, 那么就过滤
       temp_ids = temp_ids && temp_ids.filter(item => {

@@ -53,9 +53,9 @@ export default {
       gantt_board_id: '0', //甘特图查看的项目id
       group_view_type: '1', //分组视图1项目， 2成员
       group_view_filter_boards: [], //内容过滤项目id 列表
-      group_view_filter_users: [], //内容过滤成员id 列表
+      group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
-      group_view_users_tree: [], //内容过滤成员分组树
+      group_view_users_tree: [], //内容过滤职员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
@@ -92,7 +92,7 @@ export default {
 
         //  项目id处理
         for (let val of group_view_filter_boards) {
-          if (val.indexOf('board_org_') != -1) { //项目组织id
+          if (val.indexOf('board_org_') != -1) { //项目企业id
             const org_board_list = group_view_boards_tree.find(item => item.value == val).children
             const org_board_id_list = org_board_list.map(item => item.value.replace('board_', ''))
             query_board_ids = [].concat(query_board_ids, org_board_id_list)
@@ -104,11 +104,11 @@ export default {
 
         // 用户id处理
         for (let val of group_view_filter_users) {
-          if (val.indexOf('user_org_') != -1) { //用户组织id
+          if (val.indexOf('user_org_') != -1) { //用户企业id
             // 遍历得到了分组
-            const org_groups = group_view_users_tree.find(item => item.value == val).children //得到组织的用户分组
+            const org_groups = group_view_users_tree.find(item => item.value == val).children //得到企业的用户分组
             const org_groups_users = org_groups.map(item => item.children) //得到一个二维数组，组为一维，用户列表为二维
-            const org_users = org_groups_users.reduce(function (a, b) { return a.concat(b) }); //该组织下所有分组用户铺开一维数组
+            const org_users = org_groups_users.reduce(function (a, b) { return a.concat(b) }); //该企业下所有分组用户铺开一维数组
             const org_user_ids = org_users.map(item => item.value.replace('user_', '').split('_')[2])
             query_user_ids = [].concat(query_user_ids, org_user_ids)
 
@@ -117,7 +117,7 @@ export default {
             const group_org_id = org_groupr_id_arr[0]
             const group_id = org_groupr_id_arr[1]
 
-            const org_groups = group_view_users_tree.find(item => item.value == `user_org_${group_org_id}`).children //得到组织对应分组列表
+            const org_groups = group_view_users_tree.find(item => item.value == `user_org_${group_org_id}`).children //得到企业对应分组列表
             const org_users = org_groups.find(item => item.value == `user_group_${group_org_id}_${group_id}`).children //得到对应分组
             const org_user_ids = org_users.map(item => item.value.replace('user_', '').split('_')[2])
             query_user_ids = [].concat(query_user_ids, org_user_ids)
@@ -489,7 +489,7 @@ export default {
         _organization_id: localStorage.getItem('OrganizationId'),
         query_board_ids,
       }
-      if (gantt_board_id != '0') { //只有在确认项目对应的一个组织id,才能够进行操作
+      if (gantt_board_id != '0') { //只有在确认项目对应的一个企业id,才能够进行操作
         params.board_id = gantt_board_id
       }
 

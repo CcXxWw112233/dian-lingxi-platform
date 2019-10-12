@@ -65,7 +65,7 @@ export async function moveProjectToProjectGroup(data) {
   })
 }
 
-//获取当前组织搜索树
+//获取当前企业搜索树
 export async function getProjectGroupSearchTree(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/group/tree`,
@@ -82,7 +82,7 @@ export async function getCurrentProjectGroupProjectList(params) {
   const { group_id = '', keyword = '', org_id = '' } = params
   //group_id  分组id
   //keyword   (participate|star|archived)
-  //org_id  组织 id
+  //org_id  企业 id
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/list/by_param`,
     method: 'GET',

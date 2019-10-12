@@ -547,6 +547,15 @@ class Gantt extends Component {
       })
     }
 
+    const fileDetailModalDatas = {
+      ...this.props,
+      ...CreateTaskProps,
+      ...FileModuleProps,
+      previewFileModalVisibile,
+      updateDatasTask,
+      updateDatasFile
+    }
+
     return (
       <div>
         <GanttFace
@@ -556,8 +565,9 @@ class Gantt extends Component {
           gantt_board_id={gantt_board_id}
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
           is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
+          fileDetailModalDatas={fileDetailModalDatas}
         />
-        <FileDetailModal
+        {/* <FileDetailModal
           {...this.props}
           {...CreateTaskProps}
           {...FileModuleProps}
@@ -568,7 +578,7 @@ class Gantt extends Component {
           updateDatasFile={updateDatasFile}
           updateTaskDatas={updateDatasTask}
           updateFileDatas={updateDatasFile}
-        />
+        /> */}
 
         <TaskDetailModal
           {...this.props}

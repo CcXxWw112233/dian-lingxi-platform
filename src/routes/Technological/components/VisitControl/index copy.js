@@ -35,7 +35,7 @@ class VisitControl extends Component {
     super(props);
     this.state = {
       addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
-      comfirmRemoveModalVisible: false, // 是否显示移除成员的弹窗, 默认为 false 不显示
+      comfirmRemoveModalVisible: false, // 是否显示移除职员的弹窗, 默认为 false 不显示
       visible: false, // ？？？ 这是控制popover组件自身的显示状态
       selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
       othersPersonList: [], //外部邀请人员的list
@@ -59,7 +59,7 @@ class VisitControl extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
-  // 获取添加成员的回调
+  // 获取添加职员的回调
   handleGetAddNewMember = members => {
     const { handleAddNewMember } = this.props;
     const filterPlatformUsersId = users =>
@@ -167,7 +167,7 @@ class VisitControl extends Component {
   };
 
   /**
-   * 点击移除成员弹窗的确定回调
+   * 点击移除职员弹窗的确定回调
    * @param {Object} e 当前的事件对象
    */
   handleComfirmRemoveModalOk = e => {
@@ -187,7 +187,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 关闭移除成员的弹窗回调
+  // 关闭移除职员的弹窗回调
   handleCloseComfirmRemoveModal = e => {
     if (e) e.stopPropagation();
     this.setState({
@@ -195,7 +195,7 @@ class VisitControl extends Component {
     });
   };
 
-  // 关闭添加成员弹窗的回调
+  // 关闭添加职员弹窗的回调
   handleCloseAddMemberModal = e => {
     if (e) e.stopPropagation();
     this.setState({
@@ -204,7 +204,7 @@ class VisitControl extends Component {
     });
   };
 
-  // 点击添加成员的回调
+  // 点击添加职员的回调
   handleAddNewMember = () => {
     this.setState({
       addMemberModalVisible: true
@@ -212,7 +212,7 @@ class VisitControl extends Component {
     this.togglePopoverVisible
   };
 
-  //点击添加成员操作
+  //点击添加职员操作
   setShowAddMenberModalVisibile = () => {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -235,7 +235,7 @@ class VisitControl extends Component {
       return
     }
     const { currentOrgAllMembersList = [] } = this.props;
-    // 是否在负责人列表中的成员能够在当前所有组织成员列表中找到？
+    // 是否在负责人列表中的职员能够在当前所有企业职员列表中找到？
     const isEachMemberInPrincipalListCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       principalList.every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
@@ -296,7 +296,7 @@ class VisitControl extends Component {
           })
 
         } else {
-          message.error('访问控制中有非该组织成员的人');
+          message.error('访问控制中有非该企业职员的人');
           this.setState({
             transPrincipalList: getOthersPersonList(allMember)
           })
@@ -319,7 +319,7 @@ class VisitControl extends Component {
       Object.keys(otherPrivilege).every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
       );
-    //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
+    //如果现有的企业职员列表，不包括所有的人，那么就更新企业职员列表
     let allMember = [...currentOrgAllMembersList];
     const getOthersPersonList = allMember =>
       // console.log(allMember, 'ssssss_allMember')
@@ -383,7 +383,7 @@ class VisitControl extends Component {
             othersPersonList: getOthersPersonList(allMember)
           });
         } else {
-          message.error('访问控制中有非该组织成员的人');
+          message.error('访问控制中有非该企业职员的人');
           return;
         }
       });
@@ -485,7 +485,7 @@ class VisitControl extends Component {
         <div className={styles.title__operator} style={{ cursor: 'pointer' }}>
           <Dropdown overlay={this.toggleVisitControl()} trigger={['click']}>
             <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
-              <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
+              <span>{!isPropVisitControl ? '开放访问' : '仅列表职员访问'}</span>
               <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
             </span>
           </Dropdown>
@@ -615,7 +615,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 渲染popover组件中的底部 添加成员按钮
+  // 渲染popover组件中的底部 添加职员按钮
   renderPopoverContentAddMemberBtn = () => {
     return (
       <div className={styles.content__addMemberBtn_wrapper}>
@@ -625,7 +625,7 @@ class VisitControl extends Component {
           // onClick={this.handleAddNewMember}
           onClick={this.setShowAddMenberModalVisibile}
         >
-          添加成员
+          添加职员
         </Button>
       </div>
     );
@@ -641,7 +641,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 当前是否没有成员
+  // 当前是否没有职员
   isCurrentHasNoMember = () => {
     const { principalList } = this.props;
     const { othersPersonList } = this.state;
@@ -831,7 +831,7 @@ VisitControl.defaultProps = {
     //点击选中邀请进来的外部人员的下拉菜单项目的回调函数
   },
   handleAddNewMember: function () {
-    //...          //添加成员返回的 成员id 数组
+    //...          //添加职员返回的 职员id 数组
   },
   removeMemberPromptText: '移出后用户将不能访问此内容',
   handleVisitControlPopoverVisible: function () { } //单击本组件，或者是本组件visible改变的时候，将popover组件的visible状态传达到父组件。

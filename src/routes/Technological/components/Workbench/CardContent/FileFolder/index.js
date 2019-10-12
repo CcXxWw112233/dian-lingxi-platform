@@ -153,7 +153,7 @@ class FileFolder extends Component {
   renderFileItem = item => {
     const { shouldFileItemSetPreviewFileModalVisibile } = this.props;
     return (
-      <div className={styles.fileListItemWrapper} key={item.id}>
+      <div className={styles.fileListItemWrapper} key={`${item.id}-${item.is_privilege}`}>
         <FileItem
           {...this.props}
           itemValue={item}
@@ -175,7 +175,11 @@ class FileFolder extends Component {
     if(arr1.length !== arr2.length) {
       return false
     }
-    return arr1.every(i1 => arr2.find(i2 => i1.id === i2.id))
+    for (let i = 0, n = arr2.length; i < n; i++) {
+      if (arr1[i] !== arr2[i]) return false;
+    }
+    return true
+    // return arr1.every(i1 => arr2.find(i2 => i1.id === i2.id))
   }
   handleGetNewFileListAndFolderList = nextProps => {
     const{file_list: next_file_list, folder_list: next_folder_list} = nextProps

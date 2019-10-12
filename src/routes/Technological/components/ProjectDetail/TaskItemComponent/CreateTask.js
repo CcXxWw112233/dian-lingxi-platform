@@ -198,27 +198,27 @@ export default class CreateTask extends React.Component {
   }
   // 右方抽屉弹窗---start
   setDrawerVisibleOpen(data) {
-    const that = this
+
     const { drawContent: { card_id }, taskGroupListIndex_index, taskGroupListIndex } = data
     //不需要及时更新drawcontent
     const { dispatch } = this.props
     dispatch({
+      type: 'projectDetailTask/getCardDetail',
+      payload: {
+        id: card_id,
+      }
+    })
+    dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
-        taskGroupListIndex, 
-        taskGroupListIndex_index, 
-        drawerVisible: true,
-        card_id 
+        taskGroupListIndex,
+        taskGroupListIndex_index,
+        // drawerVisible: true,
+        card_id
       }
     })
     dispatch({
       type: 'projectDetailTask/getCardCommentList',
-      payload: {
-        id: card_id
-      }
-    })
-    dispatch({
-      type: 'projectDetailTask/getCardDetail',
       payload: {
         id: card_id
       }
