@@ -114,7 +114,7 @@ export default class DCMenuItemOne extends React.Component {
             <Input placeholder={'请输入负责人名称'} value={keyWord} style={{ width: 160, marginTop: 6 }} onChange={this.onChange.bind(this)} />
           </div>
           <div>
-            {isInvitation == true ? (
+            {/* {isInvitation == true ? (
               <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                 <div style={{ display: 'flex', alignItems: 'center' }} >
                   <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
@@ -123,7 +123,7 @@ export default class DCMenuItemOne extends React.Component {
                   <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
                 </div>
               </div>
-            ) : ('')}
+            ) : ('')} */}
           </div>
           {resultArr.map((value, key) => {
             const { user_id, full_name, fullName, mobile, email, avatar, name } = value

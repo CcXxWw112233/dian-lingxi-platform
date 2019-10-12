@@ -115,15 +115,15 @@ export default class DCMenuItemOne extends React.Component {
 
           <div>
             {isInvitation == true ? (
-<div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-              <div style={{ display: 'flex', alignItems: 'center' }} >
-                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
-                  <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+              <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                <div style={{ display: 'flex', alignItems: 'center' }} >
+                  <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                    <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+                  </div>
+                  <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
                 </div>
-                <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
               </div>
-            </div>
-) : ''}
+            ) : ''}
           </div>
 
           {resultArr.map((value, key) => {
