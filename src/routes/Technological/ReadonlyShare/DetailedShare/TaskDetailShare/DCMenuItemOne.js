@@ -1,8 +1,11 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
 import { Icon, Input, message, DatePicker, Menu } from 'antd'
-import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
-import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import ShowAddMenberModal from '../../../components/Project/ShowAddMenberModal'
+import { checkIsHasPermissionInBoard, } from "../../../../../utils/businessFunction";
+import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "../../../../../globalset/js/constant";
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 
 export default class DCMenuItemOne extends React.Component {
   state = {
@@ -64,31 +67,30 @@ export default class DCMenuItemOne extends React.Component {
       resultArr
     })
   }
-
   addMenbersInProject = (data) => {
-    // const { invitationType, invitationId, rela_Condition, } = this.props
-    // console.log(invitationType, invitationId, rela_Condition, 'ppppppp')
-    // const temp_ids = data.users.split(",")
-    // const invitation_org = localStorage.getItem('OrganizationId')
-    // organizationInviteWebJoin({
-    //   _organization_id: invitation_org,
-    //   type: invitationType,
-    //   users: temp_ids
-    // }).then(res => {
-    //   if (res && res.code === '0') {
-    //     commInviteWebJoin({
-    //       id: invitationId,
-    //       role_id: res.data.role_id,
-    //       type: invitationType,
-    //       users: temp_ids,
-    //       rela_condition: rela_Condition,
-    //     }).then(res => {
-    //       if (isApiResponseOk(res)) {
-    //         //...
-    //       }
-    //     })
-    //   }
-    // })
+
+    const { invitationType, invitationId, rela_Condition, } = this.props
+    const temp_ids = data.users.split(",")
+    const invitation_org = localStorage.getItem('OrganizationId')
+    organizationInviteWebJoin({
+      _organization_id: invitation_org,
+      type: invitationType,
+      users: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        commInviteWebJoin({
+          id: invitationId,
+          role_id: res.data.role_id,
+          type: invitationType,
+          users: res.data.users,
+          rela_condition: rela_Condition,
+        }).then(res => {
+          if (isApiResponseOk(res) == 0) {
+            //...
+          }
+        })
+      }
+    })
   }
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
@@ -110,6 +112,7 @@ export default class DCMenuItemOne extends React.Component {
           <div style={{ width: 160, height: 42, margin: '0 auto' }}>
             <Input placeholder={'请输入负责人名称'} value={keyWord} style={{ width: 160, marginTop: 6 }} onChange={this.onChange.bind(this)} />
           </div>
+
           <div>
             {isInvitation == true ? (
               <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
@@ -120,8 +123,9 @@ export default class DCMenuItemOne extends React.Component {
                   <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
                 </div>
               </div>
-            ) : ('')}
+            ) : ''}
           </div>
+
           {resultArr.map((value, key) => {
             const { user_id, full_name, fullName, mobile, email, avatar, name } = value
             return (
@@ -145,7 +149,8 @@ export default class DCMenuItemOne extends React.Component {
             )
           })}
         </div>
-        {/* <ShowAddMenberModal
+
+        <ShowAddMenberModal
           addMenbersInProject={this.addMenbersInProject}
           show_wechat_invite={true}
           {...this.props}
@@ -154,7 +159,7 @@ export default class DCMenuItemOne extends React.Component {
           invitationOrg={localStorage.getItem('OrganizationId')}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
-        /> */}
+        />
       </div>
     )
   }

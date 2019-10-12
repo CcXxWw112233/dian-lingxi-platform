@@ -1,42 +1,21 @@
+import React from 'react';
+import {connect} from "dva/index";
+import FileIndex from './FileModule'
+import { Route, Router, Switch, Link } from 'dva/router'
+import { Drawer } from 'antd'
 
-import React from 'react'
-import indexStyles from './index.less'
-import { Table, Button, Menu, Dropdown, Icon, Input } from 'antd';
-import Header from './Header'
-import FileDetailContent from "./FileDetailContent";
+const getEffectOrReducerByName = name => `projectDetail/${name}`
+const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
 
-const bodyHeight = document.querySelector('body').clientHeight
-export default class FileDetail extends React.Component {
-  state = {
-    clientHeight: document.documentElement.clientHeight,
-    clientWidth: document.documentElement.clientWidth,
-  }
-  constructor() {
-    super();
-    this.resizeTTY.bind(this)
-  }
-  componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
-  }
+const FileModuleIndex = (props) => {
 
-  resizeTTY(type) {
-    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
-    const clientWidth = document.documentElement.clientWidth
-    this.setState({
-      clientHeight,
-      clientWidth
-    })
-  }
+  return(
+   <div>
+     <FileIndex />
+   </div>
+  )
+};
 
-  render() {
-    const { clientHeight, clientWidth } = this.state
-    const { modalTop, offsetTopDeviation = 100, componentHeight, componentWidth } = this.props
-    //offsetTopDeviation 用来计算偏移量偏差
-    return (
-      <div id={'container_fileDetailOut'} className={indexStyles.fileDetailOut} style={{ height: clientHeight - offsetTopDeviation, top: 0 }}>
-        {/*<Header {...this.props}/>*/}
-        <FileDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} componentHeight={componentHeight} componentWidth={componentWidth} offsetTopDeviation={offsetTopDeviation} modalTop={modalTop} />
-      </div>
-    )
-  }
-}
+export default FileModuleIndex
+
+

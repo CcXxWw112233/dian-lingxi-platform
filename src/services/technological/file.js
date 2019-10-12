@@ -1,5 +1,5 @@
 //项目归档
-import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
+import { REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD, REQUEST_INTERGFACE_VERSIONN } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
 
@@ -196,6 +196,7 @@ export async function updateFolder(data) {
 export async function getPreviewFileCommits(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment/list`,
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     method: 'GET',
     params,
   });
@@ -225,6 +226,7 @@ export async function getFileCommitPoints(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment/point`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
@@ -235,6 +237,7 @@ export async function filePreviewByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
@@ -273,6 +276,7 @@ export async function getFileDetailIssue(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }
@@ -282,6 +286,7 @@ export async function getCardCommentListAll(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }

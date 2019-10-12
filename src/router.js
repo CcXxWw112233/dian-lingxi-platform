@@ -208,10 +208,14 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/IframeOut'),
     }, {
       path: '/readonly_share/:id',
-      component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index')
+      component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index'),
     }, {
       path: '/share_detailed',
-      component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index')
+      models: () => [
+        import('./models/technological/projectDetail/projectDetailTask'),
+        import('./models/technological/projectDetail/projectDetailFile'),
+      ],
+      component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index'),
     },
   ]
 

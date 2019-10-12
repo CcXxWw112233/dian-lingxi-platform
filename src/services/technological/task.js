@@ -58,14 +58,14 @@ const getContentTypeByLinkLocal = (linkLocalCode) => {
       contentType = CONTENT_DATA_TYPE_FLOW;
       break
     case '21':
-        contentType = CONTENT_DATA_TYPE_FLOW;
-        break
+      contentType = CONTENT_DATA_TYPE_FLOW;
+      break
     case '22':
-    contentType = 'flowtpl';
-    break
+      contentType = 'flowtpl';
+      break
     case '3':
-        contentType = CONTENT_DATA_TYPE_CARD;
-        break
+      contentType = CONTENT_DATA_TYPE_CARD;
+      break
     case '4':
       contentType = CONTENT_DATA_TYPE_FILE;
       break
@@ -361,6 +361,7 @@ export async function getRelations(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   });
 }
@@ -396,7 +397,7 @@ export async function getRelationsSelectionPre(params) {
     url: `${REQUEST_DOMAIN_BOARD}/content_link/prefix`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('OrganizationId') == '0'? getGlobalData('aboutBoardOrganizationId'): localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId') == '0' ? getGlobalData('aboutBoardOrganizationId') : localStorage.getItem('OrganizationId'),
       ...params,
     }
   }, { isNotLoading: true });
@@ -415,6 +416,7 @@ export async function getCardCommentListAll(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }

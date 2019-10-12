@@ -40,12 +40,12 @@ export default class MenuSearchMultiple extends React.Component {
   }
   //模糊查询
   handleMenuReallySelect = (e) => {
-    this.setSelectKey(e, 'add')
+    this.setSelectKey(e)
   }
   handleMenuReallyDeselect(e) {
-    this.setSelectKey(e, 'remove')
+    this.setSelectKey(e)
   }
-  setSelectKey(e, type) { //type add/remove
+  setSelectKey(e) {
     const { key, selectedKeys } = e
     if (!key) {
       return false
@@ -59,7 +59,7 @@ export default class MenuSearchMultiple extends React.Component {
         resultArr: this.fuzzyQuery(listData, searchName, keyWord),
       })
     })
-    this.props.chirldrenTaskChargeChange({ selectedKeys, key, type })
+    this.props.chirldrenTaskChargeChange({ selectedKeys })
   }
   onCheck() {
     if (this.props.onCheck && typeof this.props.onCheck === 'function') {
@@ -82,7 +82,6 @@ export default class MenuSearchMultiple extends React.Component {
           const deItem = arr.splice(i, 1)
           arr.unshift(...deItem)
         }
-
       }
     }
     return arr;
@@ -96,7 +95,6 @@ export default class MenuSearchMultiple extends React.Component {
       resultArr
     })
   }
-
   render() {
     const { keyWord, resultArr, selectedKeys = [] } = this.state
     const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode } = this.props

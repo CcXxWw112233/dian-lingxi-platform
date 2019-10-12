@@ -22,7 +22,7 @@ export default class ExcutorList extends React.Component{
                       <Icon type={'user'} style={{fontSize: 12, marginLeft: 0, color: '#8c8c8c'}}/>
                     </div>
                   )}
-                  <div style={{overflow: 'hidden', verticalAlign: 'middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8}}>{name || user_name || '佚名'}</div>
+                  <div style={{overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8}}>{name || user_name || '佚名'}</div>
                 </div>
               </div>
             )

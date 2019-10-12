@@ -1,15 +1,15 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip } from 'antd'
+import { Icon, Button, DatePicker, Dropdown, Avatar, Tooltip } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
-import { deepClone, timeToTimestamp } from '../../../../../utils/util'
+import { timeToTimestamp } from '../../../../../utils/util'
 import { currentNounPlanFilterName } from "../../../../../utils/businessFunction";
-import { FLOWS, TASKS } from "../../../../../globalset/js/constant";
+import { TASKS } from "../../../../../globalset/js/constant";
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
-const TextArea = Input.TextArea
-
+@connect(mapStateToProps)
 export default class DCAddChirdrenTask extends React.Component {
   state = {
     isSelectUserIcon: false, // default '#8c8c8c, hover #595959
@@ -30,9 +30,14 @@ export default class DCAddChirdrenTask extends React.Component {
   }
   //设置子任务负责人组件---------------start
   setList(id) {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {}, dispatch } = this.props
     const { board_id } = projectDetailInfoData
-    this.props.removeProjectMenbers({ board_id, user_id: id })
+    dispatch({
+      type: 'projectDetailTask/removeProjectMenbers',
+      payload: {
+        board_id, user_id: id
+      }
+    })
   }
   chirldrenTaskChargeChange(data) {
     let executors = []
@@ -58,10 +63,23 @@ export default class DCAddChirdrenTask extends React.Component {
   }
   //设置子任务负责人组件---------------end
 
+  //更新父级任务列表的当前任务
+  updateParentTaskList(name, value) {
+    const { taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [], dispatch } = this.props
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    dispatch({
+      type: 'projectDetailTask/updateDatasTask',
+      payload: {
+        taskGroupList
+      }
+    })
+  }
+
   //添加子任务
   addChirldTask() {
-    const { datas: { drawContent = {}, board_id } } = this.props.model
+    const { drawContent = {}, projectDetailInfoData = {}, taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
     const { card_id, child_data = [], list_id } = drawContent
+    const { board_id } = projectDetailInfoData
     const obj = {
       card_id,
       board_id,
@@ -71,12 +89,18 @@ export default class DCAddChirdrenTask extends React.Component {
       users: this.state.executors.length ? this.state.executors[0].user_id : '',
       due_time: this.state.due_time,
       card_name: this.state.name,
-      taskGroupListIndex: this.props.model.datas.taskGroupListIndex,
-      taskGroupListIndex_index: this.props.model.datas.taskGroupListIndex_index,
+      taskGroupListIndex,
+      taskGroupListIndex_index,
       length: child_data.length,
     }
-    drawContent['child_data'].unshift(obj)
-    this.props.addChirldTask(obj)
+    drawContent['child_data'] && drawContent['child_data'].unshift(obj)
+    this.updateParentTaskList('child_data', drawContent['child_data'])
+    dispatch({
+      type: 'projectDetailTask/addChirldTask',
+      payload: {
+        ...obj
+      }
+    })
     this.setState({
       isShowUserCalendar: false,
       isSelectUserIcon: false, // default '#8c8c8c, hover #595959
@@ -151,9 +175,9 @@ export default class DCAddChirdrenTask extends React.Component {
   }
 
   render() {
-    const { isSelectUserIcon, isSelectCalendarIcon, List, isShowUserCalendar, executors = [] } = this.state
-    const { datas: { drawContent = {}, projectDetailInfoData = {} } } = this.props.model
-    let { card_id, card_name, child_data = [], start_time, due_time, description, label_data = [] } = drawContent
+    const { isSelectCalendarIcon, isShowUserCalendar, executors = [] } = this.state
+    const { drawContent = {}, projectDetailInfoData = {} } = this.props
+    let { child_data = [] } = drawContent
     const { data = [] } = projectDetailInfoData //任务执行人列表
 
     let executor = {//任务执行人信息
@@ -168,8 +192,10 @@ export default class DCAddChirdrenTask extends React.Component {
     return (
       <div className={DrawerContentStyles.divContent_1}>
         {child_data.map((value, key) => {
+          const { card_id, card_name, due_time, executors = [] } = value
+          const { user_id } = executors[0] || {}
           return (
-            <DCAddChirdrenTaskItem {...this.props} chirldTaskItemValue={value} key={value.card_id} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem chirldTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} chirldDataIndex={key} />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
@@ -189,23 +215,16 @@ export default class DCAddChirdrenTask extends React.Component {
               </div>
               <div style={{ display: isShowUserCalendar ? 'flex' : 'none' }} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
                 <Dropdown overlay={
-                  <DCMenuItemOne invitationType='4' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />
+                  <DCMenuItemOne
+                    deleteExcutor={this.deleteExcutor.bind(this)}
+                    currentExecutor={executor}
+                    execusorList={data}
+                    setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                    isInvitation={false} />
                 }>
                   {/* <Dropdown overlay={
-                  <MenuSearchPartner
-                    keyCode={'board_id'}
-                    // onCheck={this.selectMultiple.bind(this)}
-                    selectedKeys={executor}
-                    menuSearchSingleSpinning={false}
-                    Inputlaceholder={'搜索项目'}
-                    searchName={'board_name'}
-                    listData={data}
-
-                    id=''
-                    type='4'
-                    />
+                  <MenuSearchPartner />
                 }> */}
-
                   {executor.user_id ? (
                     <Tooltip title={executor.full_name || '佚名'}>
                       {/*{imgOrAvatar(executor.avatar)}*/}
@@ -233,5 +252,29 @@ export default class DCAddChirdrenTask extends React.Component {
         </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      drawContent = {},
+      taskGroupListIndex = 0,
+      taskGroupListIndex_index = 0,
+      taskGroupList = [],
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+    }
+  },
+}) {
+  return {
+    drawContent,
+    projectDetailInfoData,
+    taskGroupListIndex,
+    taskGroupListIndex_index,
+    taskGroupList,
   }
 }

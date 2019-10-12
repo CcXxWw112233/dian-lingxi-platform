@@ -2,8 +2,9 @@ import React from 'react'
 import TagDropDownStyles from './TagDropDown.less'
 import TagDropDownItem from './TagDropDownItem.js'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
-
+@connect(mapStateToProps)
 export default class TagDropDown extends React.Component {
 
   state = {
@@ -18,7 +19,7 @@ export default class TagDropDown extends React.Component {
   }
 
   setResultArr(props) {
-    const { datas: { boardTagList = [] } } = props.model
+    const { boardTagList = [] } = props
     const { searchName = 'name', tagInputValue = '' } = props
     this.setState({
       resultArr: this.fuzzyQuery(boardTagList, searchName, tagInputValue)
@@ -62,7 +63,7 @@ export default class TagDropDown extends React.Component {
 
           {resultArr.map((value, key) => {
             return (
-              <TagDropDownItem {...this.props} key={key} itemKey={key} itemValue={value} />
+              <TagDropDownItem key={key} tagDropItemClick={this.props.tagDropItemClick} itemKey={key} itemValue={value} />
             )
           })}
         </div>
@@ -71,4 +72,15 @@ export default class TagDropDown extends React.Component {
     )
   }
 
+}
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      boardTagList = [],
+    }
+  },
+}) {
+  return {
+    boardTagList
+  }
 }

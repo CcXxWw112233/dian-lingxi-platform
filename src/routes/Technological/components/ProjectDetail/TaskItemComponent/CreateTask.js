@@ -205,10 +205,10 @@ export default class CreateTask extends React.Component {
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
-        taskGroupListIndex, 
-        taskGroupListIndex_index, 
+        taskGroupListIndex,
+        taskGroupListIndex_index,
         drawerVisible: true,
-        card_id 
+        card_id
       }
     })
     dispatch({

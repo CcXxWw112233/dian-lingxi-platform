@@ -2,7 +2,9 @@ import React from 'react'
 import { Input, Popconfirm, Dropdown } from 'antd'
 import TagDropDownStyles from './TagDropDown.less'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
 
+@connect(mapStateToProps)
 export default class TagDropDownItem extends React.Component {
 
   state = {
@@ -43,21 +45,28 @@ export default class TagDropDownItem extends React.Component {
 
   toTop(e) {
     e.stopPropagation();
-    const { datas: { boardTagList = [] } } = this.props.model
-    const { itemKey, itemValue = {} } = this.props
+    const { itemValue = {} } = this.props
     const { id, board_id } = itemValue
-    this.props.toTopBoardTag({ label_id: id, board_id })
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/toTopBoardTag',
+      payload: {
+        label_id: id, board_id
+      }
+    })
   }
 
-  updateItem(data, key) {
-    const { datas: { boardTagList = [] } } = this.props.model
-    const { itemValue = {}, itemKey } = this.props
+  updateItem(data) {
+    const { itemValue = {} } = this.props
     const { id, board_id } = itemValue
     // boardTagList[itemKey][key] = data[key]
-    // this.props.updateDatas({
-    //   boardTagList
-    // })
-    this.props.updateBoardTag({ ...data, board_id, id })
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/updateBoardTag',
+      payload: {
+        ...data, board_id, id
+      }
+    })
   }
   toEdit(e) {
     e.stopPropagation();
@@ -91,7 +100,14 @@ export default class TagDropDownItem extends React.Component {
     e.stopPropagation();
     const { itemValue = {} } = this.props
     const { id } = itemValue
-    this.props.deleteBoardTag({ id })
+
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/deleteBoardTag',
+      payload: {
+        id
+      }
+    })
   }
 
   deleteCancel(e) {
@@ -102,7 +118,7 @@ export default class TagDropDownItem extends React.Component {
     e.stopPropagation()
   }
   render() {
-    const { datas: { boardTagList = [] } } = this.props.model
+    const { boardTagList = [] } = this.props
 
     const { isInEdit, onMouse, name, color } = this.state
     const { itemValue } = this.props
@@ -170,4 +186,15 @@ export default class TagDropDownItem extends React.Component {
     )
   }
 
+}
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      boardTagList = [],
+    }
+  },
+}) {
+  return {
+    boardTagList
+  }
 }

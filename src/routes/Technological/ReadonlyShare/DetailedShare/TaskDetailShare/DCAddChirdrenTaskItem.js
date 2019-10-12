@@ -4,14 +4,23 @@ import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popco
 import DCMenuItemOne from './DCMenuItemOne'
 import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
 const TextArea = Input.TextArea
 
+@connect(mapStateToProps)
 export default class DCAddChirdrenTaskItem extends React.Component {
 
   state = {
     isCheck: false,
-    localChildTaskName: '',
+    local_card_name: '',
     isInEditTaskName: false,
+    local_due_time: '',
+    local_executor: {
+      user_id: '',
+      user_name: '',
+      avatar: '',
+      name: ''
+    }
   }
 
   componentWillMount() {
@@ -24,9 +33,21 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   //初始化根据props设置state
   initSet(props) {
     const { chirldTaskItemValue } = this.props
-    const { card_name } = chirldTaskItemValue
+    const { due_time, executors = [], card_name } = chirldTaskItemValue
+    let local_executor = {//任务执行人信息
+      user_id: '',
+      user_name: '',
+      avatar: '',
+    }
+    if (executors.length) {
+      local_executor = executors[0]
+      local_executor.user_name = executors[0]['name']
+    }
+
     this.setState({
-      localChildTaskName: card_name
+      local_due_time: due_time,
+      local_card_name: card_name,
+      local_executor
     })
   }
   //项目操作----------------start
@@ -38,134 +59,165 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   }
   localChildTaskNameChange(e) {
     this.setState({
-      localChildTaskName: e.target.value
+      local_card_name: e.target.value
     })
   }
   editTaskNameComplete(e) {
     this.setIsInEditTaskName()
-    const { chirldTaskItemValue } = this.props
-    const { localChildTaskName } = this.state
-    if (chirldTaskItemValue['card_name'] == localChildTaskName) {
+    const { chirldTaskItemValue, dispatch } = this.props
+    const { local_card_name } = this.state
+    if (chirldTaskItemValue['card_name'] == local_card_name) {
       return false
     }
-    if (!localChildTaskName) {
+    if (!local_card_name) {
       this.setState({
-        localChildTaskName: chirldTaskItemValue['card_name']
+        local_card_name: chirldTaskItemValue['card_name']
       })
       return false
     }
-    chirldTaskItemValue['card_name'] = localChildTaskName
+    chirldTaskItemValue['card_name'] = local_card_name
 
     const { card_id } = chirldTaskItemValue
     const updateObj = {
       card_id,
-      name: localChildTaskName
+      name: local_card_name
     }
-    this.props.updateTask({ updateObj })
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+  }
+
+  setChirldTaskIndrawContent = ({ name, value }) => {
+    const { chirldDataIndex } = this.props
+    const { drawContent = {}, dispatch } = this.props
+    drawContent['child_data'][chirldDataIndex][name] = value
+
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
   }
 
   itemOneClick() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const { datas: { drawContent = {}, } } = this.props.model
+    const { drawContent = {}, dispatch } = this.props
     const { card_id, is_realize = '0' } = chirldTaskItemValue
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
     }
     drawContent['child_data'][chirldDataIndex]['is_realize'] = is_realize === '1' ? '0' : '1'
-    this.props.updateDatas({ drawContent })
-    this.props.completeTask(obj)
+
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
+    dispatch({
+      type: 'projectDetailTask/completeTask',
+      payload: {
+        ...obj
+      }
+    })
   }
   //设置子任务负责人组件---------------start
   setList(id) {
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {}, dispatch } = this.props
     const { board_id } = projectDetailInfoData
-    this.props.removeProjectMenbers({ board_id, user_id: id })
+    dispatch({
+      type: 'projectDetailTask/removeProjectMenbers',
+      payload: {
+        board_id, user_id: id
+      }
+    })
   }
   chirldrenTaskChargeChange({ user_id, full_name, avatar }) {
-    const { chirldTaskItemValue } = this.props
-    const { card_id, executors = [] } = chirldTaskItemValue
+    const { chirldTaskItemValue, dispatch } = this.props
+    const { card_id } = chirldTaskItemValue
 
-    executors[0] = {
-      user_id,
-      user_name: full_name,
-      avatar: avatar,
-      name: full_name,
-    }
-    this.props.addTaskExecutor({
-      card_id,
-      users: user_id,
+    this.setState({
+      local_executor: {
+        user_id,
+        user_name: full_name,
+        avatar: avatar,
+        name: full_name
+      }
     })
 
+    dispatch({
+      type: 'projectDetailTask/addTaskExecutor',
+      payload: {
+        card_id,
+        users: user_id,
+      }
+    })
   }
 
   deleteExcutor({ user_id, full_name, avatar }) {
-    const { chirldTaskItemValue } = this.props
-    const { card_id, executors = [] } = chirldTaskItemValue
-    executors[0] = {
-      user_id: '',
-      user_name: '',
-      avatar: ''
-    }
-    this.props.removeTaskExecutor({
-      card_id,
-      user_id: user_id,
-    })
+    const { chirldTaskItemValue, dispatch } = this.props
+    const { card_id } = chirldTaskItemValue
+
     this.setState({
-      ss: 1
+      local_executor: {
+        user_id: '',
+        user_name: '',
+        avatar: ''
+      }
     })
+    dispatch({
+      type: 'projectDetailTask/removeTaskExecutor',
+      payload: {
+        card_id,
+        user_id: user_id,
+      }
+    })
+
   }
 
   datePickerChange(date, dateString) {
     if (!dateString) {
       return false
     }
-    const { datas: { drawContent = {} } } = this.props.model
-    const { chirldTaskItemValue } = this.props
+    const { chirldTaskItemValue, dispatch } = this.props
     const { card_id } = chirldTaskItemValue
-    chirldTaskItemValue['due_time'] = timeToTimestamp(dateString).toString()
+    const time = timeToTimestamp(dateString).toString()
+
+    this.setState({
+      local_due_time: time
+    })
     const updateObj = {
       card_id,
-      due_time: timeToTimestamp(dateString).toString()
+      due_time: time
     }
-    this.props.updateTask({ updateObj })
+    dispatch({
+      type: 'projectDetailTask/updateTask',
+      payload: {
+        updateObj
+      }
+    })
   }
   deleteConfirm({ card_id, chirldDataIndex }) {
-    this.props.deleteChirldTask({ card_id, chirldDataIndex })
-
-
-    const { datas: { drawContent = {} } } = this.props.model
-    drawContent['child_data'].splice(chirldDataIndex, 1)
-    this.props.updateTaskDatas({ drawContent })
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/deleteChirldTask',
+      payload: {
+        card_id, chirldDataIndex
+      }
+    })
   }
+
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
-    const { card_id, card_name, due_time, is_realize = '0', executors = [] } = chirldTaskItemValue
-    const { datas: { projectDetailInfoData = {} } } = this.props.model
+    const { card_id, is_realize = '0' } = chirldTaskItemValue
+    const { projectDetailInfoData = {}, drawContent = {}, } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { localChildTaskName, isInEditTaskName } = this.state
-
-    let executor = {//任务执行人信息
-      user_id: '',
-      user_name: '',
-      avatar: '',
-    }
-    if (executors.length) {
-      executor = executors[0]
-      executor.user_name = executors[0]['name']
-    }
-
-    const imgOrAvatar = (img) => {
-      return img ? (
-        <div>
-          <img src={img} style={{ width: 16, height: 16, marginRight: 8, borderRadius: 16, margin: '0 12px' }} />
-        </div>
-      ) : (
-          <div style={{ width: 16, height: 16, marginRight: 8, borderRadius: 16, margin: '0 12px', backgroundColor: '#8c8c8c' }}>
-            <Avatar size={16} >ss</Avatar>
-          </div>
-        )
-    }
+    const { local_card_name, isInEditTaskName, local_executor = {}, local_due_time } = this.state
 
     return (
       <div className={DrawerContentStyles.taskItem}>
@@ -178,10 +230,10 @@ export default class DCAddChirdrenTaskItem extends React.Component {
           <div>
             {!isInEditTaskName ? (
               <div style={{ wordWrap: 'break-word', width: 250, paddingTop: 2 }} onClick={this.setIsInEditTaskName.bind(this)}>
-                {`${localChildTaskName}`}
+                {`${local_card_name}`}
               </div>
             ) : (
-                <TextArea value={localChildTaskName}
+                <TextArea value={local_card_name}
                   autoFocus
                   autosize={{ minRows: 1 }}
                   size={'small'}
@@ -189,7 +241,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
                   onPressEnter={this.editTaskNameComplete.bind(this)}
                   onBlur={this.editTaskNameComplete.bind(this)} />
               )}
-            <div style={{ color: '#d5d5d5' }}>{due_time ? (due_time.indexOf('-') !== -1 ? due_time : timestampToTimeNormal(due_time, '', true)) + '截止' : ''}</div>
+            <div style={{ color: '#d5d5d5' }}>{local_due_time ? (local_due_time.indexOf('-') !== -1 ? local_due_time : timestampToTimeNormal(local_due_time, '', true)) + '截止' : ''}</div>
           </div>
           {/*cuozuo*/}
           <div style={{ position: 'relative', height: 22, display: 'flex', justifyContent: 'align-items' }}>
@@ -197,14 +249,19 @@ export default class DCAddChirdrenTaskItem extends React.Component {
               <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16 }}>&#xe70f;</div>
             </Popconfirm>
             <Dropdown overlay={
-              <DCMenuItemOne invitationType='4' invitationId='' deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={executor} execusorList={data} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
-                isInvitation={true} />
+              <DCMenuItemOne
+                deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={local_executor}
+                execusorList={data}
+                setList={this.setList.bind(this)}
+                chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} isInvitation={true}
+                invitationType='4'
+                invitationId={drawContent.list_id} />
             }>
-              {executor.user_id ? (
-                <Tooltip title={executor.user_name || executor.full_name || '佚名'}>
-                  {/*{imgOrAvatar(executor.avatar)}*/}
-                  <Avatar size={16} src={executor.avatar} style={{ fontSize: 14, margin: '4px 12px 0 12px' }}>
-                    {(executor.user_name || executor.full_name) ? (executor.user_name || executor.full_name).substring(0, 1) : '佚'}
+              {local_executor.user_id ? (
+                <Tooltip title={local_executor.user_name || local_executor.full_name || '佚名'}>
+                  {/*{imgOrAvatar(local_executor.avatar)}*/}
+                  <Avatar size={16} src={local_executor.avatar} style={{ fontSize: 14, margin: '4px 12px 0 12px' }}>
+                    {(local_executor.user_name || local_executor.full_name) ? (local_executor.user_name || local_executor.full_name).substring(0, 1) : '佚'}
                   </Avatar>
                 </Tooltip>
               ) : (
@@ -216,7 +273,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
 
             </Dropdown>
             <div>
-              {!due_time ? (
+              {!local_due_time ? (
                 <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe709;</div>
               ) : (
                   <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe8e0;</div>
@@ -232,5 +289,23 @@ export default class DCAddChirdrenTaskItem extends React.Component {
         </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      drawContent = {},
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+    }
+  },
+}) {
+  return {
+    drawContent,
+    projectDetailInfoData
   }
 }

@@ -2,15 +2,14 @@
 
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input, message } from 'antd'
+import { Input, message } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_GROUP,
-  PROJECT_FILES_FILE_EDIT
 } from "../../../../../globalset/js/constant";
 import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
+import { connect } from 'dva';
 
-const Panel = Collapse.Panel
-
+@connect(mapStateToProps)
 export default class CreateItem extends React.Component {
   state = {
     isInEditAdd: false,
@@ -35,7 +34,7 @@ export default class CreateItem extends React.Component {
     if (!this.state.inputValue) {
       return false
     }
-    const { datas: { projectDetailInfoData = {}, taskGroupList = [] } } = this.props.model
+    const { projectDetailInfoData = {}, taskGroupList = [] } = this.props
     const { board_id } = projectDetailInfoData
     const obj = {
       board_id,
@@ -44,7 +43,13 @@ export default class CreateItem extends React.Component {
       length: taskGroupList.length
     }
     taskGroupList.push(obj)
-    this.props.addTaskGroup(obj)
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/addTaskGroup',
+      payload: {
+        ...obj
+      }
+    })
   }
   inputChange(e) {
     this.setState({
@@ -54,7 +59,6 @@ export default class CreateItem extends React.Component {
 
   render() {
     const { isInEditAdd, inputValue } = this.state
-    const { datas: { projectDetailInfoData = {}, taskGroupList = [] } } = this.props.model
 
     return (
       <div className={CreateTaskStyle.createTaskItem}>
@@ -67,5 +71,22 @@ export default class CreateItem extends React.Component {
           )}
       </div>
     )
+  }
+}
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      taskGroupList = []
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+    }
+  }
+}) {
+  return {
+    taskGroupList,
+    projectDetailInfoData
   }
 }

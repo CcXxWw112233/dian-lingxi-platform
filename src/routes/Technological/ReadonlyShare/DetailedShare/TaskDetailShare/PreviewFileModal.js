@@ -1,16 +1,15 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import CustormModal from '../../../../../components/CustormModal'
+// import FileDetail from '../FileModule/FileDetail/index'
 
 class PreviewFileModal extends React.Component {
 
   state = {
   }
   onCancel = () => {
-    this.props.setPreivewProp({
-      isUsable: true,
-      previewFileType: '',
-      previewFileSrc: '',
+    this.props.updateDatasTask({
+      isInOpenFile: false
     })
     this.props.setPreviewFileModalVisibile()
   }
@@ -48,19 +47,20 @@ class PreviewFileModal extends React.Component {
       }
       return contain
     }
-
+    const modalTop = 20
     return (
       <div>
         <CustormModal
           visible={modalVisible} //modalVisible
           width={'80%'}
           zIndex={1006}
+          closable={false}
           footer={null}
           destroyOnClose
           maskClosable={false}
-          style={{ textAlign: 'center', }}
+          style={{ top: modalTop }}
           onCancel={this.onCancel}
-          overInner={containner()}
+        // overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
         >
           {/*{containner()}*/}
         </CustormModal>

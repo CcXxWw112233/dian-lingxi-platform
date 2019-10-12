@@ -1,10 +1,10 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
+import { Icon, Avatar } from 'antd'
 import CommentStyles from './Comment.less'
 import { timestampToTimeNormal, judgeTimeDiffer, judgeTimeDiffer_ten } from "../../../../../utils/util";
+import { connect } from 'dva';
 
-const Dragger = Upload.Dragger
-
+@connect(mapStateToProps)
 export default class CommentListItem extends React.Component {
   state = {
     closeNormal: true,
@@ -21,20 +21,27 @@ export default class CommentListItem extends React.Component {
       closeNormal: true
     })
   }
+
+  deleteComment(id) {
+    const { drawContent = {} } = this.props
+    const { card_id } = drawContent
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailTask/deleteCardNewComment',
+      payload: {
+        id,
+        card_id
+      }
+    })
+  }
   showAll() {
     this.setState({
       isShowAll: !this.state.isShowAll
     })
   }
-  deleteComment(id) {
-    const { datas: { drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    this.props.deleteCardNewComment({ id, card_id })
-  }
-
   render() {
 
-    const { datas: { cardCommentList = [], cardCommentAll = [] } } = this.props.model
+    const { cardCommentList = [], cardCommentAll = [] } = this.props
 
     const { closeNormal } = this.state
     const listItem = (value) => {
@@ -60,7 +67,6 @@ export default class CommentListItem extends React.Component {
                   删除
               </div>
               ) : ''}
-
             </div>
           </div>
         </div>
@@ -74,7 +80,7 @@ export default class CommentListItem extends React.Component {
         case 'board.card.create':
           messageContainer = (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>{`${data.creator.name} 创建了 ${data.content.card.name} 任务`}</div>
+              <div>{`${data.creator.name} 创建了 ${data.content.card.name} ${data.content && data.content.card_type == '0' ? '任务' : '会议'}`}</div>
               <div style={{ color: '#BFBFBF', fontSize: '12px' }}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )
@@ -90,7 +96,7 @@ export default class CommentListItem extends React.Component {
         case 'board.card.update.name':
           messageContainer = (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>{`${data.creator.name} 修改了 ${data.content.card.name} 任务的名称 为 *`}</div>
+              <div>{`${data.creator.name} 修改了 原${data.content.rela_data && data.content.rela_data.name} 任务的名称 为 ${data.content.card && data.content.card.name}`}</div>
               <div style={{ color: '#BFBFBF', fontSize: '12px' }}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )
@@ -98,10 +104,7 @@ export default class CommentListItem extends React.Component {
         case 'board.card.update.executor.add':
           messageContainer = (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                {`${data.creator.name} 在任务 ${data.content.card.name} 添加了执行人 `}
-                {/*{`${data.content.rela_data && data.content.rela_data.name}`}*/}
-              </div>
+              <div>{`${data.creator.name} 在任务 ${data.content.card.name} 添加了执行人 ${data.content.rela_data.name}`}</div>
               <div style={{ color: '#BFBFBF', fontSize: '12px' }}>{judgeTimeDiffer(create_time)}</div>
             </div>
           )
@@ -279,4 +282,18 @@ export default class CommentListItem extends React.Component {
   }
 }
 
-
+function mapStateToProps({
+  projectDetailTask: {
+    datas: {
+      drawContent = {},
+      cardCommentAll = [],
+      cardCommentList = []
+    }
+  },
+}) {
+  return {
+    drawContent,
+    cardCommentList,
+    cardCommentAll,
+  }
+}

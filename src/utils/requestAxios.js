@@ -42,7 +42,7 @@ export default function request(options = {}, elseSet = {}) {
    * 用于打开分享的任务,文件,流程等详情的接口加上请求头
    */
   let headers_share = {}
-  if (window.location.hash.indexOf('/share_detailed')) {
+  if (window.location.hash.indexOf('/share_detailed') != -1) {
     headers_share = {
       ShareLinkInfo: localStorage.getItem('shareLinkInfo')
     }
@@ -52,6 +52,7 @@ export default function request(options = {}, elseSet = {}) {
     axios({
       ...{
         url,
+        // headers: { ...header, ...headers, ...header_base_info, },
         headers: { ...header, ...headers, ...header_base_info, ...headers_share },
         method,
         params: {

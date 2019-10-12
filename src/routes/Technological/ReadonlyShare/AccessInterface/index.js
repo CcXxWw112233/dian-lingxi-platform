@@ -75,7 +75,7 @@ export default class AccessInterface extends React.Component {
                         "timestamp": futureTimestamp,
                     }
 
-                    const shareLinkInfo_value = Base64.encode(shareLinkInfo)
+                    const shareLinkInfo_value = Base64.encode(JSON.stringify(shareLinkInfo))
 
                     /***
                      * 示例data:  {"hash":"eyJyZWxhSWQiOjExODE4NTE5Nzc1NDY2MDA0NDgsInJlbGFUeXBlIjoxfQ==","signature":"8088109ab4b9b6a139785a4c4601b396","randomCode":"2234","timestamp":"1570698304"}
@@ -89,10 +89,9 @@ export default class AccessInterface extends React.Component {
                      */
                     localStorage.setItem('shareLinkInfo', shareLinkInfo_value)
 
-
                     const { dispatch } = this.props;
                     dispatch(
-                        routerRedux.push(`/share_detailed?${data.rela_type}`)
+                        routerRedux.push(`/share_detailed?rela_type=${data.rela_type}&rela_id=${data.rela_id}`)
                     )
                 }
             } else {
