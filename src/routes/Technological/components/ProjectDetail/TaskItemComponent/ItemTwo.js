@@ -53,7 +53,7 @@ export default class ItemTwo extends React.Component {
       },
     })
     dispatch({
-      type: 'projectDetailTask/completeTask',
+      type: 'publicTaskDetailModal/completeTask',
       payload: {
         ...obj
       },

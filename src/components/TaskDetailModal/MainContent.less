@@ -5,7 +5,8 @@
   border-radius:4px;
   // padding-left: 12px;
 }
-/* 公共点击完成卡片的样式 */
+
+/* 公共点击完成卡片的样式 S */
 .nomalCheckBox{
   height: 20px;
   width: 20px;
@@ -23,6 +24,51 @@
   background-color: #1890ff;
   border-radius: 4px;
 }
+/* 公共点击完成卡片的样式 E */
+
+/* 完成状态的下拉样式 S */ 
+.overlay_item {
+  min-width: 248px !important;
+  :global {
+    .ant-dropdown-menu-item {
+      line-height: 40px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      &:hover {
+        background:rgba(0,0,0,0.04);
+        cursor: pointer;
+        border-radius:4px;
+      }
+      > span {
+        display: inline-block;
+        width:52px;
+        height:24px;
+        background:rgba(0,0,0,0.09);
+        border-radius:4px;
+        color:rgba(0,0,0,0.45);
+        line-height: 24px;
+        text-align: center;
+      }
+    }
+    .ant-dropdown-menu-item:nth-child(1) {
+
+    }
+    .ant-dropdown-menu-item:nth-child(2) {
+      > span {
+        background:rgba(208,239,180,1);
+        color: #389E0D;
+      }
+    }
+    .ant-dropdown-menu-item-selected {
+      background:rgba(0,0,0,0.04);
+      border-radius:4px;
+      color:rgba(0,0,0,0.45);
+    }
+  }
+}
+/* 完成状态的下拉样式 E */ 
 
 /* 内容区的容器样式 S */
 .main_wrap {
@@ -32,6 +78,7 @@
   .title_content {
     display: flex;
     // align-items: center;
+    margin-bottom: 12px;
     .card_name {
       font-size:20px;
       font-family:PingFangSC-Medium,PingFangSC;
@@ -45,6 +92,53 @@
     }
   }
   /* 标题部分 E */
+
+  /* 各种不同字段部分 S */
+  .field_content {
+    display: flex;
+    line-height: 38px;
+    margin-bottom: 12px;
+    align-items: center;
+    // line-height: 55px;
+    .field_left {
+      margin-right: 64px;
+      > span:nth-child(1) {
+        font-size: 14px;
+        margin-right: 9px;
+        color: rgba(0, 0, 0, 0.65)
+      }
+      > span:nth-child(2) {
+        font-size: 16px;
+      }
+    }
+    .field_right {
+      flex: 1;
+      font-size: 16px;
+      color:rgba(0,0,0,0.45);
+      .incomplete {
+        display: inline-block;
+        margin-left: 12px;
+        width:58px;
+        height:26px;
+        background:rgba(0,0,0,0.09);
+        border-radius:4px;
+        line-height: 26px;
+        text-align: center;
+      }
+      .complete {
+        display: inline-block;
+        margin-left: 12px;
+        width:58px;
+        height:26px;
+        background:rgba(208,239,180,1);
+        border-radius:4px;
+        line-height: 26px;
+        text-align: center;
+        color:rgba(56,158,13,1);
+      }
+    }
+  }
+  /* 各种不同字段部分 E */
 }
 
 /* 内容区的容器样式 E */

@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -6,7 +6,7 @@ import { MEMBERS, MESSAGE_DURATION_TIME, PROJECTS, TASKS } from "../../../global
 export default {
   namespace: 'publicTaskDetailModal',
   state: {
-
+    isEditTitle: false, // 是否编辑标题 默认为 false 不显示
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -60,6 +60,27 @@ export default {
 
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    /**
+     * 更新任务:
+     * @param {String} card_id* 当前修改那一条的卡片id
+     * 修改卡片名称: @param {String} name 修改的卡片名称
+     * 编辑描述: @param {String} description 描述内容
+     * 设置开始时间: @param {String} start_time 时间戳
+     * 设置结束时间: @param {String} due_time 时间戳
+     */
+    * updateTask({ payload }, { call }) {
+      const { updateObj } = payload
+      let res = yield call(updateTask, updateObj)
+      if (isApiResponseOk(res)) {
+        if (res.data && res.data.remind_code != '0') { //通知提醒专用
+          message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
+        } else {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }
+      } else {
+        message.error(res.message, MESSAGE_DURATION_TIME)
       }
     },
   },

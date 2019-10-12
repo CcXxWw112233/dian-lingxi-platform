@@ -9,7 +9,7 @@ import { connect } from 'dva'
 
 class HeaderContent extends Component {
   render() {
-    const { publicTaskDetailModal: { drawContent = {} }, taskDetailModalHeaderParams } = this.props
+    const { drawContent = {}, taskDetailModalHeaderParams } = this.props
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
     const { currentUserOrganizes = [], is_all_org, is_show_org_name  } = taskDetailModalHeaderParams
 
@@ -51,8 +51,8 @@ HeaderContent.defaultProps = {
   card_id: '', // 任务id
 }
 
-//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ publicTaskDetailModal }) {
-  return { publicTaskDetailModal }
+//  只关联public中弹窗内的数据
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {} } }) {
+  return { drawContent }
 }
 export default connect(mapStateToProps)(HeaderContent)

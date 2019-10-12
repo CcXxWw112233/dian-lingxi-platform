@@ -221,6 +221,8 @@ export default class CreateTask extends React.Component {
       payload: {
         drawerVisible: true,
         card_id, // 在这个model中外部保存一个card_id
+        taskGroupListIndex,
+        taskGroupListIndex_index,
       }
     })
 
@@ -273,6 +275,34 @@ export default class CreateTask extends React.Component {
     // })
   }
   //右方抽屉弹窗---end
+
+  // 修改卡片详情回调
+  handleTaskDetailChange = () => {
+
+  }
+
+  /**
+   * 更新父级任务列表
+   * @param {Object} payload 需要传递进来的参数
+   */
+  updateParentTaskList = (payload) => {
+    console.log('更新父级任务列表', 'sssssss_进来了')
+    const { is_realize, card_name } = payload
+    const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    if (is_realize) { // 更新完成卡片的状态
+      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize == '1' ? '0' : '1'     
+    }
+    if (card_name) { // 更新修改卡片名称
+      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['card_name'] = card_name
+    }
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList
+      }
+    })
+  }
+
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
     const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch, is_show_org_name, is_all_org, currentUserOrganizes = [] } = this.props
@@ -331,6 +361,8 @@ export default class CreateTask extends React.Component {
             task_detail_modal_visible={drawerVisible}
             setTaskDetailModalVisible={this.setDrawerVisibleClose}
             taskDetailModalHeaderParams={taskDetailModalHeaderParams}
+            handleTaskDetailChange={this.handleTaskDetailChange}
+            updateParentTaskList={this.updateParentTaskList}
           />
       </div>
     )
@@ -357,7 +389,9 @@ function mapStateToProps({
     }
   },
   publicTaskDetailModal: {
-    drawerVisible
+    drawerVisible,
+    taskGroupListIndex,
+    taskGroupListIndex_index
   }
 }) {
   return {
@@ -367,6 +401,8 @@ function mapStateToProps({
     board_id,
     is_show_org_name,
     is_all_org,
-    currentUserOrganizes
+    currentUserOrganizes,
+    taskGroupListIndex,
+    taskGroupListIndex_index
   }
 }
