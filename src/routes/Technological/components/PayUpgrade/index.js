@@ -127,7 +127,7 @@ export class PayUpgrade extends Component {
                                     </>
                             }
                             {
-                                paymentInfo.is_free_trial == 1  &&
+                                paymentInfo.is_free_trial == 1 &&
                                 <Button type="primary" size={'default'} onClick={() => this.toPay()} > 付费升级</Button>
                             }
                              
