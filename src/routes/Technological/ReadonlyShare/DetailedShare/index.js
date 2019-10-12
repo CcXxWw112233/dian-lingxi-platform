@@ -1,5 +1,5 @@
 import React from 'react'
-import TaskDetailShare from './TaskDetailShare/DrawerContent'
+import DrawContentModal from './TaskDetailShare/components/DrawContentModal'
 import FileDetailModal from './FileDetailShare/FileDetail/FileDetailContent'
 // import ProccessDetailShare from './ProccessDetailShare/index'
 import { connect } from 'dva'
@@ -62,10 +62,18 @@ class DetailedShare extends React.Component {
 
     render() {
         const { rela_type } = this.state
+        const { dispatch, drawerVisible = false } = this.props
         return (
             <div>
                 {
-                    rela_type === '1' ? <div><TaskDetailShare /></div> : ''
+                    rela_type === '1' ?
+                        <div>
+                            <DrawContentModal
+                                dispatch={dispatch}
+                                visible={drawerVisible}
+                            // setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} 
+                            />
+                        </div> : ''
                 }
                 {
                     rela_type === '2' ? <div><ProccessDetailShare /></div> : ''
