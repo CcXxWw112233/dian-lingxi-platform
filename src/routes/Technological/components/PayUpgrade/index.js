@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import indexStyles from './index.less';
+import globalStyles from '@/globalset/css/globalClassName.less'
 import { Modal, Button, Progress, Tooltip, Divider} from 'antd';
 
 export class PayUpgrade extends Component {
@@ -41,15 +42,15 @@ export class PayUpgrade extends Component {
     };
 
     itemList = [
-        { icon: '', name: '行业模板' },
-        { icon: '', name: 'PDF图评' },
-        { icon: '', name: '视频会议' },
-        { icon: '', name: '甘特图' },
-        { icon: '', name: '存储空间' },
-        { icon: '', name: '优秀案例' },
-        { icon: '', name: '政策法规' },
-        { icon: '', name: '投资地图' },
-        { icon: '', name: '风采展示' },
+        { icon: '&#xe6bd;', name: '行业模板' },
+        { icon: '&#xe664;', name: 'PDF图评' },
+        { icon: '&#xe675;', name: '视频会议' },
+        { icon: '&#xe66d;', name: '甘特图' },
+        { icon: '&#xe6b3;', name: '存储空间' },
+        { icon: '&#xe6c0;', name: '优秀案例' },
+        { icon: '&#xe6bc;', name: '政策法规' },
+        { icon: '&#xe6bf;', name: '投资地图' },
+        { icon: '&#xe6bb;', name: '风采展示' },
     ]
     render() {
         const { datas = {} } = this.props.organizationManager;
@@ -114,7 +115,7 @@ export class PayUpgrade extends Component {
 
                         <div className={indexStyles.upgradeBtnWrapper}>
                             {
-                                paymentInfo.is_free_trial && paymentInfo.is_free_trial == 0 ?
+                                paymentInfo.is_free_trial == 0 &&
                                     <>
                                         <Tooltip title="续费功能即将开通">
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true} >续费</Button>
@@ -124,11 +125,12 @@ export class PayUpgrade extends Component {
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true}>成员扩容</Button>
                                         </Tooltip>
                                     </>
-
-
-                                    :
-                                    <Button type="primary" size={'default'} onClick={() => this.toPay()} > 付费升级</Button>
                             }
+                            {
+                                paymentInfo.is_free_trial == 1  &&
+                                <Button type="primary" size={'default'} onClick={() => this.toPay()} > 付费升级</Button>
+                            }
+                             
                         </div>
                     </div>
                 </div>
@@ -140,6 +142,7 @@ export class PayUpgrade extends Component {
                                 return (
                                     <div key={index} className={indexStyles.item}>
                                         <div className={indexStyles.iconWrapper}>
+                                        <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} ></i><br />
                                         </div>
                                         <div className={indexStyles.itemTitle}>
                                             {item.name}
