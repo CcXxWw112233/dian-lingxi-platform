@@ -65,7 +65,6 @@ class FileDetailContent extends React.Component {
   }
 
   state = {
-    // rects: [{"x":288,"y":176,"width":59,"height":58,"isAready":false},{"x":556,"y":109,"width":48,"height":48,"isAready":false},{"x":477,"y":308,"width":118,"height":123,"isAready":false}],//[],
     rects: [],
     imgHeight: 0,
     imgWidth: 0, //获取到的图片宽高
@@ -111,7 +110,6 @@ class FileDetailContent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log(nextProps, 'sssss')
     const rects = []
     const { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } = nextProps
     let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
@@ -1524,7 +1522,7 @@ class FileDetailContent extends React.Component {
     const visitControlParams = {
       privileges, is_privilege
     }
-    const { currentPreviewFileBaseInfo: { is_shared }, } = this.props
+
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
@@ -1541,7 +1539,7 @@ class FileDetailContent extends React.Component {
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>
-            <div style={{ position: 'relative' }}>
+            {/* <div style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1555,8 +1553,9 @@ class FileDetailContent extends React.Component {
                   handleFileVersionValue={this.handleFileVersionValue}
                   uploadProps={uploadProps} />
               )}
-            </div>
-            <div style={{ position: 'relative' }}>
+            </div> */}
+
+            {/* <div style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1565,7 +1564,7 @@ class FileDetailContent extends React.Component {
               <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
               </Button>
-            </div>
+            </div> */}
             <span style={{ marginLeft: '10px' }}>
             </span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
@@ -1575,11 +1574,7 @@ class FileDetailContent extends React.Component {
                 )
               } */}
 
-            {/* <ShareAndInvite
-              is_shared={is_shared}
-              onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-              handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
-            <div style={{ position: 'relative' }}>
+            {/* <div style={{ position: 'relative' }}>
               <span>
                 {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
@@ -1589,9 +1584,9 @@ class FileDetailContent extends React.Component {
                 <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
               </span>
 
-            </div>
+            </div> */}
             {/* <div style={{position:'relative'}}> */}
-            <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
+            {/* <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
               <VisitControl
                 board_id={board_id}
                 isPropVisitControl={is_privilege === '0' ? false : true}
@@ -1604,10 +1599,11 @@ class FileDetailContent extends React.Component {
                 handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
                 handleAddNewMember={this.handleVisitControlAddNewMember}
               />
-            </span>
+            </span> */}
             {/* </div> */}
             {/* </div> */}
-            <div style={{ cursor: 'pointer' }}>
+
+            {/* <div style={{ cursor: 'pointer' }}>
               {seeFileInput === 'fileModule' ? (
                 <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' })}>
                   <Icon type="ellipsis" style={{ fontSize: 20, marginLeft: 14 }} />
@@ -1617,7 +1613,8 @@ class FileDetailContent extends React.Component {
               <Tooltip title={'关闭预览'} placement={'left'}>
                 <Icon type="close" onClick={this.closeFile.bind(this)} style={{ fontSize: 20, marginLeft: 16 }} />
               </Tooltip>
-            </div>
+            </div> */}
+
           </div>
         </div>
         {/*文件详情*/}

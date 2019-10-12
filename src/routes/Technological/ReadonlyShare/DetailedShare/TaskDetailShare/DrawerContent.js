@@ -26,7 +26,7 @@ import TagDropDown from './components/TagDropDown'
 import ExcutorList from './components/ExcutorList'
 import ContentRaletion from '../../../../../components/ContentRaletion'
 import { createMeeting, createShareLink, modifOrStopShareLink } from '../../../../../services/technological/workbench'
-import VisitControl from '../../../components/VisitControl/index'
+// import VisitControl from '../../../components/VisitControl/index'
 import InformRemind from '../../../../../components/InformRemind'
 import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
 import { withRouter } from 'react-router-dom'
@@ -1493,6 +1493,19 @@ class DrawContent extends React.Component {
       <div style={{ position: 'relative' }}>
         {/* <div className={globalStyle.drawContent_mask}></div> */}
         <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={DrawerContentStyles.fileIcon}>
+              <span className={`${globalStyle.authTheme} ${DrawerContentStyles.fileTitle}`}>&#xe691;</span>
+              任务
+            </div>
+            {/* <div className={indexStyles.fileDetailHeadLeft}>
+              {seeFileInput === 'fileModule' ? (
+                <FileDerailBreadCrumbFileNav />
+              ) : ('')}
+            </div> */}
+          </div>
+
           <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
             {/*没有编辑项目时才有*/}
             {/* {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
@@ -1511,7 +1524,8 @@ class DrawContent extends React.Component {
                 {/* {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                   <div className={globalStyle.drawContent_mask} style={{ left: 20 }} onClick={this.alarmNoEditPermission}></div>
                 )} */}
-                <span style={{ position: 'relative' }}>
+
+                {/* <span style={{ position: 'relative' }}>
                   {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                     <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                   )}
@@ -1520,7 +1534,8 @@ class DrawContent extends React.Component {
                       <span>{board_name} </span> <Icon type="right" /> <span>{list_name}</span>
                     </div>
                   </Dropdown>
-                </span>
+                </span> */}
+
                 <div className={DrawerContentStyles.right}>
                   {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
                   {/* <span style={{ marginRight: '10px' }}>
@@ -1530,15 +1545,16 @@ class DrawContent extends React.Component {
                       data={onlyReadingShareData}
                       handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
                   </span> */}
-                  <span style={{ position: 'relative' }}>
+
+                  {/* <span style={{ position: 'relative' }}>
                     {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                       <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                     )}
                     <InformRemind projectExecutors={drawContent.executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
-                  </span>
+                  </span> */}
 
                   {/* <Dropdown overlay={topRightMenu}> */}
-                  {drawContent.is_privilege && (
+                  {/* {drawContent.is_privilege && (
                     <span style={{ marginRight: drawContent.is_privilege === '1' ? '46px' : '20px' }}>
                       <VisitControl
                         board_id={board_id}
@@ -1551,20 +1567,23 @@ class DrawContent extends React.Component {
                         handleAddNewMember={this.handleVisitControlAddNewMember}
                       />
                     </span>
-                  )}
+                  )} */}
                   {/* </Dropdown> */}
-                  <Dropdown overlay={topRightMenu}>
+                  {/* <Dropdown overlay={topRightMenu}>
                     <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2, cursor: 'pointer' }} />
-                    {/*</Dropdown>*/}
-                  </Dropdown>
+                  </Dropdown> */}
+                  {/*</Dropdown>*/}
+
                 </div>
               </div>
             </div>
 
             <div style={{ position: 'relative' }}>
+
               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
               )}
+
               {/*标题*/}
               <div className={DrawerContentStyles.divContent_2}>
                 <div className={DrawerContentStyles.contain_2}>
@@ -1860,7 +1879,6 @@ class DrawContent extends React.Component {
                         </Dropdown>
                       )}
                   </div>
-
                 </div>
               </div>
               {child_data.length ? (

@@ -1,8 +1,9 @@
 import React from 'react'
 import DrawContentModal from './TaskDetailShare/components/DrawContentModal'
-import FileDetailModal from './FileDetailShare/FileDetail/FileDetailContent'
+import FileDetailModal from './FileDetailShare/FileDetail/FileDetailModal'
 // import ProccessDetailShare from './ProccessDetailShare/index'
 import { connect } from 'dva'
+import indexStyle from './index.less'
 
 @connect()
 class DetailedShare extends React.Component {
@@ -62,25 +63,31 @@ class DetailedShare extends React.Component {
 
     render() {
         const { rela_type } = this.state
-        const { dispatch, drawerVisible = false } = this.props
+        const { dispatch, drawerVisible = true, } = this.props
         return (
             <div>
-                {
-                    rela_type === '1' ?
-                        <div>
-                            <DrawContentModal
-                                dispatch={dispatch}
-                                visible={drawerVisible}
-                            // setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} 
-                            />
-                        </div> : ''
-                }
-                {
+                <div className={indexStyle.mask}></div>
+
+                <div>
+                    {
+                        rela_type === '1' ?
+                            <div>
+                                <DrawContentModal
+                                    dispatch={dispatch}
+                                    visible={drawerVisible}
+                                />
+                            </div> : ''
+                    }
+                    {/* {
                     rela_type === '2' ? <div><ProccessDetailShare /></div> : ''
-                }
-                {
-                    rela_type === '3' ? <div><FileDetailModal {...this.props} /></div> : ''
-                }
+                } */}
+                    {
+                        rela_type === '3' ?
+                            <div>
+                                <FileDetailModal {...this.props} visible={drawerVisible} dispatch={dispatch} />
+                            </div> : ''
+                    }
+                </div>
             </div>
         )
     }

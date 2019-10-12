@@ -76,7 +76,7 @@ class CustormModal extends React.Component {
     if (is_simple_model !== '1') {
       maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
     }
-   
+
     // console.log(overInner, 'sss')
     return (
       <Modal

@@ -214,6 +214,7 @@ const Routers = function ({ history, app }) {
       models: () => [
         import('./models/technological/projectDetail/projectDetailTask'),
         import('./models/technological/projectDetail/projectDetailFile'),
+        import('./models/technological/projectDetail'),
       ],
       component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index'),
     },

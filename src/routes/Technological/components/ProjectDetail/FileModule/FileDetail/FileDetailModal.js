@@ -41,7 +41,8 @@ class FileDetailModal extends React.Component {
         bodyStyle={{ top: 0 }}
         style={{ top: modalTop }}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} modalTop={modalTop} />}
+        overInner={<FileDetail {...this.props} modalTop={modalTop} />
+        }
       />
     )
   }
