@@ -35,7 +35,7 @@ export default class SiderLeft extends React.Component {
     this.state = {
       collapsed: collapsed,
       createOrganizationVisable: false,
-      ShowAddMenberModalVisibile: false, // 显示邀请企业成员的弹框
+      ShowAddMenberModalVisibile: false, // 显示邀请组织成员的弹框
       NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
       is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
       is_simplemode: is_simplemode,
@@ -123,7 +123,7 @@ export default class SiderLeft extends React.Component {
     this.routingJump(`/technological/${route}`)
   }
 
-  //创建或加入企业
+  //创建或加入组织
   setCreateOrgnizationOModalVisable() {
     this.setState({
       createOrganizationVisable: !this.state.createOrganizationVisable
@@ -138,7 +138,7 @@ export default class SiderLeft extends React.Component {
     })
   }
 
-  //添加企业职员操作
+  //添加组织成员操作
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -160,7 +160,7 @@ export default class SiderLeft extends React.Component {
     }).then(res => {
       if (res && res.code === '0') {
         commInviteWebJoin({
-          id: invitationId,
+          id: invitation_org,
           role_id: res.data.role_id,
           type: '11',
           users: res.data.users,
@@ -183,9 +183,7 @@ export default class SiderLeft extends React.Component {
     // })
   }
 
-
   // 切换组织的点击事件
-  // 切换企业的点击事件
   handleOrgListMenuClick = (e) => {
     // console.log(e, 'ssss')
     const { key } = e
@@ -193,7 +191,7 @@ export default class SiderLeft extends React.Component {
     const { currentUserOrganizes = [] } = this.props
     const { id } = currentUserOrganizes
     const { dispatch, is_show_org_name } = this.props
-    //是否拥有查看职员入口
+    //是否拥有查看成员入口
     const isHasMemberView = () => {
       return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     }
@@ -213,13 +211,13 @@ export default class SiderLeft extends React.Component {
     }
 
     switch (key) {
-      case '24': // 匹配团队职员
+      case '24': // 匹配团队成员
         isHasMemberView() && this.routingJump('/technological/organizationMember')
         break
-      case '23': // 匹配职员管理后台
+      case '23': // 匹配成员管理后台
         isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
         break
-      case '22': // 匹配邀请职员加入弹框显示
+      case '22': // 匹配邀请成员加入弹框显示
         checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
         break
       case '20': // 匹配用户设置
@@ -241,10 +239,10 @@ export default class SiderLeft extends React.Component {
       case 'subShowSimple':
         this.handleMode
         break
-      case '10': // 创建或加入新企业
+      case '10': // 创建或加入新组织
         this.setCreateOrgnizationOModalVisable()
         break
-      case '0': // 匹配全部企业
+      case '0': // 匹配全部组织
         this.setState({
           is_disabled: false
         })
@@ -267,7 +265,7 @@ export default class SiderLeft extends React.Component {
         // this.nextMenuClick(key)
 
         break
-      default: // 其他企业的切换
+      default: // 其他组织的切换
         this.setState({
           is_disabled: true
         })
@@ -302,7 +300,7 @@ export default class SiderLeft extends React.Component {
         break
     }
   }
-  //选择全企业, 默认回到工作台
+  //选择全组织, 默认回到工作台
   nextMenuClick(key) {
     let data = {
       key: key,
@@ -391,7 +389,7 @@ export default class SiderLeft extends React.Component {
 
 
   render() {
-    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org } = this.props //currentUserOrganizes currentSelectOrganize企业列表和当前企业
+    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
     menuList.forEach((item) => {
       if (item.status === '1') {
@@ -457,7 +455,7 @@ export default class SiderLeft extends React.Component {
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo, id } = currentSelectOrganize
 
-    //是否拥有查看职员入口
+    //是否拥有查看成员入口
     const isHasMemberView = () => {
       return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     }
@@ -486,7 +484,7 @@ export default class SiderLeft extends React.Component {
                 <div className={indexStyles.default_select_setting}>
                   <div className={indexStyles.team}>
                     <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
-                    <span className={indexStyles.middle_text}>团队职员</span>
+                    <span className={indexStyles.middle_text}>团队成员</span>
                   </div>
                 </div>
               </Menu.Item>
@@ -513,7 +511,7 @@ export default class SiderLeft extends React.Component {
                 <div className={indexStyles.default_select_setting}>
                   <div className={indexStyles.addUsers}>
                     <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
-                    <span className={indexStyles.middle_text}>邀请职员加入</span>
+                    <span className={indexStyles.middle_text}>邀请成员加入</span>
                   </div>
                 </div>
               </Menu.Item>
@@ -552,7 +550,7 @@ export default class SiderLeft extends React.Component {
           >
             {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
             <Menu.Item key="subShowOrgName">
-              <span>显示企业名称
+              <span>显示组织名称
                   <Switch
                   style={{ display: 'inline-block', marginLeft: 8 }}
                   onClick={(checked) => { this.handleShowAllOrg(checked) }}
@@ -610,7 +608,7 @@ export default class SiderLeft extends React.Component {
           <Menu.Item key="0" className={indexStyles.org_name}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img src={linxiLogo} className={indexStyles.org_img} />
-              <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部企业</span>
+              <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
             </div>
           </Menu.Item>
           {currentUserOrganizes.map((value, key) => {
@@ -643,7 +641,7 @@ export default class SiderLeft extends React.Component {
     //   return flag
     // }
 
-    // //是否拥有查看职员入口
+    // //是否拥有查看成员入口
     // const isHasMemberView = () => {
     //   return checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY)
     // }

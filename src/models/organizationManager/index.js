@@ -485,14 +485,14 @@ export default {
       const { id, status } = payload
       let res = yield call(setFnManagementStatus, { id, status })
       const { calback } = payload
-
       if (isApiResponseOk(res)) {
         if (typeof calback == 'function') {
           calback()
         }
+        message.success('修改成功', MESSAGE_DURATION_TIME)
       }
       else {
-
+        message.warn('修改失败', MESSAGE_DURATION_TIME)
       }
     },
 
