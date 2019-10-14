@@ -55,7 +55,7 @@ export default class TaskDetailModal extends Component {
   }
 
   render() {
-    const { task_detail_modal_visible, taskDetailModalHeaderParams, users, handleTaskDetailChange, updateParentTaskList } = this.props
+    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList } = this.props
     // const commentUseParams = { //公共评论模块所需要的参数
     //   commentSubmitPost: this.commentSubmitPost,
     //   deleteComment: this.deleteComment,
@@ -70,7 +70,7 @@ export default class TaskDetailModal extends Component {
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} />}
-          headerContent={<HeaderContent users={users} taskDetailModalHeaderParams={taskDetailModalHeaderParams} />}
+          headerContent={<HeaderContent users={users} />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
         />
       </div>

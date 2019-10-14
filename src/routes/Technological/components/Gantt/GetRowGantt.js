@@ -324,28 +324,35 @@ export default class GetRowGantt extends Component {
     this.getCurrentGroup({ top })
     const { dispatch } = this.props
     if (id) { //如果有id 则是修改任务，否则是创建任务
-      this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
       dispatch({
-        type: 'workbenchTaskDetail/getCardDetail',
+        type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          id,
-          board_id,
-          calback: function (data) {
-            dispatch({
-              type: 'workbenchPublicDatas/getRelationsSelectionPre',
-              payload: {
-                _organization_id: data.org_id
-              }
-            })
-          }
+          drawerVisible: true,
+          card_id: id
         }
       })
-      dispatch({
-        type: 'workbenchTaskDetail/getCardCommentListAll',
-        payload: {
-          id: id
-        }
-      })
+      // this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+      // dispatch({
+      //   type: 'workbenchTaskDetail/getCardDetail',
+      //   payload: {
+      //     id,
+      //     board_id,
+      //     calback: function (data) {
+      //       dispatch({
+      //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      //         payload: {
+      //           _organization_id: data.org_id
+      //         }
+      //       })
+      //     }
+      //   }
+      // })
+      // dispatch({
+      //   type: 'workbenchTaskDetail/getCardCommentListAll',
+      //   payload: {
+      //     id: id
+      //   }
+      // })
       dispatch({
         type: 'workbenchPublicDatas/updateDatas',
         payload: {

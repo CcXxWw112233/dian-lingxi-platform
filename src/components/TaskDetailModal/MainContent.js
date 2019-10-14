@@ -19,6 +19,16 @@ export default class MainContent extends Component {
   state = {
   }
 
+  componentDidMount() {
+    const { card_id } = this.props
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardDetail',
+      payload: {
+        id: card_id
+      }
+    })
+  }
+
   // 设置卡片是否完成 S
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
@@ -50,7 +60,7 @@ export default class MainContent extends Component {
       }
     })
     // 需要调用父级的列表
-    this.props.updateParentTaskList && this.props.updateParentTaskList({ is_realize })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
   }
   // 设置卡片是否完成 E
 
@@ -92,7 +102,7 @@ export default class MainContent extends Component {
       payload: { updateObj }
     })
     // 需要调用父级的列表
-    this.props.updateParentTaskList && this.props.updateParentTaskList({ card_name: val })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
   }
   // 设置标题文本失去焦点回调 E
 
@@ -124,7 +134,7 @@ export default class MainContent extends Component {
       }
     })
     // 需要调用父级的列表
-    this.props.updateParentTaskList && this.props.updateParentTaskList({ is_realize: temp_realize == '0' ? '1' : '0' })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
   }
   // 设置是否完成状态的下拉回调 E
 
@@ -179,11 +189,11 @@ export default class MainContent extends Component {
           <div className={mainContentStyles.title_content}>
             {
               type == '0' ? (
-                <div style={{ cursor: 'pointer', marginTop: '12px' }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
+                <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
                   <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
                 </div>
               ) : (
-                  <div style={{ width: 24, height: 24, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
+                  <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
                     <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
                   </div>
                 )

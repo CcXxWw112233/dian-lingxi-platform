@@ -69,18 +69,26 @@ export default class TaskItem extends React.Component {
     })
 
     this.props.updatePublicDatas({ board_id });
-    this.props.getCardDetail({
-      id,
-      board_id,
-      calback: this.props.setTaskDetailModalVisibile
-    });
 
-    this.props.dispatch({
-      type: 'workbenchTaskDetail/getCardCommentListAll',
+    // this.props.getCardDetail({
+    //   id,
+    //   board_id,
+    //   calback: this.props.setTaskDetailModalVisibile
+    // });
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id: id
+        drawerVisible: true,
+        card_id: id
       }
     })
+
+    // this.props.dispatch({
+    //   type: 'workbenchTaskDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // })
   }
 
   componentDidMount() {

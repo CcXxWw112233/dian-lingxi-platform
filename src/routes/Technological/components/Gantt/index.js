@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { message } from 'antd'
 import { connect } from "dva/index";
 import GanttFace from './GanttFace'
-import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
+// import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
+import TaskDetailModal from '@/components/TaskDetailModal'
 import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
 import AddTaskModal from './components/AddTaskModal';
 
@@ -28,10 +29,8 @@ class Gantt extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
   }
-
-
+ 
   //弹窗
   setPreviewFileModalVisibile = () => {
     this.setState({
@@ -44,6 +43,16 @@ class Gantt extends Component {
     this.setState({
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
+  }
+
+  // 关闭任务弹窗的回调
+  setDrawerVisibleClose = () => {
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawerVisible: false
+      }
+    })
   }
 
   //用来实现创建任务弹窗方法
@@ -236,7 +245,8 @@ class Gantt extends Component {
       group_view_type,
       current_list_group_id,
       about_group_boards = [],
-      about_user_boards = []
+      about_user_boards = [],
+      drawerVisible,
     } = datas;
 
     const CreateTaskProps = {
@@ -580,7 +590,7 @@ class Gantt extends Component {
           updateFileDatas={updateDatasFile}
         /> */}
 
-        <TaskDetailModal
+        {/* <TaskDetailModal
           {...this.props}
           {...CreateTaskProps}
           {...FileModuleProps}
@@ -595,6 +605,12 @@ class Gantt extends Component {
           updateDatas={updateDatasTask}
           needDelete={true}
           handleDeleteCard={this.handleDeleteCard}
+        /> */}
+        <TaskDetailModal 
+          dispatch={dispatch}
+          task_detail_modal_visible={drawerVisible}
+          setTaskDetailModalVisible={this.setDrawerVisibleClose}
+          handleTaskDetailChange={this.handleChangeCard.bind(this)}
         />
 
         {addTaskModalVisible && (
@@ -619,9 +635,9 @@ class Gantt extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas }) {
+function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, publicTaskDetailModal  }) {
   const modelObj = {
-    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas'] }
+    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas'], ...publicTaskDetailModal }
   }
   return { model: modelObj }
 }

@@ -9,9 +9,8 @@ import { connect } from 'dva'
 
 class HeaderContent extends Component {
   render() {
-    const { drawContent = {}, taskDetailModalHeaderParams } = this.props
+    const { drawContent = {}, currentUserOrganizes = [], is_all_org, is_show_org_name } = this.props
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
-    const { currentUserOrganizes = [], is_all_org, is_show_org_name  } = taskDetailModalHeaderParams
 
     return (
       <div style={{display: 'flex', alignItems: 'center'}}>
@@ -32,8 +31,8 @@ class HeaderContent extends Component {
                 </span>
               )
             }
-            <span className={`${globalStyles.authTheme} ${headerStyles.arrow}`}>&#xe61f;</span>
-            <span className={headerStyles.bread_list_name}>{list_name}</span>
+            <span className={`${globalStyles.authTheme} ${headerStyles.arrow}`}>{list_name ? (<span>&#xe61f;</span>) : ''}</span>
+            <span className={headerStyles.bread_list_name}>{list_name || ''}</span>
           </span>
         </div>
         {/* 这里是头部右边 */}
@@ -52,7 +51,7 @@ HeaderContent.defaultProps = {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {} } }) {
-  return { drawContent }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {} }, technological: { datas: { currentUserOrganizes = [], is_all_org, is_show_org_name } } }) {
+  return { drawContent, currentUserOrganizes, is_show_org_name, is_all_org }
 }
 export default connect(mapStateToProps)(HeaderContent)
