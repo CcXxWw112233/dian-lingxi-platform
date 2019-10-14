@@ -85,7 +85,8 @@ class ShareAndInvite extends Component {
       day7: now + dayToSec * 7,
       forever: "0"
     };
-    return stations[key] ? stations[key] : "0";
+    //时间戳保留10位
+    return stations[key] ? JSON.stringify(stations[key]).substr(0, 10) : "0";
   };
   handleOnlyReadingShareEXPMenuClick = ({ item, key }) => {
     const { data, handleOnlyReadingShareExpChangeOrStopShare } = this.props;

@@ -68,7 +68,7 @@ class DetailedShare extends React.Component {
             <div>
 
                 <div>
-                    <div className={indexStyle.mask}></div>
+                    {/* <div className={indexStyle.mask}></div> */}
 
                     {
                         rela_type === '1' ?

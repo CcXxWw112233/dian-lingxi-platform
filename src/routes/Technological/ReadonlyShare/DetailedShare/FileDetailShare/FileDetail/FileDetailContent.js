@@ -1652,7 +1652,7 @@ class FileDetailContent extends React.Component {
               />
               {/*{seeFileInput === 'fileModule'? (*/}
               {/*<div className={indexStyles.versionOut}>*/}
-              {/*<div>版本信息</div>*/}
+              {/* <div>版本信息</div> */}
               {/*<div className={indexStyles.versionInfoList}>*/}
               {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
               {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}

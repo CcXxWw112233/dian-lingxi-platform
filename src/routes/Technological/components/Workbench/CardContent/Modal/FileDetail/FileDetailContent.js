@@ -569,6 +569,18 @@ class FileDetailContent extends React.Component {
           message.success('停止分享成功')
         } else {
           message.success('修改成功')
+          const { dispatch, } = this.props
+          const { datas: { currentPreviewFileData = {} } } = this.props.model
+          const isShared = obj && obj['status'] && obj['status']
+          if (isShared) {
+            let new_currentPreviewFileData = { ...currentPreviewFileData, is_shared: obj['status'] }
+            dispatch({
+              type: 'workbenchFileDetail/updateDatas',
+              payload: {
+                currentPreviewFileData: new_currentPreviewFileData,
+              }
+            })
+          }
         }
         this.setState((state) => {
           const { onlyReadingShareData } = state
@@ -1393,10 +1405,15 @@ class FileDetailContent extends React.Component {
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
-            <ShareAndInvite
-              is_shared={is_shared}
-              onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-              handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+            {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+
+            <span style={{ marginBottom: '4px', marginRight: '10px', width: '12px', height: '12px' }}>
+              <ShareAndInvite
+                is_shared={is_shared}
+                onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
+                handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+            </span>
+
             <div style={{ position: 'relative' }}>
               <span>
                 {
