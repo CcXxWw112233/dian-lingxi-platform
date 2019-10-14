@@ -83,7 +83,7 @@ export default class GetRowGantt extends Component {
   stopPropagationEle = (e) => {
     if (
       e.target.dataset.targetclassname == 'specific_example' ||
-      e.target.className.indexOf('authTheme') != -1 || 
+      e.target.className.indexOf('authTheme') != -1 ||
       e.target.className.indexOf('ant-avatar') != -1
     ) { //不能滑动到某一个任务实例上
       return true
@@ -285,7 +285,7 @@ export default class GetRowGantt extends Component {
     })
   }
 
- 
+
   //点击某个实例,或者创建任务
   setSpecilTaskExample = ({ id, board_id, top }, e) => {
     if (e) {
@@ -387,74 +387,81 @@ export default class GetRowGantt extends Component {
               const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
               const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
               return (
-                <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
-                  {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
-                  <GetRowTaskItem
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                    itemValue={value2}
-                    setSpecilTaskExample={this.setSpecilTaskExample}
-                    ganttPanelDashedDrag={this.isDragging}
-                    list_id={list_id}
-                  />
-                  {/* 
-                    <div
-                      className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                      data-targetclassname="specific_example"
-                      // onDrag={this.onCardItemDrag}
-                      style={{
-                        left: left, top: top,
-                        width: (width || 6) - 6, height: (height || task_item_height),
-                        marginTop: task_item_margin_top,
-                        background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                      }}
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onMouseMove={(e) => e.stopPropagation()}
-                      onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
-                    >
-                      <div
-                        data-targetclassname="specific_example"
-                        style={{
-                          opacity: is_realize == '1'? 0.5: 1,
-                        }}
-                        className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                        onMouseDown={(e) => e.stopPropagation()} >
-                        <div data-targetclassname="specific_example"
-                          className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <CheckItem is_realize={is_realize} />
-                        </div>
-                        <div data-targetclassname="specific_example"
-                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          {name}
-                          <span className={indexStyles.due_time_description}>
-                            {
-                              is_overdue && due_description
-                            }
-                          </span>
-                        </div>
-                          style={{display: 'flex'}}
-                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <div style={{display: 'flex', flex: '1'}}>
-                            <span>{name}</span>
-                            {
-                              !(is_privilege == '0') && (
-                                <Tooltip title="已开启访问控制" placement="top">
-                                    <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px'}}>
-                                    <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                                    </span>
-                                </Tooltip>
-                              )
-                            }
-                          </div>
-                        </div>
-                        
-                        <div data-targetclassname="specific_example"
-                          onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <AvatarList users={executors} size={'small'} />
-                        </div>
-                      </div>
-                    </div> */}
-                  {/* </Dropdown> */}
-                </QueueAnim>
+                <GetRowTaskItem
+                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                  itemValue={value2}
+                  setSpecilTaskExample={this.setSpecilTaskExample}
+                  ganttPanelDashedDrag={this.isDragging}
+                  list_id={list_id}
+                />
+                // <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
+                //   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
+                //   <GetRowTaskItem
+                //     key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                //     itemValue={value2}
+                //     setSpecilTaskExample={this.setSpecilTaskExample}
+                //     ganttPanelDashedDrag={this.isDragging}
+                //     list_id={list_id}
+                //   />
+                //   {/* 
+                //     <div
+                //       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                //       data-targetclassname="specific_example"
+                //       // onDrag={this.onCardItemDrag}
+                //       style={{
+                //         left: left, top: top,
+                //         width: (width || 6) - 6, height: (height || task_item_height),
+                //         marginTop: task_item_margin_top,
+                //         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                //       }}
+                //       onMouseDown={(e) => e.stopPropagation()}
+                //       onMouseMove={(e) => e.stopPropagation()}
+                //       onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                //     >
+                //       <div
+                //         data-targetclassname="specific_example"
+                //         style={{
+                //           opacity: is_realize == '1'? 0.5: 1,
+                //         }}
+                //         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                //         onMouseDown={(e) => e.stopPropagation()} >
+                //         <div data-targetclassname="specific_example"
+                //           className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <CheckItem is_realize={is_realize} />
+                //         </div>
+                //         <div data-targetclassname="specific_example"
+                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           {name}
+                //           <span className={indexStyles.due_time_description}>
+                //             {
+                //               is_overdue && due_description
+                //             }
+                //           </span>
+                //         </div>
+                //           style={{display: 'flex'}}
+                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <div style={{display: 'flex', flex: '1'}}>
+                //             <span>{name}</span>
+                //             {
+                //               !(is_privilege == '0') && (
+                //                 <Tooltip title="已开启访问控制" placement="top">
+                //                     <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px'}}>
+                //                     <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                //                     </span>
+                //                 </Tooltip>
+                //               )
+                //             }
+                //           </div>
+                //         </div>
+
+                //         <div data-targetclassname="specific_example"
+                //           onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <AvatarList users={executors} size={'small'} />
+                //         </div>
+                //       </div>
+                //     </div> */}
+                //   {/* </Dropdown> */}
+                // // </QueueAnim>
 
               )
             })
