@@ -66,9 +66,10 @@ class DetailedShare extends React.Component {
         const { dispatch, drawerVisible = true, } = this.props
         return (
             <div>
-                <div className={indexStyle.mask}></div>
 
                 <div>
+                    <div className={indexStyle.mask}></div>
+
                     {
                         rela_type === '1' ?
                             <div>
