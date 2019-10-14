@@ -205,7 +205,14 @@ export default class CreateTask extends React.Component {
     dispatch({
       type: 'projectDetailTask/getCardDetail',
       payload: {
+<<<<<<< HEAD
         id: card_id,
+=======
+        taskGroupListIndex,
+        taskGroupListIndex_index,
+        drawerVisible: true,
+        card_id
+>>>>>>> sharing
       }
     })
     dispatch({

@@ -40,7 +40,6 @@ import InformRemind from '@/components/InformRemind'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import MenuSearchPartner from '../../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
-
 const TextArea = Input.TextArea
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -804,11 +803,10 @@ class DrawContent extends React.Component {
 
     const { datas: { drawContent = {} } } = this.props.model
     const { board_id, card_id } = drawContent
-
     const payload = {
       board_id,
       rela_id: card_id,
-      rela_type: '3'
+      rela_type: '1'
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -958,7 +956,7 @@ class DrawContent extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
       message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
@@ -1408,7 +1406,7 @@ class DrawContent extends React.Component {
           {/*项目挪动*/}
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
-            {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
+            <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
             {/*<div className={DrawerContentStyles.contain_1}>*/}
             {/*<Dropdown overlay={projectGroupMenu}>*/}
             {/*<div className={DrawerContentStyles.left}>*/}
@@ -1421,6 +1419,12 @@ class DrawContent extends React.Component {
             {/*</div>*/}
             {/*</Dropdown>*/}
             {/* </div> */}
+            {/* <span style={{ marginTop: '-2px' }}>
+              正在分享中
+            </span>
+            <span>
+              <ShareAndInvite />
+            </span> */}
             <span style={{ marginTop: '-2px', marginRight: '5px', position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>

@@ -8,7 +8,6 @@ import PreviewFileModal from './PreviewFileModal'
 import PreviewFileModalRichText from './PreviewFileModalRichText'
 
 import DCAddChirdrenTask from './DCAddChirdrenTask'
-import DCMenuItemOne from './DCMenuItemOne'
 import Comment from './Comment'
 import Cookies from 'js-cookie'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../../../../../utils/util'
@@ -24,11 +23,9 @@ import {
 import { deleteTaskFile } from '../../../../../services/technological/task'
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import TagDropDown from './components/TagDropDown'
-import MeusearMutiple from './components/MeusearMutiple'
 import ExcutorList from './components/ExcutorList'
 import ContentRaletion from '../../../../../components/ContentRaletion'
 import { createMeeting, createShareLink, modifOrStopShareLink } from './../../../../../services/technological/workbench'
-import ShareAndInvite from './../../ShareAndInvite/index'
 import VisitControl from './../../VisitControl/index'
 import InformRemind from '@/components/InformRemind'
 import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
@@ -37,6 +34,7 @@ import NameChangeInput from '../../../../../components/NameChangeInput'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { connect } from 'dva'
 import MenuSearchPartner from '../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
+import ShareAndInvite from './../../ShareAndInvite/index'
 
 
 const SubMenu = Menu.SubMenu;
@@ -64,7 +62,7 @@ class DrawContent extends React.Component {
   componentWillMount() {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { drawContent = {} } = this.props
-    let { description, attachment_data = [] } = drawContent
+    let { description } = drawContent
     this.setState({
       brafitEditHtml: description
     })
@@ -278,8 +276,6 @@ class DrawContent extends React.Component {
   chirldrenTaskChargeChange(data) {
     const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id } = drawContent
-    //单个任务执行人
-    const { user_id, full_name, avatar } = data
 
     //  多个任务执行人
     const excutorData = projectDetailInfoData['data'] //所有的人
@@ -365,7 +361,7 @@ class DrawContent extends React.Component {
     })
   }
   //开始时间
-  startDatePickerChange(e, timeString) {
+  startDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
@@ -393,7 +389,7 @@ class DrawContent extends React.Component {
     })
   }
   //截止时间
-  endDatePickerChange(e, timeString) {
+  endDatePickerChange(timeString) {
     const { drawContent = {}, milestoneList = [], dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
     const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
@@ -502,7 +498,7 @@ class DrawContent extends React.Component {
       }
     })
   }
-  drawerContentOutClick(e) {
+  drawerContentOutClick() {
     this.setState({
       titleIsEdit: false,
     })
@@ -510,7 +506,6 @@ class DrawContent extends React.Component {
   isJSON = (str) => {
     if (typeof str === 'string') {
       try {
-        var obj = JSON.parse(str);
         if (str.indexOf('{') > -1) {
           return true;
         } else {
@@ -528,7 +523,7 @@ class DrawContent extends React.Component {
     const xhr = new XMLHttpRequest()
     const fd = new FormData()
 
-    const successFn = (response) => {
+    const successFn = () => {
       // 假设服务端直接返回文件上传后的地址
       // 上传成功后调用param.success并传入上传后的文件地址
       if (xhr.status === 200 && this.isJSON(xhr.responseText)) {
@@ -559,7 +554,7 @@ class DrawContent extends React.Component {
       param.progress(event.loaded / event.total * 100)
     }
 
-    const errorFn = (response) => {
+    const errorFn = () => {
       // 上传发生错误时调用param.error
       param.error({
         msg: '图片上传失败!'
@@ -788,7 +783,7 @@ class DrawContent extends React.Component {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           deleteTaskFile(data).then((value) => {
 
             if (value.code !== '0') {
@@ -813,7 +808,7 @@ class DrawContent extends React.Component {
               })
               resolve()
             }
-          }).catch(err => {
+          }).catch(() => {
             message.warn('删除出了点问题，请重新删除。')
             resolve()
           })
@@ -881,7 +876,7 @@ class DrawContent extends React.Component {
         this.setState({
           onlyReadingShareModalVisible: true
         })
-      }).catch(err => message.error('获取分享信息失败'))
+      }).catch(() => message.error('获取分享信息失败'))
     } else {
       this.setState({
         onlyReadingShareModalVisible: false
@@ -889,6 +884,7 @@ class DrawContent extends React.Component {
     }
   }
   getSearchFromLocation = location => {
+
     if (!location.search) {
       return {}
     }
@@ -898,14 +894,16 @@ class DrawContent extends React.Component {
     }, {})
   }
   createOnlyReadingShareLink = () => {
-    const { location } = this.props
+    // const { location } = this.props
     //获取参数
-    const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
+    // const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
 
+    const { drawContent = {} } = this.props
+    const { board_id, card_id, } = drawContent
     const payload = {
       board_id,
       rela_id: card_id,
-      rela_type: appsSelectKey
+      rela_type: '1'
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -938,7 +936,7 @@ class DrawContent extends React.Component {
       } else {
         message.error('操作失败')
       }
-    }).catch(err => {
+    }).catch(() => {
       message.error('操作失败')
     })
   }
@@ -1033,7 +1031,7 @@ class DrawContent extends React.Component {
 
     // 这是更新type类型
     if (obj && obj.type && obj.type == 'change') {
-      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let { id } = obj.temp_arr
       let new_privileges = [...privileges]
       new_privileges = new_privileges.map((item) => {
         let new_item = item
@@ -1279,22 +1277,16 @@ class DrawContent extends React.Component {
   }
   render() {
     that = this
-    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, isInEditContentRelation, contentDropVisible, onlyReadingShareModalVisible, onlyReadingShareData, showUploadList, isVisitControl } = this.state
+    const { titleIsEdit, isInEdit, isInAddTag, isSetedAlarm, alarmTime, brafitEditHtml, attachment_fileList, excutorsOut_left_width, onlyReadingShareModalVisible, onlyReadingShareData, } = this.state
 
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
-    const { relations_Prefix = [], isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], relationTaskList = [], dispatch } = this.props
+    const { relations_Prefix = [], isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], dispatch } = this.props
 
     const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
-    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], attachment_data = [], is_shared, privileges = [], is_privilege = '0' } = drawContent
-    let executor = {//任务执行人信息 , 单个执行人情况
-      user_id: '',
-      user_name: '',
-      avatar: '',
-    }
+    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], privileges = [], is_privilege = '0', is_shared } = drawContent
     if (executors.length) {
-      executor = executors[0]
     }
     label_data = label_data || []
     description = description //|| '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
@@ -1329,28 +1321,6 @@ class DrawContent extends React.Component {
       </Menu>
     )
 
-    const meetingMenu = (
-      <Menu onClick={this.meetingMenuClick.bind(this)}>
-        <Menu.Item key="1">
-          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
-            &#xe760;
-          </i>
-          仅语音会议
-        </Menu.Item>
-        <Menu.Item key="2">
-          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
-            &#xe601;
-          </i>
-          语音视频会议
-        </Menu.Item>
-        <Menu.Item key="3">
-          <i className={`${globalStyle.authTheme}`} style={{ marginRight: 8 }}>
-            &#xe746;
-          </i>
-          屏幕或白板共享会议
-        </Menu.Item>
-      </Menu>
-    )
 
     const projectGroupMenu = (
       <Menu onClick={this.projectGroupMenuClick.bind(this)} mode="vertical">
@@ -1411,7 +1381,7 @@ class DrawContent extends React.Component {
           showUploadList: true
         })
       },
-      onChange({ file, fileList, event }) {
+      onChange({ file, fileList }) {
         if (file.size == 0) {
           return false;
         } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
@@ -1456,7 +1426,7 @@ class DrawContent extends React.Component {
           })
         }, 300)
       },
-      onPreview(e, a) {
+      onPreview(e) {
         const file_name = e.name
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
         const file_id = e.file_id || e.response.data.file_id
@@ -1504,7 +1474,7 @@ class DrawContent extends React.Component {
             } else {
               resolve()
             }
-          }).catch(err => {
+          }).catch(() => {
             message.warn('删除失败，请重新删除。')
             reject()
           })
@@ -1552,9 +1522,13 @@ class DrawContent extends React.Component {
                   </Dropdown>
                 </span>
                 <div className={DrawerContentStyles.right}>
-                  {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null } */}
+                  {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
                   <span style={{ marginRight: '10px' }}>
-                    {/* <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
+                    <ShareAndInvite
+                      is_shared={is_shared}
+                      onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                      data={onlyReadingShareData}
+                      handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
                   </span>
                   <span style={{ position: 'relative' }}>
                     {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
@@ -1642,8 +1616,8 @@ class DrawContent extends React.Component {
                             // addMenbersInProject={this.addMenbersInProject}
                             invitationType='4'
                             invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
-                            board_id={board_id}/>}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            board_id={board_id} />}
                         >
                           <span>指派负责人</span>
                         </Dropdown>
@@ -1654,11 +1628,11 @@ class DrawContent extends React.Component {
                             <MenuSearchPartner
                               invitationType='4'
                               invitationId={card_id}
-                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} 
-                              board_id={board_id}/>}
+                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                              board_id={board_id} />}
                           >
                             <div className={DrawerContentStyles.excutorsOut_left} ref={'excutorsOut_left'}>
-                              {executors.map((value, key) => {
+                              {executors.map((value) => {
                                 const { avatar, name, user_name, user_id } = value
                                 return (
                                   <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
@@ -1907,8 +1881,8 @@ class DrawContent extends React.Component {
               </Button>
                 </Upload>
                 <div className={DrawerContentStyles.attach_file_list}>
-                  {attachment_fileList.map((value, key) => {
-                    const { name, lastModified, create_time, file_id, uid } = value
+                  {attachment_fileList.map((value) => {
+                    const { name, create_time, file_id, uid } = value
                     const now_time = new Date().getTime()
                     return (
                       <div key={file_id || uid} className={DrawerContentStyles.attach_file_item} onClick={this.attachmentItemPreview.bind(this, value)}>

@@ -31,6 +31,7 @@ import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
+import ShareAndInvite from './../../../../ShareAndInvite/index'
 
 class FileDetailContent extends React.Component {
 
@@ -65,6 +66,8 @@ class FileDetailContent extends React.Component {
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
     isZoomPictureFullScreenMode: false, //图评全屏模式
+    onlyReadingShareModalVisible: false, //只读分享model
+    onlyReadingShareData: {},
 
     // 是否显示点击时候的样式颜色
     is_show_active_color: true,
@@ -534,14 +537,16 @@ class FileDetailContent extends React.Component {
     }, {})
   }
   createOnlyReadingShareLink = () => {
-    const { location } = this.props
-    //获取参数
-    const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
+    // const { location } = this.props
+    // //获取参数
+    // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
+
+    const { datas: { currentPreviewFileData: { file_id, board_id, } } } = this.props.model
 
     const payload = {
-      board_id,
+      board_id: board_id,
+      rela_type: '3',
       rela_id: file_id,
-      rela_type: appsSelectKey
     }
     return createShareLink(payload).then(({ code, data }) => {
       if (code === '0') {
@@ -592,10 +597,17 @@ class FileDetailContent extends React.Component {
     return temp_arr
   }
 
+<<<<<<< HEAD
  /**
    * 访问控制移除职员
    * @param {String} id 移除职员对应的id
    */
+=======
+  /**
+    * 访问控制移除成员
+    * @param {String} id 移除成员对应的id
+    */
+>>>>>>> sharing
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
       id: id
@@ -695,7 +707,7 @@ class FileDetailContent extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
       message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
@@ -1038,7 +1050,7 @@ class FileDetailContent extends React.Component {
 
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue } = this.state
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue, onlyReadingShareModalVisible, onlyReadingShareData } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
     const { bodyClientWidth, bodyClientHeight } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
@@ -1068,6 +1080,7 @@ class FileDetailContent extends React.Component {
 
     const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
+
       return (
         <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, { value, key })}>
           <div className={filePreviewCurrentVersionKey === key ? indexStyles.point : indexStyles.point2}></div>
@@ -1342,6 +1355,7 @@ class FileDetailContent extends React.Component {
       is_edit_version_description,
       editValue,
     }
+    const { datas: { currentPreviewFileData: { is_shared } } } = this.props.model
 
     return (
       <div>
@@ -1387,6 +1401,11 @@ class FileDetailContent extends React.Component {
             </div>
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
+
+            <ShareAndInvite
+              is_shared={is_shared}
+              onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
+              handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
             <div style={{ position: 'relative' }}>
               <span>
                 {
@@ -1396,8 +1415,9 @@ class FileDetailContent extends React.Component {
                 }
                 <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
               </span>
-
             </div>
+
+
             {/* <div> */}
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
               <VisitControl

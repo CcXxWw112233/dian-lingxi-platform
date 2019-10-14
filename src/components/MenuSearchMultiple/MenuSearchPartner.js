@@ -129,18 +129,19 @@ export default class MenuSearchPartner extends React.Component {
                                     id: board_id
                                 }
                             })
-                            dispatch({
-                                type: 'projectDetailTask/getCardDetail',
-                                payload: {
-                                    id: invitationId
-                                }
-                            })
+                            // dispatch({
+                            //     type: 'projectDetailTask/getCardDetail',
+                            //     payload: {
+                            //         id: invitationId
+                            //     }
+                            // })
                             dispatch({
                                 type: 'workbenchTaskDetail/projectDetailInfo',
                                 payload: {
                                     id: board_id
                                 }
                             })
+<<<<<<< HEAD
                             dispatch({
                                 type: 'projectDetailTask/getTaskGroupList',
                                 payload: {
@@ -164,6 +165,23 @@ export default class MenuSearchPartner extends React.Component {
                                     }
                                 }
                             })
+=======
+                            // dispatch({
+                            //     type: 'workbenchTaskDetail/getCardDetail',
+                            //     payload: {
+                            //         id: board_id,
+                            //         board_id: board_id,
+                            //         calback: function (data) {
+                            //             dispatch({
+                            //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                            //                 payload: {
+                            //                     _organization_id: invitation_org
+                            //                 }
+                            //             })
+                            //         }
+                            //     }
+                            // })
+>>>>>>> sharing
                         } else if (invitationType === '7') {
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',
