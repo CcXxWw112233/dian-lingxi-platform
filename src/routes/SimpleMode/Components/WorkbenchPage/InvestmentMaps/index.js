@@ -17,6 +17,7 @@ export default class index extends React.Component {
         this.state = {
             height: document.querySelector('body').clientHeight,
             selectOrganizationVisible: false,
+            orgId: localStorage.getItem('OrganizationId'),
         }
     }
     componentDidMount() {
@@ -25,7 +26,7 @@ export default class index extends React.Component {
         const { dispatch } = this.props
         dispatch({
             type: 'investmentMap/getMapsQueryUser',
-            payload: { }
+            payload: {}
         })
     }
     componentWillUnmount() {
@@ -40,20 +41,25 @@ export default class index extends React.Component {
 
     seeInvestmentMaps(params) {
         this.setState({
-            selectOrganizationVisible: true
+            orgId: params.id,
+        }, () => {
+            this.setState({
+                selectOrganizationVisible: true
+            })
         })
     }
 
     render() {
+        const { orgId } = this.state
         const accessToken = Cookies.get('Authorization')
-        const src_url = `${MAP_URL}?token=${accessToken}`
+        const src_url = `${MAP_URL}?token=${accessToken}&orgId=${orgId}`
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { mapOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
         return (
-            <div className={indexStyles.mapsContainer} style={{height: contentHeight+'px'}}>
+            <div className={indexStyles.mapsContainer} style={{ height: contentHeight + 'px' }}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false ? (
                     <div className={indexStyles.boardSelectWapper}>
                         <div className={indexStyles.groupName}>请选择一个企业进行查看地图</div>
@@ -71,7 +77,7 @@ export default class index extends React.Component {
                         </div>
                     </div>
                 ) : (
-                    <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
+                        <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
                     )}
             </div>
         );

@@ -65,7 +65,8 @@ class ShowAddMenberModal extends React.Component {
     const { _organization_id, show_wechat_invite, title, submitText, } = this.props
     const container = (
       <Form style={{ margin: '0 auto', width: 336 }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div>
+        {/* <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div> */}
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加`} </div>
         <div>
           <InviteOthers submitText={submitText ? submitText : '邀请加入'} isShowTitle={false} _organization_id={_organization_id || getGlobalData('aboutBoardOrganizationId')} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
@@ -91,7 +92,7 @@ class ShowAddMenberModal extends React.Component {
         <CustormModal
           visible={modalVisible}
           width={472}
-          zIndex={1030}
+          zIndex={1100}
           maskClosable={false}
           footer={null}
           destroyOnClose
