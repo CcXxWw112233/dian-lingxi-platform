@@ -692,17 +692,10 @@ class FileDetailContent extends React.Component {
     })
   }
 
-<<<<<<< HEAD
-   /**
-   * 访问控制移除职员
-   * @param {String} id 移除职员对应的id
-   */
-=======
   /**
-  * 访问控制移除成员
-  * @param {String} id 移除成员对应的id
+  * 访问控制移除职员
+  * @param {String} id 移除职员对应的id
   */
->>>>>>> sharing
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
       id: id
@@ -750,21 +743,12 @@ class FileDetailContent extends React.Component {
     })
   }
 
-<<<<<<< HEAD
-   /**
-  * 其他职员的下拉回调
-  * @param {String} id 这是用户的user_id
-  * @param {String} type 这是对应的用户字段
-  * @param {String} removeId 这是对应移除用户的id
-  */
-=======
   /**
- * 其他成员的下拉回调
+ * 其他职员的下拉回调
  * @param {String} id 这是用户的user_id
  * @param {String} type 这是对应的用户字段
  * @param {String} removeId 这是对应移除用户的id
  */
->>>>>>> sharing
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)

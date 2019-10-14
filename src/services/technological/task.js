@@ -340,13 +340,8 @@ export async function getCardDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/detail/${params.id}`,
     method: 'GET',
-<<<<<<< HEAD
-    headers: createHeaderContentDataByCardId(params.id),
-    // params
-=======
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
->>>>>>> sharing
   });
 }
 

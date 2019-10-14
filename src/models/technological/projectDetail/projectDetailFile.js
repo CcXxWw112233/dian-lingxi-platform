@@ -171,17 +171,6 @@ export default modelExtend(projectDetail, {
               folder_id: result.data.folder_id
             }
           })
-<<<<<<< HEAD
-        } 
-        else {
-          yield put({
-            type: 'getFileList',
-            payload: {
-              folder_id: result.data.folder_id
-            }
-          })
-        }
-=======
         }
         // else {
         //   yield put({
@@ -191,7 +180,6 @@ export default modelExtend(projectDetail, {
         //     }
         //   })
         // }
->>>>>>> sharing
       } else {
       }
     },

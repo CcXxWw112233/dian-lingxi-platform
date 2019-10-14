@@ -140,15 +140,9 @@ class ShareAndInvite extends Component {
         <Menu.Item key="onlyReadingShare">
           <span>只读分享</span>
         </Menu.Item>
-<<<<<<< HEAD
-        <Menu.Item key="inviteNewMember">
-          <span>邀请新职员</span>
-        </Menu.Item>
-=======
         {/* <Menu.Item key="inviteNewMember">
           <span>邀请新成员</span>
         </Menu.Item> */}
->>>>>>> sharing
       </Menu>
     );
     return (

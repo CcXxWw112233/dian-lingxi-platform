@@ -241,13 +241,8 @@ export async function getCurrentResponsibleTask() {
   })
 }
 
-<<<<<<< HEAD
-//获取当前选择的项目的职员列表
-export async function getCurrentSelectedProjectMembersList({projectId}) {
-=======
 //获取当前选择的项目的成员列表
 export async function getCurrentSelectedProjectMembersList({ projectId }) {
->>>>>>> sharing
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,
     method: 'GET'

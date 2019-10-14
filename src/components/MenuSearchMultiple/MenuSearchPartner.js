@@ -141,31 +141,6 @@ export default class MenuSearchPartner extends React.Component {
                                     id: board_id
                                 }
                             })
-<<<<<<< HEAD
-                            dispatch({
-                                type: 'projectDetailTask/getTaskGroupList',
-                                payload: {
-                                    type: '2',
-                                    board_id: board_id,
-                                    arrange_type: '1',
-                                }
-                            })
-                            dispatch({
-                                type: 'workbenchTaskDetail/getCardDetail',
-                                payload: {
-                                    id: invitationId,
-                                    board_id: board_id,
-                                    calback: function (data) {
-                                        dispatch({
-                                            type: 'workbenchPublicDatas/getRelationsSelectionPre',
-                                            payload: {
-                                                _organization_id: invitation_org
-                                            }
-                                        })
-                                    }
-                                }
-                            })
-=======
                             // dispatch({
                             //     type: 'workbenchTaskDetail/getCardDetail',
                             //     payload: {
@@ -181,7 +156,6 @@ export default class MenuSearchPartner extends React.Component {
                             //         }
                             //     }
                             // })
->>>>>>> sharing
                         } else if (invitationType === '7') {
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',

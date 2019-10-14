@@ -597,17 +597,10 @@ class FileDetailContent extends React.Component {
     return temp_arr
   }
 
-<<<<<<< HEAD
- /**
-   * 访问控制移除职员
-   * @param {String} id 移除职员对应的id
-   */
-=======
   /**
-    * 访问控制移除成员
-    * @param {String} id 移除成员对应的id
+    * 访问控制移除职员
+    * @param {String} id 移除职员对应的id
     */
->>>>>>> sharing
   handleVisitControlRemoveContentPrivilege = id => {
     removeContentPrivilege({
       id: id
