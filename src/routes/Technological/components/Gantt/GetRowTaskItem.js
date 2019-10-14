@@ -180,6 +180,12 @@ export default class GetRowTaskItem extends Component {
             // local_top: nt,
             local_left: nl,
         })
+        const { gantt_board_id } = this.props
+        if(gantt_board_id != '0') { //只有在分组的情况下才能拖上下
+            this.setState({
+                local_top: nt,
+            })
+        }
     }
 
     // 针对于在某一条任务上滑动时，判别鼠标再不同位置的处理，(ui箭头, 事件处理等)
@@ -362,7 +368,8 @@ export default class GetRowTaskItem extends Component {
         dispatch({
             type: 'gantt/handleListGroup',
             payload: {
-                data: list_group_new
+                data: list_group_new,
+                not_set_scroll_top: true
             }
         })
     }
@@ -462,12 +469,14 @@ function mapStateToProps({ gantt: {
     datas: {
         list_group = [],
         date_arr_one_level = [],
-        ceilWidth
+        ceilWidth,
+        gantt_board_id
     }
 } }) {
     return {
         list_group,
         date_arr_one_level,
-        ceilWidth
+        ceilWidth,
+        gantt_board_id
     }
 }
