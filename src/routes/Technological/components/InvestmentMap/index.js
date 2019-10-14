@@ -29,7 +29,7 @@ export default class Index extends React.Component{
   }
   render() {
     const accessToken = Cookies.get('Authorization')
-    const src_url = `${MAP_URL}?token=${accessToken}`
+    const src_url = `${MAP_URL}?token=${accessToken}&orgId=${localStorage.getItem('OrganizationId')}`
     const { height } = this.state
     return (
       <div>
