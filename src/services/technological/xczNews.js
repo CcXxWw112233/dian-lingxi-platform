@@ -79,7 +79,7 @@ export async function getAreasLocation(params) {
     return request({
         url: `${REQUEST_COMMON}/common/areas/ip`,
         method: "GET",
-        params, 
+        params,
     })
 }
 
@@ -105,9 +105,8 @@ export async function getCommonArticlesList(params) {
 //获取有权限查看的组织列表
 export async function getXczNewsQueryUser(params) {
     return request({
-      url: `${REQUEST_DOMAIN}/organization/regulation`,
-      method: 'GET',
-      params: { }
+        url: `${REQUEST_DOMAIN}/organization/regulation`,
+        method: 'GET',
+        params: {}
     })
-  }
-  
+}

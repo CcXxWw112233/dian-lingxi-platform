@@ -103,20 +103,20 @@ export default {
 
             }
           }),
-          dispatch({
-            type: "updateDatas",
-            payload: {
-              articlesList: [],
-              defaultArr: [],
-              onSearchButton: false, // 判断是否点击搜索
-              hotFlag: true, // 热点的开关
-              highRiseFlag: true,
-              authorityFlag: true, // 权威的开关
-              dataBaseFlag: true, // 资料库的开关
-              areaFlag: true,
-              page_no: 1
-            }
-          })
+            dispatch({
+              type: "updateDatas",
+              payload: {
+                articlesList: [],
+                defaultArr: [],
+                onSearchButton: false, // 判断是否点击搜索
+                hotFlag: true, // 热点的开关
+                highRiseFlag: true,
+                authorityFlag: true, // 权威的开关
+                dataBaseFlag: true, // 资料库的开关
+                areaFlag: true,
+                page_no: 1
+              }
+            })
         }
         if (location.pathname.indexOf('/xczNews/highRise') != -1) {
           dispatch({
@@ -125,20 +125,20 @@ export default {
 
             }
           }),
-          dispatch({
-            type: "updateDatas",
-            payload: {
-              articlesList: [],
-              defaultArr: [],
-              onSearchButton: false, // 判断是否点击搜索
-              hotFlag: true, // 热点的开关
-              highRiseFlag: true,
-              authorityFlag: true, // 权威的开关
-              dataBaseFlag: true, // 资料库的开关
-              areaFlag: true,
-              page_no: 1,
-            }
-          })
+            dispatch({
+              type: "updateDatas",
+              payload: {
+                articlesList: [],
+                defaultArr: [],
+                onSearchButton: false, // 判断是否点击搜索
+                hotFlag: true, // 热点的开关
+                highRiseFlag: true,
+                authorityFlag: true, // 权威的开关
+                dataBaseFlag: true, // 资料库的开关
+                areaFlag: true,
+                page_no: 1,
+              }
+            })
         }
         if (location.pathname.indexOf('/xczNews/authority') != -1) {
           dispatch({
@@ -147,20 +147,20 @@ export default {
 
             }
           }),
-          dispatch({
-            type: "updateDatas",
-            payload: {
-              articlesList: [],
-              defaultArr: [],
-              onSearchButton: false, // 判断是否点击搜索
-              hotFlag: true, // 热点的开关
-              highRiseFlag: true,
-              authorityFlag: true, // 权威的开关
-              dataBaseFlag: true, // 资料库的开关
-              areaFlag: true,
-              page_no: 1,
-            }
-          })
+            dispatch({
+              type: "updateDatas",
+              payload: {
+                articlesList: [],
+                defaultArr: [],
+                onSearchButton: false, // 判断是否点击搜索
+                hotFlag: true, // 热点的开关
+                highRiseFlag: true,
+                authorityFlag: true, // 权威的开关
+                dataBaseFlag: true, // 资料库的开关
+                areaFlag: true,
+                page_no: 1,
+              }
+            })
         }
         if (location.pathname.indexOf('/xczNews/dataBase') != -1) {
           dispatch({
@@ -207,23 +207,23 @@ export default {
               type: "getAreasArticles",
               payload: {
 
-            }
-          }),
-          dispatch({
-            type: "updateDatas",
-            payload: {
-              articlesList: [],
-              // searchList: {},
-              defaultArr: [],
-              onSearchButton: false, // 判断是否点击搜索
-              hotFlag: true, // 热点的开关
-              highRiseFlag: true,
-              authorityFlag: true, // 权威的开关
-              dataBaseFlag: true, // 资料库的开关
-              areaFlag: false,
-              page_no: 1
-            }
-          })
+              }
+            }),
+            dispatch({
+              type: "updateDatas",
+              payload: {
+                articlesList: [],
+                // searchList: {},
+                defaultArr: [],
+                onSearchButton: false, // 判断是否点击搜索
+                hotFlag: true, // 热点的开关
+                highRiseFlag: true,
+                authorityFlag: true, // 权威的开关
+                dataBaseFlag: true, // 资料库的开关
+                areaFlag: false,
+                page_no: 1
+              }
+            })
         }
       })
     },

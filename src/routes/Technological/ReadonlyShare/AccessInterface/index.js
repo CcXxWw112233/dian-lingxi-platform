@@ -57,7 +57,7 @@ export default class AccessInterface extends React.Component {
 
                     //未来时间 = 当前时间 + 1分钟, 转成字符串, 截取10位(秒级)
                     var newDate = new Date;
-                    const futureDate = newDate.setMinutes(newDate.getMinutes() + 60).toString();
+                    const futureDate = newDate.setMinutes(newDate.getMinutes() + 1).toString();
                     const futureTimestamp = futureDate.substr(0, 10);
 
                     // hash randomCode timestamp 按照顺序拼接
