@@ -36,7 +36,7 @@ import { createMeeting, createShareLink, modifOrStopShareLink } from './../../..
 import ShareAndInvite from './../../../../ShareAndInvite/index'
 import VisitControl from './../../../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../../../services/technological/project'
-import InformRemind from '@/components/InformRemind'
+import InformRemind from '../../../../../../../components/InformRemind'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import MenuSearchPartner from '../../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
@@ -829,6 +829,20 @@ class DrawContent extends React.Component {
           message.success('停止分享成功')
         } else {
           message.success('修改成功')
+          const { dispatch, } = this.props
+          const { datas: { drawContent = {} } } = this.props.model
+          console.log(drawContent, 'dddd');
+
+          const isShared = obj && obj['status'] && obj['status']
+          if (isShared) {
+            let new_drawContent = { ...drawContent, is_shared: obj['status'] }
+            dispatch({
+              type: 'workbenchTaskDetail/updateDatas',
+              payload: {
+                drawContent: new_drawContent,
+              }
+            })
+          }
         }
         this.setState((state) => {
           const { onlyReadingShareData } = state
@@ -1406,7 +1420,13 @@ class DrawContent extends React.Component {
           {/*项目挪动*/}
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
-            <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+
+            {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+
+            <span style={{ marginBottom: '-2px', marginRight: '5px', position: 'relative', width: '12px', height: '12px' }}>
+              <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+            </span>
+
             {/*<div className={DrawerContentStyles.contain_1}>*/}
             {/*<Dropdown overlay={projectGroupMenu}>*/}
             {/*<div className={DrawerContentStyles.left}>*/}
