@@ -183,8 +183,11 @@ export default class GetRowTaskItem extends Component {
             // local_top: nt,
             local_left: nl,
         })
-        const { gantt_board_id } = this.props
-        if (gantt_board_id != '0') { //只有在分组的情况下才能拖上下
+
+        // 在分组和特定高度下才能设置高度
+        const { gantt_board_id, group_list_area_section_height = [], ceiHeight } = this.props
+        const item_height = (ceiHeight + task_item_margin_top) / 2
+        if (gantt_board_id != '0' && nt < group_list_area_section_height[group_list_area_section_height.length - 1] - item_height) { //只有在分组的情况下才能拖上下
             this.setState({
                 local_top: nt,
             })
@@ -341,6 +344,7 @@ export default class GetRowTaskItem extends Component {
                 break
             }
         }
+        // console.log('ssss', local_top, gold_area_position)
         return list_group[list_group_index].list_id
     }
     // 不在项目分组内，左右移动
@@ -439,7 +443,7 @@ export default class GetRowTaskItem extends Component {
         const group_index = list_group_new.findIndex(item => item.lane_id == list_id) //老分组的分组位置
         const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id) //老分组的该分组的该任务的位置
         let group_index_cards_item = list_group_new[group_index].lane_data.cards[group_index_cards_index] //当前这条
-        group_index_cards_item = {...group_index_cards_item, ...updateData} //更新这条
+        group_index_cards_item = { ...group_index_cards_item, ...updateData } //更新这条
 
         const group_index_gold_index = list_group_new.findIndex(item => item.lane_id == new_list_id) //新分组的分组位置
         list_group_new[group_index_gold_index].lane_data.cards.push(group_index_cards_item) //添加进新分组
