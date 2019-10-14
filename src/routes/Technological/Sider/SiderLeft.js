@@ -13,6 +13,7 @@ import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import NotificationSettingsModal from './comonent/notificationSettings/NotificationSettingsModal'
+import PayUpgrade from './../components/PayUpgrade/index'
 import { color_4 } from "../../../globalset/js/styles";
 import { message } from "antd/lib/index";
 import { connect, } from 'dva';
@@ -38,7 +39,7 @@ export default class SiderLeft extends React.Component {
       NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
       is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
       is_simplemode: is_simplemode,
-
+      payUpgradeModalVisible: false,
     }
   }
   componentDidMount() {
@@ -182,6 +183,8 @@ export default class SiderLeft extends React.Component {
     // })
   }
 
+
+  // 切换组织的点击事件
   // 切换企业的点击事件
   handleOrgListMenuClick = (e) => {
     // console.log(e, 'ssss')
@@ -337,8 +340,20 @@ export default class SiderLeft extends React.Component {
       },
       cancelText: '取消',
     });
-
   }
+
+  openPayUpgradeModal = (e) => {
+    e.stopPropagation();
+    this.setState({
+      payUpgradeModalVisible: true
+    });
+   }
+
+   setPayUpgradeModalVisible = (visible) => {
+    this.setState({
+      payUpgradeModalVisible: visible
+    });
+   }
 
   // 是否显示全部企业
   handleShowAllOrg(checked) {
@@ -485,6 +500,7 @@ export default class SiderLeft extends React.Component {
                   <div className={indexStyles.bank}>
                     <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
                     <span className={indexStyles.middle_text}>企业管理后台</span>
+                    <div className={indexStyles.payUpgrade} onClick={(e)=>{this.openPayUpgradeModal(e)}} >升级</div>
                   </div>
                 </div>
               </Menu.Item>
@@ -696,6 +712,9 @@ export default class SiderLeft extends React.Component {
         {this.state.NotificationSettingsModalVisible && (
           <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
         )}
+        {
+          this.state.payUpgradeModalVisible && <PayUpgrade setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}/>
+        }
 
       </Sider>
 

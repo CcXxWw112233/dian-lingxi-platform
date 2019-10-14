@@ -207,3 +207,20 @@ export async function investmentMapQueryAdministrators(params) {
     }   
   });
 }
+
+export async function getPayingStatus(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/paying_status`,
+    method: 'GET',
+    params: {
+      ...params,
+    }   
+  });
+}
+
+export async function getOrderList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/${params.orgId}/order/list`,
+    method: 'GET'
+  });
+}
