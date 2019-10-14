@@ -21,8 +21,15 @@ class DetailedShare extends React.Component {
         const { dispatch } = this.props
 
         if (rela_type === '1') {
+            // dispatch({
+            //     type: 'projectDetailTask/getCardDetail',
+            //     payload: {
+            //         id: rela_id
+            //     }
+            // })
+            //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
             dispatch({
-                type: 'projectDetailTask/getCardDetail',
+                type: 'projectDetailTask/getShareCardDetail',
                 payload: {
                     id: rela_id
                 }

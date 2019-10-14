@@ -1537,7 +1537,7 @@ class DrawContent extends React.Component {
                 </span> */}
 
                 <div className={DrawerContentStyles.right}>
-                  {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+                  {/* {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null} */}
                   {/* <span style={{ marginRight: '10px' }}>
                     <ShareAndInvite
                       is_shared={is_shared}
