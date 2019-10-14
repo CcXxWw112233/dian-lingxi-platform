@@ -49,6 +49,7 @@ const Organization = (options) => {
 
   const asyncProprs = {
     model,
+    dispatch,
     getFnManagementList(data) {
       dispatch({
         type: getEffectOrReducerByName('getFnManagementList'),

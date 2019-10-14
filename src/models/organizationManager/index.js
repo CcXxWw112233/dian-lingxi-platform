@@ -1,5 +1,5 @@
 import {
-  saveNounList, getNounList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
+  saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators
 } from '../../services/organization'
@@ -22,7 +22,7 @@ export default {
   namespace: 'organizationManager',
   state: {
     datas: {
-      
+
     }
   },
   subscriptions: {
@@ -79,6 +79,14 @@ export default {
               type: 'getNounList',
               payload: {}
             })
+            const OrganizationId = localStorage.getItem('OrganizationId');
+            if (OrganizationId !== '0') {
+              dispatch({
+                type: 'getPayingStatus',
+                payload: { orgId: OrganizationId }
+              })
+            }
+
           }
 
         } else {
@@ -338,6 +346,37 @@ export default {
 
       }
     },
+
+    * getPayingStatus({ payload }, { select, call, put }) {
+      const res = yield call(getPayingStatus, payload)
+      if (isApiResponseOk(res)) {
+        const data = res.data || {}
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            paymentInfo: data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    * getOrderList({ payload }, { select, call, put }) {
+      const res = yield call(getOrderList, payload)
+      if (isApiResponseOk(res)) {
+        const data = res.data || {}
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            payOrderList: data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
     * saveNounList({ payload }, { select, call, put }) {
       const { current_scheme_local } = payload
       const res = yield call(saveNounList, payload)
@@ -438,7 +477,7 @@ export default {
 
       yield put({
         type: 'technological/getCurrentUserOrganizes',
-        payload: { }
+        payload: {}
       })
     },
 
@@ -448,7 +487,7 @@ export default {
       const { calback } = payload
 
       if (isApiResponseOk(res)) {
-        if(typeof calback == 'function') {
+        if (typeof calback == 'function') {
           calback()
         }
       }
