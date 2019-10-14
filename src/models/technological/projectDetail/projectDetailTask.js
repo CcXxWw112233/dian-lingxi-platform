@@ -122,6 +122,7 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getCardDetail, { id })
+
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
