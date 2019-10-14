@@ -40,6 +40,7 @@ export default {
       date_total: 0, //总天数
       group_rows: [], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
+      group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
@@ -51,7 +52,7 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: "1177763930815205376",//'0', //甘特图查看的项目id
+      gantt_board_id: "1182848277209550848",//'0', //甘特图查看的项目id
       group_view_type: '1', //分组视图1项目， 2成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
@@ -385,12 +386,19 @@ export default {
 
       }
 
+      const group_list_area_section_height = group_list_area.map((item, index) => {
+        return group_list_area.slice(0, index).reduce((a, b) => {
+          return a + b
+        }, group_list_area[0])
+      })
+
       yield put({
         type: 'updateDatas',
         payload: {
           group_list_area,
           group_rows,
-          list_group
+          list_group,
+          group_list_area_section_height
         }
       })
       // 设置滚动条的高度位置

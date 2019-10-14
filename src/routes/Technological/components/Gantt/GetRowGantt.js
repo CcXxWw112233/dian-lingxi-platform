@@ -251,7 +251,7 @@ export default class GetRowGantt extends Component {
   }
 
   //获取当前所在的分组, 根据创建或者查看任务时的高度
-  getCurrentGroup({ top }) {
+  getCurrentGroup = ({ top }) => {
     if (top == undefined || top == null) {
       return
     }
@@ -392,6 +392,7 @@ export default class GetRowGantt extends Component {
                   itemValue={value2}
                   setSpecilTaskExample={this.setSpecilTaskExample}
                   ganttPanelDashedDrag={this.isDragging}
+                  getCurrentGroup={this.getCurrentGroup}
                   list_id={list_id}
                 />
                 // <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>

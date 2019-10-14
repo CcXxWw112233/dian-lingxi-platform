@@ -6,7 +6,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height } from './constants'
 import { isSamDay } from './getDate'
-import { updateTask } from '../../../../services/technological/task'
+import { updateTask, changeTaskType } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
@@ -103,7 +103,7 @@ export default class GetRowTaskItem extends Component {
         e.stopPropagation()
         const target = this.out_ref.current
         this.is_down = true;
-        const { drag_type } = this.state
+        const { drag_type, local_top } = this.state
         if ('position' == drag_type) { //在中间
             target.style.cursor = 'move';
         }
@@ -112,6 +112,9 @@ export default class GetRowTaskItem extends Component {
         //获取左部和顶部的偏移量
         this.l = target.offsetLeft;
         this.t = target.offsetTop;
+
+        const { getCurrentGroup } = this.props
+        getCurrentGroup({ top: local_top }) //设置当前操作的list_id
 
         window.onmousemove = this.onMouseMove.bind(this);
         window.onmouseup = this.onMouseUp.bind(this);
@@ -181,7 +184,7 @@ export default class GetRowTaskItem extends Component {
             local_left: nl,
         })
         const { gantt_board_id } = this.props
-        if(gantt_board_id != '0') { //只有在分组的情况下才能拖上下
+        if (gantt_board_id != '0') { //只有在分组的情况下才能拖上下
             this.setState({
                 local_top: nt,
             })
@@ -266,9 +269,9 @@ export default class GetRowTaskItem extends Component {
 
     }
 
-    // 拖拽完成后的事件处理---start
+    // 拖拽完成后的事件处理-----start--------
     overDragCompleteHandle = () => {
-        const { drag_type } = this.state
+        const { drag_type, local_top } = this.state
         if ('right' == drag_type) {
             this.overDragCompleteHandleRight()
         } else if ('position' == drag_type) {
@@ -316,7 +319,33 @@ export default class GetRowTaskItem extends Component {
             })
     }
     overDragCompleteHandlePositon = () => {
-        const { itemValue: { id, end_time, start_time, board_id, left } } = this.props
+        const { gantt_board_id, current_list_group_id } = this.props
+
+        if (gantt_board_id == '0' || current_list_group_id == this.getDragAroundListId()) {// 不在分组里面 ，获取分组拖拽时只在当前分组拖拽
+            this.overDragCompleteHandlePositonAbout()
+        } else {
+            this.overDragCompleteHandlePositonAround()
+        }
+    }
+    // 获取分组拖拽后分组id,
+    getDragAroundListId = () => {
+        const { local_top } = this.state
+        const { group_list_area_section_height = [], ceiHeight, list_group = [] } = this.props
+        const item_height = (ceiHeight + task_item_margin_top) / 2
+        const gold_area_position = local_top + item_height
+        const length = group_list_area_section_height.length
+        let list_group_index = 0
+        for (let i = 0; i < length; i++) {
+            if (gold_area_position < group_list_area_section_height[i]) {
+                list_group_index = i
+                break
+            }
+        }
+        return list_group[list_group_index].list_id
+    }
+    // 不在项目分组内，左右移动
+    overDragCompleteHandlePositonAbout = () => {
+        const { itemValue: { id, top, start_time, board_id, left } } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -331,7 +360,8 @@ export default class GetRowTaskItem extends Component {
         updateData.due_time = end_time_timestamp
         if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             this.setState({
-                local_left: left
+                local_left: left,
+                local_top: top
             })
             return
         }
@@ -352,11 +382,77 @@ export default class GetRowTaskItem extends Component {
                 message.error('更新失败')
             })
     }
-    updateTask = (data = {}) => {
+    // 在项目分组内，上下左右移动
+    overDragCompleteHandlePositonAround = (data = {}) => {
+        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id } = this.props
+        const { local_left, local_width, local_width_origin } = this.state
+        const { date_arr_one_level, ceilWidth } = this.props
+        const updateData = {}
 
+        const date_span = local_width / ceilWidth
+        const start_time_index = Math.floor(local_left / ceilWidth)
+        const start_date = date_arr_one_level[start_time_index]
+        const start_time_timestamp = start_date.timestamp
+        //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
+        const end_time_timestamp = start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000
+        updateData.start_time = start_time_timestamp
+        updateData.due_time = end_time_timestamp
+
+        const params = {
+            card_id: id,
+            due_time: end_time_timestamp,
+            start_time: start_time_timestamp,
+            board_id,
+            list_id: this.getDragAroundListId()
+        }
+        changeTaskType({ ...params }, { isNotLoading: false })
+            .then(res => {
+                if (isApiResponseOk(res)) {
+                    this.changeCardBelongGroup({
+                        card_id: id,
+                        new_list_id: params.list_id,
+                        updateData
+                    })
+                } else {
+                    this.setState({
+                        local_left: left,
+                        local_top: top
+                    })
+                    message.error(res.message)
+                }
+            }).catch(err => {
+                this.setState({
+                    local_left: left,
+                    local_top: top
+                })
+                message.error('更新失败')
+                // console.log('ssss', err)
+            })
     }
-    // 拖拽完成后的事件处理---end
+    // 拖拽完成后的事件处理------end---------
 
+    // 改变任务分组
+    changeCardBelongGroup = ({ new_list_id, card_id, updateData = {} }) => {
+        // 该任务在新旧两个分组之间交替
+        const { list_group = [], list_id, dispatch, current_list_group_id } = this.props
+        const list_group_new = [...list_group]
+        const group_index = list_group_new.findIndex(item => item.lane_id == list_id) //老分组的分组位置
+        const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id) //老分组的该分组的该任务的位置
+        let group_index_cards_item = list_group_new[group_index].lane_data.cards[group_index_cards_index] //当前这条
+        group_index_cards_item = {...group_index_cards_item, ...updateData} //更新这条
+
+        const group_index_gold_index = list_group_new.findIndex(item => item.lane_id == new_list_id) //新分组的分组位置
+        list_group_new[group_index_gold_index].lane_data.cards.push(group_index_cards_item) //添加进新分组
+        list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //从老分组移除
+
+        dispatch({
+            type: 'gantt/handleListGroup',
+            payload: {
+                data: list_group_new,
+                not_set_scroll_top: true
+            }
+        })
+    }
     // 修改有排期的任务
     handleHasScheduleCard = ({ card_id, updateData = {} }) => {
         const { list_group = [], list_id, dispatch } = this.props
@@ -407,9 +503,9 @@ export default class GetRowTaskItem extends Component {
                     onMouseDown={(e) => this.onMouseDown(e)}
                     onMouseMove={(e) => this.onMouseMove(e)}
                     onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
-                    // 不拖拽
-                    // onMouseMove={(e) => e.stopPropagation()}
-                    // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                // 不拖拽
+                // onMouseMove={(e) => e.stopPropagation()}
+                // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
                 >
                     <div
                         data-targetclassname="specific_example"
@@ -470,13 +566,21 @@ function mapStateToProps({ gantt: {
         list_group = [],
         date_arr_one_level = [],
         ceilWidth,
-        gantt_board_id
+        ceiHeight,
+        gantt_board_id,
+        group_list_area,
+        current_list_group_id,
+        group_list_area_section_height = [],
     }
 } }) {
     return {
         list_group,
         date_arr_one_level,
         ceilWidth,
-        gantt_board_id
+        ceiHeight,
+        gantt_board_id,
+        group_list_area,
+        current_list_group_id,
+        group_list_area_section_height
     }
 }
