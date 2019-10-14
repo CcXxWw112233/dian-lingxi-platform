@@ -105,13 +105,44 @@ export default class AccessInterface extends React.Component {
             verificationCode: inputValue,
         })
     }
+
+    strLength = (str) => {
+        var len = 0
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charCodeAt(i)
+            //单字节加1   
+            if ((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {
+                len++
+            } else {
+                len += 2;
+            }
+        }
+        return len
+    }
+
+    checkPassWord = (nubmer) => {
+        var re = /^[0-9a-zA-Z]*$/;  //判断字符串是否为数字和字母组合     
+        if (!re.test(nubmer)) {
+            return false
+        } else {
+            return true
+        }
+    }
+
     immediatelyVisitor = () => {
         const { verificationCode } = this.state
-        const params = {
-            check_type: '2',
-            password: verificationCode,
+        const valueLength = this.strLength(verificationCode)
+        const isCharacterNumber = this.checkPassWord(verificationCode)
+
+        if (valueLength == 4 && isCharacterNumber !== -1) {
+            const params = {
+                check_type: '2',
+                password: verificationCode,
+            }
+            this.verificationShareInfo(params)
+        } else {
+            message.warn('请输入正确的验证码', MESSAGE_DURATION_TIME)
         }
-        this.verificationShareInfo(params)
     }
 
     render() {
