@@ -6,7 +6,8 @@ import { MEMBERS, MESSAGE_DURATION_TIME, PROJECTS, TASKS } from "../../../global
 export default {
   namespace: 'publicTaskDetailModal',
   state: {
-    isEditTitle: false, // 是否编辑标题 默认为 false 不显示
+    is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+    is_show_principal: false, // 是否显示负责人 默认为 false 不显示
   },
   subscriptions: {
     setup({ dispatch, history }) {

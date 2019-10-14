@@ -286,7 +286,7 @@ export default class CreateTask extends React.Component {
    * @param {Object} payload 需要传递进来的参数
    */
   updateParentTaskList = (payload) => {
-    console.log('更新父级任务列表', 'sssssss_进来了')
+    // console.log('更新父级任务列表', 'sssssss_进来了')
     const { is_realize, card_name } = payload
     const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
     if (is_realize) { // 更新完成卡片的状态

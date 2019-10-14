@@ -58,12 +58,12 @@ export default class MainContent extends Component {
   setTitleEdit = (e) => {
     e && e.stopPropagation();
     // this.setState({
-    //   isEditTitle: true
+    //   is_edit_title: true
     // })
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        isEditTitle: true
+        is_edit_title: true
       }
     })
   }
@@ -83,7 +83,7 @@ export default class MainContent extends Component {
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        isEditTitle: false,
+        is_edit_title: false,
         drawContent,
       }
     })
@@ -128,10 +128,17 @@ export default class MainContent extends Component {
   }
   // 设置是否完成状态的下拉回调 E
 
+  // 设置添加属性的下拉回调 S
+  handleIsAddAtribute = (e) => {
+
+  }
+  // 设置添加属性的下拉回调 E
+
   render() {
-    const { drawContent = {}, isEditTitle } = this.props
+    const { drawContent = {}, is_edit_title } = this.props
     const { card_id, card_name, type = '0', is_realize = '0', start_time, due_time } = drawContent
 
+    // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
         <Menu.Item key="incomplete">
@@ -151,6 +158,20 @@ export default class MainContent extends Component {
       </Menu>
     )
 
+    // 添加属性
+    const addAttribute = (
+      <Menu onClick={this.handleIsAddAtribute} getPopupContainer={triggerNode => triggerNode.parentNode}>
+        <Menu.Item key="principal">
+          <span className={`${globalStyles.authTheme}`}>&#xe7b2;</span>
+          <span>负责人</span>
+        </Menu.Item>
+        <Menu.Item key="milestone">
+          <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
+          <span>里程碑</span>
+        </Menu.Item>
+      </Menu>
+    )
+
     return (
       <div className={mainContentStyles.main_wrap}>
         <div>
@@ -162,13 +183,13 @@ export default class MainContent extends Component {
                   <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
                 </div>
               ) : (
-                  <div style={{ width: 24, height: 24, color: '#595959', cursor: 'pointer' }}>
+                  <div style={{ width: 24, height: 24, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
                     <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
                   </div>
                 )
             }
             {
-              !isEditTitle ? (
+              !is_edit_title ? (
                 <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>{card_name}</div>
               ) : (
                   <NameChangeInput
@@ -211,7 +232,8 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
                 <div style={{position: 'relative'}}>
                   {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, padding: '8px 12px', display: 'inline-block',textAlign: 'center'  }}>&nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block',textAlign: 'center'  }}>
+                    &nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
                     <DatePicker
                       // disabledDate={this.disabledStartTime.bind(this)}
                       // onChange={this.startDatePickerChange.bind(this)}
@@ -224,7 +246,8 @@ export default class MainContent extends Component {
                     &nbsp;
                   <span style={{ color: '#bfbfbf' }}> ~ </span>
                     &nbsp;
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', padding: '8px 12px', display: 'inline-block',textAlign: 'center' }}>{due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block',textAlign: 'center' }}>
+                    {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
                     <DatePicker
                       // disabledDate={this.disabledDueTime.bind(this)}
                       // getCalendarContainer={triggerNode => triggerNode.parentNode}
@@ -237,6 +260,18 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
+            {/* 添加属性区域 */}
+            <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span style={{fontSize: '16px', color: 'rgba(0,0,0,0.45)'}} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+                <span>添加属性</span>
+              </div>
+              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={addAttribute}>
+                <div style={{paddingLeft: '12px'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                  <span>选择属性</span>
+                </div>
+              </Dropdown>
+            </div>
           </div>
           {/* 各种字段的不同状态 E */}
 
@@ -247,6 +282,6 @@ export default class MainContent extends Component {
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, isEditTitle, card_id } }) {
-  return { drawContent, isEditTitle, card_id }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id } }) {
+  return { drawContent, is_edit_title, card_id }
 }

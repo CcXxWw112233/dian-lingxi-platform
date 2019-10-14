@@ -49,7 +49,7 @@ export default class TaskDetailModal extends Component {
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        isEditTitle: false
+        is_edit_title: false
       }
     })
   }
