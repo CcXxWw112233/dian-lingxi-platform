@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import { min_page_width } from "./../../globalset/js/styles";
-import indexStyles from  './index.less'
+import indexStyles from './index.less'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
@@ -75,21 +75,25 @@ class CustormModal extends React.Component {
     if (is_simple_model !== '1') {
       maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
     }
-   
+
     // console.log(overInner, 'sss')
     return (
       <Modal
         title={title}
         visible={visible}
-        width={maskWidth}
+        width={width}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        maskStyle={{ height: clientHeight, width: maskWidth, ...maskStyle }}
-        style={{ width: maskWidth, ...style, marginRight: siderRightWidth + 100, padding: '20px 84px' }}
+        getContainer={() => document.getElementById('technologicalLayoutWrapper')}
+        maskStyle={{
+          height: clientHeight,
+          //  width: maskWidth, ...maskStyle 
+        }}
+        style={{ width: maskWidth, ...style, }}
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}

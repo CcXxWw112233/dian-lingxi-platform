@@ -17,7 +17,7 @@ export default class DetailModal extends React.Component {
 
 
   render() {
-    const { modalVisible, width } = this.props
+    const { modalVisible, width, style } = this.props
 
     const modalTop = 20
     return(
@@ -30,7 +30,7 @@ export default class DetailModal extends React.Component {
         footer={null}
         destroyOnClose
         bodyStyle={{top: 0}}
-        style={{top: modalTop}}
+        style={{top: modalTop, ...style}}
         onCancel={this.onCancel.bind(this)}
         overInner={<DetailDom {...this.props}/>}
       />

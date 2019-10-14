@@ -55,7 +55,8 @@ export default class TaskDetailModal extends Component {
   }
 
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList } = this.props
+    const { task_detail_modal_visible, users, handleTaskDetailChange } = this.props
+    // const siderRightWidth = document.getElementById('siderRight').clientWidth
     // const commentUseParams = { //公共评论模块所需要的参数
     //   commentSubmitPost: this.commentSubmitPost,
     //   deleteComment: this.deleteComment,
@@ -65,11 +66,13 @@ export default class TaskDetailModal extends Component {
     // }
     return (
       <div>
-        <PublicDetailModal 
+        <PublicDetailModal
+          width={1200}
+          // style={{minWidth: '1200px'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}
-          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} />}
+          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
           headerContent={<HeaderContent users={users} />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
         />
@@ -83,5 +86,5 @@ TaskDetailModal.defaultProps = {
   setTaskDetailModalVisible: function() { }, // 设置任务详情弹窗是否显示
   users: [], // 用户列表
   handleTaskDetailChange: function() { }, // 外部修改内部弹窗数据的回调
-  updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
+  // updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
 }
