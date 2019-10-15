@@ -1214,10 +1214,11 @@ class FileDetailContent extends React.Component {
       currentPreviewFileBaseInfo = {},
       fileType,
       dispatch,
-      clientWidth
+      clientWidth,
+      board_id,
     } = this.props
+
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { board_id } = projectDetailInfoData
 
     const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
@@ -1758,7 +1759,7 @@ function mapStateToProps({
     filePreviewCurrentId,
     filePreviewIsRealImage,
     projectDetailInfoData,
-    board_id,
+    // board_id,
     relations_Prefix
   }
 }

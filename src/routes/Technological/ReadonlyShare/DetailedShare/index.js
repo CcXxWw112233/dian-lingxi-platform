@@ -79,8 +79,6 @@ class DetailedShare extends React.Component {
         const { rela_type, board_id } = this.state
         const { dispatch, drawerVisible = true, } = this.props
 
-        console.log(this.props, 'sssss');
-
         return (
             <div>
                 <div>
@@ -99,7 +97,7 @@ class DetailedShare extends React.Component {
                     {
                         rela_type === '3' ?
                             <div>
-                                <FileDetailModal {...this.props} visible={drawerVisible} dispatch={dispatch} />
+                                <FileDetailModal {...this.props} board_id={board_id} visible={drawerVisible} dispatch={dispatch} />
                             </div> : ''
                     }
                 </div>
