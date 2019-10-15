@@ -171,15 +171,14 @@ export default modelExtend(projectDetail, {
               folder_id: result.data.folder_id
             }
           })
+        } else { // 点击app的时候没有file_id
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: result.data.folder_id
+            }
+          })
         }
-        // else {
-        //   yield put({
-        //     type: 'getFileList',
-        //     payload: {
-        //       folder_id: result.data.folder_id
-        //     }
-        //   })
-        // }
       } else {
       }
     },
