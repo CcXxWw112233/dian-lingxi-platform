@@ -285,18 +285,25 @@ export default class MainContent extends Component {
           </div>
           {/* 各种字段的不同状态 E */}
 
+          {/* 上传附件字段 S*/}
           <div>
             <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
                 <span>附件</span>
               </div>
-              <div className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{fontSize:'16px'}}>&#xe7fa;</span> 上传附件</span>
+              <div className={`${mainContentStyles.field_right}`}>
+                <div className={`${mainContentStyles.pub_hover}`}>
+                  <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+                </div>
+                 {/* 上传附件组件 */}
+
               </div>
             </div>
           </div>
+          {/* 上传附件字段 E*/}
 
+          
         </div>
       </div>
     )
