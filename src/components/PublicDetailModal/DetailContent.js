@@ -46,7 +46,9 @@ export default class DetailContent extends React.Component {
 
     return (
       <div className={ `${ siderRightCollapsed ? indexStyles.isSiderRightWidthExit : indexStyles.fileDetailContentOut}` } ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-        <div className={indexStyles.fileDetailContentLeft} style={{overflowY: 'auto'}}>
+        <div className={indexStyles.fileDetailContentLeft} 
+          // style={{overflowY: 'auto'}}
+          >
           {/*主要内容放置区*/}
           {mainContent}
         </div>

@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -89,6 +89,15 @@ export default {
         }
       } else {
         message.error(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 添加任务执行人
+    * addTaskExecutor({ payload }, { call, put }) {
+      let res = yield call(addTaskExecutor, payload)
+      if (isApiResponseOk(res)) {
+        message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
   },

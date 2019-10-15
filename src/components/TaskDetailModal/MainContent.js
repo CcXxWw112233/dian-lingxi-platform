@@ -148,9 +148,42 @@ export default class MainContent extends Component {
   }
   // 设置添加属性的下拉回调 E
 
+  // 添加执行人的回调 S
   chirldrenTaskChargeChange(data) {
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
+    const { card_id } = drawContent
+
+    // 多个任务执行人
+    //  多个任务执行人
+    const excutorData = projectDetailInfoData['data'] //所有的人
+    let newExecutors = []
+    const { selectedKeys = [] } = data
+    for (let i = 0; i < selectedKeys.length; i++) {
+      for (let j = 0; j < excutorData.length; j++) {
+        if (selectedKeys[i] === excutorData[j]['user_id']) {
+          newExecutors.push(excutorData[j])
+        }
+      }
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['executors'] = newExecutors
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    dispatch({
+      type: 'publicTaskDetailModal/addTaskExecutor',
+      payload: {
+        card_id,
+        users: selectedKeys.join(',')
+      }
+    })
 
   }
+  // 添加执行人的回调 E
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
@@ -252,8 +285,8 @@ export default class MainContent extends Component {
                 </div>
                 {
                   !executors.length ? (
-                    <div style={{flex: '1'}}>
-                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <div style={{flex: '1', position: 'relative'}}>
+                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             invitationType='4'
@@ -270,8 +303,8 @@ export default class MainContent extends Component {
                       </Dropdown>
                     </div>
                   ) : (
-                    <div style={{flex: '1'}}>
-                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <div style={{flex: '1', position: 'relative'}}>
+                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             invitationType='4'
@@ -280,12 +313,12 @@ export default class MainContent extends Component {
                             board_id={board_id} />
                         }
                       >
-                        <div className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                        <div style={{display: 'flex', flexWrap: 'wrap'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
                           {executors.map((value) => {
                             const { avatar, name, user_name, user_id } = value
                             return (
                               <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                                <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0' }} key={user_id}>
+                                <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
                                   {avatar ? (
                                     <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
                                   ) : (
@@ -293,7 +326,7 @@ export default class MainContent extends Component {
                                         <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
                                       </div>
                                     )}
-                                  <div style={{ marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                  <div style={{ marginRight: 8, minWidth: '60px' }}>{name || user_name || '佚名'}</div>
                                   <span className={`${mainContentStyles.userItemDeleBtn}`}></span>
                                 </div>
                                 
