@@ -3,7 +3,6 @@ import DrawContentModal from './TaskDetailShare/components/DrawContentModal'
 import FileDetailModal from './FileDetailShare/FileDetail/FileDetailModal'
 // import ProccessDetailShare from './ProccessDetailShare/index'
 import { connect } from 'dva'
-import indexStyle from './index.less'
 
 @connect()
 class DetailedShare extends React.Component {
@@ -49,6 +48,12 @@ class DetailedShare extends React.Component {
                     id: rela_id,
                 }
             })
+            // dispatch({
+            //     type: 'projectDetailFile/fileVersionist',
+            //     payload: {
+            //         version_id: rela_id,
+            //     }
+            // })
         } else if (rela_type === '4') {
 
         }
@@ -73,9 +78,7 @@ class DetailedShare extends React.Component {
         const { dispatch, drawerVisible = true, } = this.props
         return (
             <div>
-
                 <div>
-                    <div className={indexStyle.mask}></div>
                     {
                         rela_type === '1' ?
                             <div>

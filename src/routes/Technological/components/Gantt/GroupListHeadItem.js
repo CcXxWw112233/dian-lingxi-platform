@@ -9,7 +9,7 @@ import CheckItem from '@/components/CheckItem'
 import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technological/task';
 import { updateProject, addMenbersInProject } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
-import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
+import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
 
 @connect(mapStateToProps)
@@ -139,9 +139,9 @@ export default class GroupListHeadItem extends Component {
                       {
                         !(is_privilege == '0') && (
                           <Tooltip title="已开启访问控制" placement="top">
-                              <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
+                            <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
                               <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                              </span>
+                            </span>
                           </Tooltip>
                         )
                       }
@@ -430,6 +430,9 @@ export default class GroupListHeadItem extends Component {
         {
           show_add_menber_visible && (
             <ShowAddMenberModal
+              invitationType='1'
+              invitationId={list_id}
+              invitationOrg={org_id}
               show_wechat_invite={true}
               _organization_id={org_id}
               board_id={list_id}

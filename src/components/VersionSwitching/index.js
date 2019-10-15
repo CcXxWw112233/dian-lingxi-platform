@@ -101,7 +101,7 @@ export default class index extends Component {
   render() {
 
     const { is_close } = this.state
-    const { editValue, new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description } = this.props
+    const { editValue, new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description, is_show } = this.props  //is_show = 是否显示'上传新版本'
     // console.log(is_edit_version_description, 'ssssss')
     // console.log(new_filePreviewCurrentVersionList, 'ssss')
     // let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
@@ -181,13 +181,17 @@ export default class index extends Component {
                 )
               })}
             </Menu>
+
+
             <div key="updateVersion" style={{ height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)' }} >
               <Upload className={indexStyles.upload_file} {...uploadProps} showUploadList={false}>
-                <Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
-                  <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
-              </Button>
+                {is_show === true ?
+                  <Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
+                    <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
+                  </Button> : ''}
               </Upload>
             </div>
+
           </Menu>
         </div>
       )

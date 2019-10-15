@@ -1494,6 +1494,15 @@ class DrawContent extends React.Component {
         {/* <div className={globalStyle.drawContent_mask}></div> */}
         <div className={DrawerContentStyles.DrawerContentOut} onClick={this.drawerContentOutClick.bind(this)}>
 
+          {/* 遮罩禁止全部点击 */}
+          <div style={{
+            position: 'absolute',
+            width: '100%',
+            zIndex: 10,
+            height: '60%'
+          }}>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className={DrawerContentStyles.fileIcon}>
               <span className={`${globalStyle.authTheme} ${DrawerContentStyles.fileTitle}`}>&#xe691;</span>
@@ -1925,6 +1934,8 @@ class DrawContent extends React.Component {
               </div>
             </div>
           </div>
+
+
           {/*评论*/}
           <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
             <Comment {...this.props} leftSpaceDivWH={26}></Comment>
@@ -1936,7 +1947,7 @@ class DrawContent extends React.Component {
           <Comment leftSpaceDivWH={26}></Comment>
         </div>
         <div style={{ height: 100 }}></div> */}
-      </div>
+      </div >
     )
   }
 
