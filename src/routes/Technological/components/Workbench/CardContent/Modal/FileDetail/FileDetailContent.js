@@ -1389,6 +1389,7 @@ class FileDetailContent extends React.Component {
               }
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
+                  is_show={true}
                   handleVersionItem={this.handleVersionItem}
                   getVersionItemMenuClick={this.getVersionItemMenuClick}
                   handleFileVersionDecription={this.handleFileVersionDecription}

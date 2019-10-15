@@ -1217,7 +1217,10 @@ class FileDetailContent extends React.Component {
       clientWidth
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { board_id } = projectDetailInfoData
+    // const { board_id } = projectDetailInfoData
+    const { datas: { board_id } } = this.props.model
+    console.log(board_id, 'sssspppp111', this.props)
+
     const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
       board_id,
@@ -1539,7 +1542,7 @@ class FileDetailContent extends React.Component {
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>
-            {/* <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1547,13 +1550,14 @@ class FileDetailContent extends React.Component {
               }
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
+                  is_show={false}
                   handleVersionItem={this.handleVersionItem}
                   getVersionItemMenuClick={this.getVersionItemMenuClick}
                   handleFileVersionDecription={this.handleFileVersionDecription}
                   handleFileVersionValue={this.handleFileVersionValue}
                   uploadProps={uploadProps} />
               )}
-            </div> */}
+            </div>
 
             {/* <div style={{ position: 'relative' }}>
               {
