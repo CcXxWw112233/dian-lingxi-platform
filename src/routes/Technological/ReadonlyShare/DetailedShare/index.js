@@ -8,14 +8,16 @@ import { connect } from 'dva'
 class DetailedShare extends React.Component {
     state = {
         rela_type: '',  //当前对象弹框类型type, 4=里程碑 3=文件 2=流程 1=任务
+        board_id: '',
     }
 
     componentDidMount() {
         var query = this.props.history.location.search.substring(1);
         const paramr = this.getUrlParamr(query)
-        const { rela_type, rela_id } = paramr
+        const { rela_type, rela_id, board_id } = paramr
         this.setState({
-            rela_type: rela_type
+            rela_type: rela_type,
+            board_id: board_id,
         })
         const { dispatch } = this.props
 
@@ -74,8 +76,11 @@ class DetailedShare extends React.Component {
     }
 
     render() {
-        const { rela_type } = this.state
+        const { rela_type, board_id } = this.state
         const { dispatch, drawerVisible = true, } = this.props
+
+        console.log(this.props, 'sssss');
+
         return (
             <div>
                 <div>

@@ -93,7 +93,7 @@ export default class AccessInterface extends React.Component {
 
                     const { dispatch } = this.props;
                     dispatch(
-                        routerRedux.push(`/share_detailed?rela_type=${data.rela_type}&rela_id=${data.rela_id}`)
+                        routerRedux.push(`/share_detailed?rela_type=${data.rela_type}&rela_id=${data.rela_id}$board_id=${data.board_id}`)
                     )
                 }
             } else {

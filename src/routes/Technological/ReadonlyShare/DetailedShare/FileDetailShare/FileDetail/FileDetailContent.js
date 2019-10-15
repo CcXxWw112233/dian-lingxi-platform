@@ -1217,9 +1217,7 @@ class FileDetailContent extends React.Component {
       clientWidth
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    // const { board_id } = projectDetailInfoData
-    const { datas: { board_id } } = this.props.model
-    console.log(board_id, 'sssspppp111', this.props)
+    const { board_id } = projectDetailInfoData
 
     const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
