@@ -1421,7 +1421,9 @@ class DrawContent extends React.Component {
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
 
-            {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+            <span>
+              {is_shared === '1' ? <span className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></span> : null}
+            </span>
 
             <span style={{ marginBottom: '-2px', marginRight: '5px', position: 'relative', width: '12px', height: '12px' }}>
               <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
@@ -1465,8 +1467,8 @@ class DrawContent extends React.Component {
               )}
             </span>
             {this.props.needDelete && (
-             <span style={{marginTop: '-2px', position: 'relative'}}>
-               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              <span style={{ marginTop: '-2px', position: 'relative' }}>
+                {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                   <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                 )}
                 <Dropdown overlay={topRightMenu}>
@@ -1474,7 +1476,7 @@ class DrawContent extends React.Component {
                     <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2 }} />
                   </span>
                 </Dropdown>
-             </span> 
+              </span>
             )}
           </div>
           <div style={{ position: 'relative' }}>

@@ -879,7 +879,6 @@ class FileDetailContent extends React.Component {
     return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileData[curr] }), {})
   }
 
-
   handleDeleteCommentItem = obj => {
     const { id } = obj
     const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits } } = this.props.model
@@ -1360,7 +1359,10 @@ class FileDetailContent extends React.Component {
       is_edit_version_description,
       editValue,
     }
-    const { datas: { currentPreviewFileData: { is_shared } } } = this.props.model
+
+    const { datas = {} } = this.props.model
+    const { currentPreviewFileData = {} } = datas
+    const { is_shared } = currentPreviewFileData //is_shared = 是否分享状态
 
     return (
       <div>
@@ -1407,7 +1409,9 @@ class FileDetailContent extends React.Component {
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
-            {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+            <span>
+              {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+            </span>
 
             <span style={{ marginBottom: '4px', marginRight: '10px', width: '12px', height: '12px' }}>
               <ShareAndInvite

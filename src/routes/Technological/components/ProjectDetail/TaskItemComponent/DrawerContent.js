@@ -1534,8 +1534,11 @@ class DrawContent extends React.Component {
                     </div>
                   </Dropdown>
                 </span>
+
                 <div className={DrawerContentStyles.right}>
-                  {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+                  <span>
+                    {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+                  </span>
 
                   <span style={{ marginTop: '-5px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
                     <ShareAndInvite

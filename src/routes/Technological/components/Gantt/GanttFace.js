@@ -279,7 +279,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         <ShowFileSlider />
-        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} />
+        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} {...this.props} />
       </div>
     )
   }

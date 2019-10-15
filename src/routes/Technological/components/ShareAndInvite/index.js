@@ -148,7 +148,7 @@ class ShareAndInvite extends Component {
     );
     return (
       <div className={DrawerContentStyles.wrapper}>
-        {is_shared === "1" ? (
+        {/* {is_shared === "1" ? (
           <p
             className={DrawerContentStyles.right__shareIndicator}
             onClick={() => handleChangeOnlyReadingShareModalVisible()}
@@ -158,7 +158,7 @@ class ShareAndInvite extends Component {
               正在分享
             </span>
           </p>
-        ) : null}
+        ) : null} */}
         <Dropdown overlay={shareMenu}>
           <span className={DrawerContentStyles.right__share} />
         </Dropdown>
