@@ -69,7 +69,7 @@ const Register = (options) => {
       }
     })
   }
-  if (juge === 'wechatRegister') {
+  if (juge == 'wechatRegister') {
     return (
       <div className={globalClassNmae.page_style_2}>
         <QueueAnim type="top">
