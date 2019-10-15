@@ -478,7 +478,7 @@ export default class Header extends React.Component {
     if (!this.getSelectedRows()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
-    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -522,7 +522,7 @@ export default class Header extends React.Component {
     if (!this.getSelectedRows()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
-    }else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -540,7 +540,7 @@ export default class Header extends React.Component {
     if (!this.getSelectedRows()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
-    }else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -988,66 +988,66 @@ export default class Header extends React.Component {
           if (selectedRowKeys.length) { //选择文件会改变
             // operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && 
             operatorConent =
-            (
-              <div style={{ display: 'flex', alignItems: 'center', color: '#595959' }} className={indexStyle.fileOperator}>
-                <div dangerouslySetInnerHTML={{ __html: this.state.iframes }}></div>
-                <div style={{ marginTop: 18 }}>
-                  <span style={{ color: '#8c8c8c' }}>
-                    已选择{selectedRowKeys.length}项
+              (
+                <div style={{ display: 'flex', alignItems: 'center', color: '#595959' }} className={indexStyle.fileOperator}>
+                  <div dangerouslySetInnerHTML={{ __html: this.state.iframes }}></div>
+                  <div style={{ marginTop: 18 }}>
+                    <span style={{ color: '#8c8c8c' }}>
+                      已选择{selectedRowKeys.length}项
                   </span>
-                  <span style={{ marginLeft: 14 }} onClick={this.quitOperateFile.bind(this)}>
-                    取消
+                    <span style={{ marginLeft: 14 }} onClick={this.quitOperateFile.bind(this)}>
+                      取消
                   </span>
-                  {/*<span style={{marginLeft:14}} onClick={this.reverseSelection.bind(this)}>*/}
-                  {/*反选*/}
-                  {/*</span>*/}
+                    {/*<span style={{marginLeft:14}} onClick={this.reverseSelection.bind(this)}>*/}
+                    {/*反选*/}
+                    {/*</span>*/}
+                  </div>
+                  {/*<Button style={{height: 24, marginTop:16,marginLeft:14}} >*/}
+                  {/*<Icon type="star" />收藏*/}
+                  {/*</Button>*/}
+                  <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.downLoadFile.bind(this)} >
+                    <Icon type="download" />下载
+                </Button>
+                  <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.moveFile.bind(this)}>
+                    <Icon type="export" />移动
+                </Button>
+                  <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.copyFile.bind(this)}>
+                    <Icon type="copy" />复制
+                </Button>
+                  <Button style={{ height: 24, marginTop: 16, marginLeft: 14, backgroundColor: '#f5f5f5', color: 'red' }} onClick={this.deleteFile.bind(this)}>
+                    <Icon type="delete" />移动到回收站
+                </Button>
+                  <div>
+                    <Icon type="appstore-o" style={{ fontSize: 14, marginTop: 20, marginLeft: 14 }} />
+                    {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
+                  </div>
                 </div>
-                {/*<Button style={{height: 24, marginTop:16,marginLeft:14}} >*/}
-                {/*<Icon type="star" />收藏*/}
-                {/*</Button>*/}
-                <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.downLoadFile.bind(this)} >
-                  <Icon type="download" />下载
-                </Button>
-                <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.moveFile.bind(this)}>
-                  <Icon type="export" />移动
-                </Button>
-                <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.copyFile.bind(this)}>
-                  <Icon type="copy" />复制
-                </Button>
-                <Button style={{ height: 24, marginTop: 16, marginLeft: 14, backgroundColor: '#f5f5f5', color: 'red' }} onClick={this.deleteFile.bind(this)}>
-                  <Icon type="delete" />移动到回收站
-                </Button>
-                <div>
-                  <Icon type="appstore-o" style={{ fontSize: 14, marginTop: 20, marginLeft: 14 }} />
-                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
-                </div>
-              </div>
-            )
+              )
           } else {
             // operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && 
             operatorConent =
-            (
-              <div style={{ display: 'flex', alignItems: 'center', }}>
-                {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id) && (
-                  <Upload {...uploadProps} showUploadList={false}>
-                    <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
-                      <Icon type="upload" />上传
+              (
+                <div style={{ display: 'flex', alignItems: 'center', }}>
+                  {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id) && (
+                    <Upload {...uploadProps} showUploadList={false}>
+                      <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
+                        <Icon type="upload" />上传
                     </Button>
-                  </Upload>
-                )}
+                    </Upload>
+                  )}
 
-                {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id) && (
-                  <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.createDirectory.bind(this)}>
-                    <Icon type="plus" />创建文件夹
+                  {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id) && (
+                    <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.createDirectory.bind(this)}>
+                      <Icon type="plus" />创建文件夹
                   </Button>
-                )}
+                  )}
 
-                <div>
-                  <Icon type="appstore-o" style={{ fontSize: 14, marginTop: 20, marginLeft: 14 }} />
-                  {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
+                  <div>
+                    <Icon type="appstore-o" style={{ fontSize: 14, marginTop: 20, marginLeft: 14 }} />
+                    {/*<Icon type="appstore-o" style={{fontSize:14,marginTop:20,marginLeft:16}}/>*/}
+                  </div>
                 </div>
-              </div>
-            )
+              )
           }
           break;
         default:
@@ -1147,7 +1147,18 @@ export default class Header extends React.Component {
           </div>
         </div>
         <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} invitationType='1' invitationId={board_id} />
-        <ShowAddMenberModal addMenbersInProject={this.addMenbersInProject} show_wechat_invite={true} board_id={board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+
+        <ShowAddMenberModal
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          board_id={board_id}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+          invitationId={board_id}
+          invitationType='1'
+          invitationOrg={localStorage.getItem('OrganizationId')}
+        />
+
         <AddModalForm board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
       </div>
     )

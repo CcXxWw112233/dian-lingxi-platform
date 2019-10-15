@@ -671,6 +671,7 @@ class FileDetailContent extends React.Component {
 
   // 访问控制权限弹窗
   alarmNoEditPermission = () => {
+
     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
   }
 
@@ -1273,6 +1274,7 @@ class FileDetailContent extends React.Component {
             projectFileType={"projectFileType"}
             zoomPictureParams={zoomPictureParams}
             isShow_textArea={false}
+            dispatch={dispatch}
           />
         )}
       </div>
@@ -1551,11 +1553,11 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             <div style={{ position: 'relative' }}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
-              }
+              } */}
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
                   is_show={false}
@@ -1650,11 +1652,11 @@ class FileDetailContent extends React.Component {
           <div className={indexStyles.fileDetailContentRight} style={{ minWidth: isExpandFrame ? 0 : 420, height: '100vh' }}>
 
             <div style={{ position: 'relative' }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                   <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
-              }
+              } */}
 
               <ContentRaletion
                 relations_Prefix={relations_Prefix}
@@ -1662,6 +1664,7 @@ class FileDetailContent extends React.Component {
                 link_id={filePreviewCurrentFileId}
                 link_local={'4'}
                 visitControlParams={visitControlParams}
+                is_showAdd={false}
               />
 
               {/*{seeFileInput === 'fileModule'? (*/}
@@ -1711,6 +1714,7 @@ class FileDetailContent extends React.Component {
                   projectFileType={"projectFileType"}
                   zoomPictureParams={zoomPictureParams}
                   isShow_textArea={false}
+                  dispatch={dispatch}
                 />
               )}
             </div>
