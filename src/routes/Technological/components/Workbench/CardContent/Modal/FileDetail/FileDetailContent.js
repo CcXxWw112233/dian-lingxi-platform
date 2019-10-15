@@ -1118,6 +1118,7 @@ class FileDetailContent extends React.Component {
             filePreviewCurrentId={filePreviewCurrentId}
             workbenchType={"workbenchType"}
             zoomPictureParams={zoomPictureParams}
+            isShow_textArea={true}
           />
         )}
       </div>
@@ -1537,6 +1538,7 @@ class FileDetailContent extends React.Component {
                   filePreviewCurrentId={filePreviewCurrentId}
                   workbenchType={"workbenchType"}
                   zoomPictureParams={zoomPictureParams}
+                  isShow_textArea={true}
                 />
               )}
             </div>

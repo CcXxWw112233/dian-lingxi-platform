@@ -173,6 +173,9 @@ class FileDetailContent extends React.Component {
     e.stopPropagation()
   }
   commitClicShowEdit(data) {
+
+    return
+
     const { flag, coordinates, } = data
     const { filePreviewCurrentFileId } = this.props
     this.setState({
@@ -385,6 +388,8 @@ class FileDetailContent extends React.Component {
     this.stopDragging()
   }
   setEditMode() {
+    return
+
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -394,6 +399,9 @@ class FileDetailContent extends React.Component {
     })
   }
   deleteCommitSet(e) {
+
+    return
+
     this.setState({
       isInAdding: false,
       currentRect: { x: 0, y: 0, width: 0, height: 0 }
@@ -1264,6 +1272,7 @@ class FileDetailContent extends React.Component {
             filePreviewCurrentId={filePreviewCurrentId}
             projectFileType={"projectFileType"}
             zoomPictureParams={zoomPictureParams}
+            isShow_textArea={false}
           />
         )}
       </div>
@@ -1646,6 +1655,7 @@ class FileDetailContent extends React.Component {
                   <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
+
               <ContentRaletion
                 relations_Prefix={relations_Prefix}
                 board_id={board_id}
@@ -1653,6 +1663,7 @@ class FileDetailContent extends React.Component {
                 link_local={'4'}
                 visitControlParams={visitControlParams}
               />
+
               {/*{seeFileInput === 'fileModule'? (*/}
               {/*<div className={indexStyles.versionOut}>*/}
               {/* <div>版本信息</div> */}
@@ -1672,11 +1683,11 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH))) && (
+            {/* {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH))) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 currentRect={currentRect}></Comment2>
               </div>
-            )}
+            )} */}
           </div>
 
         </div>
@@ -1699,6 +1710,7 @@ class FileDetailContent extends React.Component {
                   filePreviewCurrentId={filePreviewCurrentId}
                   projectFileType={"projectFileType"}
                   zoomPictureParams={zoomPictureParams}
+                  isShow_textArea={false}
                 />
               )}
             </div>

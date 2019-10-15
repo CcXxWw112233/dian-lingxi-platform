@@ -53,6 +53,7 @@ export default class ContentRaletion extends React.Component {
     }
   }
   async addRelation(data) {
+
     const res = await JoinRelation(data)
     if (isApiResponseOk(res)) {
       this.getRelations()

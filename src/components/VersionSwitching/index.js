@@ -166,14 +166,17 @@ export default class index extends Component {
                             }
                             <span className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</span>
                             <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                              <Dropdown getPopupContainer={() => document.getElementById("versionPanePosition")} overlay={versionItemMenu({ list, file_id, file_name })}
-                                // getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onClick={(e) => { this.handleStopPro(e) }}
-                                trigger={['click']}
-                              >
-                                <span>&#xe7fd;</span>
-                              </Dropdown>.
-                          </div>
+
+                              {is_show === true ?
+                                <Dropdown getPopupContainer={() => document.getElementById("versionPanePosition")} overlay={versionItemMenu({ list, file_id, file_name })}
+                                  // getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  onClick={(e) => { this.handleStopPro(e) }}
+                                  trigger={['click']}
+                                >
+                                  <span>&#xe7fd;</span>
+                                </Dropdown> : ''}
+
+                            </div>
                           </div>
                         )
                     }
