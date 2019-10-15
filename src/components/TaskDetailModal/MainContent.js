@@ -240,10 +240,10 @@ export default class MainContent extends Component {
                 <span>时间</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-                <div style={{position: 'relative'}}>
+                <div style={{ position: 'relative' }}>
                   {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block',textAlign: 'center'  }}>
-                    &nbsp;{start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                    {start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
                     <DatePicker
                       // disabledDate={this.disabledStartTime.bind(this)}
                       // onChange={this.startDatePickerChange.bind(this)}
@@ -253,10 +253,10 @@ export default class MainContent extends Component {
                       showTime={{ format: 'HH:mm' }}
                       style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, }} />
                   </span>
-                    &nbsp;
+                  &nbsp;
                   <span style={{ color: '#bfbfbf' }}> ~ </span>
-                    &nbsp;
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block',textAlign: 'center' }}>
+                  &nbsp;
+                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                     {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
                     <DatePicker
                       // disabledDate={this.disabledDueTime.bind(this)}
@@ -271,19 +271,31 @@ export default class MainContent extends Component {
               </div>
             </div>
             {/* 添加属性区域 */}
-            <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
-                <span style={{fontSize: '16px', color: 'rgba(0,0,0,0.45)'}} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+                <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                 <span>添加属性</span>
               </div>
               <Dropdown overlayClassName={mainContentStyles.overlay_attribute} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={addAttribute}>
-                <div style={{paddingLeft: '12px'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                <div style={{ paddingLeft: '12px' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
                   <span>选择属性</span>
                 </div>
               </Dropdown>
             </div>
           </div>
           {/* 各种字段的不同状态 E */}
+
+          <div>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
+                <span>附件</span>
+              </div>
+              <div className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{fontSize:'16px'}}>&#xe7fa;</span> 上传附件</span>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
