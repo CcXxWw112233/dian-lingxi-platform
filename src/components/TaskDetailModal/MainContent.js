@@ -4,6 +4,7 @@ import { Icon, message, Dropdown, Menu, DatePicker } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
+import UploadAttachmentModal from '@/components/UploadAttachmentModal'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '@/utils/util'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
@@ -378,13 +379,16 @@ export default class MainContent extends Component {
                   <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
                 </div>
                  {/* 上传附件组件 */}
-
+                {
+                  false &&
+                  <UploadAttachmentModal/>
+                }
               </div>
             </div>
           </div>
           {/* 上传附件字段 E*/}
 
-          
+
         </div>
       </div>
     )
