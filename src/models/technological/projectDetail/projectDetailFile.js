@@ -185,7 +185,7 @@ export default modelExtend(projectDetail, {
     // 从url预览
     * previewFileByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
-      let res = yield call(filePreviewByUrl, { id: file_id })
+      let res = yield call(fileInfoByUrl, { id: file_id })
       yield put({
         type: 'updateDatas',
         payload: {
@@ -201,9 +201,10 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewIsUsable: res.data.is_usable,
-            filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.is_real_image,
+            filePreviewIsUsable: res.data.preview_info.is_usable,
+            filePreviewUrl: res.data.preview_info.url,
+            filePreviewIsRealImage: res.data.preview_info.is_real_image,
+            filePreviewCurrentVersionList: res.data.version_list
           }
         })
         const { file_id } = payload
@@ -219,7 +220,7 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-
+      
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
